@@ -12,9 +12,9 @@ public data class MyShowsQueryChanged(val query: String) : MyShowsAction
 
 public data object ClearMyShowsQuery : MyShowsAction
 
-public data object ToggleSearchActive : MyShowsAction
+public data object ToggleMyShowsSearch : MyShowsAction
 
-public data class ChangeListStyleClicked(val isGridMode: Boolean) : MyShowsAction
+public data class ChangeMyShowsListStyle(val isGridMode: Boolean) : MyShowsAction
 
 public data class MyShowsMessageShown(val id: Long) : MyShowsAction
 

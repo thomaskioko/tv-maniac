@@ -4,12 +4,12 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.myshows.presenter.ChangeListStyleClicked
+import com.thomaskioko.tvmaniac.myshows.presenter.ChangeMyShowsListStyle
 import com.thomaskioko.tvmaniac.myshows.presenter.FakeMyShowsPresenterBuilder
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsPresenter
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsQueryChanged
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsState
-import com.thomaskioko.tvmaniac.myshows.presenter.ToggleSearchActive
+import com.thomaskioko.tvmaniac.myshows.presenter.ToggleMyShowsSearch
 import com.thomaskioko.tvmaniac.myshows.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import io.kotest.matchers.shouldBe
@@ -79,7 +79,7 @@ class MyShowsPresenterTest {
     }
 
     @Test
-    fun `should toggle list style when ChangeListStyleClicked is dispatched`() = runTest {
+    fun `should toggle list style when ChangeMyShowsListStyle is dispatched`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe MyShowsState()
 
@@ -89,12 +89,12 @@ class MyShowsPresenterTest {
             initialState.isGridMode shouldBe true
             initialState.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
 
-            presenter.dispatch(ChangeListStyleClicked(isGridMode = true))
+            presenter.dispatch(ChangeMyShowsListStyle(isGridMode = true))
 
             val updatedState = awaitItem()
             updatedState.isGridMode shouldBe false
 
-            presenter.dispatch(ChangeListStyleClicked(isGridMode = false))
+            presenter.dispatch(ChangeMyShowsListStyle(isGridMode = false))
 
             val finalState = awaitItem()
             finalState.isGridMode shouldBe true
@@ -119,7 +119,7 @@ class MyShowsPresenterTest {
     }
 
     @Test
-    fun `should toggle search active state when ToggleSearchActive is dispatched`() = runTest {
+    fun `should toggle search active state when ToggleMyShowsSearch is dispatched`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe MyShowsState()
 
@@ -128,12 +128,12 @@ class MyShowsPresenterTest {
             val initialState = awaitItem()
             initialState.isSearchActive shouldBe false
 
-            presenter.dispatch(ToggleSearchActive)
+            presenter.dispatch(ToggleMyShowsSearch)
 
             val activeState = awaitItem()
             activeState.isSearchActive shouldBe true
 
-            presenter.dispatch(ToggleSearchActive)
+            presenter.dispatch(ToggleMyShowsSearch)
 
             val inactiveState = awaitItem()
             inactiveState.isSearchActive shouldBe false

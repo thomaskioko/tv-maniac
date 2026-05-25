@@ -26,9 +26,9 @@ struct MyShowsTab: View {
             onQueryChanged: { presenter.dispatch(action: MyShowsQueryChanged(query: $0)) },
             onQueryCleared: { presenter.dispatch(action: ClearMyShowsQuery()) },
             onToggleListStyle: {
-                presenter.dispatch(action: ChangeListStyleClicked_(isGridMode: uiState.isGridMode))
+                presenter.dispatch(action: ChangeMyShowsListStyle(isGridMode: uiState.isGridMode))
             },
-            onToggleSearch: { presenter.dispatch(action: ToggleSearchActive_()) },
+            onToggleSearch: { presenter.dispatch(action: ToggleMyShowsSearch()) },
             onSortClicked: { showSortOptions = true },
             onShowClicked: { id in presenter.dispatch(action: MyShowsShowClicked(traktId: id)) },
             onEpisodeClicked: { showTraktId, episodeId in

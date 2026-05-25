@@ -85,7 +85,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_my_shows
 import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_not_watched_for_while
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.myshows.presenter.ChangeListStyleClicked
+import com.thomaskioko.tvmaniac.myshows.presenter.ChangeMyShowsListStyle
 import com.thomaskioko.tvmaniac.myshows.presenter.ChangeMyShowsSortOption
 import com.thomaskioko.tvmaniac.myshows.presenter.ClearMyShowsQuery
 import com.thomaskioko.tvmaniac.myshows.presenter.MarkUpNextEpisodeWatched
@@ -97,7 +97,7 @@ import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsShowClicked
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsState
 import com.thomaskioko.tvmaniac.myshows.presenter.RefreshMyShows
 import com.thomaskioko.tvmaniac.myshows.presenter.ShowTitleClicked
-import com.thomaskioko.tvmaniac.myshows.presenter.ToggleSearchActive
+import com.thomaskioko.tvmaniac.myshows.presenter.ToggleMyShowsSearch
 import com.thomaskioko.tvmaniac.myshows.presenter.UpNextEpisodeClicked
 import com.thomaskioko.tvmaniac.myshows.presenter.model.MyShowsItem
 import com.thomaskioko.tvmaniac.myshows.presenter.model.UpNextEpisodeItem
@@ -284,7 +284,7 @@ private fun TopBar(
 
     BackHandler(enabled = state.isSearchActive) {
         onAction(ClearMyShowsQuery)
-        onAction(ToggleSearchActive)
+        onAction(ToggleMyShowsSearch)
     }
 
     TvManiacTopBar(
@@ -306,14 +306,14 @@ private fun TopBar(
                         onQueryChanged = { onAction(MyShowsQueryChanged(it)) },
                         onCloseClick = {
                             onAction(ClearMyShowsQuery)
-                            onAction(ToggleSearchActive)
+                            onAction(ToggleMyShowsSearch)
                         },
                     )
                 } else {
                     CollapsedTopBarContent(
                         state = state,
                         onAction = onAction,
-                        onSearchClick = { onAction(ToggleSearchActive) },
+                        onSearchClick = { onAction(ToggleMyShowsSearch) },
                         onSortClick = onSortClick,
                     )
                 }
@@ -345,7 +345,7 @@ private fun CollapsedTopBarContent(
             modifier = Modifier
                 .padding(end = 8.dp)
                 .testTag(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG),
-            onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
+            onClick = { onAction(ChangeMyShowsListStyle(state.isGridMode)) },
         ) {
             val image = if (state.isGridMode) {
                 Icons.AutoMirrored.Outlined.List
