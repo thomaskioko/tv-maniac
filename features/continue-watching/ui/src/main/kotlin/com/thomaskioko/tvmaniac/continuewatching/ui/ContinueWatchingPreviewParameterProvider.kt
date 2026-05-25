@@ -112,7 +112,6 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                 ContinueWatchingState(
                     isGridMode = false,
                     isRefreshing = false,
-                    isSearchActive = true,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,
                     watchNextEpisodes = watchNextEpisodes,

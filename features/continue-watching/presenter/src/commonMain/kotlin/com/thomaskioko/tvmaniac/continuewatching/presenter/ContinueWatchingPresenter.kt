@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInte
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
-import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
@@ -61,7 +60,6 @@ public class ContinueWatchingPresenter(
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
-    private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -93,7 +91,6 @@ public class ContinueWatchingPresenter(
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
-        observeStartWatchingInteractor(Unit)
         observeAuthState()
     }
 
@@ -116,8 +113,7 @@ public class ContinueWatchingPresenter(
         uiMessageManager.message,
         queryFlow,
         syncObserver.isSyncing,
-        observeStartWatchingInteractor.flow,
-    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, startWatchingShows ->
+    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
 
         // TODO:: Move to Mapper object and inject the mapper in the presenter
         val sectionedItems = watchlistSections.toPresenter()
@@ -132,11 +128,7 @@ public class ContinueWatchingPresenter(
             isGridMode = isGridMode,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,
-            sortOption = sortOption,
             emptyStateText = localizer.getString(emptyStateKey),
-            startWatchingTitle = localizer.getString(StringResourceKey.LabelStartWatching),
-            continueWatchingTitle = localizer.getString(StringResourceKey.LabelContinueWatching),
-            startWatchingItems = startWatchingShows.toStartWatchingItems(query),
             watchNextItems = sectionedItems.watchNext.applySorting(sortOption),
             staleItems = sectionedItems.stale.applySorting(sortOption),
             watchNextEpisodes = sectionedEpisodes.watchNext,
@@ -154,11 +146,6 @@ public class ContinueWatchingPresenter(
     public fun dispatch(action: ContinueWatchingAction) {
         when (action) {
             is ContinueWatchingShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
-            is ContinueWatchingQueryChanged -> updateQuery(action.query)
-            is ClearContinueWatchingQuery -> clearQuery()
-            is ToggleContinueWatchingSearch -> toggleSearchActive()
-            is ChangeContinueWatchingListStyle -> toggleListStyle(action.isGridMode)
-            is ChangeContinueWatchingSortOption -> changeSortOption(action.sortOption)
             is ContinueWatchingMessageShown -> clearMessage(action.id)
             is UpNextEpisodeClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
             is ShowTitleClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
@@ -223,35 +210,11 @@ public class ContinueWatchingPresenter(
         }
     }
 
-    private fun updateQuery(query: String) {
+    public fun onQueryChanged(query: String) {
         coroutineScope.launch {
             queryFlow.emit(query)
             observeWatchlistSectionsInteractor(query)
             observeUpNextSectionsInteractor(query)
-        }
-    }
-
-    private fun clearQuery() {
-        coroutineScope.launch {
-            queryFlow.emit("")
-            observeWatchlistSectionsInteractor("")
-            observeUpNextSectionsInteractor("")
-        }
-    }
-
-    private fun toggleSearchActive() {
-        _state.update { it.copy(isSearchActive = !it.isSearchActive) }
-    }
-
-    private fun toggleListStyle(currentIsGridMode: Boolean) {
-        coroutineScope.launch {
-            repository.saveListStyle(!currentIsGridMode)
-        }
-    }
-
-    private fun changeSortOption(sortOption: WatchlistSortOption) {
-        coroutineScope.launch {
-            repository.saveSortOption(sortOption)
         }
     }
 

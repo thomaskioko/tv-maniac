@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.UpNextSectionsMapper
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
-import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
@@ -28,7 +27,6 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -50,7 +48,6 @@ class FakeContinueWatchingPresenterBuilder {
     val watchProviderRepository = FakeWatchProviderRepository()
     val continueWatchingRepository = FakeContinueWatchingRepository()
     val continueWatchingDao = FakeContinueWatchingDao()
-    val startWatchingRepository = FakeStartWatchingRepository()
     val requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false)
     val syncObserver = FakeSyncObserver()
     val nitroFlag = FakeFeatureFlag(initial = false)
@@ -102,10 +99,6 @@ class FakeContinueWatchingPresenterBuilder {
         mapper = upNextSectionsMapper,
     )
 
-    private val observeStartWatchingInteractor = ObserveStartWatchingInteractor(
-        repository = startWatchingRepository,
-    )
-
     private val syncContinueWatchingInteractor = SyncContinueWatchingInteractor(
         syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
@@ -132,7 +125,6 @@ class FakeContinueWatchingPresenterBuilder {
         ),
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
-        observeStartWatchingInteractor = observeStartWatchingInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
         syncContinueWatchingInteractor = syncContinueWatchingInteractor,
         nitroFlag = nitroFlag,
