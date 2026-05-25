@@ -29,7 +29,7 @@ public struct TabBarView: View {
         TabView(selection: $selectedTab) {
             tabContent(.discover, stack: presenter.discoverChildStackValue)
             tabContent(.progress, stack: presenter.progressChildStackValue)
-            tabContent(.watchlist, stack: presenter.watchlistChildStackValue)
+            tabContent(.myShows, stack: presenter.myShowsChildStackValue)
             tabContent(.profile, stack: presenter.profileChildStackValue, avatarImage: avatarImage)
         }
         .tint(theme.colors.accent)
@@ -46,7 +46,7 @@ public struct TabBarView: View {
             case .discover: presenter.onDiscoverClicked()
             case .progress: presenter.onProgressClicked()
             case .profile: presenter.onProfileClicked()
-            case .watchlist: presenter.onWatchlistClicked()
+            case .myShows: presenter.onMyShowsClicked()
             }
         }
         .onChange(of: tabFor(activeRoot)) { _, newTab in
@@ -86,8 +86,8 @@ public struct TabBarView: View {
                 DiscoverTab(presenter: p).id(NavigationTab.discover.rawValue)
             case let p as ProgressPresenter:
                 ProgressTab(presenter: p).id(NavigationTab.progress.rawValue)
-            case let p as WatchlistPresenter:
-                WatchlistTab(presenter: p).id(NavigationTab.watchlist.rawValue)
+            case let p as MyShowsPresenter:
+                MyShowsTab(presenter: p).id(NavigationTab.myShows.rawValue)
             case let p as ProfilePresenter:
                 ProfileTab(presenter: p).id(NavigationTab.profile.rawValue)
             default:
@@ -103,7 +103,7 @@ public struct TabBarView: View {
         switch root {
         case is DiscoverRoot: .discover
         case is ProgressRoot: .progress
-        case is WatchlistRoot: .watchlist
+        case is MyShowsRoot: .myShows
         case is ProfileRoot: .profile
         default: .discover
         }
@@ -162,14 +162,14 @@ public struct TabBarView: View {
 public enum NavigationTab: String, CaseIterable {
     case discover
     case progress
-    case watchlist
+    case myShows
     case profile
 
     var title: String {
         switch self {
         case .discover: String(\.label_tab_discover)
         case .progress: String(\.menu_item_progress)
-        case .watchlist: String(\.label_tab_watchlist)
+        case .myShows: String(\.label_tab_my_shows)
         case .profile: String(\.menu_item_profile)
         }
     }
@@ -178,7 +178,7 @@ public enum NavigationTab: String, CaseIterable {
         switch self {
         case .discover: "tv"
         case .progress: "play.circle"
-        case .watchlist: "play.square.stack.fill"
+        case .myShows: "play.square.stack.fill"
         case .profile: "person.circle"
         }
     }

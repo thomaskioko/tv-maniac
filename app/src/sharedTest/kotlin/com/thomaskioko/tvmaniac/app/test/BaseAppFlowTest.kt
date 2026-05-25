@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.CalendarRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.DiscoverRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.EpisodeSheetRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.HomeRobot
+import com.thomaskioko.tvmaniac.app.test.compose.robot.MyShowsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ProfileRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ProgressRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.RootRobot
@@ -25,7 +26,6 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.SeasonDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.SettingsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowListRobot
-import com.thomaskioko.tvmaniac.app.test.compose.robot.WatchlistRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.util.testing.FlakyTestRule
@@ -132,7 +132,7 @@ internal class AppFlowScope(
     val settingsRobot: SettingsRobot by lazy { SettingsRobot(composeUi) }
     val searchRobot: SearchRobot by lazy { SearchRobot(composeUi) }
     val episodeSheetRobot: EpisodeSheetRobot by lazy { EpisodeSheetRobot(composeUi) }
-    val watchlistRobot: WatchlistRobot by lazy { WatchlistRobot(composeUi) }
+    val watchlistRobot: MyShowsRobot by lazy { MyShowsRobot(composeUi) }
 
     val scenarios: Scenarios by lazy {
         Scenarios(

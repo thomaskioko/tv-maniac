@@ -21,7 +21,7 @@
 
     <string name="label_season_overview">Aperçu de la saison</string>
 
-    <string name="label_tab_watchlist">Liste de suivi</string>
+    <string name="label_tab_my_shows">Mes séries</string>
     <string name="label_watchlist_title">Ajouter à …</string>
     <string name="label_watchlist_lists">Listes</string>
     <string name="label_watchlist_create_custom_list">Créer une liste</string>
@@ -85,7 +85,7 @@
     <string name="menu_item_settings">Paramètres</string>
     <string name="menu_item_profile">Profil</string>
     <string name="menu_item_progress">Progrès</string>
-    <string name="menu_item_watchlist">Liste de suivi</string>
+    <string name="menu_item_my_shows">Mes séries</string>
 
     <string name="cd_show_poster">Image d'affiche</string>
     <string name="cd_show_poster_image">Image d'affiche pour %s</string>

@@ -28,7 +28,7 @@ kotlin {
             implementation(projects.features.moreShows.nav)
             implementation(projects.features.seasonDetails.nav)
             implementation(projects.features.showDetails.nav)
-            implementation(projects.features.watchlist.nav)
+            implementation(projects.features.myShows.nav)
             implementation(projects.navigation.implementation)
         }
     }

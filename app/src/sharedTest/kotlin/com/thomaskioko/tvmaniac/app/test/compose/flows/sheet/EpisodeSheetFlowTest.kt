@@ -72,7 +72,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         episodeSheetRobot
             .clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
 
-        homeRobot.clickWatchlistTab()
+        homeRobot.clickMyShowsTab()
         watchlistRobot.clickShowCard(breakingBadTraktId)
         showDetailsRobot
             .assertShowDetailsDisplayed()
@@ -86,8 +86,8 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         discoverRobot.assertDiscoverScreenDisplayed()
 
         homeRobot
-            .clickWatchlistTab()
-            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
             .scrollToShowCard(breakingBadTraktId)

@@ -24,8 +24,8 @@ internal class HomeRobot(composeUi: ComposeUiTest) : BaseRobot<HomeRobot>(compos
         click(HomeTestTags.PROGRESS_TAB)
     }
 
-    fun clickWatchlistTab() = apply {
-        click(HomeTestTags.WATCHLIST_TAB)
+    fun clickMyShowsTab() = apply {
+        click(HomeTestTags.MY_SHOWS_TAB)
     }
 
     fun clickProfileTab() = apply {

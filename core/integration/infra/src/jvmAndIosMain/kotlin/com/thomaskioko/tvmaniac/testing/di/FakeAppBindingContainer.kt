@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
 import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultBaseRouteSerializer
 import com.thomaskioko.tvmaniac.navigation.DefaultNavRootSerializer
@@ -38,7 +39,6 @@ import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
-import com.thomaskioko.tvmaniac.watchlist.nav.WatchlistRoot
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -152,8 +152,8 @@ public object FakeAppBindingContainer {
             routeClass = ProgressRoot::class,
         ) { _: ProgressRoot, _: ComponentContext -> object : RootChild {} },
         NavDestination.TabRoot(
-            routeClass = WatchlistRoot::class,
-        ) { _: WatchlistRoot, _: ComponentContext -> object : RootChild {} },
+            routeClass = MyShowsRoot::class,
+        ) { _: MyShowsRoot, _: ComponentContext -> object : RootChild {} },
     )
 
     @Provides
@@ -175,7 +175,7 @@ public object FakeAppBindingContainer {
         LibraryRoot,
         ProfileRoot,
         ProgressRoot,
-        WatchlistRoot,
+        MyShowsRoot,
     )
 
     @Provides
@@ -198,8 +198,8 @@ public object FakeAppBindingContainer {
             ProgressRoot.serializer(),
         ),
         NavRootBinding(
-            WatchlistRoot::class,
-            WatchlistRoot.serializer(),
+            MyShowsRoot::class,
+            MyShowsRoot.serializer(),
         ),
     )
 

@@ -49,8 +49,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         // Verify synced surfaces appear after auth
         homeRobot
-            .clickWatchlistTab()
-            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
             .scrollToShowCard(breakingBadTraktId)
@@ -75,8 +75,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         // Continue tracking and mark season watched
         homeRobot
-            .clickWatchlistTab()
-            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
             .clickShowCard(breakingBadTraktId)
@@ -103,7 +103,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .pressBack()
 
         watchlistRobot
-            .assertWatchlistScreenDisplayed()
+            .assertMyShowsScreenDisplayed()
 
         // Open Episode Sheet from Discover UpNext card
         homeRobot.clickDiscoverTab()

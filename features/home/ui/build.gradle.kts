@@ -23,7 +23,7 @@ dependencies {
     implementation(projects.features.discover.nav)
     implementation(projects.features.profile.nav)
     implementation(projects.features.progress.nav)
-    implementation(projects.features.watchlist.nav)
+    implementation(projects.features.myShows.nav)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.decompose.extensions.compose)

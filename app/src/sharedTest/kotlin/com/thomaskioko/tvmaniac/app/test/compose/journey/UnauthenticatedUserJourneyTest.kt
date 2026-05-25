@@ -80,8 +80,8 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .clickUpNextTab()
 
         // Verify empty watchlist state
-        homeRobot.clickWatchlistTab()
-            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
+        homeRobot.clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
             .assertEmptyStateDisplayed()
@@ -173,8 +173,8 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         // Verify offline follow in Watchlist
         homeRobot
-            .clickWatchlistTab()
-            .assertTabSelected(HomeTestTags.WATCHLIST_TAB)
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
             .scrollToShowCard(breakingBadTraktId)
