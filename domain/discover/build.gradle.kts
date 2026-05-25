@@ -22,8 +22,6 @@ kotlin {
                 api(projects.data.topratedshows.api)
                 api(projects.data.trendingshows.api)
                 api(projects.data.upcomingshows.api)
-                api(projects.data.upnext.api)
-                api(projects.domain.continueWatching)
             }
         }
 
@@ -36,7 +34,6 @@ kotlin {
                 implementation(projects.data.topratedshows.testing)
                 implementation(projects.data.trendingshows.testing)
                 implementation(projects.data.upcomingshows.testing)
-                implementation(projects.data.upnext.testing)
             }
         }
     }

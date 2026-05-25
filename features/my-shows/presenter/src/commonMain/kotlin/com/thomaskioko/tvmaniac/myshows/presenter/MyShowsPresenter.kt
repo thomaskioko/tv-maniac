@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInte
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
@@ -65,6 +66,7 @@ public class MyShowsPresenter(
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
+    private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -96,6 +98,7 @@ public class MyShowsPresenter(
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
+        observeStartWatchingInteractor(Unit)
         observeAuthState()
     }
 
@@ -118,7 +121,8 @@ public class MyShowsPresenter(
         uiMessageManager.message,
         queryFlow,
         syncObserver.isSyncing,
-    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
+        observeStartWatchingInteractor.flow,
+    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, startWatchingShows ->
 
         // TODO:: Move to Mapper object and inject the mapper in the presenter
         val sectionedItems = watchlistSections.toPresenter()
@@ -135,6 +139,9 @@ public class MyShowsPresenter(
             isSyncing = isSyncing,
             sortOption = sortOption,
             emptyStateText = localizer.getString(emptyStateKey),
+            startWatchingTitle = localizer.getString(StringResourceKey.LabelStartWatching),
+            continueWatchingTitle = localizer.getString(StringResourceKey.LabelContinueWatching),
+            startWatchingItems = startWatchingShows.toStartWatchingItems(query),
             watchNextItems = sectionedItems.watchNext.applySorting(sortOption),
             staleItems = sectionedItems.stale.applySorting(sortOption),
             watchNextEpisodes = sectionedEpisodes.watchNext,

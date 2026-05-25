@@ -22,6 +22,7 @@ kotlin {
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)
                 api(projects.domain.continueWatching)
+                api(projects.domain.startWatching)
                 api(projects.features.myShows.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
@@ -30,6 +31,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
+                implementation(projects.data.startWatching.api)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.features.showDetails.nav)
@@ -67,6 +69,7 @@ kotlin {
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.data.continueWatching.testing)
+                implementation(projects.data.startWatching.testing)
                 implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)

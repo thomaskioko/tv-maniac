@@ -29,10 +29,15 @@ import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.genre.GenreShowsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.test
@@ -40,6 +45,8 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
+import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -78,8 +85,13 @@ class DiscoverShowsPresenterTest {
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val watchProviderRepository = FakeWatchProviderRepository()
+    private val startWatchingRepository = FakeStartWatchingRepository()
+    private val fakeLocalizer = FakeLocalizer()
     private val observeUpNextInteractor = ObserveUpNextInteractor(
         repository = upNextRepository,
+    )
+    private val observeStartWatchingInteractor = ObserveStartWatchingInteractor(
+        repository = startWatchingRepository,
     )
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -150,6 +162,7 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = uiModelList(),
                 trendingToday = uiModelList(),
                 nextEpisodes = nextEpisodeUiModelList(),
+                startWatchingTitle = fakeLocalizer.getString(StringResourceKey.LabelStartWatching),
             )
         }
     }
@@ -169,6 +182,7 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = uiModelList(),
                 trendingToday = uiModelList(),
                 nextEpisodes = nextEpisodeUiModelList(),
+                startWatchingTitle = fakeLocalizer.getString(StringResourceKey.LabelStartWatching),
             )
         }
     }
@@ -193,6 +207,7 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = uiModelList(),
                 trendingToday = uiModelList(),
                 nextEpisodes = nextEpisodeUiModelList(),
+                startWatchingTitle = fakeLocalizer.getString(StringResourceKey.LabelStartWatching),
             )
         }
     }
@@ -212,6 +227,7 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = expectedList,
                 trendingToday = expectedList,
                 nextEpisodes = nextEpisodeUiModelList(),
+                startWatchingTitle = fakeLocalizer.getString(StringResourceKey.LabelStartWatching),
             )
 
             awaitItem() shouldBe DiscoverViewState.Empty
@@ -239,6 +255,7 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = expectedUpdatedList,
                 trendingToday = expectedUpdatedList,
                 nextEpisodes = nextEpisodeUiModelList(),
+                startWatchingTitle = fakeLocalizer.getString(StringResourceKey.LabelStartWatching),
             )
         }
     }
@@ -260,6 +277,7 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = expectedList,
                 trendingToday = expectedList,
                 nextEpisodes = nextEpisodeUiModelList(),
+                startWatchingTitle = fakeLocalizer.getString(StringResourceKey.LabelStartWatching),
             )
 
             awaitItem() shouldBe expectedResult
@@ -286,6 +304,7 @@ class DiscoverShowsPresenterTest {
                 upcomingShows = expectedUpdatedList,
                 trendingToday = expectedUpdatedList,
                 nextEpisodes = nextEpisodeUiModelList(),
+                startWatchingTitle = fakeLocalizer.getString(StringResourceKey.LabelStartWatching),
                 featuredRefreshing = false,
                 message = null,
             )
@@ -308,7 +327,6 @@ class DiscoverShowsPresenterTest {
                 trendingShowsRepository = trendingShowsRepository,
                 upcomingShowsRepository = upcomingShowsRepository,
                 genreRepository = genreRepository,
-                observeUpNextInteractor = observeUpNextInteractor,
             ),
             followShowInteractor = FollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
@@ -353,7 +371,10 @@ class DiscoverShowsPresenterTest {
                 libraryRepository = FakeLibraryRepository(),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
+            observeStartWatchingInteractor = observeStartWatchingInteractor,
+            observeUpNextInteractor = observeUpNextInteractor,
             traktAuthRepository = traktAuthRepository,
+            localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )
@@ -370,6 +391,32 @@ class DiscoverShowsPresenterTest {
                     ),
                 ),
             )
+        }
+    }
+
+    @Test
+    fun `should map start watching shows into state`() = runTest {
+        presenter.state.test {
+            startWatchingRepository.setStartWatchingShows(startWatchingShowList)
+
+            var state = awaitItem()
+            while (state.startWatchingShows.isEmpty()) {
+                state = awaitItem()
+            }
+            state.startWatchingShows shouldBe expectedStartWatchingDiscoverShows
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should switch to my shows when start watching more is clicked`() = runTest {
+        val testNavigator = TestNavigator()
+        val testPresenter = buildPresenter(navigator = testNavigator)
+
+        testNavigator.test {
+            testPresenter.dispatch(StartWatchingMoreClicked)
+
+            awaitSwitchBackStack(MyShowsRoot)
         }
     }
 
@@ -448,15 +495,24 @@ class DiscoverShowsPresenterTest {
         )
     }.toImmutableList()
 
+    private val startWatchingShowList = listOf(
+        StartWatchingShow(traktId = 1, tmdbId = 11, title = "Breaking Bad", posterPath = "/1.jpg", year = "2008", inLibrary = true),
+    )
+
+    private val expectedStartWatchingDiscoverShows = listOf(
+        DiscoverShow(traktId = 1, tmdbId = 11, title = "Breaking Bad", posterImageUrl = "/1.jpg", inLibrary = true),
+    ).toImmutableList()
+
     companion object {
         const val LIST_SIZE = 5
     }
 
     private fun buildPresenter(
         lifecycle: LifecycleRegistry = LifecycleRegistry(),
+        navigator: Navigator = NoOpNavigator(),
     ): DiscoverShowsPresenter = DiscoverShowsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        navigator = NoOpNavigator(),
+        navigator = navigator,
         discoverShowsInteractor = DiscoverShowsInteractor(
             featuredShowsRepository = featuredShowsRepository,
             topRatedShowsRepository = topRatedShowsRepository,
@@ -464,7 +520,6 @@ class DiscoverShowsPresenterTest {
             trendingShowsRepository = trendingShowsRepository,
             upcomingShowsRepository = upcomingShowsRepository,
             genreRepository = genreRepository,
-            observeUpNextInteractor = observeUpNextInteractor,
         ),
         followShowInteractor = FollowShowInteractor(
             followedShowsRepository = followedShowsRepository,
@@ -509,7 +564,10 @@ class DiscoverShowsPresenterTest {
             libraryRepository = FakeLibraryRepository(),
             appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
         ),
+        observeStartWatchingInteractor = observeStartWatchingInteractor,
+        observeUpNextInteractor = observeUpNextInteractor,
         traktAuthRepository = traktAuthRepository,
+        localizer = fakeLocalizer,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),
     ).also { lifecycle.resume() }

@@ -12,6 +12,8 @@ public data object TopRatedClicked : DiscoverShowAction
 
 public data object UpNextMoreClicked : DiscoverShowAction
 
+public data object StartWatchingMoreClicked : DiscoverShowAction
+
 public data object RefreshData : DiscoverShowAction
 
 public data class ShowClicked(val traktId: Long) : DiscoverShowAction

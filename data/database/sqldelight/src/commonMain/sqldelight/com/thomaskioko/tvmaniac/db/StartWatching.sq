@@ -1,0 +1,21 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+startWatchingShows:
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.name AS title,
+    tvshow.poster_path,
+    tvshow.year,
+    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
+FROM followed_shows
+INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
+LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
+LEFT JOIN trakt_continue_watching ON tvshow.trakt_id = trakt_continue_watching.trakt_id
+WHERE followed_shows.pending_action != 'DELETE'
+  AND COALESCE(show_watch_progress.watched_count, 0) = 0
+  AND COALESCE(show_watch_progress.total_count, 0) > 0
+  AND trakt_continue_watching.trakt_id IS NULL
+ORDER BY followed_shows.followed_at DESC;
