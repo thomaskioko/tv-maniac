@@ -4,11 +4,13 @@ import SwiftUI
 struct DiscoverListContent: View {
     struct State {
         let upNextTitle: String
+        let startWatchingTitle: String
         let trendingTitle: String
         let upcomingTitle: String
         let popularTitle: String
         let topRatedTitle: String
         let nextEpisodes: [SwiftNextEpisode]
+        let startWatchingShows: [SwiftShow]
         let trendingToday: [SwiftShow]
         let upcomingShows: [SwiftShow]
         let popularShows: [SwiftShow]
@@ -19,6 +21,7 @@ struct DiscoverListContent: View {
 
     let state: State
     let onShowClicked: (Int64) -> Void
+    let onStartWatchingMoreClicked: () -> Void
     let onTrendingClicked: () -> Void
     let onUpcomingClicked: () -> Void
     let onPopularClicked: () -> Void
@@ -32,6 +35,15 @@ struct DiscoverListContent: View {
                 episodes: state.nextEpisodes,
                 chevronStyle: .chevronOnly,
                 onEpisodeClick: onNextEpisodeClicked
+            )
+
+            HorizontalShowContentView(
+                title: state.startWatchingTitle,
+                chevronStyle: .chevronOnly,
+                cardStyle: .poster,
+                items: state.startWatchingShows,
+                onClick: onShowClicked,
+                onMoreClicked: onStartWatchingMoreClicked
             )
 
             HorizontalShowContentView(

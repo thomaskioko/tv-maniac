@@ -10,6 +10,7 @@ public struct DiscoverScreen: View {
         public let errorMessage: String?
         public let featuredShows: [SwiftShow]
         public let nextEpisodes: [SwiftNextEpisode]
+        public let startWatchingShows: [SwiftShow]
         public let trendingToday: [SwiftShow]
         public let upcomingShows: [SwiftShow]
         public let popularShows: [SwiftShow]
@@ -19,6 +20,7 @@ public struct DiscoverScreen: View {
         public let missingApiKeyText: String
         public let retryText: String
         public let upNextTitle: String
+        public let startWatchingTitle: String
         public let trendingTitle: String
         public let upcomingTitle: String
         public let popularTitle: String
@@ -32,6 +34,7 @@ public struct DiscoverScreen: View {
             errorMessage: String?,
             featuredShows: [SwiftShow],
             nextEpisodes: [SwiftNextEpisode],
+            startWatchingShows: [SwiftShow],
             trendingToday: [SwiftShow],
             upcomingShows: [SwiftShow],
             popularShows: [SwiftShow],
@@ -41,6 +44,7 @@ public struct DiscoverScreen: View {
             missingApiKeyText: String,
             retryText: String,
             upNextTitle: String,
+            startWatchingTitle: String,
             trendingTitle: String,
             upcomingTitle: String,
             popularTitle: String,
@@ -53,6 +57,7 @@ public struct DiscoverScreen: View {
             self.errorMessage = errorMessage
             self.featuredShows = featuredShows
             self.nextEpisodes = nextEpisodes
+            self.startWatchingShows = startWatchingShows
             self.trendingToday = trendingToday
             self.upcomingShows = upcomingShows
             self.popularShows = popularShows
@@ -62,6 +67,7 @@ public struct DiscoverScreen: View {
             self.missingApiKeyText = missingApiKeyText
             self.retryText = retryText
             self.upNextTitle = upNextTitle
+            self.startWatchingTitle = startWatchingTitle
             self.trendingTitle = trendingTitle
             self.upcomingTitle = upcomingTitle
             self.popularTitle = popularTitle
@@ -82,6 +88,7 @@ public struct DiscoverScreen: View {
     private let onUpcomingClicked: () -> Void
     private let onPopularClicked: () -> Void
     private let onTopRatedClicked: () -> Void
+    private let onStartWatchingMoreClicked: () -> Void
     private let onNextEpisodeClicked: (SwiftNextEpisode) -> Void
     private let onCarouselIndexChanged: (Int) -> Void
     private let episodeSheetContent: ((SwiftNextEpisode) -> AnyView)?
@@ -98,6 +105,7 @@ public struct DiscoverScreen: View {
         onUpcomingClicked: @escaping () -> Void,
         onPopularClicked: @escaping () -> Void,
         onTopRatedClicked: @escaping () -> Void,
+        onStartWatchingMoreClicked: @escaping () -> Void,
         onNextEpisodeClicked: @escaping (SwiftNextEpisode) -> Void,
         onCarouselIndexChanged: @escaping (Int) -> Void,
         episodeSheetContent: ((SwiftNextEpisode) -> AnyView)? = nil
@@ -113,6 +121,7 @@ public struct DiscoverScreen: View {
         self.onUpcomingClicked = onUpcomingClicked
         self.onPopularClicked = onPopularClicked
         self.onTopRatedClicked = onTopRatedClicked
+        self.onStartWatchingMoreClicked = onStartWatchingMoreClicked
         self.onNextEpisodeClicked = onNextEpisodeClicked
         self.onCarouselIndexChanged = onCarouselIndexChanged
         self.episodeSheetContent = episodeSheetContent
@@ -361,17 +370,20 @@ public struct DiscoverScreen: View {
         DiscoverListContent(
             state: DiscoverListContent.State(
                 upNextTitle: state.upNextTitle,
+                startWatchingTitle: state.startWatchingTitle,
                 trendingTitle: state.trendingTitle,
                 upcomingTitle: state.upcomingTitle,
                 popularTitle: state.popularTitle,
                 topRatedTitle: state.topRatedTitle,
                 nextEpisodes: state.nextEpisodes,
+                startWatchingShows: state.startWatchingShows,
                 trendingToday: state.trendingToday,
                 upcomingShows: state.upcomingShows,
                 popularShows: state.popularShows,
                 topRatedShows: state.topRatedShows
             ),
             onShowClicked: onShowClicked,
+            onStartWatchingMoreClicked: onStartWatchingMoreClicked,
             onTrendingClicked: onTrendingClicked,
             onUpcomingClicked: onUpcomingClicked,
             onPopularClicked: onPopularClicked,

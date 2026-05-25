@@ -28,6 +28,7 @@ struct DiscoverTab: View {
             onUpcomingClicked: { presenter.dispatch(action: UpComingClicked()) },
             onPopularClicked: { presenter.dispatch(action: PopularClicked()) },
             onTopRatedClicked: { presenter.dispatch(action: TopRatedClicked()) },
+            onStartWatchingMoreClicked: { presenter.dispatch(action: StartWatchingMoreClicked()) },
             onNextEpisodeClicked: { episode in
                 presenter.dispatch(action: DiscoverEpisodeLongPressed(
                     showTraktId: episode.showTraktId,
@@ -58,6 +59,7 @@ private extension DiscoverViewState {
             errorMessage: message?.message,
             featuredShows: featuredShowsSwift,
             nextEpisodes: nextEpisodesSwift,
+            startWatchingShows: startWatchingShowsSwift,
             trendingToday: trendingTodaySwift,
             upcomingShows: upcomingShowsSwift,
             popularShows: popularShowsSwift,
@@ -67,6 +69,7 @@ private extension DiscoverViewState {
             missingApiKeyText: String(\.missing_api_key),
             retryText: String(\.button_error_retry),
             upNextTitle: String(\.label_discover_up_next),
+            startWatchingTitle: startWatchingTitle,
             trendingTitle: String(\.label_discover_trending_today),
             upcomingTitle: String(\.label_discover_upcoming),
             popularTitle: String(\.label_discover_popular),

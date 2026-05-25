@@ -66,6 +66,8 @@ include(
     ":features:my-shows:nav",
     ":features:continue-watching:presenter",
     ":features:continue-watching:ui",
+    ":features:start-watching:presenter",
+    ":features:start-watching:ui",
     ":features:debug:nav",
     ":features:debug:presenter",
     ":features:debug:ui",
