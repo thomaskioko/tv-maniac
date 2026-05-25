@@ -21,7 +21,7 @@ public extension TvManiac.ImageQuality {
     }
 }
 
-public extension TvManiac.MyShowsItem {
+public extension TvManiac.ContinueWatchingItem {
     func toSwift() -> ShowPosterImage {
         .init(
             traktId: traktId,

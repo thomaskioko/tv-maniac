@@ -4,8 +4,8 @@ import SwiftUIComponents
 import TvManiacKit
 
 struct MyShowsTab: View {
-    private let presenter: MyShowsPresenter
-    @StateValue private var uiState: MyShowsState
+    private let presenter: ContinueWatchingPresenter
+    @StateValue private var uiState: ContinueWatchingState
 
     @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
     @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
@@ -13,8 +13,8 @@ struct MyShowsTab: View {
     @State private var showSortOptions = false
 
     init(presenter: MyShowsPresenter) {
-        self.presenter = presenter
-        _uiState = .init(presenter.stateValue)
+        self.presenter = presenter.continueWatchingPresenter
+        _uiState = .init(presenter.continueWatchingPresenter.stateValue)
     }
 
     var body: some View {
@@ -23,14 +23,14 @@ struct MyShowsTab: View {
                 watchNextEpisodes: watchNextEpisodesSwift,
                 staleEpisodes: staleEpisodesSwift
             ),
-            onQueryChanged: { presenter.dispatch(action: MyShowsQueryChanged(query: $0)) },
-            onQueryCleared: { presenter.dispatch(action: ClearMyShowsQuery()) },
+            onQueryChanged: { presenter.dispatch(action: ContinueWatchingQueryChanged(query: $0)) },
+            onQueryCleared: { presenter.dispatch(action: ClearContinueWatchingQuery()) },
             onToggleListStyle: {
-                presenter.dispatch(action: ChangeMyShowsListStyle(isGridMode: uiState.isGridMode))
+                presenter.dispatch(action: ChangeContinueWatchingListStyle(isGridMode: uiState.isGridMode))
             },
-            onToggleSearch: { presenter.dispatch(action: ToggleMyShowsSearch()) },
+            onToggleSearch: { presenter.dispatch(action: ToggleContinueWatchingSearch()) },
             onSortClicked: { showSortOptions = true },
-            onShowClicked: { id in presenter.dispatch(action: MyShowsShowClicked(traktId: id)) },
+            onShowClicked: { id in presenter.dispatch(action: ContinueWatchingShowClicked(traktId: id)) },
             onEpisodeClicked: { showTraktId, episodeId in
                 presenter.dispatch(action: UpNextEpisodeClicked(showTraktId: showTraktId, episodeId: episodeId))
             },
@@ -45,13 +45,13 @@ struct MyShowsTab: View {
                     episodeNumber: episode.episodeNumberValue
                 ))
             },
-            onRefresh: { presenter.dispatch(action: RefreshMyShows(forceRefresh: true)) }
+            onRefresh: { presenter.dispatch(action: RefreshContinueWatching(forceRefresh: true)) }
         )
         .sheet(isPresented: $showSortOptions) {
             MyShowsSortOptionsSheet(
                 selectedSortOption: uiState.sortOption,
                 onSortOptionSelected: { sortOption in
-                    presenter.dispatch(action: ChangeMyShowsSortOption(sortOption: sortOption))
+                    presenter.dispatch(action: ChangeContinueWatchingSortOption(sortOption: sortOption))
                 }
             )
             .presentationDetents([.medium, .large])
@@ -60,7 +60,7 @@ struct MyShowsTab: View {
         .onChange(of: uiState.message) { _, newValue in
             if let message = newValue {
                 toast = Toast(type: .error, title: String(\.label_error), message: message.message)
-                presenter.dispatch(action: MyShowsMessageShown(id: message.id))
+                presenter.dispatch(action: ContinueWatchingMessageShown(id: message.id))
             }
         }
         .onChange(of: uiState.watchNextEpisodes) { _, newValue in
@@ -80,7 +80,7 @@ struct MyShowsTab: View {
     }
 }
 
-private extension MyShowsState {
+private extension ContinueWatchingState {
     func toState(
         watchNextEpisodes: [SwiftNextEpisode],
         staleEpisodes: [SwiftNextEpisode]
