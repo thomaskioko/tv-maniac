@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
+                api(projects.data.episode.api)
                 api(projects.data.startWatching.api)
             }
         }
@@ -20,6 +21,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.data.episode.testing)
                 implementation(projects.data.startWatching.testing)
             }
         }

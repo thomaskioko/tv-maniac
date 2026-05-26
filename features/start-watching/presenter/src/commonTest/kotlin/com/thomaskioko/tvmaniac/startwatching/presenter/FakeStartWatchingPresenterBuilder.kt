@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.startwatching.SyncStartWatchingInteractor
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
@@ -32,6 +33,7 @@ class FakeStartWatchingPresenterBuilder {
 
     private val syncStartWatchingInteractor = SyncStartWatchingInteractor(
         startWatchingRepository = startWatchingRepository,
+        watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
         dispatchers = coroutineDispatcher,
     )
 

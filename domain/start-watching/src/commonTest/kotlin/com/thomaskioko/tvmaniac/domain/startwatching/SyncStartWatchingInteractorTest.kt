@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.startwatching
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository.SyncInvocation
 import io.kotest.matchers.shouldBe
@@ -21,22 +22,26 @@ internal class SyncStartWatchingInteractorTest {
         databaseRead = testDispatcher,
     )
     private val repository = FakeStartWatchingRepository()
+    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val interactor = SyncStartWatchingInteractor(
         startWatchingRepository = repository,
+        watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
         dispatchers = dispatchers,
     )
 
     @Test
-    fun `should sync watchlist without force given default param`() = runTest(testDispatcher) {
+    fun `should sync watched episodes and watchlist given default param`() = runTest(testDispatcher) {
         interactor.executeSync(SyncStartWatchingInteractor.Param())
 
+        watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(false)
         repository.syncInvocations() shouldBe listOf(SyncInvocation(forceRefresh = false))
     }
 
     @Test
-    fun `should propagate force refresh to watchlist sync`() = runTest(testDispatcher) {
+    fun `should propagate force refresh to watched episodes and watchlist syncs`() = runTest(testDispatcher) {
         interactor.executeSync(SyncStartWatchingInteractor.Param(forceRefresh = true))
 
+        watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(true)
         repository.syncInvocations() shouldBe listOf(SyncInvocation(forceRefresh = true))
     }
 }

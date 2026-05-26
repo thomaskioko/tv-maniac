@@ -35,6 +35,7 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.syncstate.testing)
+                implementation(projects.data.episode.testing)
                 implementation(projects.data.startWatching.testing)
                 implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.navigation.testing)
