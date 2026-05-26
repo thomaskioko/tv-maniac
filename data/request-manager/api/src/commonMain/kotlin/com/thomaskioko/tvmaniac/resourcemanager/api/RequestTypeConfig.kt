@@ -34,5 +34,5 @@ public enum class RequestTypeConfig(public val requestId: Long, public val durat
     TRAKT_LISTS_SYNC(32, 6.hours),
     CONTINUE_WATCHING_SYNC(33, 6.hours),
     TRAKT_LIST_ITEMS_SYNC(34, 6.hours),
-    START_WATCHING_FIRST_SEASON_SYNC(35, 1.days),
+    START_WATCHING_SYNC(36, 1.days),
 }
