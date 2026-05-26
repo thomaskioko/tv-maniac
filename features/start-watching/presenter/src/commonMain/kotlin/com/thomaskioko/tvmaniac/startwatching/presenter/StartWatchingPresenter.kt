@@ -19,14 +19,11 @@ import com.thomaskioko.tvmaniac.myshows.nav.scope.MyShowsChildScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.toPersistentSet
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,9 +32,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 @ChildPresenter(scope = MyShowsChildScope::class, parentScope = MyShowsRoot::class)
 @Inject
@@ -122,7 +116,6 @@ public class StartWatchingPresenter(
         if (action.episodeId in _state.value.updatingEpisodeIds) return
         _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds + action.episodeId).toPersistentSet()) }
         coroutineScope.launch {
-            val marker = TimeSource.Monotonic.markNow()
             try {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
@@ -138,10 +131,6 @@ public class StartWatchingPresenter(
                     errorToStringMapper = errorToStringMapper,
                 )
             } finally {
-                val elapsed = marker.elapsedNow()
-                if (elapsed < INDICATOR_FLOOR) {
-                    delay(INDICATOR_FLOOR - elapsed)
-                }
                 _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds - action.episodeId).toPersistentSet()) }
             }
         }
@@ -149,15 +138,9 @@ public class StartWatchingPresenter(
 
     private fun syncFirstSeason(forceRefresh: Boolean = false) {
         coroutineScope.launch {
-            try {
-                syncStartWatchingFirstSeasonInteractor.executeSync(
-                    SyncStartWatchingFirstSeasonInteractor.Param(forceRefresh = forceRefresh),
-                )
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (error: Throwable) {
-                syncObserver.log(SyncError.BackgroundSyncFailed(FIRST_SEASON_SYNC_OPERATION, error))
-            }
+            syncStartWatchingFirstSeasonInteractor.executeSync(
+                SyncStartWatchingFirstSeasonInteractor.Param(forceRefresh = forceRefresh),
+            )
         }
     }
 
@@ -178,10 +161,5 @@ public class StartWatchingPresenter(
         coroutineScope.launch {
             uiMessageManager.clearMessage(id)
         }
-    }
-
-    private companion object {
-        private val INDICATOR_FLOOR: Duration = 150.milliseconds
-        private const val FIRST_SEASON_SYNC_OPERATION = "StartWatchingFirstSeason"
     }
 }

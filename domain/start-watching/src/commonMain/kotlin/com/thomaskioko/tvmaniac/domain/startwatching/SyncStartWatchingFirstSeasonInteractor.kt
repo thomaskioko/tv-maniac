@@ -39,14 +39,14 @@ public class SyncStartWatchingFirstSeasonInteractor(
             for (show in shows) {
                 ensureActive()
 
-                val cacheValid = !requestManagerRepository.isRequestExpired(
-                    entityId = show.traktId,
-                    requestType = START_WATCHING_FIRST_SEASON_SYNC.name,
-                    threshold = START_WATCHING_FIRST_SEASON_SYNC.duration,
-                )
-                if (!params.forceRefresh && cacheValid) continue
-
                 val result = runCatching {
+                    val cacheValid = !requestManagerRepository.isRequestExpired(
+                        entityId = show.traktId,
+                        requestType = START_WATCHING_FIRST_SEASON_SYNC.name,
+                        threshold = START_WATCHING_FIRST_SEASON_SYNC.duration,
+                    )
+                    if (!params.forceRefresh && cacheValid) return@runCatching
+
                     seasonsEpisodesSyncRepository.syncSeasonsWithEpisodes(
                         showTraktId = show.traktId,
                         forceRefresh = params.forceRefresh,
