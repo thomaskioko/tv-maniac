@@ -53,10 +53,8 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should exclude unreleased show with no aired episodes`() = runTest(testDispatcher) {
-        insertShow(2, "Unreleased Show")
-        insertSeason(seasonId = 20, showId = 2, seasonNumber = 1)
-        insertEpisode(episodeId = 200, seasonId = 20, showId = 2, episodeNumber = 1, title = "Premiere", firstAired = FAR_FUTURE)
+    fun `should exclude show with future air date`() = runTest(testDispatcher) {
+        insertShow(2, "Unreleased Show", year = "2099-12-31")
         followShow(2)
 
         dao.observeStartWatchingShows().test {
@@ -68,8 +66,10 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     @Test
     fun `should exclude show that has a watched episode`() = runTest(testDispatcher) {
         insertReleasedShow(id = 3, name = "Started Show")
+        insertSeason(seasonId = 30, showId = 3, seasonNumber = 1)
+        insertEpisode(episodeId = 301, seasonId = 30, showId = 3, episodeNumber = 1, title = "Pilot")
         followShow(3)
-        markEpisodeWatched(showId = 3, episodeId = 300 + 1, seasonNumber = 1, episodeNumber = 1)
+        markEpisodeWatched(showId = 3, episodeId = 301, seasonNumber = 1, episodeNumber = 1)
 
         dao.observeStartWatchingShows().test {
             awaitItem().shouldBeEmpty()
@@ -117,29 +117,20 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     private fun expectedShow(id: Long, title: String): StartWatchingShow =
-        StartWatchingShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2025-01-01", inLibrary = true)
+        StartWatchingShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01", inLibrary = true)
 
     private fun insertReleasedShow(id: Long, name: String) {
         insertShow(id, name)
-        insertSeason(seasonId = id * 10, showId = id, seasonNumber = 1)
-        insertEpisode(
-            episodeId = id * 100 + 1,
-            seasonId = id * 10,
-            showId = id,
-            episodeNumber = 1,
-            title = "Pilot",
-            firstAired = AIRED,
-        )
     }
 
-    private fun insertShow(id: Long, name: String) {
+    private fun insertShow(id: Long, name: String, year: String = "2020-01-01") {
         database.tvShowQueries.upsert(
             trakt_id = Id<TraktId>(id),
             tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = "Overview for $name",
             language = "en",
-            year = "2025-01-01",
+            year = year,
             ratings = 8.0,
             vote_count = 100,
             genres = listOf("Drama"),
@@ -169,7 +160,6 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
         showId: Long,
         episodeNumber: Long,
         title: String,
-        firstAired: Long?,
     ) {
         database.episodesQueries.upsert(
             id = Id(episodeId),
@@ -183,7 +173,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
             ratings = 8.0,
             vote_count = 100L,
             trakt_id = null,
-            first_aired = firstAired,
+            first_aired = 1_000L,
         )
     }
 
@@ -219,10 +209,5 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
             title = null,
             year = null,
         )
-    }
-
-    private companion object {
-        private const val AIRED = 1_000L
-        private const val FAR_FUTURE = 9_999_999_999_999L
     }
 }

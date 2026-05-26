@@ -16,6 +16,6 @@ LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trak
 LEFT JOIN trakt_continue_watching ON tvshow.trakt_id = trakt_continue_watching.trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
   AND COALESCE(show_watch_progress.watched_count, 0) = 0
-  AND COALESCE(show_watch_progress.total_count, 0) > 0
+  AND (tvshow.year IS NULL OR CAST(tvshow.year AS INTEGER) <= CAST(strftime('%Y', 'now') AS INTEGER))
   AND trakt_continue_watching.trakt_id IS NULL
 ORDER BY followed_shows.followed_at DESC;
