@@ -57,6 +57,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 errorMessage: nil,
                 featuredShows: [],
                 nextEpisodes: [],
+                startWatchingShows: [],
                 trendingToday: [],
                 upcomingShows: [],
                 popularShows: [],
@@ -66,6 +67,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 missingApiKeyText: "API key missing",
                 retryText: "Retry",
                 upNextTitle: "Up Next",
+                startWatchingTitle: "Start Watching",
                 trendingTitle: "Trending Today",
                 upcomingTitle: "Upcoming",
                 popularTitle: "Popular",
@@ -81,6 +83,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onUpcomingClicked: {},
             onPopularClicked: {},
             onTopRatedClicked: {},
+            onStartWatchingMoreClicked: {},
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
@@ -98,6 +101,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 errorMessage: nil,
                 featuredShows: [],
                 nextEpisodes: [],
+                startWatchingShows: [],
                 trendingToday: [],
                 upcomingShows: [],
                 popularShows: [],
@@ -107,6 +111,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 missingApiKeyText: "API key missing",
                 retryText: "Retry",
                 upNextTitle: "Up Next",
+                startWatchingTitle: "Start Watching",
                 trendingTitle: "Trending Today",
                 upcomingTitle: "Upcoming",
                 popularTitle: "Popular",
@@ -122,6 +127,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onUpcomingClicked: {},
             onPopularClicked: {},
             onTopRatedClicked: {},
+            onStartWatchingMoreClicked: {},
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
@@ -139,6 +145,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 errorMessage: "Something went wrong",
                 featuredShows: [],
                 nextEpisodes: [],
+                startWatchingShows: [],
                 trendingToday: [],
                 upcomingShows: [],
                 popularShows: [],
@@ -148,6 +155,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 missingApiKeyText: "API key missing",
                 retryText: "Retry",
                 upNextTitle: "Up Next",
+                startWatchingTitle: "Start Watching",
                 trendingTitle: "Trending Today",
                 upcomingTitle: "Upcoming",
                 popularTitle: "Popular",
@@ -163,6 +171,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onUpcomingClicked: {},
             onPopularClicked: {},
             onTopRatedClicked: {},
+            onStartWatchingMoreClicked: {},
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
@@ -180,6 +189,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 errorMessage: nil,
                 featuredShows: sampleShows,
                 nextEpisodes: sampleEpisodes,
+                startWatchingShows: samplePosters,
                 trendingToday: samplePosters,
                 upcomingShows: samplePosters,
                 popularShows: samplePosters,
@@ -189,6 +199,7 @@ class DiscoverScreenTest: SnapshotTestCase {
                 missingApiKeyText: "API key missing",
                 retryText: "Retry",
                 upNextTitle: "Up Next",
+                startWatchingTitle: "Start Watching",
                 trendingTitle: "Trending Today",
                 upcomingTitle: "Upcoming",
                 popularTitle: "Popular",
@@ -204,6 +215,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onUpcomingClicked: {},
             onPopularClicked: {},
             onTopRatedClicked: {},
+            onStartWatchingMoreClicked: {},
             onNextEpisodeClicked: { _ in },
             onCarouselIndexChanged: { _ in }
         )
