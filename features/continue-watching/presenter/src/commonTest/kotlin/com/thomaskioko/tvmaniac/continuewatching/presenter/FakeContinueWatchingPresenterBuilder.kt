@@ -131,7 +131,7 @@ class FakeContinueWatchingPresenterBuilder {
         syncObserver = syncObserver,
         traktAuthRepository = fakeTraktAuthRepository,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
-        localizer = localizer,
+        mapper = ContinueWatchingMapper(localizer),
         logger = fakeLogger,
     )
 }

@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.continuewatching.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -19,8 +18,6 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.myshows.nav.scope.MyShowsChildScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -32,11 +29,8 @@ import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
-import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,7 +60,7 @@ public class ContinueWatchingPresenter(
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
-    private val localizer: Localizer,
+    private val mapper: ContinueWatchingMapper,
     private val logger: Logger,
     private val traktAuthRepository: TraktAuthRepository,
 ) : ComponentContext by componentContext {
@@ -114,35 +108,16 @@ public class ContinueWatchingPresenter(
         queryFlow,
         syncObserver.isSyncing,
     ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
-
-        // TODO:: Move to Mapper object and inject the mapper in the presenter
-        val sectionedItems = watchlistSections.toPresenter()
-        val sectionedEpisodes = upNextSections.toPresenter()
-        val emptyTitleKey = if (query.isBlank()) {
-            StringResourceKey.LabelWatchlistEmptyInProgress
-        } else {
-            StringResourceKey.GenericEmptyContent
-        }
+        val sectionedItems = mapper.toSectionedItems(watchlistSections, sortOption)
+        val sectionedEpisodes = mapper.toSectionedEpisodes(upNextSections)
         currentState.copy(
             query = query,
             isGridMode = isGridMode,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,
-            labels = ContinueWatchingLabels(
-                watchingTitle = localizer.getString(StringResourceKey.TitleWatching),
-                staleTitle = localizer.getString(StringResourceKey.TitleNotWatchedForWhile),
-                upToDate = localizer.getString(StringResourceKey.LabelUpToDate),
-                premiereBadge = localizer.getString(StringResourceKey.BadgePremiere),
-                newBadge = localizer.getString(StringResourceKey.BadgeNew),
-                emptyTitle = localizer.getString(emptyTitleKey),
-                emptyResultMessage = if (query.isNotBlank()) {
-                    localizer.getString(StringResourceKey.LabelWatchlistEmptyResult, query)
-                } else {
-                    ""
-                },
-            ),
-            watchNextItems = sectionedItems.watchNext.applySorting(sortOption),
-            staleItems = sectionedItems.stale.applySorting(sortOption),
+            labels = mapper.resolveLabels(query),
+            watchNextItems = sectionedItems.watchNext,
+            staleItems = sectionedItems.stale,
             watchNextEpisodes = sectionedEpisodes.watchNext,
             staleEpisodes = sectionedEpisodes.stale,
             message = message,
@@ -248,14 +223,3 @@ public class ContinueWatchingPresenter(
         }
     }
 }
-
-private fun ImmutableList<ContinueWatchingItem>.applySorting(
-    sortOption: WatchlistSortOption,
-): ImmutableList<ContinueWatchingItem> = when (sortOption) {
-    WatchlistSortOption.ADDED_DESC -> sortedByDescending { it.lastWatchedAt ?: 0L }
-    WatchlistSortOption.ADDED_ASC -> sortedBy { it.lastWatchedAt ?: Long.MAX_VALUE }
-    WatchlistSortOption.RELEASED_DESC -> sortedByDescending { it.year.orEmpty() }
-    WatchlistSortOption.RELEASED_ASC -> sortedBy { it.year.orEmpty() }
-    WatchlistSortOption.TITLE_ASC -> sortedBy { it.title.lowercase() }
-    WatchlistSortOption.TITLE_DESC -> sortedByDescending { it.title.lowercase() }
-}.toImmutableList()
