@@ -39,21 +39,6 @@ class StartWatchingScreenTest {
     }
 
     @Test
-    fun startWatchingListState() {
-        composeTestRule.captureMultiDevice("StartWatchingList") {
-            TvManiacBackground {
-                StartWatchingScreen(
-                    state = StartWatchingState(
-                        isGridMode = false,
-                        items = previewStartWatchingItems,
-                    ),
-                    onAction = {},
-                )
-            }
-        }
-    }
-
-    @Test
     fun startWatchingEmptyState() {
         composeTestRule.captureMultiDevice("StartWatchingEmpty") {
             TvManiacBackground {

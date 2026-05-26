@@ -11,8 +11,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -245,6 +247,7 @@ private fun Toolbar(
                 } else {
                     CollapsedToolbarContent(
                         isGridMode = state.isGridMode,
+                        showListStyleToggle = state.selectedPage == 0,
                         onToggleListStyle = { onAction(MyShowsAction.ChangeListStyle(state.isGridMode)) },
                         onSearchClick = { onAction(MyShowsAction.ToggleSearch) },
                         onSortClick = onSortClick,
@@ -263,6 +266,7 @@ private fun Toolbar(
 @Composable
 private fun CollapsedToolbarContent(
     isGridMode: Boolean,
+    showListStyleToggle: Boolean,
     onToggleListStyle: () -> Unit,
     onSearchClick: () -> Unit,
     onSortClick: () -> Unit,
@@ -274,15 +278,19 @@ private fun CollapsedToolbarContent(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(
-            modifier = Modifier.testTag(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG),
-            onClick = onToggleListStyle,
-        ) {
-            Icon(
-                imageVector = if (isGridMode) Icons.AutoMirrored.Outlined.List else Icons.Outlined.GridView,
-                contentDescription = cd_toggle_list_style.resolve(context),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
+        if (showListStyleToggle) {
+            IconButton(
+                modifier = Modifier.testTag(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG),
+                onClick = onToggleListStyle,
+            ) {
+                Icon(
+                    imageVector = if (isGridMode) Icons.AutoMirrored.Outlined.List else Icons.Outlined.GridView,
+                    contentDescription = cd_toggle_list_style.resolve(context),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        } else {
+            Spacer(Modifier.size(48.dp))
         }
 
         Text(

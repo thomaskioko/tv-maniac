@@ -113,11 +113,13 @@ struct MyShowsTab: View {
                 expandedSearchBar
             }
         } else {
-            ToolbarItem(placement: .navigationBarLeading) {
-                let image = uiState.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
-                GlassButton(icon: image) {
-                    withAnimation {
-                        presenter.dispatch(action: MyShowsActionChangeListStyle(isGridMode: uiState.isGridMode))
+            if uiState.selectedPage == 0 {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    let image = uiState.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
+                    GlassButton(icon: image) {
+                        withAnimation {
+                            presenter.dispatch(action: MyShowsActionChangeListStyle(isGridMode: uiState.isGridMode))
+                        }
                     }
                 }
             }
@@ -224,59 +226,17 @@ struct MyShowsTab: View {
                 systemName: "play.rectangle.on.rectangle",
                 title: String(\.label_start_watching_empty)
             )
-        } else if startWatchingState.isGridMode {
+        } else {
             GridView(
                 items: startWatchingState.items.map { $0.toSwift() },
                 onAction: { traktId in
                     startWatchingPresenter.dispatch(action: StartWatchingShowClicked(traktId: traktId))
                 }
             )
-        } else {
-            startWatchingList
-        }
-    }
-
-    private var startWatchingList: some View {
-        ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: appTheme.spacing.xSmall) {
-                ForEach(startWatchingListItems) { item in
-                    StartWatchingListItemView(
-                        item: item,
-                        onItemClicked: { traktId in
-                            startWatchingPresenter.dispatch(action: StartWatchingShowClicked(traktId: traktId))
-                        },
-                        onShowTitleClicked: { traktId in
-                            startWatchingPresenter.dispatch(action: StartWatchingShowTitleClicked(showTraktId: traktId))
-                        },
-                        onMarkWatched: {
-                            guard let episodeId = item.episodeId,
-                                  let seasonNumber = item.seasonNumber,
-                                  let episodeNumber = item.episodeNumberValue
-                            else { return }
-                            startWatchingPresenter.dispatch(action: MarkStartWatchingEpisodeWatched(
-                                showTraktId: item.traktId,
-                                episodeId: episodeId,
-                                seasonNumber: seasonNumber,
-                                episodeNumber: episodeNumber
-                            ))
-                        },
-                        isUpdating: item.episodeId.map { startWatchingUpdatingIds.contains($0) } ?? false
-                    )
-                }
+            .refreshable {
+                startWatchingPresenter.dispatch(action: RefreshStartWatching(forceRefresh: true))
             }
-            .padding(.vertical, appTheme.spacing.xSmall)
         }
-        .refreshable {
-            startWatchingPresenter.dispatch(action: RefreshStartWatching(forceRefresh: true))
-        }
-    }
-
-    private var startWatchingListItems: [SwiftStartWatchingItem] {
-        startWatchingState.items.map { $0.toSwift() }
-    }
-
-    private var startWatchingUpdatingIds: Set<Int64> {
-        Set(startWatchingState.updatingEpisodeIds.map(\.int64Value))
     }
 }
 

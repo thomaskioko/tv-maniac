@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -27,13 +26,10 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_start_watching_empty
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.startwatching.presenter.MarkStartWatchingEpisodeWatched
 import com.thomaskioko.tvmaniac.startwatching.presenter.RefreshStartWatching
 import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingAction
-import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingEpisodeClicked
 import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingMessageShown
 import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingShowClicked
-import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingShowTitleClicked
 import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingState
 import com.thomaskioko.tvmaniac.startwatching.presenter.model.StartWatchingItem
 import com.thomaskioko.tvmaniac.testtags.startwatching.StartWatchingTestTags
@@ -66,14 +62,9 @@ public fun StartWatchingScreen(
                         .testTag(StartWatchingTestTags.EMPTY_STATE),
                 )
 
-                state.isGridMode -> StartWatchingGrid(
+                else -> StartWatchingGrid(
                     items = state.items,
                     onShowClicked = { onAction(StartWatchingShowClicked(it)) },
-                )
-
-                else -> StartWatchingList(
-                    state = state,
-                    onAction = onAction,
                 )
             }
         }
@@ -112,57 +103,6 @@ private fun StartWatchingGrid(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag(StartWatchingTestTags.showCard(item.traktId)),
-            )
-        }
-    }
-}
-
-@Composable
-private fun StartWatchingList(
-    state: StartWatchingState,
-    onAction: (StartWatchingAction) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val items = state.items
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(StartWatchingTestTags.LIST)
-            .padding(horizontal = 8.dp, vertical = 8.dp),
-    ) {
-        items(
-            count = items.size,
-            key = { items[it].traktId },
-        ) { index ->
-            val item = items[index]
-            StartWatchingListItem(
-                item = item,
-                onClick = {
-                    val episodeId = item.episodeId
-                    if (episodeId != null) {
-                        onAction(StartWatchingEpisodeClicked(item.traktId, episodeId))
-                    } else {
-                        onAction(StartWatchingShowClicked(item.traktId))
-                    }
-                },
-                onShowTitleClicked = { onAction(StartWatchingShowTitleClicked(item.traktId)) },
-                onMarkWatched = {
-                    val episodeId = item.episodeId
-                    val seasonNumber = item.seasonNumber
-                    val episodeNumber = item.episodeNumber
-                    if (episodeId != null && seasonNumber != null && episodeNumber != null) {
-                        onAction(
-                            MarkStartWatchingEpisodeWatched(
-                                showTraktId = item.traktId,
-                                episodeId = episodeId,
-                                seasonNumber = seasonNumber,
-                                episodeNumber = episodeNumber,
-                            ),
-                        )
-                    }
-                },
-                isUpdating = item.episodeId?.let { it in state.updatingEpisodeIds } ?: false,
             )
         }
     }
