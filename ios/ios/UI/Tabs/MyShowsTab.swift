@@ -67,6 +67,12 @@ struct MyShowsTab: View {
                 continueWatchingPresenter.dispatch(action: ContinueWatchingMessageShown(id: message.id))
             }
         }
+        .onChange(of: startWatchingState.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(type: .error, title: String(\.label_error), message: message.message)
+                startWatchingPresenter.dispatch(action: StartWatchingMessageShown(id: message.id))
+            }
+        }
         .onChange(of: continueWatchingState.watchNextEpisodes) { _, newValue in
             watchNextEpisodesSwift = newValue.map { $0.toSwift() }
         }
@@ -238,16 +244,39 @@ struct MyShowsTab: View {
                         item: item,
                         onItemClicked: { traktId in
                             startWatchingPresenter.dispatch(action: StartWatchingShowClicked(traktId: traktId))
-                        }
+                        },
+                        onShowTitleClicked: { traktId in
+                            startWatchingPresenter.dispatch(action: StartWatchingShowTitleClicked(showTraktId: traktId))
+                        },
+                        onMarkWatched: {
+                            guard let episodeId = item.episodeId,
+                                  let seasonNumber = item.seasonNumber,
+                                  let episodeNumber = item.episodeNumberValue
+                            else { return }
+                            startWatchingPresenter.dispatch(action: MarkStartWatchingEpisodeWatched(
+                                showTraktId: item.traktId,
+                                episodeId: episodeId,
+                                seasonNumber: seasonNumber,
+                                episodeNumber: episodeNumber
+                            ))
+                        },
+                        isUpdating: item.episodeId.map { startWatchingUpdatingIds.contains($0) } ?? false
                     )
                 }
             }
             .padding(.vertical, appTheme.spacing.xSmall)
         }
+        .refreshable {
+            startWatchingPresenter.dispatch(action: RefreshStartWatching(forceRefresh: true))
+        }
     }
 
     private var startWatchingListItems: [SwiftStartWatchingItem] {
         startWatchingState.items.map { $0.toSwift() }
+    }
+
+    private var startWatchingUpdatingIds: Set<Int64> {
+        Set(startWatchingState.updatingEpisodeIds.map(\.int64Value))
     }
 }
 

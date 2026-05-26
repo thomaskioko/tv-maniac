@@ -47,7 +47,14 @@ public extension TvManiac.StartWatchingItem {
             traktId: traktId,
             title: title,
             posterUrl: posterImageUrl,
-            year: year
+            year: year,
+            episodeId: episodeId?.int64Value,
+            episodeTitle: episodeTitle,
+            episodeNumber: episodeNumberFormatted,
+            seasonNumber: seasonNumber?.int64Value,
+            episodeNumberValue: episodeNumber?.int64Value,
+            runtime: runtime,
+            stillUrl: stillImageUrl
         )
     }
 }

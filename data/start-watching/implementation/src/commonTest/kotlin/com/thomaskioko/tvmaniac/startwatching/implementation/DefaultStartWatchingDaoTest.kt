@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingDao
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -112,6 +113,25 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
                 expectedShow(7, "Newer Follow"),
                 expectedShow(6, "Older Follow"),
             )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should include first episode given show has aired first season`() = runTest(testDispatcher) {
+        insertReleasedShow(id = 8, name = "With Episode")
+        insertSeason(seasonId = 80, showId = 8, seasonNumber = 1)
+        insertEpisode(episodeId = 801, seasonId = 80, showId = 8, episodeNumber = 1, title = "Pilot")
+        followShow(8)
+
+        dao.observeStartWatchingShows().test {
+            val item = awaitItem().single()
+            item.traktId shouldBe 8
+            item.episodeId shouldBe 801
+            item.episodeTitle shouldBe "Pilot"
+            item.seasonNumber shouldBe 1
+            item.episodeNumber shouldBe 1
+            item.runtime shouldBe 45L
             cancelAndIgnoreRemainingEvents()
         }
     }
