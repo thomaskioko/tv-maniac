@@ -14,6 +14,7 @@
     <string name="label_discover_up_next">Als Nächstes</string>
     <string name="label_start_watching">Jetzt ansehen</string>
     <string name="label_continue_watching">Weiterschauen</string>
+    <string name="label_start_watching_empty">Keine Sendungen in Ihrer Merkliste</string>
     <string name="label_discover_title">Entdecken</string>
     <string name="label_tab_search">Suchen</string>
     <string name="label_search_title">Suchen</string>
