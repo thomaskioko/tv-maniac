@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor.Param
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.api.SeasonsEpisodesSyncRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ public class ShowDetailsInteractor(
     private val trailerRepository: TrailerRepository,
     private val providerRepository: WatchProviderRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val seasonsEpisodesSyncRepository: SeasonsEpisodesSyncRepository,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<Param>() {
@@ -32,7 +34,10 @@ public class ShowDetailsInteractor(
                 launch { castRepository.fetchShowCast(showTraktId = params.id, forceRefresh = params.forceRefresh) }
                 launch { trailerRepository.fetchTrailers(traktId = params.id, forceRefresh = params.forceRefresh) }
                 launch { providerRepository.fetchWatchProviders(traktId = params.id, forceRefresh = params.forceRefresh) }
-                launch { seasonDetailsRepository.syncShowSeasonDetails(showTraktId = params.id, forceRefresh = params.forceRefresh) }
+                launch {
+                    seasonsEpisodesSyncRepository.syncSeasonsWithEpisodes(showTraktId = params.id, forceRefresh = params.forceRefresh)
+                    seasonDetailsRepository.syncShowSeasonDetails(showTraktId = params.id, forceRefresh = params.forceRefresh)
+                }
                 launch { watchedEpisodeSyncRepository.syncShowEpisodeWatches(showTraktId = params.id, forceRefresh = params.forceRefresh) }
             }
         }

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.continuewatching.ui
+package com.thomaskioko.tvmaniac.myshows.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +26,7 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-internal fun ContinueWatchingSortOptionsContent(
+internal fun MyShowsSortOptionsContent(
     selectedSortOption: WatchlistSortOption,
     onSortOptionSelected: (WatchlistSortOption) -> Unit,
     modifier: Modifier = Modifier,

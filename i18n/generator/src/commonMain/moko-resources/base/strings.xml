@@ -20,6 +20,7 @@
     <string name="label_discover_up_next">Up Next</string>
     <string name="label_start_watching">Start Watching</string>
     <string name="label_continue_watching">Continue Watching</string>
+    <string name="label_start_watching_empty">No shows in your watchlist</string>
     <string name="label_discover_title">Discover</string>
 
     <string name="label_search_title">Search</string>

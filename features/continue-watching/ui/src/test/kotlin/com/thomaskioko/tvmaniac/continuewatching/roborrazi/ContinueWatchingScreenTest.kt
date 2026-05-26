@@ -60,24 +60,6 @@ class ContinueWatchingScreenTest {
     }
 
     @Test
-    fun continueWatchingScreenSearchActiveState() {
-        composeTestRule.captureMultiDevice("SearchActiveResult") {
-            TvManiacBackground {
-                ContinueWatchingScreen(
-                    state = ContinueWatchingState(
-                        isGridMode = false,
-                        isRefreshing = false,
-                        isSearchActive = true,
-                        watchNextEpisodes = watchNextEpisodes,
-                        staleEpisodes = watchNextEpisodes,
-                    ),
-                    onAction = {},
-                )
-            }
-        }
-    }
-
-    @Test
     fun continueWatchingScreenWatchNextOnlyState() {
         composeTestRule.captureMultiDevice("WatchNextOnly") {
             TvManiacBackground {

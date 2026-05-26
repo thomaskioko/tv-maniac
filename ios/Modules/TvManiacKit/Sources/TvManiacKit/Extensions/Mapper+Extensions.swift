@@ -32,6 +32,17 @@ public extension TvManiac.ContinueWatchingItem {
     }
 }
 
+public extension TvManiac.StartWatchingItem {
+    func toSwift() -> ShowPosterImage {
+        .init(
+            traktId: traktId,
+            title: title,
+            posterUrl: posterImageUrl,
+            inLibrary: true
+        )
+    }
+}
+
 public extension TvManiac.SeasonImagesModel {
     func toSwift() -> ShowPosterImage {
         .init(
@@ -312,6 +323,10 @@ public extension TvManiac.DiscoverViewState {
 
     var nextEpisodesSwift: [SwiftNextEpisode] {
         nextEpisodes.map { $0.toSwift() }
+    }
+
+    var startWatchingShowsSwift: [SwiftShow] {
+        startWatchingShows.map { $0.toSwift() }
     }
 
     var trendingTodaySwift: [SwiftShow] {

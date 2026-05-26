@@ -194,6 +194,7 @@ dependencies {
     implementation(projects.features.myShows.nav)
     implementation(projects.features.myShows.presenter)
     implementation(projects.features.continueWatching.presenter)
+    implementation(projects.features.startWatching.presenter)
     implementation(projects.domain.featureFlags)
     implementation(projects.features.featureFlags.nav)
     implementation(projects.features.featureFlags.presenter)

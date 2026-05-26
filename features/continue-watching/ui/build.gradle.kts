@@ -26,9 +26,7 @@ dependencies {
     implementation(projects.core.testTags)
     implementation(projects.core.view)
     implementation(projects.i18n.generator)
-    implementation(projects.data.watchlistPrefs.api)
 
-    implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.material3)
     implementation(libs.kotlinx.collections)
 

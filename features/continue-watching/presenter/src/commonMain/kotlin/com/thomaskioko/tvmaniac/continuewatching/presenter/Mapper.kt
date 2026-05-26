@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.SectionedEpisodes
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.SectionedItems
-import com.thomaskioko.tvmaniac.continuewatching.presenter.model.StartWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.db.FollowedShows
 import com.thomaskioko.tvmaniac.db.SearchFollowedShows
@@ -14,7 +13,6 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSections
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistSections
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistShowInfo
-import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
@@ -68,18 +66,6 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
     }
         .toPersistentList()
 }
-
-internal fun List<StartWatchingShow>.toStartWatchingItems(query: String): ImmutableList<StartWatchingItem> =
-    filter { query.isBlank() || it.title.contains(query, ignoreCase = true) }
-        .map {
-            StartWatchingItem(
-                traktId = it.traktId,
-                title = it.title,
-                posterImageUrl = it.posterPath,
-                year = it.year,
-            )
-        }
-        .toImmutableList()
 
 internal fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
     watchNext = watchNext.map { it.toPresenter() }.toImmutableList(),

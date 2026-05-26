@@ -67,5 +67,24 @@
         "id": 1455156698,
         "listed_at": "2026-04-08T08:22:15.000Z",
         "notes": null
+    },
+    {
+        "type": "show",
+        "show": {
+            "ids": {
+                "imdb": "tt5550000",
+                "slug": "test-unstarted-show",
+                "tmdb": 555555,
+                "tvdb": 555555,
+                "trakt": 555555
+            },
+            "year": 2020,
+            "title": "Test Unstarted Show",
+            "aired_episodes": 9
+        },
+        "rank": 100,
+        "id": 1460000555,
+        "listed_at": "2026-04-15T00:00:00.000Z",
+        "notes": null
     }
 ]

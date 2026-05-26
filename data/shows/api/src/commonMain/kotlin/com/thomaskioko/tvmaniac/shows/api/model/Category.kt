@@ -9,4 +9,5 @@ public enum class Category(
     UPCOMING(3, "Upcoming"),
     TRENDING_TODAY(4, "Trending Today"),
     FEATURED(5, "Featured"),
+    START_WATCHING(6, "Start Watching"),
 }

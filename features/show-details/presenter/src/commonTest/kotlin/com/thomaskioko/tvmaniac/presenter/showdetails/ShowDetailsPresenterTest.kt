@@ -46,6 +46,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsEpisodesSyncRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
@@ -79,6 +80,7 @@ import kotlin.test.Test
 class ShowDetailsPresenterTest {
 
     private val seasonsRepository = FakeSeasonsRepository()
+    private val seasonsEpisodesSyncRepository = FakeSeasonsEpisodesSyncRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val trailerRepository = FakeTrailerRepository()
     private val similarShowsRepository = FakeSimilarShowsRepository()
@@ -731,6 +733,7 @@ class ShowDetailsPresenterTest {
                 trailerRepository = trailerRepository,
                 providerRepository = watchProvidersRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
+                seasonsEpisodesSyncRepository = seasonsEpisodesSyncRepository,
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 dispatchers = coroutineDispatcher,
             ),

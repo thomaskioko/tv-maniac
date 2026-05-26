@@ -4,6 +4,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
+import com.thomaskioko.tvmaniac.testtags.startwatching.StartWatchingTestTags
 
 @OptIn(ExperimentalTestApi::class)
 internal class MyShowsRobot(composeUi: ComposeUiTest) : BaseRobot<MyShowsRobot>(composeUi) {
@@ -65,5 +66,49 @@ internal class MyShowsRobot(composeUi: ComposeUiTest) : BaseRobot<MyShowsRobot>(
 
     fun clickToggleListStyleButton() = apply {
         click(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG)
+    }
+
+    fun assertListStyleToggleDisplayed() = apply {
+        assertDisplayed(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG)
+    }
+
+    fun assertListStyleToggleDoesNotExist() = apply {
+        assertDoesNotExist(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG)
+    }
+
+    fun clickStartWatchingTab() = apply {
+        click(MyShowsTestTags.START_WATCHING_TAB)
+        waitForIdle()
+    }
+
+    fun swipeToStartWatching() = apply {
+        swipeLeft(MyShowsTestTags.HORIZONTAL_PAGER)
+        waitForIdle()
+    }
+
+    fun assertStartWatchingGridDisplayed() = apply {
+        assertDisplayed(StartWatchingTestTags.GRID)
+    }
+
+    fun assertStartWatchingEmptyStateDisplayed() = apply {
+        assertDisplayed(StartWatchingTestTags.EMPTY_STATE)
+    }
+
+    fun assertStartWatchingShowCardDisplayed(traktId: Long) = apply {
+        assertExists(StartWatchingTestTags.showCard(traktId))
+    }
+
+    fun assertStartWatchingShowCardDoesNotExist(traktId: Long) = apply {
+        assertDoesNotExist(StartWatchingTestTags.showCard(traktId))
+    }
+
+    fun scrollToStartWatchingShowCard(traktId: Long) = apply {
+        scrollDownUntilTag(StartWatchingTestTags.GRID, StartWatchingTestTags.showCard(traktId))
+    }
+
+    fun clickStartWatchingShowCard(traktId: Long): ShowDetailsRobot {
+        scrollToStartWatchingShowCard(traktId)
+        click(StartWatchingTestTags.showCard(traktId))
+        return ShowDetailsRobot(composeUi)
     }
 }
