@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -148,6 +149,12 @@ internal fun MyShowsScreen(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.testTag(MyShowsTestTags.TAB_ROW),
+            indicator = {
+                TabRowDefaults.SecondaryIndicator(
+                    modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            },
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(

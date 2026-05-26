@@ -214,23 +214,40 @@ struct MyShowsTab: View {
                 .scaleEffect(1.5)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if startWatchingState.isEmpty {
-            VStack(spacing: appTheme.spacing.small) {
-                Image(systemName: "play.rectangle.on.rectangle")
-                    .font(.largeTitle)
-                Text(String(\.label_start_watching_empty))
-                    .multilineTextAlignment(.center)
-            }
-            .foregroundStyle(.appOnSurface)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding()
-        } else {
+            EmptyStateView(
+                systemName: "play.rectangle.on.rectangle",
+                title: String(\.label_start_watching_empty)
+            )
+        } else if startWatchingState.isGridMode {
             GridView(
                 items: startWatchingState.items.map { $0.toSwift() },
                 onAction: { traktId in
                     startWatchingPresenter.dispatch(action: StartWatchingShowClicked(traktId: traktId))
                 }
             )
+        } else {
+            startWatchingList
         }
+    }
+
+    private var startWatchingList: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: appTheme.spacing.xSmall) {
+                ForEach(startWatchingListItems) { item in
+                    StartWatchingListItemView(
+                        item: item,
+                        onItemClicked: { traktId in
+                            startWatchingPresenter.dispatch(action: StartWatchingShowClicked(traktId: traktId))
+                        }
+                    )
+                }
+            }
+            .padding(.vertical, appTheme.spacing.xSmall)
+        }
+    }
+
+    private var startWatchingListItems: [SwiftStartWatchingItem] {
+        startWatchingState.items.map { $0.toSwift() }
     }
 }
 

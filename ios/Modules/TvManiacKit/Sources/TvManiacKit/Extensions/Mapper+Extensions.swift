@@ -41,6 +41,15 @@ public extension TvManiac.StartWatchingItem {
             inLibrary: true
         )
     }
+
+    func toSwift() -> SwiftStartWatchingItem {
+        .init(
+            traktId: traktId,
+            title: title,
+            posterUrl: posterImageUrl,
+            year: year
+        )
+    }
 }
 
 public extension TvManiac.SeasonImagesModel {
