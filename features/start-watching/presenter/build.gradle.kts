@@ -12,6 +12,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
+                api(projects.core.syncstate.api)
                 api(projects.data.watchlistPrefs.api)
                 api(projects.domain.startWatching)
                 api(projects.features.myShows.nav)
@@ -30,6 +31,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.data.startWatching.testing)
                 implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.navigation.testing)

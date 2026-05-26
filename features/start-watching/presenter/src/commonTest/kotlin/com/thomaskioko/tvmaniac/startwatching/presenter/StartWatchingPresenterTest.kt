@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.startwatching.presenter.model.StartWatchingItem
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.watchlistprefs.testing.FakeWatchlistPrefsRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +37,7 @@ class StartWatchingPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val repository = FakeStartWatchingRepository()
     private val prefsRepository = FakeWatchlistPrefsRepository()
+    private val syncObserver = FakeSyncObserver()
 
     private lateinit var presenter: StartWatchingPresenter
 
@@ -48,6 +50,7 @@ class StartWatchingPresenterTest {
             navigator = NoOpNavigator(),
             observeStartWatchingInteractor = ObserveStartWatchingInteractor(repository = repository),
             repository = prefsRepository,
+            syncObserver = syncObserver,
         )
     }
 
@@ -57,23 +60,53 @@ class StartWatchingPresenterTest {
     }
 
     @Test
-    fun `should emit loading then empty given no shows`() = runTest {
+    fun `should emit empty state given no shows`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe StartWatchingState(isLoading = true)
-            awaitItem() shouldBe StartWatchingState(isLoading = false)
+            awaitItem() shouldBe StartWatchingState()
         }
     }
 
     @Test
-    fun `should emit items given interactor emits shows`() = runTest {
-        repository.setStartWatchingShows(startWatchingShows)
-
+    fun `should emit items as they arrive given repository emits shows`() = runTest {
         presenter.state.test {
-            awaitItem() shouldBe StartWatchingState(isLoading = true)
+            awaitItem() shouldBe StartWatchingState()
+
+            repository.setStartWatchingShows(startWatchingShows)
 
             val loaded = awaitItem()
-            loaded.isLoading shouldBe false
             loaded.items shouldBe expectedItems
+            loaded.isEmpty shouldBe false
+            loaded.showLoading shouldBe false
+        }
+    }
+
+    @Test
+    fun `should show loading given syncing and no shows`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe StartWatchingState()
+
+            syncObserver.setSyncing(true)
+
+            val syncing = awaitItem()
+            syncing.isSyncing shouldBe true
+            syncing.showLoading shouldBe true
+        }
+    }
+
+    @Test
+    fun `should not show loading given syncing but shows already present`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe StartWatchingState()
+
+            repository.setStartWatchingShows(startWatchingShows)
+            awaitItem().items shouldBe expectedItems
+
+            syncObserver.setSyncing(true)
+
+            val syncing = awaitItem()
+            syncing.isSyncing shouldBe true
+            syncing.showLoading shouldBe false
+            syncing.items shouldBe expectedItems
         }
     }
 }

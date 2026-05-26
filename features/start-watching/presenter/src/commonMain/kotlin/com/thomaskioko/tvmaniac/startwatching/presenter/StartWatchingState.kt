@@ -5,10 +5,13 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 public data class StartWatchingState(
-    val isLoading: Boolean = false,
+    val isSyncing: Boolean = false,
     val isGridMode: Boolean = true,
     val items: ImmutableList<StartWatchingItem> = persistentListOf(),
 ) {
     val isEmpty: Boolean
-        get() = !isLoading && items.isEmpty()
+        get() = items.isEmpty()
+
+    val showLoading: Boolean
+        get() = isSyncing && isEmpty
 }

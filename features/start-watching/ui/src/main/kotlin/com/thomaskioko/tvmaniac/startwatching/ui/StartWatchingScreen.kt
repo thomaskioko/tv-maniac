@@ -45,7 +45,7 @@ public fun StartWatchingScreen(
     val onShowClicked: (Long) -> Unit = { onAction(StartWatchingShowClicked(it)) }
 
     when {
-        state.isLoading -> LoadingIndicator(
+        state.showLoading -> LoadingIndicator(
             modifier = modifier
                 .fillMaxSize()
                 .testTag(StartWatchingTestTags.PROGRESS_INDICATOR),
@@ -177,7 +177,7 @@ internal val previewStartWatchingItems: ImmutableList<StartWatchingItem> = persi
 @Composable
 private fun StartWatchingScreenContentPreview() {
     StartWatchingScreen(
-        state = StartWatchingState(isLoading = false, items = previewStartWatchingItems),
+        state = StartWatchingState(items = previewStartWatchingItems),
         onAction = {},
     )
 }
@@ -187,7 +187,7 @@ private fun StartWatchingScreenContentPreview() {
 @Composable
 private fun StartWatchingScreenEmptyPreview() {
     StartWatchingScreen(
-        state = StartWatchingState(isLoading = false),
+        state = StartWatchingState(),
         onAction = {},
     )
 }

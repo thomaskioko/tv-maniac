@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.myshows.nav.scope.MyShowsChildScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
@@ -26,6 +27,7 @@ public class StartWatchingPresenter(
     private val navigator: Navigator,
     observeStartWatchingInteractor: ObserveStartWatchingInteractor,
     repository: WatchlistPrefsRepository,
+    syncObserver: SyncObserver,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -40,16 +42,17 @@ public class StartWatchingPresenter(
         queryFlow,
         repository.observeSortOption(),
         repository.observeListStyle(),
-    ) { shows, query, sortOption, isGridMode ->
+        syncObserver.isSyncing,
+    ) { shows, query, sortOption, isGridMode, isSyncing ->
         StartWatchingState(
-            isLoading = false,
+            isSyncing = isSyncing,
             isGridMode = isGridMode,
             items = shows.toStartWatchingItems(query, sortOption),
         )
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = StartWatchingState(isLoading = true),
+        initialValue = StartWatchingState(),
     )
 
     public val stateValue: Value<StartWatchingState> = state.asValue(coroutineScope)

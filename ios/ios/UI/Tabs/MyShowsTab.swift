@@ -209,7 +209,11 @@ struct MyShowsTab: View {
 
     @ViewBuilder
     private var startWatchingPage: some View {
-        if startWatchingState.isEmpty {
+        if startWatchingState.showLoading {
+            ProgressView()
+                .scaleEffect(1.5)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if startWatchingState.isEmpty {
             VStack(spacing: appTheme.spacing.small) {
                 Image(systemName: "play.rectangle.on.rectangle")
                     .font(.largeTitle)

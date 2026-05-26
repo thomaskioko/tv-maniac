@@ -54,9 +54,12 @@ import kotlin.time.TimeSource
 @ChildPresenter(scope = MyShowsChildScope::class, parentScope = MyShowsRoot::class)
 @Inject
 public class ContinueWatchingPresenter(
+    @ContinueWatchingNitroFlagQualifier
+    nitroFlag: FeatureFlag<Boolean>,
+    syncObserver: SyncObserver,
+    repository: WatchlistPrefsRepository,
     componentContext: ComponentContext,
     private val navigator: Navigator,
-    private val repository: WatchlistPrefsRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val observeWatchlistSectionsInteractor: ObserveWatchlistSectionsInteractor,
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
@@ -66,9 +69,6 @@ public class ContinueWatchingPresenter(
     private val localizer: Localizer,
     private val logger: Logger,
     private val traktAuthRepository: TraktAuthRepository,
-    @ContinueWatchingNitroFlagQualifier
-    nitroFlag: FeatureFlag<Boolean>,
-    syncObserver: SyncObserver,
 ) : ComponentContext by componentContext {
 
     private val watchlistLoadingState = ObservableLoadingCounter()
