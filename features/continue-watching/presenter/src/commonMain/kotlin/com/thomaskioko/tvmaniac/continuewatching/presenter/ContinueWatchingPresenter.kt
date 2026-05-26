@@ -118,7 +118,7 @@ public class ContinueWatchingPresenter(
         // TODO:: Move to Mapper object and inject the mapper in the presenter
         val sectionedItems = watchlistSections.toPresenter()
         val sectionedEpisodes = upNextSections.toPresenter()
-        val emptyStateKey = if (query.isBlank()) {
+        val emptyTitleKey = if (query.isBlank()) {
             StringResourceKey.LabelWatchlistEmptyInProgress
         } else {
             StringResourceKey.GenericEmptyContent
@@ -128,7 +128,19 @@ public class ContinueWatchingPresenter(
             isGridMode = isGridMode,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,
-            emptyStateText = localizer.getString(emptyStateKey),
+            labels = ContinueWatchingLabels(
+                watchingTitle = localizer.getString(StringResourceKey.TitleWatching),
+                staleTitle = localizer.getString(StringResourceKey.TitleNotWatchedForWhile),
+                upToDate = localizer.getString(StringResourceKey.LabelUpToDate),
+                premiereBadge = localizer.getString(StringResourceKey.BadgePremiere),
+                newBadge = localizer.getString(StringResourceKey.BadgeNew),
+                emptyTitle = localizer.getString(emptyTitleKey),
+                emptyResultMessage = if (query.isNotBlank()) {
+                    localizer.getString(StringResourceKey.LabelWatchlistEmptyResult, query)
+                } else {
+                    ""
+                },
+            ),
             watchNextItems = sectionedItems.watchNext.applySorting(sortOption),
             staleItems = sectionedItems.stale.applySorting(sortOption),
             watchNextEpisodes = sectionedEpisodes.watchNext,

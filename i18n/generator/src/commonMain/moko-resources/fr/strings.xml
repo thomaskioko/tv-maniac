@@ -162,6 +162,7 @@
     <string name="title_all_episodes">Tous les épisodes</string>
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_watching">En cours de visionnage</string>
     <string name="title_not_watched_for_while">Pas regardé depuis longtemps</string>
     <string name="title_continue_tracking">Continuer à Suivre</string>
     <string name="badge_premiere">PREMIÈRE</string>

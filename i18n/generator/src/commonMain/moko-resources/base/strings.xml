@@ -202,6 +202,7 @@
     <string name="title_all_episodes">All Episodes</string>
     <string name="title_episodes">Episodes</string>
     <string name="title_watch_next">Watch Next</string>
+    <string name="title_watching">Watching</string>
     <string name="title_not_watched_for_while">Haven\'t Watched For A While</string>
     <string name="title_continue_tracking">Continue Tracking</string>
     <string name="badge_premiere">PREMIERE</string>

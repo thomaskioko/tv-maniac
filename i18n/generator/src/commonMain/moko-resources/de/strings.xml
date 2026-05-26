@@ -164,6 +164,7 @@
     <string name="title_all_episodes">Alle Episoden</string>
     <string name="title_episodes">Episoden</string>
     <string name="title_watch_next">Als nächstes ansehen</string>
+    <string name="title_watching">Wird angesehen</string>
     <string name="title_not_watched_for_while">Lange nicht gesehen</string>
     <string name="title_continue_tracking">Weiterschauen</string>
     <string name="badge_premiere">PREMIERE</string>
