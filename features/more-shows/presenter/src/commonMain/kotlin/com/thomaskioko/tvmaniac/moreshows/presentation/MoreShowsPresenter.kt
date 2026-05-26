@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.model.Category.POPULAR
+import com.thomaskioko.tvmaniac.shows.api.model.Category.START_WATCHING
 import com.thomaskioko.tvmaniac.shows.api.model.Category.TOP_RATED
 import com.thomaskioko.tvmaniac.shows.api.model.Category.TRENDING_TODAY
 import com.thomaskioko.tvmaniac.shows.api.model.Category.UPCOMING
@@ -70,6 +71,7 @@ public class MoreShowsPresenter(
             TRENDING_TODAY.id -> getTrendingPagedList()
             POPULAR.id -> getPopularPagedList()
             TOP_RATED.id -> getTopRatedPagedList()
+            START_WATCHING.id -> getStartWatching()
         }
         observeLoadStates()
     }
@@ -150,6 +152,10 @@ public class MoreShowsPresenter(
 
             updateState(pagingList = pagingList, title = TOP_RATED.title)
         }
+    }
+
+    private fun getStartWatching() {
+        // TODO:: Add Implementation
     }
 
     private suspend fun updateState(title: String, pagingList: Flow<PagingData<TvShow>>) {

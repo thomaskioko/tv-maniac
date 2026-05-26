@@ -33,7 +33,6 @@ import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
-import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
@@ -193,7 +192,7 @@ public class DiscoverShowsPresenter(
                 TrendingClicked -> navigator.navigateTo(MoreShowsRoute(Category.TRENDING_TODAY.id))
                 UpComingClicked -> navigator.navigateTo(MoreShowsRoute(Category.UPCOMING.id))
                 UpNextMoreClicked -> navigator.switchBackStack(ProgressRoot)
-                StartWatchingMoreClicked -> navigator.switchBackStack(MyShowsRoot)
+                StartWatchingMoreClicked -> navigator.navigateTo(MoreShowsRoute(Category.START_WATCHING.id))
                 RefreshData -> observeShowData(forceRefresh = true)
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {
