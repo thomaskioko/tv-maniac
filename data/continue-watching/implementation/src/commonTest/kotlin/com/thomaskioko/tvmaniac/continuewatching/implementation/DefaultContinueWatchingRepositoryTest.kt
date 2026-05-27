@@ -90,6 +90,8 @@ internal class DefaultContinueWatchingRepositoryTest {
         repository = DefaultContinueWatchingRepository(
             nitroStore = nitroStore,
             progressStore = progressStore,
+            continueWatchingDao = continueWatchingDao,
+            dispatchers = dispatchers,
         )
     }
 
