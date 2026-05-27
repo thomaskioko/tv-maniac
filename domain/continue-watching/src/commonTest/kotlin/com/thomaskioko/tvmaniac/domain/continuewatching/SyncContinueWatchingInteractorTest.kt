@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.domain.continuewatching
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
-import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository.SyncInvocation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -39,7 +38,6 @@ class SyncContinueWatchingInteractorTest {
     )
     private val activityRepository = FakeTraktActivityRepository()
     private val continueWatchingRepository = FakeContinueWatchingRepository()
-    private val continueWatchingDao = FakeContinueWatchingDao()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
@@ -63,7 +61,6 @@ class SyncContinueWatchingInteractorTest {
     private val interactor = SyncContinueWatchingInteractor(
         syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
-        continueWatchingDao = continueWatchingDao,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
         requestManagerRepository = requestManagerRepository,
@@ -81,6 +78,16 @@ class SyncContinueWatchingInteractorTest {
         activityRepository.fetchInvocations().shouldBeEmpty()
         continueWatchingRepository.syncInvocations().shouldBeEmpty()
         watchedEpisodeSyncRepository.syncAllInvocations().shouldBeEmpty()
+        syncObserver.isSyncing.value shouldBe false
+    }
+
+    @Test
+    fun `should signal sync started when work runs`() = runTest(testDispatcher) {
+        syncObserver.syncStarted.test {
+            interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
+
+            awaitItem()
+        }
     }
 
     @Test
@@ -120,9 +127,13 @@ class SyncContinueWatchingInteractorTest {
 
     @Test
     fun `should sync metadata for every watched show`() = runTest(testDispatcher) {
-        continueWatchingDao.upsert(watchedShow(traktId = 42L))
-        continueWatchingDao.upsert(watchedShow(traktId = 99L))
-        continueWatchingDao.upsert(watchedShow(traktId = 101L))
+        continueWatchingRepository.setEntries(
+            listOf(
+                watchedShow(traktId = 42L),
+                watchedShow(traktId = 99L),
+                watchedShow(traktId = 101L),
+            ),
+        )
 
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
@@ -133,7 +144,7 @@ class SyncContinueWatchingInteractorTest {
 
     @Test
     fun `should propagate force refresh to per-show metadata sync`() = runTest(testDispatcher) {
-        continueWatchingDao.upsert(watchedShow(traktId = 7L))
+        continueWatchingRepository.setEntries(listOf(watchedShow(traktId = 7L)))
 
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
 
@@ -143,7 +154,7 @@ class SyncContinueWatchingInteractorTest {
 
     @Test
     fun `should log SyncError to observer when per-show fetch fails`() = runTest(testDispatcher) {
-        continueWatchingDao.upsert(watchedShow(traktId = 11L))
+        continueWatchingRepository.setEntries(listOf(watchedShow(traktId = 11L)))
         showDetailsRepository.setFetchError(RuntimeException("rate-limited 429"))
 
         syncObserver.errors.test {

@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
-import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -19,7 +18,6 @@ import kotlinx.coroutines.withContext
 @Inject
 public class ContinueWatchingTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
-    private val syncObserver: SyncObserver,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
     syncContinueWatchingInteractor: Lazy<SyncContinueWatchingInteractor>,
@@ -41,10 +39,8 @@ public class ContinueWatchingTasksInitializer(
             traktAuthRepository.loginEvents
                 .collect {
                     withContext(NonCancellable) {
-                        syncObserver.trackSync(POST_LOGIN_OPERATION_ID) {
-                            syncInteractor.executeSync(SyncContinueWatchingInteractor.Param())
-                            logger.debug(TAG, "Continue Watching sync completed successfully")
-                        }
+                        syncInteractor.executeSync(SyncContinueWatchingInteractor.Param())
+                        logger.debug(TAG, "Continue Watching sync completed successfully")
                     }
                 }
         }
@@ -73,6 +69,5 @@ public class ContinueWatchingTasksInitializer(
 
     private companion object {
         private const val TAG = "ContinueWatchingTasksInitializer"
-        private const val POST_LOGIN_OPERATION_ID = "PostLoginContinueWatchingSync"
     }
 }
