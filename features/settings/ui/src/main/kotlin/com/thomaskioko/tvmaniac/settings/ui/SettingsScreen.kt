@@ -258,7 +258,7 @@ private fun SettingsRootContent(
                             modifier = Modifier.testTag(rootRowTestTag(categoryItem.page)),
                             icon = rootRowIcon(categoryItem.page),
                             title = categoryItem.title,
-                            description = categoryItem.description,
+                            description = categoryItem.summary,
                             onClick = { onAction(OpenSettingsPage(categoryItem.page)) },
                         )
                         if (index != group.items.lastIndex) {

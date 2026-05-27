@@ -229,7 +229,7 @@ public class SettingsPresenter(
                             SettingsCategoryItem(
                                 page = SettingsPage.TRAKT,
                                 title = localizer.getString(StringResourceKey.SettingsTitleTrakt),
-                                description = localizer.getString(StringResourceKey.LabelSettingsTraktDescription),
+                                summary = localizer.getString(StringResourceKey.LabelSettingsTraktDescription),
                             ),
                         ),
                     ),
@@ -242,22 +242,22 @@ public class SettingsPresenter(
                         SettingsCategoryItem(
                             page = SettingsPage.APPEARANCE,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionAppearance),
-                            description = localizer.getString(StringResourceKey.LabelSettingsAppearanceDescription),
+                            summary = localizer.getString(StringResourceKey.LabelSettingsAppearanceDescription),
                         ),
                         SettingsCategoryItem(
                             page = SettingsPage.BEHAVIOR,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionBehavior),
-                            description = localizer.getString(StringResourceKey.LabelSettingsBehaviorDescription),
+                            summary = localizer.getString(StringResourceKey.LabelSettingsBehaviorDescription),
                         ),
                         SettingsCategoryItem(
                             page = SettingsPage.NOTIFICATIONS,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionNotifications),
-                            description = localizer.getString(StringResourceKey.LabelSettingsNotificationsDescription),
+                            summary = localizer.getString(StringResourceKey.LabelSettingsNotificationsDescription),
                         ),
                         SettingsCategoryItem(
                             page = SettingsPage.PRIVACY,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionPrivacy),
-                            description = localizer.getString(StringResourceKey.LabelSettingsPrivacyDescription),
+                            summary = localizer.getString(StringResourceKey.LabelSettingsPrivacyDescription),
                         ),
                     ),
                 ),
@@ -269,12 +269,12 @@ public class SettingsPresenter(
                         SettingsCategoryItem(
                             page = SettingsPage.INFO,
                             title = localizer.getString(StringResourceKey.SettingsTitleInfo),
-                            description = localizer.getString(StringResourceKey.LabelSettingsInfoDescription),
+                            summary = localizer.getString(StringResourceKey.LabelSettingsInfoDescription),
                         ),
                         SettingsCategoryItem(
                             page = SettingsPage.LICENSES,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionLicenses),
-                            description = localizer.getString(StringResourceKey.LabelSettingsLicensesDescription),
+                            summary = localizer.getString(StringResourceKey.LabelSettingsLicensesDescription),
                         ),
                     ),
                 ),

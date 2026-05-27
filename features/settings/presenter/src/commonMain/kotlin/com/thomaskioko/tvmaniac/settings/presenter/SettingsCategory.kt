@@ -5,7 +5,7 @@ import kotlinx.collections.immutable.ImmutableList
 public data class SettingsCategoryItem(
     val page: SettingsPage,
     val title: String,
-    val description: String,
+    val summary: String,
 )
 
 public data class SettingsCategoryGroup(
