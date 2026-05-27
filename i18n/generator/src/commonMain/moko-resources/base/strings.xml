@@ -71,6 +71,10 @@
     <string name="label_settings_info_description">App version and source code</string>
     <string name="label_settings_licenses_description">Data sources and acknowledgements</string>
     <string name="label_settings_trakt_description">Manage your Trakt connection</string>
+    <string name="label_settings_trakt_authentication">Authentication</string>
+    <string name="label_settings_trakt_connected">Connected</string>
+    <string name="label_settings_trakt_connected_as">Connected as %s</string>
+    <string name="label_settings_trakt_connected_description">Your watch history, watchlist, and episode progress sync with Trakt.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailers</string>
     <string name="label_settings_youtube_description">Open Trailers in Youtube App</string>

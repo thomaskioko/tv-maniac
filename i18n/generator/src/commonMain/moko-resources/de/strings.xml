@@ -68,6 +68,10 @@
     <string name="label_settings_info_description">App-Version und Quellcode</string>
     <string name="label_settings_licenses_description">Datenquellen und Danksagungen</string>
     <string name="label_settings_trakt_description">Trakt-Verbindung verwalten</string>
+    <string name="label_settings_trakt_authentication">Authentifizierung</string>
+    <string name="label_settings_trakt_connected">Verbunden</string>
+    <string name="label_settings_trakt_connected_as">Verbunden als %s</string>
+    <string name="label_settings_trakt_connected_description">Dein Wiedergabeverlauf, deine Merkliste und dein Episodenfortschritt werden mit Trakt synchronisiert.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailer</string>
     <string name="label_settings_youtube_description">Trailer in der Youtube-App öffnen</string>

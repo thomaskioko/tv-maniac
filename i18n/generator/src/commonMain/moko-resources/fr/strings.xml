@@ -67,6 +67,10 @@
     <string name="label_settings_info_description">Version de l\'app et code source</string>
     <string name="label_settings_licenses_description">Sources de données et remerciements</string>
     <string name="label_settings_trakt_description">Gérer votre connexion Trakt</string>
+    <string name="label_settings_trakt_authentication">Authentification</string>
+    <string name="label_settings_trakt_connected">Connecté</string>
+    <string name="label_settings_trakt_connected_as">Connecté en tant que %s</string>
+    <string name="label_settings_trakt_connected_description">Votre historique de visionnage, votre liste de suivi et votre progression des épisodes sont synchronisés avec Trakt.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Bandes-annonces</string>
     <string name="label_settings_youtube_description">Ouvrir les bandes-annonces dans l\'application Youtube</string>
