@@ -5,6 +5,9 @@ import TvManiac
 import TvManiacKit
 import UserNotifications
 
+private let tmdbURL = "https://www.themoviedb.org"
+private let traktURL = "https://trakt.tv"
+
 struct SettingsView: View {
     private let presenter: SettingsPresenter
     @StateValue private var uiState: SettingsState
@@ -12,7 +15,6 @@ struct SettingsView: View {
     @State private var showingLogoutAlert: Bool = false
     @State private var showingErrorAlert: Bool = false
     @State private var showPolicy = false
-    @State private var showAboutSheet = false
     @State private var showNotificationPermissionDeniedAlert = false
     @Environment(\.openURL) var openURL
     @EnvironmentObject private var appDelegate: AppDelegate
@@ -24,12 +26,18 @@ struct SettingsView: View {
 
     private var screenState: SettingsScreen<DeviceAppTheme>.State {
         SettingsScreen<DeviceAppTheme>.State(
-            title: String(\.label_settings_title),
+            rootTitle: String(\.label_settings_title),
+            versionFooter: String(\.settings_about_version, parameter: uiState.versionName),
+            currentPage: uiState.currentPage.toRoute(),
+            rootSections: rootSections,
             themeItem: themeItem,
             imageQualityItem: imageQualityItem,
             behaviorToggles: behaviorToggles,
+            notificationToggles: notificationToggles,
             privacyToggles: privacyToggles,
-            infoItems: infoItems,
+            privacyLinks: privacyLinks,
+            infoContent: infoContent,
+            licenseSections: licenseSections,
             traktItems: traktItems
         )
     }
@@ -64,31 +72,6 @@ struct SettingsView: View {
         } message: {
             Text(String(\.notification_permission_denied_message))
         }
-        .sheet(isPresented: $showAboutSheet) {
-            AboutSheet(
-                appName: "TvManiac",
-                versionText: String(\.settings_about_version, parameter: uiState.versionName),
-                aboutTitle: String(\.settings_about_section_title),
-                aboutDescription: String(\.settings_about_description),
-                sourceCodeLabel: String(\.settings_about_source_code),
-                sourceCodeAction: String(\.settings_about_github),
-                apiDisclaimer: String(\.settings_about_api_disclaimer),
-                icon: TvManiacAppIcon.image(isDebug: appDelegate.isDebug),
-                onVersionTap: { presenter.dispatch(action: VersionClicked()) },
-                onSourceCodeTap: {
-                    if let url = URL(string: uiState.githubUrl) {
-                        openURL(url)
-                    }
-                }
-            )
-            .appTint()
-            .appTheme()
-        }
-        .onChange(of: uiState.hiddenTapCount) { _, newCount in
-            if newCount == 0, showAboutSheet {
-                showAboutSheet = false
-            }
-        }
         .sheet(isPresented: $showPolicy) {
             if let url = URL(string: uiState.privacyPolicyUrl) {
                 SFSafariViewWrapper(url: url)
@@ -98,6 +81,27 @@ struct SettingsView: View {
         }
         .onAppear {
             store.imageQuality = uiState.imageQuality.toSwift()
+        }
+    }
+
+    // MARK: - Root Sections
+
+    private var rootSections: [SettingsRootSection] {
+        uiState.rootGroups.map { group in
+            SettingsRootSection(
+                id: group.label,
+                label: group.label,
+                items: group.items.map { item in
+                    let route = item.page.toRoute()
+                    return SettingsNavigationItem(
+                        id: route.rawValue,
+                        icon: route.iconName,
+                        title: item.title,
+                        subtitle: item.summary,
+                        onTap: { presenter.dispatch(action: OpenSettingsPage(page: item.page)) }
+                    )
+                }
+            )
         }
     }
 
@@ -146,15 +150,6 @@ struct SettingsView: View {
     private var behaviorToggles: [SettingsToggleItem] {
         var toggles: [SettingsToggleItem] = []
 
-        toggles.append(SettingsToggleItem(
-            id: "notifications",
-            icon: "bell.fill",
-            title: String(\.label_settings_episode_notifications),
-            subtitle: String(\.label_settings_episode_notifications_description),
-            isOn: uiState.episodeNotificationsEnabled,
-            onToggle: { handleNotificationToggle(enabled: $0) }
-        ))
-
         var syncSubtitle: String?
         if uiState.showLastSyncDate, let lastSyncDate = uiState.lastSyncDate {
             syncSubtitle = String(\.label_settings_last_sync_date, parameter: lastSyncDate)
@@ -190,7 +185,22 @@ struct SettingsView: View {
         return toggles
     }
 
-    // MARK: - Privacy Toggles
+    // MARK: - Notification Toggles
+
+    private var notificationToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "notifications",
+                icon: "bell.fill",
+                title: String(\.label_settings_episode_notifications),
+                subtitle: String(\.label_settings_episode_notifications_description),
+                isOn: uiState.episodeNotificationsEnabled,
+                onToggle: { handleNotificationToggle(enabled: $0) }
+            ),
+        ]
+    }
+
+    // MARK: - Privacy
 
     private var privacyToggles: [SettingsToggleItem] {
         [
@@ -205,22 +215,79 @@ struct SettingsView: View {
         ]
     }
 
-    // MARK: - Info Items
-
-    private var infoItems: [SettingsNavigationItem] {
+    private var privacyLinks: [SettingsNavigationItem] {
         [
             SettingsNavigationItem(
-                id: "about",
-                icon: "info.circle",
-                title: String(\.settings_about_section_title),
-                subtitle: String(\.settings_title_about),
-                onTap: { showAboutSheet = true }
-            ),
-            SettingsNavigationItem(
-                id: "privacy",
+                id: "privacy-policy",
                 icon: "hand.raised",
                 title: String(\.label_settings_privacy_policy),
                 onTap: { showPolicy = true }
+            ),
+        ]
+    }
+
+    // MARK: - Info
+
+    private var infoContent: SettingsInfoContent {
+        SettingsInfoContent(
+            icon: TvManiacAppIcon.image(isDebug: appDelegate.isDebug),
+            appName: "TvManiac",
+            versionText: String(\.settings_about_version, parameter: uiState.versionName),
+            description: String(\.settings_about_description),
+            sourceCodeLabel: String(\.settings_about_source_code),
+            sourceCodeValue: String(\.settings_about_github),
+            apiDisclaimer: String(\.settings_about_api_disclaimer),
+            onVersionTap: { presenter.dispatch(action: VersionClicked()) },
+            onSourceCodeTap: {
+                if let url = URL(string: uiState.githubUrl) {
+                    openURL(url)
+                }
+            }
+        )
+    }
+
+    // MARK: - Licenses
+
+    private var licenseSections: [SettingsLicenseSection] {
+        [
+            SettingsLicenseSection(
+                id: "app",
+                label: String(\.label_settings_licenses_section_app),
+                items: [
+                    SettingsLinkItem(
+                        id: "tvmaniac",
+                        title: "TvManiac",
+                        body: String(\.settings_about_description),
+                        link: uiState.githubUrl,
+                        onOpen: {
+                            if let url = URL(string: uiState.githubUrl) { openURL(url) }
+                        }
+                    ),
+                ]
+            ),
+            SettingsLicenseSection(
+                id: "data",
+                label: String(\.label_settings_licenses_section_data),
+                items: [
+                    SettingsLinkItem(
+                        id: "tmdb",
+                        title: String(\.label_settings_licenses_tmdb_title),
+                        body: String(\.label_settings_licenses_tmdb_body),
+                        link: tmdbURL,
+                        onOpen: {
+                            if let url = URL(string: tmdbURL) { openURL(url) }
+                        }
+                    ),
+                    SettingsLinkItem(
+                        id: "trakt",
+                        title: String(\.settings_title_trakt_app),
+                        body: String(\.label_settings_licenses_trakt_body),
+                        link: traktURL,
+                        onOpen: {
+                            if let url = URL(string: traktURL) { openURL(url) }
+                        }
+                    ),
+                ]
             ),
         ]
     }

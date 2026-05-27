@@ -139,3 +139,40 @@ public struct SettingsThemeItem<Theme: ThemeItem>: Equatable {
             && lhs.selectedTheme.id == rhs.selectedTheme.id
     }
 }
+
+public struct SettingsRootSection: Identifiable {
+    public let id: String
+    public let label: String
+    public let items: [SettingsNavigationItem]
+
+    public init(id: String, label: String, items: [SettingsNavigationItem]) {
+        self.id = id
+        self.label = label
+        self.items = items
+    }
+}
+
+public struct SettingsLinkItem: Identifiable {
+    public let id: String
+    public let leadingSystemImage: String?
+    public let title: String
+    public let body: String
+    public let link: String
+    public let onOpen: () -> Void
+
+    public init(
+        id: String,
+        leadingSystemImage: String? = nil,
+        title: String,
+        body: String,
+        link: String,
+        onOpen: @escaping () -> Void
+    ) {
+        self.id = id
+        self.leadingSystemImage = leadingSystemImage
+        self.title = title
+        self.body = body
+        self.link = link
+        self.onOpen = onOpen
+    }
+}
