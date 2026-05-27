@@ -59,6 +59,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
+            .assertUpNextCardDisplayed(breakingBadTraktId)
             .clickShowCard(breakingBadTraktId)
 
         showDetailsRobot

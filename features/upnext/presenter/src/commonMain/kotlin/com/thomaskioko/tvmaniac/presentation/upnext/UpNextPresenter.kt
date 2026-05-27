@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -26,6 +27,9 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
@@ -36,7 +40,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -53,8 +58,10 @@ public class UpNextPresenter(
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
+    private val traktAuthRepository: TraktAuthRepository,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
+    syncObserver: SyncObserver,
     observeUpNextInteractor: ObserveUpNextInteractor,
 ) : ComponentContext by componentContext {
 
@@ -65,15 +72,21 @@ public class UpNextPresenter(
     private val refreshingState = ObservableLoadingCounter()
     private val updatingEpisodeIdsState = MutableStateFlow(persistentSetOf<Long>())
 
+    init {
+        observeAuthState()
+    }
+
     public val state: StateFlow<UpNextState> = combine(
         observeUpNextInteractor.flow,
         uiMessageManager.message,
         refreshingState.observable,
         loadingState.observable,
         updatingEpisodeIdsState,
-    ) { result, message, isRefreshing, isLoading, updatingEpisodeIds ->
+        syncObserver.isSyncing,
+    ) { result, message, isRefreshing, isLoading, updatingEpisodeIds, isSyncing ->
         UpNextState(
             isLoading = isLoading,
+            isSyncing = isSyncing,
             isRefreshing = isRefreshing,
             sortOption = result.sortOption,
             episodes = result.episodes.map { it.toUiModel() }.toImmutableList(),
@@ -109,6 +122,15 @@ public class UpNextPresenter(
             is UpNextEpisodeLongPressed -> navigator.navigateTo(
                 EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeId, source = ScreenSource.UP_NEXT)),
             )
+        }
+    }
+
+    private fun observeAuthState() {
+        coroutineScope.launch {
+            traktAuthRepository.state
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { refreshUpNext(isUserInitiated = false) }
         }
     }
 

@@ -14,4 +14,9 @@ public interface ContinueWatchingRepository {
      *   in; this repository does not observe the flag itself.
      */
     public suspend fun sync(forceRefresh: Boolean = false, useNitro: Boolean = false)
+
+    /**
+     * Snapshot of the locally cached continue-watching entries.
+     */
+    public suspend fun getEntries(): List<ContinueWatchingEntry>
 }

@@ -22,7 +22,6 @@ kotlin {
                 api(projects.core.featureFlags.api)
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
-                api(projects.core.syncstate.api)
                 api(projects.core.tasks.api)
                 api(projects.core.util.api)
                 api(projects.data.continueWatching.api)
@@ -42,7 +41,6 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
-                implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.continueWatching.testing)
                 implementation(projects.data.episode.testing)

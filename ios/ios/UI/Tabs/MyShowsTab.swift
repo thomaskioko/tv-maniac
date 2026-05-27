@@ -246,12 +246,12 @@ private extension ContinueWatchingState {
         staleEpisodes: [SwiftNextEpisode]
     ) -> MyShowsScreen.State {
         MyShowsScreen.State(
-            emptyText: emptyStateText,
-            upToDateText: String(\.label_up_to_date),
-            upNextSectionTitle: String(\.label_discover_up_next),
-            staleSectionTitle: String(\.title_not_watched_for_while),
-            premiereLabel: String(\.badge_premiere),
-            newLabel: String(\.badge_new),
+            emptyText: labels.emptyTitle,
+            upToDateText: labels.upToDate,
+            upNextSectionTitle: labels.watchingTitle,
+            staleSectionTitle: labels.staleTitle,
+            premiereLabel: labels.premiereBadge,
+            newLabel: labels.newBadge,
             isLoading: showLoading,
             isGridMode: isGridMode,
             query: query,

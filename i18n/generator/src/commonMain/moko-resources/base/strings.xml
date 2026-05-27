@@ -130,6 +130,7 @@
     <string name="cd_next_week">Next week</string>
     <string name="cd_expand_collapse">Expand or collapse</string>
     <string name="cd_connectivity_icon">Connectivity icon</string>
+    <string name="cd_dismiss">Dismiss</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
@@ -202,6 +203,7 @@
     <string name="title_all_episodes">All Episodes</string>
     <string name="title_episodes">Episodes</string>
     <string name="title_watch_next">Watch Next</string>
+    <string name="title_watching">Watching</string>
     <string name="title_not_watched_for_while">Haven\'t Watched For A While</string>
     <string name="title_continue_tracking">Continue Tracking</string>
     <string name="badge_premiere">PREMIERE</string>

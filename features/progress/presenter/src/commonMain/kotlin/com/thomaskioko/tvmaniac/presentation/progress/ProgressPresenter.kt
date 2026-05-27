@@ -15,8 +15,10 @@ import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 @Inject
@@ -34,15 +36,27 @@ public class ProgressPresenter(
     private val coroutineScope = coroutineScope()
     private val _state = MutableStateFlow(ProgressState())
 
-    public val state: StateFlow<ProgressState> = _state.asStateFlow()
-
-    public val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
-
     public val upNextPresenter: UpNextPresenter =
         upNextGraphFactory.createUpNextGraph(childContext(key = "UpNext")).upNextPresenter
 
     public val calendarPresenter: CalendarPresenter =
         calendarGraphFactory.createCalendarGraph(childContext(key = "Calendar")).calendarPresenter
+
+    public val state: StateFlow<ProgressState> = combine(
+        _state,
+        upNextPresenter.state,
+        calendarPresenter.state,
+    ) { progressState, upNextState, calendarState ->
+        progressState.copy(
+            isLoading = upNextState.isLoading || upNextState.isSyncing || calendarState.isLoading,
+        )
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = ProgressState(),
+    )
+
+    public val stateValue: Value<ProgressState> = state.asValue(coroutineScope)
 
     public fun dispatch(action: ProgressAction) {
         when (action) {

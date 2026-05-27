@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -61,13 +60,6 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.UpNextEpisodeClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
-import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_new
-import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_up_to_date
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_not_watched_for_while
-import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -82,7 +74,6 @@ public fun ContinueWatchingScreen(
     onAction: (ContinueWatchingAction) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -117,21 +108,16 @@ public fun ContinueWatchingScreen(
 
                     isGridMode -> {
                         if (hasNoItems) {
-                            val message = if (state.query.isNotBlank()) {
-                                label_watchlist_empty_result.resolve(context).format(state.query)
-                            } else {
-                                null
-                            }
                             EmptyStateView(
                                 modifier = Modifier.testTag(MyShowsTestTags.EMPTY_STATE_TEST_TAG),
                                 imageVector = Icons.Outlined.Inbox,
-                                title = state.emptyStateText,
-                                message = message,
+                                title = state.labels.emptyTitle,
+                                message = state.labels.emptyResultMessage.ifBlank { null },
                             )
                         } else {
                             SectionedContinueWatchingGridContent(
-                                watchNextTitle = label_discover_up_next.resolve(context),
-                                staleTitle = title_not_watched_for_while.resolve(context),
+                                watchNextTitle = state.labels.watchingTitle,
+                                staleTitle = state.labels.staleTitle,
                                 watchNextItems = state.watchNextItems,
                                 staleItems = state.staleItems,
                                 scrollBehavior = scrollBehavior,
@@ -144,14 +130,14 @@ public fun ContinueWatchingScreen(
                         if (hasNoEpisodes) {
                             EmptyStateView(
                                 imageVector = Icons.Outlined.CheckCircle,
-                                title = label_up_to_date.resolve(context),
+                                title = state.labels.upToDate,
                             )
                         } else {
                             SectionedUpNextListContent(
-                                watchNextTitle = label_discover_up_next.resolve(context),
-                                staleTitle = title_not_watched_for_while.resolve(context),
-                                premiereLabel = badge_premiere.resolve(context),
-                                newLabel = badge_new.resolve(context),
+                                watchNextTitle = state.labels.watchingTitle,
+                                staleTitle = state.labels.staleTitle,
+                                premiereLabel = state.labels.premiereBadge,
+                                newLabel = state.labels.newBadge,
                                 watchNextEpisodes = state.watchNextEpisodes,
                                 staleEpisodes = state.staleEpisodes,
                                 updatingEpisodeIds = state.updatingEpisodeIds,

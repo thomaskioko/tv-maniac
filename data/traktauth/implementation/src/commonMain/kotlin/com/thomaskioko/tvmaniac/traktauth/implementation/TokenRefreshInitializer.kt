@@ -21,7 +21,7 @@ public class TokenRefreshInitializer(
         scope.launch {
             traktAuthRepository.state.distinctUntilChanged().collectLatest { state ->
                 when (state) {
-                    TraktAuthState.LOGGED_IN -> scheduler.schedulePeriodic(TokenRefreshWorker.REQUEST)
+                    TraktAuthState.LOGGED_IN -> scheduler.scheduleAndExecute(TokenRefreshWorker.REQUEST)
                     TraktAuthState.LOGGED_OUT -> scheduler.cancel(TokenRefreshWorker.WORKER_NAME)
                 }
             }

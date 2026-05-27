@@ -23,8 +23,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
@@ -58,6 +57,7 @@ class SeasonPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val castRepository = FakeCastRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val navigator = FakeNavigator()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -231,15 +231,12 @@ class SeasonPresenterTest {
     }
 
     @Test
-    fun `should invoke onBack when SeasonDetailsBackClicked action is dispatched`() = runTest {
-        var backCalled = false
-        presenter = buildSeasonDetailsPresenter(onBack = { backCalled = true })
-
+    fun `should navigate back when SeasonDetailsBackClicked action is dispatched`() = runTest {
         presenter.dispatch(SeasonDetailsBackClicked)
 
         advanceUntilIdle()
 
-        backCalled shouldBe true
+        navigator.navigateBackCount shouldBe 1
     }
 
     @Test
@@ -1180,9 +1177,7 @@ class SeasonPresenterTest {
         }
     }
 
-    private fun buildSeasonDetailsPresenter(
-        onBack: () -> Unit = {},
-    ): SeasonDetailsPresenter {
+    private fun buildSeasonDetailsPresenter(): SeasonDetailsPresenter {
         return SeasonDetailsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             param = SeasonDetailsUiParam(
@@ -1190,33 +1185,7 @@ class SeasonPresenterTest {
                 seasonId = 1,
                 seasonNumber = 1,
             ),
-            navigator = object : Navigator {
-                override val activeRoot: com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.NavRoot> =
-                    com.arkivanov.decompose.value.MutableValue(com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot)
-                override fun bringToFront(route: NavRoute) {}
-                override fun navigateTo(route: NavRoute) {}
-                override fun pushToFront(route: NavRoute) {}
-                override fun navigateBack() {
-                    onBack()
-                }
-                override fun navigateBackTo(routeClass: kotlin.reflect.KClass<out NavRoute>, inclusive: Boolean) {}
-                override fun popTo(toIndex: Int) {}
-                override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun <T : Any> buildHostNavigation(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.MultiStackHostState<T>> =
-                    error("Not used in this test")
-                override fun <T : Any> buildOverlaySlot(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
-                    error("Not used in this test")
-                override fun dismissOverlay() {}
-            },
+            navigator = navigator,
             observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
                 castRepository = castRepository,

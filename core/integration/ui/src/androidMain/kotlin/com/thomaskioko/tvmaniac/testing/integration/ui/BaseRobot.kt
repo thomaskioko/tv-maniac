@@ -214,7 +214,7 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
     public fun scrollDownUntilTag(
         listTag: String,
         itemTag: String,
-        maxSwipes: Int = 10,
+        maxSwipes: Int = 15,
         useUnmergedTree: Boolean = false,
     ): T = self().apply {
         awaitTagOnce(listTag, useUnmergedTree)

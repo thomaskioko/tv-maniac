@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.debug.presenter
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -304,7 +303,6 @@ class DebugPresenterTest {
                     dispatchers = dispatchers,
                 ),
                 continueWatchingRepository = FakeContinueWatchingRepository(),
-                continueWatchingDao = FakeContinueWatchingDao(),
                 syncShowMetadataInteractor = SyncShowMetadataInteractor(
                     showDetailsRepository = FakeShowDetailsRepository(),
                     seasonDetailsRepository = FakeSeasonDetailsRepository(),
@@ -313,7 +311,6 @@ class DebugPresenterTest {
                 ),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
                 requestManagerRepository = FakeRequestManagerRepository(),
-                syncObserver = FakeSyncObserver(),
                 dispatchers = dispatchers,
                 logger = logger,
             ),

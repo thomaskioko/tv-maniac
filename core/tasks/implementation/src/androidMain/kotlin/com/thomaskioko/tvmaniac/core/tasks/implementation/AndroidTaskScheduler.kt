@@ -2,7 +2,9 @@ package com.thomaskioko.tvmaniac.core.tasks.implementation
 
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -42,14 +44,37 @@ public class AndroidTaskScheduler(
         logger.debug(TAG, "Scheduled periodic task [${request.id}]")
     }
 
+    override fun scheduleAndExecute(request: PeriodicTaskRequest) {
+        schedulePeriodic(request)
+        scheduleImmediate(request)
+    }
+
     override fun cancel(id: String) {
         workManager.cancelUniqueWork(id)
+        workManager.cancelUniqueWork("${id}_immediate")
         logger.debug(TAG, "Cancelled task [$id]")
     }
 
     override fun cancelAll() {
         workManager.cancelAllWork()
         logger.debug(TAG, "Cancelled all tasks")
+    }
+
+    private fun scheduleImmediate(request: PeriodicTaskRequest) {
+        logger.debug(TAG, "Scheduling immediate work: ${request.id}")
+
+        val work = OneTimeWorkRequestBuilder<SchedulerDispatchWorker>()
+            .setConstraints(request.constraints.toWorkManagerConstraints())
+            .setInputData(workDataOf(SchedulerDispatchWorker.KEY_WORKER_NAME to request.id))
+            .build()
+
+        workManager.enqueueUniqueWork(
+            "${request.id}_immediate",
+            ExistingWorkPolicy.REPLACE,
+            work,
+        )
+
+        logger.debug(TAG, "Scheduled immediate execution of [${request.id}]")
     }
 
     private companion object {
