@@ -64,7 +64,6 @@ class SyncContinueWatchingInteractorTest {
         syncShowMetadataInteractor = syncShowMetadataInteractor,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
         requestManagerRepository = requestManagerRepository,
-        syncObserver = syncObserver,
         dispatchers = dispatchers,
         logger = FakeLogger(),
     )
