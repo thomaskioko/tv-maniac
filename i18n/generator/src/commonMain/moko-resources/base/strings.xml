@@ -55,6 +55,15 @@
     <string name="label_settings_section_app_theme">App Theme</string>
     <string name="label_settings_section_appearance">Appearance</string>
     <string name="label_settings_section_behavior">Behavior</string>
+    <string name="label_settings_section_notifications">Notifications</string>
+    <string name="label_settings_group_general">General</string>
+    <string name="label_settings_group_account">Account</string>
+    <string name="label_settings_section_licenses">Licenses &amp; Attribution</string>
+    <string name="label_settings_licenses_section_app">App</string>
+    <string name="label_settings_licenses_section_data">Data &amp; Services</string>
+    <string name="label_settings_licenses_tmdb_title">The Movie Database (TMDB)</string>
+    <string name="label_settings_licenses_tmdb_body">TvManiac uses the TMDB API for show metadata, artwork, trailers, and cast. This product uses the TMDB API but is not endorsed or certified by TMDB.</string>
+    <string name="label_settings_licenses_trakt_body">TvManiac uses Trakt to sync your watch history, watchlist, and episode progress across devices.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailers</string>
     <string name="label_settings_youtube_description">Open Trailers in Youtube App</string>

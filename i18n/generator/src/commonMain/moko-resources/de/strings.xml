@@ -52,6 +52,15 @@
     <string name="label_settings_section_app_theme">App-Thema</string>
     <string name="label_settings_section_appearance">Darstellung</string>
     <string name="label_settings_section_behavior">Verhalten</string>
+    <string name="label_settings_section_notifications">Benachrichtigungen</string>
+    <string name="label_settings_group_general">Allgemein</string>
+    <string name="label_settings_group_account">Konto</string>
+    <string name="label_settings_section_licenses">Lizenzen &amp; Danksagungen</string>
+    <string name="label_settings_licenses_section_app">App</string>
+    <string name="label_settings_licenses_section_data">Daten &amp; Dienste</string>
+    <string name="label_settings_licenses_tmdb_title">The Movie Database (TMDB)</string>
+    <string name="label_settings_licenses_tmdb_body">TvManiac verwendet die TMDB-API für Serien-Metadaten, Bilder, Trailer und Besetzung. Dieses Produkt verwendet die TMDB-API, wird aber von TMDB weder unterstützt noch zertifiziert.</string>
+    <string name="label_settings_licenses_trakt_body">TvManiac verwendet Trakt, um deinen Wiedergabeverlauf, deine Merkliste und deinen Episodenfortschritt geräteübergreifend zu synchronisieren.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailer</string>
     <string name="label_settings_youtube_description">Trailer in der Youtube-App öffnen</string>
