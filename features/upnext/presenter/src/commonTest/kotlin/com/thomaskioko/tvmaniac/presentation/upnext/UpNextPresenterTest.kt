@@ -23,6 +23,8 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
@@ -58,6 +60,7 @@ internal class UpNextPresenterTest {
     private val dateTimeProvider = FakeDateTimeProvider()
     private val logger = FakeLogger()
     private val syncObserver = FakeSyncObserver()
+    private val navigator = FakeNavigator()
 
     @BeforeTest
     fun setUp() {
@@ -229,23 +232,24 @@ internal class UpNextPresenterTest {
 
     @Test
     fun `should navigate to season details given ShowClicked action is dispatched`() = runTest {
-        var navigatedParams: Triple<Long, Long, Long>? = null
         val episode = createTestNextEpisode(showTraktId = 999, showName = "Test Show")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
 
-        val presenterWithNav = createPresenter(
-            navigateToSeasonDetails = { showTraktId, seasonId, seasonNumber ->
-                navigatedParams = Triple(showTraktId, seasonId, seasonNumber)
-            },
-        )
+        val presenter = createPresenter()
 
-        presenterWithNav.state.test {
+        presenter.state.test {
             skipItems(1)
             awaitItem()
 
-            presenterWithNav.dispatch(UpNextShowClicked(showTraktId = 999L))
+            presenter.dispatch(UpNextShowClicked(showTraktId = 999L))
 
-            navigatedParams shouldBe Triple(999L, 9990L, 1L)
+            navigator.lastNavigatedRoute shouldBe SeasonDetailsRoute(
+                SeasonDetailsUiParam(
+                    showTraktId = 999L,
+                    seasonId = 9990L,
+                    seasonNumber = 1L,
+                ),
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -445,9 +449,7 @@ internal class UpNextPresenterTest {
         }
     }
 
-    private fun createPresenter(
-        navigateToSeasonDetails: (Long, Long, Long) -> Unit = { _, _, _ -> },
-    ): UpNextPresenter {
+    private fun createPresenter(): UpNextPresenter {
         val observeUpNextInteractor = ObserveUpNextInteractor(
             repository = upNextRepository,
         )
@@ -484,7 +486,7 @@ internal class UpNextPresenterTest {
 
         return UpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = FakeNavigator(),
+            navigator = navigator,
             observeUpNextInteractor = observeUpNextInteractor,
             syncContinueWatchingInteractor = syncContinueWatchingInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
