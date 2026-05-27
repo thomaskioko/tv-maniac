@@ -13,10 +13,13 @@ import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesIntera
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
+import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
@@ -157,6 +160,39 @@ class SettingsPresenterTest {
         presenter.state.test {
             val state = awaitItem()
             state.versionName shouldBe "0.0.0"
+        }
+    }
+
+    @Test
+    fun `should open sub page when page is selected`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(OpenSettingsPage(SettingsPage.APPEARANCE))
+            awaitItem().currentPage shouldBe SettingsPage.APPEARANCE
+        }
+    }
+
+    @Test
+    fun `should return to root when back is clicked on a sub page`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(OpenSettingsPage(SettingsPage.BEHAVIOR))
+            awaitItem().currentPage shouldBe SettingsPage.BEHAVIOR
+
+            presenter.dispatch(BackClicked)
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+        }
+    }
+
+    @Test
+    fun `should remain on root when back is clicked on root`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(BackClicked)
+            expectNoEvents()
         }
     }
 }
