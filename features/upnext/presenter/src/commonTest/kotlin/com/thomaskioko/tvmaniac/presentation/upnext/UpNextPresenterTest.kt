@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -12,7 +11,6 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
@@ -23,7 +21,6 @@ import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
-import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
@@ -61,9 +58,8 @@ internal class UpNextPresenterTest {
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
-    private val datastoreRepository = FakeDatastoreRepository()
-    private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
+    private val syncObserver = FakeSyncObserver()
 
     @BeforeTest
     fun setUp() {
@@ -415,6 +411,42 @@ internal class UpNextPresenterTest {
         }
     }
 
+    @Test
+    fun `should show loading given sync in progress and no episodes`() = runTest {
+        upNextRepository.setNextEpisodesForWatchlist(emptyList())
+        syncObserver.setSyncing(true)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isSyncing shouldBe true
+            state.isEmpty shouldBe true
+            state.showLoading shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not show loading given sync in progress and episodes present`() = runTest {
+        upNextRepository.setNextEpisodesForWatchlist(
+            listOf(createTestNextEpisode(showTraktId = 1, showName = "Show 1")),
+        )
+        syncObserver.setSyncing(true)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isSyncing shouldBe true
+            state.isEmpty shouldBe false
+            state.showLoading shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun createPresenter(
         navigateToSeasonDetails: (Long, Long, Long) -> Unit = { _, _, _ -> },
     ): UpNextPresenter {
@@ -436,7 +468,6 @@ internal class UpNextPresenterTest {
                 dispatchers = dispatchers,
             ),
             continueWatchingRepository = FakeContinueWatchingRepository(),
-            continueWatchingDao = FakeContinueWatchingDao(),
             syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = FakeShowDetailsRepository(),
                 seasonDetailsRepository = FakeSeasonDetailsRepository(),
@@ -445,7 +476,7 @@ internal class UpNextPresenterTest {
             ),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
-            syncObserver = FakeSyncObserver(),
+            syncObserver = syncObserver,
             dispatchers = dispatchers,
             logger = logger,
         )
@@ -494,8 +525,10 @@ internal class UpNextPresenterTest {
                 libraryRepository = FakeLibraryRepository(),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
+            traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
+            syncObserver = syncObserver,
         )
     }
 

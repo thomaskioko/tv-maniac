@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentSetOf
 
 public data class UpNextState(
     val isLoading: Boolean = true,
+    val isSyncing: Boolean = false,
     val isRefreshing: Boolean = false,
     val sortOption: UpNextSortOption = UpNextSortOption.LAST_WATCHED,
     val episodes: ImmutableList<UpNextEpisodeUiModel> = persistentListOf(),
@@ -20,5 +21,5 @@ public data class UpNextState(
         get() = episodes.isEmpty()
 
     val showLoading: Boolean
-        get() = isLoading && isEmpty
+        get() = (isLoading || isSyncing) && isEmpty
 }
