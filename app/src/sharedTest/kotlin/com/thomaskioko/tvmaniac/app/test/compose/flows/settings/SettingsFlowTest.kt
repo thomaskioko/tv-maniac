@@ -28,6 +28,7 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
         settingsRobot
             .assertSettingsScreenDisplayed()
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
+            .openAppearancePage()
             .scrollToImageQualityChip(ImageQuality.HIGH)
             .assertImageQualitySelected(ImageQuality.AUTO)
             .assertImageQualityNotSelected(ImageQuality.HIGH)
@@ -55,6 +56,7 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
 
         settingsRobot
             .assertSettingsScreenDisplayed()
+            .openTraktPage()
             .scrollToTraktAccountRow()
             .clickTraktAccountRow()
             .assertLogoutDialogDisplayed()
