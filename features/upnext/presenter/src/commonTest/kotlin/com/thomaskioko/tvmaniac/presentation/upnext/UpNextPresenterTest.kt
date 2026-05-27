@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -12,7 +11,6 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
@@ -23,11 +21,10 @@ import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
-import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
@@ -61,9 +58,9 @@ internal class UpNextPresenterTest {
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
-    private val datastoreRepository = FakeDatastoreRepository()
-    private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
+    private val syncObserver = FakeSyncObserver()
+    private val navigator = FakeNavigator()
 
     @BeforeTest
     fun setUp() {
@@ -235,23 +232,24 @@ internal class UpNextPresenterTest {
 
     @Test
     fun `should navigate to season details given ShowClicked action is dispatched`() = runTest {
-        var navigatedParams: Triple<Long, Long, Long>? = null
         val episode = createTestNextEpisode(showTraktId = 999, showName = "Test Show")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
 
-        val presenterWithNav = createPresenter(
-            navigateToSeasonDetails = { showTraktId, seasonId, seasonNumber ->
-                navigatedParams = Triple(showTraktId, seasonId, seasonNumber)
-            },
-        )
+        val presenter = createPresenter()
 
-        presenterWithNav.state.test {
+        presenter.state.test {
             skipItems(1)
             awaitItem()
 
-            presenterWithNav.dispatch(UpNextShowClicked(showTraktId = 999L))
+            presenter.dispatch(UpNextShowClicked(showTraktId = 999L))
 
-            navigatedParams shouldBe Triple(999L, 9990L, 1L)
+            navigator.lastNavigatedRoute shouldBe SeasonDetailsRoute(
+                SeasonDetailsUiParam(
+                    showTraktId = 999L,
+                    seasonId = 9990L,
+                    seasonNumber = 1L,
+                ),
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -415,9 +413,43 @@ internal class UpNextPresenterTest {
         }
     }
 
-    private fun createPresenter(
-        navigateToSeasonDetails: (Long, Long, Long) -> Unit = { _, _, _ -> },
-    ): UpNextPresenter {
+    @Test
+    fun `should show loading given sync in progress and no episodes`() = runTest {
+        upNextRepository.setNextEpisodesForWatchlist(emptyList())
+        syncObserver.setSyncing(true)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isSyncing shouldBe true
+            state.isEmpty shouldBe true
+            state.showLoading shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not show loading given sync in progress and episodes present`() = runTest {
+        upNextRepository.setNextEpisodesForWatchlist(
+            listOf(createTestNextEpisode(showTraktId = 1, showName = "Show 1")),
+        )
+        syncObserver.setSyncing(true)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isSyncing shouldBe true
+            state.isEmpty shouldBe false
+            state.showLoading shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private fun createPresenter(): UpNextPresenter {
         val observeUpNextInteractor = ObserveUpNextInteractor(
             repository = upNextRepository,
         )
@@ -436,7 +468,6 @@ internal class UpNextPresenterTest {
                 dispatchers = dispatchers,
             ),
             continueWatchingRepository = FakeContinueWatchingRepository(),
-            continueWatchingDao = FakeContinueWatchingDao(),
             syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = FakeShowDetailsRepository(),
                 seasonDetailsRepository = FakeSeasonDetailsRepository(),
@@ -445,7 +476,6 @@ internal class UpNextPresenterTest {
             ),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
-            syncObserver = FakeSyncObserver(),
             dispatchers = dispatchers,
             logger = logger,
         )
@@ -456,35 +486,7 @@ internal class UpNextPresenterTest {
 
         return UpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = object : Navigator {
-                override val activeRoot: com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.NavRoot> =
-                    com.arkivanov.decompose.value.MutableValue(com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot)
-                override fun bringToFront(route: NavRoute) {}
-                override fun navigateTo(route: NavRoute) {
-                    if (route is SeasonDetailsRoute) {
-                        navigateToSeasonDetails(route.param.showTraktId, route.param.seasonId, route.param.seasonNumber)
-                    }
-                }
-                override fun pushToFront(route: NavRoute) {}
-                override fun navigateBack() {}
-                override fun navigateBackTo(routeClass: kotlin.reflect.KClass<out NavRoute>, inclusive: Boolean) {}
-                override fun popTo(toIndex: Int) {}
-                override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun <T : Any> buildHostNavigation(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.MultiStackHostState<T>> =
-                    error("Not used in this test")
-                override fun <T : Any> buildOverlaySlot(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
-                    error("Not used in this test")
-                override fun dismissOverlay() {}
-            },
+            navigator = navigator,
             observeUpNextInteractor = observeUpNextInteractor,
             syncContinueWatchingInteractor = syncContinueWatchingInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
@@ -494,8 +496,10 @@ internal class UpNextPresenterTest {
                 libraryRepository = FakeLibraryRepository(),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
+            traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
+            syncObserver = syncObserver,
         )
     }
 

@@ -47,6 +47,7 @@ internal class RootRobot(composeUi: ComposeUiTest) : BaseRobot<RootRobot>(compos
     fun dismissNotificationRationale() = apply {
         if (awaitTag(NotificationRationaleTestTags.BOTTOM_SHEET)) {
             click(NotificationRationaleTestTags.DISMISS_BUTTON)
+            assertDoesNotExist(NotificationRationaleTestTags.BOTTOM_SHEET)
         }
     }
 

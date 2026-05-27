@@ -102,7 +102,7 @@ internal fun ProgressScreen(
 ) {
     ProgressScreen(
         selectedPage = progressState.selectedPage,
-        isLoading = upNextState.isLoading || calendarState.isLoading,
+        isLoading = progressState.isLoading,
         tabs = tabs,
         modifier = modifier,
         onSelectPage = { progressAction(ProgressAction.SelectPage(it)) },

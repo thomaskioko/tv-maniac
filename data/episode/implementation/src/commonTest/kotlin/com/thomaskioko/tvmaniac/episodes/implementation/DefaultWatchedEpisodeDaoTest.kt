@@ -430,6 +430,36 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should keep watched episodes given an episode row is re-upserted during metadata sync`() = runTest {
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(101L),
+            season_id = Id(SEASON_1_ID),
+            show_trakt_id = Id(TEST_SHOW_ID),
+            title = "Episode 1 (refreshed)",
+            overview = "Refreshed overview",
+            episode_number = 1L,
+            runtime = 45L,
+            image_url = "/episode1.jpg",
+            ratings = 8.5,
+            vote_count = 50L,
+            trakt_id = null,
+            first_aired = LocalDate(2023, 1, 1).toEpochMillis(),
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
+            awaitItem().watchedCount shouldBe 1
+        }
+    }
+
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
             trakt_id = Id(TEST_SHOW_ID),

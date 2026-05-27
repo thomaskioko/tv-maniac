@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.continuewatching.presenter.model
+package com.thomaskioko.tvmaniac.startwatching.presenter.model
 
 public data class StartWatchingItem(
     val traktId: Long,

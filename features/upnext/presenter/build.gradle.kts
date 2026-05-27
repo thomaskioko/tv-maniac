@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.logger.api)
+                api(projects.core.syncstate.api)
                 api(projects.core.view)
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
@@ -42,7 +43,6 @@ kotlin {
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.continueWatching.testing)
-                implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.library.testing)
@@ -53,7 +53,6 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
-                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
         }

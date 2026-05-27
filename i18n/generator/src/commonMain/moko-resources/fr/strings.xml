@@ -14,6 +14,7 @@
     <string name="label_discover_up_next">À suivre</string>
     <string name="label_start_watching">Commencer à regarder</string>
     <string name="label_continue_watching">Continuer à regarder</string>
+    <string name="label_start_watching_empty">Aucune série dans votre liste de suivi</string>
     <string name="label_discover_title">Découvrir</string>
     <string name="label_tab_search">Rechercher</string>
     <string name="label_search_title">Rechercher</string>
@@ -106,6 +107,7 @@
     <string name="cd_next_week">Semaine suivante</string>
     <string name="cd_expand_collapse">Agrandir ou réduire</string>
     <string name="cd_connectivity_icon">Icône de connectivité</string>
+    <string name="cd_dismiss">Fermer</string>
 
     <string name="details_episodes">Épisodes</string>
     <string name="details_cast">Distribution</string>
@@ -161,6 +163,7 @@
     <string name="title_all_episodes">Tous les épisodes</string>
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_watching">En cours de visionnage</string>
     <string name="title_not_watched_for_while">Pas regardé depuis longtemps</string>
     <string name="title_continue_tracking">Continuer à Suivre</string>
     <string name="badge_premiere">PREMIÈRE</string>

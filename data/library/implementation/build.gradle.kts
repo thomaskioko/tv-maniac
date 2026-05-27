@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(libs.store5)
+                api(projects.api.tmdb.api)
                 api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.logger.api)
@@ -22,6 +23,7 @@ kotlin {
                 api(projects.data.followedshows.api)
                 api(projects.data.library.api)
                 api(projects.data.requestManager.api)
+                api(projects.data.shows.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
                 api(projects.data.watchproviders.api)

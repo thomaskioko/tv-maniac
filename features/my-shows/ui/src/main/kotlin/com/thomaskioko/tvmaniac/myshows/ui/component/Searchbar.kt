@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.continuewatching.ui.component
+package com.thomaskioko.tvmaniac.myshows.ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

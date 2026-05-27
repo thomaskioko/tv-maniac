@@ -31,9 +31,13 @@ public struct ToastView: View {
                     .progressViewStyle(CircularProgressViewStyle(tint: theme.colors.onPrimary))
                     .scaleEffect(0.8)
             } else {
-                Image(systemName: type.iconFileName)
-                    .foregroundStyle(.appOnPrimary)
-                    .textStyle(theme.typography.titleMedium)
+                Button(action: onCancelTapped) {
+                    Image(systemName: type.iconFileName)
+                        .foregroundStyle(.appOnPrimary)
+                        .textStyle(theme.typography.titleMedium)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Dismiss"))
             }
 
             Text(message)
@@ -46,9 +50,6 @@ public struct ToastView: View {
         .background(type.themeColor)
         .cornerRadius(theme.shapes.large)
         .padding(.horizontal, theme.spacing.medium)
-        .onTapGesture {
-            onCancelTapped()
-        }
     }
 }
 

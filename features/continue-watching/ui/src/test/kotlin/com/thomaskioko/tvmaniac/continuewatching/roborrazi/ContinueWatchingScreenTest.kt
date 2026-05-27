@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.continuewatching.roborrazi
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingLabels
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingState
 import com.thomaskioko.tvmaniac.continuewatching.ui.ContinueWatchingScreen
 import com.thomaskioko.tvmaniac.continuewatching.ui.continueWatchingItems
@@ -33,6 +34,10 @@ class ContinueWatchingScreenTest {
                 ContinueWatchingScreen(
                     state = ContinueWatchingState(
                         isRefreshing = false,
+                        labels = ContinueWatchingLabels(
+                            watchingTitle = "Watching",
+                            staleTitle = "Haven't Watched For A While",
+                        ),
                         watchNextItems = continueWatchingItems,
                         staleItems = continueWatchingItems,
                     ),
@@ -50,24 +55,12 @@ class ContinueWatchingScreenTest {
                     state = ContinueWatchingState(
                         isGridMode = false,
                         isRefreshing = false,
-                        watchNextEpisodes = watchNextEpisodes,
-                        staleEpisodes = watchNextEpisodes,
-                    ),
-                    onAction = {},
-                )
-            }
-        }
-    }
-
-    @Test
-    fun continueWatchingScreenSearchActiveState() {
-        composeTestRule.captureMultiDevice("SearchActiveResult") {
-            TvManiacBackground {
-                ContinueWatchingScreen(
-                    state = ContinueWatchingState(
-                        isGridMode = false,
-                        isRefreshing = false,
-                        isSearchActive = true,
+                        labels = ContinueWatchingLabels(
+                            watchingTitle = "Watching",
+                            staleTitle = "Haven't Watched For A While",
+                            premiereBadge = "PREMIERE",
+                            newBadge = "NEW",
+                        ),
                         watchNextEpisodes = watchNextEpisodes,
                         staleEpisodes = watchNextEpisodes,
                     ),
@@ -84,6 +77,7 @@ class ContinueWatchingScreenTest {
                 ContinueWatchingScreen(
                     state = ContinueWatchingState(
                         isRefreshing = false,
+                        labels = ContinueWatchingLabels(watchingTitle = "Watching"),
                         watchNextItems = continueWatchingItems,
                         staleItems = persistentListOf(),
                     ),
@@ -100,7 +94,9 @@ class ContinueWatchingScreenTest {
                 ContinueWatchingScreen(
                     state = ContinueWatchingState(
                         isRefreshing = false,
-                        emptyStateText = "Nothing in progress yet. Mark an episode as watched to see it here.",
+                        labels = ContinueWatchingLabels(
+                            emptyTitle = "Nothing in progress yet. Mark an episode as watched to see it here.",
+                        ),
                         watchNextItems = persistentListOf(),
                         staleItems = persistentListOf(),
                     ),
@@ -118,7 +114,7 @@ class ContinueWatchingScreenTest {
                     state = ContinueWatchingState(
                         isGridMode = false,
                         isRefreshing = false,
-                        emptyStateText = "No content",
+                        labels = ContinueWatchingLabels(upToDate = "All caught up"),
                         watchNextItems = persistentListOf(),
                         query = "Show title",
                     ),
@@ -136,6 +132,7 @@ class ContinueWatchingScreenTest {
                     state = ContinueWatchingState(
                         isGridMode = false,
                         isRefreshing = false,
+                        labels = ContinueWatchingLabels(upToDate = "All caught up"),
                         watchNextItems = persistentListOf(),
                     ),
                     onAction = {},

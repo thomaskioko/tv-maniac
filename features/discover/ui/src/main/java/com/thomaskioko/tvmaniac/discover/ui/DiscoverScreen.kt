@@ -65,6 +65,7 @@ import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.SearchIconClicked
 import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
+import com.thomaskioko.tvmaniac.discover.presenter.StartWatchingMoreClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
 import com.thomaskioko.tvmaniac.discover.presenter.TrendingClicked
 import com.thomaskioko.tvmaniac.discover.presenter.UpComingClicked
@@ -118,7 +119,7 @@ public fun DiscoverScreen(
     TvManiacSnackBarHost(
         message = discoverState.message?.message,
         style = SnackBarStyle.Error,
-        onDismiss = { discoverState.message?.let { MessageShown(it.id) } },
+        onDismiss = { discoverState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 
@@ -283,6 +284,17 @@ private fun LazyColumnContent(
                 onEpisodeClick = { episode ->
                     onAction(DiscoverEpisodeLongPressed(showTraktId = episode.showTraktId, episodeId = episode.episodeId))
                 },
+            )
+        }
+
+        item(key = DiscoverTestTags.ROW_KEY_START_WATCHING) {
+            HorizontalRowContent(
+                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_START_WATCHING),
+                category = dataLoadedState.startWatchingTitle,
+                rowKey = DiscoverTestTags.ROW_KEY_START_WATCHING,
+                tvShows = dataLoadedState.startWatchingShows,
+                onItemClicked = { onAction(ShowClicked(it)) },
+                onMoreClicked = { onAction(StartWatchingMoreClicked) },
             )
         }
 
