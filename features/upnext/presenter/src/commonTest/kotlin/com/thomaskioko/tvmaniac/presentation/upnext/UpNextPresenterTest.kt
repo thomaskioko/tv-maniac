@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.presentation.upnext
 
 import app.cash.turbine.test
+import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
@@ -21,8 +23,13 @@ import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
+import com.thomaskioko.tvmaniac.navigation.BaseRoute
+import com.thomaskioko.tvmaniac.navigation.MultiStackHostState
+import com.thomaskioko.tvmaniac.navigation.NavRoot
 import com.thomaskioko.tvmaniac.navigation.NavRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -44,6 +51,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlin.reflect.KClass
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -486,35 +494,7 @@ internal class UpNextPresenterTest {
 
         return UpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = object : Navigator {
-                override val activeRoot: com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.NavRoot> =
-                    com.arkivanov.decompose.value.MutableValue(com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot)
-                override fun bringToFront(route: NavRoute) {}
-                override fun navigateTo(route: NavRoute) {
-                    if (route is SeasonDetailsRoute) {
-                        navigateToSeasonDetails(route.param.showTraktId, route.param.seasonId, route.param.seasonNumber)
-                    }
-                }
-                override fun pushToFront(route: NavRoute) {}
-                override fun navigateBack() {}
-                override fun navigateBackTo(routeClass: kotlin.reflect.KClass<out NavRoute>, inclusive: Boolean) {}
-                override fun popTo(toIndex: Int) {}
-                override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun <T : Any> buildHostNavigation(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.MultiStackHostState<T>> =
-                    error("Not used in this test")
-                override fun <T : Any> buildOverlaySlot(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
-                    error("Not used in this test")
-                override fun dismissOverlay() {}
-            },
+            navigator = FakeNavigator(),
             observeUpNextInteractor = observeUpNextInteractor,
             syncContinueWatchingInteractor = syncContinueWatchingInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
