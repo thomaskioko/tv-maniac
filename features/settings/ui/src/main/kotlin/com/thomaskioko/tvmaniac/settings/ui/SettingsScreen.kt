@@ -53,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -78,8 +79,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_group_account
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_group_general
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto_description
@@ -98,11 +97,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_tmdb_bod
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_tmdb_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_trakt_body
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_privacy_policy
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_appearance
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_behavior
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_licenses
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_notifications
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_privacy
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
@@ -113,15 +107,11 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_api_disclaimer
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_app_name
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_github
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_section_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_source_code
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_version
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_selector_title
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_disconnect_trakt
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_info
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_trakt
 import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_trakt_app
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_settings
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
@@ -197,7 +187,7 @@ internal fun SettingsScreen(
                 },
                 title = {
                     Text(
-                        text = pageTitle(state.currentPage, context),
+                        text = state.currentPageTitle,
                         style = MaterialTheme.typography.titleLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                         ),
@@ -248,18 +238,6 @@ internal fun SettingsScreen(
 }
 
 @Composable
-private fun pageTitle(page: SettingsPage, context: Context): String = when (page) {
-    SettingsPage.ROOT -> title_settings.resolve(context)
-    SettingsPage.APPEARANCE -> label_settings_section_appearance.resolve(context)
-    SettingsPage.BEHAVIOR -> label_settings_section_behavior.resolve(context)
-    SettingsPage.NOTIFICATIONS -> label_settings_section_notifications.resolve(context)
-    SettingsPage.PRIVACY -> label_settings_section_privacy.resolve(context)
-    SettingsPage.INFO -> settings_title_info.resolve(context)
-    SettingsPage.LICENSES -> label_settings_section_licenses.resolve(context)
-    SettingsPage.TRAKT -> settings_title_trakt.resolve(context)
-}
-
-@Composable
 private fun SettingsRootContent(
     state: SettingsState,
     onAction: (SettingsActions) -> Unit,
@@ -270,80 +248,28 @@ private fun SettingsRootContent(
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        if (state.isAuthenticated) {
-            item { SettingsSectionLabel(text = label_settings_group_account.resolve(context)) }
+        state.rootGroups.forEach { group ->
+            item { SettingsSectionLabel(text = group.label) }
 
             item {
                 SettingsGroup {
-                    SettingsNavigationRow(
-                        modifier = Modifier.testTag(SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG),
-                        icon = Icons.Filled.Person,
-                        title = settings_title_trakt.resolve(context),
-                        onClick = { onAction(OpenSettingsPage(SettingsPage.TRAKT)) },
-                    )
+                    group.items.forEachIndexed { index, categoryItem ->
+                        SettingsNavigationRow(
+                            modifier = Modifier.testTag(rootRowTestTag(categoryItem.page)),
+                            icon = rootRowIcon(categoryItem.page),
+                            title = categoryItem.title,
+                            description = categoryItem.description,
+                            onClick = { onAction(OpenSettingsPage(categoryItem.page)) },
+                        )
+                        if (index != group.items.lastIndex) {
+                            SettingsGroupDivider()
+                        }
+                    }
                 }
             }
 
             item { Spacer(modifier = Modifier.height(20.dp)) }
         }
-
-        item { SettingsSectionLabel(text = label_settings_group_general.resolve(context)) }
-
-        item {
-            SettingsGroup {
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG),
-                    icon = Icons.Filled.Palette,
-                    title = label_settings_section_appearance.resolve(context),
-                    onClick = { onAction(OpenSettingsPage(SettingsPage.APPEARANCE)) },
-                )
-                SettingsGroupDivider()
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.GENERAL_BEHAVIOR_ROW_TEST_TAG),
-                    icon = Icons.Filled.Tune,
-                    title = label_settings_section_behavior.resolve(context),
-                    onClick = { onAction(OpenSettingsPage(SettingsPage.BEHAVIOR)) },
-                )
-                SettingsGroupDivider()
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.GENERAL_NOTIFICATIONS_ROW_TEST_TAG),
-                    icon = Icons.Filled.Notifications,
-                    title = label_settings_section_notifications.resolve(context),
-                    onClick = { onAction(OpenSettingsPage(SettingsPage.NOTIFICATIONS)) },
-                )
-                SettingsGroupDivider()
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG),
-                    icon = Icons.Filled.Security,
-                    title = label_settings_section_privacy.resolve(context),
-                    onClick = { onAction(OpenSettingsPage(SettingsPage.PRIVACY)) },
-                )
-            }
-        }
-
-        item { Spacer(modifier = Modifier.height(20.dp)) }
-
-        item { SettingsSectionLabel(text = settings_about_section_title.resolve(context)) }
-
-        item {
-            SettingsGroup {
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG),
-                    icon = Icons.Filled.Info,
-                    title = settings_title_info.resolve(context),
-                    onClick = { onAction(OpenSettingsPage(SettingsPage.INFO)) },
-                )
-                SettingsGroupDivider()
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG),
-                    icon = Icons.Filled.Description,
-                    title = label_settings_section_licenses.resolve(context),
-                    onClick = { onAction(OpenSettingsPage(SettingsPage.LICENSES)) },
-                )
-            }
-        }
-
-        item { Spacer(modifier = Modifier.height(24.dp)) }
 
         item {
             Text(
@@ -359,6 +285,28 @@ private fun SettingsRootContent(
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
     }
+}
+
+private fun rootRowTestTag(page: SettingsPage): String = when (page) {
+    SettingsPage.APPEARANCE -> SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG
+    SettingsPage.BEHAVIOR -> SettingsTestTags.GENERAL_BEHAVIOR_ROW_TEST_TAG
+    SettingsPage.NOTIFICATIONS -> SettingsTestTags.GENERAL_NOTIFICATIONS_ROW_TEST_TAG
+    SettingsPage.PRIVACY -> SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG
+    SettingsPage.INFO -> SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG
+    SettingsPage.LICENSES -> SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG
+    SettingsPage.TRAKT -> SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG
+    SettingsPage.ROOT -> ""
+}
+
+private fun rootRowIcon(page: SettingsPage): ImageVector = when (page) {
+    SettingsPage.APPEARANCE -> Icons.Filled.Palette
+    SettingsPage.BEHAVIOR -> Icons.Filled.Tune
+    SettingsPage.NOTIFICATIONS -> Icons.Filled.Notifications
+    SettingsPage.PRIVACY -> Icons.Filled.Security
+    SettingsPage.INFO -> Icons.Filled.Info
+    SettingsPage.LICENSES -> Icons.Filled.Description
+    SettingsPage.TRAKT -> Icons.Filled.Person
+    SettingsPage.ROOT -> Icons.Filled.Info
 }
 
 @Composable

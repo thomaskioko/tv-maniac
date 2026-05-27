@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
@@ -52,6 +53,7 @@ class SettingsPresenterTest {
     private val fakeActivitySyncRepository = FakeActivitySyncRepository()
     private val fakeRequestManagerRepository = FakeRequestManagerRepository()
     private val fakeLogger = FakeLogger()
+    private val localizer = FakeLocalizer()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -63,6 +65,7 @@ class SettingsPresenterTest {
             datastoreRepository = datastoreRepository,
             traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            localizer = localizer,
             logger = fakeLogger,
             logoutInteractor = LogoutInteractor(
                 traktAuthRepository = traktAuthRepository,

@@ -16,6 +16,8 @@ import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
@@ -23,6 +25,9 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +49,7 @@ public class SettingsPresenter(
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
+    private val localizer: Localizer,
     private val logger: Logger,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     traktAuthRepository: TraktAuthRepository,
@@ -69,13 +75,14 @@ public class SettingsPresenter(
         traktAuthRepository.state,
         uiMessageManager.message,
     ) { currentState, isLoggingOut, isTogglingNotifications, preferences, authState, message ->
+        val isAuthenticated = authState == TraktAuthState.LOGGED_IN
         currentState.copy(
             isUpdating = isLoggingOut || isTogglingNotifications,
             imageQuality = preferences.imageQuality,
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
-            isAuthenticated = authState == TraktAuthState.LOGGED_IN,
+            isAuthenticated = isAuthenticated,
             backgroundSyncEnabled = preferences.backgroundSyncEnabled,
             lastSyncDate = preferences.lastSyncDate,
             showLastSyncDate = preferences.showLastSyncDate,
@@ -83,6 +90,8 @@ public class SettingsPresenter(
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
             message = message,
+            currentPageTitle = resolvePageTitle(currentState.currentPage),
+            rootGroups = buildRootGroups(isAuthenticated),
         )
     }.stateIn(
         scope = coroutineScope,
@@ -196,6 +205,81 @@ public class SettingsPresenter(
             )
         }
     }
+
+    private fun resolvePageTitle(page: SettingsPage): String = localizer.getString(
+        when (page) {
+            SettingsPage.ROOT -> StringResourceKey.TitleSettings
+            SettingsPage.APPEARANCE -> StringResourceKey.LabelSettingsSectionAppearance
+            SettingsPage.BEHAVIOR -> StringResourceKey.LabelSettingsSectionBehavior
+            SettingsPage.NOTIFICATIONS -> StringResourceKey.LabelSettingsSectionNotifications
+            SettingsPage.PRIVACY -> StringResourceKey.LabelSettingsSectionPrivacy
+            SettingsPage.INFO -> StringResourceKey.SettingsTitleInfo
+            SettingsPage.LICENSES -> StringResourceKey.LabelSettingsSectionLicenses
+            SettingsPage.TRAKT -> StringResourceKey.SettingsTitleTrakt
+        },
+    )
+
+    private fun buildRootGroups(isAuthenticated: Boolean): ImmutableList<SettingsCategoryGroup> =
+        buildList {
+            if (isAuthenticated) {
+                add(
+                    SettingsCategoryGroup(
+                        label = localizer.getString(StringResourceKey.LabelSettingsGroupAccount),
+                        items = persistentListOf(
+                            SettingsCategoryItem(
+                                page = SettingsPage.TRAKT,
+                                title = localizer.getString(StringResourceKey.SettingsTitleTrakt),
+                                description = localizer.getString(StringResourceKey.LabelSettingsTraktDescription),
+                            ),
+                        ),
+                    ),
+                )
+            }
+            add(
+                SettingsCategoryGroup(
+                    label = localizer.getString(StringResourceKey.LabelSettingsGroupGeneral),
+                    items = persistentListOf(
+                        SettingsCategoryItem(
+                            page = SettingsPage.APPEARANCE,
+                            title = localizer.getString(StringResourceKey.LabelSettingsSectionAppearance),
+                            description = localizer.getString(StringResourceKey.LabelSettingsAppearanceDescription),
+                        ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.BEHAVIOR,
+                            title = localizer.getString(StringResourceKey.LabelSettingsSectionBehavior),
+                            description = localizer.getString(StringResourceKey.LabelSettingsBehaviorDescription),
+                        ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.NOTIFICATIONS,
+                            title = localizer.getString(StringResourceKey.LabelSettingsSectionNotifications),
+                            description = localizer.getString(StringResourceKey.LabelSettingsNotificationsDescription),
+                        ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.PRIVACY,
+                            title = localizer.getString(StringResourceKey.LabelSettingsSectionPrivacy),
+                            description = localizer.getString(StringResourceKey.LabelSettingsPrivacyDescription),
+                        ),
+                    ),
+                ),
+            )
+            add(
+                SettingsCategoryGroup(
+                    label = localizer.getString(StringResourceKey.SettingsAboutSectionTitle),
+                    items = persistentListOf(
+                        SettingsCategoryItem(
+                            page = SettingsPage.INFO,
+                            title = localizer.getString(StringResourceKey.SettingsTitleInfo),
+                            description = localizer.getString(StringResourceKey.LabelSettingsInfoDescription),
+                        ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.LICENSES,
+                            title = localizer.getString(StringResourceKey.LabelSettingsSectionLicenses),
+                            description = localizer.getString(StringResourceKey.LabelSettingsLicensesDescription),
+                        ),
+                    ),
+                ),
+            )
+        }.toImmutableList()
 
     private companion object {
         const val HIDDEN_TAP_THRESHOLD = 6

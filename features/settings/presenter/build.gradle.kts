@@ -10,12 +10,6 @@ scaffold {
 
 kotlin {
     sourceSets {
-        androidMain {
-            dependencies {
-                api(projects.i18n.generator)
-            }
-        }
-
         commonMain {
             dependencies {
                 api(projects.core.base)
@@ -30,12 +24,15 @@ kotlin {
                 api(projects.domain.theme)
                 api(projects.core.appconfig.api)
                 api(projects.features.settings.nav)
+                api(projects.i18n.api)
                 api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
 
                 implementation(projects.features.debug.nav)
+                implementation(projects.i18n.generator)
             }
         }
 
@@ -51,6 +48,7 @@ kotlin {
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.user.api)
                 implementation(projects.data.user.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
         }

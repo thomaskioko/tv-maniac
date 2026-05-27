@@ -2,12 +2,16 @@ package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 public data class SettingsState(
     val isAuthenticated: Boolean,
     val theme: ThemeModel,
     val imageQuality: ImageQuality,
     val currentPage: SettingsPage = SettingsPage.ROOT,
+    val currentPageTitle: String = "",
+    val rootGroups: ImmutableList<SettingsCategoryGroup> = persistentListOf(),
     val showTraktDialog: Boolean,
     val showthemePopup: Boolean,
     val showAboutDialog: Boolean,
