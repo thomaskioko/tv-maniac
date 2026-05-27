@@ -63,6 +63,7 @@ class SettingsPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             appMetadata = FakeAppMetadata.DEFAULT,
             datastoreRepository = datastoreRepository,
+            userRepository = userRepository,
             traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,

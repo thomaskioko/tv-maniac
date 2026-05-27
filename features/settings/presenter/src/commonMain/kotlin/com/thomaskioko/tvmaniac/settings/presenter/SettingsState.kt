@@ -12,6 +12,8 @@ public data class SettingsState(
     val currentPage: SettingsPage = SettingsPage.ROOT,
     val currentPageTitle: String = "",
     val rootGroups: ImmutableList<SettingsCategoryGroup> = persistentListOf(),
+    val labels: SettingsLabels = SettingsLabels(),
+    val username: String? = null,
     val showTraktDialog: Boolean,
     val showthemePopup: Boolean,
     val showAboutDialog: Boolean,
