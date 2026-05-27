@@ -12,6 +12,10 @@ public data object ChangeThemeClicked : SettingsActions
 
 public data object BackClicked : SettingsActions
 
+public data class OpenSettingsPage(
+    val page: SettingsPage,
+) : SettingsActions
+
 public data object DismissThemeClicked : SettingsActions
 
 public data object ShowTraktDialog : SettingsActions

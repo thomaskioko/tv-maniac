@@ -98,7 +98,8 @@ public class SettingsPresenter(
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
             ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
             VersionClicked -> handleVersionTap()
-            BackClicked -> navigator.navigateBack()
+            BackClicked -> handleBackClicked()
+            is OpenSettingsPage -> _state.update { state -> state.copy(currentPage = action.page) }
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
@@ -156,6 +157,14 @@ public class SettingsPresenter(
                     uiMessageManager.clearMessage(action.id)
                 }
             }
+        }
+    }
+
+    private fun handleBackClicked() {
+        if (_state.value.currentPage != SettingsPage.ROOT) {
+            _state.update { state -> state.copy(currentPage = SettingsPage.ROOT) }
+        } else {
+            navigator.navigateBack()
         }
     }
 

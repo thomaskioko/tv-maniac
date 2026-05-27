@@ -7,6 +7,7 @@ public data class SettingsState(
     val isAuthenticated: Boolean,
     val theme: ThemeModel,
     val imageQuality: ImageQuality,
+    val currentPage: SettingsPage = SettingsPage.ROOT,
     val showTraktDialog: Boolean,
     val showthemePopup: Boolean,
     val showAboutDialog: Boolean,
