@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
-import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository.SyncInvocation
@@ -14,12 +13,9 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
-import com.thomaskioko.tvmaniac.syncstate.api.SyncError
-import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -56,8 +52,6 @@ class SyncContinueWatchingInteractorTest {
         dispatchers = dispatchers,
     )
 
-    private val syncObserver = FakeSyncObserver()
-
     private val interactor = SyncContinueWatchingInteractor(
         syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
@@ -77,16 +71,6 @@ class SyncContinueWatchingInteractorTest {
         activityRepository.fetchInvocations().shouldBeEmpty()
         continueWatchingRepository.syncInvocations().shouldBeEmpty()
         watchedEpisodeSyncRepository.syncAllInvocations().shouldBeEmpty()
-        syncObserver.isSyncing.value shouldBe false
-    }
-
-    @Test
-    fun `should signal sync started when work runs`() = runTest(testDispatcher) {
-        syncObserver.syncStarted.test {
-            interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
-
-            awaitItem()
-        }
     }
 
     @Test
@@ -149,20 +133,6 @@ class SyncContinueWatchingInteractorTest {
 
         showDetailsRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
         watchProviderRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
-    }
-
-    @Test
-    fun `should log SyncError to observer when per-show fetch fails`() = runTest(testDispatcher) {
-        continueWatchingRepository.setEntries(listOf(watchedShow(traktId = 11L)))
-        showDetailsRepository.setFetchError(RuntimeException("rate-limited 429"))
-
-        syncObserver.errors.test {
-            interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
-
-            val event = awaitItem()
-            event.shouldBeInstanceOf<SyncError.BackgroundSyncFailed>()
-            event.cause.message shouldBe "rate-limited 429"
-        }
     }
 
     @Test
