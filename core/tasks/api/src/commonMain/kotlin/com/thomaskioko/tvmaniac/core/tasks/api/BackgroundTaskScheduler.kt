@@ -17,6 +17,13 @@ public interface BackgroundTaskScheduler {
     public fun schedulePeriodic(request: PeriodicTaskRequest)
 
     /**
+     * Registers a periodic task **and** runs it immediately. Use this for
+     * user-initiated actions (e.g., toggling notifications on) where the user
+     * expects an immediate result in addition to future periodic execution.
+     */
+    public fun scheduleAndExecute(request: PeriodicTaskRequest)
+
+    /**
      * Cancels a previously scheduled task by its unique [id].
      *
      * @param id The worker name / task identifier used when scheduling.

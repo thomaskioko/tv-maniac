@@ -119,7 +119,7 @@ public fun DiscoverScreen(
     TvManiacSnackBarHost(
         message = discoverState.message?.message,
         style = SnackBarStyle.Error,
-        onDismiss = { discoverState.message?.let { MessageShown(it.id) } },
+        onDismiss = { discoverState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 

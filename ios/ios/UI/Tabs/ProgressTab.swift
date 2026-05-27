@@ -19,7 +19,7 @@ struct ProgressTab: View {
 
     var body: some View {
         ProgressScreen(
-            state: progressState.toState(isLoading: upNextState.isLoading || calendarState.isLoading),
+            state: progressState.toState(),
             onPageChanged: { page in
                 presenter.dispatch(action: ProgressActionSelectPage(index: Int32(page)))
             },
@@ -70,7 +70,7 @@ struct ProgressTab: View {
 }
 
 private extension ProgressState {
-    func toState<U: View, C: View>(isLoading: Bool) -> ProgressScreen<U, C>.State {
+    func toState<U: View, C: View>() -> ProgressScreen<U, C>.State {
         ProgressScreen<U, C>.State(
             title: String(\.menu_item_progress),
             isLoading: isLoading,

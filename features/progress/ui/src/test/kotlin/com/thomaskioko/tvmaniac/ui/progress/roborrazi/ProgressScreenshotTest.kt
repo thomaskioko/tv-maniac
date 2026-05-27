@@ -86,7 +86,7 @@ class ProgressScreenshotTest {
         composeTestRule.captureMultiDevice("ProgressScreenLoading") {
             TvManiacBackground {
                 ProgressScreen(
-                    progressState = ProgressState(selectedPage = 0),
+                    progressState = ProgressState(selectedPage = 0, isLoading = true),
                     upNextState = UpNextState(
                         isLoading = true,
                         episodes = previewUpNextEpisodes(),

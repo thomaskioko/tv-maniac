@@ -107,6 +107,7 @@
     <string name="cd_next_week">Semaine suivante</string>
     <string name="cd_expand_collapse">Agrandir ou réduire</string>
     <string name="cd_connectivity_icon">Icône de connectivité</string>
+    <string name="cd_dismiss">Fermer</string>
 
     <string name="details_episodes">Épisodes</string>
     <string name="details_cast">Distribution</string>
@@ -162,6 +163,7 @@
     <string name="title_all_episodes">Tous les épisodes</string>
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_watching">En cours de visionnage</string>
     <string name="title_not_watched_for_while">Pas regardé depuis longtemps</string>
     <string name="title_continue_tracking">Continuer à Suivre</string>
     <string name="badge_premiere">PREMIÈRE</string>

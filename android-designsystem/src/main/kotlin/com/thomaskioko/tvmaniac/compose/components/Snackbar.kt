@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,22 +17,19 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -49,11 +47,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_dismiss
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -83,7 +83,6 @@ public enum class SnackBarStyle(
     ),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun TvManiacSnackBarHost(
     message: String?,
@@ -132,67 +131,51 @@ public fun TvManiacSnackBarHost(
                 targetOffsetY = { -it },
             ),
         ) {
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { value ->
-                    if (value != SwipeToDismissBoxValue.Settled) {
-                        dismiss()
-                        true
-                    } else {
-                        false
-                    }
-                },
-            )
             val coroutineScope = rememberCoroutineScope()
             val density = LocalDensity.current
             var offsetY by remember { mutableStateOf(0f) }
 
             LaunchedEffect(message) {
                 if (message != null) {
-                    dismissState.reset()
                     offsetY = 0f
                 }
             }
 
-            SwipeToDismissBox(
-                state = dismissState,
-                backgroundContent = {},
-                content = {
-                    TvManiacSnackBar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp)
-                            .offset { IntOffset(0, offsetY.roundToInt()) }
-                            .pointerInput(alignment) {
-                                detectVerticalDragGestures(
-                                    onVerticalDrag = { _, dragAmount ->
-                                        val isTop = alignment == Alignment.TopCenter ||
-                                            alignment == Alignment.TopStart ||
-                                            alignment == Alignment.TopEnd
+            TvManiacSnackBar(
+                onDismiss = ::dismiss,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .offset { IntOffset(0, offsetY.roundToInt()) }
+                    .pointerInput(alignment) {
+                        detectVerticalDragGestures(
+                            onVerticalDrag = { _, dragAmount ->
+                                val isTop = alignment == Alignment.TopCenter ||
+                                    alignment == Alignment.TopStart ||
+                                    alignment == Alignment.TopEnd
 
-                                        if (isTop) {
-                                            offsetY = (offsetY + dragAmount).coerceAtMost(0f)
-                                        } else {
-                                            offsetY = (offsetY + dragAmount).coerceAtLeast(0f)
-                                        }
-                                    },
-                                    onDragEnd = {
-                                        if (abs(offsetY) > with(density) { 40.dp.toPx() }) {
-                                            dismiss()
-                                        } else {
-                                            coroutineScope.launch {
-                                                Animatable(offsetY).animateTo(0f) {
-                                                    offsetY = value
-                                                }
-                                            }
-                                        }
-                                    },
-                                )
+                                offsetY = if (isTop) {
+                                    (offsetY + dragAmount).coerceAtMost(0f)
+                                } else {
+                                    (offsetY + dragAmount).coerceAtLeast(0f)
+                                }
                             },
-                        message = message.orEmpty(),
-                        style = style,
-                        loading = loading,
-                    )
-                },
+                            onDragEnd = {
+                                if (abs(offsetY) > with(density) { 40.dp.toPx() }) {
+                                    dismiss()
+                                } else {
+                                    coroutineScope.launch {
+                                        Animatable(offsetY).animateTo(0f) {
+                                            offsetY = value
+                                        }
+                                    }
+                                }
+                            },
+                        )
+                    },
+                message = message.orEmpty(),
+                style = style,
+                loading = loading,
             )
         }
     }
@@ -204,6 +187,7 @@ internal fun TvManiacSnackBar(
     modifier: Modifier = Modifier,
     style: SnackBarStyle = SnackBarStyle.Error,
     loading: Boolean = false,
+    onDismiss: () -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -225,8 +209,11 @@ internal fun TvManiacSnackBar(
         } else {
             Icon(
                 imageVector = style.icon,
-                contentDescription = null,
+                contentDescription = stringResource(cd_dismiss.resourceId),
                 tint = Color.White,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(onClick = onDismiss),
             )
         }
 
