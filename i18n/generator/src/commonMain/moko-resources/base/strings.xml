@@ -130,6 +130,7 @@
     <string name="cd_next_week">Next week</string>
     <string name="cd_expand_collapse">Expand or collapse</string>
     <string name="cd_connectivity_icon">Connectivity icon</string>
+    <string name="cd_dismiss">Dismiss</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
