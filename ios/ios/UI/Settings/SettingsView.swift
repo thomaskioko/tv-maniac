@@ -27,7 +27,7 @@ struct SettingsView: View {
     private var screenState: SettingsScreen<DeviceAppTheme>.State {
         SettingsScreen<DeviceAppTheme>.State(
             rootTitle: String(\.label_settings_title),
-            versionFooter: String(\.settings_about_version, parameter: uiState.versionName),
+            versionFooter: uiState.labels.version,
             currentPage: uiState.currentPage.toRoute(),
             rootSections: rootSections,
             themeItem: themeItem,
@@ -38,7 +38,7 @@ struct SettingsView: View {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            traktItems: traktItems
+            traktContent: traktContent
         )
     }
 
@@ -110,8 +110,8 @@ struct SettingsView: View {
     private var themeItem: SettingsThemeItem<DeviceAppTheme> {
         SettingsThemeItem(
             icon: "paintpalette",
-            title: String(\.settings_theme_selector_title),
-            subtitle: String(\.settings_theme_selector_subtitle),
+            title: uiState.labels.themeTitle,
+            subtitle: uiState.labels.themeSubtitle,
             themes: DeviceAppTheme.sortedThemes,
             selectedTheme: store.appTheme,
             onThemeSelected: { selectedTheme in
@@ -128,8 +128,8 @@ struct SettingsView: View {
         let currentQuality = uiState.imageQuality.toSwift()
         return SettingsImageQualityItem(
             icon: "photo",
-            title: String(\.label_settings_image_quality),
-            subtitle: imageQualityDescription(for: currentQuality),
+            title: uiState.labels.imageQualityTitle,
+            subtitle: uiState.labels.imageQualityDescription,
             options: SwiftImageQuality.allCases.map { quality in
                 SettingsImageQualityOption(
                     id: quality.rawValue,
@@ -150,16 +150,12 @@ struct SettingsView: View {
     private var behaviorToggles: [SettingsToggleItem] {
         var toggles: [SettingsToggleItem] = []
 
-        var syncSubtitle: String?
-        if uiState.showLastSyncDate, let lastSyncDate = uiState.lastSyncDate {
-            syncSubtitle = String(\.label_settings_last_sync_date, parameter: lastSyncDate)
-        }
         toggles.append(SettingsToggleItem(
             id: "sync",
             icon: "arrow.triangle.2.circlepath",
-            title: String(\.label_settings_sync_update),
-            subtitle: String(\.label_settings_sync_update_description),
-            secondarySubtitle: syncSubtitle,
+            title: uiState.labels.syncTitle,
+            subtitle: uiState.labels.syncDescription,
+            secondarySubtitle: uiState.labels.lastSync,
             isOn: uiState.backgroundSyncEnabled,
             onToggle: { presenter.dispatch(action: BackgroundSyncToggled(enabled: $0)) }
         ))
@@ -167,8 +163,8 @@ struct SettingsView: View {
         toggles.append(SettingsToggleItem(
             id: "specials",
             icon: "film.stack",
-            title: String(\.label_settings_include_specials),
-            subtitle: String(\.label_settings_include_specials_description),
+            title: uiState.labels.includeSpecialsTitle,
+            subtitle: uiState.labels.includeSpecialsDescription,
             isOn: uiState.includeSpecials,
             onToggle: { presenter.dispatch(action: IncludeSpecialsToggled(enabled: $0)) }
         ))
@@ -176,8 +172,8 @@ struct SettingsView: View {
         toggles.append(SettingsToggleItem(
             id: "youtube",
             icon: "tv",
-            title: String(\.label_settings_youtube),
-            subtitle: String(\.label_settings_youtube_description),
+            title: uiState.labels.youtubeTitle,
+            subtitle: uiState.labels.youtubeDescription,
             isOn: uiState.openTrailersInYoutube,
             onToggle: { presenter.dispatch(action: YoutubeToggled(enabled: $0)) }
         ))
@@ -192,8 +188,8 @@ struct SettingsView: View {
             SettingsToggleItem(
                 id: "notifications",
                 icon: "bell.fill",
-                title: String(\.label_settings_episode_notifications),
-                subtitle: String(\.label_settings_episode_notifications_description),
+                title: uiState.labels.episodeNotificationsTitle,
+                subtitle: uiState.labels.episodeNotificationsDescription,
                 isOn: uiState.episodeNotificationsEnabled,
                 onToggle: { handleNotificationToggle(enabled: $0) }
             ),
@@ -207,8 +203,8 @@ struct SettingsView: View {
             SettingsToggleItem(
                 id: "crash-reporting",
                 icon: "ladybug",
-                title: String(\.label_settings_crash_reporting),
-                subtitle: String(\.label_settings_crash_reporting_description),
+                title: uiState.labels.crashReportingTitle,
+                subtitle: uiState.labels.crashReportingDescription,
                 isOn: uiState.crashReportingEnabled,
                 onToggle: { presenter.dispatch(action: CrashReportingToggled(enabled: $0)) }
             ),
@@ -220,7 +216,7 @@ struct SettingsView: View {
             SettingsNavigationItem(
                 id: "privacy-policy",
                 icon: "hand.raised",
-                title: String(\.label_settings_privacy_policy),
+                title: uiState.labels.privacyPolicy,
                 onTap: { showPolicy = true }
             ),
         ]
@@ -231,12 +227,12 @@ struct SettingsView: View {
     private var infoContent: SettingsInfoContent {
         SettingsInfoContent(
             icon: TvManiacAppIcon.image(isDebug: appDelegate.isDebug),
-            appName: "TvManiac",
-            versionText: String(\.settings_about_version, parameter: uiState.versionName),
-            description: String(\.settings_about_description),
-            sourceCodeLabel: String(\.settings_about_source_code),
-            sourceCodeValue: String(\.settings_about_github),
-            apiDisclaimer: String(\.settings_about_api_disclaimer),
+            appName: uiState.labels.appName,
+            versionText: uiState.labels.version,
+            description: uiState.labels.aboutDescription,
+            sourceCodeLabel: uiState.labels.sourceCode,
+            sourceCodeValue: uiState.labels.github,
+            apiDisclaimer: uiState.labels.apiDisclaimer,
             onVersionTap: { presenter.dispatch(action: VersionClicked()) },
             onSourceCodeTap: {
                 if let url = URL(string: uiState.githubUrl) {
@@ -252,12 +248,12 @@ struct SettingsView: View {
         [
             SettingsLicenseSection(
                 id: "app",
-                label: String(\.label_settings_licenses_section_app),
+                label: uiState.labels.licensesApp,
                 items: [
                     SettingsLinkItem(
                         id: "tvmaniac",
-                        title: "TvManiac",
-                        body: String(\.settings_about_description),
+                        title: uiState.labels.appName,
+                        body: uiState.labels.aboutDescription,
                         link: uiState.githubUrl,
                         onOpen: {
                             if let url = URL(string: uiState.githubUrl) { openURL(url) }
@@ -267,12 +263,13 @@ struct SettingsView: View {
             ),
             SettingsLicenseSection(
                 id: "data",
-                label: String(\.label_settings_licenses_section_data),
+                label: uiState.labels.licensesData,
                 items: [
                     SettingsLinkItem(
                         id: "tmdb",
-                        title: String(\.label_settings_licenses_tmdb_title),
-                        body: String(\.label_settings_licenses_tmdb_body),
+                        leadingAsset: "TmdbLogo",
+                        title: uiState.labels.tmdbTitle,
+                        body: uiState.labels.tmdbBody,
                         link: tmdbURL,
                         onOpen: {
                             if let url = URL(string: tmdbURL) { openURL(url) }
@@ -280,8 +277,9 @@ struct SettingsView: View {
                     ),
                     SettingsLinkItem(
                         id: "trakt",
-                        title: String(\.settings_title_trakt_app),
-                        body: String(\.label_settings_licenses_trakt_body),
+                        leadingAsset: "TraktLogo",
+                        title: uiState.labels.traktTitle,
+                        body: uiState.labels.traktBody,
                         link: traktURL,
                         onOpen: {
                             if let url = URL(string: traktURL) { openURL(url) }
@@ -292,19 +290,18 @@ struct SettingsView: View {
         ]
     }
 
-    // MARK: - Trakt Items
+    // MARK: - Trakt
 
-    private var traktItems: [SettingsNavigationItem] {
-        guard uiState.isAuthenticated else { return [] }
-        return [
-            SettingsNavigationItem(
-                id: "logout",
-                icon: "person.fill",
-                title: String(\.logout),
-                subtitle: String(\.trakt_description),
-                onTap: { showingLogoutAlert = true }
-            ),
-        ]
+    private var traktContent: SettingsTraktContent {
+        SettingsTraktContent(
+            title: uiState.labels.traktTitle,
+            description: uiState.labels.traktDescription,
+            authenticationLabel: uiState.labels.traktAuthentication,
+            connectedTitle: uiState.labels.traktConnected,
+            connectedDescription: uiState.labels.traktConnectedDescription,
+            logoutLabel: uiState.labels.logout,
+            onLogout: { showingLogoutAlert = true }
+        )
     }
 
     // MARK: - Notification Handling
@@ -332,26 +329,13 @@ struct SettingsView: View {
     private func imageQualityTitle(for quality: SwiftImageQuality) -> String {
         switch quality {
         case .auto:
-            String(\.label_settings_image_quality_auto)
+            uiState.labels.imageQualityAuto
         case .high:
-            String(\.label_settings_image_quality_high)
+            uiState.labels.imageQualityHigh
         case .medium:
-            String(\.label_settings_image_quality_medium)
+            uiState.labels.imageQualityMedium
         case .low:
-            String(\.label_settings_image_quality_low)
-        }
-    }
-
-    private func imageQualityDescription(for quality: SwiftImageQuality) -> String {
-        switch quality {
-        case .auto:
-            String(\.label_settings_image_quality_auto_description)
-        case .high:
-            String(\.label_settings_image_quality_high_description)
-        case .medium:
-            String(\.label_settings_image_quality_medium_description)
-        case .low:
-            String(\.label_settings_image_quality_low_description)
+            uiState.labels.imageQualityLow
         }
     }
 }

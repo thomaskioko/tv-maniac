@@ -40,6 +40,8 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -54,10 +56,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -74,45 +76,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_last_sync_date
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_section_app
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_section_data
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_tmdb_body
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_tmdb_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_licenses_trakt_body
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_privacy_policy
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_api_disclaimer
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_app_name
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_github
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_source_code
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_version
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_selector_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_disconnect_trakt
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_trakt_app
-import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -164,8 +129,6 @@ internal fun SettingsScreen(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     BackHandler(enabled = state.currentPage != SettingsPage.ROOT) {
         onAction(BackClicked)
     }
@@ -181,7 +144,7 @@ internal fun SettingsScreen(
                             .clickable(onClick = { onAction(BackClicked) })
                             .padding(16.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_back.resolve(context),
+                        contentDescription = state.labels.back,
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },
@@ -243,8 +206,6 @@ private fun SettingsRootContent(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
@@ -273,7 +234,7 @@ private fun SettingsRootContent(
 
         item {
             Text(
-                text = settings_about_version.resolve(context).format(state.versionName),
+                text = state.labels.version,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -315,12 +276,10 @@ private fun AppearancePage(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        item { SettingsSectionLabel(text = settings_theme_selector_title.resolve(context)) }
+        item { SettingsSectionLabel(text = state.labels.themeTitle) }
 
         item {
             SettingsGroup {
@@ -334,39 +293,39 @@ private fun AppearancePage(
 
         item { Spacer(modifier = Modifier.height(20.dp)) }
 
-        item { SettingsSectionLabel(text = label_settings_image_quality.resolve(context)) }
+        item { SettingsSectionLabel(text = state.labels.imageQualityTitle) }
 
         item {
             SettingsGroup {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         ImageQualityChip(
-                            label = label_settings_image_quality_auto.resolve(context),
+                            label = state.labels.imageQualityAuto,
                             quality = ImageQuality.AUTO,
                             isSelected = state.imageQuality == ImageQuality.AUTO,
                             onClick = { onAction(ImageQualitySelected(ImageQuality.AUTO)) },
                         )
                         ImageQualityChip(
-                            label = label_settings_image_quality_high.resolve(context),
+                            label = state.labels.imageQualityHigh,
                             quality = ImageQuality.HIGH,
                             isSelected = state.imageQuality == ImageQuality.HIGH,
                             onClick = { onAction(ImageQualitySelected(ImageQuality.HIGH)) },
                         )
                         ImageQualityChip(
-                            label = label_settings_image_quality_medium.resolve(context),
+                            label = state.labels.imageQualityMedium,
                             quality = ImageQuality.MEDIUM,
                             isSelected = state.imageQuality == ImageQuality.MEDIUM,
                             onClick = { onAction(ImageQualitySelected(ImageQuality.MEDIUM)) },
                         )
                         ImageQualityChip(
-                            label = label_settings_image_quality_low.resolve(context),
+                            label = state.labels.imageQualityLow,
                             quality = ImageQuality.LOW,
                             isSelected = state.imageQuality == ImageQuality.LOW,
                             onClick = { onAction(ImageQualitySelected(ImageQuality.LOW)) },
                         )
                     }
                     Text(
-                        text = getQualityDescriptionString(state.imageQuality, context),
+                        text = state.labels.imageQualityDescription,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 8.dp),
@@ -385,13 +344,11 @@ private fun BehaviorPage(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     val syncDescription = buildString {
-        append(label_settings_sync_update_description.resolve(context))
-        if (state.showLastSyncDate && state.lastSyncDate != null) {
+        append(state.labels.syncDescription)
+        state.labels.lastSync?.let {
             append("\n")
-            append(stringResource(label_settings_last_sync_date.resourceId, state.lastSyncDate ?: ""))
+            append(it)
         }
     }
 
@@ -402,7 +359,7 @@ private fun BehaviorPage(
             SettingsGroup {
                 SettingsSwitchRow(
                     icon = Icons.Filled.Sync,
-                    title = label_settings_sync_update.resolve(context),
+                    title = state.labels.syncTitle,
                     description = syncDescription,
                     checked = state.backgroundSyncEnabled,
                     onCheckedChange = { onAction(BackgroundSyncToggled(it)) },
@@ -410,16 +367,16 @@ private fun BehaviorPage(
                 SettingsGroupDivider()
                 SettingsSwitchRow(
                     icon = Icons.Filled.VideoLibrary,
-                    title = label_settings_include_specials.resolve(context),
-                    description = label_settings_include_specials_description.resolve(context),
+                    title = state.labels.includeSpecialsTitle,
+                    description = state.labels.includeSpecialsDescription,
                     checked = state.includeSpecials,
                     onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
                 )
                 SettingsGroupDivider()
                 SettingsSwitchRow(
                     icon = Icons.Filled.Tv,
-                    title = label_settings_youtube.resolve(context),
-                    description = label_settings_youtube_description.resolve(context),
+                    title = state.labels.youtubeTitle,
+                    description = state.labels.youtubeDescription,
                     checked = state.openTrailersInYoutube,
                     onCheckedChange = { onAction(YoutubeToggled(it)) },
                 )
@@ -436,8 +393,6 @@ private fun NotificationsPage(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
@@ -446,8 +401,8 @@ private fun NotificationsPage(
                 SettingsSwitchRow(
                     modifier = Modifier.testTag(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG),
                     icon = Icons.Filled.Notifications,
-                    title = label_settings_episode_notifications.resolve(context),
-                    description = label_settings_episode_notifications_description.resolve(context),
+                    title = state.labels.episodeNotificationsTitle,
+                    description = state.labels.episodeNotificationsDescription,
                     checked = state.episodeNotificationsEnabled,
                     onCheckedChange = { onAction(EpisodeNotificationsToggled(it)) },
                 )
@@ -473,15 +428,15 @@ private fun PrivacyPage(
             SettingsGroup {
                 SettingsSwitchRow(
                     icon = Icons.Filled.BugReport,
-                    title = label_settings_crash_reporting.resolve(context),
-                    description = label_settings_crash_reporting_description.resolve(context),
+                    title = state.labels.crashReportingTitle,
+                    description = state.labels.crashReportingDescription,
                     checked = state.crashReportingEnabled,
                     onCheckedChange = { onAction(CrashReportingToggled(it)) },
                 )
                 SettingsGroupDivider()
                 SettingsNavigationRow(
                     icon = Icons.Filled.Security,
-                    title = label_settings_privacy_policy.resolve(context),
+                    title = state.labels.privacyPolicy,
                     onClick = { openInCustomTab(context, state.privacyPolicyUrl) },
                 )
             }
@@ -518,7 +473,7 @@ private fun InfoPage(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "TvManiac",
+            text = state.labels.appName,
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -527,7 +482,7 @@ private fun InfoPage(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = settings_about_version.resolve(context).format(state.versionName),
+            text = state.labels.version,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.clickable(onClick = { onAction(VersionClicked) }),
@@ -536,7 +491,7 @@ private fun InfoPage(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = settings_about_description.resolve(context),
+            text = state.labels.aboutDescription,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -550,8 +505,8 @@ private fun InfoPage(
         SettingsGroup {
             SettingsNavigationRow(
                 icon = Icons.Filled.Code,
-                title = settings_about_source_code.resolve(context),
-                description = settings_about_github.resolve(context),
+                title = state.labels.sourceCode,
+                description = state.labels.github,
                 onClick = { openInCustomTab(context, state.githubUrl) },
             )
         }
@@ -559,7 +514,7 @@ private fun InfoPage(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = settings_about_api_disclaimer.resolve(context),
+            text = state.labels.apiDisclaimer,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -580,13 +535,13 @@ private fun LicensesPage(
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        item { SettingsSectionLabel(text = label_settings_licenses_section_app.resolve(context)) }
+        item { SettingsSectionLabel(text = state.labels.licensesApp) }
 
         item {
             SettingsGroup {
                 SettingsLinkRow(
-                    title = settings_about_app_name.resolve(context),
-                    body = settings_about_description.resolve(context),
+                    title = state.labels.appName,
+                    body = state.labels.aboutDescription,
                     link = state.githubUrl,
                     onClick = { openInCustomTab(context, state.githubUrl) },
                 )
@@ -595,22 +550,22 @@ private fun LicensesPage(
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        item { SettingsSectionLabel(text = label_settings_licenses_section_data.resolve(context)) }
+        item { SettingsSectionLabel(text = state.labels.licensesData) }
 
         item {
             SettingsGroup {
                 SettingsLinkRow(
                     leadingIcon = painterResource(id = R.drawable.tmdb_logo),
-                    title = label_settings_licenses_tmdb_title.resolve(context),
-                    body = label_settings_licenses_tmdb_body.resolve(context),
+                    title = state.labels.tmdbTitle,
+                    body = state.labels.tmdbBody,
                     link = TMDB_URL,
                     onClick = { openInCustomTab(context, TMDB_URL) },
                 )
                 SettingsGroupDivider()
                 SettingsLinkRow(
                     leadingIcon = painterResource(id = R.drawable.trakt_logo),
-                    title = settings_title_trakt_app.resolve(context),
-                    body = label_settings_licenses_trakt_body.resolve(context),
+                    title = state.labels.traktTitle,
+                    body = state.labels.traktBody,
                     link = TRAKT_URL,
                     onClick = { openInCustomTab(context, TRAKT_URL) },
                 )
@@ -627,22 +582,79 @@ private fun TraktPage(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
             SettingsGroup {
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
-                    icon = Icons.Filled.Person,
-                    title = stringResource(settings_title_disconnect_trakt.resourceId, ""),
-                    description = trakt_description.resolve(context),
-                    onClick = { onAction(ShowTraktDialog) },
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.trakt_logo),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        contentScale = ContentScale.Fit,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = state.labels.traktTitle,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            text = state.labels.traktDescription,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
             }
         }
+
+        item { Spacer(modifier = Modifier.height(20.dp)) }
+
+        item { SettingsSectionLabel(text = state.labels.traktAuthentication) }
+
+        item {
+            SettingsGroup {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        text = state.labels.traktConnected,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium,
+                    )
+                    Text(
+                        text = state.labels.traktConnectedDescription,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Button(
+                        modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
+                        onClick = { onAction(ShowTraktDialog) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                        ),
+                    ) {
+                        Text(text = state.labels.logout)
+                    }
+                }
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 
     LogoutDialog(
@@ -716,15 +728,6 @@ private fun LogoutDialog(
 private fun openInCustomTab(context: Context, url: String) {
     val customTabsIntent = CustomTabsIntent.Builder().build()
     customTabsIntent.launchUrl(context, url.toUri())
-}
-
-private fun getQualityDescriptionString(quality: ImageQuality, context: Context): String {
-    return when (quality) {
-        ImageQuality.AUTO -> label_settings_image_quality_auto_description.resolve(context)
-        ImageQuality.HIGH -> label_settings_image_quality_high_description.resolve(context)
-        ImageQuality.MEDIUM -> label_settings_image_quality_medium_description.resolve(context)
-        ImageQuality.LOW -> label_settings_image_quality_low_description.resolve(context)
-    }
 }
 
 private const val SETTINGS_PAGE_ANIMATION_MILLIS = 300

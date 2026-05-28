@@ -155,6 +155,7 @@ public struct SettingsRootSection: Identifiable {
 public struct SettingsLinkItem: Identifiable {
     public let id: String
     public let leadingSystemImage: String?
+    public let leadingAsset: String?
     public let title: String
     public let body: String
     public let link: String
@@ -163,6 +164,7 @@ public struct SettingsLinkItem: Identifiable {
     public init(
         id: String,
         leadingSystemImage: String? = nil,
+        leadingAsset: String? = nil,
         title: String,
         body: String,
         link: String,
@@ -170,6 +172,7 @@ public struct SettingsLinkItem: Identifiable {
     ) {
         self.id = id
         self.leadingSystemImage = leadingSystemImage
+        self.leadingAsset = leadingAsset
         self.title = title
         self.body = body
         self.link = link

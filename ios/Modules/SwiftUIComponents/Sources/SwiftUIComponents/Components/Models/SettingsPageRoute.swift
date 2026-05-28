@@ -13,7 +13,9 @@ public enum SettingsPageRoute: String, Hashable, Identifiable, CaseIterable {
     case licenses
     case trakt
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 
     /// SF Symbol used for this page's row icon.
     public var iconName: String {

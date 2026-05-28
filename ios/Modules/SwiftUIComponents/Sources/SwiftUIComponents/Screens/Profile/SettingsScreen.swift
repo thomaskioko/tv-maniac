@@ -47,6 +47,34 @@ public struct SettingsLicenseSection: Identifiable {
     }
 }
 
+public struct SettingsTraktContent {
+    public let title: String
+    public let description: String
+    public let authenticationLabel: String
+    public let connectedTitle: String
+    public let connectedDescription: String
+    public let logoutLabel: String
+    public let onLogout: () -> Void
+
+    public init(
+        title: String,
+        description: String,
+        authenticationLabel: String,
+        connectedTitle: String,
+        connectedDescription: String,
+        logoutLabel: String,
+        onLogout: @escaping () -> Void
+    ) {
+        self.title = title
+        self.description = description
+        self.authenticationLabel = authenticationLabel
+        self.connectedTitle = connectedTitle
+        self.connectedDescription = connectedDescription
+        self.logoutLabel = logoutLabel
+        self.onLogout = onLogout
+    }
+}
+
 public struct SettingsScreen<Theme: ThemeItem>: View {
     public struct State {
         public let rootTitle: String
@@ -61,7 +89,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let privacyLinks: [SettingsNavigationItem]
         public let infoContent: SettingsInfoContent
         public let licenseSections: [SettingsLicenseSection]
-        public let traktItems: [SettingsNavigationItem]
+        public let traktContent: SettingsTraktContent
 
         public init(
             rootTitle: String,
@@ -76,7 +104,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             privacyLinks: [SettingsNavigationItem],
             infoContent: SettingsInfoContent,
             licenseSections: [SettingsLicenseSection],
-            traktItems: [SettingsNavigationItem] = []
+            traktContent: SettingsTraktContent
         ) {
             self.rootTitle = rootTitle
             self.versionFooter = versionFooter
@@ -90,7 +118,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             self.privacyLinks = privacyLinks
             self.infoContent = infoContent
             self.licenseSections = licenseSections
-            self.traktItems = traktItems
+            self.traktContent = traktContent
         }
     }
 
@@ -107,40 +135,10 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         self.onBack = onBack
     }
 
-    private var navigationPath: Binding<[SettingsPageRoute]> {
-        Binding(
-            get: { state.currentPage == .root ? [] : [state.currentPage] },
-            set: { newPath in
-                if newPath.isEmpty {
-                    onBack()
-                }
-            }
-        )
-    }
-
     public var body: some View {
-        NavigationStack(path: navigationPath) {
-            settingsPage(title: state.rootTitle, showsExitSwipe: true) {
-                rootContent
-            }
-            .navigationDestination(for: SettingsPageRoute.self) { route in
-                settingsPage(title: title(for: route), showsExitSwipe: false) {
-                    subPageContent(for: route)
-                }
-            }
-        }
-    }
-
-    // MARK: - Page chrome
-
-    private func settingsPage(
-        title: String,
-        showsExitSwipe: Bool,
-        @ViewBuilder content: () -> some View
-    ) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                content()
+                pageBody(for: state.currentPage)
                 Spacer().frame(height: appTheme.spacing.xLarge)
             }
             .padding(.horizontal, appTheme.spacing.medium)
@@ -151,10 +149,10 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
-        .modifier(ExitSwipeModifier(enabled: showsExitSwipe, onBack: onBack))
+        .swipeBackGesture(onSwipe: onBack)
         .overlay(
             GlassToolbar(
-                title: title,
+                title: toolbarTitle(state.currentPage),
                 opacity: 1.0,
                 leadingIcon: {
                     GlassButton(icon: "chevron.left", action: onBack)
@@ -163,6 +161,10 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             alignment: .top
         )
         .edgesIgnoringSafeArea(.top)
+    }
+
+    private func toolbarTitle(_ page: SettingsPageRoute) -> String {
+        page == .root ? state.rootTitle : title(for: page)
     }
 
     // MARK: - Root
@@ -194,16 +196,16 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     // MARK: - Sub pages
 
     @ViewBuilder
-    private func subPageContent(for route: SettingsPageRoute) -> some View {
-        switch route {
+    private func pageBody(for page: SettingsPageRoute) -> some View {
+        switch page {
+        case .root: rootContent
         case .appearance: appearancePage
         case .behavior: togglesPage(state.behaviorToggles)
         case .notifications: togglesPage(state.notificationToggles)
         case .privacy: privacyPage
         case .info: infoPage
         case .licenses: licensesPage
-        case .trakt: togglesPage([], navigationItems: state.traktItems)
-        case .root: EmptyView()
+        case .trakt: traktPage
         }
     }
 
@@ -244,21 +246,61 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         }
     }
 
-    private func togglesPage(
-        _ toggles: [SettingsToggleItem],
-        navigationItems: [SettingsNavigationItem] = []
-    ) -> some View {
+    private func togglesPage(_ toggles: [SettingsToggleItem]) -> some View {
         settingsCard {
             ForEach(Array(toggles.enumerated()), id: \.element.id) { index, toggle in
                 toggleRow(toggle)
-                if index != toggles.count - 1 || !navigationItems.isEmpty {
+                if index != toggles.count - 1 {
                     rowDivider
                 }
             }
-            ForEach(Array(navigationItems.enumerated()), id: \.element.id) { index, item in
-                navigationRow(item)
-                if index != navigationItems.count - 1 {
-                    rowDivider
+        }
+    }
+
+    private var traktPage: some View {
+        let trakt = state.traktContent
+        return VStack(alignment: .leading, spacing: appTheme.spacing.large) {
+            settingsCard {
+                HStack(spacing: appTheme.spacing.medium) {
+                    Image("TraktLogo", bundle: .module)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 48, height: 48)
+                    VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                        Text(trakt.title)
+                            .textStyle(appTheme.typography.titleMedium)
+                            .foregroundColor(appTheme.colors.onSurface)
+                        Text(trakt.description)
+                            .textStyle(appTheme.typography.bodyMedium)
+                            .foregroundColor(appTheme.colors.onSurfaceVariant)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(appTheme.spacing.medium)
+            }
+
+            VStack(alignment: .leading, spacing: appTheme.spacing.small) {
+                sectionLabel(trakt.authenticationLabel)
+                settingsCard {
+                    VStack(alignment: .leading, spacing: appTheme.spacing.small) {
+                        Text(trakt.connectedTitle)
+                            .textStyle(appTheme.typography.bodyLarge)
+                            .foregroundColor(appTheme.colors.onSurface)
+                        Text(trakt.connectedDescription)
+                            .textStyle(appTheme.typography.bodyMedium)
+                            .foregroundColor(appTheme.colors.onSurfaceVariant)
+                        Button(action: trakt.onLogout) {
+                            Text(trakt.logoutLabel)
+                                .textStyle(appTheme.typography.labelLarge)
+                                .foregroundColor(appTheme.colors.onSecondary)
+                                .padding(.horizontal, appTheme.spacing.large)
+                                .padding(.vertical, appTheme.spacing.small)
+                                .background(appTheme.colors.secondary)
+                                .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(appTheme.spacing.medium)
                 }
             }
         }
@@ -404,7 +446,12 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     private func linkRow(_ item: SettingsLinkItem) -> some View {
         Button(action: item.onOpen) {
             HStack(alignment: .top, spacing: appTheme.spacing.medium) {
-                if let leading = item.leadingSystemImage {
+                if let asset = item.leadingAsset {
+                    Image(asset, bundle: .module)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
+                } else if let leading = item.leadingSystemImage {
                     Image(systemName: leading)
                         .foregroundColor(appTheme.colors.secondary)
                         .frame(width: appTheme.spacing.large, height: appTheme.spacing.large)
@@ -486,19 +533,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     private var toolbarInset: CGFloat {
         let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
             .windows.first?.safeAreaInsets.top ?? 0
-        return 44 + safeAreaTop
-    }
-}
-
-private struct ExitSwipeModifier: ViewModifier {
-    let enabled: Bool
-    let onBack: () -> Void
-
-    func body(content: Content) -> some View {
-        if enabled {
-            content.swipeBackGesture(onSwipe: onBack)
-        } else {
-            content
-        }
+        // GlassToolbar is `56 + safeAreaTop` tall; clear it with a small gap so the
+        // first card is not tucked under the toolbar.
+        return 56 + safeAreaTop + appTheme.spacing.small
     }
 }
