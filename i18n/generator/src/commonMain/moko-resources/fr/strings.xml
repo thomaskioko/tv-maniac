@@ -243,9 +243,7 @@
     <string name="settings_about_source_code">Code source</string>
     <string name="settings_about_website">Site web</string>
     <string name="settings_about_section_title">À propos</string>
-    <string name="trakt_description">Trakt est une plateforme qui fait beaucoup de choses, mais qui suit principalement
-        les émissions de télévision et les films que vous regardez.
-    </string>
+    <string name="trakt_description">Synchronisez votre watchlist, votre progression, vos lectures en cours et vos listes personnelles avec Trakt.</string>
     <string name="settings_trakt_detail_description">Vous allez être redirigé vers votre navigateur et en dehors de
         l'application TvManiac, où vous serez dirigé vers le site Web de Trakt. De là, vous devrez autoriser TvManiac à
         accéder à votre compte Trakt afin d'utiliser les fonctionnalités de Trakt dans l'application. Après avoir
