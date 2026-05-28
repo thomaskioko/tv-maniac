@@ -27,13 +27,13 @@ kotlin {
                 api(projects.features.settings.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
+                api(projects.i18n.generator)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
                 implementation(projects.features.debug.nav)
-                implementation(projects.i18n.generator)
             }
         }
 
