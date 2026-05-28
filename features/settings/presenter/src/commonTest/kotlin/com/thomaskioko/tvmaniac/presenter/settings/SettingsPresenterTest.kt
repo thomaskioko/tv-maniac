@@ -15,8 +15,6 @@ import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
-import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
-import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
@@ -25,7 +23,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
@@ -107,29 +104,9 @@ class SettingsPresenterTest {
             initialState.versionName shouldBe "0.0.0"
             initialState.theme shouldBe ThemeModel.SYSTEM
 
-            datastoreRepository.setTheme(ThemeModel.DARK.toAppTheme())
-
-            presenter.dispatch(ChangeThemeClicked)
-            awaitItem().showthemePopup shouldBe true
-
             presenter.dispatch(ThemeSelected(ThemeModel.DARK))
 
-            val updatedState = awaitItem()
-            updatedState.showthemePopup shouldBe false
-            updatedState.theme shouldBe ThemeModel.DARK
-        }
-    }
-
-    @Test
-    fun `should hide theme dialog when dismissed`() = runTest {
-        presenter.state.test {
-            awaitItem()
-
-            presenter.dispatch(ChangeThemeClicked)
-            awaitItem().showthemePopup shouldBe true
-
-            presenter.dispatch(DismissThemeClicked)
-            awaitItem().showthemePopup shouldBe false
+            awaitItem().theme shouldBe ThemeModel.DARK
         }
     }
 

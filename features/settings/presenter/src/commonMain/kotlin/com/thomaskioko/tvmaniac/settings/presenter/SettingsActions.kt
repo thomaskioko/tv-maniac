@@ -8,15 +8,11 @@ public data class ThemeSelected(
     val theme: ThemeModel,
 ) : SettingsActions
 
-public data object ChangeThemeClicked : SettingsActions
-
 public data object BackClicked : SettingsActions
 
 public data class OpenSettingsPage(
     val page: SettingsPage,
 ) : SettingsActions
-
-public data object DismissThemeClicked : SettingsActions
 
 public data object ShowTraktDialog : SettingsActions
 
@@ -31,10 +27,6 @@ public data class ImageQualitySelected(
 public data class YoutubeToggled(
     val enabled: Boolean,
 ) : SettingsActions
-
-public data object ShowAboutDialog : SettingsActions
-
-public data object DismissAboutDialog : SettingsActions
 
 public data object VersionClicked : SettingsActions
 

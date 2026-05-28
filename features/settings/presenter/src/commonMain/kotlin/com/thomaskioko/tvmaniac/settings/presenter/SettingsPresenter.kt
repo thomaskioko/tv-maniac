@@ -117,9 +117,7 @@ public class SettingsPresenter(
 
     public fun dispatch(action: SettingsActions) {
         when (action) {
-            ChangeThemeClicked, DismissThemeClicked -> updateThemeDialogState()
             DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
-            ShowAboutDialog, DismissAboutDialog -> updateAboutDialogState()
             VersionClicked -> handleVersionTap()
             BackClicked -> handleBackClicked()
             is OpenSettingsPage -> _state.update { state -> state.copy(currentPage = action.page) }
@@ -133,7 +131,6 @@ public class SettingsPresenter(
 
             is ThemeSelected -> {
                 datastoreRepository.saveTheme(action.theme.toTheme().toAppTheme())
-                updateThemeDialogState()
             }
 
             is ImageQualitySelected -> {
@@ -191,10 +188,6 @@ public class SettingsPresenter(
         }
     }
 
-    private fun updateThemeDialogState() {
-        _state.update { state -> state.copy(showthemePopup = !state.showthemePopup) }
-    }
-
     private fun updateTrackDialogState() {
         _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
     }
@@ -208,15 +201,6 @@ public class SettingsPresenter(
             } else {
                 state.copy(hiddenTapCount = newCount)
             }
-        }
-    }
-
-    private fun updateAboutDialogState() {
-        _state.update { state ->
-            state.copy(
-                showAboutDialog = !state.showAboutDialog,
-                hiddenTapCount = 0,
-            )
         }
     }
 
