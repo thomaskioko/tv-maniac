@@ -1,11 +1,17 @@
 package com.thomaskioko.tvmaniac.settings.ui
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,112 +22,79 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VideoLibrary
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.thomaskioko.tvmaniac.android.feature.settings.R
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
-import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_crash_reporting_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_episode_notifications_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_auto_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_high_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_low_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_image_quality_medium_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_include_specials_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_last_sync_date
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_privacy_policy
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_appearance
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_behavior
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_section_privacy
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_sync_update_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_youtube_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_about_section_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_selector_subtitle
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_theme_selector_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_about
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_disconnect_trakt
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_info
-import com.thomaskioko.tvmaniac.i18n.MR.strings.settings_title_trakt
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_settings
-import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_description
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackgroundSyncToggled
 import com.thomaskioko.tvmaniac.settings.presenter.CrashReportingToggled
-import com.thomaskioko.tvmaniac.settings.presenter.DismissAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
+import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsMessageShown
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
-import com.thomaskioko.tvmaniac.settings.presenter.ShowAboutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
-import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
@@ -150,14 +123,15 @@ public fun SettingsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SettingsScreen(
     state: SettingsState,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
+    BackHandler(enabled = state.currentPage != SettingsPage.ROOT) {
+        onAction(BackClicked)
+    }
 
     Scaffold(
         modifier = modifier.testTag(SettingsTestTags.SCREEN_TEST_TAG),
@@ -170,13 +144,13 @@ internal fun SettingsScreen(
                             .clickable(onClick = { onAction(BackClicked) })
                             .padding(16.dp),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = cd_back.resolve(context),
+                        contentDescription = state.labels.back,
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
                 },
                 title = {
                     Text(
-                        text = title_settings.resolve(context),
+                        text = state.currentPageTitle,
                         style = MaterialTheme.typography.titleLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface,
                         ),
@@ -195,41 +169,254 @@ internal fun SettingsScreen(
             )
         },
         content = { innerPadding ->
-            SettingsContent(
-                state = state,
-                onAction = onAction,
-                onNotificationToggle = { enabled ->
-                    onAction(EpisodeNotificationsToggled(enabled))
+            AnimatedContent(
+                targetState = state.currentPage,
+                transitionSpec = {
+                    if (targetState != SettingsPage.ROOT) {
+                        (slideInHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { it } + fadeIn()) togetherWith
+                            (slideOutHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { -it / 4 } + fadeOut())
+                    } else {
+                        (slideInHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { -it / 4 } + fadeIn()) togetherWith
+                            (slideOutHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { it } + fadeOut())
+                    }
                 },
+                label = "settings_page",
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-            )
+            ) { page ->
+                when (page) {
+                    SettingsPage.ROOT -> SettingsRootContent(state = state, onAction = onAction)
+                    SettingsPage.APPEARANCE -> AppearancePage(state = state, onAction = onAction)
+                    SettingsPage.BEHAVIOR -> BehaviorPage(state = state, onAction = onAction)
+                    SettingsPage.NOTIFICATIONS -> NotificationsPage(state = state, onAction = onAction)
+                    SettingsPage.PRIVACY -> PrivacyPage(state = state, onAction = onAction)
+                    SettingsPage.INFO -> InfoPage(state = state, onAction = onAction)
+                    SettingsPage.LICENSES -> LicensesPage(state = state)
+                    SettingsPage.TRAKT -> TraktPage(state = state, onAction = onAction)
+                }
+            }
         },
     )
+}
 
-    if (state.showAboutDialog) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+@Composable
+private fun SettingsRootContent(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        ModalBottomSheet(
-            onDismissRequest = { onAction(DismissAboutDialog) },
-            sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
-        ) {
-            AboutSheetContent(
-                versionName = state.versionName,
-                onGitHubClick = { openInCustomTab(context, state.githubUrl) },
-                onVersionClick = { onAction(VersionClicked) },
+        state.rootGroups.forEach { group ->
+            item { SettingsSectionLabel(text = group.label) }
+
+            item {
+                SettingsGroup {
+                    group.items.forEachIndexed { index, categoryItem ->
+                        SettingsNavigationRow(
+                            modifier = Modifier.testTag(rootRowTestTag(categoryItem.page)),
+                            icon = rootRowIcon(categoryItem.page),
+                            title = categoryItem.title,
+                            description = categoryItem.summary,
+                            onClick = { onAction(OpenSettingsPage(categoryItem.page)) },
+                        )
+                        if (index != group.items.lastIndex) {
+                            SettingsGroupDivider()
+                        }
+                    }
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(20.dp)) }
+        }
+
+        item {
+            Text(
+                text = state.labels.version,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             )
         }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+    }
+}
+
+private fun rootRowTestTag(page: SettingsPage): String = when (page) {
+    SettingsPage.APPEARANCE -> SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG
+    SettingsPage.BEHAVIOR -> SettingsTestTags.GENERAL_BEHAVIOR_ROW_TEST_TAG
+    SettingsPage.NOTIFICATIONS -> SettingsTestTags.GENERAL_NOTIFICATIONS_ROW_TEST_TAG
+    SettingsPage.PRIVACY -> SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG
+    SettingsPage.INFO -> SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG
+    SettingsPage.LICENSES -> SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG
+    SettingsPage.TRAKT -> SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG
+    SettingsPage.ROOT -> ""
+}
+
+private fun rootRowIcon(page: SettingsPage): ImageVector = when (page) {
+    SettingsPage.APPEARANCE -> Icons.Filled.Palette
+    SettingsPage.BEHAVIOR -> Icons.Filled.Tune
+    SettingsPage.NOTIFICATIONS -> Icons.Filled.Notifications
+    SettingsPage.PRIVACY -> Icons.Filled.Security
+    SettingsPage.INFO -> Icons.Filled.Info
+    SettingsPage.LICENSES -> Icons.Filled.Description
+    SettingsPage.TRAKT -> Icons.Filled.Person
+    SettingsPage.ROOT -> Icons.Filled.Info
+}
+
+@Composable
+private fun AppearancePage(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item { SettingsSectionLabel(text = state.labels.themeTitle) }
+
+        item {
+            SettingsGroup {
+                ThemeSelectorSection(
+                    selectedTheme = state.theme,
+                    onThemeSelected = { onAction(ThemeSelected(it)) },
+                    modifier = Modifier.padding(vertical = 12.dp),
+                )
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(20.dp)) }
+
+        item { SettingsSectionLabel(text = state.labels.imageQualityTitle) }
+
+        item {
+            SettingsGroup {
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ImageQualityChip(
+                            label = state.labels.imageQualityAuto,
+                            quality = ImageQuality.AUTO,
+                            isSelected = state.imageQuality == ImageQuality.AUTO,
+                            onClick = { onAction(ImageQualitySelected(ImageQuality.AUTO)) },
+                        )
+                        ImageQualityChip(
+                            label = state.labels.imageQualityHigh,
+                            quality = ImageQuality.HIGH,
+                            isSelected = state.imageQuality == ImageQuality.HIGH,
+                            onClick = { onAction(ImageQualitySelected(ImageQuality.HIGH)) },
+                        )
+                        ImageQualityChip(
+                            label = state.labels.imageQualityMedium,
+                            quality = ImageQuality.MEDIUM,
+                            isSelected = state.imageQuality == ImageQuality.MEDIUM,
+                            onClick = { onAction(ImageQualitySelected(ImageQuality.MEDIUM)) },
+                        )
+                        ImageQualityChip(
+                            label = state.labels.imageQualityLow,
+                            quality = ImageQuality.LOW,
+                            isSelected = state.imageQuality == ImageQuality.LOW,
+                            onClick = { onAction(ImageQualitySelected(ImageQuality.LOW)) },
+                        )
+                    }
+                    Text(
+                        text = state.labels.imageQualityDescription,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
 
 @Composable
-private fun SettingsContent(
+private fun BehaviorPage(
     state: SettingsState,
     onAction: (SettingsActions) -> Unit,
-    onNotificationToggle: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val syncDescription = buildString {
+        append(state.labels.syncDescription)
+        state.labels.lastSync?.let {
+            append("\n")
+            append(it)
+        }
+    }
+
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            SettingsGroup {
+                SettingsSwitchRow(
+                    icon = Icons.Filled.Sync,
+                    title = state.labels.syncTitle,
+                    description = syncDescription,
+                    checked = state.backgroundSyncEnabled,
+                    onCheckedChange = { onAction(BackgroundSyncToggled(it)) },
+                )
+                SettingsGroupDivider()
+                SettingsSwitchRow(
+                    icon = Icons.Filled.VideoLibrary,
+                    title = state.labels.includeSpecialsTitle,
+                    description = state.labels.includeSpecialsDescription,
+                    checked = state.includeSpecials,
+                    onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
+                )
+                SettingsGroupDivider()
+                SettingsSwitchRow(
+                    icon = Icons.Filled.Tv,
+                    title = state.labels.youtubeTitle,
+                    description = state.labels.youtubeDescription,
+                    checked = state.openTrailersInYoutube,
+                    onCheckedChange = { onAction(YoutubeToggled(it)) },
+                )
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+    }
+}
+
+@Composable
+private fun NotificationsPage(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            SettingsGroup {
+                SettingsSwitchRow(
+                    modifier = Modifier.testTag(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG),
+                    icon = Icons.Filled.Notifications,
+                    title = state.labels.episodeNotificationsTitle,
+                    description = state.labels.episodeNotificationsDescription,
+                    checked = state.episodeNotificationsEnabled,
+                    onCheckedChange = { onAction(EpisodeNotificationsToggled(it)) },
+                )
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+    }
+}
+
+@Composable
+private fun PrivacyPage(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -238,302 +425,243 @@ private fun SettingsContent(
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            SectionHeader(title = label_settings_section_appearance.resolve(context))
-        }
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        item {
-            ThemeTitleSection(
-                selectedTheme = state.theme,
-                onThemeSelected = { onAction(ThemeSelected(it)) },
-            )
-        }
-
-        item { Spacer(modifier = Modifier.height(24.dp)) }
-
-        item {
-            ImageQualitySection(
-                imageQuality = state.imageQuality,
-                onQualitySelected = { onAction(ImageQualitySelected(it)) },
-            )
-        }
-
-        item { Spacer(modifier = Modifier.height(24.dp)) }
-
-        item {
-            SectionHeader(title = label_settings_section_behavior.resolve(context))
-        }
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        item {
-            SettingsToggleItem(
-                icon = Icons.Filled.Notifications,
-                title = label_settings_episode_notifications.resolve(context),
-                subtitle = label_settings_episode_notifications_description.resolve(context),
-                checked = state.episodeNotificationsEnabled,
-                onCheckedChange = onNotificationToggle,
-                modifier = Modifier.testTag(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG),
-            )
-        }
-
-        item {
-            SyncSettingsItem(
-                title = label_settings_sync_update.resolve(context),
-                subtitle = label_settings_sync_update_description.resolve(context),
-                checked = state.backgroundSyncEnabled,
-                lastSyncDate = if (state.showLastSyncDate) {
-                    stringResource(label_settings_last_sync_date.resourceId, state.lastSyncDate ?: "")
-                } else {
-                    null
-                },
-                onCheckedChange = { onAction(BackgroundSyncToggled(it)) },
-            )
-        }
-
-        item {
-            SettingsToggleItem(
-                icon = Icons.Filled.VideoLibrary,
-                title = label_settings_include_specials.resolve(context),
-                subtitle = label_settings_include_specials_description.resolve(context),
-                checked = state.includeSpecials,
-                onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
-            )
-        }
-
-        item {
-            SettingsToggleItem(
-                icon = Icons.Filled.Tv,
-                title = label_settings_youtube.resolve(context),
-                subtitle = label_settings_youtube_description.resolve(context),
-                checked = state.openTrailersInYoutube,
-                onCheckedChange = { onAction(YoutubeToggled(it)) },
-            )
-        }
-
-        item { Spacer(modifier = Modifier.height(24.dp)) }
-
-        item {
-            SectionHeader(title = label_settings_section_privacy.resolve(context))
-        }
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        item {
-            SettingsToggleItem(
-                icon = Icons.Filled.BugReport,
-                title = label_settings_crash_reporting.resolve(context),
-                subtitle = label_settings_crash_reporting_description.resolve(context),
-                checked = state.crashReportingEnabled,
-                onCheckedChange = { onAction(CrashReportingToggled(it)) },
-            )
-        }
-
-        item { Spacer(modifier = Modifier.height(24.dp)) }
-
-        item {
-            SectionHeader(title = settings_title_info.resolve(context))
-        }
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        item {
-            SettingsClickableItem(
-                icon = Icons.Filled.Info,
-                title = settings_about_section_title.resolve(context),
-                subtitle = settings_title_about.resolve(context),
-                onClick = { onAction(ShowAboutDialog) },
-            )
-        }
-
-        item { Spacer(modifier = Modifier.height(8.dp)) }
-
-        item {
-            SettingsClickableItem(
-                icon = Icons.Filled.Security,
-                title = label_settings_privacy_policy.resolve(context),
-                onClick = { openInCustomTab(context, state.privacyPolicyUrl) },
-            )
-        }
-
-        if (state.isAuthenticated) {
-            item { Spacer(modifier = Modifier.height(24.dp)) }
-
-            item {
-                SectionHeader(title = settings_title_trakt.resolve(context))
-            }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-
-            item {
-                TraktAccountSection(
-                    showTraktDialog = state.showTraktDialog,
-                    onAction = onAction,
+            SettingsGroup {
+                SettingsSwitchRow(
+                    icon = Icons.Filled.BugReport,
+                    title = state.labels.crashReportingTitle,
+                    description = state.labels.crashReportingDescription,
+                    checked = state.crashReportingEnabled,
+                    onCheckedChange = { onAction(CrashReportingToggled(it)) },
+                )
+                SettingsGroupDivider()
+                SettingsNavigationRow(
+                    icon = Icons.Filled.Security,
+                    title = state.labels.privacyPolicy,
+                    onClick = { openInCustomTab(context, state.privacyPolicyUrl) },
                 )
             }
         }
 
-        item { Spacer(modifier = Modifier.height(32.dp)) }
+        item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
 
 @Composable
-private fun SectionHeader(
-    title: String,
-    modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
-    subtitle: String? = null,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (icon != null) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-        }
-        Column {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            if (subtitle != null) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ThemeTitleSection(
-    selectedTheme: ThemeModel,
-    onThemeSelected: (ThemeModel) -> Unit,
+private fun InfoPage(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Palette,
-                tint = MaterialTheme.colorScheme.secondary,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_app_launcher),
+            contentDescription = null,
+            modifier = Modifier
+                .size(72.dp)
+                .clip(RoundedCornerShape(16.dp)),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = state.labels.appName,
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = state.labels.version,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.clickable(onClick = { onAction(VersionClicked) }),
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = state.labels.aboutDescription,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        SettingsGroup {
+            SettingsNavigationRow(
+                icon = Icons.Filled.Code,
+                title = state.labels.sourceCode,
+                description = state.labels.github,
+                onClick = { openInCustomTab(context, state.githubUrl) },
             )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = settings_theme_selector_title.resolve(context),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = settings_theme_selector_subtitle.resolve(context),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        ThemeSelectorSection(
-            selectedTheme = selectedTheme,
-            onThemeSelected = onThemeSelected,
+        Text(
+            text = state.labels.apiDisclaimer,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 24.dp),
         )
     }
 }
 
 @Composable
-private fun ImageQualitySection(
-    imageQuality: ImageQuality,
-    onQualitySelected: (ImageQuality) -> Unit,
+private fun LicensesPage(
+    state: SettingsState,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Image,
-                tint = MaterialTheme.colorScheme.secondary,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
 
-            Spacer(modifier = Modifier.width(16.dp))
+        item { SettingsSectionLabel(text = state.labels.licensesApp) }
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = label_settings_image_quality.resolve(context),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = getQualityDescriptionString(imageQuality, context),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp),
+        item {
+            SettingsGroup {
+                SettingsLinkRow(
+                    title = state.labels.appName,
+                    body = state.labels.aboutDescription,
+                    link = state.githubUrl,
+                    onClick = { openInCustomTab(context, state.githubUrl) },
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.padding(start = 40.dp),
-        ) {
-            ImageQualityChip(
-                label = label_settings_image_quality_auto.resolve(context),
-                quality = ImageQuality.AUTO,
-                isSelected = imageQuality == ImageQuality.AUTO,
-                onClick = { onQualitySelected(ImageQuality.AUTO) },
-            )
-            ImageQualityChip(
-                label = label_settings_image_quality_high.resolve(context),
-                quality = ImageQuality.HIGH,
-                isSelected = imageQuality == ImageQuality.HIGH,
-                onClick = { onQualitySelected(ImageQuality.HIGH) },
-            )
-            ImageQualityChip(
-                label = label_settings_image_quality_medium.resolve(context),
-                quality = ImageQuality.MEDIUM,
-                isSelected = imageQuality == ImageQuality.MEDIUM,
-                onClick = { onQualitySelected(ImageQuality.MEDIUM) },
-            )
-            ImageQualityChip(
-                label = label_settings_image_quality_low.resolve(context),
-                quality = ImageQuality.LOW,
-                isSelected = imageQuality == ImageQuality.LOW,
-                onClick = { onQualitySelected(ImageQuality.LOW) },
-            )
+        item { SettingsSectionLabel(text = state.labels.licensesData) }
+
+        item {
+            SettingsGroup {
+                SettingsLinkRow(
+                    leadingIcon = painterResource(id = R.drawable.tmdb_logo),
+                    title = state.labels.tmdbTitle,
+                    body = state.labels.tmdbBody,
+                    link = TMDB_URL,
+                    onClick = { openInCustomTab(context, TMDB_URL) },
+                )
+                SettingsGroupDivider()
+                SettingsLinkRow(
+                    leadingIcon = painterResource(id = R.drawable.trakt_logo),
+                    title = state.labels.traktTitle,
+                    body = state.labels.traktBody,
+                    link = TRAKT_URL,
+                    onClick = { openInCustomTab(context, TRAKT_URL) },
+                )
+            }
         }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
     }
+}
+
+@Composable
+private fun TraktPage(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            SettingsGroup {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.trakt_logo),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        contentScale = ContentScale.Fit,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = state.labels.traktTitle,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            text = state.labels.traktDescription,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(20.dp)) }
+
+        item { SettingsSectionLabel(text = state.labels.traktAuthentication) }
+
+        item {
+            SettingsGroup {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        text = state.labels.traktConnected,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium,
+                    )
+                    Text(
+                        text = state.labels.traktConnectedDescription,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Button(
+                        modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
+                        onClick = { onAction(ShowTraktDialog) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                        ),
+                    ) {
+                        Text(text = state.labels.logout)
+                    }
+                }
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(24.dp)) }
+    }
+
+    LogoutDialog(
+        isVisible = state.showTraktDialog,
+        onLogoutClicked = { onAction(TraktLogoutClicked) },
+        onDismissDialog = { onAction(DismissTraktDialog) },
+    )
 }
 
 @Composable
@@ -572,221 +700,6 @@ private fun ImageQualityChip(
 }
 
 @Composable
-private fun SettingsToggleItem(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .toggleable(
-                value = checked,
-                onValueChange = onCheckedChange,
-                role = Role.Switch,
-            )
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = icon,
-            tint = MaterialTheme.colorScheme.secondary,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 4.dp),
-            )
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        TvManiacSwitch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-        )
-    }
-}
-
-@Composable
-private fun SyncSettingsItem(
-    title: String,
-    subtitle: String,
-    checked: Boolean,
-    lastSyncDate: String?,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onCheckedChange(!checked) }
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Sync,
-                tint = MaterialTheme.colorScheme.secondary,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
-
-                if (lastSyncDate != null) {
-                    Text(
-                        text = lastSyncDate,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            TvManiacSwitch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-            )
-        }
-    }
-}
-
-@Composable
-private fun SettingsClickableItem(
-    icon: ImageVector,
-    title: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    subtitle: String? = null,
-    isLoading: Boolean = false,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(enabled = !isLoading, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = icon,
-            tint = MaterialTheme.colorScheme.secondary,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            if (subtitle != null) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
-            }
-        }
-
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(20.dp),
-                strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.secondary,
-            )
-        } else {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-@Composable
-private fun TraktAccountSection(
-    showTraktDialog: Boolean,
-    onAction: (SettingsActions) -> Unit,
-) {
-    val context = LocalContext.current
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
-            .clickable { onAction(ShowTraktDialog) }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Person,
-            tint = MaterialTheme.colorScheme.secondary,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = stringResource(settings_title_disconnect_trakt.resourceId, ""),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = trakt_description.resolve(context),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-
-    LogoutDialog(
-        isVisible = showTraktDialog,
-        onLogoutClicked = { onAction(TraktLogoutClicked) },
-        onDismissDialog = { onAction(DismissTraktDialog) },
-    )
-}
-
-@Composable
 private fun LogoutDialog(
     isVisible: Boolean,
     onLogoutClicked: () -> Unit,
@@ -817,14 +730,9 @@ private fun openInCustomTab(context: Context, url: String) {
     customTabsIntent.launchUrl(context, url.toUri())
 }
 
-private fun getQualityDescriptionString(quality: ImageQuality, context: Context): String {
-    return when (quality) {
-        ImageQuality.AUTO -> label_settings_image_quality_auto_description.resolve(context)
-        ImageQuality.HIGH -> label_settings_image_quality_high_description.resolve(context)
-        ImageQuality.MEDIUM -> label_settings_image_quality_medium_description.resolve(context)
-        ImageQuality.LOW -> label_settings_image_quality_low_description.resolve(context)
-    }
-}
+private const val SETTINGS_PAGE_ANIMATION_MILLIS = 300
+private const val TMDB_URL = "https://www.themoviedb.org"
+private const val TRAKT_URL = "https://trakt.tv"
 
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)

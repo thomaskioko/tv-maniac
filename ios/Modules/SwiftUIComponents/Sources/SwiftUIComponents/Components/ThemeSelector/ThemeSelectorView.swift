@@ -18,27 +18,38 @@ public struct ThemeSelectorView<Theme: ThemeItem>: View {
         self.onThemeSelected = onThemeSelected
     }
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8),
-        GridItem(.flexible(), spacing: 8),
-    ]
+    private let columnsPerRow = 3
+
+    private var themeRows: [[Theme]] {
+        stride(from: 0, to: themes.count, by: columnsPerRow).map { start in
+            Array(themes[start ..< min(start + columnsPerRow, themes.count)])
+        }
+    }
 
     public var body: some View {
-        LazyVGrid(columns: columns, spacing: appTheme.spacing.small) {
-            ForEach(themes, id: \.id) { theme in
-                ThemePreviewSwatch(
-                    backgroundColor: theme.backgroundColor,
-                    accentColor: theme.accentColor,
-                    onAccentColor: theme.onAccentColor,
-                    displayName: theme.displayName,
-                    isSelected: theme.id == selectedTheme.id,
-                    isSystemTheme: theme.isSystemTheme,
-                    onSelect: { onThemeSelected(theme) }
-                )
+        VStack(spacing: appTheme.spacing.small) {
+            ForEach(Array(themeRows.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: appTheme.spacing.small) {
+                    ForEach(row, id: \.id) { theme in
+                        ThemePreviewSwatch(
+                            backgroundColor: theme.backgroundColor,
+                            accentColor: theme.accentColor,
+                            onAccentColor: theme.onAccentColor,
+                            displayName: theme.displayName,
+                            isSelected: theme.id == selectedTheme.id,
+                            isSystemTheme: theme.isSystemTheme,
+                            onSelect: { onThemeSelected(theme) }
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
+                    if row.count < columnsPerRow {
+                        ForEach(0 ..< (columnsPerRow - row.count), id: \.self) { _ in
+                            Color.clear.frame(maxWidth: .infinity)
+                        }
+                    }
+                }
             }
         }
-        .padding(.horizontal, appTheme.spacing.xSmall)
     }
 }
 

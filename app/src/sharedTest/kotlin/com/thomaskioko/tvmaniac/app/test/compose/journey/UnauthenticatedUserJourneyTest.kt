@@ -100,13 +100,16 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertSettingsScreenDisplayed()
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             // Change theme from SYSTEM to DARK
+            .openAppearancePage()
             .scrollToThemeSwatch(ThemeModel.SYSTEM)
             .assertThemeSwatchSelected(ThemeModel.SYSTEM)
             .scrollToThemeSwatch(ThemeModel.DARK)
             .clickThemeSwatch(ThemeModel.DARK)
             .assertThemeSwatchSelected(ThemeModel.DARK)
             .assertThemeSwatchNotSelected(ThemeModel.SYSTEM)
+            .clickBackButton()
             // Dismiss episode notifications rationale
+            .openNotificationsPage()
             .scrollToEpisodeNotificationsToggle()
             .assertEpisodeNotificationsDisabled()
             .clickEpisodeNotificationsToggle()
@@ -130,6 +133,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         // Follow show locally
         settingsRobot
+            .clickBackButton()
             .clickBackButton()
 
         homeRobot
@@ -232,6 +236,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         settingsRobot
             .assertSettingsScreenDisplayed()
+            .openNotificationsPage()
             .scrollToEpisodeNotificationsToggle()
             .clickEpisodeNotificationsToggle()
 
@@ -241,6 +246,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertNotificationRationaleDoesNotExist()
 
         settingsRobot
+            .clickBackButton()
             .clickBackButton()
 
         // Login user
