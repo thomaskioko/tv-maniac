@@ -60,6 +60,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError as SyncStateError
@@ -87,7 +88,7 @@ public class DefaultRootPresenter(
     private val profileLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val syncErrorMessages = UiMessageManager()
-    private val userDismissed = MutableStateFlow(false)
+    private val syncStatusDismissed = MutableStateFlow(false)
     private val accountLimitErrorOccurred = MutableStateFlow(false)
 
     init {
@@ -120,7 +121,7 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
-            syncObserver.syncStarted.collect { userDismissed.value = false }
+            syncObserver.syncStarted.collect { syncStatusDismissed.update { false } }
         }
 
         coroutineScope.launch {
@@ -131,6 +132,7 @@ public class DefaultRootPresenter(
                     syncErrorMessages.emitMessage(
                         UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
                     )
+                    syncStatusDismissed.update { true }
                 }
             }
         }
@@ -188,7 +190,7 @@ public class DefaultRootPresenter(
 
     override val toastState: StateFlow<ToastState> = combine(
         syncObserver.isSyncing.minTrueDuration(MIN_STATUS_DISPLAY),
-        userDismissed,
+        syncStatusDismissed,
         syncErrorMessages.message,
     ) { syncing, dismissed, errorMessage ->
         when {
@@ -306,7 +308,7 @@ public class DefaultRootPresenter(
     }
 
     override fun dismissSyncStatus() {
-        userDismissed.value = true
+        syncStatusDismissed.update { true }
     }
 
     override fun onDismissAccountLimitBanner() {
