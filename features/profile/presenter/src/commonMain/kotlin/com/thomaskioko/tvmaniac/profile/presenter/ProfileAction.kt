@@ -7,5 +7,7 @@ public sealed interface ProfileAction {
 
     public data object RefreshProfile : ProfileAction
 
+    public data class ShowClicked(val traktId: Long) : ProfileAction
+
     public data class MessageShown(val id: Long) : ProfileAction
 }

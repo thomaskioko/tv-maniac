@@ -7,4 +7,5 @@ public data class TraktListEntity(
     val description: String?,
     val itemCount: Long,
     val createdAt: String,
+    val posterPaths: List<String> = emptyList(),
 )

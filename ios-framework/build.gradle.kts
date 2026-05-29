@@ -156,6 +156,7 @@ kotlin {
                 api(projects.domain.continueWatching)
                 api(projects.domain.startWatching)
                 api(projects.domain.favorites)
+                api(projects.domain.recentlyWatched)
                 api(projects.data.calendar.api)
                 api(projects.core.featureFlags.api)
                 implementation(projects.data.calendar.implementation)

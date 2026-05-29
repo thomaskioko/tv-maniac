@@ -7,6 +7,12 @@ public data class ProfileState(
     val userProfile: ProfileInfo?,
     val errorMessage: UiMessage? = null,
     val authenticated: Boolean,
+    val userLists: SectionState<ProfileListItem> = SectionState.Loading,
+    val inProgress: SectionState<ProfileShowItem> = SectionState.Loading,
+    val recentlyWatched: SectionState<ProfileRecentItem> = SectionState.Loading,
+    val library: SectionState<ProfileShowItem> = SectionState.Loading,
+    val watchlist: SectionState<ProfileShowItem> = SectionState.Loading,
+    val favorites: SectionState<ProfileShowItem> = SectionState.Loading,
 ) {
     val showLoading: Boolean
         get() = userProfile == null && errorMessage == null && isLoading
