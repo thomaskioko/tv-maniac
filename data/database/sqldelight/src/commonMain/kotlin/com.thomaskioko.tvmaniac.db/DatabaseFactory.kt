@@ -123,5 +123,8 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             synced_untilAdapter = InstantColumnAdapter,
             updated_atAdapter = InstantColumnAdapter,
         ),
+        favorite_showsAdapter = Favorite_shows.Adapter(
+            show_trakt_idAdapter = IdAdapter(),
+        ),
     )
 }
