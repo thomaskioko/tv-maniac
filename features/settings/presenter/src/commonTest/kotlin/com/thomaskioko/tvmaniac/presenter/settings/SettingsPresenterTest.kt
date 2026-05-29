@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
@@ -183,7 +184,7 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun `should show connect prompt when logged out`() = runTest {
+    fun `should resolve connect prompt labels when logged out`() = runTest {
         presenter.state.test {
             var state = awaitItem()
             while (state.labels.login.isEmpty()) {
@@ -191,15 +192,17 @@ class SettingsPresenterTest {
             }
 
             state.isAuthenticated shouldBe false
-            state.labels.traktConnected shouldBe "Connect to Trakt"
-            state.labels.login shouldBe "Login"
+            state.labels.traktConnected shouldBe localizer.getString(StringResourceKey.LabelSettingsTraktConnect)
+            state.labels.traktConnectedDescription shouldBe
+                localizer.getString(StringResourceKey.SettingsTraktDetailDescription)
+            state.labels.login shouldBe localizer.getString(StringResourceKey.Login)
 
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `should show connected status when logged in`() = runTest {
+    fun `should resolve connected labels when logged in`() = runTest {
         presenter.state.test {
             awaitItem()
             traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
@@ -209,8 +212,11 @@ class SettingsPresenterTest {
                 state = awaitItem()
             }
 
-            state.labels.traktConnected shouldBe "Connected as Test User"
-            state.labels.logout shouldBe "Logout"
+            state.labels.traktConnected shouldBe
+                localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, "Test User")
+            state.labels.traktConnectedDescription shouldBe
+                localizer.getString(StringResourceKey.LabelSettingsTraktConnectedDescription)
+            state.labels.logout shouldBe localizer.getString(StringResourceKey.Logout)
 
             cancelAndIgnoreRemainingEvents()
         }

@@ -80,6 +80,10 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         click(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
     }
 
+    fun assertTraktAccountButtonDisplayed() = apply {
+        assertDisplayed(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
+    }
+
     fun assertLogoutDialogDisplayed() = apply {
         assertExists(SettingsTestTags.LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG)
     }
