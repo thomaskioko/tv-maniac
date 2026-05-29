@@ -25,6 +25,8 @@ class ProfileScreenTest: SnapshotTestCase {
                 daysLabel: "Days",
                 hoursLabel: "Hours",
                 episodesWatchedLabel: "Episodes Watched",
+                showsWatchedLabel: "Shows Watched",
+                listsLabel: "Lists",
                 unauthenticatedTitle: "Track your shows",
                 footerDescription: "Sign in to sync your data.",
                 signInLabel: "Sign In with Trakt",
@@ -50,6 +52,8 @@ class ProfileScreenTest: SnapshotTestCase {
                 daysLabel: "Days",
                 hoursLabel: "Hours",
                 episodesWatchedLabel: "Episodes Watched",
+                showsWatchedLabel: "Shows Watched",
+                listsLabel: "Lists",
                 unauthenticatedTitle: "Track your shows",
                 footerDescription: "Sign in to sync your data across devices.",
                 signInLabel: "Sign In with Trakt",
@@ -69,10 +73,12 @@ class ProfileScreenTest: SnapshotTestCase {
             avatarUrl: nil,
             backgroundUrl: nil,
             stats: SwiftProfileStats(
+                showsWatched: 87,
+                episodesWatched: 1250,
                 months: 2,
                 days: 15,
                 hours: 8,
-                episodesWatched: 1250
+                listCount: 12
             )
         )
 
@@ -88,6 +94,8 @@ class ProfileScreenTest: SnapshotTestCase {
                 daysLabel: "Days",
                 hoursLabel: "Hours",
                 episodesWatchedLabel: "Episodes Watched",
+                showsWatchedLabel: "Shows Watched",
+                listsLabel: "Lists",
                 unauthenticatedTitle: "Track your shows",
                 footerDescription: "Sign in to sync your data.",
                 signInLabel: "Sign In with Trakt",

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.profile.roborazzi
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.profile.ui.authenticatedState
 import com.thomaskioko.tvmaniac.profile.ui.unauthenticatedState
@@ -30,6 +31,23 @@ internal class ProfileScreenTest {
             TvManiacBackground {
                 ProfileScreen(
                     state = unauthenticatedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun profileScreenLoadingState() {
+        composeTestRule.captureMultiDevice("ProfileScreenLoadingState") {
+            TvManiacBackground {
+                ProfileScreen(
+                    state = ProfileState(
+                        isLoading = true,
+                        userProfile = null,
+                        errorMessage = null,
+                        authenticated = false,
+                    ),
                     onAction = {},
                 )
             }

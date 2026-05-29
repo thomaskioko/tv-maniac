@@ -17,6 +17,9 @@ public data class ProfileState(
     val showLoading: Boolean
         get() = userProfile == null && errorMessage == null && isLoading
 
+    val listCount: Int
+        get() = (userLists as? SectionState.Content)?.items?.size ?: 0
+
     public companion object {
         public val DEFAULT_STATE: ProfileState = ProfileState(
             isLoading = true,

@@ -45,10 +45,12 @@ private extension ProfileState {
                     avatarUrl: profile.avatarUrl,
                     backgroundUrl: profile.backgroundUrl,
                     stats: SwiftProfileStats(
+                        showsWatched: profile.stats.showsWatched,
+                        episodesWatched: profile.stats.episodesWatched,
                         months: profile.stats.months,
                         days: profile.stats.days,
                         hours: profile.stats.hours,
-                        episodesWatched: profile.stats.episodesWatched
+                        listCount: listCount
                     )
                 )
             },
@@ -59,6 +61,8 @@ private extension ProfileState {
             daysLabel: String(\.profile_time_days),
             hoursLabel: String(\.profile_time_hours),
             episodesWatchedLabel: String(\.profile_episodes_watched),
+            showsWatchedLabel: String(\.profile_shows_watched),
+            listsLabel: String(\.profile_lists),
             unauthenticatedTitle: String(\.profile_unauthenticated_title),
             footerDescription: String(\.profile_footer_description),
             signInLabel: String(\.profile_sign_in_button),

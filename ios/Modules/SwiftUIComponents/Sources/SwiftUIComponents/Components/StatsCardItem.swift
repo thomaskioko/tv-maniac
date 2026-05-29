@@ -20,31 +20,26 @@ public struct StatsCardItem<Content: View>: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            Spacer().frame(height: 18)
-
             HStack(spacing: theme.spacing.xSmall) {
-                Spacer()
-
                 Image(systemName: systemImage)
                     .textStyle(theme.typography.bodyLarge)
                     .foregroundStyle(.appAccent)
 
                 Text(title)
-                    .textStyle(theme.typography.titleMedium)
+                    .textStyle(theme.typography.titleSmall)
                     .foregroundStyle(.appOnSurface)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
 
                 Spacer()
             }
             .frame(maxWidth: .infinity)
-            .padding(.top, theme.spacing.medium)
-
-            Spacer().frame(height: theme.spacing.small)
+            .padding(.horizontal, theme.spacing.medium)
+            .padding(.vertical, theme.spacing.medium)
 
             Rectangle()
-                .fill(.appOnSurface)
+                .fill(theme.colors.onSurfaceVariant)
                 .frame(height: 1)
-
-            Spacer().frame(height: theme.spacing.xSmall)
 
             VStack {
                 Spacer()
@@ -55,15 +50,13 @@ public struct StatsCardItem<Content: View>: View {
                 Spacer()
             }
             .padding(.horizontal, theme.spacing.large)
-            .padding(.bottom, theme.spacing.medium)
         }
         .frame(height: 120)
-        .background(.appSurface)
+        .background(theme.colors.surface)
         .overlay(
-            RoundedRectangle(cornerRadius: theme.shapes.small)
-                .stroke(.appOnSurface, lineWidth: 2)
+            Rectangle()
+                .stroke(theme.colors.outline.opacity(0.2), lineWidth: 0.5)
         )
-        .cornerRadius(theme.shapes.small)
     }
 }
 

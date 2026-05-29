@@ -13,6 +13,8 @@ public struct ProfileScreen: View {
         public let daysLabel: String
         public let hoursLabel: String
         public let episodesWatchedLabel: String
+        public let showsWatchedLabel: String
+        public let listsLabel: String
         public let unauthenticatedTitle: String
         public let footerDescription: String
         public let signInLabel: String
@@ -29,6 +31,8 @@ public struct ProfileScreen: View {
             daysLabel: String,
             hoursLabel: String,
             episodesWatchedLabel: String,
+            showsWatchedLabel: String,
+            listsLabel: String,
             unauthenticatedTitle: String,
             footerDescription: String,
             signInLabel: String,
@@ -44,6 +48,8 @@ public struct ProfileScreen: View {
             self.daysLabel = daysLabel
             self.hoursLabel = hoursLabel
             self.episodesWatchedLabel = episodesWatchedLabel
+            self.showsWatchedLabel = showsWatchedLabel
+            self.listsLabel = listsLabel
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
             self.signInLabel = signInLabel
@@ -72,10 +78,7 @@ public struct ProfileScreen: View {
     public var body: some View {
         ZStack(alignment: .top) {
             if state.isLoading {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
-                    .scaleEffect(1.5)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                profileSkeleton
             } else if let userProfile = state.userProfile {
                 profileScrollView(userProfile: userProfile)
             } else {
@@ -217,35 +220,43 @@ public struct ProfileScreen: View {
             }
             .padding(.horizontal, appTheme.spacing.medium)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: appTheme.spacing.small) {
-                    StatsCardItem(
-                        systemImage: "calendar",
-                        title: state.watchTimeLabel
-                    ) {
-                        HStack(spacing: appTheme.spacing.large) {
+            VStack(spacing: appTheme.spacing.small) {
+                HStack(spacing: appTheme.spacing.small) {
+                    StatsCardItem(systemImage: "play.circle", title: state.episodesWatchedLabel) {
+                        bigCount(Int(stats.episodesWatched))
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    StatsCardItem(systemImage: "tv", title: state.showsWatchedLabel) {
+                        bigCount(Int(stats.showsWatched))
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+
+                HStack(spacing: appTheme.spacing.small) {
+                    StatsCardItem(systemImage: "clock", title: state.watchTimeLabel) {
+                        HStack(spacing: appTheme.spacing.medium) {
                             statColumn(label: state.monthsLabel, value: stats.months)
                             statColumn(label: state.daysLabel, value: stats.days)
                             statColumn(label: state.hoursLabel, value: stats.hours)
                         }
                     }
+                    .frame(maxWidth: .infinity)
 
-                    StatsCardItem(
-                        systemImage: "tv",
-                        title: state.episodesWatchedLabel
-                    ) {
-                        VStack(spacing: 0) {
-                            Text(formatNumber(stats.episodesWatched))
-                                .textStyle(appTheme.typography.bodyMedium)
-                                .foregroundStyle(.appOnSurface)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .padding(appTheme.spacing.xSmall)
+                    StatsCardItem(systemImage: "list.bullet", title: state.listsLabel) {
+                        bigCount(Int(stats.listCount))
                     }
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, appTheme.spacing.medium)
             }
+            .padding(.horizontal, appTheme.spacing.medium)
         }
+    }
+
+    private func bigCount(_ value: Int) -> some View {
+        AnimatedCountText(count: value)
+            .textStyle(appTheme.typography.headlineMedium)
+            .foregroundStyle(.appOnSurface)
     }
 
     private func statColumn(label: String, value: Int32) -> some View {
@@ -257,14 +268,41 @@ public struct ProfileScreen: View {
             Text(label)
                 .textStyle(appTheme.typography.bodySmall)
                 .foregroundStyle(.appOnSurface)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
     }
 
-    private func formatNumber(_ number: Int32) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = ","
-        return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
+    // MARK: - Loading Skeleton
+
+    private var profileSkeleton: some View {
+        VStack(spacing: 0) {
+            ShimmerView(cornerRadius: 0)
+                .frame(height: DimensionConstants.imageHeight)
+
+            VStack(spacing: appTheme.spacing.small) {
+                HStack {
+                    ShimmerView()
+                        .frame(width: 120, height: 24)
+                    Spacer()
+                }
+
+                HStack(spacing: appTheme.spacing.small) {
+                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
+                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
+                }
+
+                HStack(spacing: appTheme.spacing.small) {
+                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
+                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
+                }
+            }
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.top, appTheme.spacing.large)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     // MARK: - Unauthenticated Content
