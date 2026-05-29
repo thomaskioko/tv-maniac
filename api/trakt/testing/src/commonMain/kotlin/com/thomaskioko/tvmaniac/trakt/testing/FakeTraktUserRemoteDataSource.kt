@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.trakt.testing
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktFavoriteShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
@@ -13,6 +14,8 @@ public class FakeTraktUserRemoteDataSource : TraktUserRemoteDataSource {
     private var userStatsResponse: ApiResponse<TraktUserStatsResponse>? = null
     private var userListResponse: List<TraktPersonalListsResponse> = emptyList()
     private var hiddenProgressWatchedResponse: ApiResponse<List<TraktHiddenItemResponse>> =
+        ApiResponse.Success(emptyList())
+    private var favoriteShowsResponse: ApiResponse<List<TraktFavoriteShowResponse>> =
         ApiResponse.Success(emptyList())
 
     private var hiddenProgressWatchedInvocations: Int = 0
@@ -33,6 +36,10 @@ public class FakeTraktUserRemoteDataSource : TraktUserRemoteDataSource {
         hiddenProgressWatchedResponse = response
     }
 
+    public fun setFavoriteShows(response: ApiResponse<List<TraktFavoriteShowResponse>>) {
+        favoriteShowsResponse = response
+    }
+
     public fun hiddenProgressWatchedInvocations(): Int = hiddenProgressWatchedInvocations
 
     public fun clearInvocations() {
@@ -47,6 +54,9 @@ public class FakeTraktUserRemoteDataSource : TraktUserRemoteDataSource {
 
     override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
         userListResponse
+
+    override suspend fun getFavoriteShows(userId: String): ApiResponse<List<TraktFavoriteShowResponse>> =
+        favoriteShowsResponse
 
     override suspend fun getHiddenProgressWatched(type: String): ApiResponse<List<TraktHiddenItemResponse>> {
         hiddenProgressWatchedInvocations++

@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktFavoriteShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktHiddenItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
@@ -44,6 +45,15 @@ public class DefaultTraktUserRemoteDataSource(
 
     override suspend fun getUserList(userId: String): List<TraktPersonalListsResponse> =
         httpClient.get("users/$userId/lists").body()
+
+    override suspend fun getFavoriteShows(userId: String): ApiResponse<List<TraktFavoriteShowResponse>> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("users/$userId/favorites/shows")
+                parameter("extended", "full")
+            }
+        }
 
     override suspend fun getHiddenProgressWatched(type: String): ApiResponse<List<TraktHiddenItemResponse>> =
         httpClient.authSafeRequest {
