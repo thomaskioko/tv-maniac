@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
+import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -38,6 +39,28 @@ public class DefaultWatchedEpisodeDao(
             .getWatchedEpisodes(Id(showTraktId))
             .asFlow()
             .mapToList(dispatchers.databaseRead)
+            .catch { emit(emptyList()) }
+    }
+
+    override fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>> {
+        return database.watchedEpisodesQueries
+            .getRecentlyWatched(limit)
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows ->
+                rows.map { row ->
+                    RecentlyWatchedEpisode(
+                        showTraktId = row.show_trakt_id.id,
+                        showTmdbId = row.show_tmdb_id.id,
+                        showTitle = row.show_title,
+                        posterPath = row.poster_path,
+                        seasonNumber = row.season_number,
+                        episodeNumber = row.episode_number,
+                        episodeTitle = row.episode_title,
+                        watchedAt = row.watched_at,
+                    )
+                }
+            }
             .catch { emit(emptyList()) }
     }
 
