@@ -5,6 +5,8 @@ public sealed interface ProfileAction {
 
     public data object SettingsClicked : ProfileAction
 
+    public data object ViewListsClicked : ProfileAction
+
     public data object RefreshProfile : ProfileAction
 
     public data class ShowClicked(val traktId: Long) : ProfileAction

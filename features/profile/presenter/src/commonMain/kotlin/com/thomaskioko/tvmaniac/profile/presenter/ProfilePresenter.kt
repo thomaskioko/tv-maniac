@@ -35,6 +35,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.ShowClicked
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.ViewListsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
@@ -178,6 +179,9 @@ public class ProfilePresenter(
                 }
             }
             SettingsClicked -> navigator.navigateTo(SettingsRoute)
+            ViewListsClicked -> {
+                // TODO: Navigate to the user's lists screen. To be implemented.
+            }
             RefreshProfile -> {
                 fetchUserData(forceRefresh = true)
                 syncFavorites(forceRefresh = true)
