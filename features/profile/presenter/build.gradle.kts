@@ -25,8 +25,14 @@ kotlin {
                 api(libs.essenty.lifecycle)
 
                 implementation(projects.data.user.api)
+                implementation(projects.domain.continueWatching)
+                implementation(projects.domain.favorites)
+                implementation(projects.domain.library)
+                implementation(projects.domain.recentlyWatched)
+                implementation(projects.domain.traktlists)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.settings.nav)
+                implementation(projects.features.showDetails.nav)
             }
         }
 
@@ -34,9 +40,13 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
+                implementation(projects.data.episode.testing)
+                implementation(projects.data.favorites.testing)
+                implementation(projects.data.library.testing)
                 implementation(projects.data.traktauth.testing)
                 implementation(projects.data.traktlists.api)
                 implementation(projects.data.traktlists.testing)
+                implementation(projects.data.upnext.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.i18n.generator)
                 implementation(projects.i18n.testing)
