@@ -39,6 +39,11 @@ kotlin {
                 api(libs.essenty.lifecycle)
 
                 implementation(projects.data.user.api)
+                implementation(projects.domain.continueWatching)
+                implementation(projects.domain.favorites)
+                implementation(projects.domain.library)
+                implementation(projects.domain.recentlyWatched)
+                implementation(projects.domain.traktlists)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.settings.nav)
                 implementation(projects.features.showDetails.nav)
