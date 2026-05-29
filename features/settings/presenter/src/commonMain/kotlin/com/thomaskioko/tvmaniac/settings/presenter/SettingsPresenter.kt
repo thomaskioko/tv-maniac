@@ -22,6 +22,7 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
@@ -55,6 +56,7 @@ public class SettingsPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
+    private val traktAuthManager: TraktAuthManager,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     traktAuthRepository: TraktAuthRepository,
 ) : ComponentContext by componentContext {
@@ -105,6 +107,7 @@ public class SettingsPresenter(
                 lastSyncDate = preferences.lastSyncDate,
                 versionName = appMetadata.versionName,
                 username = username,
+                isAuthenticated = isAuthenticated,
             ),
         )
     }.stateIn(
@@ -127,6 +130,12 @@ public class SettingsPresenter(
                         .collectStatus(logoutState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
                 updateTrackDialogState()
+            }
+
+            TraktLoginClicked -> {
+                coroutineScope.launch {
+                    traktAuthManager.launchWebView()
+                }
             }
 
             is ThemeSelected -> {
@@ -292,6 +301,7 @@ public class SettingsPresenter(
         lastSyncDate: String?,
         versionName: String,
         username: String?,
+        isAuthenticated: Boolean,
     ): SettingsLabels = SettingsLabels(
         back = localizer.getString(StringResourceKey.CdBack),
         themeTitle = localizer.getString(StringResourceKey.SettingsThemeSelectorTitle),
@@ -332,13 +342,18 @@ public class SettingsPresenter(
         traktTitle = localizer.getString(StringResourceKey.SettingsTitleTraktApp),
         traktDescription = localizer.getString(StringResourceKey.TraktDescription),
         traktAuthentication = localizer.getString(StringResourceKey.LabelSettingsTraktAuthentication),
-        traktConnected = if (username != null) {
-            localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, username)
-        } else {
-            localizer.getString(StringResourceKey.LabelSettingsTraktConnected)
+        traktConnected = when {
+            !isAuthenticated -> localizer.getString(StringResourceKey.LabelSettingsTraktConnect)
+            username != null -> localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, username)
+            else -> localizer.getString(StringResourceKey.LabelSettingsTraktConnected)
         },
-        traktConnectedDescription = localizer.getString(StringResourceKey.LabelSettingsTraktConnectedDescription),
+        traktConnectedDescription = if (isAuthenticated) {
+            localizer.getString(StringResourceKey.LabelSettingsTraktConnectedDescription)
+        } else {
+            localizer.getString(StringResourceKey.SettingsTraktDetailDescription)
+        },
         logout = localizer.getString(StringResourceKey.Logout),
+        login = localizer.getString(StringResourceKey.Login),
     )
 
     private companion object {

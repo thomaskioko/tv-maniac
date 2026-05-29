@@ -20,6 +20,8 @@ public data object DismissTraktDialog : SettingsActions
 
 public data object TraktLogoutClicked : SettingsActions
 
+public data object TraktLoginClicked : SettingsActions
+
 public data class ImageQualitySelected(
     val quality: ImageQuality,
 ) : SettingsActions

@@ -191,6 +191,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertLogoutDialogDisplayed()
             .clickLogoutConfirm()
             .assertLogoutDialogDoesNotExist()
+            .scrollToTraktAccountRow()
+            .assertTraktAccountButtonDisplayed()
             .clickBackButton()
             .clickBackButton()
 

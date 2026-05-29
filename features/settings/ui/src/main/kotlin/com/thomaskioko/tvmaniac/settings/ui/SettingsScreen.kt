@@ -96,6 +96,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
+import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
 import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
@@ -642,13 +643,15 @@ private fun TraktPage(
                     )
                     Button(
                         modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
-                        onClick = { onAction(ShowTraktDialog) },
+                        onClick = {
+                            onAction(if (state.isAuthenticated) ShowTraktDialog else TraktLoginClicked)
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                         ),
                     ) {
-                        Text(text = state.labels.logout)
+                        Text(text = if (state.isAuthenticated) state.labels.logout else state.labels.login)
                     }
                 }
             }

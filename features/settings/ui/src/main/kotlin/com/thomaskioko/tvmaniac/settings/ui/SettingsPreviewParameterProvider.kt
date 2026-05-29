@@ -87,6 +87,15 @@ private val previewLabels = SettingsLabels(
     traktConnected = "Connected as John Doe",
     traktConnectedDescription = "Your watch history, watchlist, and episode progress sync with Trakt.",
     logout = "Logout",
+    login = "Login",
+)
+
+private val loggedOutTraktLabels = previewLabels.copy(
+    traktConnected = "Connect to Trakt",
+    traktConnectedDescription = "You are about to be redirected to your browser and outside of TvManiac app, " +
+        "where you will be taken to the Trakt website. From there, you will need to authorise TvManiac access " +
+        "to your Trakt account in order to make use of the Trakt functionality around the app. After you " +
+        "authorize, you will return to the app and you can continue with business as usual.",
 )
 
 internal val defaultState = SettingsState(
@@ -125,6 +134,11 @@ internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVAC
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")
 internal val traktState = loggedInState.copy(currentPage = SettingsPage.TRAKT, currentPageTitle = "Trakt Account")
+internal val traktLoggedOutState = defaultState.copy(
+    currentPage = SettingsPage.TRAKT,
+    currentPageTitle = "Trakt Account",
+    labels = loggedOutTraktLabels,
+)
 
 internal class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
     override val values: Sequence<SettingsState>
