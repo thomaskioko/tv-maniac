@@ -10,12 +10,26 @@ scaffold {
 
 kotlin {
     sourceSets {
+        androidMain {
+            dependencies {
+                implementation(projects.data.episode.api)
+                implementation(projects.data.favorites.api)
+                implementation(projects.data.library.api)
+                implementation(projects.data.upnext.api)
+            }
+        }
+
         commonMain {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.view)
                 api(projects.data.traktauth.api)
+                api(projects.domain.continueWatching)
+                api(projects.domain.favorites)
+                api(projects.domain.library)
+                api(projects.domain.recentlyWatched)
+                api(projects.domain.traktlists)
                 api(projects.domain.user)
                 api(projects.features.profile.nav)
                 api(projects.i18n.api)
@@ -25,11 +39,6 @@ kotlin {
                 api(libs.essenty.lifecycle)
 
                 implementation(projects.data.user.api)
-                implementation(projects.domain.continueWatching)
-                implementation(projects.domain.favorites)
-                implementation(projects.domain.library)
-                implementation(projects.domain.recentlyWatched)
-                implementation(projects.domain.traktlists)
                 implementation(projects.features.home.nav)
                 implementation(projects.features.settings.nav)
                 implementation(projects.features.showDetails.nav)

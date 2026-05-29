@@ -177,6 +177,7 @@ dependencies {
     implementation(projects.data.continueWatching.implementation)
     implementation(projects.data.startWatching.api)
     implementation(projects.data.startWatching.implementation)
+    implementation(projects.data.favorites.api)
     implementation(projects.data.favorites.implementation)
     implementation(projects.data.watchlistPrefs.implementation)
     implementation(projects.i18n.generator)
