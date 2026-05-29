@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
@@ -41,6 +42,10 @@ public class DefaultEpisodeRepository(
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
         episodesDao.observeEpisodeById(episodeId)
+
+    override fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>> =
+        watchedEpisodeDao.observeRecentlyWatched(limit)
+            .distinctUntilChanged()
 
     override suspend fun markEpisodeAsWatched(
         showTraktId: Long,

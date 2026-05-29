@@ -161,6 +161,25 @@ WHERE e.show_trakt_id = :show_trakt_id
   AND we.id IS NULL
   AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
 
+-- Most-recently watched episodes across all shows, newest first, joined with show + episode
+-- metadata for the profile "Recently Watched" rail. Excludes soft-deleted rows.
+getRecentlyWatched:
+SELECT
+    watched_episodes.show_trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.name AS show_title,
+    tvshow.poster_path,
+    watched_episodes.season_number,
+    watched_episodes.episode_number,
+    episode.title AS episode_title,
+    watched_episodes.watched_at
+FROM watched_episodes
+INNER JOIN tvshow ON watched_episodes.show_trakt_id = tvshow.trakt_id
+LEFT JOIN episode ON episode.id = watched_episodes.episode_id
+WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+ORDER BY watched_episodes.watched_at DESC
+LIMIT ?;
+
 -- Trakt Sync Queries
 
 getEntriesByPendingAction:
