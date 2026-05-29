@@ -266,6 +266,7 @@
 
     <string name="profile_title">Profil</string>
     <string name="profile_shows_watched">Gesehene Sendungen</string>
+    <string name="profile_lists">Listen</string>
     <string name="profile_episodes_watched">Gesehene Episoden</string>
     <string name="profile_watch_time">Sehzeit</string>
     <string name="profile_stats_title">Statistiken</string>

@@ -295,6 +295,7 @@
 
     <string name="profile_title">Profile</string>
     <string name="profile_shows_watched">Shows Watched</string>
+    <string name="profile_lists">Lists</string>
     <string name="profile_episodes_watched">Episodes Watched</string>
     <string name="profile_watch_time">Watch Time</string>
     <string name="profile_stats_title">Stats</string>
