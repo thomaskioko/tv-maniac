@@ -237,6 +237,7 @@ include(
     ":domain:genre",
     ":domain:start-watching",
     ":domain:favorites",
+    ":domain:recently-watched",
     ":domain:library",
     ":domain:logout",
     ":domain:notifications",
