@@ -53,8 +53,11 @@ public struct SettingsTraktContent {
     public let authenticationLabel: String
     public let connectedTitle: String
     public let connectedDescription: String
+    public let isAuthenticated: Bool
     public let logoutLabel: String
+    public let loginLabel: String
     public let onLogout: () -> Void
+    public let onLogin: () -> Void
 
     public init(
         title: String,
@@ -62,16 +65,22 @@ public struct SettingsTraktContent {
         authenticationLabel: String,
         connectedTitle: String,
         connectedDescription: String,
+        isAuthenticated: Bool,
         logoutLabel: String,
-        onLogout: @escaping () -> Void
+        loginLabel: String,
+        onLogout: @escaping () -> Void,
+        onLogin: @escaping () -> Void
     ) {
         self.title = title
         self.description = description
         self.authenticationLabel = authenticationLabel
         self.connectedTitle = connectedTitle
         self.connectedDescription = connectedDescription
+        self.isAuthenticated = isAuthenticated
         self.logoutLabel = logoutLabel
+        self.loginLabel = loginLabel
         self.onLogout = onLogout
+        self.onLogin = onLogin
     }
 }
 
@@ -289,8 +298,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
                         Text(trakt.connectedDescription)
                             .textStyle(appTheme.typography.bodyMedium)
                             .foregroundColor(appTheme.colors.onSurfaceVariant)
-                        Button(action: trakt.onLogout) {
-                            Text(trakt.logoutLabel)
+                        Button(action: trakt.isAuthenticated ? trakt.onLogout : trakt.onLogin) {
+                            Text(trakt.isAuthenticated ? trakt.logoutLabel : trakt.loginLabel)
                                 .textStyle(appTheme.typography.labelLarge)
                                 .foregroundColor(appTheme.colors.onSecondary)
                                 .padding(.horizontal, appTheme.spacing.large)

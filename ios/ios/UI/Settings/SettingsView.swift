@@ -299,8 +299,11 @@ struct SettingsView: View {
             authenticationLabel: uiState.labels.traktAuthentication,
             connectedTitle: uiState.labels.traktConnected,
             connectedDescription: uiState.labels.traktConnectedDescription,
+            isAuthenticated: uiState.isAuthenticated,
             logoutLabel: uiState.labels.logout,
-            onLogout: { showingLogoutAlert = true }
+            loginLabel: uiState.labels.login,
+            onLogout: { showingLogoutAlert = true },
+            onLogin: { presenter.dispatch(action: TraktLoginClicked()) }
         )
     }
 

@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.settings.ui.licensesState
 import com.thomaskioko.tvmaniac.settings.ui.loggedInState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
+import com.thomaskioko.tvmaniac.settings.ui.traktLoggedOutState
 import com.thomaskioko.tvmaniac.settings.ui.traktState
 import org.junit.Rule
 import org.junit.Test
@@ -133,6 +134,18 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = traktState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenTraktPageLoggedOut() {
+        composeTestRule.captureMultiDevice("SettingsScreenTraktPageLoggedOut") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = traktLoggedOutState,
                     onAction = {},
                 )
             }
