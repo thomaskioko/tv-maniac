@@ -40,5 +40,6 @@ private fun DataUserProfile.toDomain(authState: TraktAuthState): UserProfile {
             userWatchTime = stats.userWatchTime,
         ),
         authState = authState,
+        statsLoaded = statsLoaded,
     )
 }

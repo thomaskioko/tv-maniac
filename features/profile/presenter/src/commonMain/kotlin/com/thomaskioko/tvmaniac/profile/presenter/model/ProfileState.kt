@@ -15,7 +15,7 @@ public data class ProfileState(
     val favorites: SectionState<ProfileShowItem> = SectionState.Loading,
 ) {
     val showLoading: Boolean
-        get() = userProfile == null && errorMessage == null && isLoading
+        get() = errorMessage == null && isLoading && (userProfile == null || !userProfile.statsLoaded)
 
     val listCount: Int
         get() = (userLists as? SectionState.Content)?.items?.size ?: 0

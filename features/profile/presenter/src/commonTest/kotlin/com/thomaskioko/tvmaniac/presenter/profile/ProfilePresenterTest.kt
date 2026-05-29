@@ -51,12 +51,14 @@ import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
@@ -246,6 +248,28 @@ internal class ProfilePresenterTest {
             authenticatedState.authenticated shouldBe true
             authenticatedState.showLoading shouldBe false
             authenticatedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
+        }
+    }
+
+    @Test
+    fun `should keep showing loading given profile present but stats not yet loaded`() = runTest {
+        userRepository.holdStatsFetch()
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
+
+        val testPresenter = createPresenter()
+
+        testPresenter.state.test {
+            runCurrent()
+            val loadingState = expectMostRecentItem()
+            loadingState.userProfile shouldNotBe null
+            loadingState.showLoading shouldBe true
+
+            userRepository.setUserProfile(testProfile.copy(statsLoaded = true))
+            runCurrent()
+            expectMostRecentItem().showLoading shouldBe false
+
+            userRepository.releaseStatsFetch()
         }
     }
 

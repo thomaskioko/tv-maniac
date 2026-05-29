@@ -308,6 +308,7 @@ private fun UserProfile.toPresentation(): ProfileInfo {
             minutes = breakdown.minutes,
         ),
         backgroundUrl = backgroundUrl,
+        statsLoaded = statsLoaded,
     )
 }
 

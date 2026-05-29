@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.data.user.implementation.DefaultUserRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -17,9 +18,19 @@ public class FakeUserRepository(
 ) : UserRepository {
 
     private val _userProfile = MutableStateFlow(userProfile)
+    private var statsFetchGate: CompletableDeferred<Unit>? = null
 
     public fun setUserProfile(profile: UserProfile?) {
         _userProfile.value = profile
+    }
+
+    /** Suspends [fetchUserStats] until [releaseStatsFetch], keeping the profile load in progress. */
+    public fun holdStatsFetch() {
+        statsFetchGate = CompletableDeferred()
+    }
+
+    public fun releaseStatsFetch() {
+        statsFetchGate?.complete(Unit)
     }
 
     override fun observeUser(slug: String): Flow<UserProfile?> = _userProfile
@@ -32,6 +43,7 @@ public class FakeUserRepository(
     }
 
     override suspend fun fetchUserStats(slug: String, forceRefresh: Boolean) {
+        statsFetchGate?.await()
     }
 
     override suspend fun clearUserData() {
