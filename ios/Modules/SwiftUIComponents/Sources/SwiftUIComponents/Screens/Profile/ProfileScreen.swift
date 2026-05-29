@@ -107,7 +107,17 @@ public struct ProfileScreen: View {
                 title: state.title,
                 opacity: showGlass,
                 trailingIcon: {
-                    GlassButton(icon: "gearshape", action: onSettingsClicked)
+                    HStack(spacing: appTheme.spacing.small) {
+                        if state.isLoading {
+                            GlassButton(action: {}) {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
+                            }
+                            .allowsHitTesting(false)
+                        }
+
+                        GlassButton(icon: "gearshape", action: onSettingsClicked)
+                    }
                 }
             )
             .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)

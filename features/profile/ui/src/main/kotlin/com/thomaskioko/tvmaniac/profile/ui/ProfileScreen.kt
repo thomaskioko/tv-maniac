@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -57,6 +59,7 @@ import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -144,21 +147,34 @@ internal fun ProfileScreen(
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
-                    actionIcon = {
-                        Box(
+                    actions = { showAppBarBackground ->
+                        if (state.isLoading) {
+                            ScrimButton(
+                                show = showAppBarBackground,
+                                onClick = {},
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                )
+                            }
+                        }
+
+                        ScrimButton(
+                            show = showAppBarBackground,
+                            onClick = { onAction(SettingsClicked) },
                             modifier = Modifier
-                                .testTag(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
-                                .clickable(onClick = { onAction(SettingsClicked) }),
+                                .padding(end = 8.dp)
+                                .testTag(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG),
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
                                 contentDescription = cd_settings.resolve(LocalContext.current),
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     },
-                    isRefreshing = state.isLoading,
-                    onActionIconClicked = { onAction(SettingsClicked) },
                 )
 
                 TvManiacSnackBarHost(
