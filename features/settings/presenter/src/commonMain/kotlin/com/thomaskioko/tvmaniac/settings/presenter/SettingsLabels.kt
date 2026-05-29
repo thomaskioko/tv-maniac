@@ -43,4 +43,5 @@ public data class SettingsLabels(
     val traktConnected: String = "",
     val traktConnectedDescription: String = "",
     val logout: String = "",
+    val login: String = "",
 )

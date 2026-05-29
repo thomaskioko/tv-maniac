@@ -23,8 +23,11 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
+import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -51,6 +54,7 @@ class SettingsPresenterTest {
     private val fakeRequestManagerRepository = FakeRequestManagerRepository()
     private val fakeLogger = FakeLogger()
     private val localizer = FakeLocalizer()
+    private val traktAuthManager = FakeTraktAuthManager()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -65,6 +69,7 @@ class SettingsPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = fakeLogger,
+            traktAuthManager = traktAuthManager,
             logoutInteractor = LogoutInteractor(
                 traktAuthRepository = traktAuthRepository,
                 userRepository = userRepository,
@@ -175,5 +180,50 @@ class SettingsPresenterTest {
             presenter.dispatch(BackClicked)
             expectNoEvents()
         }
+    }
+
+    @Test
+    fun `should show connect prompt when logged out`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.labels.login.isEmpty()) {
+                state = awaitItem()
+            }
+
+            state.isAuthenticated shouldBe false
+            state.labels.traktConnected shouldBe "Connect to Trakt"
+            state.labels.login shouldBe "Login"
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should show connected status when logged in`() = runTest {
+        presenter.state.test {
+            awaitItem()
+            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+
+            var state = awaitItem()
+            while (!state.isAuthenticated) {
+                state = awaitItem()
+            }
+
+            state.labels.traktConnected shouldBe "Connected as Test User"
+            state.labels.logout shouldBe "Logout"
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should launch web view when login is clicked`() = runTest {
+        var launched = false
+        traktAuthManager.setOnLaunchWebView { launched = true }
+
+        presenter.dispatch(TraktLoginClicked)
+        testScheduler.advanceUntilIdle()
+
+        launched shouldBe true
     }
 }
