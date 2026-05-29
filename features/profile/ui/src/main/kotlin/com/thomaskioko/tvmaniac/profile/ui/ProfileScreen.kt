@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.profile.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,10 +25,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.PlayCircle
-import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material.icons.outlined.Tv
+import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -51,7 +53,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.AnimatedCountText
 import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -75,6 +76,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_days
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_hours
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_months
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_title
+import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_view_button
 import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_watch_time
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
@@ -124,6 +126,7 @@ internal fun ProfileScreen(
                     userProfile = state.userProfile,
                     listCount = listCount,
                     onLoginClicked = { onAction(LoginClicked) },
+                    onViewLists = { onAction(ProfileAction.ViewListsClicked) },
                     listState = listState,
                     contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize(),
@@ -174,6 +177,7 @@ private fun ProfileContent(
     userProfile: ProfileInfo?,
     listCount: Int,
     onLoginClicked: () -> Unit,
+    onViewLists: () -> Unit,
     listState: LazyListState,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -213,6 +217,7 @@ private fun ProfileContent(
                     StatsCard(
                         stats = userProfile.stats,
                         listCount = listCount,
+                        onViewLists = onViewLists,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
@@ -237,6 +242,7 @@ private fun ProfileContent(
 private fun StatsCard(
     stats: ProfileStats,
     listCount: Int,
+    onViewLists: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -266,19 +272,19 @@ private fun StatsCard(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             StatTile(
-                imageVector = Icons.Outlined.PlayCircle,
+                imageVector = Icons.Filled.PlayCircle,
                 title = profile_episodes_watched.resolve(LocalContext.current),
                 modifier = Modifier.weight(1f),
             ) {
-                AnimatedCountText(count = stats.episodesWatched)
+                StatValueText(count = stats.episodesWatched)
             }
 
             StatTile(
-                imageVector = Icons.Outlined.Tv,
+                imageVector = Icons.Filled.Tv,
                 title = profile_shows_watched.resolve(LocalContext.current),
                 modifier = Modifier.weight(1f),
             ) {
-                AnimatedCountText(count = stats.showsWatched)
+                StatValueText(count = stats.showsWatched)
             }
         }
 
@@ -289,13 +295,13 @@ private fun StatsCard(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             StatTile(
-                imageVector = Icons.Outlined.Schedule,
+                imageVector = Icons.Filled.Schedule,
                 title = profile_watch_time.resolve(LocalContext.current),
                 modifier = Modifier.weight(1f),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     MiniStat(
                         value = stats.months,
@@ -317,7 +323,27 @@ private fun StatsCard(
                 title = profile_lists.resolve(LocalContext.current),
                 modifier = Modifier.weight(1f),
             ) {
-                AnimatedCountText(count = listCount)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    StatValueText(count = listCount)
+                    Text(
+                        text = profile_view_button.resolve(LocalContext.current),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable(onClick = onViewLists)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                shape = MaterialTheme.shapes.small,
+                            )
+                            .padding(horizontal = 10.dp, vertical = 4.dp),
+                    )
+                }
             }
         }
     }
@@ -329,15 +355,16 @@ private fun MiniStat(
     label: String,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value.toString(),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
+        StatValueText(
+            count = value,
+            style = MaterialTheme.typography.titleLarge,
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            softWrap = false,
         )
     }
 }
@@ -376,12 +403,14 @@ private fun ProfileLoadingSkeleton(
                     ShimmerBox(
                         modifier = Modifier
                             .weight(1f)
-                            .height(120.dp),
+                            .height(138.dp),
+                        shape = MaterialTheme.shapes.large,
                     )
                     ShimmerBox(
                         modifier = Modifier
                             .weight(1f)
-                            .height(120.dp),
+                            .height(138.dp),
+                        shape = MaterialTheme.shapes.large,
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))

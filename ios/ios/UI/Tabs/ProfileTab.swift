@@ -18,7 +18,8 @@ struct ProfileTab: View {
         ProfileScreen(
             state: uiState.toState(),
             onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
-            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) }
+            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) },
+            onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) }
         )
         .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {
@@ -63,6 +64,7 @@ private extension ProfileState {
             episodesWatchedLabel: String(\.profile_episodes_watched),
             showsWatchedLabel: String(\.profile_shows_watched),
             listsLabel: String(\.profile_lists),
+            listsViewLabel: String(\.profile_view_button),
             unauthenticatedTitle: String(\.profile_unauthenticated_title),
             footerDescription: String(\.profile_footer_description),
             signInLabel: String(\.profile_sign_in_button),

@@ -15,6 +15,7 @@ public struct ProfileScreen: View {
         public let episodesWatchedLabel: String
         public let showsWatchedLabel: String
         public let listsLabel: String
+        public let listsViewLabel: String
         public let unauthenticatedTitle: String
         public let footerDescription: String
         public let signInLabel: String
@@ -33,6 +34,7 @@ public struct ProfileScreen: View {
             episodesWatchedLabel: String,
             showsWatchedLabel: String,
             listsLabel: String,
+            listsViewLabel: String,
             unauthenticatedTitle: String,
             footerDescription: String,
             signInLabel: String,
@@ -50,6 +52,7 @@ public struct ProfileScreen: View {
             self.episodesWatchedLabel = episodesWatchedLabel
             self.showsWatchedLabel = showsWatchedLabel
             self.listsLabel = listsLabel
+            self.listsViewLabel = listsViewLabel
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
             self.signInLabel = signInLabel
@@ -62,15 +65,18 @@ public struct ProfileScreen: View {
     private let state: State
     private let onSettingsClicked: () -> Void
     private let onLoginClicked: () -> Void
+    private let onViewListsClicked: () -> Void
 
     public init(
         state: State,
         onSettingsClicked: @escaping () -> Void,
-        onLoginClicked: @escaping () -> Void
+        onLoginClicked: @escaping () -> Void,
+        onViewListsClicked: @escaping () -> Void = {}
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
         self.onLoginClicked = onLoginClicked
+        self.onViewListsClicked = onViewListsClicked
     }
 
     @SwiftUI.State private var showGlass: Double = 0
@@ -163,10 +169,9 @@ public struct ProfileScreen: View {
                         .clear,
                         .clear,
                         .clear,
-                        .clear,
-                        appTheme.colors.background.opacity(0.6),
-                        appTheme.colors.background.opacity(0.8),
-                        appTheme.colors.background,
+                        appTheme.colors.scrim.opacity(0.3),
+                        appTheme.colors.scrim.opacity(0.6),
+                        appTheme.colors.scrim.opacity(0.85),
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -211,40 +216,65 @@ public struct ProfileScreen: View {
 
     private func statsSection(stats: SwiftProfileStats) -> some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
-            HStack {
-                ChevronTitle(
-                    title: state.statsTitle,
-                    chevronStyle: ChevronStyle.chevronOnly,
-                    action: {}
-                )
+            HStack(spacing: 0) {
+                Text(state.statsTitle)
+                    .textStyle(appTheme.typography.titleLarge)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.appOnSurface)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .textStyle(appTheme.typography.titleMedium)
+                    .foregroundStyle(appTheme.colors.onSurfaceVariant)
             }
             .padding(.horizontal, appTheme.spacing.medium)
 
             VStack(spacing: appTheme.spacing.small) {
                 HStack(spacing: appTheme.spacing.small) {
-                    StatsCardItem(systemImage: "play.circle", title: state.episodesWatchedLabel) {
+                    StatsCardItem(systemImage: "play.circle.fill", title: state.episodesWatchedLabel) {
                         bigCount(Int(stats.episodesWatched))
                     }
                     .frame(maxWidth: .infinity)
 
-                    StatsCardItem(systemImage: "tv", title: state.showsWatchedLabel) {
+                    StatsCardItem(systemImage: "tv.fill", title: state.showsWatchedLabel) {
                         bigCount(Int(stats.showsWatched))
                     }
                     .frame(maxWidth: .infinity)
                 }
 
                 HStack(spacing: appTheme.spacing.small) {
-                    StatsCardItem(systemImage: "clock", title: state.watchTimeLabel) {
-                        HStack(spacing: appTheme.spacing.medium) {
+                    StatsCardItem(systemImage: "clock.fill", title: state.watchTimeLabel) {
+                        HStack(spacing: 0) {
                             statColumn(label: state.monthsLabel, value: stats.months)
+                            Spacer()
                             statColumn(label: state.daysLabel, value: stats.days)
+                            Spacer()
                             statColumn(label: state.hoursLabel, value: stats.hours)
                         }
+                        .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: .infinity)
 
                     StatsCardItem(systemImage: "list.bullet", title: state.listsLabel) {
-                        bigCount(Int(stats.listCount))
+                        HStack(alignment: .bottom) {
+                            bigCount(Int(stats.listCount))
+
+                            Spacer()
+
+                            Button(action: onViewListsClicked) {
+                                Text(state.listsViewLabel)
+                                    .textStyle(appTheme.typography.labelMedium)
+                                    .foregroundStyle(.appOnSurface)
+                                    .padding(.horizontal, appTheme.spacing.small)
+                                    .padding(.vertical, appTheme.spacing.xxSmall)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: appTheme.shapes.small)
+                                            .stroke(appTheme.colors.onSurfaceVariant.opacity(0.5), lineWidth: 1)
+                                    )
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -254,22 +284,18 @@ public struct ProfileScreen: View {
     }
 
     private func bigCount(_ value: Int) -> some View {
-        AnimatedCountText(count: value)
-            .textStyle(appTheme.typography.headlineMedium)
-            .foregroundStyle(.appOnSurface)
+        StatValueText(count: value, font: appTheme.typography.headlineLarge)
     }
 
     private func statColumn(label: String, value: Int32) -> some View {
-        VStack(spacing: appTheme.spacing.xxSmall) {
-            Text("\(value)")
-                .textStyle(appTheme.typography.titleMedium)
-                .foregroundStyle(.appOnSurface)
+        VStack(alignment: .center, spacing: appTheme.spacing.xxSmall) {
+            StatValueText(count: Int(value), font: appTheme.typography.titleLarge)
 
             Text(label)
-                .textStyle(appTheme.typography.bodySmall)
-                .foregroundStyle(.appOnSurface)
+                .textStyle(appTheme.typography.labelSmall)
+                .foregroundStyle(appTheme.colors.onSurfaceVariant)
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                .minimumScaleFactor(0.8)
         }
     }
 
@@ -288,13 +314,13 @@ public struct ProfileScreen: View {
                 }
 
                 HStack(spacing: appTheme.spacing.small) {
-                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
-                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
                 }
 
                 HStack(spacing: appTheme.spacing.small) {
-                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
-                    ShimmerView().frame(maxWidth: .infinity).frame(height: 120)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
                 }
             }
             .padding(.horizontal, appTheme.spacing.medium)
@@ -388,6 +414,19 @@ public struct ProfileScreen: View {
 
             Spacer()
         }
+    }
+}
+
+private struct StatValueText: View {
+    let count: Int
+    let font: Font
+
+    var body: some View {
+        AnimatedCountText(count: count)
+            .textStyle(font)
+            .fontWeight(.heavy)
+            .foregroundStyle(.appOnSurface)
+            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
     }
 }
 

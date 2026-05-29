@@ -19,44 +19,38 @@ public struct StatsCardItem<Content: View>: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: theme.spacing.xSmall) {
-                Image(systemName: systemImage)
-                    .textStyle(theme.typography.bodyLarge)
-                    .foregroundStyle(.appAccent)
+        VStack(alignment: .leading, spacing: 0) {
+            iconBadge
 
-                Text(title)
-                    .textStyle(theme.typography.titleSmall)
-                    .foregroundStyle(.appOnSurface)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+            Spacer(minLength: theme.spacing.small)
 
-                Spacer()
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, theme.spacing.medium)
-            .padding(.vertical, theme.spacing.medium)
+            Text(title)
+                .textStyle(theme.typography.bodySmall)
+                .foregroundStyle(theme.colors.onSurfaceVariant)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
 
-            Rectangle()
-                .fill(theme.colors.onSurfaceVariant)
-                .frame(height: 1)
+            Spacer()
+                .frame(height: theme.spacing.xxxSmall)
 
-            VStack {
-                Spacer()
-
-                content()
-                    .frame(maxWidth: .infinity)
-
-                Spacer()
-            }
-            .padding(.horizontal, theme.spacing.large)
+            content()
         }
-        .frame(height: 120)
-        .background(theme.colors.surface)
-        .overlay(
-            Rectangle()
-                .stroke(theme.colors.outline.opacity(0.2), lineWidth: 0.5)
-        )
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, theme.spacing.medium)
+        .padding(.vertical, theme.spacing.small)
+        .frame(height: 130)
+        .background(theme.colors.surfaceVariant)
+        .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large))
+        .appShadow(theme.shadows.small)
+    }
+
+    private var iconBadge: some View {
+        Image(systemName: systemImage)
+            .textStyle(theme.typography.titleMedium)
+            .foregroundStyle(.appAccent)
+            .frame(width: 36, height: 36)
+            .background(theme.colors.accent.opacity(0.15))
+            .clipShape(Circle())
     }
 }
 
@@ -100,7 +94,7 @@ public struct StatsCardItem<Content: View>: View {
             }
 
             StatsCardItem(
-                systemImage: "tv",
+                systemImage: "tv.fill",
                 title: "Episodes Watched"
             ) {
                 VStack(spacing: 0) {
