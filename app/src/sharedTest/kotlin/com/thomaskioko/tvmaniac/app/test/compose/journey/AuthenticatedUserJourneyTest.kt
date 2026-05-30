@@ -14,6 +14,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
     private val betterCallSaulTraktId = 59660L
+    private val favoritesListId = 34223248L
+    private val animeListId = 34223402L
 
     @Test
     fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {
@@ -179,6 +181,15 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         profileRobot
             .assertUserNameDisplayed()
+            .scrollToUserLists(slug = TEST_PROFILE_SLUG)
+            .assertUserListsRowDisplayed()
+            .assertListCardDisplayed(favoritesListId)
+            .assertListCardExists(animeListId)
+            // Collapse the section, then expand it again
+            .clickUserListsToggle()
+            .assertUserListsRowDoesNotExist()
+            .clickUserListsToggle()
+            .assertUserListsRowDisplayed()
             .clickSettingsButton()
 
         settingsRobot
