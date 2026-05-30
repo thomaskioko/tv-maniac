@@ -75,11 +75,11 @@ public struct CollapsibleSection<Content: View>: View {
 }
 
 #Preview {
-    CollapsibleSection(title: "Your Lists", showMore: true, onMoreClick: {}) {
+    CollapsibleSection(title: "Your Lists", showMore: true) {
         HStack(spacing: 12) {
             ForEach(0 ..< 2, id: \.self) { _ in
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.gray.opacity(0.3))
+                    .fill(.appSurfaceVariant)
                     .frame(height: 120)
             }
         }
