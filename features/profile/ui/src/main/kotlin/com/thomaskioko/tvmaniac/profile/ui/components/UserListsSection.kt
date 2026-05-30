@@ -63,59 +63,54 @@ internal fun UserListsSection(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (userLists) {
-        SectionState.Loading -> UserListsSkeleton(title = title, modifier = modifier)
-        SectionState.Empty -> Unit
-        is SectionState.Error -> UserListsError(
-            title = title,
-            message = userLists.message.message,
-            retryLabel = retryLabel,
-            onRetry = onRetry,
-            modifier = modifier,
-        )
-        is SectionState.Content -> UserListsRow(
-            title = title,
-            viewAllLabel = viewAllLabel,
-            lists = userLists.items,
-            onViewAll = onViewAll,
-            onListClick = onListClick,
-            modifier = modifier,
-        )
-    }
-}
+    if (userLists is SectionState.Empty) return
 
-@Composable
-private fun UserListsRow(
-    title: String,
-    viewAllLabel: String,
-    lists: ImmutableList<ProfileListItem>,
-    onViewAll: () -> Unit,
-    onListClick: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+    val showViewAll = (userLists as? SectionState.Content)?.items?.size?.let { it > MAX_INLINE_LISTS } == true
+
     Column(modifier = modifier.fillMaxWidth()) {
         SectionHeader(
             title = title,
-            viewAllLabel = viewAllLabel.takeIf { lists.size > MAX_INLINE_LISTS },
+            viewAllLabel = viewAllLabel.takeIf { showViewAll },
             onViewAll = onViewAll,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        LazyRow(
-            modifier = Modifier.testTag(ProfileTestTags.USER_LISTS_ROW_TEST_TAG),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(
-                items = lists,
-                key = { it.id },
-            ) { list ->
-                ListCollageCard(
-                    list = list,
-                    onClick = { onListClick(list.id) },
-                )
-            }
+        when (userLists) {
+            SectionState.Loading -> ListsSkeletonRow()
+            is SectionState.Error -> InlineSectionError(
+                message = userLists.message.message,
+                retryLabel = retryLabel,
+                onRetry = onRetry,
+                retryModifier = Modifier.testTag(ProfileTestTags.USER_LISTS_RETRY_TEST_TAG),
+            )
+            is SectionState.Content -> ListsRow(
+                lists = userLists.items,
+                onListClick = onListClick,
+            )
+            SectionState.Empty -> Unit
+        }
+    }
+}
+
+@Composable
+private fun ListsRow(
+    lists: ImmutableList<ProfileListItem>,
+    onListClick: (Long) -> Unit,
+) {
+    LazyRow(
+        modifier = Modifier.testTag(ProfileTestTags.USER_LISTS_ROW_TEST_TAG),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        items(
+            items = lists,
+            key = { it.id },
+        ) { list ->
+            ListCollageCard(
+                list = list,
+                onClick = { onListClick(list.id) },
+            )
         }
     }
 }
@@ -240,48 +235,19 @@ private fun CollagePlaceholder(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun UserListsSkeleton(
-    title: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        SectionHeader(title = title, viewAllLabel = null, onViewAll = {})
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            repeat(3) {
-                ShimmerBox(
-                    modifier = Modifier
-                        .width(CardWidth)
-                        .height(CollageHeight),
-                    shape = MaterialTheme.shapes.large,
-                )
-            }
+private fun ListsSkeletonRow() {
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        repeat(3) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(CardWidth)
+                    .height(CollageHeight),
+                shape = MaterialTheme.shapes.large,
+            )
         }
-    }
-}
-
-@Composable
-private fun UserListsError(
-    title: String,
-    message: String?,
-    retryLabel: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        SectionHeader(title = title, viewAllLabel = null, onViewAll = {})
-
-        InlineSectionError(
-            message = message ?: "",
-            retryLabel = retryLabel,
-            onRetry = onRetry,
-            retryModifier = Modifier.testTag(ProfileTestTags.USER_LISTS_RETRY_TEST_TAG),
-        )
     }
 }
 

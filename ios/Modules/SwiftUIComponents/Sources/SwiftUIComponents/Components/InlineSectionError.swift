@@ -1,9 +1,6 @@
 import DesignSystem
 import SwiftUI
 
-/// Compact, non-intrusive error row for a section that fails to load. Trakt-style: a single muted
-/// line with an optional inline retry link, so a failed rail does not dominate a screen that stacks
-/// several sections.
 public struct InlineSectionError: View {
     @Environment(\.appTheme) private var theme
 
@@ -22,12 +19,12 @@ public struct InlineSectionError: View {
     }
 
     public var body: some View {
-        HStack(alignment: .center, spacing: theme.spacing.medium) {
+        VStack(alignment: .center, spacing: theme.spacing.xxSmall) {
             Text(message)
                 .textStyle(theme.typography.bodySmall)
                 .foregroundStyle(theme.colors.onSurfaceVariant)
+                .multilineTextAlignment(.center)
                 .lineLimit(2)
-                .frame(maxWidth: .infinity, alignment: .leading)
 
             if let retryLabel, let onRetry {
                 Button(action: onRetry) {
@@ -37,8 +34,8 @@ public struct InlineSectionError: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, theme.spacing.medium)
-        .padding(.vertical, theme.spacing.small)
     }
 }
 

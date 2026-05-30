@@ -321,48 +321,55 @@ public struct ProfileScreen: View {
 
     @ViewBuilder
     private var userListsSection: some View {
-        switch state.userLists {
-        case .empty:
+        if case .empty = state.userLists {
             EmptyView()
-        case .loading:
+        } else {
             VStack(alignment: .leading, spacing: appTheme.spacing.small) {
                 Spacer().frame(height: appTheme.spacing.large)
-                sectionHeader(showChevron: false)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: appTheme.spacing.small) {
-                        ForEach(0 ..< 3, id: \.self) { _ in
-                            ShimmerView(cornerRadius: appTheme.shapes.large)
-                                .frame(width: 210, height: 140)
-                        }
-                    }
-                    .padding(.horizontal, appTheme.spacing.medium)
-                }
-            }
-        case let .error(message):
-            VStack(alignment: .leading, spacing: appTheme.spacing.small) {
-                Spacer().frame(height: appTheme.spacing.large)
-                sectionHeader(showChevron: false)
-
-                InlineSectionError(
-                    message: message,
-                    retryLabel: state.retryLabel,
-                    onRetry: onRetryLists
-                )
-            }
-        case let .content(lists):
-            VStack(alignment: .leading, spacing: appTheme.spacing.small) {
-                Spacer().frame(height: appTheme.spacing.large)
-                sectionHeader(showChevron: lists.count > DimensionConstants.maxInlineLists)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: appTheme.spacing.small) {
-                        ForEach(lists) { list in
-                            ListCollageCard(list: list, onClick: {})
-                        }
-                    }
-                    .padding(.horizontal, appTheme.spacing.medium)
-                }
+                sectionHeader(showChevron: userListsCount > DimensionConstants.maxInlineLists)
+                userListsBody
             }
         }
+    }
+
+    @ViewBuilder
+    private var userListsBody: some View {
+        switch state.userLists {
+        case .loading:
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: appTheme.spacing.small) {
+                    ForEach(0 ..< 3, id: \.self) { _ in
+                        ShimmerView(cornerRadius: appTheme.shapes.large)
+                            .frame(width: 210, height: 140)
+                    }
+                }
+                .padding(.horizontal, appTheme.spacing.medium)
+            }
+        case let .error(message):
+            InlineSectionError(
+                message: message,
+                retryLabel: state.retryLabel,
+                onRetry: onRetryLists
+            )
+        case let .content(lists):
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: appTheme.spacing.small) {
+                    ForEach(lists) { list in
+                        ListCollageCard(list: list, onClick: {})
+                    }
+                }
+                .padding(.horizontal, appTheme.spacing.medium)
+            }
+        case .empty:
+            EmptyView()
+        }
+    }
+
+    private var userListsCount: Int {
+        if case let .content(lists) = state.userLists {
+            return lists.count
+        }
+        return 0
     }
 
     private func sectionHeader(showChevron: Bool) -> some View {

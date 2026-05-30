@@ -2,22 +2,25 @@ package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 
-
+/**
+ * Compact, non-intrusive error for a section that fails to load. Trakt-style: a muted line of text
+ * directly under the section title with an optional inline retry link beneath it, left-aligned so
+ * the title and error read as one section rather than two floating elements.
+ */
 @Composable
 public fun InlineSectionError(
     message: String,
@@ -26,25 +29,23 @@ public fun InlineSectionError(
     onRetry: (() -> Unit)? = null,
     retryModifier: Modifier = Modifier,
 ) {
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = message,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
         )
 
         if (retryLabel != null && onRetry != null) {
-            Spacer(modifier = Modifier.width(12.dp))
-
             Text(
                 text = retryLabel,
                 style = MaterialTheme.typography.labelLarge,
@@ -52,7 +53,7 @@ public fun InlineSectionError(
                 modifier = retryModifier
                     .clip(MaterialTheme.shapes.small)
                     .clickable(onClick = onRetry)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(vertical = 4.dp),
             )
         }
     }
