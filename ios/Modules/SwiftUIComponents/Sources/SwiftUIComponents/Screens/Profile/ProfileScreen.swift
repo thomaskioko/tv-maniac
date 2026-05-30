@@ -130,18 +130,6 @@ public struct ProfileScreen: View {
                 unauthenticatedScrollView
             }
 
-            LinearGradient(
-                colors: [
-                    appTheme.colors.background.opacity(0.6),
-                    appTheme.colors.background.opacity(0.3),
-                    .clear,
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: 150)
-            .allowsHitTesting(false)
-
             GlassToolbar(
                 title: state.title,
                 opacity: showGlass,
