@@ -13,6 +13,7 @@ public data class ProfileState(
     val library: SectionState<ProfileShowItem> = SectionState.Loading,
     val watchlist: SectionState<ProfileShowItem> = SectionState.Loading,
     val favorites: SectionState<ProfileShowItem> = SectionState.Loading,
+    val labels: ProfileLabels = ProfileLabels(),
 ) {
     val showLoading: Boolean
         get() = errorMessage == null && isLoading && (userProfile == null || !userProfile.statsLoaded)
