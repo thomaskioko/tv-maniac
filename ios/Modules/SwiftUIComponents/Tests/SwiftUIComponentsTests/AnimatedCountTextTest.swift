@@ -7,7 +7,7 @@ import XCTest
 class AnimatedCountTextTest: SnapshotTestCase {
     func test_AnimatedCountText_LargeValue() {
         AnimatedCountText(count: 1250)
-            .font(.largeTitle)
+            .textStyle(TvManiacTypographyScheme.shared.headlineLarge)
             .padding()
             .appPreview()
             .assertSnapshot(testName: "AnimatedCountText_LargeValue")
@@ -15,7 +15,7 @@ class AnimatedCountTextTest: SnapshotTestCase {
 
     func test_AnimatedCountText_Zero() {
         AnimatedCountText(count: 0)
-            .font(.largeTitle)
+            .textStyle(TvManiacTypographyScheme.shared.headlineLarge)
             .padding()
             .appPreview()
             .assertSnapshot(testName: "AnimatedCountText_Zero")
