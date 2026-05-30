@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.data.user.api.model.UserProfileStats
 import com.thomaskioko.tvmaniac.data.user.api.model.UserWatchTime
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.data.user.testing.createTestProfile
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveCompletedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistPreviewInteractor
 import com.thomaskioko.tvmaniac.domain.favorites.ObserveFavoritesInteractor
@@ -536,6 +537,7 @@ internal class ProfilePresenterTest {
             observeUserProfileInteractor = observeUserProfileInteractor,
             observeUserListsInteractor = ObserveUserListsInteractor(traktListRepository),
             observeUpNextInteractor = ObserveUpNextInteractor(upNextRepository),
+            observeCompletedShowsInteractor = ObserveCompletedShowsInteractor(upNextRepository),
             observeRecentlyWatchedInteractor = ObserveRecentlyWatchedInteractor(episodeRepository),
             observeLibraryInteractor = ObserveLibraryInteractor(libraryRepository),
             observeWatchlistPreviewInteractor = ObserveWatchlistPreviewInteractor(upNextRepository),

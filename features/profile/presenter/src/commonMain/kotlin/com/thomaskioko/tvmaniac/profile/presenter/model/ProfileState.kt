@@ -9,6 +9,7 @@ public data class ProfileState(
     val authenticated: Boolean,
     val userLists: SectionState<ProfileListItem> = SectionState.Loading,
     val inProgress: SectionState<ProfileShowItem> = SectionState.Loading,
+    val completed: SectionState<ProfileShowItem> = SectionState.Loading,
     val recentlyWatched: SectionState<ProfileRecentItem> = SectionState.Loading,
     val library: SectionState<ProfileShowItem> = SectionState.Loading,
     val watchlist: SectionState<ProfileShowItem> = SectionState.Loading,
