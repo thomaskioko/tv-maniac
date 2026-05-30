@@ -40,7 +40,7 @@ public struct CircularButton: View {
                             .resizable()
                             .scaledToFit()
                             .foregroundStyle(.appOnSurface)
-                            .font(theme.typography.titleSmall)
+                            .textStyle(theme.typography.titleSmall)
                             .padding(theme.spacing.small)
                     )
                     .frame(width: width, height: height)

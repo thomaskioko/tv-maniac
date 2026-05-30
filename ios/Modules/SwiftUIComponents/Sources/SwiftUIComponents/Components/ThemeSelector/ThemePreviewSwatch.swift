@@ -60,7 +60,7 @@ public struct ThemePreviewSwatch: View {
                             .frame(width: 20, height: 20)
                             .overlay(
                                 Image(systemName: "checkmark")
-                                    .font(theme.typography.labelMedium)
+                                    .textStyle(theme.typography.labelMedium)
                                     .foregroundStyle(isSystemTheme ? .white : onAccentColor)
                             )
                             .offset(x: 4, y: 4)

@@ -45,7 +45,7 @@ public struct GlassButtonIconLabel: View {
 
     public var body: some View {
         Image(systemName: icon)
-            .font(theme.typography.titleMedium)
+            .textStyle(theme.typography.titleMedium)
             .foregroundStyle(.appOnPrimary)
     }
 }

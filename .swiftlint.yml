@@ -58,6 +58,12 @@ custom_rules:
         message: "Use .textStyle(theme.typography.x) or an .app*() typography modifier instead of system semantic fonts."
         severity: error
 
+    no_font_with_typography_token:
+        name: "Typography token in .font()"
+        regex: '\.font\([^)]*typography'
+        message: "Apply typography with .textStyle(theme.typography.x), not .font(...). .font() drops the token's tracking and line height. Use .textStyle(...) for Text and SF Symbols alike."
+        severity: error
+
     no_literal_foreground_color:
         name: "Literal foregroundColor"
         regex: '\.foregroundColor\((Color\.|\.)(white|black|gray|red|blue|green|yellow|orange|pink|purple|accentColor)[\.)]'

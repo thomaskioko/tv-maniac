@@ -1,28 +1,43 @@
 import DesignSystem
 import i18n
 import SwiftUI
-import SwiftUIComponents
+import TvManiac
+import UIKit
 
 public extension TvManiacTypographyScheme {
     static let moko = TvManiacTypographyScheme(
-        displayLarge: Font(resource: \.work_sans, withSize: 57),
-        displayMedium: Font(resource: \.work_sans, withSize: 45),
-        displaySmall: Font(resource: \.work_sans, withSize: 36),
-        headlineLarge: Font(resource: \.work_sans_bold, withSize: 32),
-        headlineMedium: Font(resource: \.work_sans_semibold, withSize: 28),
-        headlineSmall: Font(resource: \.work_sans_semibold, withSize: 24),
-        titleLarge: Font(resource: \.work_sans_semibold, withSize: 22),
-        titleMedium: Font(resource: \.work_sans_semibold, withSize: 16),
-        titleSmall: Font(resource: \.work_sans_bold, withSize: 14),
-        bodyLarge: Font(resource: \.work_sans, withSize: 16),
-        bodyMedium: Font(resource: \.work_sans_medium, withSize: 14),
-        bodySmall: Font(resource: \.work_sans, withSize: 12),
-        labelLarge: Font(resource: \.work_sans_semibold, withSize: 14),
-        labelMedium: Font(resource: \.work_sans_semibold, withSize: 12),
-        labelSmall: Font(resource: \.work_sans, withSize: 11)
+        displayLarge: style(\.work_sans_medium, size: 57, tracking: -0.25, lineHeight: 64),
+        displayMedium: style(\.work_sans_medium, size: 45, tracking: 0, lineHeight: 52),
+        displaySmall: style(\.work_sans_medium, size: 36, tracking: 0, lineHeight: 44),
+        headlineLarge: style(\.work_sans_bold, size: 32, tracking: 0, lineHeight: 40),
+        headlineMedium: style(\.work_sans_bold, size: 28, tracking: 0, lineHeight: 36),
+        headlineSmall: style(\.work_sans_bold, size: 24, tracking: 0, lineHeight: 32),
+        titleLarge: style(\.work_sans_bold, size: 22, tracking: 0, lineHeight: 28),
+        titleMedium: style(\.work_sans_bold, size: 16, tracking: 0.15, lineHeight: 24),
+        titleSmall: style(\.work_sans_extrabold, size: 14, tracking: 0.1, lineHeight: 20),
+        bodyLarge: style(\.work_sans_medium, size: 16, tracking: 0.15, lineHeight: 24),
+        bodyMedium: style(\.work_sans_semibold, size: 14, tracking: 0.25, lineHeight: 20),
+        bodySmall: style(\.work_sans_medium, size: 12, tracking: 0.4, lineHeight: 16),
+        labelLarge: style(\.work_sans_bold, size: 14, tracking: 0.1, lineHeight: 20),
+        labelMedium: style(\.work_sans_bold, size: 12, tracking: 0.5, lineHeight: 16),
+        labelSmall: style(\.work_sans_medium, size: 11, tracking: 0.5, lineHeight: 16)
     )
 
     static func configureMoko() {
         TvManiacTypographyScheme.shared = .moko
+    }
+
+    private static func style(
+        _ resource: KeyPath<MR.fonts, FontResource>,
+        size: Double,
+        tracking: CGFloat,
+        lineHeight: CGFloat
+    ) -> TvManiacTextStyle {
+        let uiFont = MR.fonts()[keyPath: resource].uiFont(withSize: size)
+        return TvManiacTextStyle(
+            font: Font(uiFont),
+            tracking: tracking,
+            lineSpacing: max(0, lineHeight - uiFont.lineHeight)
+        )
     }
 }

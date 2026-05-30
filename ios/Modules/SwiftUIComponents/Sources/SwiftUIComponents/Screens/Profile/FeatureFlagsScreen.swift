@@ -258,7 +258,7 @@ public struct FeatureFlagsScreen: View {
                     .appShadow(theme.shadows.medium)
 
                 Image(systemName: "line.3.horizontal.decrease")
-                    .font(theme.typography.titleMedium)
+                    .textStyle(theme.typography.titleMedium)
                     .foregroundStyle(.appOnPrimary)
             }
             .frame(width: 44, height: 44)

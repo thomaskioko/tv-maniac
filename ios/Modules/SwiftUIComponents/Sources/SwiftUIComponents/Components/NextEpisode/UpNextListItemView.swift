@@ -132,7 +132,7 @@ public struct UpNextListItemView: View {
                         .tint(theme.colors.onPrimary)
                 } else {
                     Image(systemName: "checkmark")
-                        .font(theme.typography.titleSmall)
+                        .textStyle(theme.typography.titleSmall)
                         .foregroundStyle(.white)
                 }
             }

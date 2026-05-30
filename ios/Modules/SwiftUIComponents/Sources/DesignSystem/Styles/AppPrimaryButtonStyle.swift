@@ -8,7 +8,7 @@ public struct AppPrimaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(theme.typography.labelLarge)
+            .textStyle(theme.typography.labelLarge)
             .foregroundStyle(.appOnPrimary)
             .padding(.horizontal, theme.spacing.large)
             .padding(.vertical, theme.spacing.small)

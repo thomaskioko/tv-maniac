@@ -104,7 +104,7 @@ public struct TraktListSelectorContent: View {
                     if !state.showCreateField {
                         Button(action: onShowCreateField) {
                             Image(systemName: "plus")
-                                .font(theme.typography.labelLarge)
+                                .textStyle(theme.typography.labelLarge)
                                 .foregroundStyle(.appOnAccent)
                                 .frame(width: 28, height: 28)
                                 .background(.appAccent)

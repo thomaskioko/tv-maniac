@@ -1,5 +1,17 @@
 import SwiftUI
 
+public struct TvManiacTextStyle {
+    public let font: Font
+    public let tracking: CGFloat
+    public let lineSpacing: CGFloat
+
+    public init(font: Font, tracking: CGFloat, lineSpacing: CGFloat) {
+        self.font = font
+        self.tracking = tracking
+        self.lineSpacing = lineSpacing
+    }
+}
+
 public struct TvManiacTypographyScheme {
     private static var _shared: TvManiacTypographyScheme?
 
@@ -21,55 +33,55 @@ public struct TvManiacTypographyScheme {
     }
 
     static let preview = TvManiacTypographyScheme(
-        displayLarge: .system(size: 57),
-        displayMedium: .system(size: 45),
-        displaySmall: .system(size: 36),
-        headlineLarge: .system(size: 32, weight: .bold),
-        headlineMedium: .system(size: 28, weight: .semibold),
-        headlineSmall: .system(size: 24, weight: .semibold),
-        titleLarge: .system(size: 22, weight: .semibold),
-        titleMedium: .system(size: 16, weight: .semibold),
-        titleSmall: .system(size: 14, weight: .bold),
-        bodyLarge: .system(size: 16),
-        bodyMedium: .system(size: 14, weight: .medium),
-        bodySmall: .system(size: 12),
-        labelLarge: .system(size: 14, weight: .semibold),
-        labelMedium: .system(size: 12, weight: .semibold),
-        labelSmall: .system(size: 11)
+        displayLarge: style(size: 57, weight: .medium, tracking: -0.25, lineHeight: 64),
+        displayMedium: style(size: 45, weight: .medium, tracking: 0, lineHeight: 52),
+        displaySmall: style(size: 36, weight: .medium, tracking: 0, lineHeight: 44),
+        headlineLarge: style(size: 32, weight: .bold, tracking: 0, lineHeight: 40),
+        headlineMedium: style(size: 28, weight: .bold, tracking: 0, lineHeight: 36),
+        headlineSmall: style(size: 24, weight: .bold, tracking: 0, lineHeight: 32),
+        titleLarge: style(size: 22, weight: .bold, tracking: 0, lineHeight: 28),
+        titleMedium: style(size: 16, weight: .bold, tracking: 0.15, lineHeight: 24),
+        titleSmall: style(size: 14, weight: .heavy, tracking: 0.1, lineHeight: 20),
+        bodyLarge: style(size: 16, weight: .medium, tracking: 0.15, lineHeight: 24),
+        bodyMedium: style(size: 14, weight: .semibold, tracking: 0.25, lineHeight: 20),
+        bodySmall: style(size: 12, weight: .medium, tracking: 0.4, lineHeight: 16),
+        labelLarge: style(size: 14, weight: .bold, tracking: 0.1, lineHeight: 20),
+        labelMedium: style(size: 12, weight: .bold, tracking: 0.5, lineHeight: 16),
+        labelSmall: style(size: 11, weight: .medium, tracking: 0.5, lineHeight: 16)
     )
 
-    public let displayLarge: Font
-    public let displayMedium: Font
-    public let displaySmall: Font
-    public let headlineLarge: Font
-    public let headlineMedium: Font
-    public let headlineSmall: Font
-    public let titleLarge: Font
-    public let titleMedium: Font
-    public let titleSmall: Font
-    public let bodyLarge: Font
-    public let bodyMedium: Font
-    public let bodySmall: Font
-    public let labelLarge: Font
-    public let labelMedium: Font
-    public let labelSmall: Font
+    public let displayLarge: TvManiacTextStyle
+    public let displayMedium: TvManiacTextStyle
+    public let displaySmall: TvManiacTextStyle
+    public let headlineLarge: TvManiacTextStyle
+    public let headlineMedium: TvManiacTextStyle
+    public let headlineSmall: TvManiacTextStyle
+    public let titleLarge: TvManiacTextStyle
+    public let titleMedium: TvManiacTextStyle
+    public let titleSmall: TvManiacTextStyle
+    public let bodyLarge: TvManiacTextStyle
+    public let bodyMedium: TvManiacTextStyle
+    public let bodySmall: TvManiacTextStyle
+    public let labelLarge: TvManiacTextStyle
+    public let labelMedium: TvManiacTextStyle
+    public let labelSmall: TvManiacTextStyle
 
     public init(
-        displayLarge: Font,
-        displayMedium: Font,
-        displaySmall: Font,
-        headlineLarge: Font,
-        headlineMedium: Font,
-        headlineSmall: Font,
-        titleLarge: Font,
-        titleMedium: Font,
-        titleSmall: Font,
-        bodyLarge: Font,
-        bodyMedium: Font,
-        bodySmall: Font,
-        labelLarge: Font,
-        labelMedium: Font,
-        labelSmall: Font
+        displayLarge: TvManiacTextStyle,
+        displayMedium: TvManiacTextStyle,
+        displaySmall: TvManiacTextStyle,
+        headlineLarge: TvManiacTextStyle,
+        headlineMedium: TvManiacTextStyle,
+        headlineSmall: TvManiacTextStyle,
+        titleLarge: TvManiacTextStyle,
+        titleMedium: TvManiacTextStyle,
+        titleSmall: TvManiacTextStyle,
+        bodyLarge: TvManiacTextStyle,
+        bodyMedium: TvManiacTextStyle,
+        bodySmall: TvManiacTextStyle,
+        labelLarge: TvManiacTextStyle,
+        labelMedium: TvManiacTextStyle,
+        labelSmall: TvManiacTextStyle
     ) {
         self.displayLarge = displayLarge
         self.displayMedium = displayMedium
@@ -87,11 +99,30 @@ public struct TvManiacTypographyScheme {
         self.labelMedium = labelMedium
         self.labelSmall = labelSmall
     }
+
+    private static func style(
+        size: CGFloat,
+        weight: Font.Weight,
+        tracking: CGFloat,
+        lineHeight: CGFloat
+    ) -> TvManiacTextStyle {
+        TvManiacTextStyle(
+            font: .system(size: size, weight: weight),
+            tracking: tracking,
+            lineSpacing: max(0, lineHeight - size * 1.2)
+        )
+    }
 }
 
 public extension View {
     func textStyle(_ font: Font) -> some View {
         self.font(font)
+    }
+
+    func textStyle(_ style: TvManiacTextStyle) -> some View {
+        font(style.font)
+            .tracking(style.tracking)
+            .lineSpacing(style.lineSpacing)
     }
 }
 

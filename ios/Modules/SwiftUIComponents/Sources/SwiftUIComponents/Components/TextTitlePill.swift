@@ -5,12 +5,12 @@ public struct TextTitlePill: View {
     @Environment(\.appTheme) private var theme
 
     let title: String
-    let titleStyle: Font?
+    let titleStyle: TvManiacTextStyle?
     let onTap: () -> Void
 
     public init(
         title: String,
-        titleStyle: Font? = nil,
+        titleStyle: TvManiacTextStyle? = nil,
         onTap: @escaping () -> Void
     ) {
         self.title = title
@@ -26,7 +26,7 @@ public struct TextTitlePill: View {
                     .lineLimit(1)
                     .foregroundStyle(.appOnSurface)
                 Image(systemName: "chevron.right")
-                    .font(theme.typography.labelSmall)
+                    .textStyle(theme.typography.labelSmall)
                     .foregroundStyle(.appOnSurface)
             }
             .padding(.horizontal, theme.spacing.xSmall)
