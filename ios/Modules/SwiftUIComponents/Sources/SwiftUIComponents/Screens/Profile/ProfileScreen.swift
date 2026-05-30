@@ -310,11 +310,13 @@ public struct ProfileScreen: View {
     private func watchTimeSegment(value: Int32, unit: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 2) {
             StatValueText(count: Int(value), font: appTheme.typography.headlineLarge)
+                .fixedSize(horizontal: true, vertical: false)
 
             Text(unit)
                 .textStyle(appTheme.typography.labelSmall)
                 .foregroundStyle(appTheme.colors.onSurfaceVariant)
                 .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
         }
     }
 
