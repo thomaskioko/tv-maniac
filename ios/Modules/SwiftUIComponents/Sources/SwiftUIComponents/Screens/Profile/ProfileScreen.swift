@@ -450,7 +450,7 @@ public struct ProfileScreen: View {
 
 private struct StatValueText: View {
     let count: Int
-    let font: Font
+    let font: TvManiacTextStyle
 
     var body: some View {
         AnimatedCountText(count: count)
