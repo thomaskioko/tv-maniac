@@ -152,7 +152,7 @@ public struct ProfileScreen: View {
 
                 VStack(spacing: 0) {
                     Spacer()
-                        .frame(height: appTheme.spacing.large)
+                        .frame(height: appTheme.spacing.medium)
 
                     statsSection(stats: userProfile.stats)
 
@@ -160,7 +160,6 @@ public struct ProfileScreen: View {
                         .frame(height: appTheme.spacing.xLarge)
                 }
                 .background(appTheme.colors.background)
-                .offset(y: -10)
             }
         }
         .coordinateSpace(name: "profileScroll")
@@ -188,26 +187,24 @@ public struct ProfileScreen: View {
                 )
             )
 
-            HStack(alignment: .center, spacing: appTheme.spacing.medium) {
+            HStack(alignment: .bottom, spacing: appTheme.spacing.medium) {
                 AvatarView(
                     avatarUrl: userProfile.avatarUrl,
-                    size: 80,
+                    size: 70,
                     borderColor: appTheme.colors.accent,
-                    borderWidth: 3
+                    borderWidth: 2
                 )
 
                 VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
                     Text(userProfile.fullName ?? userProfile.username)
-                        .textStyle(appTheme.typography.titleLarge)
+                        .textStyle(appTheme.typography.bodyLargeEmphasized)
                         .foregroundStyle(.appOnPrimary)
 
                     Button(action: {}) {
                         Text(state.editButtonLabel)
-                            .textStyle(appTheme.typography.labelMedium)
+                            .textStyle(appTheme.typography.bodyMedium)
                             .foregroundStyle(.appOnPrimary)
-                            .padding(.horizontal, appTheme.spacing.medium)
-                            .padding(.vertical, appTheme.spacing.xSmall)
-                            .background(Color.clear)
+                            .frame(minWidth: 140, minHeight: 40)
                             .overlay(
                                 RoundedRectangle(cornerRadius: appTheme.shapes.medium)
                                     .stroke(.appOnPrimary, lineWidth: 1)
@@ -217,7 +214,8 @@ public struct ProfileScreen: View {
 
                 Spacer()
             }
-            .padding(appTheme.spacing.medium)
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.bottom, appTheme.spacing.xSmall)
         }
         .clipped()
     }
@@ -228,8 +226,7 @@ public struct ProfileScreen: View {
         VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
             HStack(spacing: 0) {
                 Text(state.statsTitle)
-                    .textStyle(appTheme.typography.titleLarge)
-                    .fontWeight(.bold)
+                    .textStyle(appTheme.typography.titleLargeEmphasized)
                     .foregroundStyle(.appOnSurface)
 
                 Spacer()
@@ -304,13 +301,12 @@ public struct ProfileScreen: View {
     }
 
     private func bigCount(_ value: Int) -> some View {
-        StatValueText(count: value, font: appTheme.typography.headlineLarge)
+        StatValueText(count: value)
     }
 
     private func bigLabel(_ text: String) -> some View {
         Text(text)
             .textStyle(appTheme.typography.headlineLarge)
-            .fontWeight(.heavy)
             .foregroundStyle(.appOnSurface)
             .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
             .lineLimit(1)
@@ -319,11 +315,11 @@ public struct ProfileScreen: View {
 
     private func watchTimeSegment(value: Int32, unit: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 2) {
-            StatValueText(count: Int(value), font: appTheme.typography.headlineLarge)
+            StatValueText(count: Int(value))
                 .fixedSize(horizontal: true, vertical: false)
 
             Text(unit)
-                .textStyle(appTheme.typography.labelSmall)
+                .textStyle(appTheme.typography.bodySmall)
                 .foregroundStyle(appTheme.colors.onSurfaceVariant)
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
@@ -345,13 +341,13 @@ public struct ProfileScreen: View {
                 }
 
                 HStack(spacing: appTheme.spacing.small) {
-                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
-                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
                 }
 
                 HStack(spacing: appTheme.spacing.small) {
-                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
-                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 130)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
                 }
             }
             .padding(.horizontal, appTheme.spacing.medium)
@@ -449,20 +445,20 @@ public struct ProfileScreen: View {
 }
 
 private struct StatValueText: View {
+    @Environment(\.appTheme) private var appTheme
+
     let count: Int
-    let font: TvManiacTextStyle
 
     var body: some View {
         AnimatedCountText(count: count)
-            .textStyle(font)
-            .fontWeight(.heavy)
+            .textStyle(appTheme.typography.headlineLargeEmphasized)
             .foregroundStyle(.appOnSurface)
             .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
     }
 }
 
 private enum DimensionConstants {
-    static let imageHeight: CGFloat = 350
+    static let imageHeight: CGFloat = 310
 }
 
 private struct ProfileScrollOffsetKey: PreferenceKey {
