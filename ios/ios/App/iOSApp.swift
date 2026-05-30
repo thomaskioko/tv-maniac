@@ -18,7 +18,7 @@ struct iOSApp: App {
     private let screenRegistry = ScreenRegistryBootstrap.makeRegistry()
 
     init() {
-        TvManiacTypographyScheme.configureMoko()
+        TvManiacTypographyScheme.configure()
     }
 
     @State private var dragOffsetX: CGFloat = 0
