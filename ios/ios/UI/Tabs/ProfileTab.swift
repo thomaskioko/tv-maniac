@@ -19,7 +19,8 @@ struct ProfileTab: View {
             state: uiState.toState(),
             onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
             onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) },
-            onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) }
+            onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) },
+            onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) }
         )
         .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {
@@ -65,6 +66,10 @@ private extension ProfileState {
             showsWatchedLabel: labels.showsWatched,
             listsLabel: labels.lists,
             listsViewLabel: labels.viewButton,
+            userListsTitle: labels.userListsTitle,
+            viewAllLabel: labels.viewAllButton,
+            retryLabel: labels.retry,
+            userLists: userLists.toSwiftSectionState(),
             unauthenticatedTitle: labels.unauthenticatedTitle,
             footerDescription: labels.footerDescription,
             signInLabel: labels.signInButton,
@@ -95,5 +100,30 @@ private extension ProfileState {
                 ),
             ]
         )
+    }
+}
+
+private extension SectionState {
+    func toSwiftSectionState() -> SwiftSectionState<SwiftProfileList> {
+        switch self {
+        case is SectionStateLoading:
+            return .loading
+        case is SectionStateEmpty:
+            return .empty
+        case let error as SectionStateError:
+            return .error(error.message.message)
+        case let content as SectionStateContent<ProfileListItem>:
+            let items = content.items.compactMap { $0 as? ProfileListItem }.map { item in
+                SwiftProfileList(
+                    id: item.id,
+                    name: item.name,
+                    itemCountLabel: item.itemCountLabel,
+                    posterUrls: item.posterUrls
+                )
+            }
+            return .content(items)
+        default:
+            return .empty
+        }
     }
 }

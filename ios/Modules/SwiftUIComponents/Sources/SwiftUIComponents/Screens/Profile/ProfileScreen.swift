@@ -16,6 +16,10 @@ public struct ProfileScreen: View {
         public let showsWatchedLabel: String
         public let listsLabel: String
         public let listsViewLabel: String
+        public let userListsTitle: String
+        public let viewAllLabel: String
+        public let retryLabel: String
+        public let userLists: SwiftSectionState<SwiftProfileList>
         public let unauthenticatedTitle: String
         public let footerDescription: String
         public let signInLabel: String
@@ -35,6 +39,10 @@ public struct ProfileScreen: View {
             showsWatchedLabel: String,
             listsLabel: String,
             listsViewLabel: String,
+            userListsTitle: String = "",
+            viewAllLabel: String = "",
+            retryLabel: String = "",
+            userLists: SwiftSectionState<SwiftProfileList> = .empty,
             unauthenticatedTitle: String,
             footerDescription: String,
             signInLabel: String,
@@ -53,6 +61,10 @@ public struct ProfileScreen: View {
             self.showsWatchedLabel = showsWatchedLabel
             self.listsLabel = listsLabel
             self.listsViewLabel = listsViewLabel
+            self.userListsTitle = userListsTitle
+            self.viewAllLabel = viewAllLabel
+            self.retryLabel = retryLabel
+            self.userLists = userLists
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
             self.signInLabel = signInLabel
@@ -66,17 +78,20 @@ public struct ProfileScreen: View {
     private let onSettingsClicked: () -> Void
     private let onLoginClicked: () -> Void
     private let onViewListsClicked: () -> Void
+    private let onRetryLists: () -> Void
 
     public init(
         state: State,
         onSettingsClicked: @escaping () -> Void,
         onLoginClicked: @escaping () -> Void,
-        onViewListsClicked: @escaping () -> Void = {}
+        onViewListsClicked: @escaping () -> Void = {},
+        onRetryLists: @escaping () -> Void = {}
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
         self.onLoginClicked = onLoginClicked
         self.onViewListsClicked = onViewListsClicked
+        self.onRetryLists = onRetryLists
     }
 
     @SwiftUI.State private var showGlass: Double = 0
@@ -156,6 +171,8 @@ public struct ProfileScreen: View {
 
                     statsSection(stats: userProfile.stats)
 
+                    userListsSection
+
                     Spacer()
                         .frame(height: appTheme.spacing.xLarge)
                 }
@@ -223,20 +240,7 @@ public struct ProfileScreen: View {
     // MARK: - Stats Section
 
     private func statsSection(stats: SwiftProfileStats) -> some View {
-        VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
-            HStack(spacing: 0) {
-                Text(state.statsTitle)
-                    .textStyle(appTheme.typography.titleLargeEmphasized)
-                    .foregroundStyle(.appOnSurface)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .textStyle(appTheme.typography.titleMedium)
-                    .foregroundStyle(appTheme.colors.onSurfaceVariant)
-            }
-            .padding(.horizontal, appTheme.spacing.medium)
-
+        CollapsibleSection(title: state.statsTitle) {
             VStack(spacing: appTheme.spacing.small) {
                 HStack(spacing: appTheme.spacing.small) {
                     StatsCardItem(
@@ -298,6 +302,67 @@ public struct ProfileScreen: View {
             }
             .padding(.horizontal, appTheme.spacing.medium)
         }
+    }
+
+    // MARK: - User Lists Section
+
+    @ViewBuilder
+    private var userListsSection: some View {
+        if case .empty = state.userLists {
+            EmptyView()
+        } else {
+            VStack(spacing: 0) {
+                Spacer().frame(height: appTheme.spacing.large)
+
+                CollapsibleSection(
+                    title: state.userListsTitle,
+                    showMore: userListsCount > DimensionConstants.maxInlineLists,
+                    onMoreClick: onViewListsClicked
+                ) {
+                    userListsBody
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var userListsBody: some View {
+        switch state.userLists {
+        case .loading:
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: appTheme.spacing.small) {
+                    ForEach(0 ..< 3, id: \.self) { _ in
+                        ShimmerView(cornerRadius: appTheme.shapes.large)
+                            .frame(width: 210, height: 140)
+                    }
+                }
+                .padding(.horizontal, appTheme.spacing.medium)
+            }
+        case let .error(message):
+            InlineSectionError(
+                message: message,
+                retryLabel: state.retryLabel,
+                onRetry: onRetryLists
+            )
+        case let .content(lists):
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: appTheme.spacing.small) {
+                    ForEach(lists) { list in
+                        ListCollageCard(list: list, onClick: {})
+                    }
+                }
+                .padding(.horizontal, appTheme.spacing.medium)
+            }
+        case .empty:
+            EmptyView()
+        }
+    }
+
+    private var userListsCount: Int {
+        if case let .content(lists) = state.userLists {
+            return lists.count
+        }
+        return 0
     }
 
     private func bigCount(_ value: Int) -> some View {
@@ -459,6 +524,7 @@ private struct StatValueText: View {
 
 private enum DimensionConstants {
     static let imageHeight: CGFloat = 310
+    static let maxInlineLists: Int = 4
 }
 
 private struct ProfileScrollOffsetKey: PreferenceKey {

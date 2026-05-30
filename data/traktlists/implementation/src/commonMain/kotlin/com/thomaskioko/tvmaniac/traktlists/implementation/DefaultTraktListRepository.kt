@@ -33,7 +33,7 @@ public class DefaultTraktListRepository(
 ) : TraktListRepository {
 
     override fun observeLists(): Flow<List<TraktListEntity>> =
-        traktListDao.observeAll().distinctUntilChanged()
+        traktListDao.observeListsWithPosters().distinctUntilChanged()
 
     override fun observeListsForShow(traktShowId: Long): Flow<List<TraktList>> =
         combine(

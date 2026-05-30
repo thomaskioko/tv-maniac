@@ -6,10 +6,30 @@ import XCTest
 
 class ProfileScreenTest: SnapshotTestCase {
     private let sampleFeatureItems: [SwiftFeatureItem] = [
-        SwiftFeatureItem(id: "discover", iconName: "magnifyingglass", title: "Discover Shows", description: "Find new shows to watch"),
-        SwiftFeatureItem(id: "track", iconName: "tv", title: "Track Progress", description: "Keep track of what you've watched"),
-        SwiftFeatureItem(id: "manage", iconName: "rectangle.stack", title: "Manage Library", description: "Organize your shows"),
-        SwiftFeatureItem(id: "more", iconName: "sparkles", title: "And More", description: "Get personalized recommendations"),
+        SwiftFeatureItem(
+            id: "discover",
+            iconName: "magnifyingglass",
+            title: "Discover Shows",
+            description: "Find new shows to watch"
+        ),
+        SwiftFeatureItem(
+            id: "track",
+            iconName: "tv",
+            title: "Track Progress",
+            description: "Keep track of what you've watched"
+        ),
+        SwiftFeatureItem(
+            id: "manage",
+            iconName: "rectangle.stack",
+            title: "Manage Library",
+            description: "Organize your shows"
+        ),
+        SwiftFeatureItem(
+            id: "more",
+            iconName: "sparkles",
+            title: "And More",
+            description: "Get personalized recommendations"
+        ),
     ]
 
     func test_ProfileScreen_Loading() {
@@ -68,8 +88,23 @@ class ProfileScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Unauthenticated")
     }
 
-    func test_ProfileScreen_Authenticated() {
-        let profile = SwiftProfileInfo(
+    private let sampleLists: [SwiftProfileList] = [
+        SwiftProfileList(id: 1, name: "Watchlist", itemCountLabel: "24 shows", posterUrls: ["a", "b", "c", "d"]),
+        SwiftProfileList(id: 2, name: "Favorites", itemCountLabel: "2 shows", posterUrls: ["e", "f"]),
+        SwiftProfileList(id: 3, name: "New List", itemCountLabel: "3 shows", posterUrls: []),
+    ]
+
+    private let manyLists: [SwiftProfileList] = (1 ... 5).map { index in
+        SwiftProfileList(
+            id: Int64(index),
+            name: "List \(index)",
+            itemCountLabel: "\(index) shows",
+            posterUrls: ["a", "b", "c", "d"]
+        )
+    }
+
+    private func authenticatedProfile() -> SwiftProfileInfo {
+        SwiftProfileInfo(
             username: "tvmaniac_user",
             fullName: "John Doe",
             avatarUrl: nil,
@@ -83,31 +118,71 @@ class ProfileScreenTest: SnapshotTestCase {
                 listCount: 12
             )
         )
+    }
 
+    private func authenticatedState(userLists: SwiftSectionState<SwiftProfileList>) -> ProfileScreen.State {
+        ProfileScreen.State(
+            title: "Profile",
+            isLoading: false,
+            userProfile: authenticatedProfile(),
+            editButtonLabel: "Edit Profile",
+            statsTitle: "Stats",
+            watchTimeLabel: "Watch Time",
+            monthsLabel: "M",
+            daysLabel: "D",
+            hoursLabel: "H",
+            episodesWatchedLabel: "Episodes Watched",
+            showsWatchedLabel: "Shows Watched",
+            listsLabel: "Lists",
+            listsViewLabel: "View",
+            userListsTitle: "Your Lists",
+            viewAllLabel: "More",
+            retryLabel: "Retry",
+            userLists: userLists,
+            unauthenticatedTitle: "Track your shows",
+            footerDescription: "Sign in to sync your data.",
+            signInLabel: "Sign In with Trakt",
+            featureItems: sampleFeatureItems
+        )
+    }
+
+    func test_ProfileScreen_Authenticated() {
         ProfileScreen(
-            state: ProfileScreen.State(
-                title: "Profile",
-                isLoading: false,
-                userProfile: profile,
-                editButtonLabel: "Edit Profile",
-                statsTitle: "Stats",
-                watchTimeLabel: "Watch Time",
-                monthsLabel: "M",
-                daysLabel: "D",
-                hoursLabel: "H",
-                episodesWatchedLabel: "Episodes Watched",
-                showsWatchedLabel: "Shows Watched",
-                listsLabel: "Lists",
-                listsViewLabel: "View",
-                unauthenticatedTitle: "Track your shows",
-                footerDescription: "Sign in to sync your data.",
-                signInLabel: "Sign In with Trakt",
-                featureItems: sampleFeatureItems
-            ),
+            state: authenticatedState(userLists: .content(sampleLists)),
             onSettingsClicked: {},
             onLoginClicked: {}
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated")
+    }
+
+    func test_ProfileScreen_UserListsWithMore() {
+        ProfileScreen(
+            state: authenticatedState(userLists: .content(manyLists)),
+            onSettingsClicked: {},
+            onLoginClicked: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsWithMore")
+    }
+
+    func test_ProfileScreen_UserListsEmpty() {
+        ProfileScreen(
+            state: authenticatedState(userLists: .empty),
+            onSettingsClicked: {},
+            onLoginClicked: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsEmpty")
+    }
+
+    func test_ProfileScreen_UserListsError() {
+        ProfileScreen(
+            state: authenticatedState(userLists: .error("Failed to load lists")),
+            onSettingsClicked: {},
+            onLoginClicked: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsError")
     }
 }
