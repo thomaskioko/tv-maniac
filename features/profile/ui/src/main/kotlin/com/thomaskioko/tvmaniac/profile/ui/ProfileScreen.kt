@@ -63,9 +63,11 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.profile.ui.components.ProfileLoadingSkeleton
+import com.thomaskioko.tvmaniac.profile.ui.components.ProgressSection
 import com.thomaskioko.tvmaniac.profile.ui.components.StatsCard
 import com.thomaskioko.tvmaniac.profile.ui.components.UnauthenticatedContent
 import com.thomaskioko.tvmaniac.profile.ui.components.UserListsSection
@@ -109,9 +111,12 @@ internal fun ProfileScreen(
                     labels = state.labels,
                     listCount = listCount,
                     userLists = state.userLists,
+                    inProgress = state.inProgress,
+                    completed = state.completed,
                     onLoginClicked = { onAction(LoginClicked) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
                     onListClick = {},
+                    onShowClick = { onAction(ProfileAction.ShowClicked(it)) },
                     onRetry = { onAction(ProfileAction.RefreshProfile) },
                     listState = listState,
                     contentPadding = contentPadding,
@@ -177,9 +182,12 @@ private fun ProfileContent(
     labels: ProfileLabels,
     listCount: Int,
     userLists: SectionState<ProfileListItem>,
+    inProgress: SectionState<ProfileShowItem>,
+    completed: SectionState<ProfileShowItem>,
     onLoginClicked: () -> Unit,
     onViewLists: () -> Unit,
     onListClick: (Long) -> Unit,
+    onShowClick: (Long) -> Unit,
     onRetry: () -> Unit,
     listState: LazyListState,
     contentPadding: PaddingValues,
@@ -227,20 +235,42 @@ private fun ProfileContent(
                     )
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
+                if (userLists !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        UserListsSection(
+                            userLists = userLists,
+                            title = labels.userListsTitle,
+                            viewAllLabel = labels.viewAllButton,
+                            retryLabel = labels.retry,
+                            onViewAll = onViewLists,
+                            onListClick = onListClick,
+                            onRetry = onRetry,
+                        )
+                    }
                 }
 
-                item {
-                    UserListsSection(
-                        userLists = userLists,
-                        title = labels.userListsTitle,
-                        viewAllLabel = labels.viewAllButton,
-                        retryLabel = labels.retry,
-                        onViewAll = onViewLists,
-                        onListClick = onListClick,
-                        onRetry = onRetry,
-                    )
+                if (inProgress !is SectionState.Empty || completed !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        ProgressSection(
+                            inProgress = inProgress,
+                            completed = completed,
+                            title = labels.progressTitle,
+                            inProgressLabel = labels.inProgressFilter,
+                            completedLabel = labels.completedFilter,
+                            emptyLabel = labels.progressEmpty,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
+                    }
                 }
 
                 item {

@@ -26,6 +26,10 @@ internal val sampleProfileLabels: ProfileLabels = ProfileLabels(
     lists = "Lists",
     viewButton = "View",
     userListsTitle = "Your Lists",
+    progressTitle = "Progress",
+    completedFilter = "Completed",
+    inProgressFilter = "In Progress",
+    progressEmpty = "Nothing here yet",
     viewAllButton = "More",
     retry = "Retry",
     unauthenticatedTitle = "Discover.\nTrack.\nWatchlist.\n& More ...",
@@ -94,6 +98,7 @@ internal val authenticatedState = ProfileState(
         ),
     ),
     inProgress = SectionState.Content(sampleShows),
+    completed = SectionState.Content(sampleShows),
     recentlyWatched = SectionState.Content(
         persistentListOf(
             ProfileRecentItem(traktId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null, episodeLabel = "S5E14"),

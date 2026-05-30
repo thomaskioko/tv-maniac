@@ -20,7 +20,9 @@ struct ProfileTab: View {
             onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
             onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) },
             onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) },
-            onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) }
+            onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) },
+            onShowClicked: { traktId in presenter.dispatch(action: ProfileActionShowClicked(traktId: traktId)) },
+            onRetryProgress: { presenter.dispatch(action: ProfileActionRefreshProfile()) }
         )
         .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {
@@ -70,6 +72,12 @@ private extension ProfileState {
             viewAllLabel: labels.viewAllButton,
             retryLabel: labels.retry,
             userLists: userLists.toSwiftSectionState(),
+            progressTitle: labels.progressTitle,
+            inProgressLabel: labels.inProgressFilter,
+            completedLabel: labels.completedFilter,
+            progressEmptyLabel: labels.progressEmpty,
+            inProgress: inProgress.toSwiftShowSectionState(),
+            completed: completed.toSwiftShowSectionState(),
             unauthenticatedTitle: labels.unauthenticatedTitle,
             footerDescription: labels.footerDescription,
             signInLabel: labels.signInButton,
@@ -119,6 +127,28 @@ private extension SectionState {
                     name: item.name,
                     itemCountLabel: item.itemCountLabel,
                     posterUrls: item.posterUrls
+                )
+            }
+            return .content(items)
+        default:
+            return .empty
+        }
+    }
+
+    func toSwiftShowSectionState() -> SwiftSectionState<SwiftProfileShow> {
+        switch self {
+        case is SectionStateLoading:
+            return .loading
+        case is SectionStateEmpty:
+            return .empty
+        case let error as SectionStateError:
+            return .error(error.message.message)
+        case let content as SectionStateContent<ProfileShowItem>:
+            let items = content.items.compactMap { $0 as? ProfileShowItem }.map { item in
+                SwiftProfileShow(
+                    id: item.traktId,
+                    title: item.title,
+                    posterUrl: item.posterUrl
                 )
             }
             return .content(items)

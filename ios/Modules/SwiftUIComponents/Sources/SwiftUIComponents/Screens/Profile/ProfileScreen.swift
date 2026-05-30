@@ -20,6 +20,12 @@ public struct ProfileScreen: View {
         public let viewAllLabel: String
         public let retryLabel: String
         public let userLists: SwiftSectionState<SwiftProfileList>
+        public let progressTitle: String
+        public let inProgressLabel: String
+        public let completedLabel: String
+        public let progressEmptyLabel: String
+        public let inProgress: SwiftSectionState<SwiftProfileShow>
+        public let completed: SwiftSectionState<SwiftProfileShow>
         public let unauthenticatedTitle: String
         public let footerDescription: String
         public let signInLabel: String
@@ -43,6 +49,12 @@ public struct ProfileScreen: View {
             viewAllLabel: String = "",
             retryLabel: String = "",
             userLists: SwiftSectionState<SwiftProfileList> = .empty,
+            progressTitle: String = "",
+            inProgressLabel: String = "",
+            completedLabel: String = "",
+            progressEmptyLabel: String = "",
+            inProgress: SwiftSectionState<SwiftProfileShow> = .empty,
+            completed: SwiftSectionState<SwiftProfileShow> = .empty,
             unauthenticatedTitle: String,
             footerDescription: String,
             signInLabel: String,
@@ -65,6 +77,12 @@ public struct ProfileScreen: View {
             self.viewAllLabel = viewAllLabel
             self.retryLabel = retryLabel
             self.userLists = userLists
+            self.progressTitle = progressTitle
+            self.inProgressLabel = inProgressLabel
+            self.completedLabel = completedLabel
+            self.progressEmptyLabel = progressEmptyLabel
+            self.inProgress = inProgress
+            self.completed = completed
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
             self.signInLabel = signInLabel
@@ -79,19 +97,25 @@ public struct ProfileScreen: View {
     private let onLoginClicked: () -> Void
     private let onViewListsClicked: () -> Void
     private let onRetryLists: () -> Void
+    private let onShowClicked: (Int64) -> Void
+    private let onRetryProgress: () -> Void
 
     public init(
         state: State,
         onSettingsClicked: @escaping () -> Void,
         onLoginClicked: @escaping () -> Void,
         onViewListsClicked: @escaping () -> Void = {},
-        onRetryLists: @escaping () -> Void = {}
+        onRetryLists: @escaping () -> Void = {},
+        onShowClicked: @escaping (Int64) -> Void = { _ in },
+        onRetryProgress: @escaping () -> Void = {}
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
         self.onLoginClicked = onLoginClicked
         self.onViewListsClicked = onViewListsClicked
         self.onRetryLists = onRetryLists
+        self.onShowClicked = onShowClicked
+        self.onRetryProgress = onRetryProgress
     }
 
     @SwiftUI.State private var showGlass: Double = 0
@@ -172,6 +196,8 @@ public struct ProfileScreen: View {
                     statsSection(stats: userProfile.stats)
 
                     userListsSection
+
+                    progressSection
 
                     Spacer()
                         .frame(height: appTheme.spacing.xLarge)
@@ -363,6 +389,31 @@ public struct ProfileScreen: View {
             return lists.count
         }
         return 0
+    }
+
+    // MARK: - Progress Section
+
+    @ViewBuilder
+    private var progressSection: some View {
+        if case .empty = state.inProgress, case .empty = state.completed {
+            EmptyView()
+        } else {
+            VStack(spacing: 0) {
+                Spacer().frame(height: appTheme.spacing.large)
+
+                ProgressSectionView(
+                    inProgress: state.inProgress,
+                    completed: state.completed,
+                    title: state.progressTitle,
+                    inProgressLabel: state.inProgressLabel,
+                    completedLabel: state.completedLabel,
+                    emptyLabel: state.progressEmptyLabel,
+                    retryLabel: state.retryLabel,
+                    onShowClick: onShowClicked,
+                    onRetry: onRetryProgress
+                )
+            }
+        }
     }
 
     private func bigCount(_ value: Int) -> some View {
