@@ -16,10 +16,6 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         assertDisplayed(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
 
-    fun scrollToSignInButton() = apply {
-        scrollTo(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
-    }
-
     fun assertUserCardDisplayed(slug: String) = apply {
         assertDisplayed(ProfileTestTags.userCard(slug))
     }

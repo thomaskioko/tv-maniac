@@ -18,7 +18,8 @@ struct ProfileTab: View {
         ProfileScreen(
             state: uiState.toState(),
             onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
-            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) }
+            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) },
+            onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) }
         )
         .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {
@@ -36,7 +37,7 @@ struct ProfileTab: View {
 private extension ProfileState {
     func toState() -> ProfileScreen.State {
         ProfileScreen.State(
-            title: String(\.profile_title),
+            title: labels.title,
             isLoading: showLoading,
             userProfile: userProfile.map { profile in
                 SwiftProfileInfo(
@@ -45,47 +46,52 @@ private extension ProfileState {
                     avatarUrl: profile.avatarUrl,
                     backgroundUrl: profile.backgroundUrl,
                     stats: SwiftProfileStats(
+                        showsWatched: profile.stats.showsWatched,
+                        episodesWatched: profile.stats.episodesWatched,
                         months: profile.stats.months,
                         days: profile.stats.days,
                         hours: profile.stats.hours,
-                        episodesWatched: profile.stats.episodesWatched
+                        listCount: listCount
                     )
                 )
             },
-            editButtonLabel: String(\.profile_edit_button),
-            statsTitle: String(\.profile_stats_title),
-            watchTimeLabel: String(\.profile_watch_time),
-            monthsLabel: String(\.profile_time_months),
-            daysLabel: String(\.profile_time_days),
-            hoursLabel: String(\.profile_time_hours),
-            episodesWatchedLabel: String(\.profile_episodes_watched),
-            unauthenticatedTitle: String(\.profile_unauthenticated_title),
-            footerDescription: String(\.profile_footer_description),
-            signInLabel: String(\.profile_sign_in_button),
+            editButtonLabel: labels.editButton,
+            statsTitle: labels.statsTitle,
+            watchTimeLabel: labels.watchTime,
+            monthsLabel: labels.monthsShort,
+            daysLabel: labels.daysShort,
+            hoursLabel: labels.hoursShort,
+            episodesWatchedLabel: labels.episodesWatched,
+            showsWatchedLabel: labels.showsWatched,
+            listsLabel: labels.lists,
+            listsViewLabel: labels.viewButton,
+            unauthenticatedTitle: labels.unauthenticatedTitle,
+            footerDescription: labels.footerDescription,
+            signInLabel: labels.signInButton,
             featureItems: [
                 SwiftFeatureItem(
                     id: "discover",
                     iconName: "magnifyingglass",
-                    title: String(\.profile_feature_discover_title),
-                    description: String(\.profile_feature_discover_description)
+                    title: labels.featureDiscoverTitle,
+                    description: labels.featureDiscoverDescription
                 ),
                 SwiftFeatureItem(
                     id: "track",
                     iconName: "tv",
-                    title: String(\.profile_feature_track_title),
-                    description: String(\.profile_feature_track_description)
+                    title: labels.featureTrackTitle,
+                    description: labels.featureTrackDescription
                 ),
                 SwiftFeatureItem(
                     id: "manage",
                     iconName: "rectangle.stack",
-                    title: String(\.profile_feature_manage_title),
-                    description: String(\.profile_feature_manage_description)
+                    title: labels.featureManageTitle,
+                    description: labels.featureManageDescription
                 ),
                 SwiftFeatureItem(
                     id: "more",
                     iconName: "sparkles",
-                    title: String(\.profile_feature_more_title),
-                    description: String(\.profile_feature_more_description)
+                    title: labels.featureMoreTitle,
+                    description: labels.featureMoreDescription
                 ),
             ]
         )

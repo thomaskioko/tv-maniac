@@ -295,13 +295,18 @@
 
     <string name="profile_title">Profile</string>
     <string name="profile_shows_watched">Shows Watched</string>
+    <string name="profile_lists">Lists</string>
     <string name="profile_episodes_watched">Episodes Watched</string>
     <string name="profile_watch_time">Watch Time</string>
     <string name="profile_stats_title">Stats</string>
-    <string name="profile_time_months">MONTHS</string>
-    <string name="profile_time_days">DAYS</string>
-    <string name="profile_time_hours">HOURS</string>
+    <string name="profile_time_months">Months</string>
+    <string name="profile_time_days">Days</string>
+    <string name="profile_time_hours">Hours</string>
+    <string name="profile_time_months_short">M</string>
+    <string name="profile_time_days_short">D</string>
+    <string name="profile_time_hours_short">H</string>
     <string name="profile_edit_button">Edit</string>
+    <string name="profile_view_button">View</string>
 
     <string name="profile_unauthenticated_title">Discover.\nTrack.\nWatchlist.\n&amp; More ...</string>
     <string name="profile_feature_track_title">Track</string>

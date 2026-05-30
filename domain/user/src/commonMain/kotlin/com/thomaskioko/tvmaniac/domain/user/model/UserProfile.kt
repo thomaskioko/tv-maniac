@@ -10,4 +10,5 @@ public data class UserProfile(
     val backgroundUrl: String?,
     val stats: UserStats,
     val authState: TraktAuthState,
+    val statsLoaded: Boolean = true,
 )

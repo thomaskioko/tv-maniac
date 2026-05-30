@@ -7,4 +7,5 @@ public data class ProfileInfo(
     val avatarUrl: String?,
     val stats: ProfileStats,
     val backgroundUrl: String?,
+    val statsLoaded: Boolean = true,
 )

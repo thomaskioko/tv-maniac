@@ -43,12 +43,15 @@ public struct TvManiacTypographyScheme {
         displayMedium: style(size: 45, weight: .medium, tracking: 0, lineHeight: 52),
         displaySmall: style(size: 36, weight: .medium, tracking: 0, lineHeight: 44),
         headlineLarge: style(size: 32, weight: .bold, tracking: 0, lineHeight: 40),
+        headlineLargeEmphasized: style(size: 32, weight: .heavy, tracking: 0, lineHeight: 40),
         headlineMedium: style(size: 28, weight: .bold, tracking: 0, lineHeight: 36),
         headlineSmall: style(size: 24, weight: .bold, tracking: 0, lineHeight: 32),
         titleLarge: style(size: 22, weight: .bold, tracking: 0, lineHeight: 28),
+        titleLargeEmphasized: style(size: 22, weight: .heavy, tracking: 0, lineHeight: 28),
         titleMedium: style(size: 16, weight: .bold, tracking: 0.15, lineHeight: 24),
         titleSmall: style(size: 14, weight: .heavy, tracking: 0.1, lineHeight: 20),
         bodyLarge: style(size: 16, weight: .medium, tracking: 0.15, lineHeight: 24),
+        bodyLargeEmphasized: style(size: 16, weight: .heavy, tracking: 0.15, lineHeight: 24),
         bodyMedium: style(size: 14, weight: .semibold, tracking: 0.25, lineHeight: 20),
         bodySmall: style(size: 12, weight: .medium, tracking: 0.4, lineHeight: 16),
         labelLarge: style(size: 14, weight: .bold, tracking: 0.1, lineHeight: 20),
@@ -61,12 +64,15 @@ public struct TvManiacTypographyScheme {
         displayMedium: workSansStyle(.medium, size: 45, relativeTo: .largeTitle, tracking: 0, lineHeight: 52),
         displaySmall: workSansStyle(.medium, size: 36, relativeTo: .largeTitle, tracking: 0, lineHeight: 44),
         headlineLarge: workSansStyle(.bold, size: 32, relativeTo: .title, tracking: 0, lineHeight: 40),
+        headlineLargeEmphasized: workSansStyle(.extrabold, size: 32, relativeTo: .title, tracking: 0, lineHeight: 40),
         headlineMedium: workSansStyle(.bold, size: 28, relativeTo: .title, tracking: 0, lineHeight: 36),
         headlineSmall: workSansStyle(.bold, size: 24, relativeTo: .title2, tracking: 0, lineHeight: 32),
         titleLarge: workSansStyle(.bold, size: 22, relativeTo: .title2, tracking: 0, lineHeight: 28),
+        titleLargeEmphasized: workSansStyle(.extrabold, size: 22, relativeTo: .title2, tracking: 0, lineHeight: 28),
         titleMedium: workSansStyle(.bold, size: 16, relativeTo: .callout, tracking: 0.15, lineHeight: 24),
         titleSmall: workSansStyle(.extrabold, size: 14, relativeTo: .subheadline, tracking: 0.1, lineHeight: 20),
         bodyLarge: workSansStyle(.medium, size: 16, relativeTo: .body, tracking: 0.15, lineHeight: 24),
+        bodyLargeEmphasized: workSansStyle(.extrabold, size: 16, relativeTo: .body, tracking: 0.15, lineHeight: 24),
         bodyMedium: workSansStyle(.semibold, size: 14, relativeTo: .subheadline, tracking: 0.25, lineHeight: 20),
         bodySmall: workSansStyle(.medium, size: 12, relativeTo: .caption, tracking: 0.4, lineHeight: 16),
         labelLarge: workSansStyle(.bold, size: 14, relativeTo: .footnote, tracking: 0.1, lineHeight: 20),
@@ -78,12 +84,15 @@ public struct TvManiacTypographyScheme {
     public let displayMedium: TvManiacTextStyle
     public let displaySmall: TvManiacTextStyle
     public let headlineLarge: TvManiacTextStyle
+    public let headlineLargeEmphasized: TvManiacTextStyle
     public let headlineMedium: TvManiacTextStyle
     public let headlineSmall: TvManiacTextStyle
     public let titleLarge: TvManiacTextStyle
+    public let titleLargeEmphasized: TvManiacTextStyle
     public let titleMedium: TvManiacTextStyle
     public let titleSmall: TvManiacTextStyle
     public let bodyLarge: TvManiacTextStyle
+    public let bodyLargeEmphasized: TvManiacTextStyle
     public let bodyMedium: TvManiacTextStyle
     public let bodySmall: TvManiacTextStyle
     public let labelLarge: TvManiacTextStyle
@@ -95,12 +104,15 @@ public struct TvManiacTypographyScheme {
         displayMedium: TvManiacTextStyle,
         displaySmall: TvManiacTextStyle,
         headlineLarge: TvManiacTextStyle,
+        headlineLargeEmphasized: TvManiacTextStyle,
         headlineMedium: TvManiacTextStyle,
         headlineSmall: TvManiacTextStyle,
         titleLarge: TvManiacTextStyle,
+        titleLargeEmphasized: TvManiacTextStyle,
         titleMedium: TvManiacTextStyle,
         titleSmall: TvManiacTextStyle,
         bodyLarge: TvManiacTextStyle,
+        bodyLargeEmphasized: TvManiacTextStyle,
         bodyMedium: TvManiacTextStyle,
         bodySmall: TvManiacTextStyle,
         labelLarge: TvManiacTextStyle,
@@ -111,12 +123,15 @@ public struct TvManiacTypographyScheme {
         self.displayMedium = displayMedium
         self.displaySmall = displaySmall
         self.headlineLarge = headlineLarge
+        self.headlineLargeEmphasized = headlineLargeEmphasized
         self.headlineMedium = headlineMedium
         self.headlineSmall = headlineSmall
         self.titleLarge = titleLarge
+        self.titleLargeEmphasized = titleLargeEmphasized
         self.titleMedium = titleMedium
         self.titleSmall = titleSmall
         self.bodyLarge = bodyLarge
+        self.bodyLargeEmphasized = bodyLargeEmphasized
         self.bodyMedium = bodyMedium
         self.bodySmall = bodySmall
         self.labelLarge = labelLarge

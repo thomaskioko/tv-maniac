@@ -18,6 +18,7 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 public const val POSTER_PATH: String = "https://image.tmdb.org/t/p/original%s"
+private const val COMPACT_NUMBER_THRESHOLD = 10_000L
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -38,6 +39,7 @@ public class IosFormatterUtil : FormatterUtil {
     }
 
     override fun formatDuration(number: Int): String {
+        // TODO:: Use Localization
         val suffix = charArrayOf(' ', 'k', 'M', 'B', 'T', 'P', 'E')
         val numValue = number.toLong()
         val value = floor(log10(numValue.toDouble())).toInt()
@@ -58,6 +60,26 @@ public class IosFormatterUtil : FormatterUtil {
                 formatter.stringFromNumber(NSNumber(integer = numValue)) ?: number.toString()
             }
         }
+    }
+
+    override fun formatCompactNumber(number: Long): String {
+        val formatter = NSNumberFormatter()
+        formatter.numberStyle = 1u // Decimal
+
+        if (number < COMPACT_NUMBER_THRESHOLD) {
+            formatter.maximumFractionDigits = 0u
+            return formatter.stringFromNumber(NSNumber(integer = number)) ?: number.toString()
+        }
+
+        val suffix = charArrayOf(' ', 'K', 'M', 'B', 'T', 'P', 'E')
+        val magnitude = floor(log10(number.toDouble())).toInt()
+        val base = (magnitude / 3).coerceAtMost(suffix.size - 1)
+        val scaled = number / 10.0.pow((base * 3).toDouble())
+
+        formatter.minimumFractionDigits = 0u
+        formatter.maximumFractionDigits = 1u
+        val scaledString = formatter.stringFromNumber(NSNumber(scaled)) ?: scaled.toString()
+        return "$scaledString${suffix[base]}"
     }
 
     override fun formatDateTime(epochMillis: Long, pattern: String): String {

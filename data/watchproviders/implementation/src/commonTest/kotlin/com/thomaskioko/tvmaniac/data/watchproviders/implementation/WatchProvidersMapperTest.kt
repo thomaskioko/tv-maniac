@@ -235,5 +235,6 @@ private class PassThroughFormatterUtil : FormatterUtil {
     override fun formatTmdbPosterPath(imageUrl: String): String = imageUrl
     override fun formatDouble(number: Double?, scale: Int): Double = number ?: 0.0
     override fun formatDuration(number: Int): String = ""
+    override fun formatCompactNumber(number: Long): String = ""
     override fun formatDateTime(epochMillis: Long, pattern: String): String = ""
 }

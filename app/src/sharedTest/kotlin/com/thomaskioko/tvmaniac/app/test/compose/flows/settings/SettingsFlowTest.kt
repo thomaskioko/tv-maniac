@@ -21,7 +21,6 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
             .clickSettingsButton()
 

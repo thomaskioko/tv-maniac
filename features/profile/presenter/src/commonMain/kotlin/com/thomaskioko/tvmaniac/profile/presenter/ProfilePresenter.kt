@@ -35,7 +35,9 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.ShowClicked
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.ViewListsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
@@ -149,9 +151,11 @@ public class ProfilePresenter(
     ) { userProfile, authState, authError, isLoading, uiMessage, sections ->
         val authenticated = authState == TraktAuthState.LOGGED_IN
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
+        val profile = userProfile?.toPresentation()
+        val displayName = profile?.fullName ?: profile?.username ?: ""
 
         ProfileState(
-            userProfile = userProfile?.toPresentation(),
+            userProfile = profile,
             isLoading = isLoading,
             errorMessage = errorMessage,
             authenticated = authenticated,
@@ -161,6 +165,7 @@ public class ProfilePresenter(
             library = sections.library,
             watchlist = sections.watchlist,
             favorites = sections.favorites,
+            labels = buildLabels(displayName),
         )
     }.stateIn(
         scope = coroutineScope,
@@ -178,6 +183,9 @@ public class ProfilePresenter(
                 }
             }
             SettingsClicked -> navigator.navigateTo(SettingsRoute)
+            ViewListsClicked -> {
+                // TODO: Navigate to the user's lists screen. To be implemented.
+            }
             RefreshProfile -> {
                 fetchUserData(forceRefresh = true)
                 syncFavorites(forceRefresh = true)
@@ -221,6 +229,33 @@ public class ProfilePresenter(
             uiMessageManager.clearMessage(id)
         }
     }
+
+    private fun buildLabels(displayName: String): ProfileLabels = ProfileLabels(
+        title = localizer.getString(StringResourceKey.ProfileTitle),
+        settingsContentDescription = localizer.getString(StringResourceKey.CdSettings),
+        profilePictureContentDescription = localizer.getString(StringResourceKey.CdProfilePic, displayName),
+        editButton = localizer.getString(StringResourceKey.ProfileEditButton),
+        statsTitle = localizer.getString(StringResourceKey.ProfileStatsTitle),
+        episodesWatched = localizer.getString(StringResourceKey.ProfileEpisodesWatched),
+        showsWatched = localizer.getString(StringResourceKey.ProfileShowsWatched),
+        watchTime = localizer.getString(StringResourceKey.ProfileWatchTime),
+        monthsShort = localizer.getString(StringResourceKey.ProfileTimeMonthsShort),
+        daysShort = localizer.getString(StringResourceKey.ProfileTimeDaysShort),
+        hoursShort = localizer.getString(StringResourceKey.ProfileTimeHoursShort),
+        lists = localizer.getString(StringResourceKey.ProfileLists),
+        viewButton = localizer.getString(StringResourceKey.ProfileViewButton),
+        unauthenticatedTitle = localizer.getString(StringResourceKey.ProfileUnauthenticatedTitle),
+        footerDescription = localizer.getString(StringResourceKey.ProfileFooterDescription),
+        signInButton = localizer.getString(StringResourceKey.ProfileSignInButton),
+        featureDiscoverTitle = localizer.getString(StringResourceKey.ProfileFeatureDiscoverTitle),
+        featureDiscoverDescription = localizer.getString(StringResourceKey.ProfileFeatureDiscoverDescription),
+        featureTrackTitle = localizer.getString(StringResourceKey.ProfileFeatureTrackTitle),
+        featureTrackDescription = localizer.getString(StringResourceKey.ProfileFeatureTrackDescription),
+        featureManageTitle = localizer.getString(StringResourceKey.ProfileFeatureManageTitle),
+        featureManageDescription = localizer.getString(StringResourceKey.ProfileFeatureManageDescription),
+        featureMoreTitle = localizer.getString(StringResourceKey.ProfileFeatureMoreTitle),
+        featureMoreDescription = localizer.getString(StringResourceKey.ProfileFeatureMoreDescription),
+    )
 
     private fun <S, R> Flow<List<S>>.toSectionState(
         transform: (List<S>) -> ImmutableList<R>,
@@ -295,8 +330,8 @@ private fun UserProfile.toPresentation(): ProfileInfo {
         fullName = fullName,
         avatarUrl = avatarUrl,
         stats = ProfileStats(
-            showsWatched = stats.showsWatched,
-            episodesWatched = stats.episodesWatched,
+            showsWatched = stats.showsWatchedLabel,
+            episodesWatched = stats.episodesWatchedLabel,
             years = breakdown.years,
             months = breakdown.months,
             days = breakdown.remainingDays,
@@ -304,6 +339,7 @@ private fun UserProfile.toPresentation(): ProfileInfo {
             minutes = breakdown.minutes,
         ),
         backgroundUrl = backgroundUrl,
+        statsLoaded = statsLoaded,
     )
 }
 

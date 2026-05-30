@@ -264,13 +264,18 @@
 
     <string name="profile_title">Profil</string>
     <string name="profile_shows_watched">Émissions vues</string>
+    <string name="profile_lists">Listes</string>
     <string name="profile_episodes_watched">Épisodes vus</string>
     <string name="profile_watch_time">Temps de visionnage</string>
     <string name="profile_stats_title">Statistiques</string>
-    <string name="profile_time_months">MOIS</string>
-    <string name="profile_time_days">JOURS</string>
-    <string name="profile_time_hours">HEURES</string>
+    <string name="profile_time_months">Mois</string>
+    <string name="profile_time_days">Jours</string>
+    <string name="profile_time_hours">Heures</string>
+    <string name="profile_time_months_short">M</string>
+    <string name="profile_time_days_short">J</string>
+    <string name="profile_time_hours_short">H</string>
     <string name="profile_edit_button">Modifier</string>
+    <string name="profile_view_button">Voir</string>
 
     <string name="profile_unauthenticated_title">Découvrir.\nSuivre.\nListe de suivi.\n&amp; Plus ...</string>
     <string name="profile_feature_track_title">Suivre</string>

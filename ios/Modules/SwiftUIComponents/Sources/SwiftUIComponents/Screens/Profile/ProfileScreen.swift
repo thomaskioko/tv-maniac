@@ -13,6 +13,9 @@ public struct ProfileScreen: View {
         public let daysLabel: String
         public let hoursLabel: String
         public let episodesWatchedLabel: String
+        public let showsWatchedLabel: String
+        public let listsLabel: String
+        public let listsViewLabel: String
         public let unauthenticatedTitle: String
         public let footerDescription: String
         public let signInLabel: String
@@ -29,6 +32,9 @@ public struct ProfileScreen: View {
             daysLabel: String,
             hoursLabel: String,
             episodesWatchedLabel: String,
+            showsWatchedLabel: String,
+            listsLabel: String,
+            listsViewLabel: String,
             unauthenticatedTitle: String,
             footerDescription: String,
             signInLabel: String,
@@ -44,6 +50,9 @@ public struct ProfileScreen: View {
             self.daysLabel = daysLabel
             self.hoursLabel = hoursLabel
             self.episodesWatchedLabel = episodesWatchedLabel
+            self.showsWatchedLabel = showsWatchedLabel
+            self.listsLabel = listsLabel
+            self.listsViewLabel = listsViewLabel
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
             self.signInLabel = signInLabel
@@ -56,15 +65,18 @@ public struct ProfileScreen: View {
     private let state: State
     private let onSettingsClicked: () -> Void
     private let onLoginClicked: () -> Void
+    private let onViewListsClicked: () -> Void
 
     public init(
         state: State,
         onSettingsClicked: @escaping () -> Void,
-        onLoginClicked: @escaping () -> Void
+        onLoginClicked: @escaping () -> Void,
+        onViewListsClicked: @escaping () -> Void = {}
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
         self.onLoginClicked = onLoginClicked
+        self.onViewListsClicked = onViewListsClicked
     }
 
     @SwiftUI.State private var showGlass: Double = 0
@@ -72,10 +84,7 @@ public struct ProfileScreen: View {
     public var body: some View {
         ZStack(alignment: .top) {
             if state.isLoading {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
-                    .scaleEffect(1.5)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                profileSkeleton
             } else if let userProfile = state.userProfile {
                 profileScrollView(userProfile: userProfile)
             } else {
@@ -98,7 +107,17 @@ public struct ProfileScreen: View {
                 title: state.title,
                 opacity: showGlass,
                 trailingIcon: {
-                    GlassButton(icon: "gearshape", action: onSettingsClicked)
+                    HStack(spacing: appTheme.spacing.small) {
+                        if state.isLoading {
+                            GlassButton(action: {}) {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
+                            }
+                            .allowsHitTesting(false)
+                        }
+
+                        GlassButton(icon: "gearshape", action: onSettingsClicked)
+                    }
                 }
             )
             .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
@@ -133,7 +152,7 @@ public struct ProfileScreen: View {
 
                 VStack(spacing: 0) {
                     Spacer()
-                        .frame(height: appTheme.spacing.large)
+                        .frame(height: appTheme.spacing.medium)
 
                     statsSection(stats: userProfile.stats)
 
@@ -141,7 +160,6 @@ public struct ProfileScreen: View {
                         .frame(height: appTheme.spacing.xLarge)
                 }
                 .background(appTheme.colors.background)
-                .offset(y: -10)
             }
         }
         .coordinateSpace(name: "profileScroll")
@@ -160,36 +178,33 @@ public struct ProfileScreen: View {
                         .clear,
                         .clear,
                         .clear,
-                        .clear,
-                        appTheme.colors.background.opacity(0.6),
-                        appTheme.colors.background.opacity(0.8),
-                        appTheme.colors.background,
+                        appTheme.colors.scrim.opacity(0.3),
+                        appTheme.colors.scrim.opacity(0.6),
+                        appTheme.colors.scrim.opacity(0.85),
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
             )
 
-            HStack(alignment: .center, spacing: appTheme.spacing.medium) {
+            HStack(alignment: .bottom, spacing: appTheme.spacing.medium) {
                 AvatarView(
                     avatarUrl: userProfile.avatarUrl,
-                    size: 80,
+                    size: 70,
                     borderColor: appTheme.colors.accent,
-                    borderWidth: 3
+                    borderWidth: 2
                 )
 
                 VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
                     Text(userProfile.fullName ?? userProfile.username)
-                        .textStyle(appTheme.typography.titleLarge)
+                        .textStyle(appTheme.typography.bodyLargeEmphasized)
                         .foregroundStyle(.appOnPrimary)
 
                     Button(action: {}) {
                         Text(state.editButtonLabel)
-                            .textStyle(appTheme.typography.labelMedium)
+                            .textStyle(appTheme.typography.bodyMedium)
                             .foregroundStyle(.appOnPrimary)
-                            .padding(.horizontal, appTheme.spacing.medium)
-                            .padding(.vertical, appTheme.spacing.xSmall)
-                            .background(Color.clear)
+                            .frame(minWidth: 140, minHeight: 40)
                             .overlay(
                                 RoundedRectangle(cornerRadius: appTheme.shapes.medium)
                                     .stroke(.appOnPrimary, lineWidth: 1)
@@ -199,7 +214,8 @@ public struct ProfileScreen: View {
 
                 Spacer()
             }
-            .padding(appTheme.spacing.medium)
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.bottom, appTheme.spacing.xSmall)
         }
         .clipped()
     }
@@ -208,124 +224,199 @@ public struct ProfileScreen: View {
 
     private func statsSection(stats: SwiftProfileStats) -> some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
-            HStack {
-                ChevronTitle(
-                    title: state.statsTitle,
-                    chevronStyle: ChevronStyle.chevronOnly,
-                    action: {}
-                )
+            HStack(spacing: 0) {
+                Text(state.statsTitle)
+                    .textStyle(appTheme.typography.titleLargeEmphasized)
+                    .foregroundStyle(.appOnSurface)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .textStyle(appTheme.typography.titleMedium)
+                    .foregroundStyle(appTheme.colors.onSurfaceVariant)
             }
             .padding(.horizontal, appTheme.spacing.medium)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: appTheme.spacing.small) {
+            VStack(spacing: appTheme.spacing.small) {
+                HStack(spacing: appTheme.spacing.small) {
                     StatsCardItem(
-                        systemImage: "calendar",
-                        title: state.watchTimeLabel
-                    ) {
-                        HStack(spacing: appTheme.spacing.large) {
-                            statColumn(label: state.monthsLabel, value: stats.months)
-                            statColumn(label: state.daysLabel, value: stats.days)
-                            statColumn(label: state.hoursLabel, value: stats.hours)
-                        }
-                    }
-
-                    StatsCardItem(
-                        systemImage: "tv",
+                        systemImage: "play.circle.fill",
                         title: state.episodesWatchedLabel
                     ) {
-                        VStack(spacing: 0) {
-                            Text(formatNumber(stats.episodesWatched))
-                                .textStyle(appTheme.typography.bodyMedium)
-                                .foregroundStyle(.appOnSurface)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .padding(appTheme.spacing.xSmall)
+                        bigLabel(stats.episodesWatched)
                     }
+                    .frame(maxWidth: .infinity)
+
+                    StatsCardItem(
+                        systemImage: "tv.fill",
+                        title: state.showsWatchedLabel
+                    ) {
+                        bigLabel(stats.showsWatched)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, appTheme.spacing.medium)
+
+                HStack(spacing: appTheme.spacing.small) {
+                    StatsCardItem(
+                        systemImage: "clock.fill",
+                        title: state.watchTimeLabel
+                    ) {
+                        HStack(alignment: .firstTextBaseline, spacing: appTheme.spacing.small) {
+                            watchTimeSegment(value: stats.months, unit: state.monthsLabel)
+                            watchTimeSegment(value: stats.days, unit: state.daysLabel)
+                            watchTimeSegment(value: stats.hours, unit: state.hoursLabel)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    StatsCardItem(
+                        systemImage: "list.bullet",
+                        title: state.listsLabel
+                    ) {
+                        HStack(alignment: .center) {
+                            bigCount(Int(stats.listCount))
+
+                            Spacer()
+
+                            Button(action: onViewListsClicked) {
+                                Text(state.listsViewLabel)
+                                    .textStyle(appTheme.typography.labelMedium)
+                                    .foregroundStyle(.appOnSurface)
+                                    .padding(.horizontal, appTheme.spacing.small)
+                                    .padding(.vertical, appTheme.spacing.xxSmall)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: appTheme.shapes.small)
+                                            .stroke(appTheme.colors.onSurfaceVariant.opacity(0.5), lineWidth: 1)
+                                    )
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
             }
+            .padding(.horizontal, appTheme.spacing.medium)
         }
     }
 
-    private func statColumn(label: String, value: Int32) -> some View {
-        VStack(spacing: appTheme.spacing.xxSmall) {
-            Text("\(value)")
-                .textStyle(appTheme.typography.titleMedium)
-                .foregroundStyle(.appOnSurface)
+    private func bigCount(_ value: Int) -> some View {
+        StatValueText(count: value)
+    }
 
-            Text(label)
+    private func bigLabel(_ text: String) -> some View {
+        Text(text)
+            .textStyle(appTheme.typography.headlineLarge)
+            .foregroundStyle(.appOnSurface)
+            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+    }
+
+    private func watchTimeSegment(value: Int32, unit: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 2) {
+            StatValueText(count: Int(value))
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+
+            Text(unit)
                 .textStyle(appTheme.typography.bodySmall)
-                .foregroundStyle(.appOnSurface)
+                .foregroundStyle(appTheme.colors.onSurfaceVariant)
+                .lineLimit(1)
         }
     }
 
-    private func formatNumber(_ number: Int32) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = ","
-        return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
+    // MARK: - Loading Skeleton
+
+    private var profileSkeleton: some View {
+        VStack(spacing: 0) {
+            ShimmerView(cornerRadius: 0)
+                .frame(height: DimensionConstants.imageHeight)
+
+            VStack(spacing: appTheme.spacing.small) {
+                HStack {
+                    ShimmerView()
+                        .frame(width: 120, height: 24)
+                    Spacer()
+                }
+
+                HStack(spacing: appTheme.spacing.small) {
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
+                }
+
+                HStack(spacing: appTheme.spacing.small) {
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
+                    ShimmerView(cornerRadius: appTheme.shapes.large).frame(maxWidth: .infinity).frame(height: 138)
+                }
+            }
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.top, appTheme.spacing.large)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     // MARK: - Unauthenticated Content
 
     private var unauthenticatedScrollView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-                Spacer()
-                    .frame(height: 84)
-
-                Text(state.unauthenticatedTitle)
-                    .textStyle(appTheme.typography.headlineLarge)
-                    .foregroundStyle(.appOnSurface)
-                    .lineSpacing(appTheme.spacing.xSmall)
-                    .padding(.horizontal, appTheme.spacing.large)
-
+        GeometryReader { proxy in
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-                    ForEach(state.featureItems) { item in
-                        featureItemView(iconName: item.iconName, title: item.title, description: item.description)
-                    }
-                }
-                .padding(.horizontal, appTheme.spacing.large)
+                    Spacer()
+                        .frame(height: 84)
 
-                Spacer()
-                    .frame(height: appTheme.spacing.xSmall)
-
-                VStack(spacing: appTheme.spacing.medium) {
-                    Text(state.footerDescription)
-                        .textStyle(appTheme.typography.bodyMedium)
+                    Text(state.unauthenticatedTitle)
+                        .textStyle(appTheme.typography.headlineLarge)
                         .foregroundStyle(.appOnSurface)
-                        .lineSpacing(appTheme.spacing.xxSmall)
+                        .lineSpacing(appTheme.spacing.xSmall)
                         .padding(.horizontal, appTheme.spacing.large)
 
-                    Button(action: onLoginClicked) {
-                        Text(state.signInLabel)
-                            .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundStyle(.appOnButtonBackground)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, appTheme.spacing.medium)
-                            .background(.appButtonBackground)
-                            .cornerRadius(appTheme.shapes.extraLarge)
+                    VStack(alignment: .leading, spacing: appTheme.spacing.large) {
+                        ForEach(state.featureItems) { item in
+                            featureItemView(iconName: item.iconName, title: item.title, description: item.description)
+                        }
                     }
                     .padding(.horizontal, appTheme.spacing.large)
-                }
 
-                Spacer()
-                    .frame(height: appTheme.spacing.xLarge)
-            }
-            .background(
-                GeometryReader { geometry in
-                    Color.clear.preference(
-                        key: ProfileScrollOffsetKey.self,
-                        value: geometry.frame(in: .named("scrollView")).minY
-                    )
+                    Spacer(minLength: appTheme.spacing.large)
+
+                    VStack(spacing: appTheme.spacing.medium) {
+                        Button(action: onLoginClicked) {
+                            Text(state.signInLabel)
+                                .textStyle(appTheme.typography.bodyMedium)
+                                .foregroundStyle(.appOnButtonBackground)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, appTheme.spacing.medium)
+                                .background(.appButtonBackground)
+                                .cornerRadius(appTheme.shapes.extraLarge)
+                        }
+                        .padding(.horizontal, appTheme.spacing.large)
+
+                        Text(state.footerDescription)
+                            .textStyle(appTheme.typography.bodyMedium)
+                            .foregroundStyle(.appOnSurface)
+                            .lineSpacing(appTheme.spacing.xxSmall)
+                            .padding(.horizontal, appTheme.spacing.large)
+                    }
+                    .padding(.bottom, appTheme.spacing.xLarge)
                 }
-            )
-        }
-        .coordinateSpace(name: "scrollView")
-        .onPreferenceChange(ProfileScrollOffsetKey.self) { offset in
-            DispatchQueue.main.async {
-                showGlass = ParallaxConstants.glassOpacity(from: offset)
+                .frame(minHeight: proxy.size.height, alignment: .top)
+                .background(
+                    GeometryReader { geometry in
+                        Color.clear.preference(
+                            key: ProfileScrollOffsetKey.self,
+                            value: geometry.frame(in: .named("scrollView")).minY
+                        )
+                    }
+                )
+            }
+            .coordinateSpace(name: "scrollView")
+            .onPreferenceChange(ProfileScrollOffsetKey.self) { offset in
+                DispatchQueue.main.async {
+                    showGlass = ParallaxConstants.glassOpacity(from: offset)
+                }
             }
         }
     }
@@ -353,8 +444,21 @@ public struct ProfileScreen: View {
     }
 }
 
+private struct StatValueText: View {
+    @Environment(\.appTheme) private var appTheme
+
+    let count: Int
+
+    var body: some View {
+        AnimatedCountText(count: count)
+            .textStyle(appTheme.typography.headlineLargeEmphasized)
+            .foregroundStyle(.appOnSurface)
+            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+    }
+}
+
 private enum DimensionConstants {
-    static let imageHeight: CGFloat = 350
+    static let imageHeight: CGFloat = 310
 }
 
 private struct ProfileScrollOffsetKey: PreferenceKey {

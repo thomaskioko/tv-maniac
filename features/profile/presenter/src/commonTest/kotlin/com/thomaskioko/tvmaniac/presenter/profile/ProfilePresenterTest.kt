@@ -51,12 +51,14 @@ import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
@@ -80,6 +82,8 @@ internal class ProfilePresenterTest {
         stats = UserProfileStats(
             showsWatched = 10,
             episodesWatched = 100,
+            showsWatchedLabel = "10",
+            episodesWatchedLabel = "100",
             userWatchTime = UserWatchTime(
                 years = 0,
                 days = 4,
@@ -173,13 +177,13 @@ internal class ProfilePresenterTest {
 
             val updatedProfile = testProfile.copy(
                 username = "updated-user",
-                stats = testProfile.stats.copy(showsWatched = 20),
+                stats = testProfile.stats.copy(showsWatched = 20, showsWatchedLabel = "20"),
             )
             userRepository.setUserProfile(updatedProfile)
 
             val updatedState = awaitItem()
             updatedState.userProfile?.username shouldBe "updated-user"
-            updatedState.userProfile?.stats?.showsWatched shouldBe 20
+            updatedState.userProfile?.stats?.showsWatched shouldBe "20"
         }
     }
 
@@ -246,6 +250,28 @@ internal class ProfilePresenterTest {
             authenticatedState.authenticated shouldBe true
             authenticatedState.showLoading shouldBe false
             authenticatedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
+        }
+    }
+
+    @Test
+    fun `should keep showing loading given profile present but stats not yet loaded`() = runTest {
+        userRepository.holdStatsFetch()
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
+
+        val testPresenter = createPresenter()
+
+        testPresenter.state.test {
+            runCurrent()
+            val loadingState = expectMostRecentItem()
+            loadingState.userProfile shouldNotBe null
+            loadingState.showLoading shouldBe true
+
+            userRepository.setUserProfile(testProfile.copy(statsLoaded = true))
+            runCurrent()
+            expectMostRecentItem().showLoading shouldBe false
+
+            userRepository.releaseStatsFetch()
         }
     }
 
@@ -414,8 +440,8 @@ internal class ProfilePresenterTest {
             avatarUrl = profile.avatarUrl,
             backgroundUrl = profile.backgroundUrl,
             stats = ProfileStats(
-                showsWatched = profile.stats.showsWatched.toInt(),
-                episodesWatched = profile.stats.episodesWatched.toInt(),
+                showsWatched = profile.stats.showsWatchedLabel,
+                episodesWatched = profile.stats.episodesWatchedLabel,
                 years = 0,
                 months = 0,
                 days = 4,

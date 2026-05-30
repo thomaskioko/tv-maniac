@@ -37,8 +37,11 @@ private fun DataUserProfile.toDomain(authState: TraktAuthState): UserProfile {
         stats = UserStats(
             showsWatched = stats.showsWatched.toInt(),
             episodesWatched = stats.episodesWatched.toInt(),
+            showsWatchedLabel = stats.showsWatchedLabel,
+            episodesWatchedLabel = stats.episodesWatchedLabel,
             userWatchTime = stats.userWatchTime,
         ),
         authState = authState,
+        statsLoaded = statsLoaded,
     )
 }

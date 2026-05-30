@@ -13,9 +13,13 @@ public data class ProfileState(
     val library: SectionState<ProfileShowItem> = SectionState.Loading,
     val watchlist: SectionState<ProfileShowItem> = SectionState.Loading,
     val favorites: SectionState<ProfileShowItem> = SectionState.Loading,
+    val labels: ProfileLabels = ProfileLabels(),
 ) {
     val showLoading: Boolean
-        get() = userProfile == null && errorMessage == null && isLoading
+        get() = errorMessage == null && isLoading && (userProfile == null || !userProfile.statsLoaded)
+
+    val listCount: Int
+        get() = (userLists as? SectionState.Content)?.items?.size ?: 0
 
     public companion object {
         public val DEFAULT_STATE: ProfileState = ProfileState(

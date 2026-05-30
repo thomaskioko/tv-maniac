@@ -64,6 +64,12 @@ custom_rules:
         message: "Apply typography with .textStyle(theme.typography.x), not .font(...). .font() drops the token's tracking and line height. Use .textStyle(...) for Text and SF Symbols alike."
         severity: error
 
+    no_inline_font_construction:
+        name: "Inline font construction"
+        regex: '\.font\(\s*(?:Font\.|\.)(?!system\b)\w+\('
+        message: "Do not build fonts inline in views, for example .font(.workSans(...)) or .font(.custom(...)). Apply a typography token with .textStyle(theme.typography.x)."
+        severity: error
+
     no_literal_foreground_color:
         name: "Literal foregroundColor"
         regex: '\.foregroundColor\((Color\.|\.)(white|black|gray|red|blue|green|yellow|orange|pink|purple|accentColor)[\.)]'
