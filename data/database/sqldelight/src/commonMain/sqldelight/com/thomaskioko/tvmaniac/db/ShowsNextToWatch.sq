@@ -120,3 +120,19 @@ LEFT JOIN shows_next_to_watch AS next_episode
 ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at) DESC,
          next_episode.season_number ASC,
          next_episode.episode_number ASC;
+
+completedShowsForWatchlist:
+SELECT
+    watched_show.trakt_id AS show_trakt_id,
+    COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS show_tmdb_id,
+    COALESCE(tvshow.name, watched_show.title) AS show_name,
+    tvshow.poster_path AS show_poster,
+    watched_show.last_watched_at AS last_watched_at,
+    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
+    COALESCE(show_watch_progress.total_count, 0) AS total_count
+FROM trakt_continue_watching AS watched_show
+LEFT JOIN tvshow ON tvshow.trakt_id = watched_show.trakt_id
+LEFT JOIN show_watch_progress ON show_watch_progress.show_trakt_id = watched_show.trakt_id
+WHERE COALESCE(show_watch_progress.total_count, 0) > 0
+  AND COALESCE(show_watch_progress.watched_count, 0) >= COALESCE(show_watch_progress.total_count, 0)
+ORDER BY watched_show.last_watched_at DESC;

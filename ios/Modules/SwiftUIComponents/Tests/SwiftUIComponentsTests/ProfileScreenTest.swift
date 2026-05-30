@@ -120,6 +120,12 @@ class ProfileScreenTest: SnapshotTestCase {
         )
     }
 
+    private let sampleShows: [SwiftProfileShow] = [
+        SwiftProfileShow(id: 1, title: "Breaking Bad", posterUrl: nil),
+        SwiftProfileShow(id: 2, title: "Game of Thrones", posterUrl: nil),
+        SwiftProfileShow(id: 3, title: "Stranger Things", posterUrl: nil),
+    ]
+
     private func authenticatedState(userLists: SwiftSectionState<SwiftProfileList>) -> ProfileScreen.State {
         ProfileScreen.State(
             title: "Profile",
@@ -139,6 +145,12 @@ class ProfileScreenTest: SnapshotTestCase {
             viewAllLabel: "More",
             retryLabel: "Retry",
             userLists: userLists,
+            progressTitle: "Progress",
+            inProgressLabel: "In Progress",
+            completedLabel: "Completed",
+            progressEmptyLabel: "Nothing here yet",
+            inProgress: .content(sampleShows),
+            completed: .content(sampleShows),
             unauthenticatedTitle: "Track your shows",
             footerDescription: "Sign in to sync your data.",
             signInLabel: "Sign In with Trakt",
@@ -176,6 +188,22 @@ class ProfileScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsEmpty")
     }
 
+    func test_ListCollageCard() {
+        HStack(spacing: 12) {
+            ListCollageCard(
+                list: SwiftProfileList(id: 1, name: "Watchlist", itemCountLabel: "24 shows", posterUrls: ["a", "b", "c", "d"]),
+                onClick: {}
+            )
+            ListCollageCard(
+                list: SwiftProfileList(id: 2, name: "Favorites", itemCountLabel: "12 shows", posterUrls: ["e", "f"]),
+                onClick: {}
+            )
+        }
+        .padding()
+        .appPreview()
+        .assertSnapshot(layout: .sizeThatFits, testName: "ListCollageCard")
+    }
+
     func test_ProfileScreen_UserListsError() {
         ProfileScreen(
             state: authenticatedState(userLists: .error("Failed to load lists")),
@@ -184,5 +212,49 @@ class ProfileScreenTest: SnapshotTestCase {
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsError")
+    }
+
+    // MARK: - Progress Section
+
+    private func progressSection(
+        inProgress: SwiftSectionState<SwiftProfileShow>,
+        completed: SwiftSectionState<SwiftProfileShow>
+    ) -> some View {
+        ProgressSectionView(
+            inProgress: inProgress,
+            completed: completed,
+            title: "Progress",
+            inProgressLabel: "In Progress",
+            completedLabel: "Completed",
+            emptyLabel: "Nothing here yet",
+            retryLabel: "Retry",
+            onShowClick: { _ in },
+            onRetry: {}
+        )
+        .padding(.vertical)
+    }
+
+    func test_ProgressSection_Content() {
+        progressSection(inProgress: .content(sampleShows), completed: .content(sampleShows))
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_Content")
+    }
+
+    func test_ProgressSection_Loading() {
+        progressSection(inProgress: .loading, completed: .loading)
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_Loading")
+    }
+
+    func test_ProgressSection_Error() {
+        progressSection(inProgress: .content(sampleShows), completed: .error("Failed to load shows"))
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_Error")
+    }
+
+    func test_ProgressSection_EmptyFilter() {
+        progressSection(inProgress: .content(sampleShows), completed: .empty)
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_EmptyFilter")
     }
 }

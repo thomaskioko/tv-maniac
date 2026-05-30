@@ -8,17 +8,20 @@ public struct CollapsibleSection<Content: View>: View {
     private let title: String
     private let showMore: Bool
     private let onMoreClick: () -> Void
+    private let contentSpacing: CGFloat?
     private let content: () -> Content
 
     public init(
         title: String,
         showMore: Bool = false,
         onMoreClick: @escaping () -> Void = {},
+        contentSpacing: CGFloat? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
         self.showMore = showMore
         self.onMoreClick = onMoreClick
+        self.contentSpacing = contentSpacing
         self.content = content
     }
 
@@ -27,7 +30,7 @@ public struct CollapsibleSection<Content: View>: View {
             header
 
             if !collapsed {
-                Spacer().frame(height: theme.spacing.small)
+                Spacer().frame(height: contentSpacing ?? theme.spacing.small)
                 content()
             }
         }

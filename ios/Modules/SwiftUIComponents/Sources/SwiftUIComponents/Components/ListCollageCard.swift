@@ -1,4 +1,6 @@
 import DesignSystem
+import Nuke
+import NukeUI
 import SwiftUI
 
 /// Trakt-style list card: a 2x2 poster collage with the list name and item count overlaid on a
@@ -16,31 +18,32 @@ public struct ListCollageCard: View {
 
     public var body: some View {
         Button(action: onClick) {
-            ZStack(alignment: .bottomLeading) {
-                collage
-
-                LinearGradient(
-                    colors: [.clear, .black.opacity(0.85)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-
-                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
-                    Text(list.name)
-                        .textStyle(theme.typography.titleSmall)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-
-                    Text(list.itemCountLabel)
-                        .textStyle(theme.typography.bodySmall)
-                        .foregroundStyle(.white.opacity(0.85))
-                        .lineLimit(1)
+            collage
+                .frame(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
+                .overlay {
+                    LinearGradient(
+                        colors: [.clear, .black.opacity(0.85)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 }
-                .padding(theme.spacing.small)
-            }
-            .frame(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
-            .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large, style: .continuous))
+                .overlay(alignment: .bottomLeading) {
+                    VStack(alignment: .leading, spacing: theme.spacing.xxxSmall) {
+                        Text(list.name)
+                            .textStyle(theme.typography.titleSmall)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+
+                        Text(list.itemCountLabel)
+                            .textStyle(theme.typography.bodySmall)
+                            .foregroundStyle(.white.opacity(0.85))
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(theme.spacing.small)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large, style: .continuous))
         }
         .buttonStyle(.plain)
     }
@@ -71,17 +74,23 @@ public struct ListCollageCard: View {
         if index < list.posterUrls.count {
             posterCell(list.posterUrls[index])
         } else {
-            placeholderCell
+            theme.colors.surface
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
     private func posterCell(_ url: String) -> some View {
-        LazyResizableImage(
-            url: url,
-            imageType: .poster,
-            size: CGSize(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
-        )
-        .scaledToFill()
+        LazyImage(url: ImageConfiguration.transformURL(url, imageType: .poster)) { state in
+            if let image = state.image {
+                image.resizable().scaledToFill()
+            } else {
+                theme.colors.surface
+            }
+        }
+        .processors([.resize(
+            size: CGSize(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight),
+            unit: .points
+        )])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
     }
@@ -97,8 +106,8 @@ public struct ListCollageCard: View {
 }
 
 private enum DimensionConstants {
-    static let cardWidth: CGFloat = 210
-    static let cardHeight: CGFloat = 140
+    static let cardWidth: CGFloat = 200
+    static let cardHeight: CGFloat = 130
 }
 
 #Preview {

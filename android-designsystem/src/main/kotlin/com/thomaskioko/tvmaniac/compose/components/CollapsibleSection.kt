@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -45,6 +46,7 @@ public fun CollapsibleSection(
     moreContentDescription: String? = null,
     onMoreClick: () -> Unit = {},
     toggleTestTag: String? = null,
+    contentSpacing: Dp = 12.dp,
     content: @Composable () -> Unit,
 ) {
     var collapsed by rememberSaveable(title) { mutableStateOf(false) }
@@ -61,7 +63,7 @@ public fun CollapsibleSection(
         )
 
         if (!collapsed) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(contentSpacing))
             content()
         }
     }

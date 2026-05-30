@@ -20,6 +20,12 @@ public struct ProfileScreen: View {
         public let viewAllLabel: String
         public let retryLabel: String
         public let userLists: SwiftSectionState<SwiftProfileList>
+        public let progressTitle: String
+        public let inProgressLabel: String
+        public let completedLabel: String
+        public let progressEmptyLabel: String
+        public let inProgress: SwiftSectionState<SwiftProfileShow>
+        public let completed: SwiftSectionState<SwiftProfileShow>
         public let unauthenticatedTitle: String
         public let footerDescription: String
         public let signInLabel: String
@@ -43,6 +49,12 @@ public struct ProfileScreen: View {
             viewAllLabel: String = "",
             retryLabel: String = "",
             userLists: SwiftSectionState<SwiftProfileList> = .empty,
+            progressTitle: String = "",
+            inProgressLabel: String = "",
+            completedLabel: String = "",
+            progressEmptyLabel: String = "",
+            inProgress: SwiftSectionState<SwiftProfileShow> = .empty,
+            completed: SwiftSectionState<SwiftProfileShow> = .empty,
             unauthenticatedTitle: String,
             footerDescription: String,
             signInLabel: String,
@@ -65,6 +77,12 @@ public struct ProfileScreen: View {
             self.viewAllLabel = viewAllLabel
             self.retryLabel = retryLabel
             self.userLists = userLists
+            self.progressTitle = progressTitle
+            self.inProgressLabel = inProgressLabel
+            self.completedLabel = completedLabel
+            self.progressEmptyLabel = progressEmptyLabel
+            self.inProgress = inProgress
+            self.completed = completed
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
             self.signInLabel = signInLabel
@@ -79,19 +97,25 @@ public struct ProfileScreen: View {
     private let onLoginClicked: () -> Void
     private let onViewListsClicked: () -> Void
     private let onRetryLists: () -> Void
+    private let onShowClicked: (Int64) -> Void
+    private let onRetryProgress: () -> Void
 
     public init(
         state: State,
         onSettingsClicked: @escaping () -> Void,
         onLoginClicked: @escaping () -> Void,
         onViewListsClicked: @escaping () -> Void = {},
-        onRetryLists: @escaping () -> Void = {}
+        onRetryLists: @escaping () -> Void = {},
+        onShowClicked: @escaping (Int64) -> Void = { _ in },
+        onRetryProgress: @escaping () -> Void = {}
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
         self.onLoginClicked = onLoginClicked
         self.onViewListsClicked = onViewListsClicked
         self.onRetryLists = onRetryLists
+        self.onShowClicked = onShowClicked
+        self.onRetryProgress = onRetryProgress
     }
 
     @SwiftUI.State private var showGlass: Double = 0
@@ -105,18 +129,6 @@ public struct ProfileScreen: View {
             } else {
                 unauthenticatedScrollView
             }
-
-            LinearGradient(
-                colors: [
-                    appTheme.colors.background.opacity(0.6),
-                    appTheme.colors.background.opacity(0.3),
-                    .clear,
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: 150)
-            .allowsHitTesting(false)
 
             GlassToolbar(
                 title: state.title,
@@ -173,6 +185,8 @@ public struct ProfileScreen: View {
 
                     userListsSection
 
+                    progressSection
+
                     Spacer()
                         .frame(height: appTheme.spacing.xLarge)
                 }
@@ -191,13 +205,11 @@ public struct ProfileScreen: View {
             .foregroundStyle(.ultraThinMaterial)
             .overlay(
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        .clear,
-                        .clear,
-                        .clear,
-                        appTheme.colors.scrim.opacity(0.3),
-                        appTheme.colors.scrim.opacity(0.6),
-                        appTheme.colors.scrim.opacity(0.85),
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0.0),
+                        .init(color: .clear, location: 0.11),
+                        .init(color: .black.opacity(0.8), location: 0.76),
+                        .init(color: .black.opacity(0.8), location: 1.0),
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -333,7 +345,7 @@ public struct ProfileScreen: View {
                 HStack(spacing: appTheme.spacing.small) {
                     ForEach(0 ..< 3, id: \.self) { _ in
                         ShimmerView(cornerRadius: appTheme.shapes.large)
-                            .frame(width: 210, height: 140)
+                            .frame(width: 200, height: 133)
                     }
                 }
                 .padding(.horizontal, appTheme.spacing.medium)
@@ -363,6 +375,31 @@ public struct ProfileScreen: View {
             return lists.count
         }
         return 0
+    }
+
+    // MARK: - Progress Section
+
+    @ViewBuilder
+    private var progressSection: some View {
+        if case .empty = state.inProgress, case .empty = state.completed {
+            EmptyView()
+        } else {
+            VStack(spacing: 0) {
+                Spacer().frame(height: appTheme.spacing.large)
+
+                ProgressSectionView(
+                    inProgress: state.inProgress,
+                    completed: state.completed,
+                    title: state.progressTitle,
+                    inProgressLabel: state.inProgressLabel,
+                    completedLabel: state.completedLabel,
+                    emptyLabel: state.progressEmptyLabel,
+                    retryLabel: state.retryLabel,
+                    onShowClick: onShowClicked,
+                    onRetry: onRetryProgress
+                )
+            }
+        }
     }
 
     private func bigCount(_ value: Int) -> some View {
@@ -523,7 +560,7 @@ private struct StatValueText: View {
 }
 
 private enum DimensionConstants {
-    static let imageHeight: CGFloat = 310
+    static let imageHeight: CGFloat = 315
     static let maxInlineLists: Int = 4
 }
 

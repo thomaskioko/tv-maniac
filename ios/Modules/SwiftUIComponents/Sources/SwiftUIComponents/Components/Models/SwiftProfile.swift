@@ -66,6 +66,22 @@ public struct SwiftProfileList: Identifiable, Equatable {
     }
 }
 
+public struct SwiftProfileShow: Identifiable, Equatable {
+    public let id: Int64
+    public let title: String
+    public let posterUrl: String?
+
+    public init(
+        id: Int64,
+        title: String,
+        posterUrl: String?
+    ) {
+        self.id = id
+        self.title = title
+        self.posterUrl = posterUrl
+    }
+}
+
 public enum SwiftSectionState<Item: Equatable>: Equatable {
     case loading
     case empty

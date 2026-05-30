@@ -1,4 +1,6 @@
 import DesignSystem
+import Nuke
+import NukeUI
 import SwiftUI
 
 public struct HeaderCoverArtWorkView: View {
@@ -19,14 +21,33 @@ public struct HeaderCoverArtWorkView: View {
     }
 
     public var body: some View {
-        LazyResizableImage(
-            url: imageUrl,
-            imageType: .backdrop,
-            size: CGSize(width: DimensionConstants.posterWidth, height: DimensionConstants.fixedImageHeight)
-        )
-        .scaledToFill()
+        LazyImage(url: ImageConfiguration.transformURL(imageUrl ?? "", imageType: .backdrop)) { state in
+            if let image = state.image {
+                image.resizable().scaledToFill()
+            } else {
+                placeholder
+            }
+        }
+        .processors([.resize(
+            size: CGSize(width: DimensionConstants.posterWidth, height: DimensionConstants.fixedImageHeight),
+            unit: .points
+        )])
         .frame(width: DimensionConstants.posterWidth, height: posterHeight)
         .clipped()
+    }
+
+    private var placeholder: some View {
+        LinearGradient(
+            colors: [theme.colors.grey.opacity(0.8), theme.colors.grey],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .overlay {
+            Image(systemName: "film")
+                .textStyle(theme.typography.titleLarge)
+                .fontWidth(.expanded)
+                .foregroundStyle(.white.opacity(0.8))
+        }
     }
 }
 

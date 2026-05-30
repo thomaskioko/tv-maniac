@@ -268,6 +268,10 @@
     <string name="profile_episodes_watched">Épisodes vus</string>
     <string name="profile_watch_time">Temps de visionnage</string>
     <string name="profile_stats_title">Statistiques</string>
+    <string name="profile_progress_title">Progression</string>
+    <string name="profile_filter_completed">Terminées</string>
+    <string name="profile_filter_in_progress">En cours</string>
+    <string name="profile_progress_empty">Rien pour le moment</string>
     <string name="profile_time_months">Mois</string>
     <string name="profile_time_days">Jours</string>
     <string name="profile_time_hours">Heures</string>

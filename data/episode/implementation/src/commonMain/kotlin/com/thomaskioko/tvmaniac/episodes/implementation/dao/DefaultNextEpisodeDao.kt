@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.episodes.implementation.dao
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.CompletedShowsForWatchlist
 import com.thomaskioko.tvmaniac.db.NextEpisodesForWatchlist
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
+import com.thomaskioko.tvmaniac.upnext.api.model.CompletedShow
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
@@ -34,6 +36,27 @@ public class DefaultNextEpisodeDao(
             }
             .catch { emit(emptyList()) }
     }
+
+    override fun observeCompletedShows(): Flow<List<CompletedShow>> {
+        return database.showsNextToWatchQueries
+            .completedShowsForWatchlist()
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows -> rows.map { it.toCompletedShow() } }
+            .catch { emit(emptyList()) }
+    }
+}
+
+private fun CompletedShowsForWatchlist.toCompletedShow(): CompletedShow {
+    return CompletedShow(
+        showTraktId = show_trakt_id.id,
+        showTmdbId = show_tmdb_id?.id,
+        showName = show_name,
+        showPoster = show_poster,
+        lastWatchedAt = last_watched_at,
+        watchedCount = watched_count,
+        totalCount = total_count,
+    )
 }
 
 private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {

@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveCompletedShowsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistPreviewInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistShowInfo
@@ -53,6 +54,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
+import com.thomaskioko.tvmaniac.upnext.api.model.CompletedShow
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -88,6 +90,7 @@ public class ProfilePresenter(
     observeUserProfileInteractor: ObserveUserProfileInteractor,
     observeUserListsInteractor: ObserveUserListsInteractor,
     observeUpNextInteractor: ObserveUpNextInteractor,
+    observeCompletedShowsInteractor: ObserveCompletedShowsInteractor,
     observeRecentlyWatchedInteractor: ObserveRecentlyWatchedInteractor,
     observeLibraryInteractor: ObserveLibraryInteractor,
     observeWatchlistPreviewInteractor: ObserveWatchlistPreviewInteractor,
@@ -103,6 +106,7 @@ public class ProfilePresenter(
     init {
         observeUserProfileInteractor(Unit)
         observeUserListsInteractor(Unit)
+        observeCompletedShowsInteractor(ObserveCompletedShowsInteractor.Param())
         observeRecentlyWatchedInteractor(ObserveRecentlyWatchedInteractor.Param())
         observeLibraryInteractor(ObserveLibraryInteractor.Params(followedOnly = true))
         observeWatchlistPreviewInteractor(ObserveWatchlistPreviewInteractor.Param())
@@ -119,6 +123,9 @@ public class ProfilePresenter(
         observeUpNextInteractor.flow.map { it.episodes }.toSectionState { episodes ->
             episodes.take(PREVIEW_LIMIT).map { it.toShowItem() }.toImmutableList()
         },
+        observeCompletedShowsInteractor.flow.toSectionState { shows ->
+            shows.map { it.toShowItem() }.toImmutableList()
+        },
         observeRecentlyWatchedInteractor.flow.toSectionState { episodes ->
             episodes.map { it.toRecentItem() }.toImmutableList()
         },
@@ -131,10 +138,11 @@ public class ProfilePresenter(
         observeFavoritesInteractor.flow.toSectionState { shows ->
             shows.map { it.toShowItem() }.toImmutableList()
         },
-    ) { userLists, inProgress, recentlyWatched, library, watchlist, favorites ->
+    ) { userLists, inProgress, completed, recentlyWatched, library, watchlist, favorites ->
         ProfileSections(
             userLists = userLists,
             inProgress = inProgress,
+            completed = completed,
             recentlyWatched = recentlyWatched,
             library = library,
             watchlist = watchlist,
@@ -162,6 +170,7 @@ public class ProfilePresenter(
             authenticated = authenticated,
             userLists = sections.userLists,
             inProgress = sections.inProgress,
+            completed = sections.completed,
             recentlyWatched = sections.recentlyWatched,
             library = sections.library,
             watchlist = sections.watchlist,
@@ -246,6 +255,10 @@ public class ProfilePresenter(
         lists = localizer.getString(StringResourceKey.ProfileLists),
         viewButton = localizer.getString(StringResourceKey.ProfileViewButton),
         userListsTitle = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
+        progressTitle = localizer.getString(StringResourceKey.ProfileProgressTitle),
+        completedFilter = localizer.getString(StringResourceKey.ProfileFilterCompleted),
+        inProgressFilter = localizer.getString(StringResourceKey.ProfileFilterInProgress),
+        progressEmpty = localizer.getString(StringResourceKey.ProfileProgressEmpty),
         viewAllButton = localizer.getString(StringResourceKey.StrMore),
         retry = localizer.getString(StringResourceKey.GenericRetry),
         unauthenticatedTitle = localizer.getString(StringResourceKey.ProfileUnauthenticatedTitle),
@@ -276,6 +289,7 @@ public class ProfilePresenter(
 private data class ProfileSections(
     val userLists: SectionState<ProfileListItem>,
     val inProgress: SectionState<ProfileShowItem>,
+    val completed: SectionState<ProfileShowItem>,
     val recentlyWatched: SectionState<ProfileRecentItem>,
     val library: SectionState<ProfileShowItem>,
     val watchlist: SectionState<ProfileShowItem>,
@@ -298,6 +312,13 @@ private fun UpNextEpisode.toShowItem(): ProfileShowItem = ProfileShowItem(
     traktId = showTraktId,
     tmdbId = showTmdbId,
     title = showName,
+    posterUrl = showPoster,
+)
+
+private fun CompletedShow.toShowItem(): ProfileShowItem = ProfileShowItem(
+    traktId = showTraktId,
+    tmdbId = showTmdbId,
+    title = showName.orEmpty(),
     posterUrl = showPoster,
 )
 
