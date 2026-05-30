@@ -310,19 +310,19 @@ public struct ProfileScreen: View {
             .foregroundStyle(.appOnSurface)
             .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
             .lineLimit(1)
-            .fixedSize(horizontal: true, vertical: false)
+            .minimumScaleFactor(0.5)
     }
 
     private func watchTimeSegment(value: Int32, unit: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 2) {
             StatValueText(count: Int(value))
-                .fixedSize(horizontal: true, vertical: false)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
 
             Text(unit)
                 .textStyle(appTheme.typography.bodySmall)
                 .foregroundStyle(appTheme.colors.onSurfaceVariant)
                 .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
         }
     }
 
