@@ -40,7 +40,6 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
             .also { scenarios.stubAuthenticatedSyncOnSignIn() }
             .clickSignInButton()
@@ -198,7 +197,6 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         // Verify unauthenticated state
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
     }
 }

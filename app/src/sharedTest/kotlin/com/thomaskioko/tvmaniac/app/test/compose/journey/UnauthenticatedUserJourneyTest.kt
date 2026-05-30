@@ -92,7 +92,6 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
             .clickSettingsButton()
 
@@ -216,7 +215,6 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
             .clickSignInButton()
             .assertUserCardDisplayed(slug = "integration-test-user")
@@ -251,7 +249,6 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         // Login user
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
 
         scenarios.stubProfileOnSignIn()
