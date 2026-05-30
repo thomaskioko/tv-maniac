@@ -1,9 +1,10 @@
-package com.thomaskioko.tvmaniac.profile.ui.components
+package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,19 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 
-/**
- * Profile section scaffold shared by every section (Stats, Your Lists, and the rails). Renders a
- * Trakt-style header — title, an optional trailing "more" chevron, and a collapse toggle — over
- * [content] that animates open and shut. Collapse state is per-session (in-memory).
- *
- * @param showMore whether to show the trailing chevron and make the title row navigate via [onMoreClick].
- * @param moreContentDescription accessibility label for the "more" chevron.
- */
 @Composable
-internal fun CollapsibleSection(
+public fun CollapsibleSection(
     title: String,
     modifier: Modifier = Modifier,
     showMore: Boolean = false,
@@ -124,17 +115,27 @@ private fun SectionHeaderRow(
             }
         }
 
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowDown,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        Box(
             modifier = Modifier
+                .size(28.dp)
                 .clip(CircleShape)
                 .clickable(onClick = onToggleCollapse)
-                .padding(4.dp)
-                .size(22.dp)
-                .rotate(rotation),
-        )
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                    shape = CircleShape,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .size(18.dp)
+                    .rotate(rotation),
+            )
+        }
     }
 }
 

@@ -1,9 +1,6 @@
 import DesignSystem
 import SwiftUI
 
-/// Profile section scaffold shared by every section (Stats, Your Lists, and the rails). Renders a
-/// Trakt-style header — title, an optional trailing "more" chevron, and a collapse toggle — over
-/// `content` that animates open and shut. Collapse state is per-session (in-memory).
 public struct CollapsibleSection<Content: View>: View {
     @Environment(\.appTheme) private var theme
     @SwiftUI.State private var collapsed = false
@@ -62,11 +59,15 @@ public struct CollapsibleSection<Content: View>: View {
             Spacer(minLength: theme.spacing.medium)
 
             Image(systemName: "chevron.down")
-                .textStyle(theme.typography.titleMedium)
+                .textStyle(theme.typography.labelLarge)
                 .foregroundStyle(theme.colors.onSurfaceVariant)
                 .rotationEffect(.degrees(collapsed ? -180 : 0))
-                .padding(theme.spacing.xxSmall)
-                .contentShape(Rectangle())
+                .frame(width: 28, height: 28)
+                .overlay(
+                    Circle()
+                        .stroke(theme.colors.onSurfaceVariant.opacity(0.5), lineWidth: 1)
+                )
+                .contentShape(Circle())
                 .onTapGesture { collapsed.toggle() }
         }
         .padding(.horizontal, theme.spacing.medium)
