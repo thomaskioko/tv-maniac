@@ -188,6 +188,22 @@ class ProfileScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsEmpty")
     }
 
+    func test_ListCollageCard() {
+        HStack(spacing: 12) {
+            ListCollageCard(
+                list: SwiftProfileList(id: 1, name: "Watchlist", itemCountLabel: "24 shows", posterUrls: ["a", "b", "c", "d"]),
+                onClick: {}
+            )
+            ListCollageCard(
+                list: SwiftProfileList(id: 2, name: "Favorites", itemCountLabel: "12 shows", posterUrls: ["e", "f"]),
+                onClick: {}
+            )
+        }
+        .padding()
+        .appPreview()
+        .assertSnapshot(layout: .sizeThatFits, testName: "ListCollageCard")
+    }
+
     func test_ProfileScreen_UserListsError() {
         ProfileScreen(
             state: authenticatedState(userLists: .error("Failed to load lists")),

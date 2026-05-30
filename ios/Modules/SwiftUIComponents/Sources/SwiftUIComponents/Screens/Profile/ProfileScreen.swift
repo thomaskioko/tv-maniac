@@ -217,13 +217,11 @@ public struct ProfileScreen: View {
             .foregroundStyle(.ultraThinMaterial)
             .overlay(
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        .clear,
-                        .clear,
-                        .clear,
-                        appTheme.colors.scrim.opacity(0.3),
-                        appTheme.colors.scrim.opacity(0.6),
-                        appTheme.colors.scrim.opacity(0.85),
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0.0),
+                        .init(color: .clear, location: 0.11),
+                        .init(color: .black.opacity(0.8), location: 0.76),
+                        .init(color: .black.opacity(0.8), location: 1.0),
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -359,7 +357,7 @@ public struct ProfileScreen: View {
                 HStack(spacing: appTheme.spacing.small) {
                     ForEach(0 ..< 3, id: \.self) { _ in
                         ShimmerView(cornerRadius: appTheme.shapes.large)
-                            .frame(width: 210, height: 140)
+                            .frame(width: 200, height: 133)
                     }
                 }
                 .padding(.horizontal, appTheme.spacing.medium)
@@ -574,7 +572,7 @@ private struct StatValueText: View {
 }
 
 private enum DimensionConstants {
-    static let imageHeight: CGFloat = 310
+    static let imageHeight: CGFloat = 315
     static let maxInlineLists: Int = 4
 }
 
