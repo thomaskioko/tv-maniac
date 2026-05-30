@@ -224,7 +224,6 @@ private fun ProfileContent(
                         labels = labels,
                         listCount = listCount,
                         onViewLists = onViewLists,
-                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
 

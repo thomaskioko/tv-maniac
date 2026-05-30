@@ -103,7 +103,7 @@ private extension ProfileState {
     }
 }
 
-private extension SectionState<ProfileListItem> {
+private extension SectionState {
     func toSwiftSectionState() -> SwiftSectionState<SwiftProfileList> {
         switch self {
         case is SectionStateLoading:

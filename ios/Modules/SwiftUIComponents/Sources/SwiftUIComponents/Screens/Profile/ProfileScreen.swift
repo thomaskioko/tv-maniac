@@ -240,20 +240,7 @@ public struct ProfileScreen: View {
     // MARK: - Stats Section
 
     private func statsSection(stats: SwiftProfileStats) -> some View {
-        VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
-            HStack(spacing: 0) {
-                Text(state.statsTitle)
-                    .textStyle(appTheme.typography.titleLargeEmphasized)
-                    .foregroundStyle(.appOnSurface)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .textStyle(appTheme.typography.titleMedium)
-                    .foregroundStyle(appTheme.colors.onSurfaceVariant)
-            }
-            .padding(.horizontal, appTheme.spacing.medium)
-
+        CollapsibleSection(title: state.statsTitle) {
             VStack(spacing: appTheme.spacing.small) {
                 HStack(spacing: appTheme.spacing.small) {
                     StatsCardItem(
@@ -324,10 +311,16 @@ public struct ProfileScreen: View {
         if case .empty = state.userLists {
             EmptyView()
         } else {
-            VStack(alignment: .leading, spacing: appTheme.spacing.small) {
+            VStack(spacing: 0) {
                 Spacer().frame(height: appTheme.spacing.large)
-                sectionHeader(showChevron: userListsCount > DimensionConstants.maxInlineLists)
-                userListsBody
+
+                CollapsibleSection(
+                    title: state.userListsTitle,
+                    showMore: userListsCount > DimensionConstants.maxInlineLists,
+                    onMoreClick: onViewListsClicked
+                ) {
+                    userListsBody
+                }
             }
         }
     }
@@ -370,14 +363,6 @@ public struct ProfileScreen: View {
             return lists.count
         }
         return 0
-    }
-
-    private func sectionHeader(showChevron: Bool) -> some View {
-        ChevronTitle(
-            title: state.userListsTitle,
-            chevronStyle: showChevron ? .withTitle(state.viewAllLabel) : .none,
-            action: onViewListsClicked
-        )
     }
 
     private func bigCount(_ value: Int) -> some View {

@@ -10,21 +10,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Tv
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
@@ -41,69 +39,53 @@ internal fun StatsCard(
     onViewLists: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
+    CollapsibleSection(
+        title = labels.statsTitle,
+        modifier = modifier,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = labels.statsTitle,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                EpisodesWatchedCard(
+                    title = labels.episodesWatched,
+                    value = stats.episodesWatched,
+                    modifier = Modifier.weight(1f),
+                )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                ShowsWatchedCard(
+                    title = labels.showsWatched,
+                    value = stats.showsWatched,
+                    modifier = Modifier.weight(1f),
+                )
+            }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            EpisodesWatchedCard(
-                title = labels.episodesWatched,
-                value = stats.episodesWatched,
-                modifier = Modifier.weight(1f),
-            )
+            Spacer(modifier = Modifier.height(12.dp))
 
-            ShowsWatchedCard(
-                title = labels.showsWatched,
-                value = stats.showsWatched,
-                modifier = Modifier.weight(1f),
-            )
-        }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                WatchTimeCard(
+                    title = labels.watchTime,
+                    months = stats.months,
+                    days = stats.days,
+                    hours = stats.hours,
+                    monthsLabel = labels.monthsShort,
+                    daysLabel = labels.daysShort,
+                    hoursLabel = labels.hoursShort,
+                    modifier = Modifier.weight(1f),
+                )
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            WatchTimeCard(
-                title = labels.watchTime,
-                months = stats.months,
-                days = stats.days,
-                hours = stats.hours,
-                monthsLabel = labels.monthsShort,
-                daysLabel = labels.daysShort,
-                hoursLabel = labels.hoursShort,
-                modifier = Modifier.weight(1f),
-            )
-
-            ListsCard(
-                title = labels.lists,
-                count = listCount,
-                viewButtonLabel = labels.viewButton,
-                onViewLists = onViewLists,
-                modifier = Modifier.weight(1f),
-            )
+                ListsCard(
+                    title = labels.lists,
+                    count = listCount,
+                    viewButtonLabel = labels.viewButton,
+                    onViewLists = onViewLists,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
-import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
+import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.InlineSectionError
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -67,15 +66,13 @@ internal fun UserListsSection(
 
     val showViewAll = (userLists as? SectionState.Content)?.items?.size?.let { it > MAX_INLINE_LISTS } == true
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        SectionHeader(
-            title = title,
-            viewAllLabel = viewAllLabel.takeIf { showViewAll },
-            onViewAll = onViewAll,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
+    CollapsibleSection(
+        title = title,
+        modifier = modifier,
+        showMore = showViewAll,
+        moreContentDescription = viewAllLabel,
+        onMoreClick = onViewAll,
+    ) {
         when (userLists) {
             SectionState.Loading -> ListsSkeletonRow()
             is SectionState.Error -> InlineSectionError(
@@ -249,24 +246,6 @@ private fun ListsSkeletonRow() {
             )
         }
     }
-}
-
-@Composable
-private fun SectionHeader(
-    title: String,
-    viewAllLabel: String?,
-    onViewAll: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    BoxTextItems(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp),
-        title = title,
-        label = viewAllLabel,
-        onMoreClicked = onViewAll,
-        moreModifier = Modifier.testTag(ProfileTestTags.USER_LISTS_VIEW_ALL_TEST_TAG),
-    )
 }
 
 @ThemePreviews
