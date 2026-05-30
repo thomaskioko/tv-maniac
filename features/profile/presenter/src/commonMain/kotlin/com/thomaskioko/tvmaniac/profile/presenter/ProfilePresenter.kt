@@ -26,6 +26,7 @@ import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
+import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -113,7 +114,7 @@ public class ProfilePresenter(
 
     private val sectionsFlow: Flow<ProfileSections> = combine(
         observeUserListsInteractor.flow.toSectionState { lists ->
-            lists.map { it.toListItem() }.toImmutableList()
+            lists.filter { it.itemCount > 0 }.map { it.toListItem(localizer) }.toImmutableList()
         },
         observeUpNextInteractor.flow.map { it.episodes }.toSectionState { episodes ->
             episodes.take(PREVIEW_LIMIT).map { it.toShowItem() }.toImmutableList()
@@ -244,6 +245,9 @@ public class ProfilePresenter(
         hoursShort = localizer.getString(StringResourceKey.ProfileTimeHoursShort),
         lists = localizer.getString(StringResourceKey.ProfileLists),
         viewButton = localizer.getString(StringResourceKey.ProfileViewButton),
+        userListsTitle = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
+        viewAllButton = localizer.getString(StringResourceKey.StrMore),
+        retry = localizer.getString(StringResourceKey.GenericRetry),
         unauthenticatedTitle = localizer.getString(StringResourceKey.ProfileUnauthenticatedTitle),
         footerDescription = localizer.getString(StringResourceKey.ProfileFooterDescription),
         signInButton = localizer.getString(StringResourceKey.ProfileSignInButton),
@@ -278,10 +282,15 @@ private data class ProfileSections(
     val favorites: SectionState<ProfileShowItem>,
 )
 
-private fun TraktListEntity.toListItem(): ProfileListItem = ProfileListItem(
+private fun TraktListEntity.toListItem(localizer: Localizer): ProfileListItem = ProfileListItem(
     id = id,
     name = name,
     itemCount = itemCount.toInt(),
+    itemCountLabel = localizer.getPlural(
+        key = PluralsResourceKey.ShowCount,
+        quantity = itemCount.toInt(),
+        itemCount.toInt(),
+    ),
     posterUrls = posterPaths.toImmutableList(),
 )
 

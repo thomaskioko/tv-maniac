@@ -62,10 +62,13 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
+import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.profile.ui.components.ProfileLoadingSkeleton
 import com.thomaskioko.tvmaniac.profile.ui.components.StatsCard
 import com.thomaskioko.tvmaniac.profile.ui.components.UnauthenticatedContent
+import com.thomaskioko.tvmaniac.profile.ui.components.UserListsSection
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import io.github.thomaskioko.codegen.annotations.TabUi
 
@@ -105,8 +108,11 @@ internal fun ProfileScreen(
                     userProfile = state.userProfile,
                     labels = state.labels,
                     listCount = listCount,
+                    userLists = state.userLists,
                     onLoginClicked = { onAction(LoginClicked) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
+                    onListClick = {},
+                    onRetry = { onAction(ProfileAction.RefreshProfile) },
                     listState = listState,
                     contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize(),
@@ -170,8 +176,11 @@ private fun ProfileContent(
     userProfile: ProfileInfo?,
     labels: ProfileLabels,
     listCount: Int,
+    userLists: SectionState<ProfileListItem>,
     onLoginClicked: () -> Unit,
     onViewLists: () -> Unit,
+    onListClick: (Long) -> Unit,
+    onRetry: () -> Unit,
     listState: LazyListState,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -216,6 +225,22 @@ private fun ProfileContent(
                         listCount = listCount,
                         onViewLists = onViewLists,
                         modifier = Modifier.padding(horizontal = 16.dp),
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+                item {
+                    UserListsSection(
+                        userLists = userLists,
+                        title = labels.userListsTitle,
+                        viewAllLabel = labels.viewAllButton,
+                        retryLabel = labels.retry,
+                        onViewAll = onViewLists,
+                        onListClick = onListClick,
+                        onRetry = onRetry,
                     )
                 }
 

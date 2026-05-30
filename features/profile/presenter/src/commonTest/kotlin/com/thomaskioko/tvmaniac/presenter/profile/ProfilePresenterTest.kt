@@ -341,6 +341,7 @@ internal class ProfilePresenterTest {
                     id = 1,
                     name = "Favorites",
                     itemCount = 12,
+                    itemCountLabel = "12 shows",
                     posterUrls = persistentListOf("/list-poster.jpg"),
                 ),
             )

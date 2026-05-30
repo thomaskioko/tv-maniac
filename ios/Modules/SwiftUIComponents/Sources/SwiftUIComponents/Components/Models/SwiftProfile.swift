@@ -47,6 +47,32 @@ public struct SwiftProfileStats: Equatable {
     }
 }
 
+public struct SwiftProfileList: Identifiable, Equatable {
+    public let id: Int64
+    public let name: String
+    public let itemCountLabel: String
+    public let posterUrls: [String]
+
+    public init(
+        id: Int64,
+        name: String,
+        itemCountLabel: String,
+        posterUrls: [String]
+    ) {
+        self.id = id
+        self.name = name
+        self.itemCountLabel = itemCountLabel
+        self.posterUrls = posterUrls
+    }
+}
+
+public enum SwiftSectionState<Item: Equatable>: Equatable {
+    case loading
+    case empty
+    case content([Item])
+    case error(String)
+}
+
 public struct SwiftFeatureItem: Identifiable, Equatable {
     public let id: String
     public let iconName: String
