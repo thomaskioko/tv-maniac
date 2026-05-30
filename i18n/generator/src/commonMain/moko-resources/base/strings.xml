@@ -299,6 +299,10 @@
     <string name="profile_episodes_watched">Episodes Watched</string>
     <string name="profile_watch_time">Watch Time</string>
     <string name="profile_stats_title">Stats</string>
+    <string name="profile_progress_title">Progress</string>
+    <string name="profile_filter_completed">Completed</string>
+    <string name="profile_filter_in_progress">In Progress</string>
+    <string name="profile_progress_empty">Nothing here yet</string>
     <string name="profile_time_months">Months</string>
     <string name="profile_time_days">Days</string>
     <string name="profile_time_hours">Hours</string>
