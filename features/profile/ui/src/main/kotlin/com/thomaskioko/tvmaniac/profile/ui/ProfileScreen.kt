@@ -46,9 +46,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -68,26 +66,13 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_settings
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_edit_button
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_episodes_watched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_lists
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_shows_watched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_stats_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_days
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_hours
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_months
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_view_button
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_watch_time
-import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
@@ -127,6 +112,7 @@ internal fun ProfileScreen(
                 ProfileContent(
                     showLoading = state.showLoading,
                     userProfile = state.userProfile,
+                    labels = state.labels,
                     listCount = listCount,
                     onLoginClicked = { onAction(LoginClicked) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
@@ -139,7 +125,7 @@ internal fun ProfileScreen(
                     listState = listState,
                     title = {
                         Text(
-                            text = profile_title.resolve(LocalContext.current),
+                            text = state.labels.title,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 color = MaterialTheme.colorScheme.onSurface,
                             ),
@@ -170,7 +156,7 @@ internal fun ProfileScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
-                                contentDescription = cd_settings.resolve(LocalContext.current),
+                                contentDescription = state.labels.settingsContentDescription,
                                 tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
@@ -191,6 +177,7 @@ internal fun ProfileScreen(
 private fun ProfileContent(
     showLoading: Boolean,
     userProfile: ProfileInfo?,
+    labels: ProfileLabels,
     listCount: Int,
     onLoginClicked: () -> Unit,
     onViewLists: () -> Unit,
@@ -220,6 +207,8 @@ private fun ProfileContent(
                         imageUrl = userProfile.backgroundUrl,
                         username = userProfile.fullName ?: userProfile.username,
                         avatarUrl = userProfile.avatarUrl,
+                        editButtonLabel = labels.editButton,
+                        avatarContentDescription = labels.profilePictureContentDescription,
                         listState = listState,
                         onEditClicked = {},
                     )
@@ -232,6 +221,7 @@ private fun ProfileContent(
                 item {
                     StatsCard(
                         stats = userProfile.stats,
+                        labels = labels,
                         listCount = listCount,
                         onViewLists = onViewLists,
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -246,6 +236,7 @@ private fun ProfileContent(
 
         else -> {
             UnauthenticatedContent(
+                labels = labels,
                 onLoginClicked = onLoginClicked,
                 modifier = modifier,
                 contentPadding = contentPadding,
@@ -257,6 +248,7 @@ private fun ProfileContent(
 @Composable
 private fun StatsCard(
     stats: ProfileStats,
+    labels: ProfileLabels,
     listCount: Int,
     onViewLists: () -> Unit,
     modifier: Modifier = Modifier,
@@ -270,7 +262,7 @@ private fun StatsCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = profile_stats_title.resolve(LocalContext.current),
+                text = labels.statsTitle,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
@@ -289,7 +281,7 @@ private fun StatsCard(
         ) {
             StatTile(
                 imageVector = Icons.Filled.PlayCircle,
-                title = profile_episodes_watched.resolve(LocalContext.current),
+                title = labels.episodesWatched,
                 modifier = Modifier.weight(1f),
             ) {
                 StatValueText(count = stats.episodesWatched)
@@ -297,7 +289,7 @@ private fun StatsCard(
 
             StatTile(
                 imageVector = Icons.Filled.Tv,
-                title = profile_shows_watched.resolve(LocalContext.current),
+                title = labels.showsWatched,
                 modifier = Modifier.weight(1f),
             ) {
                 StatValueText(count = stats.showsWatched)
@@ -312,31 +304,22 @@ private fun StatsCard(
         ) {
             StatTile(
                 imageVector = Icons.Filled.Schedule,
-                title = profile_watch_time.resolve(LocalContext.current),
+                title = labels.watchTime,
                 modifier = Modifier.weight(1f),
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    MiniStat(
-                        value = stats.months,
-                        label = profile_time_months.resolve(LocalContext.current),
-                    )
-                    MiniStat(
-                        value = stats.days,
-                        label = profile_time_days.resolve(LocalContext.current),
-                    )
-                    MiniStat(
-                        value = stats.hours,
-                        label = profile_time_hours.resolve(LocalContext.current),
-                    )
-                }
+                WatchTimeValue(
+                    months = stats.months,
+                    days = stats.days,
+                    hours = stats.hours,
+                    monthsLabel = labels.monthsShort,
+                    daysLabel = labels.daysShort,
+                    hoursLabel = labels.hoursShort,
+                )
             }
 
             StatTile(
                 imageVector = Icons.AutoMirrored.Filled.List,
-                title = profile_lists.resolve(LocalContext.current),
+                title = labels.lists,
                 modifier = Modifier.weight(1f),
             ) {
                 Row(
@@ -346,7 +329,7 @@ private fun StatsCard(
                 ) {
                     StatValueText(count = listCount)
                     Text(
-                        text = profile_view_button.resolve(LocalContext.current),
+                        text = labels.viewButton,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
@@ -366,21 +349,46 @@ private fun StatsCard(
 }
 
 @Composable
-private fun MiniStat(
-    value: Int,
-    label: String,
+private fun WatchTimeValue(
+    months: Int,
+    days: Int,
+    hours: Int,
+    monthsLabel: String,
+    daysLabel: String,
+    hoursLabel: String,
+    modifier: Modifier = Modifier,
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        WatchTimeSegment(value = months, unit = monthsLabel)
+        WatchTimeSegment(value = days, unit = daysLabel)
+        WatchTimeSegment(value = hours, unit = hoursLabel)
+    }
+}
+
+@Composable
+private fun WatchTimeSegment(
+    value: Int,
+    unit: String,
+) {
+    Row(verticalAlignment = Alignment.Bottom) {
         StatValueText(
             count = value,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.alignByBaseline(),
         )
         Text(
-            text = label,
+            text = unit,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             softWrap = false,
+            modifier = Modifier
+                .alignByBaseline()
+                .padding(start = 2.dp),
         )
     }
 }
@@ -441,6 +449,8 @@ private fun HeaderContent(
     imageUrl: String?,
     username: String,
     avatarUrl: String?,
+    editButtonLabel: String,
+    avatarContentDescription: String,
     listState: LazyListState,
     onEditClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -506,10 +516,7 @@ private fun HeaderContent(
                 imageUrl = avatarUrl,
                 size = 80.dp,
                 placeholderIcon = Icons.Filled.Person,
-                contentDescription = stringResource(
-                    cd_profile_pic.resourceId,
-                    username,
-                ),
+                contentDescription = avatarContentDescription,
                 border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
             )
 
@@ -533,7 +540,7 @@ private fun HeaderContent(
                     borderColor = MaterialTheme.colorScheme.onSecondary,
                     text = {
                         Text(
-                            text = profile_edit_button.resolve(LocalContext.current),
+                            text = editButtonLabel,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 2.dp),
                         )
@@ -554,6 +561,7 @@ private fun ProfileScreenLoadingPreview() {
             userProfile = null,
             errorMessage = null,
             authenticated = false,
+            labels = sampleProfileLabels,
         ),
         onAction = {},
     )

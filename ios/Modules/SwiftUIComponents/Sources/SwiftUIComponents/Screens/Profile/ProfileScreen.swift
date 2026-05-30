@@ -242,31 +242,41 @@ public struct ProfileScreen: View {
 
             VStack(spacing: appTheme.spacing.small) {
                 HStack(spacing: appTheme.spacing.small) {
-                    StatsCardItem(systemImage: "play.circle.fill", title: state.episodesWatchedLabel) {
+                    StatsCardItem(
+                        systemImage: "play.circle.fill",
+                        title: state.episodesWatchedLabel
+                    ) {
                         bigCount(Int(stats.episodesWatched))
                     }
                     .frame(maxWidth: .infinity)
 
-                    StatsCardItem(systemImage: "tv.fill", title: state.showsWatchedLabel) {
+                    StatsCardItem(
+                        systemImage: "tv.fill",
+                        title: state.showsWatchedLabel
+                    ) {
                         bigCount(Int(stats.showsWatched))
                     }
                     .frame(maxWidth: .infinity)
                 }
 
                 HStack(spacing: appTheme.spacing.small) {
-                    StatsCardItem(systemImage: "clock.fill", title: state.watchTimeLabel) {
-                        HStack(spacing: 0) {
-                            statColumn(label: state.monthsLabel, value: stats.months)
-                            Spacer()
-                            statColumn(label: state.daysLabel, value: stats.days)
-                            Spacer()
-                            statColumn(label: state.hoursLabel, value: stats.hours)
+                    StatsCardItem(
+                        systemImage: "clock.fill",
+                        title: state.watchTimeLabel
+                    ) {
+                        HStack(alignment: .firstTextBaseline, spacing: appTheme.spacing.small) {
+                            watchTimeSegment(value: stats.months, unit: state.monthsLabel)
+                            watchTimeSegment(value: stats.days, unit: state.daysLabel)
+                            watchTimeSegment(value: stats.hours, unit: state.hoursLabel)
                         }
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .frame(maxWidth: .infinity)
 
-                    StatsCardItem(systemImage: "list.bullet", title: state.listsLabel) {
+                    StatsCardItem(
+                        systemImage: "list.bullet",
+                        title: state.listsLabel
+                    ) {
                         HStack(alignment: .bottom) {
                             bigCount(Int(stats.listCount))
 
@@ -297,15 +307,14 @@ public struct ProfileScreen: View {
         StatValueText(count: value, font: appTheme.typography.headlineLarge)
     }
 
-    private func statColumn(label: String, value: Int32) -> some View {
-        VStack(alignment: .center, spacing: appTheme.spacing.xxSmall) {
-            StatValueText(count: Int(value), font: appTheme.typography.titleLarge)
+    private func watchTimeSegment(value: Int32, unit: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 2) {
+            StatValueText(count: Int(value), font: appTheme.typography.headlineLarge)
 
-            Text(label)
+            Text(unit)
                 .textStyle(appTheme.typography.labelSmall)
                 .foregroundStyle(appTheme.colors.onSurfaceVariant)
                 .lineLimit(1)
-                .minimumScaleFactor(0.8)
         }
     }
 

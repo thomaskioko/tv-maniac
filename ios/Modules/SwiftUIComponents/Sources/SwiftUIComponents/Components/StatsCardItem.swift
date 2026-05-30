@@ -25,13 +25,13 @@ public struct StatsCardItem<Content: View>: View {
             Spacer(minLength: theme.spacing.small)
 
             Text(title)
-                .textStyle(theme.typography.bodySmall)
+                .textStyle(theme.typography.bodyMedium)
                 .foregroundStyle(theme.colors.onSurfaceVariant)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Spacer()
-                .frame(height: theme.spacing.xxxSmall)
+                .frame(height: theme.spacing.xSmall)
 
             content()
         }

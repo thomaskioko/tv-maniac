@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -31,22 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_discover_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_discover_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_manage_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_manage_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_more_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_more_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_track_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_feature_track_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_footer_description
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_sign_in_button
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_unauthenticated_title
-import com.thomaskioko.tvmaniac.i18n.resolve
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
 @Composable
 internal fun UnauthenticatedContent(
+    labels: ProfileLabels,
     onLoginClicked: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
@@ -62,7 +51,7 @@ internal fun UnauthenticatedContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = profile_unauthenticated_title.resolve(LocalContext.current),
+            text = labels.unauthenticatedTitle,
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             lineHeight = MaterialTheme.typography.displaySmall.fontSize.times(1.2f),
@@ -74,26 +63,26 @@ internal fun UnauthenticatedContent(
         ) {
             FeatureItem(
                 icon = Icons.Outlined.Search,
-                title = profile_feature_discover_title.resolve(LocalContext.current),
-                description = profile_feature_discover_description.resolve(LocalContext.current),
+                title = labels.featureDiscoverTitle,
+                description = labels.featureDiscoverDescription,
             )
 
             FeatureItem(
                 icon = Icons.Outlined.Tv,
-                title = profile_feature_track_title.resolve(LocalContext.current),
-                description = profile_feature_track_description.resolve(LocalContext.current),
+                title = labels.featureTrackTitle,
+                description = labels.featureTrackDescription,
             )
 
             FeatureItem(
                 icon = Icons.AutoMirrored.Outlined.LibraryBooks,
-                title = profile_feature_manage_title.resolve(LocalContext.current),
-                description = profile_feature_manage_description.resolve(LocalContext.current),
+                title = labels.featureManageTitle,
+                description = labels.featureManageDescription,
             )
 
             FeatureItem(
                 icon = Icons.Outlined.AutoAwesome,
-                title = profile_feature_more_title.resolve(LocalContext.current),
-                description = profile_feature_more_description.resolve(LocalContext.current),
+                title = labels.featureMoreTitle,
+                description = labels.featureMoreDescription,
             )
         }
 
@@ -104,7 +93,7 @@ internal fun UnauthenticatedContent(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                text = profile_footer_description.resolve(LocalContext.current),
+                text = labels.footerDescription,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = MaterialTheme.typography.bodySmall.fontSize.times(1.5f),
@@ -121,7 +110,7 @@ internal fun UnauthenticatedContent(
                     containerColor = MaterialTheme.colorScheme.secondary,
                 ),
                 content = {
-                    Text(text = profile_sign_in_button.resolve(LocalContext.current))
+                    Text(text = labels.signInButton)
                 },
             )
         }
@@ -171,6 +160,7 @@ private fun FeatureItem(
 @Composable
 private fun UnauthenticatedContentPreview() {
     UnauthenticatedContent(
+        labels = sampleProfileLabels,
         onLoginClicked = {},
         contentPadding = PaddingValues(),
     )

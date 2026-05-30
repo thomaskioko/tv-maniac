@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.profile.ui.authenticatedState
+import com.thomaskioko.tvmaniac.profile.ui.sampleProfileLabels
 import com.thomaskioko.tvmaniac.profile.ui.unauthenticatedState
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import org.junit.Rule
@@ -47,6 +48,7 @@ internal class ProfileScreenTest {
                         userProfile = null,
                         errorMessage = null,
                         authenticated = false,
+                        labels = sampleProfileLabels,
                     ),
                     onAction = {},
                 )
