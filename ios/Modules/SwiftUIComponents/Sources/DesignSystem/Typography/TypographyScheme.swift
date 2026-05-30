@@ -21,7 +21,8 @@ public struct TvManiacTypographyScheme {
                 return shared
             }
             #if DEBUG
-                _shared = .preview
+                WorkSansFontRegistrar.registerIfNeeded()
+                _shared = .workSans
                 return _shared!
             #else
                 fatalError("TvManiacTypographyScheme.configure() must be called before accessing typography")
@@ -30,6 +31,11 @@ public struct TvManiacTypographyScheme {
         set {
             _shared = newValue
         }
+    }
+
+    public static func configure() {
+        WorkSansFontRegistrar.registerIfNeeded()
+        shared = .workSans
     }
 
     static let preview = TvManiacTypographyScheme(
@@ -48,6 +54,24 @@ public struct TvManiacTypographyScheme {
         labelLarge: style(size: 14, weight: .bold, tracking: 0.1, lineHeight: 20),
         labelMedium: style(size: 12, weight: .bold, tracking: 0.5, lineHeight: 16),
         labelSmall: style(size: 11, weight: .medium, tracking: 0.5, lineHeight: 16)
+    )
+
+    static let workSans = TvManiacTypographyScheme(
+        displayLarge: workSansStyle(.medium, size: 57, relativeTo: .largeTitle, tracking: -0.25, lineHeight: 64),
+        displayMedium: workSansStyle(.medium, size: 45, relativeTo: .largeTitle, tracking: 0, lineHeight: 52),
+        displaySmall: workSansStyle(.medium, size: 36, relativeTo: .largeTitle, tracking: 0, lineHeight: 44),
+        headlineLarge: workSansStyle(.bold, size: 32, relativeTo: .title, tracking: 0, lineHeight: 40),
+        headlineMedium: workSansStyle(.bold, size: 28, relativeTo: .title, tracking: 0, lineHeight: 36),
+        headlineSmall: workSansStyle(.bold, size: 24, relativeTo: .title2, tracking: 0, lineHeight: 32),
+        titleLarge: workSansStyle(.bold, size: 22, relativeTo: .title2, tracking: 0, lineHeight: 28),
+        titleMedium: workSansStyle(.bold, size: 16, relativeTo: .callout, tracking: 0.15, lineHeight: 24),
+        titleSmall: workSansStyle(.extrabold, size: 14, relativeTo: .subheadline, tracking: 0.1, lineHeight: 20),
+        bodyLarge: workSansStyle(.medium, size: 16, relativeTo: .body, tracking: 0.15, lineHeight: 24),
+        bodyMedium: workSansStyle(.semibold, size: 14, relativeTo: .subheadline, tracking: 0.25, lineHeight: 20),
+        bodySmall: workSansStyle(.medium, size: 12, relativeTo: .caption, tracking: 0.4, lineHeight: 16),
+        labelLarge: workSansStyle(.bold, size: 14, relativeTo: .footnote, tracking: 0.1, lineHeight: 20),
+        labelMedium: workSansStyle(.bold, size: 12, relativeTo: .caption, tracking: 0.5, lineHeight: 16),
+        labelSmall: workSansStyle(.medium, size: 11, relativeTo: .caption2, tracking: 0.5, lineHeight: 16)
     )
 
     public let displayLarge: TvManiacTextStyle
@@ -112,6 +136,20 @@ public struct TvManiacTypographyScheme {
             lineSpacing: max(0, lineHeight - size * 1.2)
         )
     }
+
+    private static func workSansStyle(
+        _ weight: WorkSans,
+        size: CGFloat,
+        relativeTo textStyle: Font.TextStyle,
+        tracking: CGFloat,
+        lineHeight: CGFloat
+    ) -> TvManiacTextStyle {
+        TvManiacTextStyle(
+            font: .workSans(weight, size: size, relativeTo: textStyle),
+            tracking: tracking,
+            lineSpacing: max(0, lineHeight - size * 1.2)
+        )
+    }
 }
 
 public extension View {
@@ -130,7 +168,8 @@ public extension View {
     public extension TvManiacTypographyScheme {
         static func configureForTesting() {
             guard _shared == nil else { return }
-            _shared = .preview
+            WorkSansFontRegistrar.registerIfNeeded()
+            _shared = .workSans
         }
     }
 #endif
