@@ -30,6 +30,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.profile.ui.StatTile
+import com.thomaskioko.tvmaniac.profile.ui.StatValueLabel
 import com.thomaskioko.tvmaniac.profile.ui.StatValueText
 
 @Composable
@@ -68,13 +69,13 @@ internal fun StatsCard(
         ) {
             EpisodesWatchedCard(
                 title = labels.episodesWatched,
-                count = stats.episodesWatched,
+                value = stats.episodesWatched,
                 modifier = Modifier.weight(1f),
             )
 
             ShowsWatchedCard(
                 title = labels.showsWatched,
-                count = stats.showsWatched,
+                value = stats.showsWatched,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -110,7 +111,7 @@ internal fun StatsCard(
 @Composable
 internal fun EpisodesWatchedCard(
     title: String,
-    count: Int,
+    value: String,
     modifier: Modifier = Modifier,
 ) {
     StatTile(
@@ -118,14 +119,14 @@ internal fun EpisodesWatchedCard(
         title = title,
         modifier = modifier,
     ) {
-        StatValueText(count = count)
+        StatValueLabel(text = value)
     }
 }
 
 @Composable
 internal fun ShowsWatchedCard(
     title: String,
-    count: Int,
+    value: String,
     modifier: Modifier = Modifier,
 ) {
     StatTile(
@@ -133,7 +134,7 @@ internal fun ShowsWatchedCard(
         title = title,
         modifier = modifier,
     ) {
-        StatValueText(count = count)
+        StatValueLabel(text = value)
     }
 }
 
@@ -180,7 +181,7 @@ internal fun ListsCard(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             StatValueText(count = count)
             Text(
@@ -252,8 +253,8 @@ private fun WatchTimeSegment(
 private fun StatsCardPreview() {
     StatsCard(
         stats = ProfileStats(
-            showsWatched = 42,
-            episodesWatched = 256,
+            showsWatched = "42",
+            episodesWatched = "256",
             months = 2,
             days = 5,
             hours = 12,

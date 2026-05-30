@@ -23,16 +23,16 @@ public struct SwiftProfileInfo: Equatable {
 }
 
 public struct SwiftProfileStats: Equatable {
-    public let showsWatched: Int32
-    public let episodesWatched: Int32
+    public let showsWatched: String
+    public let episodesWatched: String
     public let months: Int32
     public let days: Int32
     public let hours: Int32
     public let listCount: Int32
 
     public init(
-        showsWatched: Int32,
-        episodesWatched: Int32,
+        showsWatched: String,
+        episodesWatched: String,
         months: Int32,
         days: Int32,
         hours: Int32,

@@ -246,7 +246,7 @@ public struct ProfileScreen: View {
                         systemImage: "play.circle.fill",
                         title: state.episodesWatchedLabel
                     ) {
-                        bigCount(Int(stats.episodesWatched))
+                        bigLabel(stats.episodesWatched)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -254,7 +254,7 @@ public struct ProfileScreen: View {
                         systemImage: "tv.fill",
                         title: state.showsWatchedLabel
                     ) {
-                        bigCount(Int(stats.showsWatched))
+                        bigLabel(stats.showsWatched)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -277,7 +277,7 @@ public struct ProfileScreen: View {
                         systemImage: "list.bullet",
                         title: state.listsLabel
                     ) {
-                        HStack(alignment: .bottom) {
+                        HStack(alignment: .center) {
                             bigCount(Int(stats.listCount))
 
                             Spacer()
@@ -305,6 +305,16 @@ public struct ProfileScreen: View {
 
     private func bigCount(_ value: Int) -> some View {
         StatValueText(count: value, font: appTheme.typography.headlineLarge)
+    }
+
+    private func bigLabel(_ text: String) -> some View {
+        Text(text)
+            .textStyle(appTheme.typography.headlineLarge)
+            .fontWeight(.heavy)
+            .foregroundStyle(.appOnSurface)
+            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
     }
 
     private func watchTimeSegment(value: Int32, unit: String) -> some View {

@@ -88,6 +88,28 @@ internal fun StatValueText(
 }
 
 @Composable
+internal fun StatValueLabel(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.headlineLarge,
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        style = style.copy(
+            fontWeight = FontWeight.ExtraBold,
+            shadow = Shadow(
+                color = Color.Black.copy(alpha = 0.3f),
+                offset = Offset(0f, 2f),
+                blurRadius = 4f,
+            ),
+        ),
+        color = MaterialTheme.colorScheme.onSurface,
+        maxLines = 1,
+    )
+}
+
+@Composable
 private fun IconBadge(
     imageVector: ImageVector,
     modifier: Modifier = Modifier,
