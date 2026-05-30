@@ -43,6 +43,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
+import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -72,6 +73,7 @@ internal fun UserListsSection(
         showMore = showViewAll,
         moreContentDescription = viewAllLabel,
         onMoreClick = onViewAll,
+        toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.USER_LISTS_SECTION_KEY),
     ) {
         when (userLists) {
             SectionState.Loading -> ListsSkeletonRow()

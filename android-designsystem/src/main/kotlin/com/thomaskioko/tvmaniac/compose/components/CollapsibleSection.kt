@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -43,6 +44,7 @@ public fun CollapsibleSection(
     showMore: Boolean = false,
     moreContentDescription: String? = null,
     onMoreClick: () -> Unit = {},
+    toggleTestTag: String? = null,
     content: @Composable () -> Unit,
 ) {
     var collapsed by rememberSaveable(title) { mutableStateOf(false) }
@@ -55,6 +57,7 @@ public fun CollapsibleSection(
             collapsed = collapsed,
             onMoreClick = onMoreClick,
             onToggleCollapse = { collapsed = !collapsed },
+            toggleTestTag = toggleTestTag,
         )
 
         if (!collapsed) {
@@ -72,6 +75,7 @@ private fun SectionHeaderRow(
     collapsed: Boolean,
     onMoreClick: () -> Unit,
     onToggleCollapse: () -> Unit,
+    toggleTestTag: String?,
     modifier: Modifier = Modifier,
 ) {
     val rotation by animateFloatAsState(
@@ -117,6 +121,7 @@ private fun SectionHeaderRow(
 
         Box(
             modifier = Modifier
+                .then(if (toggleTestTag != null) Modifier.testTag(toggleTestTag) else Modifier)
                 .size(28.dp)
                 .clip(CircleShape)
                 .clickable(onClick = onToggleCollapse)
