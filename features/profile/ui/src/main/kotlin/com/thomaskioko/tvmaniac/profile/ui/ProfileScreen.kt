@@ -3,9 +3,6 @@ package com.thomaskioko.tvmaniac.profile.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,13 +20,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayCircle
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,11 +33,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,7 +48,6 @@ import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.ScrimButton
-import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
@@ -74,7 +63,9 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
-import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
+import com.thomaskioko.tvmaniac.profile.ui.components.ProfileLoadingSkeleton
+import com.thomaskioko.tvmaniac.profile.ui.components.StatsCard
+import com.thomaskioko.tvmaniac.profile.ui.components.UnauthenticatedContent
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import io.github.thomaskioko.codegen.annotations.TabUi
 
@@ -241,204 +232,6 @@ private fun ProfileContent(
                 modifier = modifier,
                 contentPadding = contentPadding,
             )
-        }
-    }
-}
-
-@Composable
-private fun StatsCard(
-    stats: ProfileStats,
-    labels: ProfileLabels,
-    listCount: Int,
-    onViewLists: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = labels.statsTitle,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            StatTile(
-                imageVector = Icons.Filled.PlayCircle,
-                title = labels.episodesWatched,
-                modifier = Modifier.weight(1f),
-            ) {
-                StatValueText(count = stats.episodesWatched)
-            }
-
-            StatTile(
-                imageVector = Icons.Filled.Tv,
-                title = labels.showsWatched,
-                modifier = Modifier.weight(1f),
-            ) {
-                StatValueText(count = stats.showsWatched)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            StatTile(
-                imageVector = Icons.Filled.Schedule,
-                title = labels.watchTime,
-                modifier = Modifier.weight(1f),
-            ) {
-                WatchTimeValue(
-                    months = stats.months,
-                    days = stats.days,
-                    hours = stats.hours,
-                    monthsLabel = labels.monthsShort,
-                    daysLabel = labels.daysShort,
-                    hoursLabel = labels.hoursShort,
-                )
-            }
-
-            StatTile(
-                imageVector = Icons.AutoMirrored.Filled.List,
-                title = labels.lists,
-                modifier = Modifier.weight(1f),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom,
-                ) {
-                    StatValueText(count = listCount)
-                    Text(
-                        text = labels.viewButton,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable(onClick = onViewLists)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                                shape = MaterialTheme.shapes.small,
-                            )
-                            .padding(horizontal = 10.dp, vertical = 4.dp),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun WatchTimeValue(
-    months: Int,
-    days: Int,
-    hours: Int,
-    monthsLabel: String,
-    daysLabel: String,
-    hoursLabel: String,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        WatchTimeSegment(value = months, unit = monthsLabel)
-        WatchTimeSegment(value = days, unit = daysLabel)
-        WatchTimeSegment(value = hours, unit = hoursLabel)
-    }
-}
-
-@Composable
-private fun WatchTimeSegment(
-    value: Int,
-    unit: String,
-) {
-    Row(verticalAlignment = Alignment.Bottom) {
-        StatValueText(
-            count = value,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.alignByBaseline(),
-        )
-        Text(
-            text = unit,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            softWrap = false,
-            modifier = Modifier
-                .alignByBaseline()
-                .padding(start = 2.dp),
-        )
-    }
-}
-
-@Composable
-private fun ProfileLoadingSkeleton(
-    contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.padding(contentPadding),
-    ) {
-        ShimmerBox(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp),
-            shape = RectangleShape,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            ShimmerBox(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(28.dp),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            repeat(2) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    ShimmerBox(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(138.dp),
-                        shape = MaterialTheme.shapes.large,
-                    )
-                    ShimmerBox(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(138.dp),
-                        shape = MaterialTheme.shapes.large,
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-            }
         }
     }
 }

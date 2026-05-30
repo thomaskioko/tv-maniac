@@ -353,62 +353,62 @@ public struct ProfileScreen: View {
     // MARK: - Unauthenticated Content
 
     private var unauthenticatedScrollView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-                Spacer()
-                    .frame(height: 84)
-
-                Text(state.unauthenticatedTitle)
-                    .textStyle(appTheme.typography.headlineLarge)
-                    .foregroundStyle(.appOnSurface)
-                    .lineSpacing(appTheme.spacing.xSmall)
-                    .padding(.horizontal, appTheme.spacing.large)
-
+        GeometryReader { proxy in
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-                    ForEach(state.featureItems) { item in
-                        featureItemView(iconName: item.iconName, title: item.title, description: item.description)
-                    }
-                }
-                .padding(.horizontal, appTheme.spacing.large)
+                    Spacer()
+                        .frame(height: 84)
 
-                Spacer()
-                    .frame(height: appTheme.spacing.xSmall)
-
-                VStack(spacing: appTheme.spacing.medium) {
-                    Text(state.footerDescription)
-                        .textStyle(appTheme.typography.bodyMedium)
+                    Text(state.unauthenticatedTitle)
+                        .textStyle(appTheme.typography.headlineLarge)
                         .foregroundStyle(.appOnSurface)
-                        .lineSpacing(appTheme.spacing.xxSmall)
+                        .lineSpacing(appTheme.spacing.xSmall)
                         .padding(.horizontal, appTheme.spacing.large)
 
-                    Button(action: onLoginClicked) {
-                        Text(state.signInLabel)
-                            .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundStyle(.appOnButtonBackground)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, appTheme.spacing.medium)
-                            .background(.appButtonBackground)
-                            .cornerRadius(appTheme.shapes.extraLarge)
+                    VStack(alignment: .leading, spacing: appTheme.spacing.large) {
+                        ForEach(state.featureItems) { item in
+                            featureItemView(iconName: item.iconName, title: item.title, description: item.description)
+                        }
                     }
                     .padding(.horizontal, appTheme.spacing.large)
-                }
 
-                Spacer()
-                    .frame(height: appTheme.spacing.xLarge)
-            }
-            .background(
-                GeometryReader { geometry in
-                    Color.clear.preference(
-                        key: ProfileScrollOffsetKey.self,
-                        value: geometry.frame(in: .named("scrollView")).minY
-                    )
+                    Spacer(minLength: appTheme.spacing.large)
+
+                    VStack(spacing: appTheme.spacing.medium) {
+                        Button(action: onLoginClicked) {
+                            Text(state.signInLabel)
+                                .textStyle(appTheme.typography.bodyMedium)
+                                .foregroundStyle(.appOnButtonBackground)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, appTheme.spacing.medium)
+                                .background(.appButtonBackground)
+                                .cornerRadius(appTheme.shapes.extraLarge)
+                        }
+                        .padding(.horizontal, appTheme.spacing.large)
+
+                        Text(state.footerDescription)
+                            .textStyle(appTheme.typography.bodyMedium)
+                            .foregroundStyle(.appOnSurface)
+                            .lineSpacing(appTheme.spacing.xxSmall)
+                            .padding(.horizontal, appTheme.spacing.large)
+                    }
+                    .padding(.bottom, appTheme.spacing.xLarge)
                 }
-            )
-        }
-        .coordinateSpace(name: "scrollView")
-        .onPreferenceChange(ProfileScrollOffsetKey.self) { offset in
-            DispatchQueue.main.async {
-                showGlass = ParallaxConstants.glassOpacity(from: offset)
+                .frame(minHeight: proxy.size.height, alignment: .top)
+                .background(
+                    GeometryReader { geometry in
+                        Color.clear.preference(
+                            key: ProfileScrollOffsetKey.self,
+                            value: geometry.frame(in: .named("scrollView")).minY
+                        )
+                    }
+                )
+            }
+            .coordinateSpace(name: "scrollView")
+            .onPreferenceChange(ProfileScrollOffsetKey.self) { offset in
+                DispatchQueue.main.async {
+                    showGlass = ParallaxConstants.glassOpacity(from: offset)
+                }
             }
         }
     }
