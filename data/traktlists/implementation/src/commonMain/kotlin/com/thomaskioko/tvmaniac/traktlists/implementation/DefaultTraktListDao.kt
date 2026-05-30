@@ -20,6 +20,23 @@ public class DefaultTraktListDao(
 ) : TraktListDao {
 
     override fun observeAll(): Flow<List<TraktListEntity>> =
+        database.traktListsQueries.selectAll()
+            .asFlow()
+            .mapToList(dispatchers.io)
+            .map { rows ->
+                rows.map { list ->
+                    TraktListEntity(
+                        id = list.id,
+                        slug = list.slug,
+                        name = list.name,
+                        description = list.description,
+                        itemCount = list.item_count,
+                        createdAt = list.created_at,
+                    )
+                }
+            }
+
+    override fun observeListsWithPosters(): Flow<List<TraktListEntity>> =
         database.traktListsQueries.selectAllWithPosters()
             .asFlow()
             .mapToList(dispatchers.io)

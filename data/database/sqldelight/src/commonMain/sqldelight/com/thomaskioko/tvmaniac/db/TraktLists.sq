@@ -24,9 +24,14 @@ SELECT
 FROM trakt_lists lists
 LEFT JOIN trakt_list_shows listShows ON listShows.list_id = lists.id
     AND listShows.pending_action != 'DELETE'
+    AND EXISTS (
+        SELECT 1 FROM tvshow s
+        WHERE s.trakt_id = listShows.show_trakt_id AND s.poster_path IS NOT NULL
+    )
     AND (
         SELECT COUNT(*)
         FROM trakt_list_shows newerShows
+        JOIN tvshow ns ON ns.trakt_id = newerShows.show_trakt_id AND ns.poster_path IS NOT NULL
         WHERE newerShows.list_id = listShows.list_id
             AND newerShows.pending_action != 'DELETE'
             AND (
