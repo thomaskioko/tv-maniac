@@ -100,7 +100,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
         if let rating = episode.rating {
             HStack(spacing: theme.spacing.xxSmall) {
                 Image(systemName: "star.fill")
-                    .font(theme.typography.labelMedium)
+                    .textStyle(theme.typography.labelMedium)
                     .foregroundStyle(.appAccent)
 
                 Text(buildRatingText(rating: rating))
@@ -143,7 +143,7 @@ public struct SheetActionItem: View {
         Button(action: action) {
             HStack(spacing: theme.spacing.medium) {
                 Image(systemName: icon)
-                    .font(theme.typography.titleMedium)
+                    .textStyle(theme.typography.titleMedium)
                     .foregroundStyle(.appOnSurface)
                     .frame(width: 24)
 

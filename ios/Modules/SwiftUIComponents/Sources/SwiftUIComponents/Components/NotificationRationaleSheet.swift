@@ -34,7 +34,7 @@ public struct NotificationRationaleSheet: View {
 
             Image(systemName: "bell.badge.fill")
                 .symbolRenderingMode(.monochrome)
-                .font(theme.typography.displayMedium)
+                .textStyle(theme.typography.displayMedium)
                 .foregroundStyle(.appAccent)
 
             Text(title)

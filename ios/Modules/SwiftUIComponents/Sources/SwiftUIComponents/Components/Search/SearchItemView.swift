@@ -48,7 +48,7 @@ public struct SearchItemView: View {
                     if let voteAverage {
                         Image(systemName: "star")
                             .foregroundStyle(.appSecondary)
-                            .font(theme.typography.bodySmall)
+                            .textStyle(theme.typography.bodySmall)
 
                         Text(String(format: "%.1f", voteAverage))
                             .textStyle(theme.typography.bodySmall)
@@ -57,7 +57,6 @@ public struct SearchItemView: View {
                         Text("•")
                             .textStyle(theme.typography.labelSmall)
                             .foregroundStyle(.appSecondary)
-                            .font(theme.typography.labelSmall)
                     }
 
                     if let year {
@@ -68,7 +67,6 @@ public struct SearchItemView: View {
                         Text("•")
                             .textStyle(theme.typography.labelSmall)
                             .foregroundStyle(.appSecondary)
-                            .font(theme.typography.labelSmall)
                     }
 
                     if let status, !status.isEmpty {

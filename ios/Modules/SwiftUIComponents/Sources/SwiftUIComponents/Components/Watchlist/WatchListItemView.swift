@@ -120,7 +120,7 @@ public struct WatchListItemView: View {
                         .tint(theme.colors.onPrimary)
                 } else {
                     Image(systemName: "checkmark")
-                        .font(theme.typography.labelMedium)
+                        .textStyle(theme.typography.labelMedium)
                         .foregroundStyle(.appOnPrimary)
                 }
             }

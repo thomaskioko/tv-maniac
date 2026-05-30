@@ -115,10 +115,6 @@ public struct TvManiacTypographyScheme {
 }
 
 public extension View {
-    func font(_ style: TvManiacTextStyle) -> some View {
-        font(style.font)
-    }
-
     func textStyle(_ font: Font) -> some View {
         self.font(font)
     }

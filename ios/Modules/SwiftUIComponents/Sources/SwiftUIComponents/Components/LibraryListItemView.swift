@@ -61,7 +61,7 @@ public struct LibraryListItemView: View {
                     if let rating = formattedRating {
                         HStack(spacing: 4) {
                             Image(systemName: "star.fill")
-                                .font(theme.typography.bodyMedium)
+                                .textStyle(theme.typography.bodyMedium)
                                 .foregroundStyle(.appAccent)
                             Text(rating)
                                 .textStyle(theme.typography.bodyMedium)

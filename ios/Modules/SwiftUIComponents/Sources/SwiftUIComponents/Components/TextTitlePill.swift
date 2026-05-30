@@ -26,7 +26,7 @@ public struct TextTitlePill: View {
                     .lineLimit(1)
                     .foregroundStyle(.appOnSurface)
                 Image(systemName: "chevron.right")
-                    .font(theme.typography.labelSmall)
+                    .textStyle(theme.typography.labelSmall)
                     .foregroundStyle(.appOnSurface)
             }
             .padding(.horizontal, theme.spacing.xSmall)
