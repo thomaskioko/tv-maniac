@@ -122,7 +122,7 @@ public struct EpisodeItemView: View {
                         .fill(isWatched ? .appSuccess : .appGrey)
                         .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
                     Image(systemName: "checkmark")
-                        .font(theme.typography.labelMedium)
+                        .textStyle(theme.typography.labelMedium)
                         .foregroundStyle(.white)
                 }
             }

@@ -37,4 +37,13 @@ private fun StartWatchingShows.toStartWatchingShow(): StartWatchingShow =
         posterPath = poster_path,
         year = year,
         inLibrary = in_library == 1L,
+        episodeId = episode_id?.id,
+        episodeTitle = episode_name,
+        seasonId = season_id?.id,
+        seasonNumber = season_number,
+        episodeNumber = episode_number,
+        runtime = runtime,
+        episodeStillPath = still_path,
+        episodeOverview = episode_overview,
+        firstAired = first_aired,
     )

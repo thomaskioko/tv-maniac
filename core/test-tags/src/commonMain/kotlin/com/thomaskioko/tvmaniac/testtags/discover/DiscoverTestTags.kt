@@ -9,6 +9,7 @@ public object DiscoverTestTags {
     public const val UP_NEXT_SECTION_TEST_TAG: String = "up_next_section"
     public const val PROGRESS_INDICATOR: String = "discover_progress_indicator"
 
+    public const val ROW_KEY_START_WATCHING: String = "start_watching"
     public const val ROW_KEY_TRENDING: String = "trending"
     public const val ROW_KEY_UPCOMING: String = "upcoming"
     public const val ROW_KEY_POPULAR: String = "popular"

@@ -5,9 +5,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
-import com.thomaskioko.tvmaniac.continuewatching.presenter.model.StartWatchingItem
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -24,40 +21,6 @@ import kotlin.test.Test
 
 private fun LocalDate.toEpochMillis(): Long =
     atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
-
-private val startWatchingShows = listOf(
-    StartWatchingShow(
-        traktId = 1,
-        tmdbId = 1,
-        title = "Breaking Bad",
-        posterPath = "/1.jpg",
-        year = "2008",
-        inLibrary = true,
-    ),
-    StartWatchingShow(
-        traktId = 2,
-        tmdbId = 2,
-        title = "Better Call Saul",
-        posterPath = "/2.jpg",
-        year = "2015",
-        inLibrary = true,
-    ),
-)
-
-private val expectedStartWatchingItems = listOf(
-    StartWatchingItem(
-        traktId = 1,
-        title = "Breaking Bad",
-        posterImageUrl = "/1.jpg",
-        year = "2008",
-    ),
-    StartWatchingItem(
-        traktId = 2,
-        title = "Better Call Saul",
-        posterImageUrl = "/2.jpg",
-        year = "2015",
-    ),
-)
 
 class ContinueWatchingPresenterTest {
 
@@ -98,7 +61,6 @@ class ContinueWatchingPresenterTest {
 
             val state = awaitItem()
             state.query shouldBe ""
-            state.isSearchActive shouldBe false
             state.isGridMode shouldBe true
             state.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
 
@@ -110,65 +72,7 @@ class ContinueWatchingPresenterTest {
     }
 
     @Test
-    fun `should emit start watching items when interactor emits`() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe ContinueWatchingState()
-
-            factory.startWatchingRepository.setStartWatchingShows(startWatchingShows)
-
-            val state = awaitItem()
-            state.startWatchingItems shouldBe expectedStartWatchingItems
-            state.startWatchingTitle shouldBe factory.localizer.getString(StringResourceKey.LabelStartWatching)
-            state.continueWatchingTitle shouldBe factory.localizer.getString(StringResourceKey.LabelContinueWatching)
-        }
-    }
-
-    @Test
-    fun `should filter start watching items by search query`() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe ContinueWatchingState()
-
-            factory.startWatchingRepository.setStartWatchingShows(startWatchingShows)
-            awaitItem().startWatchingItems shouldBe expectedStartWatchingItems
-
-            presenter.dispatch(ContinueWatchingQueryChanged("better"))
-
-            awaitItem().startWatchingItems shouldBe listOf(
-                StartWatchingItem(
-                    traktId = 2,
-                    title = "Better Call Saul",
-                    posterImageUrl = "/2.jpg",
-                    year = "2015",
-                ),
-            )
-        }
-    }
-
-    @Test
-    fun `should toggle list style when ChangeContinueWatchingListStyle is dispatched`() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe ContinueWatchingState()
-
-            factory.upNextRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
-
-            val initialState = awaitItem()
-            initialState.isGridMode shouldBe true
-            initialState.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
-
-            presenter.dispatch(ChangeContinueWatchingListStyle(isGridMode = true))
-
-            val updatedState = awaitItem()
-            updatedState.isGridMode shouldBe false
-
-            presenter.dispatch(ChangeContinueWatchingListStyle(isGridMode = false))
-
-            val finalState = awaitItem()
-            finalState.isGridMode shouldBe true
-        }
-    }
-
-    @Test
-    fun `should update query when ContinueWatchingQueryChanged is dispatched`() = runTest {
+    fun `should update query when onQueryChanged is called`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe ContinueWatchingState()
 
@@ -177,32 +81,10 @@ class ContinueWatchingPresenterTest {
             val initialState = awaitItem()
             initialState.query shouldBe ""
 
-            presenter.dispatch(ContinueWatchingQueryChanged("test query"))
+            presenter.onQueryChanged("test query")
 
             val updatedState = awaitItem()
             updatedState.query shouldBe "test query"
-        }
-    }
-
-    @Test
-    fun `should toggle search active state when ToggleContinueWatchingSearch is dispatched`() = runTest {
-        presenter.state.test {
-            awaitItem() shouldBe ContinueWatchingState()
-
-            factory.upNextRepository.setNextEpisodesForWatchlist(cachedNextEpisodes)
-
-            val initialState = awaitItem()
-            initialState.isSearchActive shouldBe false
-
-            presenter.dispatch(ToggleContinueWatchingSearch)
-
-            val activeState = awaitItem()
-            activeState.isSearchActive shouldBe true
-
-            presenter.dispatch(ToggleContinueWatchingSearch)
-
-            val inactiveState = awaitItem()
-            inactiveState.isSearchActive shouldBe false
         }
     }
 
@@ -238,7 +120,7 @@ class ContinueWatchingPresenterTest {
             factory.upNextRepository.setNextEpisodesForWatchlist(nextEpisodes)
             awaitItem()
 
-            presenter.dispatch(ContinueWatchingQueryChanged("Loki"))
+            presenter.onQueryChanged("Loki")
 
             skipItems(1)
 

@@ -1,6 +1,21 @@
 import SwiftUIComponents
 import TvManiac
 
+// MARK: - SettingsPage Mapping
+
+public extension SettingsPage {
+    func toRoute() -> SettingsPageRoute {
+        if self == SettingsPage.appearance { return .appearance }
+        if self == SettingsPage.behavior { return .behavior }
+        if self == SettingsPage.notifications { return .notifications }
+        if self == SettingsPage.privacy { return .privacy }
+        if self == SettingsPage.info { return .info }
+        if self == SettingsPage.licenses { return .licenses }
+        if self == SettingsPage.trakt { return .trakt }
+        return .root
+    }
+}
+
 // MARK: - ImageQuality Mapping
 
 public extension TvManiac.ImageQuality {
@@ -22,6 +37,17 @@ public extension TvManiac.ImageQuality {
 }
 
 public extension TvManiac.ContinueWatchingItem {
+    func toSwift() -> ShowPosterImage {
+        .init(
+            traktId: traktId,
+            title: title,
+            posterUrl: posterImageUrl,
+            inLibrary: true
+        )
+    }
+}
+
+public extension TvManiac.StartWatchingItem {
     func toSwift() -> ShowPosterImage {
         .init(
             traktId: traktId,
@@ -312,6 +338,10 @@ public extension TvManiac.DiscoverViewState {
 
     var nextEpisodesSwift: [SwiftNextEpisode] {
         nextEpisodes.map { $0.toSwift() }
+    }
+
+    var startWatchingShowsSwift: [SwiftShow] {
+        startWatchingShows.map { $0.toSwift() }
     }
 
     var trendingTodaySwift: [SwiftShow] {

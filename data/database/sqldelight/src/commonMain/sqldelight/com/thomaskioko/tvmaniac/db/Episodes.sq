@@ -27,7 +27,7 @@ CREATE INDEX IF NOT EXISTS idx_episode_first_aired ON episode(first_aired);
 CREATE INDEX IF NOT EXISTS idx_episode_show_first_aired ON episode(show_trakt_id, first_aired);
 
 upsert:
-INSERT OR REPLACE INTO episode(
+INSERT INTO episode(
     id,
     season_id,
     show_trakt_id,
@@ -41,7 +41,19 @@ INSERT OR REPLACE INTO episode(
     trakt_id,
     first_aired
 )
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+ON CONFLICT(id) DO UPDATE SET
+    season_id = excluded.season_id,
+    show_trakt_id = excluded.show_trakt_id,
+    title = excluded.title,
+    overview = excluded.overview,
+    runtime = excluded.runtime,
+    vote_count = excluded.vote_count,
+    ratings = excluded.ratings,
+    episode_number = excluded.episode_number,
+    image_url = excluded.image_url,
+    trakt_id = excluded.trakt_id,
+    first_aired = excluded.first_aired;
 
 episodeDetails:
 SELECT

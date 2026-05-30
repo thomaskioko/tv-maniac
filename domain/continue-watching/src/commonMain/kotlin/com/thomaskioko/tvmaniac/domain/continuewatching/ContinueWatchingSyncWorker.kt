@@ -7,8 +7,6 @@ import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
-import com.thomaskioko.tvmaniac.syncstate.api.SyncError
-import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
@@ -23,7 +21,6 @@ public class ContinueWatchingSyncWorker(
     private val traktAuthRepository: Lazy<TraktAuthRepository>,
     @ContinueWatchingNitroFlagQualifier
     private val nitroFlag: FeatureFlag<Boolean>,
-    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
 
@@ -50,7 +47,6 @@ public class ContinueWatchingSyncWorker(
             WorkerResult.Retry("Cancelled, will retry")
         } catch (e: Exception) {
             logger.error(TAG, "Continue Watching sync failed: ${e.message}")
-            syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, e))
             WorkerResult.Failure(e.message)
         }
     }

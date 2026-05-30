@@ -20,6 +20,7 @@
     <string name="label_discover_up_next">Up Next</string>
     <string name="label_start_watching">Start Watching</string>
     <string name="label_continue_watching">Continue Watching</string>
+    <string name="label_start_watching_empty">No shows in your watchlist</string>
     <string name="label_discover_title">Discover</string>
 
     <string name="label_search_title">Search</string>
@@ -54,6 +55,26 @@
     <string name="label_settings_section_app_theme">App Theme</string>
     <string name="label_settings_section_appearance">Appearance</string>
     <string name="label_settings_section_behavior">Behavior</string>
+    <string name="label_settings_section_notifications">Notifications</string>
+    <string name="label_settings_group_general">General</string>
+    <string name="label_settings_group_account">Account</string>
+    <string name="label_settings_section_licenses">Licenses &amp; Attribution</string>
+    <string name="label_settings_licenses_section_app">App</string>
+    <string name="label_settings_licenses_section_data">Data &amp; Services</string>
+    <string name="label_settings_licenses_tmdb_title">The Movie Database (TMDB)</string>
+    <string name="label_settings_licenses_tmdb_body">TvManiac uses the TMDB API for show metadata, artwork, trailers, and cast. This product uses the TMDB API but is not endorsed or certified by TMDB.</string>
+    <string name="label_settings_licenses_trakt_body">TvManiac uses Trakt to sync your watch history, watchlist, and episode progress across devices.</string>
+    <string name="label_settings_appearance_description">Theme and image quality</string>
+    <string name="label_settings_behavior_description">Sync, specials, and trailers</string>
+    <string name="label_settings_notifications_description">Episode release alerts</string>
+    <string name="label_settings_privacy_description">Crash reporting and privacy policy</string>
+    <string name="label_settings_info_description">App version and source code</string>
+    <string name="label_settings_licenses_description">Data sources and acknowledgements</string>
+    <string name="label_settings_trakt_description">Manage your Trakt connection</string>
+    <string name="label_settings_trakt_authentication">Authentication</string>
+    <string name="label_settings_trakt_connected">Connected</string>
+    <string name="label_settings_trakt_connected_as">Connected as %s</string>
+    <string name="label_settings_trakt_connected_description">Your watch history, watchlist, and episode progress sync with Trakt.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailers</string>
     <string name="label_settings_youtube_description">Open Trailers in Youtube App</string>
@@ -129,6 +150,7 @@
     <string name="cd_next_week">Next week</string>
     <string name="cd_expand_collapse">Expand or collapse</string>
     <string name="cd_connectivity_icon">Connectivity icon</string>
+    <string name="cd_dismiss">Dismiss</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
@@ -201,6 +223,7 @@
     <string name="title_all_episodes">All Episodes</string>
     <string name="title_episodes">Episodes</string>
     <string name="title_watch_next">Watch Next</string>
+    <string name="title_watching">Watching</string>
     <string name="title_not_watched_for_while">Haven\'t Watched For A While</string>
     <string name="title_continue_tracking">Continue Tracking</string>
     <string name="badge_premiere">PREMIERE</string>
@@ -255,7 +278,7 @@
     <string name="settings_about_source_code">Source Code</string>
     <string name="settings_about_website">Website</string>
     <string name="settings_about_section_title">About</string>
-    <string name="trakt_description">Trakt is a platform that does many things, but primarily keeps track of TV shows and movies you watch.</string>
+    <string name="trakt_description">Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.</string>
     <string name="settings_trakt_detail_description">You are about to be redirected to your browser and outside of TvManiac app, where you will be taken to the Trakt website. From there, you will need to authorise TvManiac access to your Trakt account in order to make use of the Trakt functionality around the app. After you authorize, you will return to the app and you can continue with business as usual.</string>
 
     <string name="settings_title_ui">User Interface</string>

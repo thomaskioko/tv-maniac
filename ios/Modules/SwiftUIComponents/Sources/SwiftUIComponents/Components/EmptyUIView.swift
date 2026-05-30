@@ -28,7 +28,7 @@ public struct EmptyUIView: View {
             Spacer()
 
             Text("🚧")
-                .font(theme.typography.displayLarge)
+                .textStyle(theme.typography.displayLarge)
                 .padding(theme.spacing.medium)
 
             Text(title)

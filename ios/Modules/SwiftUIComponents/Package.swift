@@ -26,7 +26,10 @@ let package = Package(
     targets: [
         .target(
             name: "DesignSystem",
-            dependencies: []
+            dependencies: [],
+            resources: [
+                .process("Resources/Fonts"),
+            ]
         ),
         .target(
             name: "SwiftUIComponents",

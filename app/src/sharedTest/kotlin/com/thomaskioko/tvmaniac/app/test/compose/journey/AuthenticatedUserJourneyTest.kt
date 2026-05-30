@@ -185,11 +185,15 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         settingsRobot
             .assertSettingsScreenDisplayed()
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
+            .openTraktPage()
             .scrollToTraktAccountRow()
             .clickTraktAccountRow()
             .assertLogoutDialogDisplayed()
             .clickLogoutConfirm()
             .assertLogoutDialogDoesNotExist()
+            .scrollToTraktAccountRow()
+            .assertTraktAccountButtonDisplayed()
+            .clickBackButton()
             .clickBackButton()
 
         // Verify unauthenticated state

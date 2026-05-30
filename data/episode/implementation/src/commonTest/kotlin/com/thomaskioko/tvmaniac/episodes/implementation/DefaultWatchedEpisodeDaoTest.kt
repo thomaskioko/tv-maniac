@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
+import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TraktId
@@ -82,6 +83,84 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         count shouldBe SEASON_1_EPISODE_COUNT.toLong()
+    }
+
+    @Test
+    fun `should return recently watched episodes newest first with show and episode metadata`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+        fakeDateTimeProvider.setCurrentTimeMillis(2_000L)
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = TEST_SHOW_ID,
+            episodeId = 102L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 2L,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
+            val items = awaitItem()
+            items shouldHaveSize 2
+
+            items[0].showTitle shouldBe TEST_SHOW_NAME
+            items[0].episodeNumber shouldBe 2L
+            items[0].episodeTitle shouldBe "Episode 2"
+            items[0].watchedAt shouldBe 2_000L
+
+            items[1].episodeNumber shouldBe 1L
+            items[1].watchedAt shouldBe 1_000L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should respect the limit for recently watched episodes`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, includeSpecials = false)
+        fakeDateTimeProvider.setCurrentTimeMillis(2_000L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L, includeSpecials = false)
+
+        watchedEpisodeDao.observeRecentlyWatched(limit = 1).test {
+            val items = awaitItem()
+            items shouldHaveSize 1
+            items[0].episodeNumber shouldBe 2L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should exclude soft-deleted episodes from recently watched`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, includeSpecials = false)
+        database.watchedEpisodesQueries.markAsWatched(
+            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            episode_id = Id<EpisodeId>(102L),
+            season_number = SEASON_1_NUMBER,
+            episode_number = 2L,
+            watched_at = 2_000L,
+            pending_action = "SYNCED_DELETE",
+        )
+
+        watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
+            val items = awaitItem()
+            items shouldHaveSize 1
+            items[0].episodeNumber shouldBe 1L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit empty recently watched when nothing is watched`() = runTest {
+        watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
+            awaitItem().shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -427,6 +506,36 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             watchedEpisodes shouldHaveSize 1
             watchedEpisodes.first().season_number shouldBe seasonNumber
             watchedEpisodes.first().episode_number shouldBe episodeNumber
+        }
+    }
+
+    @Test
+    fun `should keep watched episodes given an episode row is re-upserted during metadata sync`() = runTest {
+        watchedEpisodeDao.markAsWatched(
+            showTraktId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(101L),
+            season_id = Id(SEASON_1_ID),
+            show_trakt_id = Id(TEST_SHOW_ID),
+            title = "Episode 1 (refreshed)",
+            overview = "Refreshed overview",
+            episode_number = 1L,
+            runtime = 45L,
+            image_url = "/episode1.jpg",
+            ratings = 8.5,
+            vote_count = 50L,
+            trakt_id = null,
+            first_aired = LocalDate(2023, 1, 1).toEpochMillis(),
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
+            awaitItem().watchedCount shouldBe 1
         }
     }
 

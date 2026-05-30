@@ -36,6 +36,7 @@ dependencies {
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.material3)
     implementation(libs.coil.compose)

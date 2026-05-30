@@ -36,7 +36,7 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.genre.FakeGenreRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
+import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
@@ -44,6 +44,7 @@ import com.thomaskioko.tvmaniac.navigation.testing.test
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
@@ -416,7 +417,7 @@ class DiscoverShowsPresenterTest {
         testNavigator.test {
             testPresenter.dispatch(StartWatchingMoreClicked)
 
-            awaitSwitchBackStack(MyShowsRoot)
+            awaitNavigateTo(MoreShowsRoute(Category.START_WATCHING.id))
         }
     }
 

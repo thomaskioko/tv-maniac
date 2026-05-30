@@ -4,7 +4,7 @@ public struct AppDisplayStyle: ViewModifier {
     @Environment(\.appTheme) private var theme
 
     public func body(content: Content) -> some View {
-        content.font(theme.typography.displayLarge)
+        content.textStyle(theme.typography.displayLarge)
     }
 }
 
@@ -12,7 +12,7 @@ public struct AppHeadlineStyle: ViewModifier {
     @Environment(\.appTheme) private var theme
 
     public func body(content: Content) -> some View {
-        content.font(theme.typography.headlineMedium)
+        content.textStyle(theme.typography.headlineMedium)
     }
 }
 
@@ -20,7 +20,7 @@ public struct AppTitleStyle: ViewModifier {
     @Environment(\.appTheme) private var theme
 
     public func body(content: Content) -> some View {
-        content.font(theme.typography.titleMedium)
+        content.textStyle(theme.typography.titleMedium)
     }
 }
 
@@ -28,7 +28,7 @@ public struct AppBodyStyle: ViewModifier {
     @Environment(\.appTheme) private var theme
 
     public func body(content: Content) -> some View {
-        content.font(theme.typography.bodyMedium)
+        content.textStyle(theme.typography.bodyMedium)
     }
 }
 
@@ -37,7 +37,7 @@ public struct AppCaptionStyle: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .font(theme.typography.labelSmall)
+            .textStyle(theme.typography.labelSmall)
             .foregroundStyle(theme.colors.onSurfaceVariant)
     }
 }
@@ -46,7 +46,7 @@ public struct AppLabelStyle: ViewModifier {
     @Environment(\.appTheme) private var theme
 
     public func body(content: Content) -> some View {
-        content.font(theme.typography.labelMedium)
+        content.textStyle(theme.typography.labelMedium)
     }
 }
 

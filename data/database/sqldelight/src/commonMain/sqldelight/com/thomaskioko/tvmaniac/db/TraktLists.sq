@@ -12,6 +12,31 @@ SELECT id, slug, name, description, item_count, created_at
 FROM trakt_lists
 ORDER BY name ASC;
 
+selectAllWithPosters:
+SELECT
+    lists.id,
+    lists.slug,
+    lists.name,
+    lists.description,
+    lists.item_count,
+    lists.created_at,
+    show.poster_path AS poster_url
+FROM trakt_lists lists
+LEFT JOIN trakt_list_shows listShows ON listShows.list_id = lists.id
+    AND listShows.pending_action != 'DELETE'
+    AND (
+        SELECT COUNT(*)
+        FROM trakt_list_shows newerShows
+        WHERE newerShows.list_id = listShows.list_id
+            AND newerShows.pending_action != 'DELETE'
+            AND (
+                newerShows.listed_at > listShows.listed_at
+                OR (newerShows.listed_at = listShows.listed_at AND newerShows.show_trakt_id > listShows.show_trakt_id)
+            )
+    ) < 4
+LEFT JOIN tvshow show ON show.trakt_id = listShows.show_trakt_id
+ORDER BY lists.name ASC, listShows.listed_at DESC, listShows.show_trakt_id DESC;
+
 selectById:
 SELECT id, slug, name, description, item_count, created_at
 FROM trakt_lists

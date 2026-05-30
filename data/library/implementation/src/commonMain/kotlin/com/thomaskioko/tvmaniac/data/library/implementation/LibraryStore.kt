@@ -1,25 +1,35 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
+import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType.SHOWS_WATCHLISTED
+import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
+import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -29,28 +39,59 @@ import kotlin.time.Instant
 @SingleIn(AppScope::class)
 public class LibraryStore(
     private val traktListDataSource: TraktListRemoteDataSource,
+    private val tmdbDataSource: TmdbShowDetailsNetworkDataSource,
     private val followedShowsDao: FollowedShowsDao,
+    private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val syncRepository: ActivitySyncRepository,
     private val transactionRunner: DatabaseTransactionRunner,
+    private val formatterUtil: FormatterUtil,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<LibrarySortOption, List<FollowedShowEntry>> by storeBuilder(
-    fetcher = apiFetcher { key: LibrarySortOption ->
-        traktListDataSource.getWatchList(sortBy = key.sortBy, sortHow = key.sortHow)
+    fetcher = Fetcher.of { key: LibrarySortOption ->
+        coroutineScope {
+            traktListDataSource.getWatchList(sortBy = key.sortBy, sortHow = key.sortHow)
+                .getOrThrow()
+                .map { followedShow ->
+                    async {
+                        when (val tmdb = tmdbDataSource.getShowDetails(followedShow.show.ids.tmdb)) {
+                            is ApiResponse.Success -> FollowedShowWithImages(
+                                response = followedShow,
+                                tmdbPosterPath = tmdb.body.posterPath,
+                                tmdbBackdropPath = tmdb.body.backdropPath,
+                            )
+                            is ApiResponse.Unauthenticated,
+                            is ApiResponse.Error,
+                            -> FollowedShowWithImages(
+                                response = followedShow,
+                                tmdbPosterPath = null,
+                                tmdbBackdropPath = null,
+                            )
+                        }
+                    }
+                }
+                .awaitAll()
+        }
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { _: LibrarySortOption -> followedShowsDao.entriesObservable() },
-        writer = { _: LibrarySortOption, response: List<TraktFollowedShowResponse> ->
-            val networkEntries = response.map { it.toFollowedShowEntry() }
-
+        writer = { _: LibrarySortOption, response: List<FollowedShowWithImages> ->
             transactionRunner {
                 val currentEntries = followedShowsDao.entriesWithNoPendingAction()
                 val currentByTraktId = currentEntries.associateBy { it.traktId }
-                val networkTraktIds = networkEntries.map { it.traktId }.toSet()
+                val networkTraktIds = response.map { it.response.show.ids.trakt }.toSet()
 
-                networkEntries.forEach { networkEntry ->
-                    val existingEntry = currentByTraktId[networkEntry.traktId]
-                    val _ = followedShowsDao.upsert(networkEntry.copy(id = existingEntry?.id ?: 0))
+                response.forEach { item ->
+                    val entry = item.response.toFollowedShowEntry()
+                    val existingEntry = currentByTraktId[entry.traktId]
+                    val _ = followedShowsDao.upsert(entry.copy(id = existingEntry?.id ?: 0))
+
+                    tvShowsDao.upsertMerging(
+                        item.response.toTvshow(
+                            posterPath = item.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                            backdropPath = item.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        ),
+                    )
                 }
 
                 currentEntries.forEach { localEntry ->
@@ -87,9 +128,32 @@ public class LibraryStore(
     },
 ).build()
 
+private data class FollowedShowWithImages(
+    val response: TraktFollowedShowResponse,
+    val tmdbPosterPath: String?,
+    val tmdbBackdropPath: String?,
+)
+
 private fun TraktFollowedShowResponse.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
     traktId = show.ids.trakt,
     tmdbId = show.ids.tmdb,
     followedAt = Instant.parse(listedAt),
     pendingAction = PendingAction.NOTHING,
+)
+
+private fun TraktFollowedShowResponse.toTvshow(posterPath: String?, backdropPath: String?): Tvshow = Tvshow(
+    trakt_id = Id(show.ids.trakt),
+    tmdb_id = Id(show.ids.tmdb),
+    name = show.title,
+    overview = "",
+    language = null,
+    year = show.year?.toString(),
+    status = null,
+    ratings = 0.0,
+    vote_count = 0,
+    genres = null,
+    poster_path = posterPath,
+    backdrop_path = backdropPath,
+    episode_numbers = null,
+    season_numbers = null,
 )

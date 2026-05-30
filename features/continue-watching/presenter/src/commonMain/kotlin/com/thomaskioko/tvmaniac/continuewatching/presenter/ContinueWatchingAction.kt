@@ -1,20 +1,8 @@
 package com.thomaskioko.tvmaniac.continuewatching.presenter
 
-import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
-
 public sealed interface ContinueWatchingAction
 
 public data class ContinueWatchingShowClicked(val traktId: Long) : ContinueWatchingAction
-
-public data class ChangeContinueWatchingSortOption(val sortOption: WatchlistSortOption) : ContinueWatchingAction
-
-public data class ContinueWatchingQueryChanged(val query: String) : ContinueWatchingAction
-
-public data object ClearContinueWatchingQuery : ContinueWatchingAction
-
-public data object ToggleContinueWatchingSearch : ContinueWatchingAction
-
-public data class ChangeContinueWatchingListStyle(val isGridMode: Boolean) : ContinueWatchingAction
 
 public data class ContinueWatchingMessageShown(val id: Long) : ContinueWatchingAction
 

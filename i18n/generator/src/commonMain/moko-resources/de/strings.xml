@@ -14,6 +14,7 @@
     <string name="label_discover_up_next">Als Nächstes</string>
     <string name="label_start_watching">Jetzt ansehen</string>
     <string name="label_continue_watching">Weiterschauen</string>
+    <string name="label_start_watching_empty">Keine Sendungen in Ihrer Merkliste</string>
     <string name="label_discover_title">Entdecken</string>
     <string name="label_tab_search">Suchen</string>
     <string name="label_search_title">Suchen</string>
@@ -51,6 +52,26 @@
     <string name="label_settings_section_app_theme">App-Thema</string>
     <string name="label_settings_section_appearance">Darstellung</string>
     <string name="label_settings_section_behavior">Verhalten</string>
+    <string name="label_settings_section_notifications">Benachrichtigungen</string>
+    <string name="label_settings_group_general">Allgemein</string>
+    <string name="label_settings_group_account">Konto</string>
+    <string name="label_settings_section_licenses">Lizenzen &amp; Danksagungen</string>
+    <string name="label_settings_licenses_section_app">App</string>
+    <string name="label_settings_licenses_section_data">Daten &amp; Dienste</string>
+    <string name="label_settings_licenses_tmdb_title">The Movie Database (TMDB)</string>
+    <string name="label_settings_licenses_tmdb_body">TvManiac verwendet die TMDB-API für Serien-Metadaten, Bilder, Trailer und Besetzung. Dieses Produkt verwendet die TMDB-API, wird aber von TMDB weder unterstützt noch zertifiziert.</string>
+    <string name="label_settings_licenses_trakt_body">TvManiac verwendet Trakt, um deinen Wiedergabeverlauf, deine Merkliste und deinen Episodenfortschritt geräteübergreifend zu synchronisieren.</string>
+    <string name="label_settings_appearance_description">Design und Bildqualität</string>
+    <string name="label_settings_behavior_description">Sync, Specials und Trailer</string>
+    <string name="label_settings_notifications_description">Benachrichtigungen zu neuen Episoden</string>
+    <string name="label_settings_privacy_description">Absturzberichte und Datenschutz</string>
+    <string name="label_settings_info_description">App-Version und Quellcode</string>
+    <string name="label_settings_licenses_description">Datenquellen und Danksagungen</string>
+    <string name="label_settings_trakt_description">Trakt-Verbindung verwalten</string>
+    <string name="label_settings_trakt_authentication">Authentifizierung</string>
+    <string name="label_settings_trakt_connected">Verbunden</string>
+    <string name="label_settings_trakt_connected_as">Verbunden als %s</string>
+    <string name="label_settings_trakt_connected_description">Dein Wiedergabeverlauf, deine Merkliste und dein Episodenfortschritt werden mit Trakt synchronisiert.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailer</string>
     <string name="label_settings_youtube_description">Trailer in der Youtube-App öffnen</string>
@@ -105,6 +126,7 @@
     <string name="cd_next_week">Nächste Woche</string>
     <string name="cd_expand_collapse">Auf- oder zuklappen</string>
     <string name="cd_connectivity_icon">Verbindungssymbol</string>
+    <string name="cd_dismiss">Schließen</string>
 
     <string name="details_episodes">Episoden</string>
     <string name="details_cast">Besetzung</string>
@@ -163,6 +185,7 @@
     <string name="title_all_episodes">Alle Episoden</string>
     <string name="title_episodes">Episoden</string>
     <string name="title_watch_next">Als nächstes ansehen</string>
+    <string name="title_watching">Wird angesehen</string>
     <string name="title_not_watched_for_while">Lange nicht gesehen</string>
     <string name="title_continue_tracking">Weiterschauen</string>
     <string name="badge_premiere">PREMIERE</string>
@@ -222,9 +245,7 @@
     <string name="settings_about_source_code">Quellcode</string>
     <string name="settings_about_website">Webseite</string>
     <string name="settings_about_section_title">Über</string>
-    <string name="trakt_description">Trakt ist eine Plattform, die viele Dinge tut, aber in erster Linie verfolgt,
-        welche TV-Shows und Filme Sie ansehen.
-    </string>
+    <string name="trakt_description">Synchronisieren Sie Watchlist, Fortschritt, Weiterschauen und persönliche Listen mit Trakt.</string>
     <string name="settings_trakt_detail_description">Sie werden zu Ihrem Browser und außerhalb der TvManiac-App
         weitergeleitet, wo Sie zur Trakt-Website gelangen. Von dort aus müssen Sie TvManiac den Zugriff auf Ihr
         Trakt-Konto autorisieren, um die Trakt-Funktionalität in der App nutzen zu können. Nachdem Sie die Autorisierung

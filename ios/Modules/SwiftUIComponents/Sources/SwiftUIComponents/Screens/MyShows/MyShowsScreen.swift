@@ -3,20 +3,14 @@ import SwiftUI
 
 public struct MyShowsScreen: View {
     public struct State {
-        public let title: String
-        public let searchPlaceholder: String
         public let emptyText: String
         public let upToDateText: String
-        public let listStyleLabel: String
-        public let searchLabel: String
-        public let sortLabel: String
         public let upNextSectionTitle: String
         public let staleSectionTitle: String
         public let premiereLabel: String
         public let newLabel: String
         public let isLoading: Bool
         public let isGridMode: Bool
-        public let isSearchActive: Bool
         public let query: String
         public let watchNextGridItems: [MyShowsGridItem]
         public let staleGridItems: [MyShowsGridItem]
@@ -25,20 +19,14 @@ public struct MyShowsScreen: View {
         public let updatingEpisodeIds: Set<Int64>
 
         public init(
-            title: String,
-            searchPlaceholder: String,
             emptyText: String,
             upToDateText: String,
-            listStyleLabel: String,
-            searchLabel: String,
-            sortLabel: String,
             upNextSectionTitle: String,
             staleSectionTitle: String,
             premiereLabel: String,
             newLabel: String,
             isLoading: Bool,
             isGridMode: Bool,
-            isSearchActive: Bool,
             query: String,
             watchNextGridItems: [MyShowsGridItem],
             staleGridItems: [MyShowsGridItem],
@@ -46,20 +34,14 @@ public struct MyShowsScreen: View {
             staleEpisodes: [SwiftNextEpisode],
             updatingEpisodeIds: Set<Int64> = []
         ) {
-            self.title = title
-            self.searchPlaceholder = searchPlaceholder
             self.emptyText = emptyText
             self.upToDateText = upToDateText
-            self.listStyleLabel = listStyleLabel
-            self.searchLabel = searchLabel
-            self.sortLabel = sortLabel
             self.upNextSectionTitle = upNextSectionTitle
             self.staleSectionTitle = staleSectionTitle
             self.premiereLabel = premiereLabel
             self.newLabel = newLabel
             self.isLoading = isLoading
             self.isGridMode = isGridMode
-            self.isSearchActive = isSearchActive
             self.query = query
             self.watchNextGridItems = watchNextGridItems
             self.staleGridItems = staleGridItems
@@ -72,24 +54,16 @@ public struct MyShowsScreen: View {
     @Environment(\.appTheme) private var appTheme
 
     private let state: State
-    private let onQueryChanged: (String) -> Void
-    private let onQueryCleared: () -> Void
-    private let onToggleListStyle: () -> Void
-    private let onToggleSearch: () -> Void
-    private let onSortClicked: () -> Void
     private let onShowClicked: (Int64) -> Void
     private let onEpisodeClicked: (Int64, Int64) -> Void
     private let onShowTitleClicked: (Int64) -> Void
     private let onMarkWatched: (SwiftNextEpisode) -> Void
     private let onRefresh: () -> Void
 
+    @Namespace private var animation
+
     public init(
         state: State,
-        onQueryChanged: @escaping (String) -> Void,
-        onQueryCleared: @escaping () -> Void,
-        onToggleListStyle: @escaping () -> Void,
-        onToggleSearch: @escaping () -> Void,
-        onSortClicked: @escaping () -> Void,
         onShowClicked: @escaping (Int64) -> Void,
         onEpisodeClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
@@ -97,11 +71,6 @@ public struct MyShowsScreen: View {
         onRefresh: @escaping () -> Void
     ) {
         self.state = state
-        self.onQueryChanged = onQueryChanged
-        self.onQueryCleared = onQueryCleared
-        self.onToggleListStyle = onToggleListStyle
-        self.onToggleSearch = onToggleSearch
-        self.onSortClicked = onSortClicked
         self.onShowClicked = onShowClicked
         self.onEpisodeClicked = onEpisodeClicked
         self.onShowTitleClicked = onShowTitleClicked
@@ -109,52 +78,9 @@ public struct MyShowsScreen: View {
         self.onRefresh = onRefresh
     }
 
-    @SwiftUI.State private var showListSelection = false
-    @SwiftUI.State private var isRotating = 0.0
-    @FocusState private var isSearchFocused: Bool
-    @Namespace private var animation
-    @SwiftUI.State private var localQuery: String = ""
-
     public var body: some View {
-        ZStack {
-            VStack {
-                contentView
-                    .refreshable { onRefresh() }
-            }
-        }
-        .appScreen()
-        .navigationBarTitleDisplayMode(.inline)
-        .disableAutocorrection(true)
-        .toolbar {
-            if state.isSearchActive {
-                ToolbarItem(placement: .principal) {
-                    expandedSearchBar
-                }
-            } else {
-                let image = state.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
-                ToolbarItem(placement: .navigationBarLeading) {
-                    GlassButton(icon: image) {
-                        withAnimation { onToggleListStyle() }
-                    }
-                }
-                ToolbarItem(placement: .principal) {
-                    titleView
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: appTheme.spacing.xSmall) {
-                        searchButton
-                        filterButton
-                    }
-                }
-            }
-        }
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
-        .disableAutocorrection(true)
-        .textInputAutocapitalization(.never)
-        .toolbarBackground(.appSurface, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .onAppear { localQuery = state.query }
-        .onChange(of: state.query) { _, newValue in localQuery = newValue }
+        contentView
+            .refreshable { onRefresh() }
     }
 
     @ViewBuilder
@@ -181,80 +107,6 @@ public struct MyShowsScreen: View {
                 sectionedListContent
             }
         }
-    }
-
-    private var titleView: some View {
-        HStack {
-            Text(state.title)
-                .textStyle(appTheme.typography.titleMedium)
-                .lineLimit(1)
-                .foregroundStyle(.appOnSurface)
-            Button {
-                withAnimation { showListSelection.toggle() }
-            } label: {
-                Image(systemName: "chevron.down.circle.fill")
-                    .textStyle(appTheme.typography.labelSmall)
-                    .foregroundStyle(.appOnSurfaceVariant)
-                    .rotationEffect(.degrees(isRotating))
-                    .task(id: showListSelection) {
-                        withAnimation(.easeInOut) {
-                            isRotating = showListSelection ? -180.0 : 0.0
-                        }
-                    }
-            }
-        }
-    }
-
-    private var searchButton: some View {
-        GlassButton(icon: "magnifyingglass") {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                onToggleSearch()
-                isSearchFocused = true
-            }
-        }
-    }
-
-    private var filterButton: some View {
-        GlassButton(icon: "line.3.horizontal.decrease.circle", action: onSortClicked)
-    }
-
-    private var expandedSearchBar: some View {
-        HStack(spacing: appTheme.spacing.small) {
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.appOnSurfaceVariant)
-
-                TextField(state.searchPlaceholder, text: $localQuery)
-                    .textStyle(appTheme.typography.bodyMedium)
-                    .focused($isSearchFocused)
-                    .submitLabel(.search)
-                    .onChange(of: localQuery) { _, newValue in
-                        onQueryChanged(newValue)
-                    }
-
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        if !localQuery.isEmpty {
-                            localQuery = ""
-                            onQueryCleared()
-                        } else {
-                            onToggleSearch()
-                            isSearchFocused = false
-                        }
-                    }
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.appOnSurfaceVariant)
-                }
-            }
-            .padding(.horizontal, appTheme.spacing.small)
-            .padding(.vertical, appTheme.spacing.xxSmall)
-            .background(.appSurfaceVariant.opacity(0.5))
-            .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.bottom, appTheme.spacing.small)
-        .transition(.scale.combined(with: .opacity))
     }
 
     private var sectionedListContent: some View {

@@ -1,0 +1,47 @@
+package com.thomaskioko.tvmaniac.settings.presenter
+
+/**
+ * Localized display strings for the settings sub-pages, resolved once in the presenter so both
+ * Android and iOS render from the same shared state instead of resolving strings per platform.
+ */
+public data class SettingsLabels(
+    val back: String = "",
+    val themeTitle: String = "",
+    val themeSubtitle: String = "",
+    val imageQualityTitle: String = "",
+    val imageQualityDescription: String = "",
+    val imageQualityAuto: String = "",
+    val imageQualityHigh: String = "",
+    val imageQualityMedium: String = "",
+    val imageQualityLow: String = "",
+    val syncTitle: String = "",
+    val syncDescription: String = "",
+    val lastSync: String? = null,
+    val includeSpecialsTitle: String = "",
+    val includeSpecialsDescription: String = "",
+    val youtubeTitle: String = "",
+    val youtubeDescription: String = "",
+    val episodeNotificationsTitle: String = "",
+    val episodeNotificationsDescription: String = "",
+    val crashReportingTitle: String = "",
+    val crashReportingDescription: String = "",
+    val privacyPolicy: String = "",
+    val appName: String = "",
+    val version: String = "",
+    val aboutDescription: String = "",
+    val sourceCode: String = "",
+    val github: String = "",
+    val apiDisclaimer: String = "",
+    val licensesApp: String = "",
+    val licensesData: String = "",
+    val tmdbTitle: String = "",
+    val tmdbBody: String = "",
+    val traktBody: String = "",
+    val traktTitle: String = "",
+    val traktDescription: String = "",
+    val traktAuthentication: String = "",
+    val traktConnected: String = "",
+    val traktConnectedDescription: String = "",
+    val logout: String = "",
+    val login: String = "",
+)

@@ -5,29 +5,57 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfile
 import com.thomaskioko.tvmaniac.data.user.api.model.UserProfileStats
 import com.thomaskioko.tvmaniac.data.user.api.model.UserWatchTime
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.data.user.testing.createTestProfile
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
+import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistPreviewInteractor
+import com.thomaskioko.tvmaniac.domain.favorites.ObserveFavoritesInteractor
+import com.thomaskioko.tvmaniac.domain.favorites.SyncFavoritesInteractor
+import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
+import com.thomaskioko.tvmaniac.domain.recentlywatched.ObserveRecentlyWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ObserveUserListsInteractor
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
+import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
+import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
+import com.thomaskioko.tvmaniac.favorites.testing.FakeFavoritesRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.test
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
+import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -42,6 +70,11 @@ internal class ProfilePresenterTest {
     private val userRepository = FakeUserRepository()
     private val traktAuthRepository = FakeTraktAuthRepository()
     private val traktAuthManager = FakeTraktAuthManager()
+    private val traktListRepository = FakeTraktListRepository()
+    private val upNextRepository = FakeUpNextRepository()
+    private val episodeRepository = FakeEpisodeRepository()
+    private val libraryRepository = FakeLibraryRepository()
+    private val favoritesRepository = FakeFavoritesRepository()
     private val logger = FakeLogger()
     private val testProfile = createTestProfile(
         stats = UserProfileStats(
@@ -70,7 +103,7 @@ internal class ProfilePresenterTest {
 
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
-        traktListRepository = FakeTraktListRepository(),
+        traktListRepository = traktListRepository,
         dispatchers = testDispatchers,
     )
 
@@ -261,6 +294,118 @@ internal class ProfilePresenterTest {
         }
     }
 
+    @Test
+    fun `should map each section to content when data is available`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        userRepository.setUserProfile(testProfile)
+        traktListRepository.setLists(listOf(createListEntity()))
+        upNextRepository.setNextEpisodesForWatchlist(listOf(createNextEpisode()))
+        episodeRepository.setRecentlyWatched(listOf(createRecentlyWatched()))
+        libraryRepository.setLibraryItems(listOf(createLibraryItem()))
+        favoritesRepository.setFavorites(listOf(createFavorite()))
+
+        presenter.state.test {
+            awaitItem() shouldBe ProfileState.DEFAULT_STATE
+
+            val loaded = awaitItem()
+
+            val userLists = loaded.userLists.shouldBeInstanceOf<SectionState.Content<ProfileListItem>>()
+            userLists.items shouldBe listOf(
+                ProfileListItem(
+                    id = 1,
+                    name = "Favorites",
+                    itemCount = 12,
+                    posterUrls = persistentListOf("/list-poster.jpg"),
+                ),
+            )
+
+            val inProgress = loaded.inProgress.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
+            inProgress.items.first().traktId shouldBe 1L
+            inProgress.items.first().title shouldBe "Breaking Bad"
+
+            val recent = loaded.recentlyWatched.shouldBeInstanceOf<SectionState.Content<ProfileRecentItem>>()
+            recent.items shouldBe listOf(
+                ProfileRecentItem(
+                    traktId = 1L,
+                    tmdbId = 2L,
+                    title = "Breaking Bad",
+                    posterUrl = "/poster.jpg",
+                    episodeLabel = "S1E5",
+                ),
+            )
+
+            val library = loaded.library.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
+            library.items.first().traktId shouldBe 1L
+
+            val watchlist = loaded.watchlist.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
+            watchlist.items.first().traktId shouldBe 1L
+
+            val favorites = loaded.favorites.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
+            favorites.items shouldBe listOf(
+                ProfileShowItem(traktId = 1L, tmdbId = 2L, title = "Breaking Bad", posterUrl = "/poster.jpg"),
+            )
+        }
+    }
+
+    @Test
+    fun `should map sections to empty when no data is available`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        userRepository.setUserProfile(testProfile)
+
+        presenter.state.test {
+            awaitItem() shouldBe ProfileState.DEFAULT_STATE
+
+            val loaded = awaitItem()
+            loaded.userLists shouldBe SectionState.Empty
+            loaded.inProgress shouldBe SectionState.Empty
+            loaded.recentlyWatched shouldBe SectionState.Empty
+            loaded.library shouldBe SectionState.Empty
+            loaded.watchlist shouldBe SectionState.Empty
+            loaded.favorites shouldBe SectionState.Empty
+        }
+    }
+
+    @Test
+    fun `should map a single section to error without collapsing the others`() = runTest {
+        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        userRepository.setUserProfile(testProfile)
+        favoritesRepository.setObserveError(IllegalStateException("favorites boom"))
+        libraryRepository.setLibraryItems(listOf(createLibraryItem()))
+
+        presenter.state.test {
+            awaitItem() shouldBe ProfileState.DEFAULT_STATE
+
+            val loaded = awaitItem()
+            val error = loaded.favorites.shouldBeInstanceOf<SectionState.Error>()
+            error.message.message shouldBe "favorites boom"
+
+            loaded.library.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
+        }
+    }
+
+    @Test
+    fun `should navigate to show details given show is clicked`() = runTest {
+        val navigator = TestNavigator()
+        val testPresenter = createPresenter(navigator = navigator)
+
+        navigator.test {
+            testPresenter.dispatch(ProfileAction.ShowClicked(traktId = 5L))
+            awaitNavigateTo(ShowDetailsRoute(ShowDetailsParam(id = 5L)))
+        }
+    }
+
+    @Test
+    fun `should force refresh favorites given refresh action`() = runTest {
+        advanceUntilIdle()
+        favoritesRepository.clearInvocations()
+
+        presenter.dispatch(ProfileAction.RefreshProfile)
+        advanceUntilIdle()
+
+        favoritesRepository.syncInvocations() shouldBe
+            listOf(FakeFavoritesRepository.SyncInvocation(forceRefresh = true))
+    }
+
     private fun createExpectedProfileInfo(profile: UserProfile): ProfileInfo {
         return ProfileInfo(
             slug = profile.slug,
@@ -280,17 +425,94 @@ internal class ProfilePresenterTest {
         )
     }
 
-    private fun createPresenter(): ProfilePresenter {
+    private fun createListEntity(): TraktListEntity = TraktListEntity(
+        id = 1,
+        slug = "favorites",
+        name = "Favorites",
+        description = null,
+        itemCount = 12,
+        createdAt = "2024-01-01",
+        posterPaths = listOf("/list-poster.jpg"),
+    )
+
+    private fun createNextEpisode(): NextEpisodeWithShow = NextEpisodeWithShow(
+        showTraktId = 1L,
+        showTmdbId = 2L,
+        showName = "Breaking Bad",
+        showPoster = "/poster.jpg",
+        showStatus = "Ended",
+        showYear = "2008",
+        episodeId = 10L,
+        episodeName = "Episode",
+        seasonId = 5L,
+        seasonNumber = 1L,
+        episodeNumber = 2L,
+        runtime = 45L,
+        stillPath = "/still.jpg",
+        overview = "Overview",
+        firstAired = null,
+        lastWatchedAt = null,
+        seasonCount = 5,
+        episodeCount = 62,
+        watchedCount = 3,
+        totalCount = 62,
+    )
+
+    private fun createRecentlyWatched(): RecentlyWatchedEpisode = RecentlyWatchedEpisode(
+        showTraktId = 1L,
+        showTmdbId = 2L,
+        showTitle = "Breaking Bad",
+        posterPath = "/poster.jpg",
+        seasonNumber = 1L,
+        episodeNumber = 5L,
+        episodeTitle = "Gray Matter",
+        watchedAt = 1000L,
+    )
+
+    private fun createLibraryItem(): LibraryItem = LibraryItem(
+        traktId = 1L,
+        tmdbId = 2L,
+        title = "Breaking Bad",
+        posterPath = "/poster.jpg",
+        status = "Ended",
+        year = "2008",
+        rating = 9.0,
+        genres = null,
+        seasonCount = 5,
+        episodeCount = 62,
+        watchedCount = 3,
+        totalCount = 62,
+        lastWatchedAt = null,
+        followedAt = 1000L,
+        isFollowed = true,
+    )
+
+    private fun createFavorite(): FavoriteShow = FavoriteShow(
+        traktId = 1L,
+        tmdbId = 2L,
+        title = "Breaking Bad",
+        posterPath = "/poster.jpg",
+        year = "2008",
+    )
+
+    private fun createPresenter(navigator: Navigator = NoOpNavigator()): ProfilePresenter {
         return ProfilePresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = NoOpNavigator(),
+            navigator = navigator,
             localizer = FakeLocalizer(),
             traktAuthManager = traktAuthManager,
             traktAuthRepository = traktAuthRepository,
             updateUserProfileData = updateUserProfileData,
             errorToStringMapper = { it.message ?: "Test error" },
             logger = logger,
+            syncFavoritesInteractor = SyncFavoritesInteractor(favoritesRepository, testDispatchers),
             observeUserProfileInteractor = observeUserProfileInteractor,
+            observeUserListsInteractor = ObserveUserListsInteractor(traktListRepository),
+            observeUpNextInteractor = ObserveUpNextInteractor(upNextRepository),
+            observeRecentlyWatchedInteractor = ObserveRecentlyWatchedInteractor(episodeRepository),
+            observeLibraryInteractor = ObserveLibraryInteractor(libraryRepository),
+            observeWatchlistPreviewInteractor = ObserveWatchlistPreviewInteractor(upNextRepository),
+            observeFavoritesInteractor = ObserveFavoritesInteractor(favoritesRepository),
         )
     }
 }

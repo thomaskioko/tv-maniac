@@ -11,19 +11,24 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
-import com.thomaskioko.tvmaniac.settings.presenter.ChangeThemeClicked
-import com.thomaskioko.tvmaniac.settings.presenter.DismissThemeClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
+import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.presenter.toAppTheme
+import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -49,6 +54,8 @@ class SettingsPresenterTest {
     private val fakeActivitySyncRepository = FakeActivitySyncRepository()
     private val fakeRequestManagerRepository = FakeRequestManagerRepository()
     private val fakeLogger = FakeLogger()
+    private val localizer = FakeLocalizer()
+    private val traktAuthManager = FakeTraktAuthManager()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -58,9 +65,12 @@ class SettingsPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             appMetadata = FakeAppMetadata.DEFAULT,
             datastoreRepository = datastoreRepository,
+            userRepository = userRepository,
             traktAuthRepository = traktAuthRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            localizer = localizer,
             logger = fakeLogger,
+            traktAuthManager = traktAuthManager,
             logoutInteractor = LogoutInteractor(
                 traktAuthRepository = traktAuthRepository,
                 userRepository = userRepository,
@@ -100,29 +110,9 @@ class SettingsPresenterTest {
             initialState.versionName shouldBe "0.0.0"
             initialState.theme shouldBe ThemeModel.SYSTEM
 
-            datastoreRepository.setTheme(ThemeModel.DARK.toAppTheme())
-
-            presenter.dispatch(ChangeThemeClicked)
-            awaitItem().showthemePopup shouldBe true
-
             presenter.dispatch(ThemeSelected(ThemeModel.DARK))
 
-            val updatedState = awaitItem()
-            updatedState.showthemePopup shouldBe false
-            updatedState.theme shouldBe ThemeModel.DARK
-        }
-    }
-
-    @Test
-    fun `should hide theme dialog when dismissed`() = runTest {
-        presenter.state.test {
-            awaitItem()
-
-            presenter.dispatch(ChangeThemeClicked)
-            awaitItem().showthemePopup shouldBe true
-
-            presenter.dispatch(DismissThemeClicked)
-            awaitItem().showthemePopup shouldBe false
+            awaitItem().theme shouldBe ThemeModel.DARK
         }
     }
 
@@ -158,5 +148,88 @@ class SettingsPresenterTest {
             val state = awaitItem()
             state.versionName shouldBe "0.0.0"
         }
+    }
+
+    @Test
+    fun `should open sub page when page is selected`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(OpenSettingsPage(SettingsPage.APPEARANCE))
+            awaitItem().currentPage shouldBe SettingsPage.APPEARANCE
+        }
+    }
+
+    @Test
+    fun `should return to root when back is clicked on a sub page`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(OpenSettingsPage(SettingsPage.BEHAVIOR))
+            awaitItem().currentPage shouldBe SettingsPage.BEHAVIOR
+
+            presenter.dispatch(BackClicked)
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+        }
+    }
+
+    @Test
+    fun `should remain on root when back is clicked on root`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(BackClicked)
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `should resolve connect prompt labels when logged out`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.labels.login.isEmpty()) {
+                state = awaitItem()
+            }
+
+            state.isAuthenticated shouldBe false
+            state.labels.traktConnected shouldBe localizer.getString(StringResourceKey.LabelSettingsTraktConnect)
+            state.labels.traktConnectedDescription shouldBe
+                localizer.getString(StringResourceKey.SettingsTraktDetailDescription)
+            state.labels.login shouldBe localizer.getString(StringResourceKey.Login)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should resolve connected labels when logged in`() = runTest {
+        presenter.state.test {
+            awaitItem()
+            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+
+            var state = awaitItem()
+            while (!state.isAuthenticated) {
+                state = awaitItem()
+            }
+
+            state.labels.traktConnected shouldBe
+                localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, "Test User")
+            state.labels.traktConnectedDescription shouldBe
+                localizer.getString(StringResourceKey.LabelSettingsTraktConnectedDescription)
+            state.labels.logout shouldBe localizer.getString(StringResourceKey.Logout)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should launch web view when login is clicked`() = runTest {
+        var launched = false
+        traktAuthManager.setOnLaunchWebView { launched = true }
+
+        presenter.dispatch(TraktLoginClicked)
+        testScheduler.advanceUntilIdle()
+
+        launched shouldBe true
     }
 }

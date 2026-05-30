@@ -1,6 +1,5 @@
 import DesignSystem
 import i18n
-import SwiftUI
 import TvManiac
 
 public extension String {
@@ -48,11 +47,5 @@ public extension String {
                 }
             ).localized()
         )
-    }
-}
-
-public extension Font {
-    init(resource: KeyPath<MR.fonts, FontResource>, withSize: Double = 14.0) {
-        self.init(MR.fonts()[keyPath: resource].uiFont(withSize: withSize))
     }
 }

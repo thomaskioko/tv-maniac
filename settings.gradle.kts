@@ -37,7 +37,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    id("com.gradle.develocity") version ("4.4.1")
+    id("com.gradle.develocity") version ("4.4.2")
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
@@ -66,6 +66,8 @@ include(
     ":features:my-shows:nav",
     ":features:continue-watching:presenter",
     ":features:continue-watching:ui",
+    ":features:start-watching:presenter",
+    ":features:start-watching:ui",
     ":features:debug:nav",
     ":features:debug:presenter",
     ":features:debug:ui",
@@ -217,6 +219,9 @@ include(
     ":data:start-watching:api",
     ":data:start-watching:implementation",
     ":data:start-watching:testing",
+    ":data:favorites:api",
+    ":data:favorites:implementation",
+    ":data:favorites:testing",
     ":data:watchlist-prefs:api",
     ":data:watchlist-prefs:implementation",
     ":data:watchlist-prefs:testing",
@@ -231,6 +236,8 @@ include(
     ":domain:followedshows",
     ":domain:genre",
     ":domain:start-watching",
+    ":domain:favorites",
+    ":domain:recently-watched",
     ":domain:library",
     ":domain:logout",
     ":domain:notifications",
