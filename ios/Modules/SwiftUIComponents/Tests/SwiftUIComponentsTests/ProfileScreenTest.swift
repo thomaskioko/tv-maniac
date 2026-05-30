@@ -75,8 +75,8 @@ class ProfileScreenTest: SnapshotTestCase {
             avatarUrl: nil,
             backgroundUrl: nil,
             stats: SwiftProfileStats(
-                showsWatched: 87,
-                episodesWatched: 1250,
+                showsWatched: "87",
+                episodesWatched: "1,250",
                 months: 2,
                 days: 15,
                 hours: 8,

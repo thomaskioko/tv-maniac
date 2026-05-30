@@ -82,6 +82,8 @@ internal class ProfilePresenterTest {
         stats = UserProfileStats(
             showsWatched = 10,
             episodesWatched = 100,
+            showsWatchedLabel = "10",
+            episodesWatchedLabel = "100",
             userWatchTime = UserWatchTime(
                 years = 0,
                 days = 4,
@@ -175,13 +177,13 @@ internal class ProfilePresenterTest {
 
             val updatedProfile = testProfile.copy(
                 username = "updated-user",
-                stats = testProfile.stats.copy(showsWatched = 20),
+                stats = testProfile.stats.copy(showsWatched = 20, showsWatchedLabel = "20"),
             )
             userRepository.setUserProfile(updatedProfile)
 
             val updatedState = awaitItem()
             updatedState.userProfile?.username shouldBe "updated-user"
-            updatedState.userProfile?.stats?.showsWatched shouldBe 20
+            updatedState.userProfile?.stats?.showsWatched shouldBe "20"
         }
     }
 
@@ -438,8 +440,8 @@ internal class ProfilePresenterTest {
             avatarUrl = profile.avatarUrl,
             backgroundUrl = profile.backgroundUrl,
             stats = ProfileStats(
-                showsWatched = profile.stats.showsWatched.toInt(),
-                episodesWatched = profile.stats.episodesWatched.toInt(),
+                showsWatched = profile.stats.showsWatchedLabel,
+                episodesWatched = profile.stats.episodesWatchedLabel,
                 years = 0,
                 months = 0,
                 days = 4,
