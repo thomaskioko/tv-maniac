@@ -69,19 +69,19 @@ public struct WatchListItemView: View {
 
             HStack(spacing: theme.spacing.xxSmall) {
                 Text(episode.episodeNumber)
-                    .font(theme.typography.labelLarge)
+                    .textStyle(theme.typography.labelLarge)
                     .foregroundStyle(.appOnSurface)
                     .lineLimit(1)
                 if episode.remainingEpisodes > 0 {
                     Text("+\(episode.remainingEpisodes)")
-                        .font(theme.typography.labelMedium)
+                        .textStyle(theme.typography.labelMedium)
                         .foregroundStyle(.appOnSurface.opacity(0.6))
                 }
             }
             .padding(.top, theme.spacing.medium)
 
             Text(episode.episodeTitle)
-                .font(theme.typography.bodySmall)
+                .textStyle(theme.typography.bodySmall)
                 .foregroundStyle(.appOnSurface.opacity(0.7))
                 .lineLimit(2)
                 .padding(.top, theme.spacing.xxSmall)
