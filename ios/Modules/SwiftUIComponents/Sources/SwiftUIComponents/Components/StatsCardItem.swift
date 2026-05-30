@@ -22,7 +22,7 @@ public struct StatsCardItem<Content: View>: View {
         VStack(alignment: .leading, spacing: 0) {
             iconBadge
 
-            Spacer(minLength: theme.spacing.small)
+            Spacer(minLength: 0)
 
             Text(title)
                 .textStyle(theme.typography.bodyMedium)
@@ -38,7 +38,7 @@ public struct StatsCardItem<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, theme.spacing.medium)
         .padding(.vertical, theme.spacing.small)
-        .frame(height: 130)
+        .frame(height: 138)
         .background(theme.colors.surfaceVariant)
         .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large))
         .appShadow(theme.shadows.small)
@@ -46,7 +46,9 @@ public struct StatsCardItem<Content: View>: View {
 
     private var iconBadge: some View {
         Image(systemName: systemImage)
-            .textStyle(theme.typography.titleMedium)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 20, height: 20)
             .foregroundStyle(.appAccent)
             .frame(width: 36, height: 36)
             .background(theme.colors.accent.opacity(0.15))
