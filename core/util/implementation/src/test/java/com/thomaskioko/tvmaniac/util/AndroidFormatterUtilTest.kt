@@ -83,6 +83,21 @@ class AndroidFormatterUtilTest {
     }
 
     @Test
+    fun formatCompactNumber_belowThreshold_returnsGroupedNumber() {
+        formatterUtil.formatCompactNumber(1250L) shouldBeEqual "1,250"
+    }
+
+    @Test
+    fun formatCompactNumber_atThreshold_returnsCompactKSuffix() {
+        formatterUtil.formatCompactNumber(10800L) shouldBeEqual "10.8K"
+    }
+
+    @Test
+    fun formatCompactNumber_millions_returnsCompactMSuffix() {
+        formatterUtil.formatCompactNumber(1500000L) shouldBeEqual "1.5M"
+    }
+
+    @Test
     fun `should return formatted date time given epoch millis and pattern`() {
         val dateTime = LocalDateTime(2025, 1, 23, 11, 24, 0)
         val epochMillis = dateTime.toInstant(TimeZone.UTC).toEpochMilliseconds()

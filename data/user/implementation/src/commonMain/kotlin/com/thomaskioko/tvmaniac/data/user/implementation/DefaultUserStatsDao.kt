@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.data.user.api.model.UserProfileStats
 import com.thomaskioko.tvmaniac.data.user.api.model.UserWatchTime
 import com.thomaskioko.tvmaniac.db.Stats
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.map
 @ContributesBinding(AppScope::class)
 public class DefaultUserStatsDao(
     private val database: TvManiacDatabase,
+    private val formatterUtil: FormatterUtil,
     private val dispatchers: AppCoroutineDispatchers,
 ) : UserStatsDao {
 
@@ -38,6 +40,8 @@ public class DefaultUserStatsDao(
                     UserProfileStats(
                         showsWatched = it.shows_watched,
                         episodesWatched = it.episodes_watched,
+                        showsWatchedLabel = formatterUtil.formatCompactNumber(it.shows_watched),
+                        episodesWatchedLabel = formatterUtil.formatCompactNumber(it.episodes_watched),
                         userWatchTime = UserWatchTime(
                             years = totalMinutes / MINUTES_PER_YEAR,
                             days = remainingAfterYears / MINUTES_PER_DAY,

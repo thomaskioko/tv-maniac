@@ -330,8 +330,8 @@ private fun UserProfile.toPresentation(): ProfileInfo {
         fullName = fullName,
         avatarUrl = avatarUrl,
         stats = ProfileStats(
-            showsWatched = stats.showsWatched,
-            episodesWatched = stats.episodesWatched,
+            showsWatched = stats.showsWatchedLabel,
+            episodesWatched = stats.episodesWatchedLabel,
             years = breakdown.years,
             months = breakdown.months,
             days = breakdown.remainingDays,

@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.util
 
+import android.icu.text.CompactDecimalFormat
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -15,6 +16,7 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 public const val POSTER_PATH: String = "https://image.tmdb.org/t/p/original%s"
+private const val COMPACT_NUMBER_THRESHOLD = 10_000L
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -27,6 +29,7 @@ public class AndroidFormatterUtil : FormatterUtil {
     }
 
     override fun formatDuration(number: Int): String {
+        // TODO:: Use Localization
         val suffix = charArrayOf(' ', 'k', 'M', 'B', 'T', 'P', 'E')
         val numValue = number.toLong()
         val value = floor(log10(numValue.toDouble())).toInt()
@@ -39,6 +42,15 @@ public class AndroidFormatterUtil : FormatterUtil {
                 DecimalFormat("#,##0").format(numValue)
             }
         }
+    }
+
+    override fun formatCompactNumber(number: Long): String = when {
+        number < COMPACT_NUMBER_THRESHOLD -> DecimalFormat("#,##0").format(number)
+        else ->
+            CompactDecimalFormat
+                .getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT)
+                .apply { maximumFractionDigits = 1 }
+                .format(number)
     }
 
     override fun formatDateTime(epochMillis: Long, pattern: String): String {
