@@ -82,7 +82,7 @@ public struct RecentlyWatchedSectionView: View {
                 title: show.title,
                 posterUrl: show.posterUrl,
                 posterWidth: 120,
-                posterHeight: 180,
+                aspectRatio: 2.0 / 3.0,
                 posterRadius: theme.shapes.medium
             )
             .padding(.top, theme.spacing.xxSmall)
