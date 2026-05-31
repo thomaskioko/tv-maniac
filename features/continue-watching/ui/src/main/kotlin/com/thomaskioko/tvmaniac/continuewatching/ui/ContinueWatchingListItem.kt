@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
@@ -55,7 +54,6 @@ internal fun ContinueWatchingListItem(
             PosterCard(
                 imageUrl = item.posterImageUrl,
                 onClick = { onItemClicked(item.traktId) },
-                imageWidth = Layout.posterWidth,
                 title = item.title,
                 shape = RectangleShape,
             )
@@ -191,4 +189,3 @@ private fun ContinueWatchingListItemPreview() {
         )
     }
 }
-

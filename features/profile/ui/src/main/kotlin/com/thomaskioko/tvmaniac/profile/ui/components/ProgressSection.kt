@@ -40,8 +40,7 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
-import com.thomaskioko.tvmaniac.compose.theme.Layout
+import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
@@ -74,7 +73,7 @@ internal fun ProgressSection(
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.PROGRESS_SECTION_KEY),
         contentSpacing = 0.dp,
     ) {
-        val posterWidth = Layout.posterWidth
+        val posterWidth = ImageType.Poster.width
 
         Column {
             FilterRow(
@@ -208,7 +207,7 @@ private fun PosterSkeletonRow(posterWidth: Dp) {
             ShimmerBox(
                 modifier = Modifier
                     .width(posterWidth)
-                    .height(posterWidth / ImageDimens.PosterAspect),
+                    .height(posterWidth / ImageType.Poster.aspect),
                 shape = MaterialTheme.shapes.medium,
             )
         }

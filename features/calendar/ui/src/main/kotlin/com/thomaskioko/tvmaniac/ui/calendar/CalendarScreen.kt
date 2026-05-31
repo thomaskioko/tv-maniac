@@ -49,7 +49,6 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
-import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -320,7 +319,6 @@ private fun CalendarEpisodeCard(
                     imageUrl = episode.posterUrl,
                     onClick = onClick,
                     modifier = Modifier.fillMaxHeight(),
-                    imageWidth = Layout.posterWidth,
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))

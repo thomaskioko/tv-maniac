@@ -21,7 +21,6 @@ import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
@@ -70,7 +69,6 @@ internal fun HorizontalRowContent(
                             onClick = { onItemClicked(tvShow.traktId) },
                             modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.traktId)),
                             title = tvShow.title,
-                            imageWidth = Layout.posterWidth,
                             isInLibrary = tvShow.inLibrary,
                         )
                     }

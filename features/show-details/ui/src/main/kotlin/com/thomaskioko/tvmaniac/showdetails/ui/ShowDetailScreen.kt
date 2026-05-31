@@ -78,7 +78,6 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
-import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
@@ -838,7 +837,6 @@ private fun HorizontalRowContent(
                     imageUrl = tvShow.posterImageUrl,
                     onClick = { onShowClicked(tvShow.traktId) },
                     title = tvShow.title,
-                    imageWidth = Layout.posterWidth,
                 )
             }
         }

@@ -7,7 +7,7 @@ public struct ProgressSectionView: View {
     @SwiftUI.State private var filter: ProgressFilter = .completed
 
     private var posterWidth: CGFloat {
-        ImageDimens.posterWidth(widthSizeClass)
+        ImageType.poster.width(widthSizeClass)
     }
 
     private let inProgress: SwiftSectionState<SwiftProfileShow>
@@ -94,7 +94,7 @@ public struct ProgressSectionView: View {
                 HStack(spacing: theme.spacing.small) {
                     ForEach(0 ..< 3, id: \.self) { _ in
                         ShimmerView(cornerRadius: theme.shapes.medium)
-                            .frame(width: posterWidth, height: posterWidth / ImageDimens.posterAspect)
+                            .frame(width: posterWidth, height: posterWidth / ImageType.poster.aspect)
                     }
                 }
                 .padding(.horizontal, theme.spacing.medium)
@@ -114,7 +114,7 @@ public struct ProgressSectionView: View {
                                 title: show.title,
                                 posterUrl: show.posterUrl,
                                 posterWidth: posterWidth,
-                                aspectRatio: ImageDimens.posterAspect,
+                                aspectRatio: ImageType.poster.aspect,
                                 posterRadius: theme.shapes.medium
                             )
                         }

@@ -6,7 +6,7 @@ public struct RecentlyWatchedSectionView: View {
     @Environment(\.widthSizeClass) private var widthSizeClass
 
     private var posterWidth: CGFloat {
-        ImageDimens.posterWidth(widthSizeClass)
+        ImageType.poster.width(widthSizeClass)
     }
 
     private let recentlyWatched: SwiftSectionState<SwiftProfileRecentShow>
@@ -48,7 +48,7 @@ public struct RecentlyWatchedSectionView: View {
                     ForEach(0 ..< 3, id: \.self) { _ in
                         VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                             ShimmerView(cornerRadius: theme.shapes.medium)
-                                .frame(width: posterWidth, height: posterWidth / ImageDimens.posterAspect)
+                                .frame(width: posterWidth, height: posterWidth / ImageType.poster.aspect)
                             ShimmerView(cornerRadius: theme.shapes.small)
                                 .frame(width: posterWidth, height: 14)
                             ShimmerView(cornerRadius: theme.shapes.small)
@@ -87,7 +87,7 @@ public struct RecentlyWatchedSectionView: View {
                 title: show.title,
                 posterUrl: show.posterUrl,
                 posterWidth: posterWidth,
-                aspectRatio: ImageDimens.posterAspect,
+                aspectRatio: ImageType.poster.aspect,
                 posterRadius: theme.shapes.medium
             )
             .padding(.top, theme.spacing.xxSmall)

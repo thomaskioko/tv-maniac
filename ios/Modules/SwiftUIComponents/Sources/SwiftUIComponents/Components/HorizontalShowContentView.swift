@@ -86,8 +86,8 @@ public struct HorizontalShowContentView: View {
                 title: item.title,
                 posterUrl: item.posterUrl,
                 isInLibrary: item.inLibrary,
-                posterWidth: ImageDimens.posterWidth(widthSizeClass),
-                aspectRatio: ImageDimens.posterAspect
+                posterWidth: ImageType.poster.width(widthSizeClass),
+                aspectRatio: ImageType.poster.aspect
             )
         case .backdrop:
             BackdropPosterCard(

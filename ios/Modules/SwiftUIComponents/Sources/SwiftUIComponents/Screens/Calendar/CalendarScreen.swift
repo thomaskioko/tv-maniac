@@ -183,8 +183,8 @@ public struct CalendarPageContent: View {
                     PosterItemView(
                         title: nil,
                         posterUrl: episode.posterUrl,
-                        posterWidth: ImageDimens.posterWidth(widthSizeClass),
-                        aspectRatio: ImageDimens.posterAspect,
+                        posterWidth: ImageType.poster.width(widthSizeClass),
+                        aspectRatio: ImageType.poster.aspect,
                         posterRadius: 0
                     )
 

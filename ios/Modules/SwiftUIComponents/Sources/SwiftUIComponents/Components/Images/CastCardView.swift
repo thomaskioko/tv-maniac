@@ -6,11 +6,11 @@ public struct CastCardView: View {
     @Environment(\.widthSizeClass) private var widthSizeClass
 
     private var cardWidth: CGFloat {
-        ImageDimens.castCardWidth(widthSizeClass)
+        ImageType.cast.width(widthSizeClass)
     }
 
     private var cardHeight: CGFloat {
-        cardWidth / ImageDimens.castAspect
+        cardWidth / ImageType.cast.aspect
     }
 
     private let profileUrl: String?

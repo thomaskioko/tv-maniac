@@ -49,8 +49,8 @@ public struct LibraryListItemView: View {
                 PosterItemView(
                     title: item.title,
                     posterUrl: item.posterUrl,
-                    posterWidth: ImageDimens.posterWidth(widthSizeClass),
-                    aspectRatio: ImageDimens.posterAspect
+                    posterWidth: ImageType.poster.width(widthSizeClass),
+                    aspectRatio: ImageType.poster.aspect
                 )
 
                 VStack(alignment: .leading, spacing: theme.spacing.xSmall) {

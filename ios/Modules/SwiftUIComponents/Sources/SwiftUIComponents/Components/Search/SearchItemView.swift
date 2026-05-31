@@ -33,8 +33,8 @@ public struct SearchItemView: View {
             PosterItemView(
                 title: nil,
                 posterUrl: imageUrl,
-                posterWidth: ImageDimens.posterWidth(widthSizeClass),
-                aspectRatio: ImageDimens.posterAspect,
+                posterWidth: ImageType.poster.width(widthSizeClass),
+                aspectRatio: ImageType.poster.aspect,
                 posterRadius: 0
             )
 

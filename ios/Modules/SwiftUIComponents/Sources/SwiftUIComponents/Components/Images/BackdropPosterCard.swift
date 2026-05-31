@@ -26,8 +26,8 @@ public struct BackdropPosterCard: View {
     }
 
     public var body: some View {
-        let resolvedWidth = cardWidth ?? ImageDimens.backdropCardWidth(widthSizeClass)
-        let resolvedHeight = cardHeight ?? (resolvedWidth / ImageDimens.backdropAspect)
+        let resolvedWidth = cardWidth ?? ImageType.backdrop.width(widthSizeClass)
+        let resolvedHeight = cardHeight ?? (resolvedWidth / ImageType.backdrop.aspect)
         PosterItemView(
             title: nil,
             posterUrl: posterUrl,
