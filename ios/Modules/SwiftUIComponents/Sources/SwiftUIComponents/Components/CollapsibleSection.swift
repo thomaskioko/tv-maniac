@@ -42,7 +42,7 @@ public struct CollapsibleSection<Content: View>: View {
         HStack(alignment: .center, spacing: 0) {
             HStack(spacing: theme.spacing.xSmall) {
                 Text(title)
-                    .textStyle(theme.typography.titleLargeEmphasized)
+                    .textStyle(theme.typography.titleLarge)
                     .foregroundStyle(.appOnSurface)
                     .lineLimit(1)
 
@@ -62,10 +62,10 @@ public struct CollapsibleSection<Content: View>: View {
             Spacer(minLength: theme.spacing.medium)
 
             Image(systemName: "chevron.down")
-                .textStyle(theme.typography.labelLarge)
+                .textStyle(theme.typography.labelSmall)
                 .foregroundStyle(theme.colors.onSurfaceVariant)
                 .rotationEffect(.degrees(collapsed ? -180 : 0))
-                .frame(width: 28, height: 28)
+                .frame(width: DimensionConstants.toggleSize, height: DimensionConstants.toggleSize)
                 .overlay(
                     Circle()
                         .stroke(theme.colors.onSurfaceVariant.opacity(0.5), lineWidth: 1)
@@ -75,6 +75,10 @@ public struct CollapsibleSection<Content: View>: View {
         }
         .padding(.horizontal, theme.spacing.medium)
     }
+}
+
+private enum DimensionConstants {
+    static let toggleSize: CGFloat = 24
 }
 
 #Preview {

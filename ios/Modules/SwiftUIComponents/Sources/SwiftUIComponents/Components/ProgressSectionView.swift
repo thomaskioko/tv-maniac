@@ -41,7 +41,7 @@ public struct ProgressSectionView: View {
         if isHidden {
             EmptyView()
         } else {
-            CollapsibleSection(title: title, contentSpacing: theme.spacing.xxSmall) {
+            CollapsibleSection(title: title, contentSpacing: theme.spacing.small) {
                 VStack(alignment: .leading, spacing: theme.spacing.small) {
                     filterRow
                     body(for: selectedState)

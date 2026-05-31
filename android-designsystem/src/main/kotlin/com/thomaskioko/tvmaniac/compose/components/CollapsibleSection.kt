@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -103,12 +104,15 @@ private fun SectionHeaderRow(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    platformStyle = PlatformTextStyle(includeFontPadding = false),
+                ),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f, fill = false),
+                modifier = Modifier
+                    .weight(1f, fill = false),
             )
 
             if (showMore) {
@@ -124,7 +128,7 @@ private fun SectionHeaderRow(
         Box(
             modifier = Modifier
                 .then(if (toggleTestTag != null) Modifier.testTag(toggleTestTag) else Modifier)
-                .size(28.dp)
+                .size(24.dp)
                 .clip(CircleShape)
                 .clickable(onClick = onToggleCollapse)
                 .border(

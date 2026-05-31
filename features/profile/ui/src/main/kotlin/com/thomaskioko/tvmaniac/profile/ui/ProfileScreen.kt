@@ -63,11 +63,13 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.profile.ui.components.ProfileLoadingSkeleton
 import com.thomaskioko.tvmaniac.profile.ui.components.ProgressSection
+import com.thomaskioko.tvmaniac.profile.ui.components.RecentlyWatchedSection
 import com.thomaskioko.tvmaniac.profile.ui.components.StatsCard
 import com.thomaskioko.tvmaniac.profile.ui.components.UnauthenticatedContent
 import com.thomaskioko.tvmaniac.profile.ui.components.UserListsSection
@@ -113,6 +115,7 @@ internal fun ProfileScreen(
                     userLists = state.userLists,
                     inProgress = state.inProgress,
                     completed = state.completed,
+                    recentlyWatched = state.recentlyWatched,
                     onLoginClicked = { onAction(LoginClicked) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
                     onListClick = {},
@@ -125,10 +128,11 @@ internal fun ProfileScreen(
 
                 RefreshCollapsableTopAppBar(
                     listState = listState,
+                    centeredTitle = true,
                     title = {
                         Text(
                             text = state.labels.title,
-                            style = MaterialTheme.typography.titleMedium.copy(
+                            style = MaterialTheme.typography.titleLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface,
                             ),
                             maxLines = 1,
@@ -184,6 +188,7 @@ private fun ProfileContent(
     userLists: SectionState<ProfileListItem>,
     inProgress: SectionState<ProfileShowItem>,
     completed: SectionState<ProfileShowItem>,
+    recentlyWatched: SectionState<ProfileRecentItem>,
     onLoginClicked: () -> Unit,
     onViewLists: () -> Unit,
     onListClick: (Long) -> Unit,
@@ -235,19 +240,17 @@ private fun ProfileContent(
                     )
                 }
 
-                if (userLists !is SectionState.Empty) {
+                if (recentlyWatched !is SectionState.Empty) {
                     item {
                         Spacer(modifier = Modifier.height(24.dp))
                     }
 
                     item {
-                        UserListsSection(
-                            userLists = userLists,
-                            title = labels.userListsTitle,
-                            viewAllLabel = labels.viewAllButton,
+                        RecentlyWatchedSection(
+                            recentlyWatched = recentlyWatched,
+                            title = labels.recentlyWatchedTitle,
                             retryLabel = labels.retry,
-                            onViewAll = onViewLists,
-                            onListClick = onListClick,
+                            onShowClick = onShowClick,
                             onRetry = onRetry,
                         )
                     }
@@ -268,6 +271,24 @@ private fun ProfileContent(
                             emptyLabel = labels.progressEmpty,
                             retryLabel = labels.retry,
                             onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                if (userLists !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        UserListsSection(
+                            userLists = userLists,
+                            title = labels.userListsTitle,
+                            viewAllLabel = labels.viewAllButton,
+                            retryLabel = labels.retry,
+                            onViewAll = onViewLists,
+                            onListClick = onListClick,
                             onRetry = onRetry,
                         )
                     }

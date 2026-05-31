@@ -78,6 +78,8 @@ private extension ProfileState {
             progressEmptyLabel: labels.progressEmpty,
             inProgress: inProgress.toSwiftShowSectionState(),
             completed: completed.toSwiftShowSectionState(),
+            recentlyWatchedTitle: labels.recentlyWatchedTitle,
+            recentlyWatched: recentlyWatched.toSwiftRecentSectionState(),
             unauthenticatedTitle: labels.unauthenticatedTitle,
             footerDescription: labels.footerDescription,
             signInLabel: labels.signInButton,
@@ -149,6 +151,29 @@ private extension SectionState {
                     id: item.traktId,
                     title: item.title,
                     posterUrl: item.posterUrl
+                )
+            }
+            return .content(items)
+        default:
+            return .empty
+        }
+    }
+
+    func toSwiftRecentSectionState() -> SwiftSectionState<SwiftProfileRecentShow> {
+        switch self {
+        case is SectionStateLoading:
+            return .loading
+        case is SectionStateEmpty:
+            return .empty
+        case let error as SectionStateError:
+            return .error(error.message.message)
+        case let content as SectionStateContent<ProfileRecentItem>:
+            let items = content.items.compactMap { $0 as? ProfileRecentItem }.map { item in
+                SwiftProfileRecentShow(
+                    traktId: item.traktId,
+                    title: item.title,
+                    posterUrl: item.posterUrl,
+                    episodeLabel: item.episodeLabel
                 )
             }
             return .content(items)
