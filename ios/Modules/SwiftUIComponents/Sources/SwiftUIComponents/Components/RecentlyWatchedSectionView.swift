@@ -77,7 +77,7 @@ public struct RecentlyWatchedSectionView: View {
     }
 
     private func episodeCard(_ show: SwiftProfileRecentShow) -> some View {
-        VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
+        VStack(alignment: .leading) {
             PosterItemView(
                 title: show.title,
                 posterUrl: show.posterUrl,
@@ -85,6 +85,7 @@ public struct RecentlyWatchedSectionView: View {
                 posterHeight: 180,
                 posterRadius: theme.shapes.medium
             )
+            .padding(.top, theme.spacing.xxSmall)
 
             Text(show.title)
                 .textStyle(theme.typography.labelMedium)
