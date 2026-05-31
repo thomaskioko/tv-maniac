@@ -40,7 +40,7 @@ public enum ImageDimens {
         Array(repeating: GridItem(.flexible(), spacing: spacing), count: posterColumns(sizeClass))
     }
 
-    public static func posterRailWidth(_ sizeClass: WidthSizeClass) -> CGFloat {
+    public static func posterWidth(_ sizeClass: WidthSizeClass) -> CGFloat {
         switch sizeClass {
         case .compact: 112
         case .medium: 140

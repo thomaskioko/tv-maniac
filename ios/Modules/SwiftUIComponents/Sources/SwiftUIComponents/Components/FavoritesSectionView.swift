@@ -6,7 +6,7 @@ public struct FavoritesSectionView: View {
     @Environment(\.widthSizeClass) private var widthSizeClass
 
     private var posterWidth: CGFloat {
-        ImageDimens.posterRailWidth(widthSizeClass)
+        ImageDimens.posterWidth(widthSizeClass)
     }
 
     private let favorites: SwiftSectionState<SwiftProfileShow>

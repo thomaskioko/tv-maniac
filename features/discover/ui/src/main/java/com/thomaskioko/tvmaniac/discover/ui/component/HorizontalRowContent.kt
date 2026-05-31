@@ -70,7 +70,7 @@ internal fun HorizontalRowContent(
                             onClick = { onItemClicked(tvShow.traktId) },
                             modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.traktId)),
                             title = tvShow.title,
-                            imageWidth = Layout.posterRailWidth,
+                            imageWidth = Layout.posterWidth,
                             isInLibrary = tvShow.inLibrary,
                         )
                     }

@@ -55,7 +55,7 @@ internal fun ContinueWatchingListItem(
             PosterCard(
                 imageUrl = item.posterImageUrl,
                 onClick = { onItemClicked(item.traktId) },
-                imageWidth = Layout.posterRailWidth,
+                imageWidth = Layout.posterWidth,
                 title = item.title,
                 shape = RectangleShape,
             )

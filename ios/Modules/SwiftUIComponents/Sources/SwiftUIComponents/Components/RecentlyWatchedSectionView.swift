@@ -6,7 +6,7 @@ public struct RecentlyWatchedSectionView: View {
     @Environment(\.widthSizeClass) private var widthSizeClass
 
     private var posterWidth: CGFloat {
-        ImageDimens.posterRailWidth(widthSizeClass)
+        ImageDimens.posterWidth(widthSizeClass)
     }
 
     private let recentlyWatched: SwiftSectionState<SwiftProfileRecentShow>

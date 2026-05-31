@@ -45,7 +45,7 @@ public object Layout {
             else -> 3
         }
 
-    public val posterRailWidth: Dp
+    public val posterWidth: Dp
         @Composable @ReadOnlyComposable
         get() = when (LocalWindowWidthSizeClass.current) {
             WindowWidthSizeClass.Medium -> 140.dp

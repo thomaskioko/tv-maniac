@@ -50,7 +50,7 @@ internal fun RecentlyWatchedSection(
         modifier = modifier,
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.RECENTLY_WATCHED_SECTION_KEY),
     ) {
-        val posterWidth = Layout.posterRailWidth
+        val posterWidth = Layout.posterWidth
 
         when (recentlyWatched) {
             SectionState.Loading -> SkeletonRow(posterWidth = posterWidth)

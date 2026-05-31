@@ -74,7 +74,7 @@ internal fun ProgressSection(
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.PROGRESS_SECTION_KEY),
         contentSpacing = 0.dp,
     ) {
-        val posterWidth = Layout.posterRailWidth
+        val posterWidth = Layout.posterWidth
 
         Column {
             FilterRow(

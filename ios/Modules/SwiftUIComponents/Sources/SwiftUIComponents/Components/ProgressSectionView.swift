@@ -7,7 +7,7 @@ public struct ProgressSectionView: View {
     @SwiftUI.State private var filter: ProgressFilter = .completed
 
     private var posterWidth: CGFloat {
-        ImageDimens.posterRailWidth(widthSizeClass)
+        ImageDimens.posterWidth(widthSizeClass)
     }
 
     private let inProgress: SwiftSectionState<SwiftProfileShow>

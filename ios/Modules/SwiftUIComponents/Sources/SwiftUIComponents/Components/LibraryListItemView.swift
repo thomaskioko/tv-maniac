@@ -49,7 +49,7 @@ public struct LibraryListItemView: View {
                 PosterItemView(
                     title: item.title,
                     posterUrl: item.posterUrl,
-                    posterWidth: ImageDimens.posterRailWidth(widthSizeClass),
+                    posterWidth: ImageDimens.posterWidth(widthSizeClass),
                     aspectRatio: ImageDimens.posterAspect
                 )
 

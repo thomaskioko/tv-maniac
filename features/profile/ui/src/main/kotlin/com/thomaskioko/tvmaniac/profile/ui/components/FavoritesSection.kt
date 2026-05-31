@@ -46,7 +46,7 @@ internal fun FavoritesSection(
         modifier = modifier,
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.FAVORITES_SECTION_KEY),
     ) {
-        val posterWidth = Layout.posterRailWidth
+        val posterWidth = Layout.posterWidth
 
         when (favorites) {
             SectionState.Loading -> SkeletonRow(posterWidth = posterWidth)
