@@ -304,6 +304,7 @@
     <string name="profile_filter_in_progress">In Progress</string>
     <string name="profile_progress_empty">Nothing here yet</string>
     <string name="profile_recently_watched_title">Recently Watched</string>
+    <string name="profile_favorites_title">Favorites</string>
     <string name="profile_time_months">Months</string>
     <string name="profile_time_days">Days</string>
     <string name="profile_time_hours">Hours</string>

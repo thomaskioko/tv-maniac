@@ -80,6 +80,8 @@ private extension ProfileState {
             completed: completed.toSwiftShowSectionState(),
             recentlyWatchedTitle: labels.recentlyWatchedTitle,
             recentlyWatched: recentlyWatched.toSwiftRecentSectionState(),
+            favoritesTitle: labels.favoritesTitle,
+            favorites: favorites.toSwiftShowSectionState(),
             unauthenticatedTitle: labels.unauthenticatedTitle,
             footerDescription: labels.footerDescription,
             signInLabel: labels.signInButton,

@@ -273,6 +273,7 @@
     <string name="profile_filter_in_progress">En cours</string>
     <string name="profile_progress_empty">Rien pour le moment</string>
     <string name="profile_recently_watched_title">Vu récemment</string>
+    <string name="profile_favorites_title">Favoris</string>
     <string name="profile_time_months">Mois</string>
     <string name="profile_time_days">Jours</string>
     <string name="profile_time_hours">Heures</string>

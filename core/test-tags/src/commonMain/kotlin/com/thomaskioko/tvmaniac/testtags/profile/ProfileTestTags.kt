@@ -16,6 +16,9 @@ public object ProfileTestTags {
     public const val RECENTLY_WATCHED_SECTION_KEY: String = "profile_recently_watched"
     public const val RECENTLY_WATCHED_ROW_TEST_TAG: String = "profile_recently_watched_row"
     public const val RECENTLY_WATCHED_RETRY_TEST_TAG: String = "profile_recently_watched_retry"
+    public const val FAVORITES_SECTION_KEY: String = "profile_favorites"
+    public const val FAVORITES_ROW_TEST_TAG: String = "profile_favorites_row"
+    public const val FAVORITES_RETRY_TEST_TAG: String = "profile_favorites_retry"
 
     public fun userCard(slug: String): String = "profile_user_card_$slug"
     public fun listCard(id: Long): String = "profile_list_card_$id"

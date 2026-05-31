@@ -159,6 +159,8 @@ class ProfileScreenTest: SnapshotTestCase {
             completed: .content(sampleShows),
             recentlyWatchedTitle: "Recently Watched",
             recentlyWatched: .content(sampleRecentShows),
+            favoritesTitle: "Favorites",
+            favorites: .content(sampleShows),
             unauthenticatedTitle: "Track your shows",
             footerDescription: "Sign in to sync your data.",
             signInLabel: "Sign In with Trakt",
@@ -297,5 +299,38 @@ class ProfileScreenTest: SnapshotTestCase {
         recentlyWatchedSection(recentlyWatched: .error("Failed to load history"))
             .appPreview()
             .assertSnapshot(layout: .sizeThatFits, testName: "RecentlyWatchedSection_Error")
+    }
+
+    // MARK: - Favorites Section
+
+    private func favoritesSection(
+        favorites: SwiftSectionState<SwiftProfileShow>
+    ) -> some View {
+        FavoritesSectionView(
+            favorites: favorites,
+            title: "Favorites",
+            retryLabel: "Retry",
+            onShowClick: { _ in },
+            onRetry: {}
+        )
+        .padding(.vertical)
+    }
+
+    func test_FavoritesSection_Content() {
+        favoritesSection(favorites: .content(sampleShows))
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "FavoritesSection_Content")
+    }
+
+    func test_FavoritesSection_Loading() {
+        favoritesSection(favorites: .loading)
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "FavoritesSection_Loading")
+    }
+
+    func test_FavoritesSection_Error() {
+        favoritesSection(favorites: .error("Failed to load favorites"))
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "FavoritesSection_Error")
     }
 }
