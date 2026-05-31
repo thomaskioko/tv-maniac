@@ -3,19 +3,20 @@ import SwiftUI
 
 public struct BackdropPosterCard: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let title: String
     private let posterUrl: String?
     private let isInLibrary: Bool
-    private let cardWidth: CGFloat
-    private let cardHeight: CGFloat
+    private let cardWidth: CGFloat?
+    private let cardHeight: CGFloat?
 
     public init(
         title: String,
         posterUrl: String?,
         isInLibrary: Bool = false,
-        cardWidth: CGFloat = 240,
-        cardHeight: CGFloat = 140
+        cardWidth: CGFloat? = nil,
+        cardHeight: CGFloat? = nil
     ) {
         self.title = title
         self.posterUrl = posterUrl
@@ -25,13 +26,15 @@ public struct BackdropPosterCard: View {
     }
 
     public var body: some View {
+        let resolvedWidth = cardWidth ?? ImageDimens.backdropCardWidth(widthSizeClass)
+        let resolvedHeight = cardHeight ?? (resolvedWidth / ImageDimens.backdropAspect)
         PosterItemView(
             title: nil,
             posterUrl: posterUrl,
             isInLibrary: isInLibrary,
             imageType: .poster,
-            posterWidth: cardWidth,
-            posterHeight: cardHeight,
+            posterWidth: resolvedWidth,
+            posterHeight: resolvedHeight,
             posterRadius: 0
         )
         .overlay(alignment: .bottom) {

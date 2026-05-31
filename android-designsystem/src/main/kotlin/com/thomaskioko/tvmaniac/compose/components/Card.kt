@@ -35,6 +35,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
@@ -44,7 +46,7 @@ public fun PosterCard(
     onClick: () -> Unit = {},
     title: String? = null,
     imageWidth: Dp = 120.dp,
-    aspectRatio: Float = 2 / 3f,
+    aspectRatio: Float = ImageDimens.PosterAspect,
     contentScale: ContentScale = ContentScale.Crop,
     shape: Shape = RectangleShape,
     isInLibrary: Boolean = false,
@@ -115,7 +117,7 @@ public fun PosterBackdropCard(
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
     imageWidth: Dp = 120.dp,
-    aspectRatio: Float = 2 / 3f,
+    aspectRatio: Float = ImageDimens.PosterAspect,
     shape: Shape = RectangleShape,
 ) {
     val surface = MaterialTheme.colorScheme.surface
@@ -209,7 +211,8 @@ public fun CastCard(
     name: String,
     characterName: String,
     modifier: Modifier = Modifier,
-    height: Dp = 160.dp,
+    width: Dp = Layout.castCardWidth,
+    height: Dp = Layout.castCardWidth / ImageDimens.CastAspect,
 ) {
     Card(
         modifier = modifier,
@@ -219,7 +222,7 @@ public fun CastCard(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .size(width = 120.dp, height = height),
+                .size(width = width, height = height),
             contentAlignment = Alignment.BottomStart,
         ) {
             CastPlaceholder(

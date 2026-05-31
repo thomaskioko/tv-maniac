@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -24,6 +23,8 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_start_watching_empty
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.startwatching.presenter.RefreshStartWatching
@@ -84,13 +85,13 @@ private fun StartWatchingGrid(
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        columns = GridCells.Fixed(Layout.posterColumns),
+        verticalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
+        horizontalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
         modifier = modifier
             .fillMaxSize()
             .testTag(StartWatchingTestTags.GRID)
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = ImageDimens.GridItemSpacing),
     ) {
         items(
             items = items,

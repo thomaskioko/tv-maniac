@@ -3,6 +3,7 @@ import SwiftUI
 
 public struct LibraryListItemView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let item: SwiftLibraryItem
     private let onItemClicked: () -> Void
@@ -48,8 +49,8 @@ public struct LibraryListItemView: View {
                 PosterItemView(
                     title: item.title,
                     posterUrl: item.posterUrl,
-                    posterWidth: 120,
-                    posterHeight: 200
+                    posterWidth: ImageDimens.posterRailWidth(widthSizeClass),
+                    aspectRatio: ImageDimens.posterAspect
                 )
 
                 VStack(alignment: .leading, spacing: theme.spacing.xSmall) {

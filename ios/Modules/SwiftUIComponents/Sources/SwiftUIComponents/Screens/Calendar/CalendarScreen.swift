@@ -35,6 +35,7 @@ public struct CalendarPageContent: View {
     }
 
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let state: State
     private let moreEpisodesFormat: (Int32) -> String
@@ -182,8 +183,8 @@ public struct CalendarPageContent: View {
                     PosterItemView(
                         title: nil,
                         posterUrl: episode.posterUrl,
-                        posterWidth: 90,
-                        posterHeight: 120,
+                        posterWidth: ImageDimens.posterRailWidth(widthSizeClass),
+                        aspectRatio: ImageDimens.posterAspect,
                         posterRadius: 0
                     )
 

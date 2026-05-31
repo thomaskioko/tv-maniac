@@ -18,10 +18,3 @@ public struct MyShowsGridItem: Identifiable, Equatable {
         self.watchProgress = watchProgress
     }
 }
-
-enum MyShowsScreenConstants {
-    static let spacing: CGFloat = 4
-    static let columns: [GridItem] = [
-        GridItem(.adaptive(minimum: 100), spacing: spacing),
-    ]
-}

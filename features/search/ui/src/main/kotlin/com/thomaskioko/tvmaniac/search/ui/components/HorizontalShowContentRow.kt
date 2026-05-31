@@ -23,6 +23,8 @@ import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
@@ -74,8 +76,8 @@ internal fun HorizontalShowContentRow(
                 PosterBackdropCard(
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
-                    imageWidth = 240.dp,
-                    aspectRatio = 4 / 3f,
+                    imageWidth = Layout.backdropCardWidth,
+                    aspectRatio = ImageDimens.BackdropAspect,
                     onClick = { onItemClicked(tvShow.traktId) },
                 )
             }

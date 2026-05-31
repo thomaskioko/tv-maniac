@@ -3,7 +3,12 @@ import SwiftUI
 
 public struct ProgressSectionView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
     @SwiftUI.State private var filter: ProgressFilter = .completed
+
+    private var posterWidth: CGFloat {
+        ImageDimens.posterRailWidth(widthSizeClass)
+    }
 
     private let inProgress: SwiftSectionState<SwiftProfileShow>
     private let completed: SwiftSectionState<SwiftProfileShow>
@@ -89,7 +94,7 @@ public struct ProgressSectionView: View {
                 HStack(spacing: theme.spacing.small) {
                     ForEach(0 ..< 3, id: \.self) { _ in
                         ShimmerView(cornerRadius: theme.shapes.medium)
-                            .frame(width: 120, height: 180)
+                            .frame(width: posterWidth, height: posterWidth / ImageDimens.posterAspect)
                     }
                 }
                 .padding(.horizontal, theme.spacing.medium)
@@ -108,8 +113,8 @@ public struct ProgressSectionView: View {
                             PosterItemView(
                                 title: show.title,
                                 posterUrl: show.posterUrl,
-                                posterWidth: 120,
-                                posterHeight: 180,
+                                posterWidth: posterWidth,
+                                aspectRatio: ImageDimens.posterAspect,
                                 posterRadius: theme.shapes.medium
                             )
                         }

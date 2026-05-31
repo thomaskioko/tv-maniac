@@ -3,6 +3,11 @@ import SwiftUI
 
 public struct RecentlyWatchedSectionView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
+
+    private var posterWidth: CGFloat {
+        ImageDimens.posterRailWidth(widthSizeClass)
+    }
 
     private let recentlyWatched: SwiftSectionState<SwiftProfileRecentShow>
     private let title: String
@@ -43,11 +48,11 @@ public struct RecentlyWatchedSectionView: View {
                     ForEach(0 ..< 3, id: \.self) { _ in
                         VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
                             ShimmerView(cornerRadius: theme.shapes.medium)
-                                .frame(width: 120, height: 180)
+                                .frame(width: posterWidth, height: posterWidth / ImageDimens.posterAspect)
                             ShimmerView(cornerRadius: theme.shapes.small)
-                                .frame(width: 120, height: 14)
+                                .frame(width: posterWidth, height: 14)
                             ShimmerView(cornerRadius: theme.shapes.small)
-                                .frame(width: 60, height: 12)
+                                .frame(width: posterWidth * 0.5, height: 12)
                         }
                     }
                 }
@@ -81,8 +86,8 @@ public struct RecentlyWatchedSectionView: View {
             PosterItemView(
                 title: show.title,
                 posterUrl: show.posterUrl,
-                posterWidth: 120,
-                aspectRatio: 2.0 / 3.0,
+                posterWidth: posterWidth,
+                aspectRatio: ImageDimens.posterAspect,
                 posterRadius: theme.shapes.medium
             )
             .padding(.top, theme.spacing.xxSmall)
@@ -97,7 +102,7 @@ public struct RecentlyWatchedSectionView: View {
                 .foregroundStyle(theme.colors.onSurfaceVariant)
                 .lineLimit(1)
         }
-        .frame(width: 120, alignment: .leading)
+        .frame(width: posterWidth, alignment: .leading)
     }
 }
 

@@ -247,25 +247,25 @@ class ProfileScreenTest: SnapshotTestCase {
     func test_ProgressSection_Content() {
         progressSection(inProgress: .content(sampleShows), completed: .content(sampleShows))
             .appPreview()
-            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_Content")
+            .assertSnapshot(layout: .defaultDevice, testName: "ProgressSection_Content")
     }
 
     func test_ProgressSection_Loading() {
         progressSection(inProgress: .loading, completed: .loading)
             .appPreview()
-            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_Loading")
+            .assertSnapshot(layout: .defaultDevice, testName: "ProgressSection_Loading")
     }
 
     func test_ProgressSection_Error() {
         progressSection(inProgress: .content(sampleShows), completed: .error("Failed to load shows"))
             .appPreview()
-            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_Error")
+            .assertSnapshot(layout: .defaultDevice, testName: "ProgressSection_Error")
     }
 
     func test_ProgressSection_EmptyFilter() {
         progressSection(inProgress: .content(sampleShows), completed: .empty)
             .appPreview()
-            .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_EmptyFilter")
+            .assertSnapshot(layout: .defaultDevice, testName: "ProgressSection_EmptyFilter")
     }
 
     // MARK: - Recently Watched Section
@@ -286,19 +286,19 @@ class ProfileScreenTest: SnapshotTestCase {
     func test_RecentlyWatchedSection_Content() {
         recentlyWatchedSection(recentlyWatched: .content(sampleRecentShows))
             .appPreview()
-            .assertSnapshot(layout: .sizeThatFits, testName: "RecentlyWatchedSection_Content")
+            .assertSnapshot(layout: .defaultDevice, testName: "RecentlyWatchedSection_Content")
     }
 
     func test_RecentlyWatchedSection_Loading() {
         recentlyWatchedSection(recentlyWatched: .loading)
             .appPreview()
-            .assertSnapshot(layout: .sizeThatFits, testName: "RecentlyWatchedSection_Loading")
+            .assertSnapshot(layout: .defaultDevice, testName: "RecentlyWatchedSection_Loading")
     }
 
     func test_RecentlyWatchedSection_Error() {
         recentlyWatchedSection(recentlyWatched: .error("Failed to load history"))
             .appPreview()
-            .assertSnapshot(layout: .sizeThatFits, testName: "RecentlyWatchedSection_Error")
+            .assertSnapshot(layout: .defaultDevice, testName: "RecentlyWatchedSection_Error")
     }
 
     // MARK: - Favorites Section

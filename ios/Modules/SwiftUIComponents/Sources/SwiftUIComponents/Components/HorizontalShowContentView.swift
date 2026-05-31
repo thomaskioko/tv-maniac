@@ -9,6 +9,7 @@ public enum CardStyle {
 
 public struct HorizontalShowContentView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let title: String
     private let subtitle: String?
@@ -84,7 +85,9 @@ public struct HorizontalShowContentView: View {
             PosterItemView(
                 title: item.title,
                 posterUrl: item.posterUrl,
-                isInLibrary: item.inLibrary
+                isInLibrary: item.inLibrary,
+                posterWidth: ImageDimens.posterRailWidth(widthSizeClass),
+                aspectRatio: ImageDimens.posterAspect
             )
         case .backdrop:
             BackdropPosterCard(

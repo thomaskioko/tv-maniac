@@ -82,6 +82,7 @@ struct iOSApp: App {
                     }
                 }
                 .animation(.spring(), value: toastManager.toast)
+                .provideWidthSizeClass()
                 .onAppear {
                     setupAuthCoordinator()
                     appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)

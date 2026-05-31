@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.InlineSectionError
@@ -20,15 +21,14 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-
-private val PosterWidth = 120.dp
-private val PosterHeight = 180.dp
 
 @Composable
 internal fun FavoritesSection(
@@ -46,8 +46,10 @@ internal fun FavoritesSection(
         modifier = modifier,
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.FAVORITES_SECTION_KEY),
     ) {
+        val posterWidth = Layout.posterRailWidth
+
         when (favorites) {
-            SectionState.Loading -> SkeletonRow()
+            SectionState.Loading -> SkeletonRow(posterWidth = posterWidth)
             is SectionState.Error -> InlineSectionError(
                 message = favorites.message.message,
                 retryLabel = retryLabel,
@@ -56,6 +58,7 @@ internal fun FavoritesSection(
             )
             is SectionState.Content -> PosterRow(
                 shows = favorites.items,
+                posterWidth = posterWidth,
                 onShowClick = onShowClick,
             )
             SectionState.Empty -> Unit
@@ -66,6 +69,7 @@ internal fun FavoritesSection(
 @Composable
 private fun PosterRow(
     shows: ImmutableList<ProfileShowItem>,
+    posterWidth: Dp,
     onShowClick: (Long) -> Unit,
 ) {
     LazyRow(
@@ -80,7 +84,7 @@ private fun PosterRow(
             PosterCard(
                 imageUrl = show.posterUrl,
                 title = show.title,
-                imageWidth = PosterWidth,
+                imageWidth = posterWidth,
                 shape = MaterialTheme.shapes.medium,
                 onClick = { onShowClick(show.traktId) },
                 modifier = Modifier.testTag(ProfileTestTags.showCard(show.traktId)),
@@ -90,7 +94,7 @@ private fun PosterRow(
 }
 
 @Composable
-private fun SkeletonRow() {
+private fun SkeletonRow(posterWidth: Dp) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -98,8 +102,8 @@ private fun SkeletonRow() {
         repeat(3) {
             ShimmerBox(
                 modifier = Modifier
-                    .width(PosterWidth)
-                    .height(PosterHeight),
+                    .width(posterWidth)
+                    .height(posterWidth / ImageDimens.PosterAspect),
                 shape = MaterialTheme.shapes.medium,
             )
         }

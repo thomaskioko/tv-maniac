@@ -56,11 +56,14 @@ public struct MoreShowsScreen: View {
     }
 
     @SwiftUI.State private var scrollPosition: Int64?
-    private let columns = [GridItem(.adaptive(minimum: 100), spacing: 4)]
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     public var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVGrid(columns: columns, spacing: theme.spacing.xxSmall) {
+            LazyVGrid(
+                columns: ImageDimens.posterGridColumns(widthSizeClass, spacing: ImageDimens.gridItemSpacing),
+                spacing: ImageDimens.gridItemSpacing
+            ) {
                 ForEach(state.items) { item in
                     PosterItemView(
                         title: item.title,

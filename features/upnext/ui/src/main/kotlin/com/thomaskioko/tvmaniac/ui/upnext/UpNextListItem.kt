@@ -39,6 +39,7 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
@@ -78,7 +79,7 @@ internal fun UpNextListItem(
                 imageUrl = item.imageUrl,
                 onClick = { onItemClicked(item.showTraktId) },
                 title = item.showName,
-                imageWidth = 100.dp,
+                imageWidth = Layout.posterRailWidth,
                 aspectRatio = 100f / 140f,
             )
 
