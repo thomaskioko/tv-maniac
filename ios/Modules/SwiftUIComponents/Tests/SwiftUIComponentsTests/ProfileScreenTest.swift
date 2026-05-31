@@ -126,6 +126,12 @@ class ProfileScreenTest: SnapshotTestCase {
         SwiftProfileShow(id: 3, title: "Stranger Things", posterUrl: nil),
     ]
 
+    private let sampleRecentShows: [SwiftProfileRecentShow] = [
+        SwiftProfileRecentShow(traktId: 1, title: "Breaking Bad", posterUrl: nil, episodeLabel: "S5E14"),
+        SwiftProfileRecentShow(traktId: 2, title: "Game of Thrones", posterUrl: nil, episodeLabel: "S8E3"),
+        SwiftProfileRecentShow(traktId: 3, title: "Stranger Things", posterUrl: nil, episodeLabel: "S4E9"),
+    ]
+
     private func authenticatedState(userLists: SwiftSectionState<SwiftProfileList>) -> ProfileScreen.State {
         ProfileScreen.State(
             title: "Profile",
@@ -151,6 +157,8 @@ class ProfileScreenTest: SnapshotTestCase {
             progressEmptyLabel: "Nothing here yet",
             inProgress: .content(sampleShows),
             completed: .content(sampleShows),
+            recentlyWatchedTitle: "Recently Watched",
+            recentlyWatched: .content(sampleRecentShows),
             unauthenticatedTitle: "Track your shows",
             footerDescription: "Sign in to sync your data.",
             signInLabel: "Sign In with Trakt",
@@ -256,5 +264,38 @@ class ProfileScreenTest: SnapshotTestCase {
         progressSection(inProgress: .content(sampleShows), completed: .empty)
             .appPreview()
             .assertSnapshot(layout: .sizeThatFits, testName: "ProgressSection_EmptyFilter")
+    }
+
+    // MARK: - Recently Watched Section
+
+    private func recentlyWatchedSection(
+        recentlyWatched: SwiftSectionState<SwiftProfileRecentShow>
+    ) -> some View {
+        RecentlyWatchedSectionView(
+            recentlyWatched: recentlyWatched,
+            title: "Recently Watched",
+            retryLabel: "Retry",
+            onShowClick: { _ in },
+            onRetry: {}
+        )
+        .padding(.vertical)
+    }
+
+    func test_RecentlyWatchedSection_Content() {
+        recentlyWatchedSection(recentlyWatched: .content(sampleRecentShows))
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "RecentlyWatchedSection_Content")
+    }
+
+    func test_RecentlyWatchedSection_Loading() {
+        recentlyWatchedSection(recentlyWatched: .loading)
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "RecentlyWatchedSection_Loading")
+    }
+
+    func test_RecentlyWatchedSection_Error() {
+        recentlyWatchedSection(recentlyWatched: .error("Failed to load history"))
+            .appPreview()
+            .assertSnapshot(layout: .sizeThatFits, testName: "RecentlyWatchedSection_Error")
     }
 }

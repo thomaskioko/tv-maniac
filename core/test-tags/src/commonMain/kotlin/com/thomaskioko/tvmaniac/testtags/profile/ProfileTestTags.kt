@@ -13,6 +13,9 @@ public object ProfileTestTags {
     public const val PROGRESS_RETRY_TEST_TAG: String = "profile_progress_retry"
     public const val PROGRESS_COMPLETED_CHIP_TEST_TAG: String = "profile_progress_chip_completed"
     public const val PROGRESS_IN_PROGRESS_CHIP_TEST_TAG: String = "profile_progress_chip_in_progress"
+    public const val RECENTLY_WATCHED_SECTION_KEY: String = "profile_recently_watched"
+    public const val RECENTLY_WATCHED_ROW_TEST_TAG: String = "profile_recently_watched_row"
+    public const val RECENTLY_WATCHED_RETRY_TEST_TAG: String = "profile_recently_watched_retry"
 
     public fun userCard(slug: String): String = "profile_user_card_$slug"
     public fun listCard(id: Long): String = "profile_list_card_$id"
