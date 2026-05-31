@@ -1,5 +1,4 @@
-import DesignSystem
-import SwiftUI
+import Foundation
 
 public enum SwiftEpisodeBadge {
     case premiere
