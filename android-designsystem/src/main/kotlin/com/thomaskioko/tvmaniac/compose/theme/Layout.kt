@@ -1,0 +1,88 @@
+package com.thomaskioko.tvmaniac.compose.theme
+
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
+/**
+ * Current window width size class, provided once at the root from `calculateWindowSizeClass`.
+ * Defaults to [WindowWidthSizeClass.Compact] for previews and tests.
+ */
+public val LocalWindowWidthSizeClass: ProvidableCompositionLocal<WindowWidthSizeClass> =
+    staticCompositionLocalOf { WindowWidthSizeClass.Compact }
+
+/**
+ * Responsive layout tokens keyed on the window width size class. Single source of truth for page
+ * margins, item spacing, grid column counts, and poster/backdrop/cast widths so every screen scales
+ * consistently across phones, foldables, and tablets.
+ */
+public object Layout {
+    public val bodyMargin: Dp
+        @Composable @ReadOnlyComposable
+        get() = when (LocalWindowWidthSizeClass.current) {
+            WindowWidthSizeClass.Medium -> 24.dp
+            WindowWidthSizeClass.Expanded -> 32.dp
+            else -> 16.dp
+        }
+
+    public val gutter: Dp
+        @Composable @ReadOnlyComposable
+        get() = when (LocalWindowWidthSizeClass.current) {
+            WindowWidthSizeClass.Medium -> 12.dp
+            WindowWidthSizeClass.Expanded -> 16.dp
+            else -> 8.dp
+        }
+
+    public val posterColumns: Int
+        @Composable @ReadOnlyComposable
+        get() = when (LocalWindowWidthSizeClass.current) {
+            WindowWidthSizeClass.Medium -> 5
+            WindowWidthSizeClass.Expanded -> 7
+            else -> 3
+        }
+
+    public val posterRailWidth: Dp
+        @Composable @ReadOnlyComposable
+        get() = when (LocalWindowWidthSizeClass.current) {
+            WindowWidthSizeClass.Medium -> 140.dp
+            WindowWidthSizeClass.Expanded -> 160.dp
+            else -> 112.dp
+        }
+
+    public val backdropCardWidth: Dp
+        @Composable @ReadOnlyComposable
+        get() = when (LocalWindowWidthSizeClass.current) {
+            WindowWidthSizeClass.Medium -> 300.dp
+            WindowWidthSizeClass.Expanded -> 360.dp
+            else -> 240.dp
+        }
+
+    public val castCardWidth: Dp
+        @Composable @ReadOnlyComposable
+        get() = when (LocalWindowWidthSizeClass.current) {
+            WindowWidthSizeClass.Medium -> 128.dp
+            WindowWidthSizeClass.Expanded -> 144.dp
+            else -> 112.dp
+        }
+}
+
+/**
+ * Fixed image tokens that do not depend on the window size class: aspect ratios (expressed as
+ * width / height, matching `Modifier.aspectRatio` semantics) and hero/parallax heights.
+ */
+public object ImageDimens {
+    public val PosterAspect: Float = 2f / 3f
+    public val BackdropAspect: Float = 16f / 9f
+    public val CastAspect: Float = 3f / 4f
+
+    public val GridItemSpacing: Dp = 4.dp
+
+    public val HeroDefaultHeight: Dp = 520.dp
+    public val HeroShowDetailsHeight: Dp = 500.dp
+    public val HeroProfileHeight: Dp = 350.dp
+    public val HeroCollapsedHeight: Dp = 120.dp
+}
