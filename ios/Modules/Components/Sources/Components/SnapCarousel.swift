@@ -8,6 +8,7 @@
 
 import DesignSystem
 import Foundation
+import Models
 import SwiftUI
 
 public struct SnapCarousel<Content: View>: View {

@@ -1,4 +1,5 @@
 import DesignSystem
+import Models
 import SwiftUI
 
 public struct GridView: View {

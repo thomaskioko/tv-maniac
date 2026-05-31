@@ -124,17 +124,21 @@ public struct GlassToolbar<LeadingIcon: View, TrailingIcon: View>: View {
     }
 }
 
-struct VisualEffectView: UIViewRepresentable {
+public struct VisualEffectView: UIViewRepresentable {
     let effect: UIVisualEffect
 
-    func makeUIView(context _: UIViewRepresentableContext<Self>) -> UIVisualEffectView {
+    public init(effect: UIVisualEffect) {
+        self.effect = effect
+    }
+
+    public func makeUIView(context _: UIViewRepresentableContext<Self>) -> UIVisualEffectView {
         let view = UIVisualEffectView(effect: effect)
         view.isUserInteractionEnabled = false
         view.contentView.isUserInteractionEnabled = false
         return view
     }
 
-    func updateUIView(_ uiView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) {
+    public func updateUIView(_ uiView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) {
         uiView.effect = effect
     }
 }
