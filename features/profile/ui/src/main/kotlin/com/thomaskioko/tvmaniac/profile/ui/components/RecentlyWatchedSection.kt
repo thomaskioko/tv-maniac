@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.InlineSectionError
@@ -24,15 +26,13 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-
-private val PosterWidth = 120.dp
-private val PosterHeight = 180.dp
 
 @Composable
 internal fun RecentlyWatchedSection(
@@ -50,8 +50,10 @@ internal fun RecentlyWatchedSection(
         modifier = modifier,
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.RECENTLY_WATCHED_SECTION_KEY),
     ) {
+        val posterWidth = ImageType.Poster.width
+
         when (recentlyWatched) {
-            SectionState.Loading -> SkeletonRow()
+            SectionState.Loading -> SkeletonRow(posterWidth = posterWidth)
             is SectionState.Error -> InlineSectionError(
                 message = recentlyWatched.message.message,
                 retryLabel = retryLabel,
@@ -60,6 +62,7 @@ internal fun RecentlyWatchedSection(
             )
             is SectionState.Content -> EpisodeRow(
                 items = recentlyWatched.items,
+                posterWidth = posterWidth,
                 onShowClick = onShowClick,
             )
             SectionState.Empty -> Unit
@@ -70,6 +73,7 @@ internal fun RecentlyWatchedSection(
 @Composable
 private fun EpisodeRow(
     items: ImmutableList<ProfileRecentItem>,
+    posterWidth: Dp,
     onShowClick: (Long) -> Unit,
 ) {
     LazyRow(
@@ -81,7 +85,7 @@ private fun EpisodeRow(
             items = items,
             key = { "${it.traktId}-${it.episodeLabel}" },
         ) { item ->
-            EpisodeCard(item = item, onShowClick = onShowClick)
+            EpisodeCard(item = item, posterWidth = posterWidth, onShowClick = onShowClick)
         }
     }
 }
@@ -89,13 +93,14 @@ private fun EpisodeRow(
 @Composable
 private fun EpisodeCard(
     item: ProfileRecentItem,
+    posterWidth: Dp,
     onShowClick: (Long) -> Unit,
 ) {
-    Column(modifier = Modifier.width(PosterWidth)) {
+    Column(modifier = Modifier.width(posterWidth)) {
         PosterCard(
             imageUrl = item.posterUrl,
             title = item.title,
-            imageWidth = PosterWidth,
+            imageWidth = posterWidth,
             shape = MaterialTheme.shapes.medium,
             onClick = { onShowClick(item.traktId) },
             modifier = Modifier.testTag(ProfileTestTags.showCard(item.traktId)),
@@ -122,17 +127,17 @@ private fun EpisodeCard(
 }
 
 @Composable
-private fun SkeletonRow() {
+private fun SkeletonRow(posterWidth: Dp) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         repeat(3) {
-            Column(modifier = Modifier.width(PosterWidth)) {
+            Column(modifier = Modifier.width(posterWidth)) {
                 ShimmerBox(
                     modifier = Modifier
-                        .width(PosterWidth)
-                        .height(PosterHeight),
+                        .width(posterWidth)
+                        .aspectRatio(ImageType.Poster.aspect),
                     shape = MaterialTheme.shapes.medium,
                 )
 
@@ -140,7 +145,7 @@ private fun SkeletonRow() {
 
                 ShimmerBox(
                     modifier = Modifier
-                        .width(PosterWidth)
+                        .width(posterWidth)
                         .height(14.dp),
                     shape = MaterialTheme.shapes.small,
                 )
@@ -149,7 +154,7 @@ private fun SkeletonRow() {
 
                 ShimmerBox(
                     modifier = Modifier
-                        .width(60.dp)
+                        .width(posterWidth * 0.5f)
                         .height(12.dp),
                     shape = MaterialTheme.shapes.small,
                 )

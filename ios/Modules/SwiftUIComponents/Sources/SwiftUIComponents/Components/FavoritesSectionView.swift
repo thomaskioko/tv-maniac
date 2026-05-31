@@ -3,6 +3,11 @@ import SwiftUI
 
 public struct FavoritesSectionView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
+
+    private var posterWidth: CGFloat {
+        ImageType.poster.width(widthSizeClass)
+    }
 
     private let favorites: SwiftSectionState<SwiftProfileShow>
     private let title: String
@@ -42,7 +47,7 @@ public struct FavoritesSectionView: View {
                 HStack(spacing: theme.spacing.small) {
                     ForEach(0 ..< 3, id: \.self) { _ in
                         ShimmerView(cornerRadius: theme.shapes.medium)
-                            .frame(width: 120, height: 180)
+                            .frame(width: posterWidth, height: posterWidth / ImageType.poster.aspect)
                     }
                 }
                 .padding(.horizontal, theme.spacing.medium)
@@ -61,8 +66,8 @@ public struct FavoritesSectionView: View {
                             PosterItemView(
                                 title: show.title,
                                 posterUrl: show.posterUrl,
-                                posterWidth: 120,
-                                posterHeight: 180,
+                                posterWidth: posterWidth,
+                                aspectRatio: ImageType.poster.aspect,
                                 posterRadius: theme.shapes.medium
                             )
                         }

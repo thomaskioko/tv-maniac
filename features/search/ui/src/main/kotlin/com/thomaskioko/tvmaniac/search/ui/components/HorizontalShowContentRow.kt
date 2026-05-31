@@ -74,8 +74,6 @@ internal fun HorizontalShowContentRow(
                 PosterBackdropCard(
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
-                    imageWidth = 240.dp,
-                    aspectRatio = 4 / 3f,
                     onClick = { onItemClicked(tvShow.traktId) },
                 )
             }

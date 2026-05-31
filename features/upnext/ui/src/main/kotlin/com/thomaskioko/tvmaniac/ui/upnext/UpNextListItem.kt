@@ -78,7 +78,6 @@ internal fun UpNextListItem(
                 imageUrl = item.imageUrl,
                 onClick = { onItemClicked(item.showTraktId) },
                 title = item.showName,
-                imageWidth = 100.dp,
                 aspectRatio = 100f / 140f,
             )
 

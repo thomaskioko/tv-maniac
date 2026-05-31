@@ -43,6 +43,7 @@ public struct LibraryScreen: View {
     }
 
     @Environment(\.appTheme) private var appTheme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let state: State
     private let emptySearchResultFormat: ((String) -> String)?
@@ -207,7 +208,10 @@ public struct LibraryScreen: View {
 
     private var gridContent: some View {
         ScrollView(showsIndicators: false) {
-            LazyVGrid(columns: LibraryScreenConstants.columns, spacing: LibraryScreenConstants.spacing) {
+            LazyVGrid(
+                columns: ImageDimens.posterGridColumns(widthSizeClass, spacing: ImageDimens.gridItemSpacing),
+                spacing: ImageDimens.gridItemSpacing
+            ) {
                 ForEach(state.gridItems) { item in
                     PosterItemView(
                         title: item.title,
@@ -281,11 +285,4 @@ public struct LibraryGridItem: Identifiable, Equatable {
         self.title = title
         self.posterImageUrl = posterImageUrl
     }
-}
-
-private enum LibraryScreenConstants {
-    static let spacing: CGFloat = 4
-    static let columns: [GridItem] = [
-        GridItem(.adaptive(minimum: 100), spacing: spacing),
-    ]
 }

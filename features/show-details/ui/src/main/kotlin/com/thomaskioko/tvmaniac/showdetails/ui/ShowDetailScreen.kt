@@ -837,7 +837,6 @@ private fun HorizontalRowContent(
                     imageUrl = tvShow.posterImageUrl,
                     onClick = { onShowClicked(tvShow.traktId) },
                     title = tvShow.title,
-                    imageWidth = 84.dp,
                 )
             }
         }

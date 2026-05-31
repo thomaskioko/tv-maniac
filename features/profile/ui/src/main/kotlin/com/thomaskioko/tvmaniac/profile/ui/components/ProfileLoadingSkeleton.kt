@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 
 @Composable
 internal fun ProfileLoadingSkeleton(
@@ -42,7 +43,7 @@ private fun ProfileHeaderSkeleton(
     ShimmerBox(
         modifier = modifier
             .fillMaxWidth()
-            .height(350.dp),
+            .height(ImageDimens.HeroProfileHeight),
         shape = RectangleShape,
     )
 }

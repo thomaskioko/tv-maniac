@@ -3,11 +3,12 @@ import SwiftUI
 
 public struct GridView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
     private let spacing: CGFloat?
-    private let columns: [GridItem]
+    private let columns: [GridItem]?
     private let items: [ShowPosterImage]
     private var onAction: (Int64) -> Void
 
@@ -16,7 +17,7 @@ public struct GridView: View {
         posterWidth: CGFloat = 130,
         posterHeight: CGFloat = 200,
         spacing: CGFloat? = nil,
-        columns: [GridItem] = [GridItem(.adaptive(minimum: 100), spacing: 4)],
+        columns: [GridItem]? = nil,
         onAction: @escaping (Int64) -> Void
     ) {
         self.posterWidth = posterWidth
@@ -28,8 +29,9 @@ public struct GridView: View {
     }
 
     public var body: some View {
+        let resolvedColumns = columns ?? ImageDimens.posterGridColumns(widthSizeClass, spacing: ImageDimens.gridItemSpacing)
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVGrid(columns: columns, spacing: spacing ?? theme.spacing.xxSmall) {
+            LazyVGrid(columns: resolvedColumns, spacing: spacing ?? theme.spacing.xxSmall) {
                 ForEach(items, id: \.traktId) { item in
                     PosterItemView(
                         title: item.title,

@@ -319,7 +319,6 @@ private fun CalendarEpisodeCard(
                     imageUrl = episode.posterUrl,
                     onClick = onClick,
                     modifier = Modifier.fillMaxHeight(),
-                    imageWidth = 90.dp,
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))

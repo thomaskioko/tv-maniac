@@ -54,6 +54,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
@@ -364,7 +365,7 @@ private fun HeaderContent(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(350.dp)
+            .height(ImageDimens.HeroProfileHeight)
             .clipToBounds()
             .offset { headerOffset },
         contentAlignment = Alignment.BottomCenter,

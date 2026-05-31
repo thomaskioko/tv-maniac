@@ -225,6 +225,7 @@ dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.ktor.core)
     implementation(libs.firebase.config)
+    implementation(libs.androidx.compose.material3.windowsize)
 
     testRuntimeOnly(projects.core.notifications.implementation)
 

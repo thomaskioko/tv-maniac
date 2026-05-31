@@ -3,6 +3,7 @@ import SwiftUI
 
 public struct SearchItemView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let title: String
     private let overview: String?
@@ -32,8 +33,8 @@ public struct SearchItemView: View {
             PosterItemView(
                 title: nil,
                 posterUrl: imageUrl,
-                posterWidth: 100,
-                posterHeight: 125,
+                posterWidth: ImageType.poster.width(widthSizeClass),
+                aspectRatio: ImageType.poster.aspect,
                 posterRadius: 0
             )
 

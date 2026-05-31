@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.InlineSectionError
@@ -39,15 +41,13 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-
-private val PosterWidth = 120.dp
-private val PosterHeight = 180.dp
 
 internal enum class ProgressFilter { COMPLETED, IN_PROGRESS }
 
@@ -74,6 +74,8 @@ internal fun ProgressSection(
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.PROGRESS_SECTION_KEY),
         contentSpacing = 0.dp,
     ) {
+        val posterWidth = ImageType.Poster.width
+
         Column {
             FilterRow(
                 selected = selectedFilter,
@@ -90,7 +92,7 @@ internal fun ProgressSection(
             }
 
             when (sectionState) {
-                SectionState.Loading -> PosterSkeletonRow()
+                SectionState.Loading -> PosterSkeletonRow(posterWidth = posterWidth)
                 is SectionState.Error -> InlineSectionError(
                     message = sectionState.message.message,
                     retryLabel = retryLabel,
@@ -99,6 +101,7 @@ internal fun ProgressSection(
                 )
                 is SectionState.Content -> PosterRow(
                     shows = sectionState.items,
+                    posterWidth = posterWidth,
                     onShowClick = onShowClick,
                 )
                 SectionState.Empty -> EmptyLabel(label = emptyLabel)
@@ -171,6 +174,7 @@ private fun ProgressChip(
 @Composable
 private fun PosterRow(
     shows: ImmutableList<ProfileShowItem>,
+    posterWidth: Dp,
     onShowClick: (Long) -> Unit,
 ) {
     LazyRow(
@@ -185,7 +189,7 @@ private fun PosterRow(
             PosterCard(
                 imageUrl = show.posterUrl,
                 title = show.title,
-                imageWidth = PosterWidth,
+                imageWidth = posterWidth,
                 shape = MaterialTheme.shapes.medium,
                 onClick = { onShowClick(show.traktId) },
                 modifier = Modifier.testTag(ProfileTestTags.showCard(show.traktId)),
@@ -195,7 +199,7 @@ private fun PosterRow(
 }
 
 @Composable
-private fun PosterSkeletonRow() {
+private fun PosterSkeletonRow(posterWidth: Dp) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -203,8 +207,8 @@ private fun PosterSkeletonRow() {
         repeat(3) {
             ShimmerBox(
                 modifier = Modifier
-                    .width(PosterWidth)
-                    .height(PosterHeight),
+                    .width(posterWidth)
+                    .aspectRatio(ImageType.Poster.aspect),
                 shape = MaterialTheme.shapes.medium,
             )
         }

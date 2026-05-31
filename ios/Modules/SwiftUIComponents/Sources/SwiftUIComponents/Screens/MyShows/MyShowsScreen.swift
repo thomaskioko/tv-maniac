@@ -52,6 +52,7 @@ public struct MyShowsScreen: View {
     }
 
     @Environment(\.appTheme) private var appTheme
+    @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let state: State
     private let onShowClicked: (Int64) -> Void
@@ -188,7 +189,10 @@ public struct MyShowsScreen: View {
     }
 
     private func gridItemsView(items: [MyShowsGridItem]) -> some View {
-        LazyVGrid(columns: MyShowsScreenConstants.columns, spacing: MyShowsScreenConstants.spacing) {
+        LazyVGrid(
+            columns: ImageDimens.posterGridColumns(widthSizeClass, spacing: ImageDimens.gridItemSpacing),
+            spacing: ImageDimens.gridItemSpacing
+        ) {
             ForEach(items) { item in
                 ZStack(alignment: .bottom) {
                     PosterItemView(

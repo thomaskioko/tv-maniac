@@ -3,6 +3,15 @@ import SwiftUI
 
 public struct CastCardView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.widthSizeClass) private var widthSizeClass
+
+    private var cardWidth: CGFloat {
+        ImageType.cast.width(widthSizeClass)
+    }
+
+    private var cardHeight: CGFloat {
+        cardWidth / ImageType.cast.aspect
+    }
 
     private let profileUrl: String?
     private let name: String
@@ -25,11 +34,11 @@ public struct CastCardView: View {
         LazyResizableImage(
             url: profileUrl,
             imageType: .profile,
-            size: CGSize(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight),
+            size: CGSize(width: cardWidth, height: cardHeight),
             placeholderIcon: "person"
         )
         .aspectRatio(contentMode: .fill)
-        .frame(width: DimensionConstants.profileWidth, height: DimensionConstants.profileHeight)
+        .frame(width: cardWidth, height: cardHeight)
     }
 
     private var nameOverlay: some View {
@@ -58,11 +67,6 @@ public struct CastCardView: View {
         .padding(.bottom, theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-}
-
-private enum DimensionConstants {
-    static let profileWidth: CGFloat = 120
-    static let profileHeight: CGFloat = 160
 }
 
 #Preview {

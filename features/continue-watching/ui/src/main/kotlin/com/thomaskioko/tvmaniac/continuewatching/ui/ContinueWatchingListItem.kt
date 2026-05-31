@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,7 +54,6 @@ internal fun ContinueWatchingListItem(
             PosterCard(
                 imageUrl = item.posterImageUrl,
                 onClick = { onItemClicked(item.traktId) },
-                imageWidth = 100.dp,
                 title = item.title,
                 shape = RectangleShape,
             )
@@ -182,8 +182,10 @@ internal fun ContinueWatchingListItem(
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ContinueWatchingListItemPreview() {
-    ContinueWatchingListItem(
-        item = continueWatchingItems[0],
-        onItemClicked = {},
-    )
+    Box {
+        ContinueWatchingListItem(
+            item = continueWatchingItems[0],
+            onItemClicked = {},
+        )
+    }
 }

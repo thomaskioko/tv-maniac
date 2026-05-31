@@ -56,7 +56,6 @@ internal fun LibraryListItem(
             PosterCard(
                 imageUrl = item.posterImageUrl,
                 title = item.title,
-                imageWidth = 120.dp,
                 aspectRatio = 120f / 200f,
             )
 
