@@ -28,6 +28,8 @@ public struct ProfileScreen: View {
         public let completed: SwiftSectionState<SwiftProfileShow>
         public let recentlyWatchedTitle: String
         public let recentlyWatched: SwiftSectionState<SwiftProfileRecentShow>
+        public let favoritesTitle: String
+        public let favorites: SwiftSectionState<SwiftProfileShow>
         public let unauthenticatedTitle: String
         public let footerDescription: String
         public let signInLabel: String
@@ -59,6 +61,8 @@ public struct ProfileScreen: View {
             completed: SwiftSectionState<SwiftProfileShow> = .empty,
             recentlyWatchedTitle: String = "",
             recentlyWatched: SwiftSectionState<SwiftProfileRecentShow> = .empty,
+            favoritesTitle: String = "",
+            favorites: SwiftSectionState<SwiftProfileShow> = .empty,
             unauthenticatedTitle: String,
             footerDescription: String,
             signInLabel: String,
@@ -89,6 +93,8 @@ public struct ProfileScreen: View {
             self.completed = completed
             self.recentlyWatchedTitle = recentlyWatchedTitle
             self.recentlyWatched = recentlyWatched
+            self.favoritesTitle = favoritesTitle
+            self.favorites = favorites
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
             self.signInLabel = signInLabel
@@ -194,6 +200,8 @@ public struct ProfileScreen: View {
                     progressSection
 
                     userListsSection
+
+                    favoritesSection
 
                     Spacer()
                         .frame(height: appTheme.spacing.xLarge)
@@ -423,6 +431,27 @@ public struct ProfileScreen: View {
                 RecentlyWatchedSectionView(
                     recentlyWatched: state.recentlyWatched,
                     title: state.recentlyWatchedTitle,
+                    retryLabel: state.retryLabel,
+                    onShowClick: onShowClicked,
+                    onRetry: onRetryProgress
+                )
+            }
+        }
+    }
+
+    // MARK: - Favorites Section
+
+    @ViewBuilder
+    private var favoritesSection: some View {
+        if case .empty = state.favorites {
+            EmptyView()
+        } else {
+            VStack(spacing: 0) {
+                Spacer().frame(height: appTheme.spacing.large)
+
+                FavoritesSectionView(
+                    favorites: state.favorites,
+                    title: state.favoritesTitle,
                     retryLabel: state.retryLabel,
                     onShowClick: onShowClicked,
                     onRetry: onRetryProgress

@@ -67,6 +67,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
+import com.thomaskioko.tvmaniac.profile.ui.components.FavoritesSection
 import com.thomaskioko.tvmaniac.profile.ui.components.ProfileLoadingSkeleton
 import com.thomaskioko.tvmaniac.profile.ui.components.ProgressSection
 import com.thomaskioko.tvmaniac.profile.ui.components.RecentlyWatchedSection
@@ -116,6 +117,7 @@ internal fun ProfileScreen(
                     inProgress = state.inProgress,
                     completed = state.completed,
                     recentlyWatched = state.recentlyWatched,
+                    favorites = state.favorites,
                     onLoginClicked = { onAction(LoginClicked) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
                     onListClick = {},
@@ -189,6 +191,7 @@ private fun ProfileContent(
     inProgress: SectionState<ProfileShowItem>,
     completed: SectionState<ProfileShowItem>,
     recentlyWatched: SectionState<ProfileRecentItem>,
+    favorites: SectionState<ProfileShowItem>,
     onLoginClicked: () -> Unit,
     onViewLists: () -> Unit,
     onListClick: (Long) -> Unit,
@@ -289,6 +292,22 @@ private fun ProfileContent(
                             retryLabel = labels.retry,
                             onViewAll = onViewLists,
                             onListClick = onListClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                if (favorites !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        FavoritesSection(
+                            favorites = favorites,
+                            title = labels.favoritesTitle,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
                             onRetry = onRetry,
                         )
                     }

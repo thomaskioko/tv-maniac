@@ -260,6 +260,7 @@ public class ProfilePresenter(
         inProgressFilter = localizer.getString(StringResourceKey.ProfileFilterInProgress),
         progressEmpty = localizer.getString(StringResourceKey.ProfileProgressEmpty),
         recentlyWatchedTitle = localizer.getString(StringResourceKey.ProfileRecentlyWatchedTitle),
+        favoritesTitle = localizer.getString(StringResourceKey.ProfileFavoritesTitle),
         viewAllButton = localizer.getString(StringResourceKey.StrMore),
         retry = localizer.getString(StringResourceKey.GenericRetry),
         unauthenticatedTitle = localizer.getString(StringResourceKey.ProfileUnauthenticatedTitle),

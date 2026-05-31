@@ -31,6 +31,7 @@ internal val sampleProfileLabels: ProfileLabels = ProfileLabels(
     inProgressFilter = "In Progress",
     progressEmpty = "Nothing here yet",
     recentlyWatchedTitle = "Recently Watched",
+    favoritesTitle = "Favorites",
     viewAllButton = "More",
     retry = "Retry",
     unauthenticatedTitle = "Discover.\nTrack.\nWatchlist.\n& More ...",
