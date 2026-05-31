@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -207,7 +208,7 @@ private fun PosterSkeletonRow(posterWidth: Dp) {
             ShimmerBox(
                 modifier = Modifier
                     .width(posterWidth)
-                    .height(posterWidth / ImageType.Poster.aspect),
+                    .aspectRatio(ImageType.Poster.aspect),
                 shape = MaterialTheme.shapes.medium,
             )
         }
