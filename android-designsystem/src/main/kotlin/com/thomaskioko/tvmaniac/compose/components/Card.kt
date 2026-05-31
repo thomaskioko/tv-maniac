@@ -74,9 +74,8 @@ public fun PosterCard(
                             title,
                         )
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(aspectRatio),
+                    aspectRatio = aspectRatio,
+                    modifier = Modifier.fillMaxWidth(),
                 )
 
                 if (isInLibrary) {

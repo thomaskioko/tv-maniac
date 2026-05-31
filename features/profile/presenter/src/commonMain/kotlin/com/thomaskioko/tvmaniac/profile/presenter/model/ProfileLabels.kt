@@ -23,6 +23,7 @@ public data class ProfileLabels(
     val completedFilter: String = "",
     val inProgressFilter: String = "",
     val progressEmpty: String = "",
+    val recentlyWatchedTitle: String = "",
     val viewAllButton: String = "",
     val retry: String = "",
     val unauthenticatedTitle: String = "",

@@ -6,6 +6,7 @@ import SwiftUI
 public struct LazyResizableImage: View {
     private let url: URL?
     private let fixedSize: CGSize?
+    private let aspectRatio: CGFloat?
     private let placeholderIcon: String
     private let placeholderTitle: String?
 
@@ -16,16 +17,24 @@ public struct LazyResizableImage: View {
         url: String?,
         imageType: TmdbImageType? = nil,
         size: CGSize? = nil,
+        aspectRatio: CGFloat? = nil,
         placeholderIcon: String = "popcorn.fill",
         placeholderTitle: String? = nil
     ) {
         self.url = ImageConfiguration.transformURL(url ?? "", imageType: imageType)
         fixedSize = size
+        self.aspectRatio = aspectRatio
         self.placeholderIcon = placeholderIcon
         self.placeholderTitle = placeholderTitle
     }
 
     public var body: some View {
+        loader
+            .modifier(AspectRatioSizing(width: fixedSize?.width, aspectRatio: aspectRatio))
+    }
+
+    @ViewBuilder
+    private var loader: some View {
         if let fixedSize {
             LazyImage(url: url) { state in
                 imageContent(state, size: fixedSize)
@@ -79,6 +88,22 @@ public struct LazyResizableImage: View {
             await MainActor.run {
                 resizeProcessor = .resize(size: newSize)
             }
+        }
+    }
+}
+
+private struct AspectRatioSizing: ViewModifier {
+    let width: CGFloat?
+    let aspectRatio: CGFloat?
+
+    func body(content: Content) -> some View {
+        if let width, let aspectRatio {
+            content
+                .scaledToFill()
+                .frame(width: width, height: width / aspectRatio)
+                .clipped()
+        } else {
+            content
         }
     }
 }

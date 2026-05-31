@@ -274,6 +274,7 @@
     <string name="profile_filter_completed">Abgeschlossen</string>
     <string name="profile_filter_in_progress">Läuft</string>
     <string name="profile_progress_empty">Noch nichts vorhanden</string>
+    <string name="profile_recently_watched_title">Kürzlich gesehen</string>
     <string name="profile_time_months">Monate</string>
     <string name="profile_time_days">Tage</string>
     <string name="profile_time_hours">Stunden</string>

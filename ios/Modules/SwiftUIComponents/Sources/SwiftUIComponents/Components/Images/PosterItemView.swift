@@ -11,6 +11,7 @@ public struct PosterItemView: View {
     private let imageType: TmdbImageType
     private let posterWidth: CGFloat
     private let posterHeight: CGFloat
+    private let aspectRatio: CGFloat?
     private let posterRadius: CGFloat?
     private let processorHeight: CGFloat?
 
@@ -22,6 +23,7 @@ public struct PosterItemView: View {
         imageType: TmdbImageType = .poster,
         posterWidth: CGFloat = 120,
         posterHeight: CGFloat = 180,
+        aspectRatio: CGFloat? = nil,
         posterRadius: CGFloat? = nil,
         processorHeight: CGFloat? = nil
     ) {
@@ -32,28 +34,43 @@ public struct PosterItemView: View {
         self.imageType = imageType
         self.posterWidth = posterWidth
         self.posterHeight = posterHeight
+        self.aspectRatio = aspectRatio
         self.posterRadius = posterRadius
         self.processorHeight = processorHeight
     }
 
     public var body: some View {
         let resolvedRadius = posterRadius ?? 0
-        let imageHeight = processorHeight ?? posterHeight
+        let resolvedHeight = aspectRatio.map { posterWidth / $0 } ?? posterHeight
+        let imageHeight = processorHeight ?? resolvedHeight
 
-        LazyResizableImage(
+        poster(radius: resolvedRadius, imageHeight: imageHeight)
+            .overlay {
+                if isInLibrary {
+                    LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
+                }
+            }
+    }
+
+    @ViewBuilder
+    private func poster(radius: CGFloat, imageHeight: CGFloat) -> some View {
+        let image = LazyResizableImage(
             url: posterUrl,
             imageType: imageType,
             size: CGSize(width: posterWidth, height: imageHeight),
+            aspectRatio: aspectRatio,
             placeholderTitle: title
         )
-        .scaledToFill()
-        .clipShape(RoundedRectangle(cornerRadius: resolvedRadius, style: .continuous))
-        .frame(width: posterWidth, height: posterHeight)
-        .clipped()
-        .overlay {
-            if isInLibrary {
-                LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
-            }
+
+        if aspectRatio != nil {
+            image
+                .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
+        } else {
+            image
+                .scaledToFill()
+                .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
+                .frame(width: posterWidth, height: posterHeight)
+                .clipped()
         }
     }
 }

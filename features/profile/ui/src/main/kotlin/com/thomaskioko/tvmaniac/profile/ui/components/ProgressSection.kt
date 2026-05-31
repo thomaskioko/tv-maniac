@@ -72,7 +72,7 @@ internal fun ProgressSection(
         title = title,
         modifier = modifier,
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.PROGRESS_SECTION_KEY),
-        contentSpacing = 2.dp,
+        contentSpacing = 0.dp,
     ) {
         Column {
             FilterRow(
@@ -82,7 +82,7 @@ internal fun ProgressSection(
                 onSelected = { selectedFilter = it },
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             val sectionState = when (selectedFilter) {
                 ProgressFilter.IN_PROGRESS -> inProgress
@@ -113,9 +113,10 @@ private fun FilterRow(
     inProgressLabel: String,
     completedLabel: String,
     onSelected: (ProgressFilter) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         ProgressChip(
