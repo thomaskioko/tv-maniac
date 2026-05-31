@@ -1,4 +1,6 @@
+import Components
 import Foundation
+import Models
 
 public struct SwiftSearchShow: Identifiable {
     public let id: UUID = .init()

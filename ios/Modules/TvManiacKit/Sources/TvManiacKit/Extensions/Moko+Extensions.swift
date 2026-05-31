@@ -1,3 +1,4 @@
+import Components
 import DesignSystem
 import i18n
 import TvManiac

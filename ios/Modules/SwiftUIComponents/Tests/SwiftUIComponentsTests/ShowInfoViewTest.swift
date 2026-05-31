@@ -1,4 +1,6 @@
+import Components
 import DesignSystem
+import Models
 import SnapshotTestingLib
 import SwiftUI
 import SwiftUIComponents
@@ -28,7 +30,9 @@ class ShowInfoViewTest: SnapshotTestCase {
             seasonDetailsTitle: "Season Details",
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
-            episodesLeftFormat: { count in count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch" },
+            episodesLeftFormat: { count in
+                count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
+            },
             upToDateLabel: "You're up-to-date",
             onAddToCustomList: {},
             onAddToLibrary: {},
@@ -45,8 +49,24 @@ class ShowInfoViewTest: SnapshotTestCase {
 
     private var seasonList: [SwiftSeason] {
         [
-            .init(tvShowId: 23, seasonId: 23, seasonNumber: 1, name: "Season 1", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
-            .init(tvShowId: 123, seasonId: 123, seasonNumber: 2, name: "Season 2", watchedCount: 1, totalCount: 6, progressPercentage: 0.17),
+            .init(
+                tvShowId: 23,
+                seasonId: 23,
+                seasonNumber: 1,
+                name: "Season 1",
+                watchedCount: 6,
+                totalCount: 6,
+                progressPercentage: 1.0
+            ),
+            .init(
+                tvShowId: 123,
+                seasonId: 123,
+                seasonNumber: 2,
+                name: "Season 2",
+                watchedCount: 1,
+                totalCount: 6,
+                progressPercentage: 0.17
+            ),
         ]
     }
 
@@ -72,7 +92,13 @@ class ShowInfoViewTest: SnapshotTestCase {
     private var showList: [SwiftShow] {
         [
             .init(traktId: 1234, title: "Arcane", posterUrl: "", backdropUrl: nil, inLibrary: false),
-            .init(traktId: 123, title: "The Lord of the Rings: The Rings of Power", posterUrl: "", backdropUrl: nil, inLibrary: false),
+            .init(
+                traktId: 123,
+                title: "The Lord of the Rings: The Rings of Power",
+                posterUrl: "",
+                backdropUrl: nil,
+                inLibrary: false
+            ),
             .init(traktId: 12346, title: "Kaos", posterUrl: "", backdropUrl: nil, inLibrary: false),
         ]
     }

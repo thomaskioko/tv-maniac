@@ -1,4 +1,6 @@
+import Components
 import DesignSystem
+import Models
 import SnapshotTestingLib
 import SwiftUI
 import SwiftUIComponents
@@ -201,7 +203,12 @@ class ProfileScreenTest: SnapshotTestCase {
     func test_ListCollageCard() {
         HStack(spacing: 12) {
             ListCollageCard(
-                list: SwiftProfileList(id: 1, name: "Watchlist", itemCountLabel: "24 shows", posterUrls: ["a", "b", "c", "d"]),
+                list: SwiftProfileList(
+                    id: 1,
+                    name: "Watchlist",
+                    itemCountLabel: "24 shows",
+                    posterUrls: ["a", "b", "c", "d"]
+                ),
                 onClick: {}
             )
             ListCollageCard(

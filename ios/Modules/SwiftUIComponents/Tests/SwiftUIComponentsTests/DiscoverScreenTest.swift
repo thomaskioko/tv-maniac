@@ -1,4 +1,6 @@
+import Components
 import DesignSystem
+import Models
 import SnapshotTestingLib
 import SwiftUI
 import SwiftUIComponents
@@ -6,8 +8,22 @@ import XCTest
 
 class DiscoverScreenTest: SnapshotTestCase {
     private let sampleShows: [SwiftShow] = [
-        SwiftShow(traktId: 1, title: "Breaking Bad", posterUrl: nil, backdropUrl: nil, inLibrary: false, overview: "A chemistry teacher diagnosed with cancer turns to manufacturing methamphetamine."),
-        SwiftShow(traktId: 2, title: "Game of Thrones", posterUrl: nil, backdropUrl: nil, inLibrary: true, overview: "Nine noble families fight for control of the lands of Westeros."),
+        SwiftShow(
+            traktId: 1,
+            title: "Breaking Bad",
+            posterUrl: nil,
+            backdropUrl: nil,
+            inLibrary: false,
+            overview: "A chemistry teacher diagnosed with cancer turns to manufacturing methamphetamine."
+        ),
+        SwiftShow(
+            traktId: 2,
+            title: "Game of Thrones",
+            posterUrl: nil,
+            backdropUrl: nil,
+            inLibrary: true,
+            overview: "Nine noble families fight for control of the lands of Westeros."
+        ),
     ]
 
     private let samplePosters: [SwiftShow] = [

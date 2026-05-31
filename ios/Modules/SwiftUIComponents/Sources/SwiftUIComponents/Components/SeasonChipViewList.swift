@@ -6,7 +6,9 @@
 //  Copyright © 2024 orgName. All rights reserved.
 //
 
+import Components
 import DesignSystem
+import Models
 import SwiftUI
 
 public struct SeasonChipViewList: View {

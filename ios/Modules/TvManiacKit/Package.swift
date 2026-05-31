@@ -16,6 +16,9 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "CoreKit", path: "../CoreKit"),
+        .package(name: "DesignSystem", path: "../DesignSystem"),
+        .package(name: "Models", path: "../Models"),
+        .package(name: "Components", path: "../Components"),
         .package(name: "SwiftUIComponents", path: "../SwiftUIComponents"),
         .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.14.0"),
@@ -25,8 +28,10 @@ let package = Package(
             name: "TvManiacKit",
             dependencies: [
                 "CoreKit",
-                .product(name: "DesignSystem", package: "SwiftUIComponents"),
-                .product(name: "SwiftUIComponents", package: "SwiftUIComponents"),
+                "DesignSystem",
+                "Models",
+                "Components",
+                "SwiftUIComponents",
                 "TraktAuthKit",
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
             ]

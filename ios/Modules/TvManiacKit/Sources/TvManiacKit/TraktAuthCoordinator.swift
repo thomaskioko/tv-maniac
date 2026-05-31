@@ -59,11 +59,17 @@ public class TraktAuthCoordinator: NSObject {
                 )
 
             } catch let error as TraktAuthError {
-                logger.error(tag: "TraktAuthCoordinator", message: "OAuth authorization failed: \(String(describing: error))")
+                logger.error(
+                    tag: "TraktAuthCoordinator",
+                    message: "OAuth authorization failed: \(String(describing: error))"
+                )
                 await handleAuthError(mapToKMPError(error))
 
             } catch {
-                logger.error(tag: "TraktAuthCoordinator", message: "Authorization or token save failed: \(error.localizedDescription)")
+                logger.error(
+                    tag: "TraktAuthCoordinator",
+                    message: "Authorization or token save failed: \(error.localizedDescription)"
+                )
                 await handleAuthError(AuthError.Unknown())
             }
         }
@@ -73,7 +79,10 @@ public class TraktAuthCoordinator: NSObject {
         do {
             try await authRepository.setAuthError(error: error)
         } catch {
-            logger.error(tag: "TraktAuthCoordinator", message: "Failed to persist auth error state: \(error.localizedDescription)")
+            logger.error(
+                tag: "TraktAuthCoordinator",
+                message: "Failed to persist auth error state: \(error.localizedDescription)"
+            )
         }
     }
 

@@ -1,4 +1,6 @@
+import Components
 import Foundation
+import Models
 
 public struct SwiftProfileInfo: Equatable {
     public let username: String
