@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import UpNext
 
 public struct ShowInfoView: View {
     @Environment(\.appTheme) private var theme
@@ -217,8 +218,24 @@ public struct ShowInfoView: View {
                 .init(name: "Action"),
             ],
             seasonList: [
-                .init(tvShowId: 23, seasonId: 23, seasonNumber: 1, name: "Season 1", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
-                .init(tvShowId: 123, seasonId: 123, seasonNumber: 2, name: "Season 2", watchedCount: 1, totalCount: 6, progressPercentage: 0.17),
+                .init(
+                    tvShowId: 23,
+                    seasonId: 23,
+                    seasonNumber: 1,
+                    name: "Season 1",
+                    watchedCount: 6,
+                    totalCount: 6,
+                    progressPercentage: 1.0
+                ),
+                .init(
+                    tvShowId: 123,
+                    seasonId: 123,
+                    seasonNumber: 2,
+                    name: "Season 2",
+                    watchedCount: 1,
+                    totalCount: 6,
+                    progressPercentage: 0.17
+                ),
             ],
             providerList: [
                 .init(
@@ -301,7 +318,9 @@ public struct ShowInfoView: View {
             seasonDetailsTitle: "Season Details",
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
-            episodesLeftFormat: { count in count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch" },
+            episodesLeftFormat: { count in
+                count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
+            },
             upToDateLabel: "You're up-to-date",
             onAddToCustomList: {},
             onAddToLibrary: {},

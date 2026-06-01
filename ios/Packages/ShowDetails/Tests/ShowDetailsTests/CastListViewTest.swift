@@ -1,9 +1,9 @@
 import Components
 import DesignSystem
 import Models
+import ShowDetails
 import SnapshotTestingLib
 import SwiftUI
-import SwiftUIComponents
 import XCTest
 
 class CastListViewTest: SnapshotTestCase {

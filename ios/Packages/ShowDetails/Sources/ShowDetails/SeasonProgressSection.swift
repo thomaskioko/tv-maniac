@@ -176,7 +176,9 @@ public struct SeasonProgressSection: View {
         ],
         seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
         episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
-        episodesLeftFormat: { count in count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch" },
+        episodesLeftFormat: { count in
+            count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
+        },
         upToDateLabel: "You're up-to-date",
         onSeasonClicked: { _, _ in }
     )
@@ -190,15 +192,57 @@ public struct SeasonProgressSection: View {
         watchedEpisodesCount: 30,
         totalEpisodesCount: 30,
         seasonsList: [
-            SwiftSeason(tvShowId: 1, seasonId: 1, seasonNumber: 1, name: "Season 1", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
-            SwiftSeason(tvShowId: 1, seasonId: 2, seasonNumber: 2, name: "Season 2", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
-            SwiftSeason(tvShowId: 1, seasonId: 3, seasonNumber: 3, name: "Season 3", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
-            SwiftSeason(tvShowId: 1, seasonId: 4, seasonNumber: 4, name: "Season 4", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
-            SwiftSeason(tvShowId: 1, seasonId: 5, seasonNumber: 5, name: "Season 5", watchedCount: 6, totalCount: 6, progressPercentage: 1.0),
+            SwiftSeason(
+                tvShowId: 1,
+                seasonId: 1,
+                seasonNumber: 1,
+                name: "Season 1",
+                watchedCount: 6,
+                totalCount: 6,
+                progressPercentage: 1.0
+            ),
+            SwiftSeason(
+                tvShowId: 1,
+                seasonId: 2,
+                seasonNumber: 2,
+                name: "Season 2",
+                watchedCount: 6,
+                totalCount: 6,
+                progressPercentage: 1.0
+            ),
+            SwiftSeason(
+                tvShowId: 1,
+                seasonId: 3,
+                seasonNumber: 3,
+                name: "Season 3",
+                watchedCount: 6,
+                totalCount: 6,
+                progressPercentage: 1.0
+            ),
+            SwiftSeason(
+                tvShowId: 1,
+                seasonId: 4,
+                seasonNumber: 4,
+                name: "Season 4",
+                watchedCount: 6,
+                totalCount: 6,
+                progressPercentage: 1.0
+            ),
+            SwiftSeason(
+                tvShowId: 1,
+                seasonId: 5,
+                seasonNumber: 5,
+                name: "Season 5",
+                watchedCount: 6,
+                totalCount: 6,
+                progressPercentage: 1.0
+            ),
         ],
         seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
         episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
-        episodesLeftFormat: { count in count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch" },
+        episodesLeftFormat: { count in
+            count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
+        },
         upToDateLabel: "You're up-to-date",
         onSeasonClicked: { _, _ in }
     )
@@ -212,12 +256,30 @@ public struct SeasonProgressSection: View {
         watchedEpisodesCount: 0,
         totalEpisodesCount: 12,
         seasonsList: [
-            SwiftSeason(tvShowId: 1, seasonId: 1, seasonNumber: 1, name: "Season 1", watchedCount: 0, totalCount: 6, progressPercentage: 0),
-            SwiftSeason(tvShowId: 1, seasonId: 2, seasonNumber: 2, name: "Season 2", watchedCount: 0, totalCount: 6, progressPercentage: 0),
+            SwiftSeason(
+                tvShowId: 1,
+                seasonId: 1,
+                seasonNumber: 1,
+                name: "Season 1",
+                watchedCount: 0,
+                totalCount: 6,
+                progressPercentage: 0
+            ),
+            SwiftSeason(
+                tvShowId: 1,
+                seasonId: 2,
+                seasonNumber: 2,
+                name: "Season 2",
+                watchedCount: 0,
+                totalCount: 6,
+                progressPercentage: 0
+            ),
         ],
         seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
         episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
-        episodesLeftFormat: { count in count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch" },
+        episodesLeftFormat: { count in
+            count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
+        },
         upToDateLabel: "You're up-to-date",
         onSeasonClicked: { _, _ in }
     )
