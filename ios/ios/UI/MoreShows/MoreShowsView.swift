@@ -1,7 +1,7 @@
 import Components
 import DesignSystem
+import MoreShows
 import SwiftUI
-import SwiftUIComponents
 import TvManiac
 import TvManiacKit
 
