@@ -4,7 +4,7 @@ import Library
 import Models
 import Profile
 import Search
-import ShowDetails
+import Settings
 import TvManiac
 
 // MARK: - SettingsPage Mapping

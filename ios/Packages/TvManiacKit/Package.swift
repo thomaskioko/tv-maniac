@@ -23,7 +23,7 @@ let package = Package(
         .package(name: "Search", path: "../Search"),
         .package(name: "Library", path: "../Library"),
         .package(name: "Profile", path: "../Profile"),
-        .package(name: "ShowDetails", path: "../ShowDetails"),
+        .package(name: "Settings", path: "../Settings"),
         .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.14.0"),
     ],
@@ -39,7 +39,7 @@ let package = Package(
                 "Search",
                 "Library",
                 "Profile",
-                "ShowDetails",
+                "Settings",
                 "TraktAuthKit",
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
             ]
