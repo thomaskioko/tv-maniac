@@ -7,13 +7,22 @@
 //  adding a new screen means adding one line here. `RootNavigationView` itself does not change.
 //
 
+import Debug
 import DesignSystem
+import EpisodeDetail
+import FeatureFlags
+import MoreShows
+import Search
+import SeasonDetails
+import Settings
+import ShowDetails
+import ShowList
 import SwiftUI
 import TvManiac
 import TvManiacKit
 
-enum ScreenRegistryBootstrap {
-    static func makeRegistry() -> ScreenRegistry {
+public enum ScreenRegistryBootstrap {
+    public static func makeRegistry() -> ScreenRegistry {
         let registry = ScreenRegistry()
         registerScreens(into: registry)
         registerSheets(into: registry)

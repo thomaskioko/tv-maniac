@@ -1,5 +1,8 @@
 import Components
 import DesignSystem
+import Discover
+import MyShows
+import Profile
 import SwiftUI
 import TvManiac
 import TvManiacKit
@@ -17,7 +20,7 @@ public struct TabBarView: View {
     @State private var downloadedAvatar: UIImage?
     @EnvironmentObject private var appDelegate: AppDelegate
 
-    init(presenter: HomePresenter, navigator: Navigator, registry: ScreenRegistry) {
+    public init(presenter: HomePresenter, navigator: Navigator, registry: ScreenRegistry) {
         self.presenter = presenter
         self.navigator = navigator
         self.registry = registry

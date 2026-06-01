@@ -3,18 +3,18 @@ import DesignSystem
 import SwiftUI
 import TvManiacKit
 
-struct EpisodeDetailSheetView: View {
+public struct EpisodeDetailSheetView: View {
     private let presenter: EpisodeSheetPresenter
     @StateValue private var state: EpisodeDetailSheetState
     @State private var selectedDetent: PresentationDetent = .large
     @State private var toast: Toast?
 
-    init(presenter: EpisodeSheetPresenter) {
+    public init(presenter: EpisodeSheetPresenter) {
         self.presenter = presenter
         _state = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         if !state.isLoading {
             EpisodeDetailSheetContent(
                 episode: EpisodeDetailInfo(

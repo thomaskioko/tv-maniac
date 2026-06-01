@@ -3,18 +3,18 @@ import DesignSystem
 import SwiftUI
 import TvManiacKit
 
-struct ShowListSheetView: View {
+public struct ShowListSheetView: View {
     @Environment(\.appTheme) private var theme
     private let presenter: ShowListPresenter
     @StateValue private var state: ShowListState
     @State private var toast: Toast?
 
-    init(presenter: ShowListPresenter) {
+    public init(presenter: ShowListPresenter) {
         self.presenter = presenter
         _state = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             Group {
                 if state.isLoggedIn {

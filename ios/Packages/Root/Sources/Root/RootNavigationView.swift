@@ -1,19 +1,12 @@
-//
-//  RootNavigationView.swift
-//  tv-maniac
-//
-//  Created by Thomas Kioko on 12/8/24.
-//  Copyright © 2024 orgName. All rights reserved.
-//
-
 import Components
 import DesignSystem
+import Home
 import SwiftUI
 import TvManiac
 import TvManiacKit
 import UserNotifications
 
-struct RootNavigationView: View {
+public struct RootNavigationView: View {
     private let rootPresenter: RootPresenter
     private let navigator: Navigator
     private let registry: ScreenRegistry
@@ -25,7 +18,7 @@ struct RootNavigationView: View {
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
 
-    init(rootPresenter: RootPresenter, navigator: Navigator, registry: ScreenRegistry) {
+    public init(rootPresenter: RootPresenter, navigator: Navigator, registry: ScreenRegistry) {
         self.rootPresenter = rootPresenter
         self.navigator = navigator
         self.registry = registry
@@ -35,7 +28,7 @@ struct RootNavigationView: View {
         _accountLimitBannerVisible = .init(rootPresenter.accountLimitBannerVisibleValue)
     }
 
-    var body: some View {
+    public var body: some View {
         SplashView(isDebug: appDelegate.isDebug) {
             VStack(spacing: 0) {
                 if accountLimitBannerVisible.boolValue {
