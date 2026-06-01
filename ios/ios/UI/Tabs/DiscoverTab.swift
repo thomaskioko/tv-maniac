@@ -1,7 +1,7 @@
 import Components
 import DesignSystem
+import Discover
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
 
 struct DiscoverTab: View {

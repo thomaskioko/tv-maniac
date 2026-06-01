@@ -6,7 +6,6 @@
 import Components
 import DesignSystem
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
 
 struct AccountLimitBanner: View {

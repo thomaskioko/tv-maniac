@@ -2,8 +2,8 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
+import UpNext
 
 struct UpNextPageContent: View {
     @Environment(\.appTheme) private var theme

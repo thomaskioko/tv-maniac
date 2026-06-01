@@ -1,7 +1,7 @@
 import Components
 import DesignSystem
+import Search
 import SwiftUI
-import SwiftUIComponents
 import TvManiac
 import TvManiacKit
 

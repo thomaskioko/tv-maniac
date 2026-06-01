@@ -1,8 +1,8 @@
 import Components
 import DesignSystem
 import Models
+import Profile
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
 
 struct ProfileTab: View {

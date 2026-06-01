@@ -1,8 +1,8 @@
 import Components
 import DesignSystem
 import Models
+import MyShows
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
 
 struct MyShowsTab: View {

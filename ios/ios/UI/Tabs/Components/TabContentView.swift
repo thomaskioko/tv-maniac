@@ -1,7 +1,6 @@
 import Components
 import DesignSystem
 import SwiftUI
-import SwiftUIComponents
 import TvManiac
 
 public struct TabContentView<Content: View>: View {

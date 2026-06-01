@@ -1,7 +1,7 @@
 import Components
 import DesignSystem
+import ShowDetails
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
 
 struct ShowDetailsView: View {

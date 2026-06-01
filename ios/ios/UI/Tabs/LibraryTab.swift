@@ -1,7 +1,7 @@
 import Components
 import DesignSystem
+import Library
 import SwiftUI
-import SwiftUIComponents
 import TvManiacKit
 
 struct LibraryTab: View {

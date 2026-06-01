@@ -9,7 +9,6 @@
 import Components
 import DesignSystem
 import SwiftUI
-import SwiftUIComponents
 
 struct SplashView: View {
     @Environment(\.appTheme) private var theme
