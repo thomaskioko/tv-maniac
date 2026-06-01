@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import UpNext
 
 struct DiscoverListContent: View {
     struct State {
