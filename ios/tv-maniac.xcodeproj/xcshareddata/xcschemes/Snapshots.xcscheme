@@ -139,6 +139,56 @@
                ReferencedContainer = "container:Packages/ShowDetails">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SettingsTests"
+               BuildableName = "SettingsTests"
+               BlueprintName = "SettingsTests"
+               ReferencedContainer = "container:Packages/Settings">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DebugTests"
+               BuildableName = "DebugTests"
+               BlueprintName = "DebugTests"
+               ReferencedContainer = "container:Packages/Debug">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FeatureFlagsTests"
+               BuildableName = "FeatureFlagsTests"
+               BlueprintName = "FeatureFlagsTests"
+               ReferencedContainer = "container:Packages/FeatureFlags">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "MoreShowsTests"
+               BuildableName = "MoreShowsTests"
+               BlueprintName = "MoreShowsTests"
+               ReferencedContainer = "container:Packages/MoreShows">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SeasonDetailsTests"
+               BuildableName = "SeasonDetailsTests"
+               BlueprintName = "SeasonDetailsTests"
+               ReferencedContainer = "container:Packages/SeasonDetails">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
