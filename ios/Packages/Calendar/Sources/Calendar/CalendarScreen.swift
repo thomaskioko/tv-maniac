@@ -90,7 +90,8 @@ public struct CalendarPageContent: View {
         HStack {
             Button(action: onPreviousWeek) {
                 Image(systemName: "chevron.left")
-                    .foregroundStyle(state.canNavigatePrevious ? AnyShapeStyle(.appOnSurface) : AnyShapeStyle(.appOnSurface.opacity(0.3)))
+                    .foregroundStyle(state
+                        .canNavigatePrevious ? AnyShapeStyle(.appOnSurface) : AnyShapeStyle(.appOnSurface.opacity(0.3)))
             }
             .disabled(!state.canNavigatePrevious)
 
@@ -113,7 +114,8 @@ public struct CalendarPageContent: View {
 
             Button(action: onNextWeek) {
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(state.canNavigateNext ? AnyShapeStyle(.appOnSurface) : AnyShapeStyle(.appOnSurface.opacity(0.3)))
+                    .foregroundStyle(state
+                        .canNavigateNext ? AnyShapeStyle(.appOnSurface) : AnyShapeStyle(.appOnSurface.opacity(0.3)))
             }
             .disabled(!state.canNavigateNext)
         }
