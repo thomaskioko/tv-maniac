@@ -3,7 +3,7 @@ import DesignSystem
 import Models
 import SnapshotTestingLib
 import SwiftUI
-import SwiftUIComponents
+import UpNext
 import XCTest
 
 class NextEpisodesSectionTest: SnapshotTestCase {

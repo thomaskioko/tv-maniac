@@ -3,75 +3,62 @@ import DesignSystem
 import Models
 import SwiftUI
 
-public struct UpNextListItemView: View {
+public struct WatchListItemView: View {
     @Environment(\.appTheme) private var theme
 
     let episode: SwiftNextEpisode
+    let premiereLabel: String
+    let newLabel: String
     let onItemClicked: (Int64, Int64) -> Void
     let onShowTitleClicked: (Int64) -> Void
     let onMarkWatched: () -> Void
-    let onLongPress: () -> Void
     let isUpdating: Bool
-
-    private let posterImageUrl: String?
-    private let episodeInfoText: String
 
     public init(
         episode: SwiftNextEpisode,
+        premiereLabel: String,
+        newLabel: String,
         onItemClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping () -> Void,
-        onLongPress: @escaping () -> Void = {},
         isUpdating: Bool = false
     ) {
         self.episode = episode
+        self.premiereLabel = premiereLabel
+        self.newLabel = newLabel
         self.onItemClicked = onItemClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
-        self.onLongPress = onLongPress
         self.isUpdating = isUpdating
-
-        posterImageUrl = episode.imageUrl
-
-        var text = episode.episodeNumber
-        if episode.remainingEpisodes > 0 {
-            text += " +\(episode.remainingEpisodes)"
-        }
-        if let runtime = episode.runtime {
-            text += " (\(runtime))"
-        }
-        episodeInfoText = text
     }
 
     public var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            posterView
-            episodeDetails
-            watchedButton
-        }
-        .frame(height: UpNextListItemViewConstants.height)
-        .frame(maxWidth: .infinity)
-        .background(.appSurface)
-        .cornerRadius(UpNextListItemViewConstants.cornerRadius)
-        .contentShape(Rectangle())
-        .onTapGesture {
+        Button(action: {
             onItemClicked(episode.showTraktId, episode.episodeId)
+        }) {
+            HStack(alignment: .top, spacing: 0) {
+                posterView
+                episodeDetails
+                watchedButton
+            }
+            .frame(height: WatchListItemViewConstants.height)
+            .frame(maxWidth: .infinity)
+            .background(.appSurface)
+            .cornerRadius(WatchListItemViewConstants.cornerRadius)
         }
-        .onLongPressGesture {
-            onLongPress()
-        }
-        .padding(.horizontal, theme.spacing.xSmall)
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, theme.spacing.medium)
     }
 
     private var posterView: some View {
         PosterItemView(
             title: nil,
-            posterUrl: posterImageUrl,
-            posterWidth: UpNextListItemViewConstants.imageWidth,
-            posterHeight: UpNextListItemViewConstants.height,
+            posterUrl: episode.imageUrl,
+            posterWidth: WatchListItemViewConstants.imageWidth,
+            posterHeight: WatchListItemViewConstants.height,
             posterRadius: 0
         )
-        .frame(width: UpNextListItemViewConstants.imageWidth, height: UpNextListItemViewConstants.height)
+        .frame(width: WatchListItemViewConstants.imageWidth, height: WatchListItemViewConstants.height)
         .clipped()
     }
 
@@ -82,42 +69,43 @@ public struct UpNextListItemView: View {
                 onTap: { onShowTitleClicked(episode.showTraktId) }
             )
 
-            Text(episodeInfoText)
-                .textStyle(theme.typography.bodySmall)
-                .foregroundStyle(.appAccent)
-                .lineLimit(1)
-                .padding(.top, theme.spacing.xSmall)
+            HStack(spacing: theme.spacing.xxSmall) {
+                Text(episode.episodeNumber)
+                    .textStyle(theme.typography.labelLarge)
+                    .foregroundStyle(.appOnSurface)
+                    .lineLimit(1)
+                if episode.remainingEpisodes > 0 {
+                    Text("+\(episode.remainingEpisodes)")
+                        .textStyle(theme.typography.labelMedium)
+                        .foregroundStyle(.appOnSurface.opacity(0.6))
+                }
+            }
+            .padding(.top, theme.spacing.medium)
 
             Text(episode.episodeTitle)
                 .textStyle(theme.typography.bodySmall)
                 .foregroundStyle(.appOnSurface.opacity(0.7))
                 .lineLimit(2)
+                .padding(.top, theme.spacing.xxSmall)
 
             Spacer()
 
-            progressView
+            badgeView
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, theme.spacing.small)
         .padding(.horizontal, theme.spacing.xSmall)
     }
 
-    private var progressView: some View {
-        let progress: Float = episode.totalCount > 0
-            ? Float(episode.watchedCount) / Float(episode.totalCount)
-            : 0
-
-        return HStack(spacing: theme.spacing.xSmall) {
-            SegmentedProgressBar(
-                segmentProgress: [progress],
-                height: 4
-            )
-            .frame(maxWidth: .infinity)
-
-            if episode.totalCount > 0 {
-                Text("\(episode.watchedCount)/\(episode.totalCount)")
-                    .textStyle(theme.typography.labelSmall)
-                    .foregroundStyle(.appOnSurface.opacity(0.6))
+    private var badgeView: some View {
+        HStack(spacing: theme.spacing.xxSmall) {
+            switch episode.badge {
+            case .premiere:
+                PremiereBadge(text: premiereLabel)
+            case .new:
+                NewBadge(text: newLabel)
+            case .none:
+                EmptyView()
             }
         }
     }
@@ -127,38 +115,38 @@ public struct UpNextListItemView: View {
             ZStack {
                 Circle()
                     .fill(.appGrey)
-                    .frame(width: UpNextListItemViewConstants.checkmarkSize, height: UpNextListItemViewConstants.checkmarkSize)
+                    .frame(
+                        width: WatchListItemViewConstants.checkmarkSize,
+                        height: WatchListItemViewConstants.checkmarkSize
+                    )
                 if isUpdating {
                     ProgressView()
                         .progressViewStyle(.circular)
                         .tint(theme.colors.onPrimary)
                 } else {
                     Image(systemName: "checkmark")
-                        .textStyle(theme.typography.titleSmall)
-                        .foregroundStyle(.white)
+                        .textStyle(theme.typography.labelMedium)
+                        .foregroundStyle(.appOnPrimary)
                 }
             }
-            .frame(width: UpNextListItemViewConstants.tapTargetSize, height: UpNextListItemViewConstants.height)
-            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .disabled(isUpdating)
         .frame(maxHeight: .infinity)
-        .padding(.trailing, theme.spacing.small)
+        .padding(.trailing, theme.spacing.medium)
     }
 }
 
-private enum UpNextListItemViewConstants {
+private enum WatchListItemViewConstants {
     static let height: CGFloat = 140
     static let imageWidth: CGFloat = 120
     static let cornerRadius: CGFloat = 2
-    static let checkmarkSize: CGFloat = 36
-    static let tapTargetSize: CGFloat = 48
+    static let checkmarkSize: CGFloat = 32
 }
 
 #Preview {
     VStack {
-        UpNextListItemView(
+        WatchListItemView(
             episode: SwiftNextEpisode(
                 showTraktId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
@@ -172,10 +160,10 @@ private enum UpNextListItemViewConstants {
                 runtime: "45 min",
                 overview: "Daryl washes ashore in France.",
                 badge: .premiere,
-                remainingEpisodes: 7,
-                watchedCount: 3,
-                totalCount: 10
+                remainingEpisodes: 7
             ),
+            premiereLabel: "PREMIERE",
+            newLabel: "NEW",
             onItemClicked: { _, _ in },
             onShowTitleClicked: { _ in },
             onMarkWatched: {}

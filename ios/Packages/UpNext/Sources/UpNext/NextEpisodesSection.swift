@@ -43,8 +43,14 @@ public struct NextEpisodesSection: View {
                                 onEpisodeClick: { onEpisodeClick(episode) }
                             )
                             .padding([.leading, .trailing], theme.spacing.xxSmall + 2)
-                            .padding(.leading, episode.episodeId == episodes.first?.episodeId ? theme.spacing.small - 2 : 0)
-                            .padding(.trailing, episode.episodeId == episodes.last?.episodeId ? theme.spacing.xSmall : 0)
+                            .padding(
+                                .leading,
+                                episode.episodeId == episodes.first?.episodeId ? theme.spacing.small - 2 : 0
+                            )
+                            .padding(
+                                .trailing,
+                                episode.episodeId == episodes.last?.episodeId ? theme.spacing.xSmall : 0
+                            )
                         }
                     }
                 }

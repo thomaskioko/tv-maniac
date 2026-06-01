@@ -56,7 +56,10 @@ public struct ContinueTrackingCard: View {
                         ZStack {
                             Circle()
                                 .fill(episode.isWatched ? .appSuccess : .appGrey)
-                                .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
+                                .frame(
+                                    width: DimensionConstants.checkmarkSize,
+                                    height: DimensionConstants.checkmarkSize
+                                )
                             if isUpdating {
                                 ProgressView()
                                     .progressViewStyle(.circular)
