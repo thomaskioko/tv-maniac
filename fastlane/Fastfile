@@ -27,7 +27,7 @@ platform :ios do
   lane :snapshot_tests do
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
-      scheme: "SwiftUIComponents",
+      scheme: "Snapshots",
       destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
       skip_detect_devices: true,
       clean: true,
@@ -43,7 +43,7 @@ platform :ios do
   lane :record_snapshots do
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
-      scheme: "SwiftUIComponents",
+      scheme: "Snapshots",
       destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
       skip_detect_devices: true,
       clean: true,
