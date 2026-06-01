@@ -1,9 +1,9 @@
 import Components
 import DesignSystem
+import Library
 import Models
 import SnapshotTestingLib
 import SwiftUI
-import SwiftUIComponents
 import XCTest
 
 class LibraryScreenTest: SnapshotTestCase {
