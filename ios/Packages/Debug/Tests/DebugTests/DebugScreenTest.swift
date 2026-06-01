@@ -1,7 +1,7 @@
 import Components
+import Debug
 import DesignSystem
 import Models
-import Profile
 import SnapshotTestingLib
 import SwiftUI
 import XCTest
