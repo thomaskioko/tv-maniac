@@ -1,7 +1,7 @@
 import Components
 import DesignSystem
 import Models
-import ShowDetails
+import SeasonDetails
 import SnapshotTestingLib
 import SwiftUI
 import XCTest
