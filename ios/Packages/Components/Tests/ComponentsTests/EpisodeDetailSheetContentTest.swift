@@ -1,7 +1,6 @@
 import Components
 import DesignSystem
 import Models
-import ShowDetails
 import SnapshotTestingLib
 import SwiftUI
 import XCTest
