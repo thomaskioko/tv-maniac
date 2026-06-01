@@ -28,7 +28,10 @@ final class AppAuthCoordinator {
             additionalParameters: nil
         )
 
-        let authState = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<OIDAuthState, Error>) in
+        let authState = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<
+            OIDAuthState,
+            Error
+        >) in
             currentAuthorizationFlow = OIDAuthState.authState(
                 byPresenting: request,
                 presenting: presentingViewController
