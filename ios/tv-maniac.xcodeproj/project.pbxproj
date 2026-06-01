@@ -24,6 +24,7 @@
 		D6FEA700000000000001AA11 /* MoreShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA11 /* MoreShows */; };
 		D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA12 /* SeasonDetails */; };
 		D6FEA700000000000001AA13 /* Calendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA13 /* Calendar */; };
+		D6FEA700000000000001AA14 /* Root in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA14 /* Root */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +53,6 @@
 		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		D68A22262F415DC30034550F /* Config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Config; sourceTree = "<group>"; };
 		D6A2A0EB2EC7FD8C0001CD82 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
-		D6FE248E2D060E7200AB7700 /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +76,7 @@
 				D6FEA700000000000001AA11 /* MoreShows in Frameworks */,
 				D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */,
 				D6FEA700000000000001AA13 /* Calendar in Frameworks */,
+				D6FEA700000000000001AA14 /* Root in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +109,6 @@
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
-				D6FE248E2D060E7200AB7700 /* UI */,
 				D639FA9E2F77530500F3C67B /* Firebase */,
 			);
 			path = ios;
@@ -142,7 +142,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D65009DC2CF644BE00394D67 /* App */,
-				D6FE248E2D060E7200AB7700 /* UI */,
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
@@ -162,6 +161,7 @@
 				D6FEA700000000000002AA11 /* MoreShows */,
 				D6FEA700000000000002AA12 /* SeasonDetails */,
 				D6FEA700000000000002AA13 /* Calendar */,
+				D6FEA700000000000002AA14 /* Root */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -622,6 +622,10 @@
 		D6FEA700000000000002AA13 /* Calendar */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Calendar;
+		};
+		D6FEA700000000000002AA14 /* Root */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Root;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
