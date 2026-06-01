@@ -1,26 +1,6 @@
-import Calendar
 import Components
-import Library
 import Models
-import Profile
-import Search
-import Settings
 import TvManiac
-
-// MARK: - SettingsPage Mapping
-
-public extension SettingsPage {
-    func toRoute() -> SettingsPageRoute {
-        if self == SettingsPage.appearance { return .appearance }
-        if self == SettingsPage.behavior { return .behavior }
-        if self == SettingsPage.notifications { return .notifications }
-        if self == SettingsPage.privacy { return .privacy }
-        if self == SettingsPage.info { return .info }
-        if self == SettingsPage.licenses { return .licenses }
-        if self == SettingsPage.trakt { return .trakt }
-        return .root
-    }
-}
 
 // MARK: - ImageQuality Mapping
 
@@ -254,19 +234,6 @@ public extension TvManiac.ShowItem {
             inLibrary: inLibrary
         )
     }
-
-    func toSwift() -> SwiftSearchShow {
-        .init(
-            tmdbId: tmdbId,
-            traktId: traktId,
-            title: title,
-            overview: overview,
-            status: status,
-            imageUrl: posterImageUrl,
-            year: year,
-            voteAverage: voteAverage?.doubleValue
-        )
-    }
 }
 
 public extension TvManiac.ContinueTrackingEpisodeModel {
@@ -367,71 +334,8 @@ public extension TvManiac.DiscoverViewState {
     }
 }
 
-public extension TvManiac.LibraryShowItem {
-    func toSwift() -> SwiftLibraryItem {
-        .init(
-            traktId: traktId,
-            title: title,
-            posterUrl: posterImageUrl,
-            year: year,
-            status: status,
-            seasonCount: seasonCount,
-            episodeCount: episodeCount,
-            rating: rating?.doubleValue,
-            genres: genres?.map { String($0) },
-            watchProviders: watchProviders.map { $0.toSwift() }
-        )
-    }
-}
-
 public extension TvManiac.WatchProviderUiModel {
     func toSwift() -> SwiftProviders {
         .init(providerId: id, logoUrl: logoUrl)
-    }
-}
-
-// MARK: - Trakt List Mapping
-
-public extension TvManiac.TraktListModel {
-    func toSwift() -> SwiftTraktListItem {
-        .init(
-            listId: id,
-            slug: slug,
-            name: name,
-            description: description_,
-            showCountText: showCountText,
-            isShowInList: isShowInList
-        )
-    }
-}
-
-// MARK: - Calendar Mapping
-
-public extension TvManiac.CalendarDateGroup {
-    func toSwift() -> SwiftCalendarDateGroup {
-        .init(
-            dateLabel: dateLabel,
-            episodes: episodes.compactMap { $0.toSwift() }
-        )
-    }
-}
-
-public extension TvManiac.CalendarEpisodeItem {
-    func toSwift() -> SwiftCalendarEpisodeItem {
-        .init(
-            showTraktId: showTraktId,
-            episodeTraktId: episodeTraktId,
-            showTitle: showTitle,
-            posterUrl: posterUrl,
-            episodeInfo: episodeInfo,
-            airTime: airTime,
-            network: network,
-            additionalEpisodesCount: additionalEpisodesCount,
-            overview: overview,
-            rating: rating?.doubleValue,
-            votes: votes?.int32Value,
-            runtime: runtime?.int32Value,
-            formattedAirDate: formattedAirDate
-        )
     }
 }

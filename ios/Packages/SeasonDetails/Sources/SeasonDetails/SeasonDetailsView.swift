@@ -1,11 +1,10 @@
 import Components
 import DesignSystem
 import Models
-import SeasonDetails
 import SwiftUI
 import TvManiacKit
 
-struct SeasonDetailsView: View {
+public struct SeasonDetailsView: View {
     private let presenter: SeasonDetailsPresenter
 
     @StateValue private var uiState: SeasonDetailsModel
@@ -15,12 +14,12 @@ struct SeasonDetailsView: View {
     @State private var showUnwatchedConfirmAlert = false
     @State private var showMarkPreviousSeasonsAlert = false
     @State private var showSeasonUnwatchAlert = false
-    init(presenter: SeasonDetailsPresenter) {
+    public init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         SeasonDetailsScreen(
             state: uiState.toState(),
             seasonImagesCountFormat: { count in String(\.season_images_count, quantity: count) },

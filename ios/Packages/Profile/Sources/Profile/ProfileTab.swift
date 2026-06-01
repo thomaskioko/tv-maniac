@@ -1,22 +1,21 @@
 import Components
 import DesignSystem
 import Models
-import Profile
 import SwiftUI
 import TvManiacKit
 
-struct ProfileTab: View {
+public struct ProfileTab: View {
     @Environment(ToastManager.self) private var toastManager
 
     private let presenter: ProfilePresenter
     @StateValue private var uiState: ProfileState
 
-    init(presenter: ProfilePresenter) {
+    public init(presenter: ProfilePresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         ProfileScreen(
             state: uiState.toState(),
             onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },

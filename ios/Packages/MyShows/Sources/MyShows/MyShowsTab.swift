@@ -1,11 +1,10 @@
 import Components
 import DesignSystem
 import Models
-import MyShows
 import SwiftUI
 import TvManiacKit
 
-struct MyShowsTab: View {
+public struct MyShowsTab: View {
     private let presenter: MyShowsPresenter
     private let continueWatchingPresenter: ContinueWatchingPresenter
     private let startWatchingPresenter: StartWatchingPresenter
@@ -22,7 +21,7 @@ struct MyShowsTab: View {
     @State private var localQuery: String = ""
     @FocusState private var isSearchFocused: Bool
 
-    init(presenter: MyShowsPresenter) {
+    public init(presenter: MyShowsPresenter) {
         self.presenter = presenter
         continueWatchingPresenter = presenter.continueWatchingPresenter
         startWatchingPresenter = presenter.startWatchingPresenter
@@ -31,7 +30,7 @@ struct MyShowsTab: View {
         _startWatchingState = .init(presenter.startWatchingPresenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             pagePicker
 

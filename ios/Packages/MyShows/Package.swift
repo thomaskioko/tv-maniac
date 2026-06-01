@@ -18,6 +18,7 @@ let package = Package(
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(name: "Components", path: "../Components"),
         .package(name: "Models", path: "../Models"),
+        .package(name: "TvManiacKit", path: "../TvManiacKit"),
         .package(name: "UpNext", path: "../UpNext"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
@@ -29,6 +30,7 @@ let package = Package(
                 "Components",
                 "Models",
                 "UpNext",
+                "TvManiacKit",
             ]
         ),
         .testTarget(

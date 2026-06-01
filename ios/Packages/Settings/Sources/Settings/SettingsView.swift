@@ -1,6 +1,5 @@
 import Components
 import DesignSystem
-import Settings
 import SwiftUI
 import TvManiac
 import TvManiacKit
@@ -9,7 +8,7 @@ import UserNotifications
 private let tmdbURL = "https://www.themoviedb.org"
 private let traktURL = "https://trakt.tv"
 
-struct SettingsView: View {
+public struct SettingsView: View {
     private let presenter: SettingsPresenter
     @StateValue private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
@@ -20,7 +19,7 @@ struct SettingsView: View {
     @Environment(\.openURL) var openURL
     @EnvironmentObject private var appDelegate: AppDelegate
 
-    init(presenter: SettingsPresenter) {
+    public init(presenter: SettingsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
@@ -43,7 +42,7 @@ struct SettingsView: View {
         )
     }
 
-    var body: some View {
+    public var body: some View {
         SettingsScreen(
             state: screenState,
             onBack: { presenter.dispatch(action: BackClicked___()) }

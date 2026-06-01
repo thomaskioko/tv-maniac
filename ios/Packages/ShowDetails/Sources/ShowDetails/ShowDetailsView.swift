@@ -1,20 +1,19 @@
 import Components
 import DesignSystem
-import ShowDetails
 import SwiftUI
 import TvManiacKit
 
-struct ShowDetailsView: View {
+public struct ShowDetailsView: View {
     private let presenter: ShowDetailsPresenter
     @StateValue private var uiState: ShowDetailsContent
     @State private var toast: Toast?
 
-    init(presenter: ShowDetailsPresenter) {
+    public init(presenter: ShowDetailsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         ShowDetailsScreen(
             state: uiState.toState(),
             dayLabelFormat: { count in String(\.day_label, quantity: count) },

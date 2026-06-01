@@ -23,6 +23,7 @@
 		D6FEA700000000000001AA10 /* FeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA10 /* FeatureFlags */; };
 		D6FEA700000000000001AA11 /* MoreShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA11 /* MoreShows */; };
 		D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA12 /* SeasonDetails */; };
+		D6FEA700000000000001AA13 /* Calendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA13 /* Calendar */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 				D6FEA700000000000001AA10 /* FeatureFlags in Frameworks */,
 				D6FEA700000000000001AA11 /* MoreShows in Frameworks */,
 				D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */,
+				D6FEA700000000000001AA13 /* Calendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,6 +161,7 @@
 				D6FEA700000000000002AA10 /* FeatureFlags */,
 				D6FEA700000000000002AA11 /* MoreShows */,
 				D6FEA700000000000002AA12 /* SeasonDetails */,
+				D6FEA700000000000002AA13 /* Calendar */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -615,6 +618,10 @@
 		D6FEA700000000000002AA12 /* SeasonDetails */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SeasonDetails;
+		};
+		D6FEA700000000000002AA13 /* Calendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Calendar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

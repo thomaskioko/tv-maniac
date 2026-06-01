@@ -1,22 +1,21 @@
 import Components
 import DesignSystem
-import Discover
 import SwiftUI
 import TvManiacKit
 
-struct DiscoverTab: View {
+public struct DiscoverTab: View {
     private let presenter: DiscoverShowsPresenter
     @StateValue private var uiState: DiscoverViewState
     @StateObject private var store = SettingsAppStorage.shared
     @State private var currentIndex: Int
     @State private var toast: Toast?
-    init(presenter: DiscoverShowsPresenter) {
+    public init(presenter: DiscoverShowsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
         _currentIndex = State(initialValue: SettingsAppStorage.shared.savedIndex)
     }
 
-    var body: some View {
+    public var body: some View {
         DiscoverScreen(
             state: uiState.toState(),
             currentIndex: $currentIndex,

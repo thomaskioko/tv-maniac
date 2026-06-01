@@ -1,21 +1,20 @@
 import Components
-import Debug
 import DesignSystem
 import SwiftUI
 import TvManiac
 import TvManiacKit
 
-struct DebugMenuView: View {
+public struct DebugMenuView: View {
     private let presenter: DebugPresenter
     @StateValue private var uiState: DebugState
     @State private var toast: Toast?
 
-    init(presenter: DebugPresenter) {
+    public init(presenter: DebugPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         DebugScreen(
             state: DebugScreen.State(
                 title: uiState.title,

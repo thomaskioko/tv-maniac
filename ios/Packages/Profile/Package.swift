@@ -18,6 +18,7 @@ let package = Package(
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(name: "Components", path: "../Components"),
         .package(name: "Models", path: "../Models"),
+        .package(name: "TvManiacKit", path: "../TvManiacKit"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
     targets: [
@@ -27,6 +28,7 @@ let package = Package(
                 "DesignSystem",
                 "Components",
                 "Models",
+                "TvManiacKit",
             ],
             resources: [
                 .process("Resources"),

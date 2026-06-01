@@ -1,21 +1,20 @@
 import Components
 import DesignSystem
-import MoreShows
 import SwiftUI
 import TvManiac
 import TvManiacKit
 
-struct MoreShowsView: View {
+public struct MoreShowsView: View {
     private let presenter: MoreShowsPresenter
     @StateValue private var uiState: MoreShowsState
     @State private var toast: Toast?
 
-    init(presenter: MoreShowsPresenter) {
+    public init(presenter: MoreShowsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         MoreShowsScreen(
             state: uiState.toState(),
             toast: $toast,

@@ -1,15 +1,14 @@
 import Components
 import DesignSystem
-import Search
 import SwiftUI
 import TvManiac
 import TvManiacKit
 
-struct SearchTab: View {
+public struct SearchTab: View {
     private let presenter: SearchShowsPresenter
     @StateValue private var uiState: SearchShowState
 
-    init(presenter: SearchShowsPresenter) {
+    public init(presenter: SearchShowsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
@@ -22,7 +21,7 @@ struct SearchTab: View {
         )
     }
 
-    var body: some View {
+    public var body: some View {
         let categoryLabels = Array(uiState.categories).map { $0 as CategoryItem }
 
         SearchScreen(

@@ -1,20 +1,19 @@
 import Components
 import DesignSystem
-import FeatureFlags
 import SwiftUI
 import TvManiac
 import TvManiacKit
 
-struct FeatureFlagsView: View {
+public struct FeatureFlagsView: View {
     private let presenter: FeatureFlagsPresenter
     @StateValue private var uiState: FeatureFlagsState
 
-    init(presenter: FeatureFlagsPresenter) {
+    public init(presenter: FeatureFlagsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         FeatureFlagsScreen(
             state: uiState.toScreenState(),
             onBack: { presenter.dispatch(action: BackClicked_()) },

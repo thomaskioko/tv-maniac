@@ -1,20 +1,19 @@
 import Components
 import DesignSystem
-import Library
 import SwiftUI
 import TvManiacKit
 
-struct LibraryTab: View {
+public struct LibraryTab: View {
     private let presenter: LibraryPresenter
     @StateValue private var uiState: LibraryState
     @State private var showSortOptions = false
 
-    init(presenter: LibraryPresenter) {
+    public init(presenter: LibraryPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
     }
 
-    var body: some View {
+    public var body: some View {
         LibraryScreen(
             state: uiState.toState(),
             emptySearchResultFormat: { query in String(\.label_watchlist_empty_result, parameter: query) },
