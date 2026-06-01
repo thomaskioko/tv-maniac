@@ -1,7 +1,7 @@
 import Components
 import DesignSystem
+import FeatureFlags
 import Models
-import Profile
 import SnapshotTestingLib
 import SwiftUI
 import XCTest
