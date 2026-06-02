@@ -9,6 +9,10 @@ inputs:
     description: 'Path to SPM dependencies for caching'
     required: false
     default: 'ios/SourcePackages'
+  gradle-cache-read-only:
+    description: 'Forwarded to setup-gradle. Defaults to read-only on pull requests; set false for the cache-writing job.'
+    required: false
+    default: ${{ github.event_name == 'pull_request' }}
 
 runs:
   using: 'composite'
@@ -36,7 +40,7 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ inputs.spm-cache-path }}
-        key: ${{ runner.os }}-spm-${{ github.sha }}
+        key: ${{ runner.os }}-spm-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.resolved') }}
         restore-keys: |
           ${{ runner.os }}-spm-
 
@@ -56,5 +60,15 @@ runs:
       shell: bash
       run: mint bootstrap --link
 
+    - name: 🗂️ Cache Kotlin/Native (konan)
+      uses: actions/cache@v5
+      with:
+        path: ~/.konan
+        key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-konan-
+
     - name: 🐘 Setup Gradle
       uses: ./.github/actions/setup-gradle
+      with:
+        gradle-cache-read-only: ${{ inputs.gradle-cache-read-only }}

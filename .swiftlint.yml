@@ -34,7 +34,7 @@ excluded:
     - "**/SourcePackages"
     - derived_data
     - DerivedData
-    - ios/Modules/SnapshotTestingLib
+    - ios/Packages/SnapshotTestingLib
     - ios/build
     - vendor/bundle
     - ios-framework/build

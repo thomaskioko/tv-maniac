@@ -1,0 +1,146 @@
+import Components
+import DesignSystem
+import Models
+import SwiftUI
+
+public struct ContinueTrackingSection: View {
+    @Environment(\.appTheme) private var theme
+
+    private let title: String
+    private let episodes: [SwiftContinueTrackingEpisode]
+    private let scrollIndex: Int
+    private let dayLabelFormat: (_ count: Int) -> String
+    private let tbdLabel: String
+    private let onMarkWatched: (SwiftContinueTrackingEpisode) -> Void
+    private let updatingEpisodeIds: Set<Int64>
+
+    public init(
+        title: String,
+        episodes: [SwiftContinueTrackingEpisode],
+        scrollIndex: Int,
+        dayLabelFormat: @escaping (_ count: Int) -> String,
+        tbdLabel: String,
+        onMarkWatched: @escaping (SwiftContinueTrackingEpisode) -> Void,
+        updatingEpisodeIds: Set<Int64> = []
+    ) {
+        self.title = title
+        self.episodes = episodes
+        self.scrollIndex = scrollIndex
+        self.dayLabelFormat = dayLabelFormat
+        self.tbdLabel = tbdLabel
+        self.onMarkWatched = onMarkWatched
+        self.updatingEpisodeIds = updatingEpisodeIds
+    }
+
+    public var body: some View {
+        if !episodes.isEmpty {
+            VStack(alignment: .leading, spacing: theme.spacing.small) {
+                Text(title)
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundStyle(.appOnSurface)
+                    .padding(.horizontal, theme.spacing.medium)
+
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: theme.spacing.small) {
+                            ForEach(episodes) { episode in
+                                ContinueTrackingCard(
+                                    episode: episode,
+                                    dayLabelFormat: dayLabelFormat,
+                                    tbdLabel: tbdLabel,
+                                    onMarkWatched: { onMarkWatched(episode) },
+                                    isUpdating: updatingEpisodeIds.contains(episode.episodeId)
+                                )
+                                .id(episode.id)
+                            }
+                        }
+                        .padding(.horizontal, theme.spacing.medium)
+                    }
+                    .task(id: scrollIndex) {
+                        if scrollIndex >= 0, scrollIndex < episodes.count {
+                            let targetId = episodes[scrollIndex].id
+
+                            // Small delay for initial appearance
+                            try? await Task.sleep(for: .milliseconds(100))
+
+                            guard !Task.isCancelled else { return }
+
+                            await MainActor.run {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    proxy.scrollTo(targetId, anchor: .center)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, theme.spacing.medium)
+        }
+    }
+}
+
+#Preview {
+    VStack {
+        ContinueTrackingSection(
+            title: "Continue tracking",
+            episodes: [
+                SwiftContinueTrackingEpisode(
+                    episodeId: 1,
+                    seasonId: 1,
+                    showTraktId: 1,
+                    episodeNumber: 1,
+                    seasonNumber: 2,
+                    episodeNumberFormatted: "S02 | E01 (E14)",
+                    episodeTitle: "First Episode",
+                    imageUrl: nil,
+                    isWatched: true,
+                    daysUntilAir: nil,
+                    hasAired: true
+                ),
+                SwiftContinueTrackingEpisode(
+                    episodeId: 2,
+                    seasonId: 1,
+                    showTraktId: 1,
+                    episodeNumber: 2,
+                    seasonNumber: 2,
+                    episodeNumberFormatted: "S02 | E02 (E15)",
+                    episodeTitle: "Second Episode",
+                    imageUrl: nil,
+                    isWatched: true,
+                    daysUntilAir: nil,
+                    hasAired: true
+                ),
+                SwiftContinueTrackingEpisode(
+                    episodeId: 3,
+                    seasonId: 1,
+                    showTraktId: 1,
+                    episodeNumber: 3,
+                    seasonNumber: 2,
+                    episodeNumberFormatted: "S02 | E03 (E16)",
+                    episodeTitle: "Re:start",
+                    imageUrl: nil,
+                    isWatched: false,
+                    daysUntilAir: nil,
+                    hasAired: true
+                ),
+                SwiftContinueTrackingEpisode(
+                    episodeId: 4,
+                    seasonId: 1,
+                    showTraktId: 1,
+                    episodeNumber: 4,
+                    seasonNumber: 2,
+                    episodeNumberFormatted: "S02 | E04 (E17)",
+                    episodeTitle: "Fourth Episode",
+                    imageUrl: nil,
+                    isWatched: false,
+                    daysUntilAir: 5,
+                    hasAired: false
+                ),
+            ],
+            scrollIndex: 2,
+            dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
+            onMarkWatched: { _ in }
+        )
+    }
+}

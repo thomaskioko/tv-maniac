@@ -99,8 +99,8 @@ jobs:
                 with:
                     name: compose-compiler-metrics
                     path: |
-                        **/build/compose_metrics/
-                        **/build/compose_reports/
+                        **/build/compose-metrics/
+                        **/build/compose-reports/
 
 
     linux-test:
@@ -143,7 +143,7 @@ jobs:
 #                    name: ios-test-report
 #                    path: '**/build/reports/*'
 
-    build-ios:
+    build-ios-framework:
         needs: [swift-lint]
         runs-on: macos-15
         timeout-minutes: 60
@@ -158,6 +158,34 @@ jobs:
                 uses: ./.github/actions/setup-ios
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
+                    gradle-cache-read-only: 'false'
+
+            -   name: 🧱 Build & cache KMP frameworks
+                uses: ./.github/actions/kmp-ios-framework
+                with:
+                    mode: build
+
+    build-ios:
+        needs: [build-ios-framework]
+        runs-on: macos-15
+        timeout-minutes: 60
+        env:
+            FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+            TVMANIAC_SKIP_FRAMEWORK_BUILD: '1'
+
+        steps:
+            -   name: 🚚 Checkout project
+                uses: actions/checkout@v6
+
+            -   name: 📱 Setup iOS Environment
+                uses: ./.github/actions/setup-ios
+                with:
+                    xcode-version: ${{ env.XCODE_VERSION }}
+
+            -   name: 🗂️ Restore prebuilt KMP frameworks
+                uses: ./.github/actions/kmp-ios-framework
+                with:
+                    mode: restore
 
             -   name: 🔥 Install GoogleService-Info.plist
                 env:
@@ -181,13 +209,16 @@ jobs:
                     path: |
                         derived_data/Build/Products/
                         fastlane/logs
+                        !derived_data/Build/Products/**/*.bundle/**
+
 
     ios-snapshot-test:
-        needs: [swift-lint]
+        needs: [build-ios-framework]
         runs-on: macos-15
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+            TVMANIAC_SKIP_FRAMEWORK_BUILD: '1'
 
         steps:
             -   name: 🚚 Checkout project
@@ -197,6 +228,20 @@ jobs:
                 uses: ./.github/actions/setup-ios
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
+
+            -   name: 🗂️ Restore prebuilt KMP frameworks
+                uses: ./.github/actions/kmp-ios-framework
+                with:
+                    mode: restore
+
+            -   name: 🗂️ Cache DerivedData
+                uses: actions/cache@v5
+                with:
+                    path: derived_data
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}-${{ github.sha }}
+                    restore-keys: |
+                        ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}-
+                        ${{ runner.os }}-snapshot-derived-data-
 
             -   name: 📸 Run Snapshot Tests
                 run: bundle exec fastlane snapshot_tests
