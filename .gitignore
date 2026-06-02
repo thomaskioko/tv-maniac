@@ -106,6 +106,8 @@ CLAUDE.md
 !**/*.yaml.template
 **/.build/
 **/Package.resolved
+# Track the app's resolved dependency versions for reproducible builds and a stable SPM cache key; local packages stay ignored
+!/ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 # Firebase
 google-services.json
