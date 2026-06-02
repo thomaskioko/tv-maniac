@@ -209,6 +209,7 @@ jobs:
                     path: |
                         derived_data/Build/Products/
                         fastlane/logs
+                        !derived_data/Build/Products/**/*.bundle/**
 
 
     ios-snapshot-test:
