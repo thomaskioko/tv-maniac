@@ -234,17 +234,24 @@ jobs:
                 with:
                     mode: restore
 
-            -   name: 🗂️ Cache DerivedData
-                uses: actions/cache@v5
+            -   name: 🗂️ Restore DerivedData
+                id: derived-data
+                uses: actions/cache/restore@v5
                 with:
                     path: derived_data
-                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}-${{ github.sha }}
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
                     restore-keys: |
-                        ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}-
                         ${{ runner.os }}-snapshot-derived-data-
 
             -   name: 📸 Run Snapshot Tests
                 run: bundle exec fastlane snapshot_tests
+
+            -   name: 🗂️ Save DerivedData
+                if: github.ref == 'refs/heads/main' && steps.derived-data.outputs.cache-hit != 'true'
+                uses: actions/cache/save@v5
+                with:
+                    path: derived_data
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
 
             -   name: Upload test results
                 uses: actions/upload-artifact@v7
