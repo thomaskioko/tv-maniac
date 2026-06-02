@@ -84,8 +84,10 @@ jobs:
                     fi
 
             -   name: 🤖 Build Android App
+                env:
+                    BUNDLE_TASK: ${{ github.ref == 'refs/heads/main' && ':app:bundleRelease' || '' }}
                 run: |
-                    ./gradlew :app:assembleRelease ${{ github.ref == 'refs/heads/main' && ':app:bundleRelease' || '' }} \
+                    ./gradlew :app:assembleRelease $BUNDLE_TASK \
                       -Pandroidx.baselineprofile.skipgeneration=true \
                       -Pcompose.enableCompilerMetrics=true \
                       -Pcompose.enableCompilerReports=true \
@@ -99,6 +101,7 @@ jobs:
                     path: |
                         **/build/compose-metrics/
                         **/build/compose-reports/
+
 
 
     linux-test:
