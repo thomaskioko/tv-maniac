@@ -19,7 +19,7 @@ env:
     TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
 
 jobs:
-    static-analysis:
+    spotless:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v6
@@ -29,6 +29,14 @@ jobs:
 
             -   name: Run Spotless
                 run: ./gradlew spotlessCheck -Papp.debugOnly=false
+
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v6
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
 
             -   name: Lint Project
                 run: ./gradlew :app:lintRelease -Papp.debugOnly=false
@@ -41,6 +49,14 @@ jobs:
                     path: build/reports/lint/
                     if-no-files-found: ignore
 
+    dependency-health:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v6
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
             -   name: Dependency Health
                 run: ./gradlew buildHealth -Papp.debugOnly=false
 
@@ -50,6 +66,21 @@ jobs:
                 with:
                     name: dependency-health-report
                     path: '**/build/reports/dependency-analysis/build-health-report.txt'
+
+    static-analysis:
+        needs: [spotless, lint, dependency-health]
+        if: always()
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Verify static checks passed
+                run: |
+                    if [ "${{ needs.spotless.result }}" != "success" ] || \
+                       [ "${{ needs.lint.result }}" != "success" ] || \
+                       [ "${{ needs.dependency-health.result }}" != "success" ]; then
+                      echo "::error::Static checks failed (spotless=${{ needs.spotless.result }}, lint=${{ needs.lint.result }}, dependency-health=${{ needs.dependency-health.result }})"
+                      exit 1
+                    fi
+                    echo "All static checks passed."
 
     swift-lint:
         runs-on: ubuntu-latest
