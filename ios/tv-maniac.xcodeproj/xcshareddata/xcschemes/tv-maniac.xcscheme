@@ -11,7 +11,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "cd &quot;$SRCROOT/..&quot;&#10;TV_SRC=&quot;ios-framework/build/xcode-frameworks/$CONFIGURATION/$SDK_NAME&quot;&#10;I18N_SRC=&quot;i18n/generator/build/xcode-frameworks/$CONFIGURATION/$SDK_NAME&quot;&#10;if [ &quot;$TVMANIAC_SKIP_FRAMEWORK_BUILD&quot; = &quot;1&quot; ] &amp;&amp; [ -d &quot;$TV_SRC/TvManiac.framework&quot; ]; then&#10;  echo &quot;note: using prebuilt KMP framework from cache&quot;&#10;  mkdir -p &quot;$BUILT_PRODUCTS_DIR&quot;&#10;  ditto &quot;$TV_SRC/TvManiac.framework&quot; &quot;$BUILT_PRODUCTS_DIR/TvManiac.framework&quot;&#10;  ditto &quot;$I18N_SRC/i18n.framework&quot; &quot;$BUILT_PRODUCTS_DIR/i18n.framework&quot;&#10;else&#10;  ./gradlew :ios-framework:embedAndSignAppleFrameworkForXcode :i18n:generator:embedAndSignAppleFrameworkForXcode -Papp.enableIos=true&#10;fi&#10;">
+               scriptText = "&quot;$SRCROOT/../scripts/embed-kmp-framework.sh&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
