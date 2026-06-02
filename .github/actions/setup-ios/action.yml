@@ -40,7 +40,7 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ inputs.spm-cache-path }}
-        key: ${{ runner.os }}-spm-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.resolved') }}
+        key: ${{ runner.os }}-spm-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
         restore-keys: |
           ${{ runner.os }}-spm-
 
