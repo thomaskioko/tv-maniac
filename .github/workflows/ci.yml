@@ -62,7 +62,6 @@ jobs:
                     args: --config .swiftlint.yml
 
     build-android:
-        needs: [static-analysis]
         runs-on: ubuntu-latest
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,8 +85,7 @@ jobs:
 
             -   name: 🤖 Build Android App
                 run: |
-                    ./gradlew :app:assembleRelease \
-                      :app:bundleRelease \
+                    ./gradlew :app:assembleRelease ${{ github.ref == 'refs/heads/main' && ':app:bundleRelease' || '' }} \
                       -Pandroidx.baselineprofile.skipgeneration=true \
                       -Pcompose.enableCompilerMetrics=true \
                       -Pcompose.enableCompilerReports=true \
@@ -104,7 +102,6 @@ jobs:
 
 
     linux-test:
-        needs: [static-analysis]
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v6
