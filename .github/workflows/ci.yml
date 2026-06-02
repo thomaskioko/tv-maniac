@@ -198,6 +198,15 @@ jobs:
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
 
+            -   name: 🗂️ Cache DerivedData
+                uses: actions/cache@v5
+                with:
+                    path: derived_data
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}-${{ github.sha }}
+                    restore-keys: |
+                        ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}-
+                        ${{ runner.os }}-snapshot-derived-data-
+
             -   name: 📸 Run Snapshot Tests
                 run: bundle exec fastlane snapshot_tests
 
