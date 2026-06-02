@@ -60,12 +60,14 @@ public class DebugPresenter(
 
     private val coroutineScope = coroutineScope()
     private val debugNotificationState = ObservableLoadingCounter()
+    private val delayedNotificationState = ObservableLoadingCounter()
     private val librarySyncState = ObservableLoadingCounter()
     private val upNextSyncState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     public val state: StateFlow<DebugState> = combine(
         debugNotificationState.observable,
+        delayedNotificationState.observable,
         librarySyncState.observable,
         upNextSyncState.observable,
         datastoreRepository.observeLastSyncTimestamp(),
@@ -75,8 +77,8 @@ public class DebugPresenter(
         traktAuthRepository.state,
         traktAuthRepository.authState,
     ) {
-            isSchedulingDebugNotification, isSyncingLibrary, isSyncingUpNext, lastLibrarySyncDate, lastUpNextSyncDate,
-            lastTokenRefreshDate, message, traktAuthState, authState,
+            isSchedulingDebugNotification, isSchedulingDelayedNotification, isSyncingLibrary, isSyncingUpNext,
+            lastLibrarySyncDate, lastUpNextSyncDate, lastTokenRefreshDate, message, traktAuthState, authState,
         ->
         val isLoggedIn = traktAuthState == TraktAuthState.LOGGED_IN
         val tokenSubtitle = formatTokenStatus(
@@ -89,6 +91,7 @@ public class DebugPresenter(
             title = localizer.getString(StringResourceKey.LabelDebugMenuTitle),
             items = buildItems(
                 isSchedulingDebugNotification = isSchedulingDebugNotification,
+                isSchedulingDelayedNotification = isSchedulingDelayedNotification,
                 isSyncingLibrary = isSyncingLibrary,
                 isSyncingUpNext = isSyncingUpNext,
                 lastLibrarySyncDate = lastLibrarySyncDate,
@@ -109,8 +112,11 @@ public class DebugPresenter(
     public fun dispatch(action: DebugActions) {
         when (action) {
             BackClicked -> navigator.navigateBack()
-            TriggerDebugNotification -> scheduleDebugNotification()
-            TriggerDelayedDebugNotification -> scheduleDebugNotification(5.minutes)
+            TriggerDebugNotification -> scheduleDebugNotification(loadingState = debugNotificationState)
+            TriggerDelayedDebugNotification -> scheduleDebugNotification(
+                duration = 5.minutes,
+                loadingState = delayedNotificationState,
+            )
             TriggerLibrarySync -> runIfLoggedIn { triggerLibrarySync() }
             TriggerUpNextSync -> runIfLoggedIn { triggerUpNextSync() }
             OpenFeatureFlags -> navigator.navigateTo(FeatureFlagsRoute)
@@ -131,6 +137,7 @@ public class DebugPresenter(
 
     private fun buildItems(
         isSchedulingDebugNotification: Boolean,
+        isSchedulingDelayedNotification: Boolean,
         isSyncingLibrary: Boolean,
         isSyncingUpNext: Boolean,
         lastLibrarySyncDate: Long?,
@@ -151,7 +158,7 @@ public class DebugPresenter(
             icon = DebugItemIcon.Schedule,
             title = localizer.getString(StringResourceKey.LabelSettingsDelayedDebugNotificationTitle),
             subtitle = localizer.getString(StringResourceKey.LabelSettingsDelayedDebugNotificationDescription),
-            isLoading = isSchedulingDebugNotification,
+            isLoading = isSchedulingDelayedNotification,
             action = TriggerDelayedDebugNotification,
         )
         items += DebugItem(
@@ -207,7 +214,10 @@ public class DebugPresenter(
             localizer.getString(StringResourceKey.LabelDebugNeverSynced)
         }
 
-    private fun scheduleDebugNotification(duration: Duration = Duration.ZERO) {
+    private fun scheduleDebugNotification(
+        duration: Duration = Duration.ZERO,
+        loadingState: ObservableLoadingCounter,
+    ) {
         coroutineScope.launch {
             val notificationsEnabled = datastoreRepository.getEpisodeNotificationsEnabled()
             if (!notificationsEnabled) {
@@ -215,7 +225,7 @@ public class DebugPresenter(
                 return@launch
             }
             scheduleDebugEpisodeNotificationInteractor(DebugNotificationParams(delay = duration))
-                .collectStatus(debugNotificationState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
