@@ -79,13 +79,19 @@ platform :ios do
 
   desc "Build iOS App (Debug, simulator)"
   lane :build_tvmaniac do
-    sh("xcodebuild -project ../ios/tv-maniac.xcodeproj \
-      -scheme tv-maniac \
-      -destination 'platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}' \
-      -configuration Debug \
-      -clonedSourcePackagesDirPath ../ios/SourcePackages \
-      clean build \
-      COMPILER_INDEX_STORE_ENABLE=NO"
+    build_ios_app(
+      project: "ios/tv-maniac.xcodeproj",
+      scheme: "tv-maniac",
+      configuration: "Debug",
+      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      derived_data_path: DERIVED_DATA_PATH,
+      cloned_source_packages_path: "ios/SourcePackages",
+      xcargs: "COMPILER_INDEX_STORE_ENABLE=NO -skipPackagePluginValidation",
+      buildlog_path: "fastlane/logs",
+      clean: true,
+      skip_archive: true,
+      skip_codesigning: true,
+      skip_package_ipa: true
     )
   end
 
