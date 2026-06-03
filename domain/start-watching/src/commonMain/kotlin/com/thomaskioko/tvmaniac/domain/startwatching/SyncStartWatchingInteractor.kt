@@ -16,8 +16,8 @@ public class SyncStartWatchingInteractor(
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
-            watchedEpisodeSyncRepository.syncAllWatchedEpisodes(params.forceRefresh)
             startWatchingRepository.syncWatchlist(params.forceRefresh)
+            watchedEpisodeSyncRepository.syncAllWatchedEpisodes(params.forceRefresh)
         }
     }
 
