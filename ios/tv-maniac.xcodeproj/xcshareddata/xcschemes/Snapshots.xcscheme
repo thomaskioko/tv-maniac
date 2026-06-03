@@ -207,6 +207,16 @@
                ReferencedContainer = "container:Packages/SeasonDetails">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EpisodeDetailTests"
+               BuildableName = "EpisodeDetailTests"
+               BlueprintName = "EpisodeDetailTests"
+               ReferencedContainer = "container:Packages/EpisodeDetail">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
