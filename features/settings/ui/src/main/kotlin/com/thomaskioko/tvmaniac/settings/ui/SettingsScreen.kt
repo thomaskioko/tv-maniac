@@ -170,31 +170,39 @@ internal fun SettingsScreen(
             )
         },
         content = { innerPadding ->
-            AnimatedContent(
-                targetState = state.currentPage,
-                transitionSpec = {
-                    if (targetState != SettingsPage.ROOT) {
-                        (slideInHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { it } + fadeIn()) togetherWith
-                            (slideOutHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { -it / 4 } + fadeOut())
-                    } else {
-                        (slideInHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { -it / 4 } + fadeIn()) togetherWith
-                            (slideOutHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { it } + fadeOut())
+            if (state.isLoading) {
+                SettingsLoadingUi(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
+            } else {
+                AnimatedContent(
+                    targetState = state.currentPage,
+                    transitionSpec = {
+                        if (targetState != SettingsPage.ROOT) {
+                            (slideInHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { it } + fadeIn()) togetherWith
+                                (slideOutHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { -it / 4 } + fadeOut())
+                        } else {
+                            (slideInHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { -it / 4 } + fadeIn()) togetherWith
+                                (slideOutHorizontally(tween(SETTINGS_PAGE_ANIMATION_MILLIS)) { it } + fadeOut())
+                        }
+                    },
+                    label = "settings_page",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                ) { page ->
+                    when (page) {
+                        SettingsPage.ROOT -> SettingsRootContent(state = state, onAction = onAction)
+                        SettingsPage.APPEARANCE -> AppearancePage(state = state, onAction = onAction)
+                        SettingsPage.BEHAVIOR -> BehaviorPage(state = state, onAction = onAction)
+                        SettingsPage.NOTIFICATIONS -> NotificationsPage(state = state, onAction = onAction)
+                        SettingsPage.PRIVACY -> PrivacyPage(state = state, onAction = onAction)
+                        SettingsPage.INFO -> InfoPage(state = state, onAction = onAction)
+                        SettingsPage.LICENSES -> LicensesPage(state = state)
+                        SettingsPage.TRAKT -> TraktPage(state = state, onAction = onAction)
                     }
-                },
-                label = "settings_page",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            ) { page ->
-                when (page) {
-                    SettingsPage.ROOT -> SettingsRootContent(state = state, onAction = onAction)
-                    SettingsPage.APPEARANCE -> AppearancePage(state = state, onAction = onAction)
-                    SettingsPage.BEHAVIOR -> BehaviorPage(state = state, onAction = onAction)
-                    SettingsPage.NOTIFICATIONS -> NotificationsPage(state = state, onAction = onAction)
-                    SettingsPage.PRIVACY -> PrivacyPage(state = state, onAction = onAction)
-                    SettingsPage.INFO -> InfoPage(state = state, onAction = onAction)
-                    SettingsPage.LICENSES -> LicensesPage(state = state)
-                    SettingsPage.TRAKT -> TraktPage(state = state, onAction = onAction)
                 }
             }
         },
