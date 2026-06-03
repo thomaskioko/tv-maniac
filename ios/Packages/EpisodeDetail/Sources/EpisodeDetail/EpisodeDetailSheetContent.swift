@@ -1,9 +1,8 @@
 import Components
 import DesignSystem
-import Models
 import SwiftUI
 
-public struct EpisodeDetailInfo: Equatable {
+public struct EpisodeDetailSheetInfo: Equatable {
     public let title: String
     public let imageUrl: String?
     public let episodeInfo: String
@@ -31,11 +30,11 @@ public struct EpisodeDetailInfo: Equatable {
 public struct EpisodeDetailSheetContent<Actions: View>: View {
     @Environment(\.appTheme) private var theme
 
-    private let episode: EpisodeDetailInfo
+    private let episode: EpisodeDetailSheetInfo
     private let actions: (() -> Actions)?
 
     public init(
-        episode: EpisodeDetailInfo,
+        episode: EpisodeDetailSheetInfo,
         @ViewBuilder actions: @escaping () -> Actions
     ) {
         self.episode = episode
@@ -122,7 +121,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
 }
 
 public extension EpisodeDetailSheetContent where Actions == EmptyView {
-    init(episode: EpisodeDetailInfo) {
+    init(episode: EpisodeDetailSheetInfo) {
         self.episode = episode
         actions = nil
     }
@@ -164,7 +163,7 @@ public struct SheetActionItem: View {
 
 #Preview("Detail Only") {
     EpisodeDetailSheetContent(
-        episode: EpisodeDetailInfo(
+        episode: EpisodeDetailSheetInfo(
             title: "The Walking Dead: Daryl Dixon",
             imageUrl: nil,
             episodeInfo: "S02E01 \u{2022} 45m",
@@ -178,7 +177,7 @@ public struct SheetActionItem: View {
 
 #Preview("With Actions") {
     EpisodeDetailSheetContent(
-        episode: EpisodeDetailInfo(
+        episode: EpisodeDetailSheetInfo(
             title: "Wednesday",
             imageUrl: nil,
             episodeInfo: "S02E03 \u{2022} 50m",
@@ -197,7 +196,7 @@ public struct SheetActionItem: View {
 
 #Preview("No Rating") {
     EpisodeDetailSheetContent(
-        episode: EpisodeDetailInfo(
+        episode: EpisodeDetailSheetInfo(
             title: "House of the Dragon",
             imageUrl: nil,
             episodeInfo: "S03E01",
