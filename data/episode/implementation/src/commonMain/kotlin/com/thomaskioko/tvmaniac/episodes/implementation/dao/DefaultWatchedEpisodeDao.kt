@@ -176,8 +176,6 @@ public class DefaultWatchedEpisodeDao(
                 watchedCount = watchedCount.toInt(),
                 totalCount = totalCount.toInt(),
             )
-        }.catch {
-            emit(ShowWatchProgress(showTraktId, 0, 0))
         }
     }
 
