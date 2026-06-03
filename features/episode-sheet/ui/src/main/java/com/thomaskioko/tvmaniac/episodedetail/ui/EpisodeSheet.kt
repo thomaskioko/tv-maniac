@@ -6,6 +6,8 @@ import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,18 +38,25 @@ public fun EpisodeSheet(
     val state by presenter.state.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    if (!state.isLoading) {
-        EpisodeDetailBottomSheet(
-            episode = state.toEpisodeDetailInfo(),
-            sheetState = sheetState,
-            onDismiss = { presenter.dispatch(EpisodeSheetAction.Dismiss) },
-            modifier = modifier,
-            actions = if (state.availableActions.isEmpty()) {
-                null
-            } else {
-                { EpisodeSheetActions(state, presenter::dispatch) }
-            },
-        )
+    ModalBottomSheet(
+        onDismissRequest = { presenter.dispatch(EpisodeSheetAction.Dismiss) },
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
+        dragHandle = null,
+        modifier = modifier,
+    ) {
+        if (state.isLoading) {
+            EpisodeDetailSheetLoadingUi()
+        } else {
+            EpisodeDetailSheetContent(
+                episode = state.toEpisodeDetailInfo(),
+                actions = if (state.availableActions.isEmpty()) {
+                    null
+                } else {
+                    { EpisodeSheetActions(state, presenter::dispatch) }
+                },
+            )
+        }
     }
 }
 

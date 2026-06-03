@@ -15,37 +15,41 @@ public struct EpisodeDetailSheetView: View {
     }
 
     public var body: some View {
-        if !state.isLoading {
-            EpisodeDetailSheetContent(
-                episode: EpisodeDetailInfo(
-                    title: state.episodeTitle,
-                    imageUrl: state.imageUrl,
-                    episodeInfo: {
-                        var text = state.seasonEpisodeNumber
-                        if !state.showName.isEmpty {
-                            text += " \u{2022} \(state.showName)"
-                        }
-                        return text
-                    }(),
-                    overview: state.overview,
-                    rating: state.rating as? Double,
-                    voteCount: state.voteCount as? Int64
-                )
-            ) {
-                ForEach(Array(state.availableActions), id: \.self) { action in
-                    actionView(for: action)
+        Group {
+            if state.isLoading {
+                EpisodeDetailSheetLoadingUi()
+            } else {
+                EpisodeDetailSheetContent(
+                    episode: EpisodeDetailSheetInfo(
+                        title: state.episodeTitle,
+                        imageUrl: state.imageUrl,
+                        episodeInfo: {
+                            var text = state.seasonEpisodeNumber
+                            if !state.showName.isEmpty {
+                                text += " \u{2022} \(state.showName)"
+                            }
+                            return text
+                        }(),
+                        overview: state.overview,
+                        rating: state.rating as? Double,
+                        voteCount: state.voteCount as? Int64
+                    )
+                ) {
+                    ForEach(Array(state.availableActions), id: \.self) { action in
+                        actionView(for: action)
+                    }
                 }
             }
-            .presentationDetents([.medium, .large], selection: $selectedDetent)
-            .presentationDragIndicator(.visible)
-            .presentationCornerRadius(16)
-            .appTheme()
-            .toastView(toast: $toast)
-            .onChange(of: state.message) { _, newValue in
-                if let message = newValue {
-                    toast = Toast(type: .error, title: String(\.label_error), message: message.message)
-                    presenter.dispatch(action: EpisodeSheetActionMessageShown(id: message.id))
-                }
+        }
+        .presentationDetents([.medium, .large], selection: $selectedDetent)
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius(16)
+        .appTheme()
+        .toastView(toast: $toast)
+        .onChange(of: state.message) { _, newValue in
+            if let message = newValue {
+                toast = Toast(type: .error, title: String(\.label_error), message: message.message)
+                presenter.dispatch(action: EpisodeSheetActionMessageShown(id: message.id))
             }
         }
     }
