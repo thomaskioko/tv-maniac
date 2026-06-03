@@ -102,6 +102,21 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should exclude show once its followed entry is removed`() = runTest(testDispatcher) {
+        insertReleasedShow(id = 9, name = "Finished Show")
+        followShow(9)
+
+        dao.observeStartWatchingShows().test {
+            awaitItem() shouldContainExactly listOf(expectedShow(9, "Finished Show"))
+
+            database.followedShowsQueries.deleteByTraktId(Id<TraktId>(9L))
+
+            awaitItem().shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should order by followed at descending`() = runTest(testDispatcher) {
         insertReleasedShow(id = 6, name = "Older Follow")
         insertReleasedShow(id = 7, name = "Newer Follow")
