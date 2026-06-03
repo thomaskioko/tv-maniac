@@ -32,6 +32,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlin.time.Instant
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -117,6 +118,27 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         readRow(seasonNumber = 1L, episodeNumber = 1L)
             .shouldNotBeNull().pending_action shouldBe PendingAction.SYNCED_DELETE.value
         readRow(seasonNumber = 1L, episodeNumber = 2L).shouldBeNull()
+    }
+
+    @Test
+    fun `should fetch per-show watches on open when bulk ran recently but show was never per-show synced`() = runTest {
+        requestManagerRepository.requestValid = true
+        requestManagerRepository.requestExpired = true
+        recordingDataSource.showWatchesToReturn = listOf(
+            WatchedEpisodeEntry(
+                showTraktId = SHOW_ID,
+                episodeId = null,
+                seasonNumber = 1L,
+                episodeNumber = 1L,
+                watchedAt = Instant.fromEpochMilliseconds(fakeDateTimeProvider.nowMillis()),
+                pendingAction = PendingAction.NOTHING,
+            ),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncShowEpisodeWatches(showTraktId = SHOW_ID, forceRefresh = false)
+
+        recordingDataSource.getShowEpisodeWatchesCalls shouldContainExactly listOf(SHOW_ID)
+        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
     }
 
     private data class WatchedRow(
@@ -206,7 +228,14 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     private val _removedTraktIds = mutableListOf<Long>()
     val removedTraktIds: List<Long> get() = _removedTraktIds.toList()
 
-    override suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry> = emptyList()
+    private val _getShowEpisodeWatchesCalls = mutableListOf<Long>()
+    val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
+    var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
+
+    override suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry> {
+        _getShowEpisodeWatchesCalls += showTraktId
+        return showWatchesToReturn
+    }
     override suspend fun getAllWatchedShows(
         page: Int,
         limit: Int,
