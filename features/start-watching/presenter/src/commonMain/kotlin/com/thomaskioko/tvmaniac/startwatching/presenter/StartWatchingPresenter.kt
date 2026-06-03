@@ -18,12 +18,16 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -38,15 +42,27 @@ public class StartWatchingPresenter(
     private val syncStartWatchingInteractor: SyncStartWatchingInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
+    private val traktAuthRepository: TraktAuthRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
     private val queryFlow = MutableStateFlow("")
     private val userRefreshState = ObservableLoadingCounter()
+    private val watchlistLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     init {
         observeStartWatchingInteractor(Unit)
+        observeAuthState()
+    }
+
+    private fun observeAuthState() {
+        coroutineScope.launch {
+            traktAuthRepository.state
+                .distinctUntilChanged()
+                .filter { it == TraktAuthState.LOGGED_IN }
+                .collect { syncStartWatching(forceRefresh = false) }
+        }
     }
 
     public val state: StateFlow<StartWatchingState> = combine(
@@ -79,7 +95,7 @@ public class StartWatchingPresenter(
         when (action) {
             is StartWatchingShowClicked -> navigateToShowDetails(action.traktId)
             is StartWatchingMessageShown -> clearMessage(action.id)
-            is RefreshStartWatching -> refresh()
+            is RefreshStartWatching -> syncStartWatching(action.forceRefresh)
         }
     }
 
@@ -87,14 +103,15 @@ public class StartWatchingPresenter(
         navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = traktId)))
     }
 
-    private fun refresh() {
+    private fun syncStartWatching(forceRefresh: Boolean) {
         coroutineScope.launch {
+            val counter = if (forceRefresh) userRefreshState else watchlistLoadingState
             syncStartWatchingInteractor(
-                SyncStartWatchingInteractor.Param(forceRefresh = true),
+                SyncStartWatchingInteractor.Param(forceRefresh = forceRefresh),
             ).collectStatus(
-                userRefreshState,
-                logger,
-                uiMessageManager,
+                counter = counter,
+                logger = logger,
+                uiMessageManager = uiMessageManager,
                 errorToStringMapper = errorToStringMapper,
             )
         }
