@@ -17,6 +17,14 @@
 -- and still valid against the rebuilt tvshow.
 PRAGMA legacy_alter_table=1;
 
+-- The views reference season/episode/watched_episodes by their show key, which this migration
+-- repoints from show_trakt_id to show_id. Drop them up front and recreate them (further down, with
+-- the new show_id-based definitions) once the tables are rebuilt, so the migrated schema matches the
+-- .sq view definitions.
+DROP VIEW IF EXISTS shows_next_to_watch;
+DROP VIEW IF EXISTS shows_last_watched;
+DROP VIEW IF EXISTS show_watch_progress;
+
 CREATE TABLE tvshow_new(
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     trakt_id INTEGER NOT NULL UNIQUE,
@@ -85,3 +93,216 @@ SELECT id, 'TRAKT', CAST(trakt_id AS TEXT) FROM tvshow;
 
 INSERT INTO tvshow_provider_meta(show_id, provider, rating, vote_count, last_synced_at)
 SELECT id, 'TMDB', ratings, vote_count, NULL FROM tvshow;
+
+-- Repoint the child/hierarchy tables from show_trakt_id (FK to tvshow.trakt_id) onto show_id (FK to
+-- tvshow.id). Each rebuild backfills show_id by joining the old show_trakt_id to the rebuilt tvshow;
+-- the inner join is total because every child row had a foreign key to tvshow(trakt_id). Rebuilt in
+-- dependency order (season -> episode -> watched_episodes) so each new table's foreign keys
+-- reference an already-rebuilt parent. Foreign keys are off for the whole migration, so dropping a
+-- parent does not cascade into not-yet-rebuilt children.
+
+CREATE TABLE season_new (
+    id INTEGER NOT NULL PRIMARY KEY,
+    show_id INTEGER NOT NULL,
+    season_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    episode_count INTEGER NOT NULL,
+    overview TEXT,
+    image_url TEXT DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO season_new (id, show_id, season_number, title, episode_count, overview, image_url)
+SELECT season.id, tvshow.id, season.season_number, season.title, season.episode_count, season.overview, season.image_url
+FROM season
+JOIN tvshow ON tvshow.trakt_id = season.show_trakt_id;
+
+DROP TABLE season;
+ALTER TABLE season_new RENAME TO season;
+CREATE INDEX IF NOT EXISTS idx_season_show_id ON season(show_id);
+CREATE INDEX IF NOT EXISTS idx_season_show_number_id ON season(show_id, season_number, id);
+
+CREATE TABLE episode_new (
+    id INTEGER NOT NULL PRIMARY KEY,
+    season_id INTEGER NOT NULL,
+    show_id INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    runtime INTEGER DEFAULT NULL,
+    vote_count INTEGER NOT NULL,
+    ratings REAL NOT NULL,
+    image_url TEXT DEFAULT NULL,
+    trakt_id INTEGER DEFAULT NULL,
+    first_aired INTEGER DEFAULT NULL,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO episode_new (id, season_id, show_id, episode_number, title, overview, runtime, vote_count, ratings, image_url, trakt_id, first_aired)
+SELECT episode.id, episode.season_id, tvshow.id, episode.episode_number, episode.title, episode.overview, episode.runtime, episode.vote_count, episode.ratings, episode.image_url, episode.trakt_id, episode.first_aired
+FROM episode
+JOIN tvshow ON tvshow.trakt_id = episode.show_trakt_id;
+
+DROP TABLE episode;
+ALTER TABLE episode_new RENAME TO episode;
+CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);
+CREATE INDEX IF NOT EXISTS idx_episode_first_aired ON episode(first_aired);
+CREATE INDEX IF NOT EXISTS idx_episode_show_first_aired ON episode(show_id, first_aired);
+
+CREATE TABLE watched_episodes_new (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER NOT NULL,
+    episode_id INTEGER DEFAULT NULL,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    watched_at INTEGER NOT NULL,
+    trakt_id INTEGER DEFAULT NULL,
+    synced_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE,
+    UNIQUE(show_id, season_number, episode_number)
+);
+
+INSERT INTO watched_episodes_new (id, show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action)
+SELECT watched_episodes.id, tvshow.id, watched_episodes.episode_id, watched_episodes.season_number, watched_episodes.episode_number, watched_episodes.watched_at, watched_episodes.trakt_id, watched_episodes.synced_at, watched_episodes.pending_action
+FROM watched_episodes
+JOIN tvshow ON tvshow.trakt_id = watched_episodes.show_trakt_id;
+
+DROP TABLE watched_episodes;
+ALTER TABLE watched_episodes_new RENAME TO watched_episodes;
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_id ON watched_episodes(show_id);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_show_season ON watched_episodes(show_id, season_number);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_pending_action ON watched_episodes(pending_action);
+CREATE INDEX IF NOT EXISTS idx_watched_episodes_trakt ON watched_episodes(trakt_id);
+CREATE INDEX IF NOT EXISTS idx_watched_show_episode ON watched_episodes(show_id, episode_id);
+
+-- casts and show_metadata also FK to tvshow(trakt_id); repoint them onto show_id. No view references
+-- either, so this is a plain parent-less rebuild backfilling show_id from the rebuilt tvshow. casts
+-- additionally references season(id), already rebuilt above.
+
+CREATE TABLE casts_new (
+    id INTEGER NOT NULL,
+    trakt_id INTEGER,
+    show_id INTEGER NOT NULL,
+    season_id INTEGER,
+    name TEXT NOT NULL,
+    character_name TEXT NOT NULL,
+    profile_path TEXT,
+    popularity REAL,
+    PRIMARY KEY (id, show_id, season_id),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON DELETE CASCADE
+);
+
+INSERT INTO casts_new (id, trakt_id, show_id, season_id, name, character_name, profile_path, popularity)
+SELECT casts.id, casts.trakt_id, tvshow.id, casts.season_id, casts.name, casts.character_name, casts.profile_path, casts.popularity
+FROM casts
+JOIN tvshow ON tvshow.trakt_id = casts.show_trakt_id;
+
+DROP TABLE casts;
+ALTER TABLE casts_new RENAME TO casts;
+CREATE INDEX IF NOT EXISTS `index_casts_trakt_id` ON `casts` (`trakt_id`);
+CREATE INDEX IF NOT EXISTS `index_casts_show_id` ON `casts` (`show_id`);
+CREATE INDEX IF NOT EXISTS `index_casts_season_id` ON `casts` (`season_id`);
+
+CREATE TABLE show_metadata_new (
+    show_id INTEGER PRIMARY KEY NOT NULL,
+    season_count INTEGER NOT NULL DEFAULT 0,
+    episode_count INTEGER NOT NULL DEFAULT 0,
+    status TEXT DEFAULT NULL,
+    last_watched_episode_id INTEGER DEFAULT NULL,
+    last_watched_season_number INTEGER DEFAULT NULL,
+    last_watched_episode_number INTEGER DEFAULT NULL,
+    last_watched_at INTEGER DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO show_metadata_new (show_id, season_count, episode_count, status, last_watched_episode_id, last_watched_season_number, last_watched_episode_number, last_watched_at)
+SELECT tvshow.id, show_metadata.season_count, show_metadata.episode_count, show_metadata.status, show_metadata.last_watched_episode_id, show_metadata.last_watched_season_number, show_metadata.last_watched_episode_number, show_metadata.last_watched_at
+FROM show_metadata
+JOIN tvshow ON tvshow.trakt_id = show_metadata.show_trakt_id;
+
+DROP TABLE show_metadata;
+ALTER TABLE show_metadata_new RENAME TO show_metadata;
+
+-- Recreate the views with show_id-based internal joins, matching the .sq definitions. They still
+-- expose show_trakt_id (via tvshow.trakt_id) so downstream consumers (followed_shows/library/
+-- continue-watching) are untouched until later phases.
+CREATE VIEW shows_last_watched AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
+    MAX(watched_episode.watched_at) AS last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_id = tvshow.id AND watched_episode.episode_id = episode.id AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+WHERE season.season_number > 0 OR season.title != 'Specials'
+GROUP BY tvshow.trakt_id;
+
+CREATE VIEW show_watch_progress AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    COALESCE(watched.count, 0) AS watched_count,
+    COALESCE(total.count, 0) AS total_count
+FROM tvshow
+LEFT JOIN (
+    SELECT show_id, COUNT(*) AS count
+    FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY show_id
+) AS watched ON watched.show_id = tvshow.id
+LEFT JOIN (
+    SELECT episode.show_id, COUNT(*) AS count
+    FROM episode
+    INNER JOIN season ON episode.season_id = season.id
+    WHERE season.season_number > 0
+    AND episode.first_aired IS NOT NULL
+    AND episode.first_aired <= strftime('%s', 'now') * 1000
+    GROUP BY episode.show_id
+) AS total ON total.show_id = tvshow.id;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.first_aired,
+    last_watched.last_watched_at,
+    episode.ratings,
+    episode.vote_count
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS watched_episode
+    ON watched_episode.show_id = tvshow.id
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    AND (
+        watched_episode.episode_id = episode.id
+        OR (
+            watched_episode.episode_id IS NULL
+            AND watched_episode.season_number = season.season_number
+            AND watched_episode.episode_number = episode.episode_number
+        )
+    )
+LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvshow.trakt_id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND watched_episode.id IS NULL
+  AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+  AND episode.first_aired IS NOT NULL
+  AND episode.first_aired <= strftime('%s', 'now') * 1000
+ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;

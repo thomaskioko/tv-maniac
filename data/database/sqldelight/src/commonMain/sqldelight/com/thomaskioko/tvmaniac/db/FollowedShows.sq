@@ -118,7 +118,7 @@ SELECT
     COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
-LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
 ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC;
@@ -139,7 +139,7 @@ SELECT
     COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
-LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
 WHERE followed_shows.pending_action != 'DELETE'
   AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE

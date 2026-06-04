@@ -32,7 +32,7 @@ class Migration25Test {
             migrateToCurrent(driver, oldVersion = 24)
 
             val cols = driver.columnNames("show_metadata")
-            cols shouldContain "show_trakt_id"
+            cols shouldContain "show_id"
             cols shouldContain "season_count"
             cols shouldContain "episode_count"
             cols shouldContain "status"
@@ -62,13 +62,24 @@ class Migration25Test {
 
             migrateToCurrent(driver, oldVersion = 24)
 
+            val expectedShowId = driver.executeQuery(
+                identifier = null,
+                sql = "SELECT id FROM tvshow WHERE trakt_id = 42",
+                parameters = 0,
+                binders = null,
+                mapper = { cursor ->
+                    cursor.next()
+                    QueryResult.Value(cursor.getLong(0)!!)
+                },
+            ).value
+
             val row = driver.executeQuery(
                 identifier = null,
                 sql = """
-                    SELECT show_trakt_id, season_count, episode_count, status,
+                    SELECT show_id, season_count, episode_count, status,
                            last_watched_episode_id, last_watched_season_number,
                            last_watched_episode_number, last_watched_at
-                    FROM show_metadata WHERE show_trakt_id = 42
+                    FROM show_metadata WHERE show_id = $expectedShowId
                 """.trimIndent(),
                 parameters = 0,
                 binders = null,
@@ -76,7 +87,7 @@ class Migration25Test {
                     QueryResult.Value(
                         if (cursor.next().value) {
                             ShowMetadataRow(
-                                showTraktId = cursor.getLong(0)!!,
+                                showId = cursor.getLong(0)!!,
                                 seasonCount = cursor.getLong(1)!!,
                                 episodeCount = cursor.getLong(2)!!,
                                 status = cursor.getString(3),
@@ -93,7 +104,7 @@ class Migration25Test {
             ).value
 
             row shouldBe ShowMetadataRow(
-                showTraktId = 42L,
+                showId = expectedShowId,
                 seasonCount = 5L,
                 episodeCount = 50L,
                 status = "Returning Series",
@@ -114,7 +125,7 @@ class Migration25Test {
             val error = runCatching {
                 driver.execute(
                     identifier = null,
-                    sql = "INSERT INTO show_metadata (show_trakt_id) VALUES (999999999)",
+                    sql = "INSERT INTO show_metadata (show_id) VALUES (999999999)",
                     parameters = 0,
                 )
             }.exceptionOrNull()
@@ -125,7 +136,7 @@ class Migration25Test {
 }
 
 private data class ShowMetadataRow(
-    val showTraktId: Long,
+    val showId: Long,
     val seasonCount: Long,
     val episodeCount: Long,
     val status: String?,

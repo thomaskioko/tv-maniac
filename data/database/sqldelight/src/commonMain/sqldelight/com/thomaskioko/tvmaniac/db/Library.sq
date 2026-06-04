@@ -23,7 +23,7 @@ SELECT
 FROM tvshow
 LEFT JOIN followed_shows ON tvshow.trakt_id = followed_shows.trakt_id
     AND followed_shows.pending_action != 'DELETE'
-LEFT JOIN show_metadata ON tvshow.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
 WHERE (
     followed_shows.id IS NOT NULL

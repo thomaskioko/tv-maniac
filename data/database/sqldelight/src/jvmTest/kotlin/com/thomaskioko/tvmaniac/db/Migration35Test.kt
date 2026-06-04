@@ -5,9 +5,6 @@ import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.util.columnNames
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
-import com.thomaskioko.tvmaniac.db.util.seedEpisode
-import com.thomaskioko.tvmaniac.db.util.seedSeason
-import com.thomaskioko.tvmaniac.db.util.seedWatchedEpisode
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -52,15 +49,9 @@ class Migration35Test {
     fun `should preserve child rows and pending writes across the tvshow rebuild`() {
         openSnapshot(version = 35).use { driver ->
             driver.seedShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
-            driver.seedSeason(id = 1, showTraktId = 100, seasonNumber = 1)
-            driver.seedEpisode(id = 1, seasonId = 1, showTraktId = 100, episodeNumber = 1, firstAired = 1_700_000_000_000L)
-            driver.seedWatchedEpisode(
-                showTraktId = 100,
-                episodeId = 1,
-                seasonNumber = 1,
-                episodeNumber = 1,
-                pendingAction = "UPLOAD",
-            )
+            driver.seedSeasonV35(id = 1, showTraktId = 100, seasonNumber = 1)
+            driver.seedEpisodeV35(id = 1, seasonId = 1, showTraktId = 100, episodeNumber = 1, firstAired = 1_700_000_000_000L)
+            driver.seedWatchedEpisodeV35(showTraktId = 100, episodeId = 1, seasonNumber = 1, episodeNumber = 1, pendingAction = "UPLOAD")
 
             migrateToCurrent(driver, oldVersion = 35)
 
@@ -81,6 +72,45 @@ class Migration35Test {
             sql = """
                 INSERT INTO tvshow (trakt_id, tmdb_id, name, overview, ratings, vote_count)
                 VALUES ($traktId, $tmdbId, 'show-$traktId', 'overview', $ratings, $voteCount)
+            """.trimIndent(),
+            parameters = 0,
+        )
+    }
+
+    private fun SqlDriver.seedSeasonV35(id: Long, showTraktId: Long, seasonNumber: Long) {
+        execute(
+            identifier = null,
+            sql = """
+                INSERT INTO season (id, show_trakt_id, season_number, title, episode_count, overview)
+                VALUES ($id, $showTraktId, $seasonNumber, 'Season $seasonNumber', 1, 'overview')
+            """.trimIndent(),
+            parameters = 0,
+        )
+    }
+
+    private fun SqlDriver.seedEpisodeV35(id: Long, seasonId: Long, showTraktId: Long, episodeNumber: Long, firstAired: Long) {
+        execute(
+            identifier = null,
+            sql = """
+                INSERT INTO episode (id, season_id, show_trakt_id, episode_number, title, overview, ratings, vote_count, first_aired)
+                VALUES ($id, $seasonId, $showTraktId, $episodeNumber, 'ep-$id', 'overview', 8.0, 100, $firstAired)
+            """.trimIndent(),
+            parameters = 0,
+        )
+    }
+
+    private fun SqlDriver.seedWatchedEpisodeV35(
+        showTraktId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        pendingAction: String,
+    ) {
+        execute(
+            identifier = null,
+            sql = """
+                INSERT INTO watched_episodes (show_trakt_id, episode_id, season_number, episode_number, watched_at, pending_action)
+                VALUES ($showTraktId, $episodeId, $seasonNumber, $episodeNumber, 1700000000000, '$pendingAction')
             """.trimIndent(),
             parameters = 0,
         )
@@ -121,7 +151,7 @@ class Migration35Test {
 
     private fun SqlDriver.pendingActionFor(showTraktId: Long): String? = executeQuery(
         identifier = null,
-        sql = "SELECT pending_action FROM watched_episodes WHERE show_trakt_id = $showTraktId",
+        sql = "SELECT pending_action FROM watched_episodes WHERE show_id = (SELECT id FROM tvshow WHERE trakt_id = $showTraktId)",
         mapper = { cursor -> QueryResult.Value(if (cursor.next().value) cursor.getString(0) else null) },
         parameters = 0,
     ).value

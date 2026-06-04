@@ -25,11 +25,11 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         episodeAdapter = Episode.Adapter(
             idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
-            show_trakt_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
         ),
         seasonAdapter = Season.Adapter(
             idAdapter = IdAdapter(),
-            show_trakt_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
         ),
         similar_showsAdapter = Similar_shows.Adapter(
             tmdb_idAdapter = IdAdapter(),
@@ -82,7 +82,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         castsAdapter = Casts.Adapter(
             idAdapter = IdAdapter(),
             trakt_idAdapter = IdAdapter(),
-            show_trakt_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
             season_idAdapter = IdAdapter(),
         ),
         watch_providersAdapter = Watch_providers.Adapter(
@@ -99,11 +99,11 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             genre_idAdapter = IdAdapter(),
         ),
         show_metadataAdapter = Show_metadata.Adapter(
-            show_trakt_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
             last_watched_episode_idAdapter = IdAdapter(),
         ),
         watched_episodesAdapter = Watched_episodes.Adapter(
-            show_trakt_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
             episode_idAdapter = IdAdapter(),
         ),
         followed_showsAdapter = Followed_shows.Adapter(

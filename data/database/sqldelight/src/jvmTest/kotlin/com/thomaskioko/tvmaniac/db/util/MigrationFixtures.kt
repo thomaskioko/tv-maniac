@@ -77,8 +77,8 @@ internal fun SqlDriver.seedSeason(
     execute(
         identifier = null,
         sql = """
-            INSERT INTO season (id, show_trakt_id, season_number, title, episode_count, overview)
-            VALUES ($id, $showTraktId, $seasonNumber, '$title', $episodeCount, 'overview')
+            INSERT INTO season (id, show_id, season_number, title, episode_count, overview)
+            VALUES ($id, (SELECT id FROM tvshow WHERE trakt_id = $showTraktId), $seasonNumber, '$title', $episodeCount, 'overview')
         """.trimIndent(),
         parameters = 0,
     )
@@ -99,11 +99,11 @@ internal fun SqlDriver.seedEpisode(
         identifier = null,
         sql = """
             INSERT INTO episode (
-                id, season_id, show_trakt_id, episode_number,
+                id, season_id, show_id, episode_number,
                 title, overview, ratings, vote_count, first_aired
             )
             VALUES (
-                $id, $seasonId, $showTraktId, $episodeNumber,
+                $id, $seasonId, (SELECT id FROM tvshow WHERE trakt_id = $showTraktId), $episodeNumber,
                 '$title', 'overview', $ratings, $voteCount, $firstAiredSql
             )
         """.trimIndent(),
@@ -124,11 +124,11 @@ internal fun SqlDriver.seedWatchedEpisode(
         identifier = null,
         sql = """
             INSERT INTO watched_episodes (
-                show_trakt_id, episode_id, season_number, episode_number,
+                show_id, episode_id, season_number, episode_number,
                 watched_at, pending_action
             )
             VALUES (
-                $showTraktId, $episodeIdSql, $seasonNumber, $episodeNumber,
+                (SELECT id FROM tvshow WHERE trakt_id = $showTraktId), $episodeIdSql, $seasonNumber, $episodeNumber,
                 $watchedAt, '$pendingAction'
             )
         """.trimIndent(),

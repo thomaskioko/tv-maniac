@@ -18,10 +18,10 @@ SELECT
     episode.ratings,
     episode.vote_count
 FROM tvshow
-INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
-INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
 LEFT JOIN watched_episodes AS watched_episode
-    ON watched_episode.show_trakt_id = tvshow.trakt_id
+    ON watched_episode.show_id = tvshow.id
     AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     AND (
         watched_episode.episode_id = episode.id
@@ -55,10 +55,10 @@ SELECT
     tvshow.poster_path AS show_poster,
     episode.first_aired
 FROM tvshow
-INNER JOIN season ON tvshow.trakt_id = season.show_trakt_id
-INNER JOIN episode ON episode.season_id = season.id AND episode.show_trakt_id = tvshow.trakt_id
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
 LEFT JOIN watched_episodes AS watched_episode
-    ON watched_episode.show_trakt_id = tvshow.trakt_id
+    ON watched_episode.show_id = tvshow.id
     AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
     AND (
         watched_episode.episode_id = episode.id
@@ -104,7 +104,7 @@ SELECT
     next_episode.vote_count
 FROM trakt_continue_watching AS watched_show
 LEFT JOIN tvshow ON tvshow.trakt_id = watched_show.trakt_id
-LEFT JOIN show_metadata ON watched_show.trakt_id = show_metadata.show_trakt_id
+LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_trakt_id = watched_show.trakt_id
 LEFT JOIN (
     SELECT
