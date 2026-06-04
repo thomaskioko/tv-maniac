@@ -8,11 +8,11 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Season
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAILS
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
@@ -80,21 +80,21 @@ public class ShowDetailsStore(
                 val tmdbId = response.tmdbId
 
                 tvShowsDao.upsert(
-                    Tvshow(
-                        trakt_id = Id(traktId),
-                        tmdb_id = Id(tmdbId),
+                    ShowToPersist(
+                        traktId = Id(traktId),
+                        tmdbId = Id(tmdbId),
                         name = show.title,
                         overview = show.overview ?: "",
                         language = show.language,
                         status = show.status,
                         year = show.firstAirDate?.let { dateTimeProvider.extractYear(it) },
-                        episode_numbers = show.airedEpisodes?.toString(),
-                        season_numbers = response.traktSeasons.size.toString(),
+                        episodeNumbers = show.airedEpisodes?.toString(),
+                        seasonNumbers = response.traktSeasons.size.toString(),
                         ratings = show.rating ?: 0.0,
-                        vote_count = show.votes ?: 0L,
+                        voteCount = show.votes ?: 0L,
                         genres = show.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-                        poster_path = response.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        backdrop_path = response.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        posterPath = response.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        backdropPath = response.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                     ),
                 )
 

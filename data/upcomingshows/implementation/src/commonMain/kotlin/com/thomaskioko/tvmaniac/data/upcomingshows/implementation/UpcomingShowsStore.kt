@@ -9,10 +9,10 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.model.Upcoming
 import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.model.UpcomingShowResult
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
@@ -130,25 +130,25 @@ private fun UpcomingShowResult.toTvshow(
     tmdbId: Long,
     formatterUtil: FormatterUtil,
     dateTimeProvider: DateTimeProvider,
-): Tvshow {
+): ShowToPersist {
     val tmdb = tmdbShow
     val trakt = traktShow
     val dateString = tmdb.firstAirDate ?: trakt?.firstAirDate
-    return Tvshow(
-        trakt_id = Id(traktId),
-        tmdb_id = Id(tmdbId),
+    return ShowToPersist(
+        traktId = Id(traktId),
+        tmdbId = Id(tmdbId),
         name = tmdb.name,
         overview = tmdb.overview,
         language = tmdb.originalLanguage ?: trakt?.language,
         year = dateString?.let { dateTimeProvider.extractYear(it) },
         ratings = tmdb.voteAverage,
-        vote_count = tmdb.voteCount.toLong(),
-        poster_path = tmdb.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-        backdrop_path = tmdb.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+        voteCount = tmdb.voteCount.toLong(),
+        posterPath = tmdb.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+        backdropPath = tmdb.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         status = trakt?.status,
         genres = trakt?.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-        episode_numbers = trakt?.airedEpisodes?.toString(),
-        season_numbers = null,
+        episodeNumbers = trakt?.airedEpisodes?.toString(),
+        seasonNumbers = null,
     )
 }
 

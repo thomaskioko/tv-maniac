@@ -6,7 +6,7 @@ import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.mergeShows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -25,13 +25,13 @@ public class DefaultTvShowsDao(
 
     private val tvShowQueries = database.tvShowQueries
 
-    override fun upsert(show: Tvshow) {
+    override fun upsert(show: ShowToPersist) {
         tvShowQueries.transaction {
             upsertShowWithGenres(show)
         }
     }
 
-    override fun upsert(list: List<Tvshow>) {
+    override fun upsert(list: List<ShowToPersist>) {
         if (list.isEmpty()) return
 
         tvShowQueries.transaction {
@@ -41,24 +41,24 @@ public class DefaultTvShowsDao(
         }
     }
 
-    private fun upsertShowWithGenres(show: Tvshow) {
-        val existingTraktId = tvShowQueries.getTraktIdByTmdbId(show.tmdb_id).executeAsOneOrNull()
-        val resolvedTraktId = existingTraktId ?: show.trakt_id
+    private fun upsertShowWithGenres(show: ShowToPersist) {
+        val existingTraktId = tvShowQueries.getTraktIdByTmdbId(show.tmdbId).executeAsOneOrNull()
+        val resolvedTraktId = existingTraktId ?: show.traktId
         tvShowQueries.upsert(
             trakt_id = resolvedTraktId,
-            tmdb_id = show.tmdb_id,
+            tmdb_id = show.tmdbId,
             name = show.name,
             overview = show.overview,
             language = show.language,
             year = show.year,
             ratings = show.ratings,
-            vote_count = show.vote_count,
+            vote_count = show.voteCount,
             genres = show.genres,
             status = show.status,
-            episode_numbers = show.episode_numbers,
-            season_numbers = show.season_numbers,
-            poster_path = show.poster_path,
-            backdrop_path = show.backdrop_path,
+            episode_numbers = show.episodeNumbers,
+            season_numbers = show.seasonNumbers,
+            poster_path = show.posterPath,
+            backdrop_path = show.backdropPath,
         )
     }
 
@@ -106,9 +106,9 @@ public class DefaultTvShowsDao(
         tvShowQueries.transaction { tvShowQueries.deleteAll() }
     }
 
-    override fun upsertMerging(show: Tvshow) {
+    override fun upsertMerging(show: ShowToPersist) {
         tvShowQueries.transaction {
-            val existing = tvShowQueries.tvshowByTraktId(show.trakt_id).executeAsOneOrNull()
+            val existing = tvShowQueries.tvshowByTraktId(show.traktId).executeAsOneOrNull()
             upsertShowWithGenres(mergeShows(existing, show))
         }
     }

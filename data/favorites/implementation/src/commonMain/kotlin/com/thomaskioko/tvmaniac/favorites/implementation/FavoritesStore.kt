@@ -7,11 +7,11 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
 import com.thomaskioko.tvmaniac.favorites.api.FavoritesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FAVORITES_SYNC
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktUserRemoteDataSource
@@ -114,19 +114,19 @@ private data class FavoriteWithImages(
     val tmdbBackdropPath: String?,
 )
 
-private fun TraktFavoriteShowResponse.toTvshow(posterPath: String?, backdropPath: String?): Tvshow = Tvshow(
-    trakt_id = Id(show.ids.trakt),
-    tmdb_id = Id(show.ids.tmdb),
+private fun TraktFavoriteShowResponse.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
+    traktId = Id(show.ids.trakt),
+    tmdbId = Id(show.ids.tmdb),
     name = show.title,
     overview = "",
     language = null,
     year = show.year?.toString(),
     status = null,
     ratings = 0.0,
-    vote_count = 0,
+    voteCount = 0,
     genres = null,
-    poster_path = posterPath,
-    backdrop_path = backdropPath,
-    episode_numbers = null,
-    season_numbers = null,
+    posterPath = posterPath,
+    backdropPath = backdropPath,
+    episodeNumbers = null,
+    seasonNumbers = null,
 )
