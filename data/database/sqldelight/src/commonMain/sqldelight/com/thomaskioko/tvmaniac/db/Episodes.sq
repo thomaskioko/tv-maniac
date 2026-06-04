@@ -151,7 +151,7 @@ SELECT
 FROM episode
 INNER JOIN season ON episode.season_id = season.id
 INNER JOIN tvshow ON tvshow.id = episode.show_id
-INNER JOIN followed_shows ON followed_shows.trakt_id = tvshow.trakt_id
+INNER JOIN followed_shows ON followed_shows.show_id = tvshow.id
 LEFT JOIN watched_episodes ON
     watched_episodes.show_id = episode.show_id
     AND watched_episodes.season_number = season.season_number

@@ -1,25 +1,25 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 
 CREATE TABLE IF NOT EXISTS favorite_shows(
-    show_trakt_id INTEGER AS Id<TraktId> NOT NULL PRIMARY KEY,
+    show_id INTEGER AS Id<ShowId> NOT NULL PRIMARY KEY,
     rank INTEGER NOT NULL,
     listed_at TEXT NOT NULL
 );
 
 favoriteShows:
 SELECT
-    favorite_shows.show_trakt_id AS show_trakt_id,
+    tvshow.trakt_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name AS title,
     tvshow.poster_path,
     tvshow.year
 FROM favorite_shows
-INNER JOIN tvshow ON favorite_shows.show_trakt_id = tvshow.trakt_id
+INNER JOIN tvshow ON favorite_shows.show_id = tvshow.id
 ORDER BY favorite_shows.rank ASC;
 
 upsert:
-INSERT OR REPLACE INTO favorite_shows(show_trakt_id, rank, listed_at)
+INSERT OR REPLACE INTO favorite_shows(show_id, rank, listed_at)
 VALUES(?, ?, ?);
 
 deleteAll:

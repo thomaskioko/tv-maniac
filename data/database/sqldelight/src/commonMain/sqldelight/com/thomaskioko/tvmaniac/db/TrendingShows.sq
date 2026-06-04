@@ -52,7 +52,7 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM trending_shows
 INNER JOIN tvshow ON tvshow.id = trending_shows.show_id
-LEFT OUTER JOIN followed_shows ON followed_shows.trakt_id = tvshow.trakt_id AND followed_shows.pending_action != 'DELETE'
+LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE trending_shows.page = :page
 AND trending_shows.name IS NOT NULL
 ORDER BY trending_shows.position ASC;
@@ -70,7 +70,7 @@ FROM
 INNER JOIN
     tvshow ON tvshow.id = trending_shows.show_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     trending_shows.page = :page
     AND tvshow.ratings >= 6.0
@@ -91,7 +91,7 @@ FROM
 INNER JOIN
     tvshow ON tvshow.id = trending_shows.show_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     tvshow.ratings >= 6.0
     AND tvshow.vote_count >= 50

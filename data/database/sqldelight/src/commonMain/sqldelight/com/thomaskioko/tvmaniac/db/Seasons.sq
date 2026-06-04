@@ -125,7 +125,7 @@ SELECT
     season.season_number
 FROM season
 INNER JOIN tvshow ON tvshow.id = season.show_id
-INNER JOIN followed_shows ON followed_shows.trakt_id = tvshow.trakt_id
+INNER JOIN followed_shows ON followed_shows.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
   AND season.season_number > 0
   AND season.season_number = (

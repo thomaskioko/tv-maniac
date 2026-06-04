@@ -42,7 +42,7 @@ WHERE show_id = :showId;
 
 CREATE VIEW show_watch_progress AS
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    tvshow.id AS show_id,
     COALESCE(watched.count, 0) AS watched_count,
     COALESCE(total.count, 0) AS total_count
 FROM tvshow

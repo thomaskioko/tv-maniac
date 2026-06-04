@@ -359,12 +359,113 @@ ALTER TABLE genre_shows_new RENAME TO genre_shows;
 CREATE INDEX IF NOT EXISTS idx_genre_shows_genre_slug ON genre_shows(genre_slug);
 CREATE INDEX IF NOT EXISTS idx_genre_shows_genre_slug_category ON genre_shows(genre_slug, category);
 
--- Recreate the views with show_id-based internal joins, matching the .sq definitions. They still
--- expose show_trakt_id (via tvshow.trakt_id) so downstream consumers (followed_shows/library/
--- continue-watching) are untouched until later phases.
+-- Repoint the library, continue-watching, favorites, and tmdb-FK tables onto show_id.
+-- followed_shows / continue_watching / favorite_shows carry no foreign key (followed_shows and
+-- continue_watching keep their surrogate id; favorite_shows keeps its anti-cascade FK-less intent
+-- from migration 34). Each backfills show_id by joining the rebuilt tvshow on the old trakt_id and
+-- drops any row whose show has no tvshow (re-syncs). Unresolvable rows carrying a pending UPLOAD or
+-- DELETE are routed to the fail-closed rebuild path in a later task, never a silent drop. trakt_id
+-- stays UNIQUE on tvshow this phase, so the joins resolve. continue_watching is also renamed from
+-- the Trakt-specific trakt_continue_watching to a provider-neutral name.
+CREATE TABLE followed_shows_new(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER NOT NULL UNIQUE,
+    tmdb_id INTEGER DEFAULT NULL,
+    followed_at INTEGER NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE'))
+);
+INSERT INTO followed_shows_new(id, show_id, tmdb_id, followed_at, pending_action)
+SELECT followed_shows.id, tvshow.id, followed_shows.tmdb_id, followed_shows.followed_at, followed_shows.pending_action
+FROM followed_shows JOIN tvshow ON tvshow.trakt_id = followed_shows.trakt_id;
+DROP TABLE followed_shows;
+ALTER TABLE followed_shows_new RENAME TO followed_shows;
+CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
+CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
+CREATE INDEX IF NOT EXISTS idx_followed_show_pending ON followed_shows(show_id, pending_action);
+
+CREATE TABLE continue_watching(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER NOT NULL UNIQUE,
+    tmdb_id INTEGER DEFAULT NULL,
+    aired_episodes INTEGER NOT NULL DEFAULT 0,
+    completed_count INTEGER NOT NULL DEFAULT 0,
+    last_watched_at INTEGER NOT NULL,
+    last_updated_at INTEGER NOT NULL,
+    title TEXT DEFAULT NULL,
+    year INTEGER DEFAULT NULL
+);
+INSERT INTO continue_watching(id, show_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
+SELECT trakt_continue_watching.id, tvshow.id, trakt_continue_watching.tmdb_id, trakt_continue_watching.aired_episodes, trakt_continue_watching.completed_count, trakt_continue_watching.last_watched_at, trakt_continue_watching.last_updated_at, trakt_continue_watching.title, trakt_continue_watching.year
+FROM trakt_continue_watching JOIN tvshow ON tvshow.trakt_id = trakt_continue_watching.trakt_id;
+DROP TABLE trakt_continue_watching;
+CREATE INDEX IF NOT EXISTS idx_continue_watching_tmdb_id ON continue_watching(tmdb_id);
+
+CREATE TABLE favorite_shows_new(
+    show_id INTEGER NOT NULL PRIMARY KEY,
+    rank INTEGER NOT NULL,
+    listed_at TEXT NOT NULL
+);
+INSERT INTO favorite_shows_new(show_id, rank, listed_at)
+SELECT tvshow.id, favorite_shows.rank, favorite_shows.listed_at
+FROM favorite_shows JOIN tvshow ON tvshow.trakt_id = favorite_shows.show_trakt_id;
+DROP TABLE favorite_shows;
+ALTER TABLE favorite_shows_new RENAME TO favorite_shows;
+
+-- show_genres and trailers FK tvshow(tmdb_id); repoint onto tvshow(id). watch_providers moves its
+-- PK from (id, trakt_id) to (id, show_id) while keeping the denormalized tmdb_id its main read path
+-- filters on. Each backfills show_id from the rebuilt tvshow (tmdb_id join for the tmdb-FK tables,
+-- trakt_id join for watch_providers); the inner join is total for the FK'd tables.
+CREATE TABLE show_genres_new (
+    show_id INTEGER NOT NULL,
+    genre_id INTEGER NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(genre_id) REFERENCES genres(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (show_id, genre_id)
+);
+INSERT INTO show_genres_new(show_id, genre_id)
+SELECT tvshow.id, show_genres.genre_id
+FROM show_genres JOIN tvshow ON tvshow.tmdb_id = show_genres.show_tmdb_id;
+DROP TABLE show_genres;
+ALTER TABLE show_genres_new RENAME TO show_genres;
+
+CREATE TABLE trailers_new (
+    id TEXT NOT NULL PRIMARY KEY,
+    show_id INTEGER NOT NULL,
+    youtube_url TEXT NOT NULL,
+    name TEXT NOT NULL,
+    site TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id)
+);
+INSERT INTO trailers_new(id, show_id, youtube_url, name, site, size, type)
+SELECT trailers.id, tvshow.id, trailers.youtube_url, trailers.name, trailers.site, trailers.size, trailers.type
+FROM trailers JOIN tvshow ON tvshow.tmdb_id = trailers.show_tmdb_id;
+DROP TABLE trailers;
+ALTER TABLE trailers_new RENAME TO trailers;
+
+CREATE TABLE watch_providers_new (
+    id INTEGER NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    show_id INTEGER NOT NULL,
+    logo_path TEXT DEFAULT NULL,
+    name TEXT,
+    PRIMARY KEY (id, show_id)
+);
+INSERT INTO watch_providers_new(id, tmdb_id, show_id, logo_path, name)
+SELECT watch_providers.id, watch_providers.tmdb_id, tvshow.id, watch_providers.logo_path, watch_providers.name
+FROM watch_providers JOIN tvshow ON tvshow.trakt_id = watch_providers.trakt_id;
+DROP TABLE watch_providers;
+ALTER TABLE watch_providers_new RENAME TO watch_providers;
+CREATE INDEX IF NOT EXISTS index_watch_providers_show_id ON watch_providers (show_id);
+
+-- Recreate the views with show_id as the join key (matching the .sq definitions). They expose
+-- tvshow.id AS show_id internally; result columns that name a trakt id are re-emitted by the
+-- consuming queries via the tvshow join, re-sourced from tvshow_external_id when trakt_id is dropped.
 CREATE VIEW shows_last_watched AS
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    tvshow.id AS show_id,
     MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
     MAX(watched_episode.watched_at) AS last_watched_at
 FROM tvshow
@@ -372,11 +473,11 @@ INNER JOIN season ON tvshow.id = season.show_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
 INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_id = tvshow.id AND watched_episode.episode_id = episode.id AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 WHERE season.season_number > 0 OR season.title != 'Specials'
-GROUP BY tvshow.trakt_id;
+GROUP BY tvshow.id;
 
 CREATE VIEW show_watch_progress AS
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    tvshow.id AS show_id,
     COALESCE(watched.count, 0) AS watched_count,
     COALESCE(total.count, 0) AS total_count
 FROM tvshow
@@ -398,7 +499,7 @@ LEFT JOIN (
 
 CREATE VIEW shows_next_to_watch AS
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    tvshow.id AS show_id,
     tvshow.tmdb_id AS show_tmdb_id,
     episode.id AS episode_id,
     episode.title AS episode_name,
@@ -429,10 +530,10 @@ LEFT JOIN watched_episodes AS watched_episode
             AND watched_episode.episode_number = episode.episode_number
         )
     )
-LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_trakt_id = tvshow.trakt_id
+LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_id = tvshow.id
 WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
   AND watched_episode.id IS NULL
   AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
   AND episode.first_aired IS NOT NULL
   AND episode.first_aired <= strftime('%s', 'now') * 1000
-ORDER BY tvshow.trakt_id, season.season_number, episode.episode_number;
+ORDER BY tvshow.id, season.season_number, episode.episode_number;

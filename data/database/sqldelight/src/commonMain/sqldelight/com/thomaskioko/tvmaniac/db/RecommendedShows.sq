@@ -37,7 +37,7 @@ FROM
 JOIN
     recommended_shows ON recommended_shows.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     recommended_shows.recommended_show_trakt_id = ?;
 

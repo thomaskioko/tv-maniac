@@ -1,20 +1,20 @@
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
-import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.WatchProviderId;
 
-CREATE TABLE IF NOT EXISTS `watch_providers` (
-    `id` INTEGER AS Id<WatchProviderId> NOT NULL,
-    `tmdb_id` INTEGER AS Id<TmdbId> NOT NULL,
-    `trakt_id` INTEGER AS Id<TraktId> NOT NULL,
-    `logo_path` TEXT DEFAULT NULL,
-    `name` TEXT,
-     PRIMARY KEY (id, trakt_id)
+CREATE TABLE IF NOT EXISTS watch_providers (
+    id INTEGER AS Id<WatchProviderId> NOT NULL,
+    tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    logo_path TEXT DEFAULT NULL,
+    name TEXT,
+    PRIMARY KEY (id, show_id)
 );
 
 -- indices
 
-CREATE INDEX IF NOT EXISTS `index_watch_providers_trakt_id` ON `watch_providers` (`trakt_id`);
+CREATE INDEX IF NOT EXISTS index_watch_providers_show_id ON watch_providers (show_id);
 
 -- queries
 
@@ -22,7 +22,7 @@ upsert:
 INSERT OR REPLACE INTO watch_providers (
     id,
     tmdb_id,
-    trakt_id,
+    show_id,
     logo_path,
     name
 ) VALUES (?, ?, ?, ?, ?);
@@ -44,14 +44,15 @@ SELECT
     watch_providers.name,
     watch_providers.logo_path,
     watch_providers.tmdb_id,
-    watch_providers.trakt_id
+    tvshow.trakt_id
 FROM watch_providers
-WHERE watch_providers.trakt_id = :traktId;
+INNER JOIN tvshow ON tvshow.id = watch_providers.show_id
+WHERE watch_providers.show_id = :showId;
 
-deleteByTraktId:
+deleteByShowId:
 DELETE
 FROM watch_providers
-WHERE trakt_id = ?;
+WHERE show_id = ?;
 
 deleteAll:
 DELETE FROM watch_providers;

@@ -1,94 +1,104 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE IF NOT EXISTS followed_shows(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    trakt_id INTEGER AS Id<TraktId> NOT NULL UNIQUE,
+    show_id INTEGER AS Id<ShowId> NOT NULL UNIQUE,
     tmdb_id INTEGER AS Id<TmdbId> DEFAULT NULL,
     followed_at INTEGER NOT NULL,
     pending_action TEXT NOT NULL DEFAULT 'NOTHING'
         CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_followed_shows_trakt_id ON followed_shows(trakt_id);
 CREATE INDEX IF NOT EXISTS idx_followed_shows_tmdb_id ON followed_shows(tmdb_id);
 CREATE INDEX IF NOT EXISTS idx_followed_shows_pending_action ON followed_shows(pending_action);
-CREATE INDEX IF NOT EXISTS idx_followed_trakt_pending ON followed_shows(trakt_id, pending_action);
+CREATE INDEX IF NOT EXISTS idx_followed_show_pending ON followed_shows(show_id, pending_action);
 
 entries:
 SELECT
     followed_shows.id AS followed_id,
-    followed_shows.trakt_id,
+    tvshow.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
     followed_shows.pending_action
-FROM followed_shows;
+FROM followed_shows
+JOIN tvshow ON tvshow.id = followed_shows.show_id;
 
-entryWithTraktId:
+entryWithShowId:
 SELECT
     followed_shows.id AS followed_id,
-    followed_shows.trakt_id,
+    tvshow.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
     followed_shows.pending_action
-FROM followed_shows WHERE trakt_id = ?;
+FROM followed_shows
+JOIN tvshow ON tvshow.id = followed_shows.show_id
+WHERE followed_shows.show_id = :showId;
 
 entriesWithNoPendingAction:
 SELECT
     followed_shows.id AS followed_id,
-    followed_shows.trakt_id,
+    tvshow.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
     followed_shows.pending_action
-FROM followed_shows WHERE pending_action = 'NOTHING';
+FROM followed_shows
+JOIN tvshow ON tvshow.id = followed_shows.show_id
+WHERE followed_shows.pending_action = 'NOTHING';
 
 entriesExcludingDeleted:
 SELECT
     followed_shows.id AS followed_id,
-    followed_shows.trakt_id,
+    tvshow.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
     followed_shows.pending_action
-FROM followed_shows WHERE pending_action != 'DELETE';
+FROM followed_shows
+JOIN tvshow ON tvshow.id = followed_shows.show_id
+WHERE followed_shows.pending_action != 'DELETE';
 
 entriesWithUploadPendingAction:
 SELECT
     followed_shows.id AS followed_id,
-    followed_shows.trakt_id,
+    tvshow.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
     followed_shows.pending_action
-FROM followed_shows WHERE pending_action = 'UPLOAD';
+FROM followed_shows
+JOIN tvshow ON tvshow.id = followed_shows.show_id
+WHERE followed_shows.pending_action = 'UPLOAD';
 
 entriesWithDeletePendingAction:
 SELECT
     followed_shows.id AS followed_id,
-    followed_shows.trakt_id,
+    tvshow.trakt_id,
     followed_shows.tmdb_id,
     followed_shows.followed_at,
     followed_shows.pending_action
-FROM followed_shows WHERE pending_action = 'DELETE';
+FROM followed_shows
+JOIN tvshow ON tvshow.id = followed_shows.show_id
+WHERE followed_shows.pending_action = 'DELETE';
 
 upsert:
-INSERT OR REPLACE INTO followed_shows(id, trakt_id, tmdb_id, followed_at, pending_action)
-VALUES(:id, :traktId, :tmdbId, :followedAt, :pendingAction);
+INSERT OR REPLACE INTO followed_shows(id, show_id, tmdb_id, followed_at, pending_action)
+VALUES(:id, :showId, :tmdbId, :followedAt, :pendingAction);
 
 insert:
-INSERT INTO followed_shows(trakt_id, tmdb_id, followed_at, pending_action)
-VALUES(:traktId, :tmdbId, :followedAt, :pendingAction);
+INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
+VALUES(:showId, :tmdbId, :followedAt, :pendingAction);
 
 updatePendingAction:
 UPDATE followed_shows SET pending_action = :pendingAction WHERE id = :id;
 
-updatePendingActionForTraktId:
-UPDATE followed_shows SET pending_action = :pendingAction WHERE trakt_id = :traktId;
+updatePendingActionForShowId:
+UPDATE followed_shows SET pending_action = :pendingAction WHERE show_id = :showId;
 
 deleteById:
 DELETE FROM followed_shows WHERE id = ?;
 
-deleteByTraktId:
-DELETE FROM followed_shows WHERE trakt_id = ?;
+deleteByShowId:
+DELETE FROM followed_shows WHERE show_id = ?;
 
 countEntries:
 SELECT COUNT(*) FROM followed_shows;
@@ -97,11 +107,11 @@ countEntriesWithPendingAction:
 SELECT COUNT(*) FROM followed_shows WHERE pending_action != 'NOTHING';
 
 upsertIfNotExists:
-INSERT OR IGNORE INTO followed_shows(trakt_id, tmdb_id, followed_at, pending_action)
-VALUES(:traktId, :tmdbId, :followedAt, 'UPLOAD');
+INSERT OR IGNORE INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
+VALUES(:showId, :tmdbId, :followedAt, 'UPLOAD');
 
 isShowFollowed:
-SELECT COUNT(*) > 0 FROM followed_shows WHERE trakt_id = ? AND pending_action != 'DELETE';
+SELECT COUNT(*) > 0 FROM followed_shows WHERE show_id = ? AND pending_action != 'DELETE';
 
 followedShows:
 SELECT
@@ -117,9 +127,9 @@ SELECT
     COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
     COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
-INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
+INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
-LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
+LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
 ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC;
 
@@ -138,9 +148,9 @@ SELECT
     COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
     COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
-INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
+INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
-LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
+LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
   AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
 ORDER BY

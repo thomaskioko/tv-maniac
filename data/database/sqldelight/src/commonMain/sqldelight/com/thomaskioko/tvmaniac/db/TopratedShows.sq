@@ -52,7 +52,7 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM toprated_shows
 INNER JOIN tvshow ON tvshow.id = toprated_shows.show_id
-LEFT OUTER JOIN followed_shows ON followed_shows.trakt_id = tvshow.trakt_id AND followed_shows.pending_action != 'DELETE'
+LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE toprated_shows.page = :page
   AND toprated_shows.name IS NOT NULL
 ORDER BY toprated_shows.page_order ASC;
@@ -70,7 +70,7 @@ FROM
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.show_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     toprated_shows.page ASC, toprated_shows.page_order ASC;
 
@@ -87,7 +87,7 @@ FROM
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.show_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     toprated_shows.page = :page;
 
@@ -104,7 +104,7 @@ FROM
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.show_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     toprated_shows.page ASC, toprated_shows.page_order ASC
 LIMIT

@@ -79,7 +79,7 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     tvshow.trakt_id = ?;
 
@@ -102,7 +102,7 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     tvshow.tmdb_id = ?;
 
@@ -120,7 +120,7 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     -- First try exact match on name start (most efficient, can use index)
     name LIKE ? || '%'
@@ -182,7 +182,7 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE tvshow.trakt_id IN ?;
 
 showsByTmdbIds:
@@ -196,7 +196,7 @@ SELECT
 FROM
     tvshow
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE tvshow.tmdb_id IN ?;
 
 getTmdbIdByTraktId:

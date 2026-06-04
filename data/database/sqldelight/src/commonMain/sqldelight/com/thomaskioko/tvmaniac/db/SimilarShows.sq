@@ -39,7 +39,7 @@ FROM
 JOIN
     similar_shows ON tvshow.id = similar_shows.show_id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     similar_shows.similar_show_trakt_id = ?
 ORDER BY similar_shows.page_order ASC;

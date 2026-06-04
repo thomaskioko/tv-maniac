@@ -20,22 +20,22 @@ SELECT
     next_episode.overview AS episode_overview,
     next_episode.first_aired
 FROM followed_shows
-INNER JOIN tvshow ON followed_shows.trakt_id = tvshow.trakt_id
-LEFT JOIN show_watch_progress ON tvshow.trakt_id = show_watch_progress.show_trakt_id
-LEFT JOIN trakt_continue_watching ON tvshow.trakt_id = trakt_continue_watching.trakt_id
+INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
+LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
+LEFT JOIN continue_watching ON continue_watching.show_id = tvshow.id
 LEFT JOIN (
     SELECT
-        show_trakt_id,
+        show_id,
         MIN(next_ep_abs_number) AS min_abs_number
     FROM shows_next_to_watch
     WHERE season_number > 0
-    GROUP BY show_trakt_id
-) AS min_next_episode ON min_next_episode.show_trakt_id = tvshow.trakt_id
+    GROUP BY show_id
+) AS min_next_episode ON min_next_episode.show_id = tvshow.id
 LEFT JOIN shows_next_to_watch AS next_episode
-    ON next_episode.show_trakt_id = tvshow.trakt_id
+    ON next_episode.show_id = tvshow.id
     AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
 WHERE followed_shows.pending_action != 'DELETE'
   AND COALESCE(show_watch_progress.watched_count, 0) = 0
   AND (tvshow.year IS NULL OR CAST(tvshow.year AS INTEGER) <= CAST(strftime('%Y', 'now') AS INTEGER))
-  AND trakt_continue_watching.trakt_id IS NULL
+  AND continue_watching.show_id IS NULL
 ORDER BY followed_shows.followed_at DESC;
