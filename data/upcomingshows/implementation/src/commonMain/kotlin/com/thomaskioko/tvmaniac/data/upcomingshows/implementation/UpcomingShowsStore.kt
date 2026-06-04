@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.model.Upcoming
 import com.thomaskioko.tvmaniac.data.upcomingshows.implementation.model.UpcomingShowResult
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_SHOWS
@@ -36,6 +37,7 @@ public class UpcomingShowsStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val upcomingShowsDao: UpcomingShowsDao,
     private val tvShowsDao: TvShowsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -95,9 +97,11 @@ public class UpcomingShowsStore(
 
                         tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil, dateTimeProvider))
 
+                        val showId = showIdResolver.showIdForTraktId(traktId) ?: return@forEachIndexed
+
                         upcomingShowsDao.upsert(
                             Upcoming_shows(
-                                trakt_id = Id(traktId),
+                                show_id = showId,
                                 tmdb_id = Id(tmdbId),
                                 page = Id(params.page),
                                 name = result.tmdbShow.name,

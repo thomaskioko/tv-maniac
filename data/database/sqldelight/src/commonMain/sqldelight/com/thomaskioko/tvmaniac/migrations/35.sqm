@@ -229,6 +229,136 @@ JOIN tvshow ON tvshow.trakt_id = show_metadata.show_trakt_id;
 DROP TABLE show_metadata;
 ALTER TABLE show_metadata_new RENAME TO show_metadata;
 
+-- Repoint the discovery/list tables from trakt_id onto show_id. The five paginated caches
+-- (trending/popular/toprated/featured/upcoming) carry no foreign key; similar_shows/recommended_shows
+-- FK their related-show column, and genre_shows FKs its show column. Each backfills show_id by
+-- joining the rebuilt tvshow on the old trakt_id; the inner join is total for FK'd columns and drops
+-- any orphan cache rows (already invisible, since the display queries inner-join tvshow). The parent
+-- references similar_show_trakt_id / recommended_show_trakt_id stay plain trakt values: they are
+-- intentionally not FK-constrained and only ever filtered by, never joined to tvshow.
+
+CREATE TABLE trending_shows_new (
+    show_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT
+);
+INSERT INTO trending_shows_new (show_id, tmdb_id, page, position, name, poster_path, overview)
+SELECT tvshow.id, trending_shows.tmdb_id, trending_shows.page, trending_shows.position, trending_shows.name, trending_shows.poster_path, trending_shows.overview
+FROM trending_shows JOIN tvshow ON tvshow.trakt_id = trending_shows.trakt_id;
+DROP TABLE trending_shows;
+ALTER TABLE trending_shows_new RENAME TO trending_shows;
+CREATE INDEX IF NOT EXISTS index_trending_shows_tmdb_id ON trending_shows(tmdb_id);
+
+CREATE TABLE popular_shows_new (
+    show_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO popular_shows_new (show_id, tmdb_id, page, name, poster_path, overview, page_order)
+SELECT tvshow.id, popular_shows.tmdb_id, popular_shows.page, popular_shows.name, popular_shows.poster_path, popular_shows.overview, popular_shows.page_order
+FROM popular_shows JOIN tvshow ON tvshow.trakt_id = popular_shows.trakt_id;
+DROP TABLE popular_shows;
+ALTER TABLE popular_shows_new RENAME TO popular_shows;
+CREATE INDEX IF NOT EXISTS index_popular_shows_tmdb_id ON popular_shows(tmdb_id);
+
+CREATE TABLE toprated_shows_new (
+    show_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO toprated_shows_new (show_id, tmdb_id, page, name, poster_path, overview, page_order)
+SELECT tvshow.id, toprated_shows.tmdb_id, toprated_shows.page, toprated_shows.name, toprated_shows.poster_path, toprated_shows.overview, toprated_shows.page_order
+FROM toprated_shows JOIN tvshow ON tvshow.trakt_id = toprated_shows.trakt_id;
+DROP TABLE toprated_shows;
+ALTER TABLE toprated_shows_new RENAME TO toprated_shows;
+CREATE INDEX IF NOT EXISTS index_toprated_shows_tmdb_id ON toprated_shows(tmdb_id);
+
+CREATE TABLE featured_shows_new (
+    show_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO featured_shows_new (show_id, tmdb_id, name, poster_path, overview, page_order)
+SELECT tvshow.id, featured_shows.tmdb_id, featured_shows.name, featured_shows.poster_path, featured_shows.overview, featured_shows.page_order
+FROM featured_shows JOIN tvshow ON tvshow.trakt_id = featured_shows.trakt_id;
+DROP TABLE featured_shows;
+ALTER TABLE featured_shows_new RENAME TO featured_shows;
+CREATE INDEX IF NOT EXISTS index_featured_shows_tmdb_id ON featured_shows(tmdb_id);
+
+CREATE TABLE upcoming_shows_new (
+    show_id INTEGER PRIMARY KEY NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    page INTEGER NOT NULL,
+    name TEXT,
+    poster_path TEXT,
+    overview TEXT,
+    page_order INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO upcoming_shows_new (show_id, tmdb_id, page, name, poster_path, overview, page_order)
+SELECT tvshow.id, upcoming_shows.tmdb_id, upcoming_shows.page, upcoming_shows.name, upcoming_shows.poster_path, upcoming_shows.overview, upcoming_shows.page_order
+FROM upcoming_shows JOIN tvshow ON tvshow.trakt_id = upcoming_shows.trakt_id;
+DROP TABLE upcoming_shows;
+ALTER TABLE upcoming_shows_new RENAME TO upcoming_shows;
+CREATE INDEX IF NOT EXISTS index_upcoming_shows_tmdb_id ON upcoming_shows(tmdb_id);
+
+CREATE TABLE similar_shows_new (
+    show_id INTEGER,
+    tmdb_id INTEGER NOT NULL,
+    similar_show_trakt_id INTEGER NOT NULL,
+    page_order INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (similar_show_trakt_id, show_id),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id)
+);
+INSERT INTO similar_shows_new (show_id, tmdb_id, similar_show_trakt_id, page_order)
+SELECT tvshow.id, similar_shows.tmdb_id, similar_shows.similar_show_trakt_id, similar_shows.page_order
+FROM similar_shows JOIN tvshow ON tvshow.trakt_id = similar_shows.trakt_id;
+DROP TABLE similar_shows;
+ALTER TABLE similar_shows_new RENAME TO similar_shows;
+
+CREATE TABLE recommended_shows_new (
+    show_id INTEGER,
+    tmdb_id INTEGER NOT NULL,
+    recommended_show_trakt_id INTEGER NOT NULL,
+    PRIMARY KEY (recommended_show_trakt_id, show_id),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id)
+);
+INSERT INTO recommended_shows_new (show_id, tmdb_id, recommended_show_trakt_id)
+SELECT tvshow.id, recommended_shows.tmdb_id, recommended_shows.recommended_show_trakt_id
+FROM recommended_shows JOIN tvshow ON tvshow.trakt_id = recommended_shows.trakt_id;
+DROP TABLE recommended_shows;
+ALTER TABLE recommended_shows_new RENAME TO recommended_shows;
+
+CREATE TABLE genre_shows_new (
+    genre_slug TEXT NOT NULL,
+    show_id INTEGER NOT NULL,
+    page_order INTEGER NOT NULL DEFAULT 0,
+    category TEXT NOT NULL DEFAULT 'POPULAR',
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (genre_slug, show_id, category)
+);
+INSERT INTO genre_shows_new (genre_slug, show_id, page_order, category)
+SELECT genre_shows.genre_slug, tvshow.id, genre_shows.page_order, genre_shows.category
+FROM genre_shows JOIN tvshow ON tvshow.trakt_id = genre_shows.trakt_id;
+DROP TABLE genre_shows;
+ALTER TABLE genre_shows_new RENAME TO genre_shows;
+CREATE INDEX IF NOT EXISTS idx_genre_shows_genre_slug ON genre_shows(genre_slug);
+CREATE INDEX IF NOT EXISTS idx_genre_shows_genre_slug_category ON genre_shows(genre_slug, category);
+
 -- Recreate the views with show_id-based internal joins, matching the .sq definitions. They still
 -- expose show_trakt_id (via tvshow.trakt_id) so downstream consumers (followed_shows/library/
 -- continue-watching) are untouched until later phases.

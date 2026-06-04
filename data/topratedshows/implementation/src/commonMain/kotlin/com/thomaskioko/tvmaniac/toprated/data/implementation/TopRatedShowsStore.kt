@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Toprated_shows
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TOP_RATED_SHOWS
@@ -36,6 +37,7 @@ public class TopRatedShowsStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val topRatedShowsDao: TopRatedShowsDao,
     private val tvShowsDao: TvShowsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -98,9 +100,11 @@ public class TopRatedShowsStore(
 
                         tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath, dateTimeProvider))
 
+                        val showId = showIdResolver.showIdForTraktId(traktId) ?: return@forEach
+
                         topRatedShowsDao.upsert(
                             Toprated_shows(
-                                trakt_id = Id(traktId),
+                                show_id = showId,
                                 tmdb_id = Id(tmdbId),
                                 page = Id(page),
                                 name = show.title,

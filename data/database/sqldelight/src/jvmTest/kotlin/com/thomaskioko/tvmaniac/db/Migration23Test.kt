@@ -19,17 +19,18 @@ class Migration23Test {
             driver.insertTvshow(traktId = 1L, tmdbId = 1001L)
 
             shouldThrowFkViolation {
-                driver.insertSimilarShow(traktId = 1L, tmdbId = 1001L, parentTraktId = 999L)
+                driver.insertSimilarShowV23(traktId = 1L, tmdbId = 1001L, parentTraktId = 999L)
             }
 
             migrateToCurrent(driver, oldVersion = 23)
 
+            val showId = driver.showId(traktId = 1L)!!
             shouldNotThrowAny {
-                driver.insertSimilarShow(traktId = 1L, tmdbId = 1001L, parentTraktId = 999L)
+                driver.insertSimilarShow(showId = showId, tmdbId = 1001L, parentTraktId = 999L)
             }
 
             shouldThrowFkViolation {
-                driver.insertSimilarShow(traktId = 8888L, tmdbId = 8888L, parentTraktId = 999L)
+                driver.insertSimilarShow(showId = 8888L, tmdbId = 8888L, parentTraktId = 999L)
             }
         }
     }
@@ -41,17 +42,18 @@ class Migration23Test {
             driver.insertTvshow(traktId = 2L, tmdbId = 2002L)
 
             shouldThrowFkViolation {
-                driver.insertRecommendedShow(traktId = 2L, tmdbId = 2002L, parentTraktId = 999L)
+                driver.insertRecommendedShowV23(traktId = 2L, tmdbId = 2002L, parentTraktId = 999L)
             }
 
             migrateToCurrent(driver, oldVersion = 23)
 
+            val showId = driver.showId(traktId = 2L)!!
             shouldNotThrowAny {
-                driver.insertRecommendedShow(traktId = 2L, tmdbId = 2002L, parentTraktId = 999L)
+                driver.insertRecommendedShow(showId = showId, tmdbId = 2002L, parentTraktId = 999L)
             }
 
             shouldThrowFkViolation {
-                driver.insertRecommendedShow(traktId = 7777L, tmdbId = 7777L, parentTraktId = 999L)
+                driver.insertRecommendedShow(showId = 7777L, tmdbId = 7777L, parentTraktId = 999L)
             }
         }
     }
@@ -61,8 +63,8 @@ class Migration23Test {
         openSnapshot(version = 23).use { driver ->
             driver.insertTvshow(traktId = 10L, tmdbId = 1010L)
             driver.insertTvshow(traktId = 20L, tmdbId = 2020L)
-            driver.insertSimilarShow(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L, pageOrder = 5L)
-            driver.insertRecommendedShow(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L)
+            driver.insertSimilarShowV23(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L, pageOrder = 5L)
+            driver.insertRecommendedShowV23(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L)
 
             migrateToCurrent(driver, oldVersion = 23)
 
@@ -93,7 +95,17 @@ private fun SqlDriver.insertTvshow(traktId: Long, tmdbId: Long) {
     )
 }
 
-private fun SqlDriver.insertSimilarShow(
+private fun SqlDriver.showId(traktId: Long): Long? = executeQuery(
+    identifier = null,
+    sql = "SELECT id FROM tvshow WHERE trakt_id = $traktId",
+    parameters = 0,
+    binders = null,
+    mapper = { cursor ->
+        QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
+    },
+).value
+
+private fun SqlDriver.insertSimilarShowV23(
     traktId: Long,
     tmdbId: Long,
     parentTraktId: Long,
@@ -109,7 +121,23 @@ private fun SqlDriver.insertSimilarShow(
     )
 }
 
-private fun SqlDriver.insertRecommendedShow(
+private fun SqlDriver.insertSimilarShow(
+    showId: Long,
+    tmdbId: Long,
+    parentTraktId: Long,
+    pageOrder: Long = 0L,
+) {
+    execute(
+        identifier = null,
+        sql = """
+            INSERT INTO similar_shows (show_id, tmdb_id, similar_show_trakt_id, page_order)
+            VALUES ($showId, $tmdbId, $parentTraktId, $pageOrder)
+        """.trimIndent(),
+        parameters = 0,
+    )
+}
+
+private fun SqlDriver.insertRecommendedShowV23(
     traktId: Long,
     tmdbId: Long,
     parentTraktId: Long,
@@ -124,10 +152,30 @@ private fun SqlDriver.insertRecommendedShow(
     )
 }
 
+private fun SqlDriver.insertRecommendedShow(
+    showId: Long,
+    tmdbId: Long,
+    parentTraktId: Long,
+) {
+    execute(
+        identifier = null,
+        sql = """
+            INSERT INTO recommended_shows (show_id, tmdb_id, recommended_show_trakt_id)
+            VALUES ($showId, $tmdbId, $parentTraktId)
+        """.trimIndent(),
+        parameters = 0,
+    )
+}
+
 private fun SqlDriver.querySimilarShow(parentTraktId: Long): Triple<Long, Long, Long>? =
     executeQuery(
         identifier = null,
-        sql = "SELECT trakt_id, tmdb_id, page_order FROM similar_shows WHERE similar_show_trakt_id = $parentTraktId",
+        sql = """
+            SELECT tvshow.trakt_id, similar_shows.tmdb_id, similar_shows.page_order
+            FROM similar_shows
+            JOIN tvshow ON tvshow.id = similar_shows.show_id
+            WHERE similar_shows.similar_show_trakt_id = $parentTraktId
+        """.trimIndent(),
         parameters = 0,
         binders = null,
         mapper = { cursor ->
@@ -144,7 +192,12 @@ private fun SqlDriver.querySimilarShow(parentTraktId: Long): Triple<Long, Long, 
 private fun SqlDriver.queryRecommendedShow(parentTraktId: Long): Pair<Long, Long>? =
     executeQuery(
         identifier = null,
-        sql = "SELECT trakt_id, tmdb_id FROM recommended_shows WHERE recommended_show_trakt_id = $parentTraktId",
+        sql = """
+            SELECT tvshow.trakt_id, recommended_shows.tmdb_id
+            FROM recommended_shows
+            JOIN tvshow ON tvshow.id = recommended_shows.show_id
+            WHERE recommended_shows.recommended_show_trakt_id = $parentTraktId
+        """.trimIndent(),
         parameters = 0,
         binders = null,
         mapper = { cursor ->

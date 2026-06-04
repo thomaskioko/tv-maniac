@@ -27,8 +27,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         shows.forEachIndexed { index, show ->
             show.insertTvShowQuery()
+            val showId = showIdForTraktId(show.trakt_id.id)
             trendingShowsQueries.insert(
-                traktId = show.trakt_id,
+                showId = showId,
                 tmdbId = show.tmdb_id,
                 page = Id<PageId>(1),
                 name = show.name,

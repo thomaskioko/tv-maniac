@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.RecommendedShows
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -16,12 +17,14 @@ import kotlinx.coroutines.flow.Flow
 @ContributesBinding(AppScope::class)
 public class DefaultRecommendedShowsDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedShowsDao {
     override fun upsert(showTraktId: Long, showTmdbId: Long, recommendedShowTraktId: Long) {
+        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return
         database.recommendedShowsQueries.transaction {
             database.recommendedShowsQueries.upsert(
-                trakt_id = Id(showTraktId),
+                show_id = showId,
                 tmdb_id = Id(showTmdbId),
                 recommended_show_trakt_id = Id(recommendedShowTraktId),
             )

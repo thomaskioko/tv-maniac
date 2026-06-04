@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Featured_shows
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.FEATURED_SHOWS_TODAY
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
@@ -36,6 +37,7 @@ public class FeaturedShowsStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val featuredShowsDao: FeaturedShowsDao,
     private val tvShowsDao: TvShowsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -98,9 +100,11 @@ public class FeaturedShowsStore(
 
                         tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath, dateTimeProvider))
 
+                        val showId = showIdResolver.showIdForTraktId(traktId) ?: return@forEach
+
                         featuredShowsDao.upsert(
                             Featured_shows(
-                                trakt_id = Id(traktId),
+                                show_id = showId,
                                 tmdb_id = Id(tmdbId),
                                 name = show.title,
                                 poster_path = posterPath,
