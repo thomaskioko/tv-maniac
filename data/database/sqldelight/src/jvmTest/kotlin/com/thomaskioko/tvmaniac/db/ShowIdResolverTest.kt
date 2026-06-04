@@ -22,22 +22,22 @@ class ShowIdResolverTest {
 
     @Test
     fun `should resolve a traktId to the internal showId via its TRAKT external id`() {
-        val showId = database.seedShowWithTraktExternalId(traktId = 100, tmdbId = 200)
+        val showId = database.insertShowWithTraktExternalId(traktId = 100, tmdbId = 200)
 
         resolver.showIdForTraktId(100) shouldBe showId
     }
 
     @Test
     fun `should return null for a traktId with no external id row`() {
-        database.seedShowWithTraktExternalId(traktId = 100, tmdbId = 200)
+        database.insertShowWithTraktExternalId(traktId = 100, tmdbId = 200)
 
         resolver.showIdForTraktId(999).shouldBeNull()
     }
 
     @Test
     fun `should keep a trakt id mapped to its first show when another show claims the same id`() {
-        val showA = database.seedShowWithTraktExternalId(traktId = 100, tmdbId = 200)
-        val showB = database.seedShow(traktId = 101, tmdbId = 201)
+        val showA = database.insertShowWithTraktExternalId(traktId = 100, tmdbId = 200)
+        val showB = database.insertShow(traktId = 101, tmdbId = 201)
 
         // The UNIQUE(provider, external_id) guard makes this a no-op rather than a mis-merge.
         database.tvshowExternalIdQueries.insert(showId = showB, provider = Provider.TRAKT, externalId = "100")
@@ -45,7 +45,7 @@ class ShowIdResolverTest {
         resolver.showIdForTraktId(100) shouldBe showA
     }
 
-    private fun TvManiacDatabase.seedShow(traktId: Long, tmdbId: Long): Id<ShowId> {
+    private fun TvManiacDatabase.insertShow(traktId: Long, tmdbId: Long): Id<ShowId> {
         tvShowQueries.upsert(
             trakt_id = Id(traktId),
             tmdb_id = Id(tmdbId),
@@ -65,8 +65,8 @@ class ShowIdResolverTest {
         return tvShowQueries.tvshowByTraktId(Id(traktId)).executeAsOne().id
     }
 
-    private fun TvManiacDatabase.seedShowWithTraktExternalId(traktId: Long, tmdbId: Long): Id<ShowId> {
-        val showId = seedShow(traktId, tmdbId)
+    private fun TvManiacDatabase.insertShowWithTraktExternalId(traktId: Long, tmdbId: Long): Id<ShowId> {
+        val showId = insertShow(traktId, tmdbId)
         tvshowExternalIdQueries.insert(showId = showId, provider = Provider.TRAKT, externalId = traktId.toString())
         return showId
     }

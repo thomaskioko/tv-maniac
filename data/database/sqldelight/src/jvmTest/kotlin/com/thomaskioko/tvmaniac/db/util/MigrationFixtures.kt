@@ -17,7 +17,7 @@ internal fun SqlDriver.viewNames(): Set<String> = executeQuery(
     },
 ).value
 
-internal fun SqlDriver.seedTvshow(
+internal fun SqlDriver.insertTvshow(
     traktId: Long,
     tmdbId: Long,
     name: String = "show-$traktId",
@@ -32,7 +32,7 @@ internal fun SqlDriver.seedTvshow(
     )
 }
 
-internal fun SqlDriver.seedFollowedShow(
+internal fun SqlDriver.insertFollowedShow(
     traktId: Long,
     tmdbId: Long,
     followedAt: Long = 1_700_000_000_000L,
@@ -48,7 +48,7 @@ internal fun SqlDriver.seedFollowedShow(
     )
 }
 
-internal fun SqlDriver.seedTraktContinueWatching(
+internal fun SqlDriver.insertTraktContinueWatching(
     traktId: Long,
     tmdbId: Long?,
     airedEpisodes: Long = 10L,
@@ -67,7 +67,7 @@ internal fun SqlDriver.seedTraktContinueWatching(
     )
 }
 
-internal fun SqlDriver.seedSeason(
+internal fun SqlDriver.insertSeason(
     id: Long,
     showTraktId: Long,
     seasonNumber: Long,
@@ -84,7 +84,7 @@ internal fun SqlDriver.seedSeason(
     )
 }
 
-internal fun SqlDriver.seedEpisode(
+internal fun SqlDriver.insertEpisode(
     id: Long,
     seasonId: Long,
     showTraktId: Long,
@@ -111,7 +111,7 @@ internal fun SqlDriver.seedEpisode(
     )
 }
 
-internal fun SqlDriver.seedWatchedEpisode(
+internal fun SqlDriver.insertWatchedEpisode(
     showTraktId: Long,
     episodeId: Long?,
     seasonNumber: Long,

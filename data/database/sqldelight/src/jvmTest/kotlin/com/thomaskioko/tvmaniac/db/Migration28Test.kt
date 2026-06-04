@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.util.columnNames
+import com.thomaskioko.tvmaniac.db.util.insertFollowedShow
+import com.thomaskioko.tvmaniac.db.util.insertTvshow
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
 import com.thomaskioko.tvmaniac.db.util.notNullColumns
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
-import com.thomaskioko.tvmaniac.db.util.seedFollowedShow
-import com.thomaskioko.tvmaniac.db.util.seedTvshow
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
@@ -19,10 +19,10 @@ class Migration28Test {
     @Test
     fun `should preserve followed_shows rows when migrating past version 27`() {
         openSnapshot(version = 27).use { driver ->
-            driver.seedTvshow(traktId = 5001L, tmdbId = 6001L)
-            driver.seedTvshow(traktId = 5002L, tmdbId = 6002L)
-            driver.seedFollowedShow(traktId = 5001L, tmdbId = 6001L, followedAt = 1_700_000_000_000L)
-            driver.seedFollowedShow(traktId = 5002L, tmdbId = 6002L, followedAt = 1_700_000_001_000L)
+            driver.insertTvshow(traktId = 5001L, tmdbId = 6001L)
+            driver.insertTvshow(traktId = 5002L, tmdbId = 6002L)
+            driver.insertFollowedShow(traktId = 5001L, tmdbId = 6001L, followedAt = 1_700_000_000_000L)
+            driver.insertFollowedShow(traktId = 5002L, tmdbId = 6002L, followedAt = 1_700_000_001_000L)
 
             migrateToCurrent(driver, oldVersion = 27)
 
@@ -86,7 +86,7 @@ class Migration28Test {
         openSnapshot(version = 27).use { driver ->
             migrateToCurrent(driver, oldVersion = 27)
 
-            driver.seedTvshow(traktId = 7001L, tmdbId = 8001L)
+            driver.insertTvshow(traktId = 7001L, tmdbId = 8001L)
             driver.execute(
                 identifier = null,
                 sql = """

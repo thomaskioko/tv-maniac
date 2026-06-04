@@ -211,7 +211,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             followedAt = now,
             pendingAction = "NOTHING",
         )
-        val showId = seedExternalId(SHOW_ID)
+        val showId = showIdForTraktId(SHOW_ID)
         database.traktContinueWatchingQueries.upsert(
             traktId = Id(SHOW_ID),
             tmdbId = Id(SHOW_ID),

@@ -703,7 +703,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = "/$id-back.jpg",
         )
-        showIdByTraktId[id] = seedExternalId(id)
+        showIdByTraktId[id] = showIdForTraktId(id)
     }
 
     private fun insertSeason(

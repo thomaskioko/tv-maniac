@@ -177,7 +177,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = null,
         )
-        showIdByTraktId[id] = seedExternalId(id)
+        showIdByTraktId[id] = showIdForTraktId(id)
     }
 
     private fun insertSeason(seasonId: Long, showId: Long, seasonNumber: Long) {

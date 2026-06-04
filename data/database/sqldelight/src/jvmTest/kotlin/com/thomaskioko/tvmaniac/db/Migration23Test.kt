@@ -16,7 +16,7 @@ class Migration23Test {
     fun `should drop parent FK from similar_shows when migrating past version 23`() {
         openSnapshot(version = 23).use { driver ->
             driver.enableForeignKeys()
-            driver.seedTvshow(traktId = 1L, tmdbId = 1001L)
+            driver.insertTvshow(traktId = 1L, tmdbId = 1001L)
 
             shouldThrowFkViolation {
                 driver.insertSimilarShow(traktId = 1L, tmdbId = 1001L, parentTraktId = 999L)
@@ -38,7 +38,7 @@ class Migration23Test {
     fun `should drop parent FK from recommended_shows when migrating past version 23`() {
         openSnapshot(version = 23).use { driver ->
             driver.enableForeignKeys()
-            driver.seedTvshow(traktId = 2L, tmdbId = 2002L)
+            driver.insertTvshow(traktId = 2L, tmdbId = 2002L)
 
             shouldThrowFkViolation {
                 driver.insertRecommendedShow(traktId = 2L, tmdbId = 2002L, parentTraktId = 999L)
@@ -59,8 +59,8 @@ class Migration23Test {
     @Test
     fun `should preserve existing rows across migration 23`() {
         openSnapshot(version = 23).use { driver ->
-            driver.seedTvshow(traktId = 10L, tmdbId = 1010L)
-            driver.seedTvshow(traktId = 20L, tmdbId = 2020L)
+            driver.insertTvshow(traktId = 10L, tmdbId = 1010L)
+            driver.insertTvshow(traktId = 20L, tmdbId = 2020L)
             driver.insertSimilarShow(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L, pageOrder = 5L)
             driver.insertRecommendedShow(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L)
 
@@ -82,7 +82,7 @@ private inline fun shouldThrowFkViolation(block: () -> Unit) {
     message shouldContain "FOREIGN KEY"
 }
 
-private fun SqlDriver.seedTvshow(traktId: Long, tmdbId: Long) {
+private fun SqlDriver.insertTvshow(traktId: Long, tmdbId: Long) {
     execute(
         identifier = null,
         sql = """

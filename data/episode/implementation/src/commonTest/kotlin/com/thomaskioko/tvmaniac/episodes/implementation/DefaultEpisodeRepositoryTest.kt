@@ -145,7 +145,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        val showId = seedExternalId(TEST_SHOW_ID)
+        val showId = showIdForTraktId(TEST_SHOW_ID)
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),

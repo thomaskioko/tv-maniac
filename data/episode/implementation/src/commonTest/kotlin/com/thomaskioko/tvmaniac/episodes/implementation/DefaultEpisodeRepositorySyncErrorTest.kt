@@ -165,7 +165,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        val showId = seedExternalId(SHOW_ID)
+        val showId = showIdForTraktId(SHOW_ID)
         database.seasonsQueries.upsert(
             id = Id(11L),
             show_id = showId,

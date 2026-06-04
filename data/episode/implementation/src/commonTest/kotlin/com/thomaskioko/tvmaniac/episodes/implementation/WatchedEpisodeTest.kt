@@ -362,7 +362,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        showId = seedExternalId(SHOW_ID)
+        showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
             id = null,
             traktId = Id<TraktId>(SHOW_ID),

@@ -206,7 +206,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        val resolvedShowId = seedExternalId(showId)
+        val resolvedShowId = showIdForTraktId(showId)
         if (addToFollowedShows) {
             database.followedShowsQueries.upsert(
                 id = null,
@@ -272,7 +272,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        val showId = seedExternalId(SHOW_ID)
+        val showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
             id = null,
             traktId = Id(SHOW_ID),

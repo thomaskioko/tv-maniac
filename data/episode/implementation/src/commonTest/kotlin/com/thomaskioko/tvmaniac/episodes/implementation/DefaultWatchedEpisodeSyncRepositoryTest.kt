@@ -219,7 +219,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        showId = seedExternalId(SHOW_ID)
+        showId = showIdForTraktId(SHOW_ID)
     }
 
     private companion object {

@@ -15,8 +15,8 @@ class Migration35Test {
     @Test
     fun `should add an internal id and seed a TRAKT external id per show`() {
         openSnapshot(version = 35).use { driver ->
-            driver.seedShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
-            driver.seedShow(traktId = 101, tmdbId = 201, ratings = 9.1, voteCount = 99)
+            driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
+            driver.insertShow(traktId = 101, tmdbId = 201, ratings = 9.1, voteCount = 99)
 
             migrateToCurrent(driver, oldVersion = 35)
 
@@ -35,7 +35,7 @@ class Migration35Test {
     @Test
     fun `should copy ratings into a TMDB provider_meta row`() {
         openSnapshot(version = 35).use { driver ->
-            driver.seedShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
+            driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
 
             migrateToCurrent(driver, oldVersion = 35)
 
@@ -48,10 +48,10 @@ class Migration35Test {
     @Test
     fun `should preserve child rows and pending writes across the tvshow rebuild`() {
         openSnapshot(version = 35).use { driver ->
-            driver.seedShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
-            driver.seedSeasonV35(id = 1, showTraktId = 100, seasonNumber = 1)
-            driver.seedEpisodeV35(id = 1, seasonId = 1, showTraktId = 100, episodeNumber = 1, firstAired = 1_700_000_000_000L)
-            driver.seedWatchedEpisodeV35(showTraktId = 100, episodeId = 1, seasonNumber = 1, episodeNumber = 1, pendingAction = "UPLOAD")
+            driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
+            driver.insertSeasonV35(id = 1, showTraktId = 100, seasonNumber = 1)
+            driver.insertEpisodeV35(id = 1, seasonId = 1, showTraktId = 100, episodeNumber = 1, firstAired = 1_700_000_000_000L)
+            driver.insertWatchedEpisodeV35(showTraktId = 100, episodeId = 1, seasonNumber = 1, episodeNumber = 1, pendingAction = "UPLOAD")
 
             migrateToCurrent(driver, oldVersion = 35)
 
@@ -66,7 +66,7 @@ class Migration35Test {
 
     private data class ProviderMeta(val rating: Double, val voteCount: Long)
 
-    private fun SqlDriver.seedShow(traktId: Long, tmdbId: Long, ratings: Double, voteCount: Long) {
+    private fun SqlDriver.insertShow(traktId: Long, tmdbId: Long, ratings: Double, voteCount: Long) {
         execute(
             identifier = null,
             sql = """
@@ -77,7 +77,7 @@ class Migration35Test {
         )
     }
 
-    private fun SqlDriver.seedSeasonV35(id: Long, showTraktId: Long, seasonNumber: Long) {
+    private fun SqlDriver.insertSeasonV35(id: Long, showTraktId: Long, seasonNumber: Long) {
         execute(
             identifier = null,
             sql = """
@@ -88,7 +88,7 @@ class Migration35Test {
         )
     }
 
-    private fun SqlDriver.seedEpisodeV35(id: Long, seasonId: Long, showTraktId: Long, episodeNumber: Long, firstAired: Long) {
+    private fun SqlDriver.insertEpisodeV35(id: Long, seasonId: Long, showTraktId: Long, episodeNumber: Long, firstAired: Long) {
         execute(
             identifier = null,
             sql = """
@@ -99,7 +99,7 @@ class Migration35Test {
         )
     }
 
-    private fun SqlDriver.seedWatchedEpisodeV35(
+    private fun SqlDriver.insertWatchedEpisodeV35(
         showTraktId: Long,
         episodeId: Long,
         seasonNumber: Long,

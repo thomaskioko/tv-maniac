@@ -56,7 +56,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             backdrop_path = "/kXkuE8WXlCD8zMX7MxzBEKmLJUZ.jpg",
         )
-        showId = seedExternalId(123232)
+        showId = showIdForTraktId(123232)
     }
 
     private fun insertSeason() {

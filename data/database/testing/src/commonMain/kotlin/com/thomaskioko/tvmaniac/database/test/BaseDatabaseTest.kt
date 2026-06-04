@@ -29,7 +29,7 @@ public abstract class BaseDatabaseTest {
      * `DefaultTvShowsDao.upsert` does in production. Seed the trio (`season`, `episode`,
      * `watched_episodes`) with the returned `show_id`.
      */
-    protected fun seedExternalId(traktId: Long): Id<ShowId> {
+    protected fun showIdForTraktId(traktId: Long): Id<ShowId> {
         val showId = database.tvShowQueries.tvshowByTraktId(Id(traktId)).executeAsOne().id
         database.tvshowExternalIdQueries.insert(
             showId = showId,

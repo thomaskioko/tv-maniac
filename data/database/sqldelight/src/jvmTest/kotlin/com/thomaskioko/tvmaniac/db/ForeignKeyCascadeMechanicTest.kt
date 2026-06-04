@@ -10,7 +10,7 @@ class ForeignKeyCascadeMechanicTest {
     @Test
     fun `parent rebuild cascade-deletes children when foreign keys are on`() {
         connection().use { connection ->
-            connection.seedParentAndChild()
+            connection.insertParentAndChild()
             connection.exec("PRAGMA foreign_keys=ON")
 
             connection.rebuildParent()
@@ -22,7 +22,7 @@ class ForeignKeyCascadeMechanicTest {
     @Test
     fun `parent rebuild preserves children when foreign keys are off`() {
         connection().use { connection ->
-            connection.seedParentAndChild()
+            connection.insertParentAndChild()
             connection.exec("PRAGMA foreign_keys=OFF")
 
             connection.rebuildParent()
@@ -33,7 +33,7 @@ class ForeignKeyCascadeMechanicTest {
 
     private fun connection(): Connection = DriverManager.getConnection("jdbc:sqlite::memory:")
 
-    private fun Connection.seedParentAndChild() {
+    private fun Connection.insertParentAndChild() {
         exec("CREATE TABLE parent (id INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL)")
         exec(
             """

@@ -487,7 +487,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop.jpg",
         )
 
-        val resolvedShowId = seedExternalId(showId)
+        val resolvedShowId = showIdForTraktId(showId)
         val _ = database.seasonsQueries.upsert(
             id = Id(9001L),
             show_id = resolvedShowId,
@@ -532,7 +532,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             poster_path = "/p.jpg",
             backdrop_path = "/b.jpg",
         )
-        val show900Id = seedExternalId(900L)
+        val show900Id = showIdForTraktId(900L)
         database.seasonsQueries.upsert(
             id = Id(990L),
             show_id = show900Id,
@@ -631,7 +631,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        testShowId = seedExternalId(TEST_SHOW_ID)
+        testShowId = showIdForTraktId(TEST_SHOW_ID)
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),

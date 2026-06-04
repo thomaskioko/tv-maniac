@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import com.thomaskioko.tvmaniac.db.util.columnNames
 import com.thomaskioko.tvmaniac.db.util.enableForeignKeys
+import com.thomaskioko.tvmaniac.db.util.insertTvshow
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
-import com.thomaskioko.tvmaniac.db.util.seedTvshow
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
@@ -46,7 +46,7 @@ class Migration25Test {
     @Test
     fun `should preserve row data across the column drop`() {
         openSnapshot(version = 24).use { driver ->
-            driver.seedTvshow(traktId = 42L, tmdbId = 4242L)
+            driver.insertTvshow(traktId = 42L, tmdbId = 4242L)
             driver.execute(
                 identifier = null,
                 sql = """
