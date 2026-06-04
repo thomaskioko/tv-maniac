@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.testing
 
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -50,6 +51,7 @@ public class FakeTvShowsDao : TvShowsDao {
 }
 
 private fun ShowToPersist.toTvshow(): Tvshow = Tvshow(
+    id = Id(0),
     trakt_id = traktId,
     tmdb_id = tmdbId,
     name = name,

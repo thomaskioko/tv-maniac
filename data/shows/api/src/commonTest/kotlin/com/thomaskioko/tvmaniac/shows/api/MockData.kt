@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.Tvshow
@@ -8,6 +9,7 @@ import com.thomaskioko.tvmaniac.db.Tvshow
 internal object MockData {
 
     fun getShow() = Tvshow(
+        id = Id<ShowId>(1),
         trakt_id = Id<TraktId>(84958),
         tmdb_id = Id<TmdbId>(84958),
         name = "Loki",
@@ -31,6 +33,7 @@ internal object MockData {
 
     fun showList() = listOf(
         Tvshow(
+            id = Id<ShowId>(1),
             trakt_id = Id<TraktId>(84958),
             tmdb_id = Id<TmdbId>(84958),
             name = "Loki",
@@ -52,6 +55,7 @@ internal object MockData {
             ratings = 8.1,
         ),
         Tvshow(
+            id = Id<ShowId>(2),
             trakt_id = Id<TraktId>(126280),
             tmdb_id = Id<TmdbId>(126280),
             name = "Sex/Life",
