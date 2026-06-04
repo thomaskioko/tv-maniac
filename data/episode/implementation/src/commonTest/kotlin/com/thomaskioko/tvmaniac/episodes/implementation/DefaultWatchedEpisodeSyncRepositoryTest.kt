@@ -32,10 +32,10 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlin.time.Instant
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
