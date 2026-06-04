@@ -1,6 +1,5 @@
-import Components
 import DesignSystem
-import Models
+import EpisodeDetail
 import SnapshotTestingLib
 import SwiftUI
 import XCTest
@@ -68,7 +67,7 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
         isWatched: Bool
     ) -> some View {
         EpisodeDetailSheetContent(
-            episode: EpisodeDetailInfo(
+            episode: EpisodeDetailSheetInfo(
                 title: title,
                 imageUrl: nil,
                 episodeInfo: episodeInfo,

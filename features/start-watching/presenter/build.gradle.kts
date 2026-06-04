@@ -15,6 +15,7 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.syncstate.api)
                 api(projects.core.view)
+                api(projects.data.traktauth.api)
                 api(projects.data.watchlistPrefs.api)
                 api(projects.domain.startWatching)
                 api(projects.features.myShows.nav)
@@ -37,6 +38,8 @@ kotlin {
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.startWatching.testing)
+                implementation(projects.data.traktauth.api)
+                implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.navigation.testing)
             }

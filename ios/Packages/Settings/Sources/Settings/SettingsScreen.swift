@@ -88,6 +88,7 @@ public struct SettingsTraktContent {
 
 public struct SettingsScreen<Theme: ThemeItem>: View {
     public struct State {
+        public let isLoading: Bool
         public let rootTitle: String
         public let versionFooter: String
         public let currentPage: SettingsPageRoute
@@ -103,6 +104,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let traktContent: SettingsTraktContent
 
         public init(
+            isLoading: Bool,
             rootTitle: String,
             versionFooter: String,
             currentPage: SettingsPageRoute,
@@ -117,6 +119,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             licenseSections: [SettingsLicenseSection],
             traktContent: SettingsTraktContent
         ) {
+            self.isLoading = isLoading
             self.rootTitle = rootTitle
             self.versionFooter = versionFooter
             self.currentPage = currentPage
@@ -149,7 +152,11 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                pageBody(for: state.currentPage)
+                if state.isLoading {
+                    SettingsLoadingUI()
+                } else {
+                    pageBody(for: state.currentPage)
+                }
                 Spacer().frame(height: appTheme.spacing.xLarge)
             }
             .padding(.horizontal, appTheme.spacing.medium)
@@ -160,7 +167,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
-        .swipeBackGesture(onSwipe: onBack)
+        .swipeBackGesture(handledByPresenter: true, onSwipe: onBack)
         .overlay(
             GlassToolbar(
                 title: toolbarTitle(state.currentPage),

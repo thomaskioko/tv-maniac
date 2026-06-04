@@ -30,15 +30,15 @@ public class ShowDetailsInteractor(
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
             coroutineScope {
-                launch { showDetailsRepository.fetchShowDetails(id = params.id, forceRefresh = params.forceRefresh) }
                 launch { castRepository.fetchShowCast(showTraktId = params.id, forceRefresh = params.forceRefresh) }
                 launch { trailerRepository.fetchTrailers(traktId = params.id, forceRefresh = params.forceRefresh) }
                 launch { providerRepository.fetchWatchProviders(traktId = params.id, forceRefresh = params.forceRefresh) }
                 launch {
+                    showDetailsRepository.fetchShowDetails(id = params.id, forceRefresh = params.forceRefresh)
                     seasonsEpisodesSyncRepository.syncSeasonsWithEpisodes(showTraktId = params.id, forceRefresh = params.forceRefresh)
                     seasonDetailsRepository.syncShowSeasonDetails(showTraktId = params.id, forceRefresh = params.forceRefresh)
+                    watchedEpisodeSyncRepository.syncShowEpisodeWatches(showTraktId = params.id, forceRefresh = params.forceRefresh)
                 }
-                launch { watchedEpisodeSyncRepository.syncShowEpisodeWatches(showTraktId = params.id, forceRefresh = params.forceRefresh) }
             }
         }
     }

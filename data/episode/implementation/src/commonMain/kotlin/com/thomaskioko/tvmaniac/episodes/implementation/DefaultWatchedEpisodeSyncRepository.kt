@@ -90,16 +90,9 @@ public class DefaultWatchedEpisodeSyncRepository(
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
 
-        // Fetch when per-show TTL has expired AND the bulk sync has not run
-        // recently enough to cover this show. If the bulk path is fresh, the
-        // local watched_episodes table already has this show's data, so the
-        // per-show round-trip is redundant.
-        val bulkRecentlyRan = lastRequestStore.isRequestValid()
         val perShowExpired = lastRequestStore.isShowRequestExpired(showTraktId)
-        val shouldFetch = forceRefresh || (perShowExpired && !bulkRecentlyRan)
-
-        if (!shouldFetch) {
-            logger.debug(TAG, "Per-show sync skipped for $showTraktId — bulk current and per-show TTL fresh")
+        if (!forceRefresh && !perShowExpired) {
+            logger.debug(TAG, "Per-show sync skipped for $showTraktId — per-show TTL fresh")
             return
         }
 

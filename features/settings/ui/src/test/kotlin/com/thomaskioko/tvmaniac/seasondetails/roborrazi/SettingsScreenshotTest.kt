@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
 import com.thomaskioko.tvmaniac.settings.ui.infoState
 import com.thomaskioko.tvmaniac.settings.ui.licensesState
+import com.thomaskioko.tvmaniac.settings.ui.loadingState
 import com.thomaskioko.tvmaniac.settings.ui.loggedInState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
@@ -31,6 +32,18 @@ class SettingsScreenshotTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    @Test
+    fun settingsScreenLoadingState() {
+        composeTestRule.captureMultiDevice("SettingsScreenLoadingState") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = loadingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
 
     @Test
     fun settingsScreenDefaultState() {

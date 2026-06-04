@@ -18,6 +18,7 @@ let package = Package(
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(name: "Components", path: "../Components"),
         .package(name: "TvManiacKit", path: "../TvManiacKit"),
+        .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
     targets: [
         .target(
@@ -27,6 +28,15 @@ let package = Package(
                 "Components",
                 "TvManiacKit",
             ]
+        ),
+        .testTarget(
+            name: "EpisodeDetailTests",
+            dependencies: [
+                "SnapshotTestingLib",
+                "EpisodeDetail",
+                "DesignSystem",
+            ],
+            exclude: ["__Snapshots__"]
         ),
     ]
 )

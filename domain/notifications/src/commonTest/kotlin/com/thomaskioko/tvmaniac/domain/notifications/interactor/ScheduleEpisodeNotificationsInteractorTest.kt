@@ -296,7 +296,7 @@ class ScheduleEpisodeNotificationsInteractorTest {
     }
 
     @Test
-    fun `should skip future episodes given they air after today`() = runTest(testDispatcher) {
+    fun `should schedule episodes airing beyond today given the repository returns them`() = runTest(testDispatcher) {
         val currentTime = 1_000_000L
         val todayEpAirTime = currentTime + 1.hours.inWholeMilliseconds
         val tomorrowEpAirTime = currentTime + 25.hours.inWholeMilliseconds
@@ -344,9 +344,9 @@ class ScheduleEpisodeNotificationsInteractorTest {
         }
 
         val scheduled = notificationManager.getScheduledNotifications()
-        scheduled.size shouldBe 1
+        scheduled.size shouldBe 2
         scheduled shouldContainKey 601L
-        scheduled shouldNotContainKey 602L
+        scheduled shouldContainKey 602L
     }
 
     @Test

@@ -107,6 +107,7 @@ internal val defaultState = SettingsState(
     showTraktDialog = false,
     showLogoutDialog = false,
     isAuthenticated = false,
+    isLoading = false,
     openTrailersInYoutube = false,
     includeSpecials = false,
     versionName = "1.0.0",
@@ -122,6 +123,7 @@ internal val loggedInState = SettingsState(
     showTraktDialog = false,
     showLogoutDialog = false,
     isAuthenticated = true,
+    isLoading = false,
     openTrailersInYoutube = true,
     includeSpecials = true,
     versionName = "1.0.0",
@@ -140,10 +142,13 @@ internal val traktLoggedOutState = defaultState.copy(
     labels = loggedOutTraktLabels,
 )
 
+internal val loadingState = defaultState.copy(isLoading = true)
+
 internal class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
     override val values: Sequence<SettingsState>
         get() {
             return sequenceOf(
+                loadingState,
                 defaultState,
                 loggedInState,
                 appearanceState,

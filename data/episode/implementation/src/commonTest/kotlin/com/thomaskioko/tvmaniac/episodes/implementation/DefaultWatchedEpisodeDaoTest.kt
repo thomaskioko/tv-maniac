@@ -510,6 +510,74 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should keep the watched count given it exceeds the season episode count`() = runTest {
+        database.tvShowQueries.upsert(
+            trakt_id = Id(900L),
+            tmdb_id = Id<TmdbId>(900L),
+            name = "Understated Show",
+            overview = "overview",
+            language = "en",
+            year = "2023-01-01",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        database.seasonsQueries.upsert(
+            id = Id(990L),
+            show_trakt_id = Id(900L),
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 0L,
+            image_url = null,
+        )
+        database.watchedEpisodesQueries.markAsWatched(
+            show_trakt_id = Id(900L),
+            episode_id = null,
+            season_number = 1L,
+            episode_number = 1L,
+            watched_at = 1L,
+            pending_action = "UPLOAD",
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(900L).test {
+            val progress = awaitItem()
+            progress.watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should exclude specials given a special episode is watched`() = runTest {
+        database.watchedEpisodesQueries.markAsWatched(
+            show_trakt_id = Id(TEST_SHOW_ID),
+            episode_id = null,
+            season_number = SEASON_1_NUMBER,
+            episode_number = 1L,
+            watched_at = 1L,
+            pending_action = "UPLOAD",
+        )
+        database.watchedEpisodesQueries.markAsWatched(
+            show_trakt_id = Id(TEST_SHOW_ID),
+            episode_id = null,
+            season_number = 0L,
+            episode_number = 1L,
+            watched_at = 1L,
+            pending_action = "UPLOAD",
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
+            val progress = awaitItem()
+            progress.watchedCount shouldBe 1
+            progress.totalCount shouldBe (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT)
+        }
+    }
+
+    @Test
     fun `should keep watched episodes given an episode row is re-upserted during metadata sync`() = runTest {
         watchedEpisodeDao.markAsWatched(
             showTraktId = TEST_SHOW_ID,

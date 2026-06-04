@@ -85,6 +85,7 @@ public class SettingsPresenter(
         val isAuthenticated = authState == TraktAuthState.LOGGED_IN
         val username = userProfile?.let { it.fullName ?: it.username }
         currentState.copy(
+            isLoading = false,
             isUpdating = isLoggingOut || isTogglingNotifications,
             imageQuality = preferences.imageQuality,
             theme = preferences.theme.toThemeModel(),

@@ -253,9 +253,11 @@ class SettingsScreenTest: SnapshotTestCase {
 
     private func makeState(
         page: SettingsPageRoute,
-        authenticated: Bool
+        authenticated: Bool,
+        isLoading: Bool = false
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
+            isLoading: isLoading,
             rootTitle: "Settings",
             versionFooter: "Version 1.0.0",
             currentPage: page,
@@ -270,6 +272,12 @@ class SettingsScreenTest: SnapshotTestCase {
             licenseSections: licenseSections,
             traktContent: traktContent
         )
+    }
+
+    func test_SettingsScreen_Loading() {
+        SettingsScreen(state: makeState(page: .root, authenticated: false, isLoading: true), onBack: {})
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Loading")
     }
 
     func test_SettingsScreen_Root() {

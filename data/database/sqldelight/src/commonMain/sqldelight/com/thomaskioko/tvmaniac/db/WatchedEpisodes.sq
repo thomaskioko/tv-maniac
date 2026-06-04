@@ -133,7 +133,8 @@ WHERE show_trakt_id = :show_trakt_id
 
 getWatchedEpisodesCountForShow:
 SELECT COUNT(*) FROM watched_episodes
-WHERE show_trakt_id = ? AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE');
+WHERE show_trakt_id = ? AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+  AND season_number > 0;
 
 getUnwatchedEpisodesInPreviousSeasons:
 SELECT

@@ -14,9 +14,9 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 
 /**
- * Dormant. Contributed to the worker set but no longer scheduled while the Library surface is
- * disabled — Continue Watching covers the watched-episode + metadata sync, and follow/unfollow
- * pushes flush via PendingUploadsWorker. Retained for the Library feature rebuild.
+ * Periodic background worker that runs the full library sync (watchlist, watched episodes, and
+ * per-show metadata fan-out). Scheduled by [SyncTasksInitializer] while the user is logged in and
+ * background sync is enabled. Runs only in the background, never inline at app start.
  */
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
@@ -62,6 +62,7 @@ public class LibrarySyncWorker(
             id = WORKER_NAME,
             intervalMs = TWELVE_HOURS_MS,
             constraints = TaskConstraints(requiresNetwork = true),
+            longRunning = true,
         )
     }
 }

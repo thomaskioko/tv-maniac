@@ -26,6 +26,7 @@ public struct SettingsView: View {
 
     private var screenState: SettingsScreen<DeviceAppTheme>.State {
         SettingsScreen<DeviceAppTheme>.State(
+            isLoading: uiState.isLoading,
             rootTitle: String(\.label_settings_title),
             versionFooter: uiState.labels.version,
             currentPage: uiState.currentPage.toRoute(),

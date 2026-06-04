@@ -1,63 +1,33 @@
 package com.thomaskioko.tvmaniac.domain.library
 
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
-import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
-import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
- * Dormant. Not registered as an app initializer while the Library surface is disabled — the
- * Continue Watching flow owns post-login sync and worker scheduling. Retained as the reference
- * wiring for when the Library feature is rebuilt.
+ * Schedules [LibrarySyncWorker] to run periodically while the user is logged in and background
+ * sync is enabled. Only enqueues the periodic worker: the heavy library sync runs inside
+ * [LibrarySyncWorker] on its background schedule, never inline at app start.
  */
 @Inject
 public class SyncTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
-    private val syncObserver: SyncObserver,
-    private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
-    syncLibraryInteractor: Lazy<SyncLibraryInteractor>,
     datastoreRepo: Lazy<DatastoreRepository>,
     traktAuthRepo: Lazy<TraktAuthRepository>,
 ) {
 
-    private val syncInteractor by syncLibraryInteractor
     private val datastoreRepository by datastoreRepo
     private val traktAuthRepository by traktAuthRepo
 
     public fun init() {
-        observeDataSync()
-        observePendingUploads()
-    }
-
-    private fun observeDataSync() {
-        coroutineScope.launch {
-            // loginEvents emits exactly once per explicit sign-in. Cache restore on
-            // cold relaunch and token refresh paths do not emit, so a relaunch with
-            // cached auth no longer re-enters this block.
-            traktAuthRepository.loginEvents.collect {
-                withContext(NonCancellable) {
-                    syncObserver.trackSync(POST_LOGIN_OPERATION_ID) {
-                        syncInteractor.executeSync(SyncLibraryInteractor.Param())
-                        logger.debug(TAG, "Library sync completed successfully")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun observePendingUploads() {
         coroutineScope.launch {
             combine(
                 traktAuthRepository.state,
@@ -67,22 +37,12 @@ public class SyncTasksInitializer(
             }
                 .distinctUntilChanged()
                 .collect { shouldSync ->
-                    when {
-                        shouldSync -> {
-                            scheduler.schedulePeriodic(LibrarySyncWorker.REQUEST)
-                            scheduler.schedulePeriodic(PendingUploadsWorker.REQUEST)
-                        }
-                        else -> {
-                            scheduler.cancel(LibrarySyncWorker.WORKER_NAME)
-                            scheduler.cancel(PendingUploadsWorker.WORKER_NAME)
-                        }
+                    if (shouldSync) {
+                        scheduler.schedulePeriodic(LibrarySyncWorker.REQUEST)
+                    } else {
+                        scheduler.cancel(LibrarySyncWorker.WORKER_NAME)
                     }
                 }
         }
-    }
-
-    private companion object {
-        private const val TAG = "SyncTasksInitializer"
-        private const val POST_LOGIN_OPERATION_ID = "PostLoginLibrarySync"
     }
 }

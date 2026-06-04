@@ -6,6 +6,8 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.startwatching.presenter.model.StartWatchingItem
+import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
+import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -80,6 +82,26 @@ class StartWatchingPresenterTest {
             syncing.isSyncing shouldBe true
             syncing.showLoading shouldBe true
         }
+    }
+
+    @Test
+    fun `should sync watchlist without forcing refresh given auth state changes to logged in`() = runTest {
+        factory.traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        factory.startWatchingRepository.syncInvocations() shouldBe listOf(
+            FakeStartWatchingRepository.SyncInvocation(forceRefresh = false),
+        )
+    }
+
+    @Test
+    fun `should force refresh watchlist given RefreshStartWatching action is dispatched`() = runTest {
+        presenter.dispatch(RefreshStartWatching())
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        factory.startWatchingRepository.syncInvocations() shouldBe listOf(
+            FakeStartWatchingRepository.SyncInvocation(forceRefresh = true),
+        )
     }
 
     @Test
