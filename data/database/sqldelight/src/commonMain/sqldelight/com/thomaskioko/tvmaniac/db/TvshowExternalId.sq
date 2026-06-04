@@ -15,3 +15,12 @@ CREATE TABLE IF NOT EXISTS tvshow_external_id(
 -- Makes a mis-merge impossible: a given provider id maps to at most one internal show.
 CREATE UNIQUE INDEX IF NOT EXISTS idx_external_lookup
     ON tvshow_external_id(provider, external_id);
+
+showIdForExternalId:
+SELECT show_id
+FROM tvshow_external_id
+WHERE provider = :provider AND external_id = :externalId;
+
+insert:
+INSERT OR IGNORE INTO tvshow_external_id(show_id, provider, external_id)
+VALUES (:showId, :provider, :externalId);
