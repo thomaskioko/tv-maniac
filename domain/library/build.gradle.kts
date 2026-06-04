@@ -33,7 +33,6 @@ kotlin {
                 api(projects.domain.syncActivity)
 
                 implementation(projects.data.requestManager.api)
-                implementation(projects.domain.episode)
             }
         }
 
