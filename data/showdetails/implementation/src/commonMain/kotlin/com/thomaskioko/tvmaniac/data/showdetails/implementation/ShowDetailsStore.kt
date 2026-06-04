@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAILS
@@ -34,6 +35,7 @@ public class ShowDetailsStore(
     private val tvShowsDao: TvShowsDao,
     private val showDetailsDao: ShowDetailsDao,
     private val seasonDao: SeasonsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val requestManagerRepository: RequestManagerRepository,
@@ -98,11 +100,14 @@ public class ShowDetailsStore(
                     ),
                 )
 
+                val showId = showIdResolver.showIdForTraktId(traktId)
+                    ?: return@databaseTransactionRunner
+
                 response.traktSeasons.forEach { season ->
                     seasonDao.upsert(
                         Season(
                             id = Id(season.ids.trakt.toLong()),
-                            show_trakt_id = Id(traktId),
+                            show_id = showId,
                             season_number = season.number.toLong(),
                             episode_count = season.episodeCount.toLong(),
                             title = season.title,

@@ -8,24 +8,27 @@ import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.db.ShowCast
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultCastDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatcher: AppCoroutineDispatchers,
 ) : CastDao {
     override fun upsert(entity: Casts) {
         database.castQueries.upsert(
             id = entity.id,
             trakt_id = entity.trakt_id,
-            show_trakt_id = entity.show_trakt_id,
+            show_id = entity.show_id,
             season_id = entity.season_id,
             name = entity.name,
             character_name = entity.character_name,
@@ -36,11 +39,14 @@ public class DefaultCastDao(
 
     override suspend fun getShowCast(traktId: Long): List<ShowCast> =
         withContext(dispatcher.io) {
-            database.castQueries.showCast(Id(traktId)).executeAsList()
+            val showId = showIdResolver.showIdForTraktId(traktId) ?: return@withContext emptyList()
+            database.castQueries.showCast(showId).executeAsList()
         }
 
-    override fun observeShowCast(traktId: Long): Flow<List<ShowCast>> =
-        database.castQueries.showCast(Id(traktId)).asFlow().mapToList(dispatcher.io)
+    override fun observeShowCast(traktId: Long): Flow<List<ShowCast>> {
+        val showId = showIdResolver.showIdForTraktId(traktId) ?: return flowOf(emptyList())
+        return database.castQueries.showCast(showId).asFlow().mapToList(dispatcher.io)
+    }
 
     override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
         database.castQueries.seasonCast(Id(seasonId)).asFlow().mapToList(dispatcher.io)

@@ -128,8 +128,8 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
     private fun TestScope.buildRepository(
         syncObserver: FakeSyncObserver,
     ): DefaultEpisodeRepository {
-        val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
-        val episodesDao = DefaultEpisodesDao(database, dispatchers, fakeDateTimeProvider)
+        val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
+        val episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         val upcomingEpisodesStore = UpcomingEpisodesStore(
             calendarDataSource = NoOpCalendarDataSource,
             episodesDao = episodesDao,
@@ -165,9 +165,10 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        val showId = seedExternalId(SHOW_ID)
         database.seasonsQueries.upsert(
             id = Id(11L),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_number = 1L,
             title = "Season 1",
             overview = null,
@@ -177,7 +178,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(EPISODE_ID),
             season_id = Id(11L),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Pilot",
             overview = "",
             episode_number = 1L,

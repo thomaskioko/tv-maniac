@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
@@ -46,6 +47,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var dao: WatchedEpisodeDao
+    private var showId: Id<ShowId> = Id(0L)
 
     @BeforeTest
     fun setup() {
@@ -53,6 +55,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         fakeDateTimeProvider.setCurrentTimeMillis(now)
         dao = DefaultWatchedEpisodeDao(
             database = database,
+            showIdResolver = showIdResolver,
             dispatchers = dispatchers,
             dateTimeProvider = fakeDateTimeProvider,
         )
@@ -299,7 +302,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         syncedAt: Long = now,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             episode_id = episodeId?.let { Id(it) },
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -317,7 +320,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         syncedAt: Long,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -359,6 +362,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        showId = seedExternalId(SHOW_ID)
         database.followedShowsQueries.upsert(
             id = null,
             traktId = Id<TraktId>(SHOW_ID),
@@ -368,7 +372,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         )
         database.seasonsQueries.upsert(
             id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_number = 1L,
             title = "Season 1",
             overview = null,
@@ -378,7 +382,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(EPISODE_1_ID),
             season_id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Episode 1",
             overview = "",
             episode_number = 1L,
@@ -392,7 +396,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(EPISODE_2_ID),
             season_id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Episode 2",
             overview = "",
             episode_number = 2L,
@@ -404,7 +408,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             first_aired = now - 86_400_000L,
         )
         database.showMetadataQueries.upsert(
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_count = 1,
             episode_count = 5,
             status = "Returning Series",

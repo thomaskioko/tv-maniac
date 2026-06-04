@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowCast
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_CAST
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -31,6 +32,7 @@ public class ShowCastStore(
     private val tmdbNetworkDataSource: TmdbShowsNetworkDataSource,
     private val tvShowsDao: TvShowsDao,
     private val castDao: CastDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -67,6 +69,9 @@ public class ShowCastStore(
         },
         writer = { traktId, result ->
             databaseTransactionRunner {
+                val showId = showIdResolver.showIdForTraktId(traktId)
+                    ?: return@databaseTransactionRunner
+
                 val tmdbCastMap = result.tmdbCredits?.cast
                     ?.associateBy { it.id.toLong() }
                     ?: emptyMap()
@@ -84,7 +89,7 @@ public class ShowCastStore(
                             Casts(
                                 id = Id(tmdbId),
                                 trakt_id = Id(person.ids.trakt),
-                                show_trakt_id = Id(traktId),
+                                show_id = showId,
                                 season_id = null,
                                 name = person.name,
                                 character_name = castMember.characters.firstOrNull() ?: "",

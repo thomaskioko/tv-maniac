@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingDao
@@ -31,6 +32,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     )
 
     private lateinit var dao: StartWatchingDao
+    private val showIdByTraktId = mutableMapOf<Long, Id<ShowId>>()
 
     @BeforeTest
     fun setUp() {
@@ -175,12 +177,13 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = null,
         )
+        showIdByTraktId[id] = seedExternalId(id)
     }
 
     private fun insertSeason(seasonId: Long, showId: Long, seasonNumber: Long) {
         database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             season_number = seasonNumber,
             title = "Season $seasonNumber",
             overview = "Overview",
@@ -199,7 +202,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
@@ -224,7 +227,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
     private fun markEpisodeWatched(showId: Long, episodeId: Long, seasonNumber: Long, episodeNumber: Long) {
         database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,

@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -24,6 +25,7 @@ public class DefaultTvShowsDao(
 ) : TvShowsDao {
 
     private val tvShowQueries = database.tvShowQueries
+    private val externalIdQueries = database.tvshowExternalIdQueries
 
     override fun upsert(show: ShowToPersist) {
         tvShowQueries.transaction {
@@ -59,6 +61,12 @@ public class DefaultTvShowsDao(
             season_numbers = show.seasonNumbers,
             poster_path = show.posterPath,
             backdrop_path = show.backdropPath,
+        )
+        val showId = tvShowQueries.tvshowByTraktId(resolvedTraktId).executeAsOne().id
+        externalIdQueries.insert(
+            showId = showId,
+            provider = Provider.TRAKT,
+            externalId = resolvedTraktId.id.toString(),
         )
     }
 

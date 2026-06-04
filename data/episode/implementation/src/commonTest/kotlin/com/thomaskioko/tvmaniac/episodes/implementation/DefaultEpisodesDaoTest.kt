@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
@@ -44,11 +45,12 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
     )
     private val dateTimeProvider = FakeDateTimeProvider()
     private lateinit var episodesDao: EpisodesDao
+    private val showIdByTraktId = mutableMapOf<Long, Id<ShowId>>()
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        episodesDao = DefaultEpisodesDao(database, dispatchers, dateTimeProvider)
+        episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, dateTimeProvider)
     }
 
     @AfterTest
@@ -290,6 +292,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = null,
         )
+        showIdByTraktId[id] = seedExternalId(id)
     }
 
     private fun insertSeason(
@@ -300,7 +303,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
     ) {
         val _ = database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             season_number = seasonNumber,
             title = title,
             overview = "Overview",
@@ -320,7 +323,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         val _ = database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
@@ -350,7 +353,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         episodeNumber: Long,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,

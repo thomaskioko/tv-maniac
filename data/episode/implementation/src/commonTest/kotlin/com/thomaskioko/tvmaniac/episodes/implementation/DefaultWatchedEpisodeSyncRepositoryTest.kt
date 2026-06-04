@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
@@ -57,15 +58,16 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     private lateinit var dao: DefaultWatchedEpisodeDao
     private lateinit var defaultWatchedEpisodeSyncRepository: DefaultWatchedEpisodeSyncRepository
+    private var showId: Id<ShowId> = Id(0L)
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         seedShow()
-        dao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
+        dao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         defaultWatchedEpisodeSyncRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
-            episodesDao = DefaultEpisodesDao(database, dispatchers, fakeDateTimeProvider),
+            episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
             dataSource = recordingDataSource,
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
@@ -147,7 +149,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     )
 
     private fun readRow(seasonNumber: Long, episodeNumber: Long): WatchedRow? =
-        database.watchedEpisodesQueries.getWatchedEpisodes(Id(SHOW_ID))
+        database.watchedEpisodesQueries.getWatchedEpisodes(showId)
             .executeAsList()
             .firstOrNull { it.season_number == seasonNumber && it.episode_number == episodeNumber }
             ?.let { WatchedRow(pending_action = it.pending_action, trakt_id = it.trakt_id) }
@@ -158,7 +160,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         traktId: Long?,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -177,7 +179,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     ) {
         database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_number = seasonNumber,
             episode_count = 12L,
             title = "Season $seasonNumber",
@@ -187,7 +189,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(seasonId * 100 + episodeNumber),
             season_id = Id(seasonId),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Episode $episodeNumber",
             overview = "",
             runtime = null,
@@ -217,6 +219,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        showId = seedExternalId(SHOW_ID)
     }
 
     private companion object {

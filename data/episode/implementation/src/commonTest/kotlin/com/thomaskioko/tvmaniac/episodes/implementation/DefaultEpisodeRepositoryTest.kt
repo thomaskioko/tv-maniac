@@ -49,6 +49,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val watchedEpisodeDao = DefaultWatchedEpisodeDao(
         database = database,
+        showIdResolver = showIdResolver,
         dispatchers = coroutineDispatcher,
         dateTimeProvider = fakeDateTimeProvider,
     )
@@ -92,6 +93,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         watchedEpisodeDao.observeAllSeasonsWatchProgress(999L).test {
             val progress = awaitItem()
             progress.shouldBeEmpty()
+            awaitComplete()
         }
     }
 
@@ -143,9 +145,11 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
+        val showId = seedExternalId(TEST_SHOW_ID)
+
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = showId,
             season_number = SEASON_1_NUMBER,
             title = "Season 1",
             overview = "First season",
@@ -155,7 +159,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = showId,
             season_number = SEASON_2_NUMBER,
             title = "Season 2",
             overview = "Second season",
@@ -169,7 +173,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
-                show_trakt_id = Id(TEST_SHOW_ID),
+                show_id = showId,
                 title = "Episode $episodeNumber",
                 overview = "Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
@@ -188,7 +192,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_2_ID),
-                show_trakt_id = Id(TEST_SHOW_ID),
+                show_id = showId,
                 title = "Episode $episodeNumber",
                 overview = "Season 2 Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
@@ -210,7 +214,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         )
 
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = showId,
             season_count = 2,
             episode_count = (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT).toLong(),
             status = "Returning Series",

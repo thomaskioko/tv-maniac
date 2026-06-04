@@ -45,7 +45,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         fakeDateTimeProvider.setCurrentTimeMillis(now)
-        watchedEpisodeDao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
+        watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         nextEpisodeDao = DefaultNextEpisodeDao(database, dispatchers, fakeDateTimeProvider)
         seedShowWithThreeAiredEpisodes()
     }
@@ -211,6 +211,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             followedAt = now,
             pendingAction = "NOTHING",
         )
+        val showId = seedExternalId(SHOW_ID)
         database.traktContinueWatchingQueries.upsert(
             traktId = Id(SHOW_ID),
             tmdbId = Id(SHOW_ID),
@@ -223,7 +224,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         )
         database.seasonsQueries.upsert(
             id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_number = 1L,
             title = "Season 1",
             overview = null,
@@ -238,7 +239,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_ID),
-                show_trakt_id = Id(SHOW_ID),
+                show_id = showId,
                 title = "Episode $episodeNumber",
                 overview = "",
                 episode_number = episodeNumber,

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TraktId
 import io.kotest.matchers.shouldBe
@@ -12,6 +13,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
     private val episodeQueries
         get() = database.episodesQueries
+
+    private var showId: Id<ShowId> = Id(0L)
 
     @Test
     fun insertEpisodes_andEpisodeByEpisodeId_returnsExpectedData() {
@@ -53,12 +56,13 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             backdrop_path = "/kXkuE8WXlCD8zMX7MxzBEKmLJUZ.jpg",
         )
+        showId = seedExternalId(123232)
     }
 
     private fun insertSeason() {
         val _ = database.seasonsQueries.upsert(
             id = Id(114355),
-            show_trakt_id = Id<TraktId>(123232),
+            show_id = showId,
             season_number = 1,
             episode_count = 6,
             title = "Season 1",
@@ -76,7 +80,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             ratings = ratings,
             episode_number = episode_number,
             runtime = runtime,
-            show_trakt_id = show_trakt_id,
+            show_id = show_id,
             vote_count = vote_count,
             image_url = image_url,
             trakt_id = trakt_id,
@@ -88,7 +92,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         Episode(
             id = Id(2534997),
             season_id = Id(114355),
-            show_trakt_id = Id<TraktId>(123232),
+            show_id = showId,
             title = "Glorious Purpose",
             overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
             vote_count = 42,
@@ -102,7 +106,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         Episode(
             id = Id(2927202),
             season_id = Id(114355),
-            show_trakt_id = Id<TraktId>(123232),
+            show_id = showId,
             title = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
             vote_count = 42,
