@@ -29,18 +29,39 @@ public fun createNativeSqliteDriver(
     schema: SqlSchema<QueryResult.Value<Unit>>,
     name: String,
     inMemory: Boolean = false,
-): NativeSqliteDriver = NativeSqliteDriver(
-    DatabaseConfiguration(
-        name = name,
-        inMemory = inMemory,
-        journalMode = JournalMode.WAL,
-        version = schema.version.toInt(),
-        create = { connection ->
-            wrapConnection(connection) { schema.create(it) }
-        },
-        upgrade = { connection, oldVersion, newVersion ->
-            wrapConnection(connection) { schema.migrate(it, oldVersion.toLong(), newVersion.toLong()) }
-        },
-        extendedConfig = DatabaseConfiguration.Extended(foreignKeyConstraints = true),
-    ),
+): NativeSqliteDriver {
+    if (!inMemory) {
+        val migrationDriver = NativeSqliteDriver(
+            databaseConfiguration(schema, name, inMemory = false, foreignKeys = false),
+        )
+        // Force a connection so SQLiter runs the upgrade callback (Schema.migrate) now, then release
+        // it. SQLiter opens lazily, so without a statement the migration would not run before close.
+        migrationDriver.executeQuery(
+            identifier = null,
+            sql = "SELECT 1",
+            mapper = { QueryResult.Value(Unit) },
+            parameters = 0,
+        )
+        migrationDriver.close()
+    }
+    return NativeSqliteDriver(databaseConfiguration(schema, name, inMemory = inMemory, foreignKeys = true))
+}
+
+internal fun databaseConfiguration(
+    schema: SqlSchema<QueryResult.Value<Unit>>,
+    name: String,
+    inMemory: Boolean,
+    foreignKeys: Boolean,
+): DatabaseConfiguration = DatabaseConfiguration(
+    name = name,
+    inMemory = inMemory,
+    journalMode = JournalMode.WAL,
+    version = schema.version.toInt(),
+    create = { connection ->
+        wrapConnection(connection) { schema.create(it) }
+    },
+    upgrade = { connection, oldVersion, newVersion ->
+        wrapConnection(connection) { schema.migrate(it, oldVersion.toLong(), newVersion.toLong()) }
+    },
+    extendedConfig = DatabaseConfiguration.Extended(foreignKeyConstraints = foreignKeys),
 )
