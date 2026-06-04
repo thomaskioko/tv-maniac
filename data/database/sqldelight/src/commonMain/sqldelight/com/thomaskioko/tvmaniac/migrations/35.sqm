@@ -1,0 +1,87 @@
+-- Migration 35: introduce the provider-agnostic identity layer.
+--
+-- Adds an internal canonical `tvshow.id` (AUTOINCREMENT primary key) and demotes `trakt_id` from
+-- primary key to a UNIQUE column, so every existing trakt_id query, child foreign key, and the
+-- ON CONFLICT(trakt_id) upsert keep working unchanged. Seeds one TRAKT row in `tvshow_external_id`
+-- per show and copies each show's community rating into a TMDB `tvshow_provider_meta` row. Ratings
+-- stay on `tvshow` for now (readers are unchanged this phase); the provider_meta row is dormant.
+--
+-- `tvshow` is rebuilt with the temp-table pattern. Dropping the old table would cascade into its
+-- children if foreign keys were enforced; migrations run with foreign keys OFF on both platforms
+-- (Android enables them in onOpen, after onUpgrade; iOS via createNativeSqliteDriver's migrate-then-
+-- reopen), so the children are untouched and keep referencing tvshow(trakt_id), still UNIQUE.
+--
+-- The views (shows_last_watched, shows_next_to_watch, show_watch_progress) reference tvshow, so the
+-- RENAME below would trip SQLite's view re-validation ("no such table: tvshow"). Those views are
+-- repointed in a later phase; legacy_alter_table skips that re-validation here, leaving them intact
+-- and still valid against the rebuilt tvshow.
+PRAGMA legacy_alter_table=1;
+
+CREATE TABLE tvshow_new(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER NOT NULL UNIQUE,
+    tmdb_id INTEGER NOT NULL UNIQUE,
+    backdrop_path TEXT DEFAULT NULL,
+    year TEXT DEFAULT NULL,
+    language TEXT,
+    name TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    poster_path TEXT,
+    episode_numbers TEXT DEFAULT NULL,
+    season_numbers TEXT DEFAULT NULL,
+    status TEXT DEFAULT NULL,
+    ratings REAL NOT NULL,
+    vote_count INTEGER NOT NULL,
+    genres TEXT
+);
+
+INSERT INTO tvshow_new(
+    trakt_id, tmdb_id, backdrop_path, year, language, name, overview, poster_path,
+    episode_numbers, season_numbers, status, ratings, vote_count, genres
+)
+SELECT
+    trakt_id, tmdb_id, backdrop_path, year, language, name, overview, poster_path,
+    episode_numbers, season_numbers, status, ratings, vote_count, genres
+FROM tvshow;
+
+DROP TABLE tvshow;
+
+ALTER TABLE tvshow_new RENAME TO tvshow;
+
+CREATE INDEX IF NOT EXISTS idx_tvshow_name ON tvshow(name);
+CREATE INDEX IF NOT EXISTS idx_tvshow_tmdb_id ON tvshow(tmdb_id);
+
+CREATE TABLE IF NOT EXISTS tvshow_external_id(
+    show_id INTEGER NOT NULL,
+    provider TEXT NOT NULL,
+    external_id TEXT NOT NULL,
+    PRIMARY KEY (show_id, provider),
+    FOREIGN KEY (show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_external_lookup
+    ON tvshow_external_id(provider, external_id);
+
+CREATE TABLE IF NOT EXISTS tvshow_provider_meta(
+    show_id INTEGER NOT NULL,
+    provider TEXT NOT NULL,
+    rating REAL,
+    vote_count INTEGER,
+    last_synced_at INTEGER,
+    PRIMARY KEY (show_id, provider),
+    FOREIGN KEY (show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS show_watch_status(
+    show_id INTEGER NOT NULL PRIMARY KEY,
+    status TEXT,
+    last_watched_at INTEGER,
+    last_synced_at INTEGER,
+    FOREIGN KEY (show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+INSERT INTO tvshow_external_id(show_id, provider, external_id)
+SELECT id, 'TRAKT', CAST(trakt_id AS TEXT) FROM tvshow;
+
+INSERT INTO tvshow_provider_meta(show_id, provider, rating, vote_count, last_synced_at)
+SELECT id, 'TMDB', ratings, vote_count, NULL FROM tvshow;

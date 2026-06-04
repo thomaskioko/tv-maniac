@@ -1,11 +1,13 @@
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import kotlin.String;
 import kotlin.collections.List;
 
 CREATE TABLE IF NOT EXISTS tvshow(
-    trakt_id INTEGER AS Id<TraktId> NOT NULL PRIMARY KEY,
+    id INTEGER AS Id<ShowId> NOT NULL PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER AS Id<TraktId> NOT NULL UNIQUE,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL UNIQUE,
     backdrop_path TEXT DEFAULT NULL,
     year TEXT DEFAULT NULL,

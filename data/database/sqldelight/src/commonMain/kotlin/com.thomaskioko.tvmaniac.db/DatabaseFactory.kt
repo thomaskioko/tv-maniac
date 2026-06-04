@@ -44,6 +44,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             pageAdapter = IdAdapter(),
         ),
         tvshowAdapter = Tvshow.Adapter(
+            idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
             trakt_idAdapter = IdAdapter(),
             genresAdapter = stringColumnAdapter,
