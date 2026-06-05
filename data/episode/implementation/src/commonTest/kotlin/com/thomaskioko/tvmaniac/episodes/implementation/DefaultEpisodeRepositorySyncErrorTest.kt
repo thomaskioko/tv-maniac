@@ -150,7 +150,6 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
     private fun seedShow() {
         database.tvShowQueries.upsert(
-            trakt_id = Id(SHOW_ID),
             tmdb_id = Id(SHOW_ID),
             name = "Test Show",
             overview = "",

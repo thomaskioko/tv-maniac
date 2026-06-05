@@ -22,7 +22,9 @@ class Migration23Test {
                 driver.insertSimilarShowV23(traktId = 1L, tmdbId = 1001L, parentTraktId = 999L)
             }
 
+            driver.execute(null, "PRAGMA foreign_keys=OFF", 0)
             migrateToCurrent(driver, oldVersion = 23)
+            driver.execute(null, "PRAGMA foreign_keys=ON", 0)
 
             val showId = driver.showId(traktId = 1L)!!
             shouldNotThrowAny {
@@ -45,7 +47,9 @@ class Migration23Test {
                 driver.insertRecommendedShowV23(traktId = 2L, tmdbId = 2002L, parentTraktId = 999L)
             }
 
+            driver.execute(null, "PRAGMA foreign_keys=OFF", 0)
             migrateToCurrent(driver, oldVersion = 23)
+            driver.execute(null, "PRAGMA foreign_keys=ON", 0)
 
             val showId = driver.showId(traktId = 2L)!!
             shouldNotThrowAny {
@@ -97,7 +101,7 @@ private fun SqlDriver.insertTvshow(traktId: Long, tmdbId: Long) {
 
 private fun SqlDriver.showId(traktId: Long): Long? = executeQuery(
     identifier = null,
-    sql = "SELECT id FROM tvshow WHERE trakt_id = $traktId",
+    sql = "SELECT show_id FROM show_trakt WHERE trakt_id = $traktId",
     parameters = 0,
     binders = null,
     mapper = { cursor ->
@@ -171,9 +175,10 @@ private fun SqlDriver.querySimilarShow(parentTraktId: Long): Triple<Long, Long, 
     executeQuery(
         identifier = null,
         sql = """
-            SELECT tvshow.trakt_id, similar_shows.tmdb_id, similar_shows.page_order
+            SELECT show_trakt.trakt_id, similar_shows.tmdb_id, similar_shows.page_order
             FROM similar_shows
             JOIN tvshow ON tvshow.id = similar_shows.show_id
+            JOIN show_trakt ON show_trakt.show_id = tvshow.id
             WHERE similar_shows.similar_show_trakt_id = $parentTraktId
         """.trimIndent(),
         parameters = 0,
@@ -193,9 +198,10 @@ private fun SqlDriver.queryRecommendedShow(parentTraktId: Long): Pair<Long, Long
     executeQuery(
         identifier = null,
         sql = """
-            SELECT tvshow.trakt_id, recommended_shows.tmdb_id
+            SELECT show_trakt.trakt_id, recommended_shows.tmdb_id
             FROM recommended_shows
             JOIN tvshow ON tvshow.id = recommended_shows.show_id
+            JOIN show_trakt ON show_trakt.show_id = tvshow.id
             WHERE recommended_shows.recommended_show_trakt_id = $parentTraktId
         """.trimIndent(),
         parameters = 0,

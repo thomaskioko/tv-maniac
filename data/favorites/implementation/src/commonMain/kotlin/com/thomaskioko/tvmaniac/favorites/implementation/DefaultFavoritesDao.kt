@@ -46,7 +46,7 @@ public class DefaultFavoritesDao(
 
 private fun FavoriteShows.toFavoriteShow(): FavoriteShow =
     FavoriteShow(
-        traktId = show_trakt_id.id,
+        traktId = show_trakt_id,
         tmdbId = show_tmdb_id.id,
         title = title,
         posterPath = poster_path,

@@ -88,7 +88,6 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
 
     private fun insertShow(id: Long, name: String) {
         database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(id),
             tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = "Overview for $name",

@@ -56,7 +56,6 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     private fun insertTestShows() {
         listOf(1L, 2L, 3L).forEach { id ->
             database.tvShowQueries.upsert(
-                trakt_id = Id<TraktId>(id),
                 tmdb_id = Id<TmdbId>(id),
                 name = "Test Show $id",
                 overview = "overview",

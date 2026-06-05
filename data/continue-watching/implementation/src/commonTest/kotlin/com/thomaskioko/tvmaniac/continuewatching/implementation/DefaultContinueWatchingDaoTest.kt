@@ -139,7 +139,6 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 
     private fun insertTvShow(traktId: Long, tmdbId: Long) {
         database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(traktId),
             tmdb_id = Id<TmdbId>(tmdbId),
             name = "show-$traktId",
             overview = "overview",
@@ -154,7 +153,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        showIdForTraktId(traktId)
+        showIdForTraktId(traktId = traktId, tmdbId = tmdbId)
     }
 
     private companion object {

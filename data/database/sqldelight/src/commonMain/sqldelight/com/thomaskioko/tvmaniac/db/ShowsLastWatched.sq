@@ -12,13 +12,14 @@ GROUP BY tvshow.id;
 
 lastWatchedEpisodeForShow:
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     episode.id AS episode_id,
     season.season_number AS last_watched_season,
     episode.episode_number AS last_watched_episode,
     last_watched.last_watched_at
 FROM shows_last_watched AS last_watched
 INNER JOIN tvshow ON tvshow.id = last_watched.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 INNER JOIN season ON season.show_id = tvshow.id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
 WHERE last_watched.show_id = :showId

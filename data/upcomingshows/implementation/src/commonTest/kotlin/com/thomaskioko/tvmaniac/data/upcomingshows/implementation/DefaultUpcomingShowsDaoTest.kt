@@ -277,7 +277,6 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
 
     private fun seedShow(traktId: Long, name: String, posterPath: String): Id<ShowId> {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(traktId),
             tmdb_id = Id<TmdbId>(traktId),
             name = name,
             overview = "$name overview",
@@ -298,7 +297,6 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
     private fun insertTestShows() {
         // Insert test TV shows first
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(1),
             tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -315,7 +313,6 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
         )
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(2),
             tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",

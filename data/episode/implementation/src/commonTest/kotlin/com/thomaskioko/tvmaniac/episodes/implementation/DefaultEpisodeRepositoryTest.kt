@@ -129,7 +129,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(TEST_SHOW_ID),
             tmdb_id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,

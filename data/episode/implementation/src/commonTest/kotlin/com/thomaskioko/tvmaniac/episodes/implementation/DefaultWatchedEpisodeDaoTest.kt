@@ -470,7 +470,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         val episodeNumber = 5L
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(showId),
             tmdb_id = Id(showId),
             name = "UpNext Test Show",
             overview = "A show where episode details haven't been synced",
@@ -516,7 +515,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should keep the watched count given it exceeds the season episode count`() = runTest {
         database.tvShowQueries.upsert(
-            trakt_id = Id(900L),
             tmdb_id = Id<TmdbId>(900L),
             name = "Understated Show",
             overview = "overview",
@@ -614,7 +612,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(TEST_SHOW_ID),
             tmdb_id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,

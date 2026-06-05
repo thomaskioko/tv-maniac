@@ -71,7 +71,7 @@ public class TrailerStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val traktId = result.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            val traktId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = traktId,
                 requestType = TRAILERS.name,

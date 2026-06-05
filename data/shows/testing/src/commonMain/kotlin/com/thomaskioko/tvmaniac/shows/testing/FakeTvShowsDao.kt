@@ -52,7 +52,6 @@ public class FakeTvShowsDao : TvShowsDao {
 
 private fun ShowToPersist.toTvshow(): Tvshow = Tvshow(
     id = Id(0),
-    trakt_id = traktId,
     tmdb_id = tmdbId,
     name = name,
     overview = overview,

@@ -43,7 +43,7 @@ public class DefaultPopularShowsDao(
         popularShowsQueries
             .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
@@ -66,7 +66,7 @@ public class DefaultPopularShowsDao(
                     offset = offset,
                 ) { traktId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        traktId = traktId.id,
+                        traktId = traktId,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,

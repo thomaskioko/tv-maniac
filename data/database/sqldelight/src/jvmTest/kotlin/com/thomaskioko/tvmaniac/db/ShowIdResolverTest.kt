@@ -47,7 +47,6 @@ class ShowIdResolverTest {
 
     private fun TvManiacDatabase.insertShow(traktId: Long, tmdbId: Long): Id<ShowId> {
         tvShowQueries.upsert(
-            trakt_id = Id(traktId),
             tmdb_id = Id(tmdbId),
             name = "show-$traktId",
             overview = "overview",
@@ -62,7 +61,7 @@ class ShowIdResolverTest {
             poster_path = null,
             backdrop_path = null,
         )
-        return tvShowQueries.tvshowByTraktId(Id(traktId)).executeAsOne().id
+        return tvShowQueries.getShowIdByTmdbId(Id(tmdbId)).executeAsOne()
     }
 
     private fun TvManiacDatabase.insertShowWithTraktExternalId(traktId: Long, tmdbId: Long): Id<ShowId> {

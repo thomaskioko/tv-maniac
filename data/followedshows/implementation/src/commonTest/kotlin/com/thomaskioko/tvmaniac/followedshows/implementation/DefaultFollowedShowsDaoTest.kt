@@ -362,7 +362,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShows() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(1),
             tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -380,7 +379,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         showIdForTraktId(1L)
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(2),
             tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -398,7 +396,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         showIdForTraktId(2L)
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(3),
             tmdb_id = Id<TmdbId>(3),
             name = "Test Show 3",
             overview = "Test overview 3",

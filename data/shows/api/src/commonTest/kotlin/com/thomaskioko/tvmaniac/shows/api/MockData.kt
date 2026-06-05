@@ -10,7 +10,6 @@ internal object MockData {
 
     fun getShow() = Tvshow(
         id = Id<ShowId>(1),
-        trakt_id = Id<TraktId>(84958),
         tmdb_id = Id<TmdbId>(84958),
         name = "Loki",
         overview = "After stealing the Tesseract during the events of Avengers: Endgame, " +
@@ -34,7 +33,6 @@ internal object MockData {
     fun showList() = listOf(
         Tvshow(
             id = Id<ShowId>(1),
-            trakt_id = Id<TraktId>(84958),
             tmdb_id = Id<TmdbId>(84958),
             name = "Loki",
             overview = "After stealing the Tesseract during the events of Avengers: Endgame, " +
@@ -56,7 +54,6 @@ internal object MockData {
         ),
         Tvshow(
             id = Id<ShowId>(2),
-            trakt_id = Id<TraktId>(126280),
             tmdb_id = Id<TmdbId>(126280),
             name = "Sex/Life",
             overview = "A woman's daring sexual past collides with her married-with-kids " +

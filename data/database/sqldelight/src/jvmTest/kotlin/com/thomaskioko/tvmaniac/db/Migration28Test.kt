@@ -91,7 +91,7 @@ class Migration28Test {
                 identifier = null,
                 sql = """
                     INSERT INTO followed_shows (show_id, tmdb_id, followed_at, pending_action)
-                    VALUES ((SELECT id FROM tvshow WHERE trakt_id = 7001), NULL, 1700000000000, 'NOTHING')
+                    VALUES ((SELECT show_id FROM show_trakt WHERE trakt_id = 7001), NULL, 1700000000000, 'NOTHING')
                 """.trimIndent(),
                 parameters = 0,
             )
@@ -125,10 +125,10 @@ private data class FollowedShowRow(
 private fun SqlDriver.followedShowsRows(): List<FollowedShowRow> = executeQuery(
     identifier = null,
     sql = """
-        SELECT tvshow.trakt_id, followed_shows.tmdb_id, followed_shows.followed_at, followed_shows.pending_action
+        SELECT show_trakt.trakt_id, followed_shows.tmdb_id, followed_shows.followed_at, followed_shows.pending_action
         FROM followed_shows
-        JOIN tvshow ON tvshow.id = followed_shows.show_id
-        ORDER BY tvshow.trakt_id
+        JOIN show_trakt ON show_trakt.show_id = followed_shows.show_id
+        ORDER BY show_trakt.trakt_id
     """.trimIndent(),
     parameters = 0,
     binders = null,

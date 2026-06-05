@@ -31,45 +31,45 @@ public class DefaultFollowedShowsDao(
     override fun entries(): List<FollowedShowEntry> {
         return queries.entries()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+            .map { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesObservable(): Flow<List<FollowedShowEntry>> {
         return queries.entries()
             .asFlow()
             .mapToList(dispatchers.io)
-            .map { list -> list.map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) } }
+            .map { list -> list.map { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) } }
     }
 
     override fun entryWithTraktId(traktId: Long): FollowedShowEntry? {
         val showId = showIdResolver.showIdForTraktId(traktId) ?: return null
         return queries.entryWithShowId(showId)
             .executeAsOneOrNull()
-            ?.let { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+            ?.let { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithNoPendingAction()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+            .map { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesExcludingDeleted(): List<FollowedShowEntry> {
         return queries.entriesExcludingDeleted()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+            .map { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesWithUploadPendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithUploadPendingAction()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+            .map { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun entriesWithDeletePendingAction(): List<FollowedShowEntry> {
         return queries.entriesWithDeletePendingAction()
             .executeAsList()
-            .map { toEntry(it.followed_id, it.trakt_id.id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+            .map { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
 
     override fun upsert(entry: FollowedShowEntry): Long {

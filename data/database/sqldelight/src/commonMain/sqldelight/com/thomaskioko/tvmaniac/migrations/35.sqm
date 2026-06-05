@@ -460,9 +460,49 @@ DROP TABLE watch_providers;
 ALTER TABLE watch_providers_new RENAME TO watch_providers;
 CREATE INDEX IF NOT EXISTS index_watch_providers_show_id ON watch_providers (show_id);
 
+-- Final identity step: drop trakt_id from tvshow. The internal id is now the sole show identity and
+-- the Trakt id lives only in tvshow_external_id (seeded above). Everything that needed tvshow.trakt_id
+-- has already run (external-id seeding plus every child/discovery/library backfill), and the views are
+-- still dropped (recreated below), so nothing references tvshow.trakt_id at this point. The rebuild
+-- preserves id values so the children's show_id foreign keys stay valid; foreign keys are off for the
+-- whole migration, so dropping tvshow does not cascade into tvshow_external_id or the child tables.
+CREATE TABLE tvshow_final(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    tmdb_id INTEGER NOT NULL UNIQUE,
+    backdrop_path TEXT DEFAULT NULL,
+    year TEXT DEFAULT NULL,
+    language TEXT,
+    name TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    poster_path TEXT,
+    episode_numbers TEXT DEFAULT NULL,
+    season_numbers TEXT DEFAULT NULL,
+    status TEXT DEFAULT NULL,
+    ratings REAL NOT NULL,
+    vote_count INTEGER NOT NULL,
+    genres TEXT
+);
+INSERT INTO tvshow_final(
+    id, tmdb_id, backdrop_path, year, language, name, overview, poster_path,
+    episode_numbers, season_numbers, status, ratings, vote_count, genres
+)
+SELECT
+    id, tmdb_id, backdrop_path, year, language, name, overview, poster_path,
+    episode_numbers, season_numbers, status, ratings, vote_count, genres
+FROM tvshow;
+DROP TABLE tvshow;
+ALTER TABLE tvshow_final RENAME TO tvshow;
+CREATE INDEX IF NOT EXISTS idx_tvshow_name ON tvshow(name);
+CREATE INDEX IF NOT EXISTS idx_tvshow_tmdb_id ON tvshow(tmdb_id);
+
 -- Recreate the views with show_id as the join key (matching the .sq definitions). They expose
 -- tvshow.id AS show_id internally; result columns that name a trakt id are re-emitted by the
--- consuming queries via the tvshow join, re-sourced from tvshow_external_id when trakt_id is dropped.
+-- consuming queries via show_trakt (a typed view over the TRAKT rows of tvshow_external_id).
+CREATE VIEW show_trakt AS
+SELECT show_id, CAST(external_id AS INTEGER) AS trakt_id
+FROM tvshow_external_id
+WHERE provider = 'TRAKT';
+
 CREATE VIEW shows_last_watched AS
 SELECT
     tvshow.id AS show_id,

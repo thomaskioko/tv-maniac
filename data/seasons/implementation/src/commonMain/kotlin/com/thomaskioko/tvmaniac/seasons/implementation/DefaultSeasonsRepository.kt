@@ -34,7 +34,7 @@ public class DefaultSeasonsRepository(
     override suspend fun getLatestSeasonsForFollowedShows(): List<FollowedShowSeason> {
         return seasonsDao.getLatestSeasonPerFollowedShow().map { row ->
             FollowedShowSeason(
-                showTraktId = row.show_trakt_id.id,
+                showTraktId = row.show_trakt_id,
                 seasonId = row.season_id.id,
                 seasonNumber = row.season_number,
             )

@@ -688,7 +688,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         status: String = "Returning Series",
     ) {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(id),
             tmdb_id = Id(id),
             name = name,
             overview = overview,

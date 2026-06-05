@@ -64,7 +64,7 @@ class Migration25Test {
 
             val expectedShowId = driver.executeQuery(
                 identifier = null,
-                sql = "SELECT id FROM tvshow WHERE trakt_id = 42",
+                sql = "SELECT show_id FROM show_trakt WHERE trakt_id = 42",
                 parameters = 0,
                 binders = null,
                 mapper = { cursor ->

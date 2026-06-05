@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import kotlin.uuid.Uuid
 
@@ -24,13 +25,15 @@ public abstract class BaseDatabaseTest {
 
     /**
      * Links an already-seeded `tvshow` row to the identity layer and returns its internal
-     * `show_id`. Tests seed `tvshow` (carrying the public `trakt_id`) and then call this to create
-     * the `TRAKT` `tvshow_external_id` row that [showIdResolver] reads, mirroring what
-     * `DefaultTvShowsDao.upsert` does in production. Seed the trio (`season`, `episode`,
-     * `watched_episodes`) with the returned `show_id`.
+     * `show_id`. Tests seed `tvshow` via `tvShowQueries.upsert` and then call this to create the
+     * `TRAKT` `tvshow_external_id` row that [showIdResolver] reads, mirroring what
+     * `DefaultTvShowsDao.upsert` does in production.
+     *
+     * Pass [tmdbId] when the Trakt and TMDB ids differ (the test seeded the row by [tmdbId]).
+     * When omitted, [traktId] is used for the lookup (tests that use the same value for both).
      */
-    protected fun showIdForTraktId(traktId: Long): Id<ShowId> {
-        val showId = database.tvShowQueries.tvshowByTraktId(Id(traktId)).executeAsOne().id
+    protected fun showIdForTraktId(traktId: Long, tmdbId: Long = traktId): Id<ShowId> {
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(tmdbId)).executeAsOne()
         database.tvshowExternalIdQueries.insert(
             showId = showId,
             provider = Provider.TRAKT,

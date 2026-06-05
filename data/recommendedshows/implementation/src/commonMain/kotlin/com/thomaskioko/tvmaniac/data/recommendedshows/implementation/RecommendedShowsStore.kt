@@ -101,7 +101,7 @@ public class RecommendedShowsStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val showTraktId = cachedData.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            val showTraktId = cachedData.firstOrNull()?.show_trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showTraktId,
                 requestType = RECOMMENDED_SHOWS.name,

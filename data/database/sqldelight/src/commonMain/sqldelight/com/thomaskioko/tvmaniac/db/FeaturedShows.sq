@@ -19,7 +19,7 @@ CREATE INDEX IF NOT EXISTS `index_featured_shows_tmdb_id` ON `featured_shows` (`
 
 entriesInPage:
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     featured_shows.tmdb_id AS show_tmdb_id,
     COALESCE(featured_shows.name, '') AS name,
     featured_shows.poster_path,
@@ -27,6 +27,7 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM featured_shows
 INNER JOIN tvshow ON tvshow.id = featured_shows.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE featured_shows.name IS NOT NULL
 ORDER BY featured_shows.page_order ASC;
@@ -50,7 +51,7 @@ INSERT OR IGNORE INTO featured_shows(
 
 featuredShows:
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     featured_shows.tmdb_id AS show_tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -60,6 +61,8 @@ FROM
     featured_shows
 INNER JOIN
     tvshow ON tvshow.id = featured_shows.show_id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE

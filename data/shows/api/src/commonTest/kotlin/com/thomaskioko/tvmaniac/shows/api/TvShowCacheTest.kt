@@ -27,7 +27,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         shows.forEachIndexed { index, show ->
             show.insertTvShowQuery()
-            val showId = showIdForTraktId(show.trakt_id.id)
+            val showId = showIdForTraktId(show.tmdb_id.id)
             trendingShowsQueries.insert(
                 showId = showId,
                 tmdbId = show.tmdb_id,
@@ -48,8 +48,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     fun `should return show when data is available`() {
         val show = getShow()
         show.insertTvShowQuery()
+        showIdForTraktId(show.tmdb_id.id)
 
-        val entity = tvShowQueries.tvshowDetails(show.trakt_id).executeAsOne()
+        val entity = tvShowQueries.tvshowDetails(show.tmdb_id.id).executeAsOne()
 
         entity shouldNotBe null
         entity.name shouldBe show.name
@@ -194,7 +195,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
             ),
         ).forEach { show ->
             tvShowQueries.upsert(
-                trakt_id = Id<TraktId>(show.traktId),
                 tmdb_id = Id<TmdbId>(show.tmdbId),
                 name = show.name,
                 overview = show.overview,
@@ -209,6 +209,7 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
                 episode_numbers = null,
                 season_numbers = null,
             )
+            showIdForTraktId(traktId = show.traktId, tmdbId = show.tmdbId)
         }
     }
 
@@ -221,7 +222,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
     private fun Tvshow.insertTvShowQuery() {
         tvShowQueries.upsert(
-            trakt_id = trakt_id,
             tmdb_id = tmdb_id,
             name = name,
             overview = overview,

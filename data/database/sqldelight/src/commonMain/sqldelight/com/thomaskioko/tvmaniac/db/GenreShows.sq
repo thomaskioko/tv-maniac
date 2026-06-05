@@ -19,7 +19,7 @@ VALUES (?, ?, ?, ?);
 
 showsByGenreSlug:
 SELECT
-    s.trakt_id,
+    st.trakt_id,
     s.tmdb_id,
     s.name,
     s.poster_path,
@@ -30,12 +30,13 @@ SELECT
     gs.page_order
 FROM genre_shows gs
 INNER JOIN tvshow s ON gs.show_id = s.id
+INNER JOIN show_trakt st ON st.show_id = s.id
 WHERE gs.genre_slug = ?
 ORDER BY gs.page_order ASC;
 
 showsByGenreSlugAndCategory:
 SELECT
-    s.trakt_id,
+    st.trakt_id,
     s.tmdb_id,
     s.name,
     s.poster_path,
@@ -46,6 +47,7 @@ SELECT
     gs.page_order
 FROM genre_shows gs
 INNER JOIN tvshow s ON gs.show_id = s.id
+INNER JOIN show_trakt st ON st.show_id = s.id
 WHERE gs.genre_slug = ? AND gs.category = ?
 ORDER BY gs.page_order ASC;
 
@@ -53,7 +55,7 @@ genresWithShowsByCategory:
 SELECT
     g.slug AS genre_slug,
     g.name AS genre_name,
-    s.trakt_id,
+    st.trakt_id,
     s.tmdb_id,
     s.name,
     s.poster_path,
@@ -65,6 +67,7 @@ SELECT
 FROM trakt_genres g
 INNER JOIN genre_shows gs ON g.slug = gs.genre_slug
 INNER JOIN tvshow s ON gs.show_id = s.id
+INNER JOIN show_trakt st ON st.show_id = s.id
 WHERE gs.category = ?
 ORDER BY g.slug, gs.page_order ASC;
 

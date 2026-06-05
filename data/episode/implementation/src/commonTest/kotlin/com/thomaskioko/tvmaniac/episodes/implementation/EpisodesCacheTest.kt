@@ -41,7 +41,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
     private fun insertShow() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(123232),
             tmdb_id = Id<TmdbId>(123232),
             name = "Loki",
             overview = "After stealing the Tesseract, Loki is brought to the Time Variance Authority.",

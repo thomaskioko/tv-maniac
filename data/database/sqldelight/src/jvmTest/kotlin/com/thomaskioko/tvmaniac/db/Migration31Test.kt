@@ -48,8 +48,8 @@ class Migration31Test {
                 sql = """
                     SELECT cw.title
                     FROM continue_watching cw
-                    JOIN tvshow ON tvshow.id = cw.show_id
-                    WHERE tvshow.trakt_id = 42
+                    JOIN show_trakt ON show_trakt.show_id = cw.show_id
+                    WHERE show_trakt.trakt_id = 42
                 """.trimIndent(),
                 parameters = 0,
                 binders = null,
@@ -91,7 +91,7 @@ class Migration31Test {
                 sql = """
                     UPDATE continue_watching
                     SET title = 'Severance', year = 2022
-                    WHERE show_id = (SELECT id FROM tvshow WHERE trakt_id = 7)
+                    WHERE show_id = (SELECT show_id FROM show_trakt WHERE trakt_id = 7)
                 """.trimIndent(),
                 parameters = 0,
             )
@@ -101,8 +101,8 @@ class Migration31Test {
                 sql = """
                     SELECT cw.title
                     FROM continue_watching cw
-                    JOIN tvshow ON tvshow.id = cw.show_id
-                    WHERE tvshow.trakt_id = 7
+                    JOIN show_trakt ON show_trakt.show_id = cw.show_id
+                    WHERE show_trakt.trakt_id = 7
                 """.trimIndent(),
                 parameters = 0,
                 binders = null,
@@ -118,8 +118,8 @@ class Migration31Test {
                 sql = """
                     SELECT cw.year
                     FROM continue_watching cw
-                    JOIN tvshow ON tvshow.id = cw.show_id
-                    WHERE tvshow.trakt_id = 7
+                    JOIN show_trakt ON show_trakt.show_id = cw.show_id
+                    WHERE show_trakt.trakt_id = 7
                 """.trimIndent(),
                 parameters = 0,
                 binders = null,

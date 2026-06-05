@@ -25,13 +25,15 @@ FROM trakt_lists lists
 LEFT JOIN trakt_list_shows listShows ON listShows.list_id = lists.id
     AND listShows.pending_action != 'DELETE'
     AND EXISTS (
-        SELECT 1 FROM tvshow s
-        WHERE s.trakt_id = listShows.show_trakt_id AND s.poster_path IS NOT NULL
+        SELECT 1 FROM show_trakt st
+        JOIN tvshow s ON s.id = st.show_id
+        WHERE st.trakt_id = listShows.show_trakt_id AND s.poster_path IS NOT NULL
     )
     AND (
         SELECT COUNT(*)
         FROM trakt_list_shows newerShows
-        JOIN tvshow ns ON ns.trakt_id = newerShows.show_trakt_id AND ns.poster_path IS NOT NULL
+        JOIN show_trakt nst ON nst.trakt_id = newerShows.show_trakt_id
+        JOIN tvshow ns ON ns.id = nst.show_id AND ns.poster_path IS NOT NULL
         WHERE newerShows.list_id = listShows.list_id
             AND newerShows.pending_action != 'DELETE'
             AND (
@@ -39,7 +41,8 @@ LEFT JOIN trakt_list_shows listShows ON listShows.list_id = lists.id
                 OR (newerShows.listed_at = listShows.listed_at AND newerShows.show_trakt_id > listShows.show_trakt_id)
             )
     ) < 4
-LEFT JOIN tvshow show ON show.trakt_id = listShows.show_trakt_id
+LEFT JOIN show_trakt listShowTrakt ON listShowTrakt.trakt_id = listShows.show_trakt_id
+LEFT JOIN tvshow show ON show.id = listShowTrakt.show_id
 ORDER BY lists.name ASC, listShows.listed_at DESC, listShows.show_trakt_id DESC;
 
 selectById:

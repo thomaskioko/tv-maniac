@@ -118,7 +118,11 @@ class Migration35Test {
 
     private fun SqlDriver.showRow(traktId: Long): ShowRow? = executeQuery(
         identifier = null,
-        sql = "SELECT id, tmdb_id FROM tvshow WHERE trakt_id = $traktId",
+        sql = """
+            SELECT tvshow.id, tvshow.tmdb_id FROM tvshow
+            JOIN show_trakt ON show_trakt.show_id = tvshow.id
+            WHERE show_trakt.trakt_id = $traktId
+        """.trimIndent(),
         mapper = { cursor ->
             QueryResult.Value(
                 if (cursor.next().value) ShowRow(id = cursor.getLong(0)!!, tmdbId = cursor.getLong(1)!!) else null,
@@ -151,7 +155,7 @@ class Migration35Test {
 
     private fun SqlDriver.pendingActionFor(showTraktId: Long): String? = executeQuery(
         identifier = null,
-        sql = "SELECT pending_action FROM watched_episodes WHERE show_id = (SELECT id FROM tvshow WHERE trakt_id = $showTraktId)",
+        sql = "SELECT pending_action FROM watched_episodes WHERE show_id = (SELECT show_id FROM show_trakt WHERE trakt_id = $showTraktId)",
         mapper = { cursor -> QueryResult.Value(if (cursor.next().value) cursor.getString(0) else null) },
         parameters = 0,
     ).value

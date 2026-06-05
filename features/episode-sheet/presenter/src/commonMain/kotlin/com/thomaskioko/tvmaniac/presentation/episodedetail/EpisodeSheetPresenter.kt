@@ -99,14 +99,14 @@ public class EpisodeSheetPresenter(
             if (episode.is_watched != 0L) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
-                        showTraktId = episode.show_trakt_id.id,
+                        showTraktId = episode.show_trakt_id,
                         episodeId = episode.episode_id.id,
                     ),
                 ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             } else {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
-                        showTraktId = episode.show_trakt_id.id,
+                        showTraktId = episode.show_trakt_id,
                         episodeId = episode.episode_id.id,
                         seasonNumber = episode.season_number,
                         episodeNumber = episode.episode_number,
@@ -119,7 +119,7 @@ public class EpisodeSheetPresenter(
     private fun openShow() {
         val episode = currentEpisode ?: return
         navigator.dismissOverlay()
-        navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = episode.show_trakt_id.id)))
+        navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = episode.show_trakt_id)))
     }
 
     private fun openSeason() {
@@ -128,7 +128,7 @@ public class EpisodeSheetPresenter(
         navigator.navigateTo(
             SeasonDetailsRoute(
                 SeasonDetailsUiParam(
-                    showTraktId = episode.show_trakt_id.id,
+                    showTraktId = episode.show_trakt_id,
                     seasonId = episode.season_id.id,
                     seasonNumber = episode.season_number,
                 ),
@@ -140,7 +140,7 @@ public class EpisodeSheetPresenter(
         val episode = currentEpisode ?: return
         navigator.dismissOverlay()
         appScopeLauncher.launch(TAG) {
-            unfollowShowInteractor.executeSync(episode.show_trakt_id.id)
+            unfollowShowInteractor.executeSync(episode.show_trakt_id)
         }
     }
 

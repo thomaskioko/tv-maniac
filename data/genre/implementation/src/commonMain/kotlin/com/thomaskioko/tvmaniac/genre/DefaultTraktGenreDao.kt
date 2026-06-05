@@ -55,7 +55,7 @@ public class DefaultTraktGenreDao(
     override fun observeShowsByGenreSlug(slug: String): Flow<List<ShowEntity>> =
         genreShowsQueries.showsByGenreSlug(slug) { traktId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                traktId = traktId.id,
+                traktId = traktId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -72,7 +72,7 @@ public class DefaultTraktGenreDao(
     override fun observeShowsByGenreSlugAndCategory(slug: String, category: String): Flow<List<ShowEntity>> =
         genreShowsQueries.showsByGenreSlugAndCategory(slug, category) { traktId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                traktId = traktId.id,
+                traktId = traktId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -92,7 +92,7 @@ public class DefaultTraktGenreDao(
                 genreSlug = genreSlug,
                 genreName = genreName,
                 show = ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,

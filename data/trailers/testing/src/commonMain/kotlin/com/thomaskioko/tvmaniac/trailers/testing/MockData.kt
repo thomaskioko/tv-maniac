@@ -7,7 +7,7 @@ public val trailers: List<SelectByShowTraktId> = listOf(
     SelectByShowTraktId(
         trailer_id = "Fd43V",
         show_tmdb_id = Id(84958),
-        show_trakt_id = Id(84958),
+        show_trakt_id = 84958L,
         youtube_url = "https://www.youtube.com/watch?v=Fd43V",
         name = "Some title",
         site = "Youtube",

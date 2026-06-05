@@ -191,7 +191,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         addToFollowedShows: Boolean = true,
     ) {
         database.tvShowQueries.upsert(
-            trakt_id = Id(showId),
             tmdb_id = Id(showId),
             name = "Show $showId",
             overview = "",
@@ -256,7 +255,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
 
     private fun seedShow() {
         database.tvShowQueries.upsert(
-            trakt_id = Id(SHOW_ID),
             tmdb_id = Id(SHOW_ID),
             name = "Severance",
             overview = "",

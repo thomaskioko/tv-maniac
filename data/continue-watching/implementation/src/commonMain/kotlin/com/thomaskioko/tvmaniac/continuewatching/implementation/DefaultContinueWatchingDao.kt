@@ -25,7 +25,7 @@ public class DefaultContinueWatchingDao(
     override fun entries(): List<ContinueWatchingEntry> =
         database.continueWatchingQueries.entries().executeAsList().map { row ->
             ContinueWatchingEntry(
-                traktId = row.trakt_id.id,
+                traktId = row.trakt_id,
                 tmdbId = row.tmdb_id?.id,
                 airedEpisodes = row.aired_episodes,
                 completedCount = row.completed_count,
@@ -43,7 +43,7 @@ public class DefaultContinueWatchingDao(
             .map { rows ->
                 rows.map { row ->
                     ContinueWatchingEntry(
-                        traktId = row.trakt_id.id,
+                        traktId = row.trakt_id,
                         tmdbId = row.tmdb_id?.id,
                         airedEpisodes = row.aired_episodes,
                         completedCount = row.completed_count,
@@ -58,7 +58,6 @@ public class DefaultContinueWatchingDao(
     override fun traktIdsMissingShowDetails(): List<Long> =
         database.continueWatchingQueries.traktIdsMissingShowDetails()
             .executeAsList()
-            .map { it.id }
 
     override fun upsert(entry: ContinueWatchingEntry) {
         val showId = showIdResolver.showIdForTraktId(entry.traktId) ?: return

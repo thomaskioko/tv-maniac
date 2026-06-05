@@ -40,7 +40,7 @@ public class DefaultFeaturedShowsDao(
         featuredShowsQueries
             .entriesInPage { traktId, tmdbId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,

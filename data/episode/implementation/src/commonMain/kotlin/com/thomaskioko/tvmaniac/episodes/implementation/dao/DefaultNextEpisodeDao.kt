@@ -49,7 +49,7 @@ public class DefaultNextEpisodeDao(
 
 private fun CompletedShowsForWatchlist.toCompletedShow(): CompletedShow {
     return CompletedShow(
-        showTraktId = show_trakt_id.id,
+        showTraktId = show_trakt_id,
         showTmdbId = show_tmdb_id?.id,
         showName = show_name,
         showPoster = show_poster,
@@ -61,7 +61,7 @@ private fun CompletedShowsForWatchlist.toCompletedShow(): CompletedShow {
 
 private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
     return NextEpisodeWithShow(
-        showTraktId = show_trakt_id.id,
+        showTraktId = show_trakt_id,
         showTmdbId = show_tmdb_id?.id,
         episodeId = episode_id?.id,
         episodeName = episode_name,

@@ -55,7 +55,7 @@ public class DefaultWatchedEpisodeDao(
             .map { rows ->
                 rows.map { row ->
                     RecentlyWatchedEpisode(
-                        showTraktId = row.show_trakt_id.id,
+                        showTraktId = row.show_trakt_id,
                         showTmdbId = row.show_tmdb_id.id,
                         showTitle = row.show_title,
                         posterPath = row.poster_path,
@@ -545,7 +545,7 @@ public class DefaultWatchedEpisodeDao(
             val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext
             database.transaction {
                 val showExists = database.tvShowQueries
-                    .existsByTraktId(Id(showTraktId))
+                    .existsByTraktId(showTraktId)
                     .executeAsOne()
                 if (!showExists) return@transaction
 

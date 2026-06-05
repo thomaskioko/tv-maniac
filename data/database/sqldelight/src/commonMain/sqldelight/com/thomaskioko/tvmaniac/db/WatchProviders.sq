@@ -44,9 +44,10 @@ SELECT
     watch_providers.name,
     watch_providers.logo_path,
     watch_providers.tmdb_id,
-    tvshow.trakt_id
+    show_trakt.trakt_id
 FROM watch_providers
 INNER JOIN tvshow ON tvshow.id = watch_providers.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 WHERE watch_providers.show_id = :showId;
 
 deleteByShowId:

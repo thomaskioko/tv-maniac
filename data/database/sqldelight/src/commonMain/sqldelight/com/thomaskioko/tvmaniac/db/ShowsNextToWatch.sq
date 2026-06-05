@@ -41,7 +41,7 @@ ORDER BY tvshow.id, season.season_number, episode.episode_number;
 
 nextEpisodeForShow:
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     episode.id AS episode_id,
     episode.title AS episode_name,
@@ -55,6 +55,7 @@ SELECT
     tvshow.poster_path AS show_poster,
     episode.first_aired
 FROM tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 INNER JOIN season ON tvshow.id = season.show_id
 INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
 LEFT JOIN watched_episodes AS watched_episode
@@ -80,7 +81,7 @@ LIMIT 1;
 
 nextEpisodesForWatchlist:
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS show_tmdb_id,
     next_episode.episode_id,
     next_episode.episode_name,
@@ -104,6 +105,7 @@ SELECT
     next_episode.vote_count
 FROM continue_watching AS watched_show
 INNER JOIN tvshow ON tvshow.id = watched_show.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 LEFT JOIN (
@@ -123,7 +125,7 @@ ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at) DE
 
 completedShowsForWatchlist:
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS show_tmdb_id,
     COALESCE(tvshow.name, watched_show.title) AS show_name,
     tvshow.poster_path AS show_poster,
@@ -132,6 +134,7 @@ SELECT
     COALESCE(show_watch_progress.total_count, 0) AS total_count
 FROM continue_watching AS watched_show
 INNER JOIN tvshow ON tvshow.id = watched_show.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 WHERE COALESCE(show_watch_progress.total_count, 0) > 0
   AND COALESCE(show_watch_progress.watched_count, 0) >= COALESCE(show_watch_progress.total_count, 0)

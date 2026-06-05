@@ -166,7 +166,7 @@ WHERE e.show_id = :showId
 -- metadata for the profile "Recently Watched" rail. Excludes soft-deleted rows.
 getRecentlyWatched:
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name AS show_title,
     tvshow.poster_path,
@@ -176,6 +176,7 @@ SELECT
     watched_episodes.watched_at
 FROM watched_episodes
 INNER JOIN tvshow ON watched_episodes.show_id = tvshow.id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT JOIN episode ON episode.id = watched_episodes.episode_id
 WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 ORDER BY watched_episodes.watched_at DESC
@@ -186,7 +187,7 @@ LIMIT ?;
 getEntriesByPendingAction:
 SELECT
     watched_episodes.id AS watched_id,
-    tvshow.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     watched_episodes.episode_id,
     watched_episodes.season_number,
     watched_episodes.episode_number,
@@ -196,6 +197,7 @@ SELECT
     watched_episodes.pending_action
 FROM watched_episodes
 INNER JOIN tvshow ON tvshow.id = watched_episodes.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 WHERE pending_action = ?
 ORDER BY watched_at;
 

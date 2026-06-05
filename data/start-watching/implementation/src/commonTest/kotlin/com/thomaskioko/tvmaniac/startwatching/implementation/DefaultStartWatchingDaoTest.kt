@@ -162,7 +162,6 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
     private fun insertShow(id: Long, name: String, year: String = "2020-01-01") {
         database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(id),
             tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = "Overview for $name",

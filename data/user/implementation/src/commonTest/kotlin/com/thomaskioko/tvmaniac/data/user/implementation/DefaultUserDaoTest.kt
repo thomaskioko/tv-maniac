@@ -231,7 +231,6 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShowWithWatchlist() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(1),
             tmdb_id = Id(1),
             name = "Test Show",
             overview = "Test overview",

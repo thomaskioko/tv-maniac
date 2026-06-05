@@ -18,7 +18,7 @@ CREATE INDEX IF NOT EXISTS idx_continue_watching_tmdb_id ON continue_watching(tm
 
 entries:
 SELECT
-    tvshow.trakt_id,
+    show_trakt.trakt_id,
     continue_watching.tmdb_id,
     continue_watching.aired_episodes,
     continue_watching.completed_count,
@@ -27,19 +27,21 @@ SELECT
     continue_watching.title,
     continue_watching.year
 FROM continue_watching
-JOIN tvshow ON tvshow.id = continue_watching.show_id;
+JOIN tvshow ON tvshow.id = continue_watching.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id;
 
 -- Continue Watching shows whose tvshow row is still a stub (placeholder upsert leaves overview
 -- empty); the sync layer fetches full details for these. Re-emits trakt_id for the caller.
 traktIdsMissingShowDetails:
-SELECT tvshow.trakt_id
+SELECT show_trakt.trakt_id
 FROM continue_watching
 JOIN tvshow ON tvshow.id = continue_watching.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 WHERE tvshow.overview = '';
 
 entriesObservable:
 SELECT
-    tvshow.trakt_id,
+    show_trakt.trakt_id,
     continue_watching.tmdb_id,
     continue_watching.aired_episodes,
     continue_watching.completed_count,
@@ -48,7 +50,8 @@ SELECT
     continue_watching.title,
     continue_watching.year
 FROM continue_watching
-JOIN tvshow ON tvshow.id = continue_watching.show_id;
+JOIN tvshow ON tvshow.id = continue_watching.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id;
 
 -- Server sync upsert. Preserves a more recent local last_watched_at so a
 -- pending local mark is not regressed when the server's projection trails.

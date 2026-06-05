@@ -29,13 +29,13 @@ internal object MockData {
 
     val testShowSeasons = listOf(
         ShowSeasons(
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = TEST_SHOW_ID,
             season_id = Id(SEASON_1_ID),
             season_title = "Season 1",
             season_number = SEASON_1_NUMBER,
         ),
         ShowSeasons(
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = TEST_SHOW_ID,
             season_id = Id(SEASON_2_ID),
             season_title = "Season 2",
             season_number = SEASON_2_NUMBER,

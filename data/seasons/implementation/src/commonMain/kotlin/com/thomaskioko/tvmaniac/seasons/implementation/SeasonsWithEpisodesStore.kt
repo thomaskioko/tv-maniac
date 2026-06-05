@@ -98,7 +98,7 @@ public class SeasonsWithEpisodesStore(
         seasonsList.firstOrNull()?.let { firstSeason ->
             withContext(dispatchers.io) {
                 !requestManagerRepository.isRequestExpired(
-                    entityId = firstSeason.show_trakt_id.id,
+                    entityId = firstSeason.show_trakt_id,
                     requestType = SEASONS_EPISODES_SYNC.name,
                     threshold = SEASONS_EPISODES_SYNC.duration,
                 )
