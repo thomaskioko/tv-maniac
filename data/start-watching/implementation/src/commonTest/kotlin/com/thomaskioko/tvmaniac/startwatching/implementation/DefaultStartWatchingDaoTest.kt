@@ -111,7 +111,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
         dao.observeStartWatchingShows().test {
             awaitItem() shouldContainExactly listOf(expectedShow(9, "Finished Show"))
 
-            database.followedShowsQueries.deleteByTraktId(Id<TraktId>(9L))
+            database.followedShowsQueries.deleteByShowId(showIdByTraktId.getValue(9L))
 
             awaitItem().shouldBeEmpty()
             cancelAndIgnoreRemainingEvents()
@@ -218,7 +218,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     private fun followShow(showId: Long, pendingAction: String = "NOTHING", followedAt: Long = 1_000L) {
         database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id(showId),
+            showId = showIdByTraktId.getValue(showId),
             tmdbId = Id(showId),
             followedAt = followedAt,
             pendingAction = pendingAction,
@@ -237,8 +237,8 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     private fun addToContinueWatching(showId: Long) {
-        database.traktContinueWatchingQueries.upsert(
-            traktId = Id(showId),
+        database.continueWatchingQueries.upsert(
+            showId = showIdByTraktId.getValue(showId),
             tmdbId = Id(showId),
             airedEpisodes = 10L,
             completedCount = 0L,

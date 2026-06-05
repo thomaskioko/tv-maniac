@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
@@ -23,6 +24,7 @@ import org.mobilenativefoundation.store.store5.Validator
 public class WatchProvidersStore(
     private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
     private val tvShowsDao: TvShowsDao,
+    private val showIdResolver: ShowIdResolver,
     private val dao: WatchProviderDao,
     private val mapper: WatchProvidersMapper,
     private val requestManagerRepository: RequestManagerRepository,
@@ -54,9 +56,12 @@ public class WatchProvidersStore(
         writer = { traktId, result ->
             databaseTransactionRunner {
                 dao.deleteByTraktId(traktId)
-                result.response.results.US
-                    ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, traktId = traktId) }
-                    ?.forEach(dao::upsert)
+                val showId = showIdResolver.showIdForTraktId(traktId)
+                if (showId != null) {
+                    result.response.results.US
+                        ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, showId = showId) }
+                        ?.forEach(dao::upsert)
+                }
             }
         },
         delete = { traktId ->

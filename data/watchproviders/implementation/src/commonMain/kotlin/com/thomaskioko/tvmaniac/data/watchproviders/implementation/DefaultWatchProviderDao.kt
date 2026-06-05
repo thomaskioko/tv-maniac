@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
@@ -13,12 +14,14 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultWatchProviderDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatcher: AppCoroutineDispatchers,
 ) : WatchProviderDao {
 
@@ -26,7 +29,7 @@ public class DefaultWatchProviderDao(
         database.watchProvidersQueries.upsert(
             id = entity.id,
             tmdb_id = entity.tmdb_id,
-            trakt_id = entity.trakt_id,
+            show_id = entity.show_id,
             logo_path = entity.logo_path,
             name = entity.name,
         )
@@ -43,14 +46,17 @@ public class DefaultWatchProviderDao(
             .mapToList(dispatcher.io)
             .map { rows -> rows.dedupedByBrand { it.name } }
 
-    override fun observeWatchProvidersByTraktId(traktId: Long): Flow<List<WatchProvidersByTraktId>> =
-        database.watchProvidersQueries.watchProvidersByTraktId(Id(traktId))
+    override fun observeWatchProvidersByTraktId(traktId: Long): Flow<List<WatchProvidersByTraktId>> {
+        val showId = showIdResolver.showIdForTraktId(traktId) ?: return flowOf(emptyList())
+        return database.watchProvidersQueries.watchProvidersByTraktId(showId)
             .asFlow()
             .mapToList(dispatcher.io)
             .map { rows -> rows.dedupedByBrand { it.name } }
+    }
 
     override fun deleteByTraktId(traktId: Long) {
-        database.watchProvidersQueries.deleteByTraktId(Id(traktId))
+        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
+        database.watchProvidersQueries.deleteByShowId(showId)
     }
 
     override fun deleteAll() {

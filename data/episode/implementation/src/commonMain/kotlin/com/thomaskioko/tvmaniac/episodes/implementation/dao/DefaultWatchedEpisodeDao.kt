@@ -81,12 +81,12 @@ public class DefaultWatchedEpisodeDao(
             val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext
             database.transaction {
                 val _ = database.followedShowsQueries.upsertIfNotExists(
-                    traktId = Id(showTraktId),
+                    showId = showId,
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
-                    traktId = Id(showTraktId),
+                val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
+                    showId = showId,
                     tmdbId = null,
                     watchedAt = timestamp,
                 )
@@ -137,7 +137,7 @@ public class DefaultWatchedEpisodeDao(
                     showId = showId,
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
-                recalculateContinueWatchingLastWatchedAt(showTraktId, showId)
+                recalculateContinueWatchingLastWatchedAt(showId)
             }
         }
     }
@@ -220,12 +220,12 @@ public class DefaultWatchedEpisodeDao(
             val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext
             database.transaction {
                 val _ = database.followedShowsQueries.upsertIfNotExists(
-                    traktId = Id(showTraktId),
+                    showId = showId,
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
-                    traktId = Id(showTraktId),
+                val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
+                    showId = showId,
                     tmdbId = null,
                     watchedAt = timestamp,
                 )
@@ -277,7 +277,7 @@ public class DefaultWatchedEpisodeDao(
                     showId = showId,
                     include_specials = if (includeSpecials) 1L else 0L,
                 )
-                recalculateContinueWatchingLastWatchedAt(showTraktId, showId)
+                recalculateContinueWatchingLastWatchedAt(showId)
             }
         }
     }
@@ -330,12 +330,12 @@ public class DefaultWatchedEpisodeDao(
                     .executeAsList()
 
                 val _ = database.followedShowsQueries.upsertIfNotExists(
-                    traktId = Id(showTraktId),
+                    showId = showId,
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
-                    traktId = Id(showTraktId),
+                val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
+                    showId = showId,
                     tmdbId = null,
                     watchedAt = timestamp,
                 )
@@ -389,12 +389,12 @@ public class DefaultWatchedEpisodeDao(
                 }
 
                 val _ = database.followedShowsQueries.upsertIfNotExists(
-                    traktId = Id(showTraktId),
+                    showId = showId,
                     tmdbId = null,
                     followedAt = timestamp,
                 )
-                val _ = database.traktContinueWatchingQueries.upsertMembershipForLocalMark(
-                    traktId = Id(showTraktId),
+                val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
+                    showId = showId,
                     tmdbId = null,
                     watchedAt = timestamp,
                 )
@@ -447,15 +447,15 @@ public class DefaultWatchedEpisodeDao(
             ?.id
     }
 
-    private fun recalculateContinueWatchingLastWatchedAt(showTraktId: Long, showId: Id<ShowId>) {
+    private fun recalculateContinueWatchingLastWatchedAt(showId: Id<ShowId>) {
         val maxWatchedAt = database.watchedEpisodesQueries
             .getMaxWatchedAtForShow(showId)
             .executeAsOne()
             .last_watched_at
             ?: return
-        database.traktContinueWatchingQueries.updateLastWatchedAt(
+        database.continueWatchingQueries.updateLastWatchedAt(
             lastWatchedAt = maxWatchedAt,
-            traktId = Id(showTraktId),
+            showId = showId,
         )
     }
 
@@ -550,7 +550,7 @@ public class DefaultWatchedEpisodeDao(
                 if (!showExists) return@transaction
 
                 val _ = database.followedShowsQueries.upsertIfNotExists(
-                    traktId = Id(showTraktId),
+                    showId = showId,
                     tmdbId = null,
                     followedAt = entries.first().watchedAt.toEpochMilliseconds(),
                 )

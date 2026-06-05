@@ -246,10 +246,11 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
             poster_path = "/backdrop.jpg",
             backdrop_path = "/backdrop.jpg",
         )
+        val showId = showIdForTraktId(1L)
 
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id(1),
+            showId = showId,
             tmdbId = Id(1),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",

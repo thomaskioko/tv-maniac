@@ -38,7 +38,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        dao = DefaultFollowedShowsDao(database, coroutineDispatcher)
+        dao = DefaultFollowedShowsDao(database, showIdResolver, coroutineDispatcher)
         insertTestShows()
     }
 
@@ -377,6 +377,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test1.jpg",
             backdrop_path = "/backdrop1.jpg",
         )
+        showIdForTraktId(1L)
 
         val _ = database.tvShowQueries.upsert(
             trakt_id = Id<TraktId>(2),
@@ -394,6 +395,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
         )
+        showIdForTraktId(2L)
 
         val _ = database.tvShowQueries.upsert(
             trakt_id = Id<TraktId>(3),
@@ -411,5 +413,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test3.jpg",
             backdrop_path = "/backdrop3.jpg",
         )
+        showIdForTraktId(3L)
     }
 }

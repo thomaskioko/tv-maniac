@@ -60,8 +60,8 @@ public class ProgressContinueWatchingStore(
         when (batch) {
             is ProgressBatch.Entry -> withContext(dispatchers.databaseWrite) {
                 transactionRunner {
-                    continueWatchingDao.upsert(batch.entry)
                     batch.entry.toMinimalTvshow()?.let(tvShowsDao::upsertMerging)
+                    continueWatchingDao.upsert(batch.entry)
                 }
             }
             is ProgressBatch.Complete -> {

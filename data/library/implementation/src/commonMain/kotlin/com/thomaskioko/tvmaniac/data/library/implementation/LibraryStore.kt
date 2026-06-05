@@ -84,7 +84,6 @@ public class LibraryStore(
                 response.forEach { item ->
                     val entry = item.response.toFollowedShowEntry()
                     val existingEntry = currentByTraktId[entry.traktId]
-                    val _ = followedShowsDao.upsert(entry.copy(id = existingEntry?.id ?: 0))
 
                     tvShowsDao.upsertMerging(
                         item.response.toTvshow(
@@ -92,6 +91,8 @@ public class LibraryStore(
                             backdropPath = item.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                         ),
                     )
+
+                    val _ = followedShowsDao.upsert(entry.copy(id = existingEntry?.id ?: 0))
                 }
 
                 currentEntries.forEach { localEntry ->

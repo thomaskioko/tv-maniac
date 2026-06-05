@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
@@ -365,7 +364,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id<TraktId>(SHOW_ID),
+            showId = showId,
             tmdbId = Id<TmdbId>(SHOW_ID),
             followedAt = now,
             pendingAction = PendingAction.NOTHING.value,

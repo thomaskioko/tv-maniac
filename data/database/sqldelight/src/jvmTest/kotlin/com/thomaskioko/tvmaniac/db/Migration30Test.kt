@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.QueryResult
 import com.thomaskioko.tvmaniac.db.util.WatchProgress
+import com.thomaskioko.tvmaniac.db.util.insertContinueWatching
 import com.thomaskioko.tvmaniac.db.util.insertEpisode
 import com.thomaskioko.tvmaniac.db.util.insertSeason
-import com.thomaskioko.tvmaniac.db.util.insertTraktContinueWatching
 import com.thomaskioko.tvmaniac.db.util.insertTvshow
 import com.thomaskioko.tvmaniac.db.util.insertWatchedEpisode
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
@@ -26,20 +26,21 @@ class Migration30Test {
     }
 
     @Test
-    fun `should create trakt_continue_watching on migration`() {
+    fun `should create continue_watching on migration`() {
         openSnapshot(version = 29).use { driver ->
             migrateToCurrent(driver, oldVersion = 29)
 
-            driver.tableNames().contains("trakt_continue_watching") shouldBe true
+            driver.tableNames().contains("continue_watching") shouldBe true
         }
     }
 
     @Test
-    fun `should accept upsert into trakt_continue_watching`() {
+    fun `should accept upsert into continue_watching`() {
         openSnapshot(version = 29).use { driver ->
             migrateToCurrent(driver, oldVersion = 29)
 
-            driver.insertTraktContinueWatching(traktId = 1L, tmdbId = 100L)
+            driver.insertTvshow(traktId = 1L, tmdbId = 100L)
+            driver.insertContinueWatching(traktId = 1L, tmdbId = 100L)
         }
     }
 
@@ -83,7 +84,7 @@ class Migration30Test {
     }
 
     @Test
-    fun `should compute show watch progress alongside trakt_continue_watching row`() {
+    fun `should compute show watch progress alongside continue_watching row`() {
         openSnapshot(version = 29).use { driver ->
             migrateToCurrent(driver, oldVersion = 29)
 
@@ -103,7 +104,7 @@ class Migration30Test {
                 episodeNumber = 2L,
                 firstAired = OLD_EPOCH_MS,
             )
-            driver.insertTraktContinueWatching(traktId = 1L, tmdbId = 100L)
+            driver.insertContinueWatching(traktId = 1L, tmdbId = 100L)
             driver.insertWatchedEpisode(
                 showTraktId = 1L,
                 episodeId = 111L,

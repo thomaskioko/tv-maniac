@@ -131,7 +131,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
 
     @Test
     fun `should advance trakt continue watching last watched at on subsequent local marks`() = runTest {
-        val initialLastWatchedAt = database.traktContinueWatchingQueries
+        val initialLastWatchedAt = database.continueWatchingQueries
             .entries()
             .executeAsList()
             .first { it.trakt_id.id == SHOW_ID }
@@ -146,7 +146,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             includeSpecials = false,
         )
 
-        val afterMark = database.traktContinueWatchingQueries
+        val afterMark = database.continueWatchingQueries
             .entries()
             .executeAsList()
             .first { it.trakt_id.id == SHOW_ID }
@@ -179,7 +179,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             includeSpecials = false,
         )
 
-        val afterUnmark = database.traktContinueWatchingQueries
+        val afterUnmark = database.continueWatchingQueries
             .entries()
             .executeAsList()
             .first { it.trakt_id.id == SHOW_ID }
@@ -204,16 +204,16 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        val showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id(SHOW_ID),
+            showId = showId,
             tmdbId = Id(SHOW_ID),
             followedAt = now,
             pendingAction = "NOTHING",
         )
-        val showId = showIdForTraktId(SHOW_ID)
-        database.traktContinueWatchingQueries.upsert(
-            traktId = Id(SHOW_ID),
+        database.continueWatchingQueries.upsert(
+            showId = showId,
             tmdbId = Id(SHOW_ID),
             airedEpisodes = 0L,
             completedCount = 1L,

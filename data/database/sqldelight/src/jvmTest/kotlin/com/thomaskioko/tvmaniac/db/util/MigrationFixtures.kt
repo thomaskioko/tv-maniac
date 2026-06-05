@@ -41,8 +41,43 @@ internal fun SqlDriver.insertFollowedShow(
     execute(
         identifier = null,
         sql = """
+            INSERT INTO followed_shows (show_id, tmdb_id, followed_at, pending_action)
+            VALUES ((SELECT id FROM tvshow WHERE trakt_id = $traktId), $tmdbId, $followedAt, '$pendingAction')
+        """.trimIndent(),
+        parameters = 0,
+    )
+}
+
+internal fun SqlDriver.insertFollowedShowLegacy(
+    traktId: Long,
+    tmdbId: Long,
+    followedAt: Long = 1_700_000_000_000L,
+    pendingAction: String = "NOTHING",
+) {
+    execute(
+        identifier = null,
+        sql = """
             INSERT INTO followed_shows (trakt_id, tmdb_id, followed_at, pending_action)
             VALUES ($traktId, $tmdbId, $followedAt, '$pendingAction')
+        """.trimIndent(),
+        parameters = 0,
+    )
+}
+
+internal fun SqlDriver.insertContinueWatching(
+    traktId: Long,
+    tmdbId: Long?,
+    airedEpisodes: Long = 10L,
+    completedCount: Long = 1L,
+    lastWatchedAtMs: Long = 1_700_000_000_000L,
+    lastUpdatedAtMs: Long = 1_700_000_000_000L,
+) {
+    val tmdbIdSql = tmdbId?.toString() ?: "NULL"
+    execute(
+        identifier = null,
+        sql = """
+            INSERT INTO continue_watching (show_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
+            VALUES ((SELECT id FROM tvshow WHERE trakt_id = $traktId), $tmdbIdSql, $airedEpisodes, $completedCount, $lastWatchedAtMs, $lastUpdatedAtMs)
         """.trimIndent(),
         parameters = 0,
     )
@@ -143,7 +178,7 @@ internal fun SqlDriver.queryWatchProgress(showTraktId: Long): WatchProgress = ex
     sql = """
         SELECT watched_count, total_count
         FROM show_watch_progress
-        WHERE show_trakt_id = $showTraktId
+        WHERE show_id = (SELECT id FROM tvshow WHERE trakt_id = $showTraktId)
     """.trimIndent(),
     parameters = 0,
     binders = null,
@@ -166,7 +201,7 @@ internal fun SqlDriver.countNextToWatch(showTraktId: Long): Long = executeQuery(
     sql = """
         SELECT COUNT(*)
         FROM shows_next_to_watch
-        WHERE show_trakt_id = $showTraktId
+        WHERE show_id = (SELECT id FROM tvshow WHERE trakt_id = $showTraktId)
     """.trimIndent(),
     parameters = 0,
     binders = null,
@@ -187,7 +222,7 @@ internal fun SqlDriver.queryFirstNextToWatch(showTraktId: Long): NextToWatchEpis
     sql = """
         SELECT episode_id, ratings, vote_count
         FROM shows_next_to_watch
-        WHERE show_trakt_id = $showTraktId
+        WHERE show_id = (SELECT id FROM tvshow WHERE trakt_id = $showTraktId)
         ORDER BY season_number, episode_number
         LIMIT 1
     """.trimIndent(),

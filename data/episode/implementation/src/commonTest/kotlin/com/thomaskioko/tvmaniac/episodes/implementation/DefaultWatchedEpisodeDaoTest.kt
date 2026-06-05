@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
@@ -693,7 +692,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id<TraktId>(TEST_SHOW_ID),
+            showId = testShowId,
             tmdbId = Id<TmdbId>(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",

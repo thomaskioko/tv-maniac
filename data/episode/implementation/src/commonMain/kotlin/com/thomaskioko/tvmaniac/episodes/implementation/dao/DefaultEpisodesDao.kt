@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.UpcomingEpisodesFromFollowedShows
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
@@ -19,6 +18,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
@@ -127,18 +127,21 @@ public class DefaultEpisodesDao(
     override fun observeNextEpisodeForShow(
         showTraktId: Long,
         includeSpecials: Boolean,
-    ): Flow<NextEpisodeForShow?> =
-        database.showsNextToWatchQueries.nextEpisodeForShow(
-            showTraktId = Id<TraktId>(showTraktId),
+    ): Flow<NextEpisodeForShow?> {
+        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return flowOf(null)
+        return database.showsNextToWatchQueries.nextEpisodeForShow(
+            showId = showId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).asFlow().mapToOneOrNull(dispatchers.databaseRead)
+    }
 
     override suspend fun getNextEpisodeForShow(
         showTraktId: Long,
         includeSpecials: Boolean,
     ): NextEpisodeForShow? = withContext(dispatchers.databaseRead) {
+        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext null
         database.showsNextToWatchQueries.nextEpisodeForShow(
-            showTraktId = Id<TraktId>(showTraktId),
+            showId = showId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).executeAsOneOrNull()
     }

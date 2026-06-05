@@ -79,7 +79,6 @@ public class StartWatchingWatchlistStore(
                 response.forEach { item ->
                     val entry = item.response.toFollowedShowEntry()
                     val existingEntry = currentByTraktId[entry.traktId]
-                    val _ = followedShowsDao.upsert(entry.copy(id = existingEntry?.id ?: 0))
 
                     tvShowsDao.upsertMerging(
                         item.response.toTvshow(
@@ -87,6 +86,8 @@ public class StartWatchingWatchlistStore(
                             backdropPath = item.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                         ),
                     )
+                    // TODO:: Review this. Don't insert zero. Can be a problem
+                    val _ = followedShowsDao.upsert(entry.copy(id = existingEntry?.id ?: 0))
                 }
 
                 currentEntries.forEach { localEntry ->

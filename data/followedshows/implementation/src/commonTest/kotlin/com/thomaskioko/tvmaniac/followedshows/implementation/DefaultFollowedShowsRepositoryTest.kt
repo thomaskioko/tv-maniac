@@ -5,6 +5,9 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -38,7 +41,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        dao = DefaultFollowedShowsDao(database, coroutineDispatcher)
+        dao = DefaultFollowedShowsDao(database, showIdResolver, coroutineDispatcher)
         transactionRunner = DbTransactionRunner(database)
         repository = DefaultFollowedShowsRepository(
             followedShowsDao = dao,
@@ -47,6 +50,29 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
             dispatchers = coroutineDispatcher,
             logger = FakeLogger(),
         )
+        insertTestShows()
+    }
+
+    private fun insertTestShows() {
+        listOf(1L, 2L, 3L).forEach { id ->
+            database.tvShowQueries.upsert(
+                trakt_id = Id<TraktId>(id),
+                tmdb_id = Id<TmdbId>(id),
+                name = "Test Show $id",
+                overview = "overview",
+                language = "en",
+                year = "2023-01-01",
+                ratings = 8.0,
+                vote_count = 100,
+                genres = emptyList(),
+                status = "Returning Series",
+                episode_numbers = null,
+                season_numbers = null,
+                poster_path = null,
+                backdrop_path = null,
+            )
+            showIdForTraktId(id)
+        }
     }
 
     @AfterTest

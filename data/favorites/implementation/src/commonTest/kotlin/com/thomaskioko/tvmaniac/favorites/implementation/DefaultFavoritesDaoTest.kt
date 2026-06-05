@@ -33,7 +33,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setUp() {
-        dao = DefaultFavoritesDao(database, dispatchers)
+        dao = DefaultFavoritesDao(database, showIdResolver, dispatchers)
     }
 
     @AfterTest
@@ -103,5 +103,6 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = null,
         )
+        showIdForTraktId(id)
     }
 }

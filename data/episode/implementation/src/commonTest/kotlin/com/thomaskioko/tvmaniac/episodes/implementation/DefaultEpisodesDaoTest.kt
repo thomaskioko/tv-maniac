@@ -339,7 +339,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
     private fun followShow(showId: Long) {
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id(showId),
+            showId = showIdByTraktId.getValue(showId),
             tmdbId = Id(showId),
             followedAt = 1000L,
             pendingAction = "NOTHING",

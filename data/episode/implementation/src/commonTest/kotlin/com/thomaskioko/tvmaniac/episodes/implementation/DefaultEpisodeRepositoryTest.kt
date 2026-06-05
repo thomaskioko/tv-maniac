@@ -207,7 +207,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id(TEST_SHOW_ID),
+            showId = showId,
             tmdbId = Id(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",

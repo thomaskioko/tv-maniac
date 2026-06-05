@@ -615,16 +615,17 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun followShow(showId: Long, followedAt: Long) {
+        val resolvedShowId = showIdByTraktId.getValue(showId)
         database.transaction {
             database.followedShowsQueries.upsert(
                 id = null,
-                traktId = Id(showId),
+                showId = resolvedShowId,
                 tmdbId = Id(showId),
                 followedAt = followedAt,
                 pendingAction = "NOTHING",
             )
-            database.traktContinueWatchingQueries.upsert(
-                traktId = Id(showId),
+            database.continueWatchingQueries.upsert(
+                showId = resolvedShowId,
                 tmdbId = Id(showId),
                 airedEpisodes = 0L,
                 completedCount = 1L,
@@ -637,9 +638,10 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun followShowOnly(showId: Long, followedAt: Long) {
+        val resolvedShowId = showIdByTraktId.getValue(showId)
         val _ = database.followedShowsQueries.upsert(
             id = null,
-            traktId = Id(showId),
+            showId = resolvedShowId,
             tmdbId = Id(showId),
             followedAt = followedAt,
             pendingAction = "NOTHING",
