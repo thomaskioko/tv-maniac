@@ -1,0 +1,14 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+-- The user's canonical watch status per show: the WatchStatus enum (watchlist / watching /
+-- completed / on-hold / dropped) plus last-watched and last-synced timestamps. Provider-neutral
+-- (one provider connected at a time) and cleared on a provider switch. Created empty here;
+-- populated by later phases. `user_rating` deferred.
+CREATE TABLE IF NOT EXISTS show_watch_status(
+    show_id INTEGER AS Id<ShowId> NOT NULL PRIMARY KEY,
+    status TEXT,
+    last_watched_at INTEGER,
+    last_synced_at INTEGER,
+    FOREIGN KEY (show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);

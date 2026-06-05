@@ -6,6 +6,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Trending_shows
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 @ContributesBinding(AppScope::class)
 public class DefaultTrendingShowsDao(
     database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : TrendingShowsDao {
 
@@ -27,7 +29,7 @@ public class DefaultTrendingShowsDao(
     override fun upsert(show: Trending_shows) {
         trendingShowsQueries.transaction {
             trendingShowsQueries.insert(
-                traktId = show.trakt_id,
+                showId = show.show_id,
                 tmdbId = show.tmdb_id,
                 page = show.page,
                 position = show.position,
@@ -49,7 +51,7 @@ public class DefaultTrendingShowsDao(
                     offset = offset,
                 ) { traktId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        traktId = traktId.id,
+                        traktId = traktId,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,
@@ -65,7 +67,8 @@ public class DefaultTrendingShowsDao(
     }
 
     override fun deleteTrendingShow(id: Long) {
-        trendingShowsQueries.delete(Id(id))
+        val showId = showIdResolver.showIdForTraktId(id) ?: return
+        trendingShowsQueries.delete(showId)
     }
 
     override fun deleteTrendingShows() {
@@ -76,7 +79,7 @@ public class DefaultTrendingShowsDao(
         trendingShowsQueries
             .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,

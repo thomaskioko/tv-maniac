@@ -5,7 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.featuredshows.api.FeaturedShowsDao
 import com.thomaskioko.tvmaniac.db.Featured_shows
-import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import dev.zacsweers.metro.AppScope
@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 @ContributesBinding(AppScope::class)
 public class DefaultFeaturedShowsDao(
     database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : FeaturedShowsDao {
 
@@ -25,7 +26,7 @@ public class DefaultFeaturedShowsDao(
     override fun upsert(show: Featured_shows) {
         featuredShowsQueries.transaction {
             featuredShowsQueries.insert(
-                traktId = show.trakt_id,
+                showId = show.show_id,
                 tmdbId = show.tmdb_id,
                 name = show.name,
                 poster_path = show.poster_path,
@@ -39,7 +40,7 @@ public class DefaultFeaturedShowsDao(
         featuredShowsQueries
             .entriesInPage { traktId, tmdbId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,
@@ -51,7 +52,8 @@ public class DefaultFeaturedShowsDao(
             .mapToList(dispatchers.io)
 
     override fun deleteFeaturedShows(id: Long) {
-        featuredShowsQueries.delete(Id(id))
+        val showId = showIdResolver.showIdForTraktId(id) ?: return
+        featuredShowsQueries.delete(showId)
     }
 
     override fun deleteFeaturedShows() {

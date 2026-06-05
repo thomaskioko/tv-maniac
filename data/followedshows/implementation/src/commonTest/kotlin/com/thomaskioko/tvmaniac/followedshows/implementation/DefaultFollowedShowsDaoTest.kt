@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -38,7 +37,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        dao = DefaultFollowedShowsDao(database, coroutineDispatcher)
+        dao = DefaultFollowedShowsDao(database, showIdResolver, coroutineDispatcher)
         insertTestShows()
     }
 
@@ -362,7 +361,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShows() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(1),
             tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -377,9 +375,9 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test1.jpg",
             backdrop_path = "/backdrop1.jpg",
         )
+        showIdForTraktId(1L)
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(2),
             tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -394,9 +392,9 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
         )
+        showIdForTraktId(2L)
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(3),
             tmdb_id = Id<TmdbId>(3),
             name = "Test Show 3",
             overview = "Test overview 3",
@@ -411,5 +409,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test3.jpg",
             backdrop_path = "/backdrop3.jpg",
         )
+        showIdForTraktId(3L)
     }
 }

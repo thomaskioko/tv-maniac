@@ -11,11 +11,11 @@ import kotlin.test.Test
 class Migration31Test {
 
     @Test
-    fun `should add title and year columns to trakt_continue_watching`() {
+    fun `should add title and year columns to continue_watching`() {
         openSnapshot(version = 31).use { driver ->
             migrateToCurrent(driver, oldVersion = 31)
 
-            driver.columnNames("trakt_continue_watching") shouldContainAll setOf("title", "year")
+            driver.columnNames("continue_watching") shouldContainAll setOf("title", "year")
         }
     }
 
@@ -32,11 +32,25 @@ class Migration31Test {
                 parameters = 0,
             )
 
+            driver.execute(
+                identifier = null,
+                sql = """
+                    INSERT INTO tvshow (trakt_id, tmdb_id, name, overview, ratings, vote_count)
+                    VALUES (42, 4242, 'show-42', 'overview', 0.0, 0)
+                """.trimIndent(),
+                parameters = 0,
+            )
+
             migrateToCurrent(driver, oldVersion = 31)
 
             val title = driver.executeQuery(
                 identifier = null,
-                sql = "SELECT title FROM trakt_continue_watching WHERE trakt_id = 42",
+                sql = """
+                    SELECT cw.title
+                    FROM continue_watching cw
+                    JOIN show_trakt ON show_trakt.show_id = cw.show_id
+                    WHERE show_trakt.trakt_id = 42
+                """.trimIndent(),
                 parameters = 0,
                 binders = null,
                 mapper = { cursor ->
@@ -51,21 +65,45 @@ class Migration31Test {
     @Test
     fun `should accept title and year on upsert after migration`() {
         openSnapshot(version = 31).use { driver ->
+            driver.execute(
+                identifier = null,
+                sql = """
+                    INSERT INTO trakt_continue_watching
+                        (trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at)
+                    VALUES (7, 77, 12, 6, 1700000000000, 1700000000000)
+                """.trimIndent(),
+                parameters = 0,
+            )
+
+            driver.execute(
+                identifier = null,
+                sql = """
+                    INSERT INTO tvshow (trakt_id, tmdb_id, name, overview, ratings, vote_count)
+                    VALUES (7, 77, 'Severance', 'overview', 0.0, 0)
+                """.trimIndent(),
+                parameters = 0,
+            )
+
             migrateToCurrent(driver, oldVersion = 31)
 
             driver.execute(
                 identifier = null,
                 sql = """
-                    INSERT INTO trakt_continue_watching
-                        (trakt_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
-                    VALUES (7, 77, 12, 6, 1700000000000, 1700000000000, 'Severance', 2022)
+                    UPDATE continue_watching
+                    SET title = 'Severance', year = 2022
+                    WHERE show_id = (SELECT show_id FROM show_trakt WHERE trakt_id = 7)
                 """.trimIndent(),
                 parameters = 0,
             )
 
             val title = driver.executeQuery(
                 identifier = null,
-                sql = "SELECT title FROM trakt_continue_watching WHERE trakt_id = 7",
+                sql = """
+                    SELECT cw.title
+                    FROM continue_watching cw
+                    JOIN show_trakt ON show_trakt.show_id = cw.show_id
+                    WHERE show_trakt.trakt_id = 7
+                """.trimIndent(),
                 parameters = 0,
                 binders = null,
                 mapper = { cursor ->
@@ -77,7 +115,12 @@ class Migration31Test {
 
             val year = driver.executeQuery(
                 identifier = null,
-                sql = "SELECT year FROM trakt_continue_watching WHERE trakt_id = 7",
+                sql = """
+                    SELECT cw.year
+                    FROM continue_watching cw
+                    JOIN show_trakt ON show_trakt.show_id = cw.show_id
+                    WHERE show_trakt.trakt_id = 7
+                """.trimIndent(),
                 parameters = 0,
                 binders = null,
                 mapper = { cursor ->

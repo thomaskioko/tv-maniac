@@ -33,7 +33,6 @@ public class DefaultFollowedShowsRepository(
                 if (existingEntry == null || existingEntry.pendingAction == PendingAction.DELETE) {
                     val _ = followedShowsDao.upsert(
                         FollowedShowEntry(
-                            id = existingEntry?.id ?: 0,
                             traktId = traktId,
                             tmdbId = existingEntry?.tmdbId,
                             followedAt = dateTimeProvider.now(),

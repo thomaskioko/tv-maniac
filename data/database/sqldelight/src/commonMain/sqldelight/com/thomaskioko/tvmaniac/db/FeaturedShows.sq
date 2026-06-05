@@ -1,9 +1,9 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE IF NOT EXISTS featured_shows (
-    trakt_id INTEGER AS Id<TraktId> PRIMARY KEY NOT NULL,
+    show_id INTEGER AS Id<ShowId> PRIMARY KEY NOT NULL,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     name TEXT,
     poster_path TEXT,
@@ -13,34 +13,35 @@ CREATE TABLE IF NOT EXISTS featured_shows (
 
 -- indices
 
-CREATE UNIQUE INDEX IF NOT EXISTS `index_featured_shows_trakt_id` ON `featured_shows` (`trakt_id`);
 CREATE INDEX IF NOT EXISTS `index_featured_shows_tmdb_id` ON `featured_shows` (`tmdb_id`);
 
 -- queries
 
 entriesInPage:
 SELECT
-    featured_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     featured_shows.tmdb_id AS show_tmdb_id,
     COALESCE(featured_shows.name, '') AS name,
     featured_shows.poster_path,
     featured_shows.overview,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM featured_shows
-LEFT OUTER JOIN followed_shows ON featured_shows.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+INNER JOIN tvshow ON tvshow.id = featured_shows.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE featured_shows.name IS NOT NULL
 ORDER BY featured_shows.page_order ASC;
 
 insert:
 INSERT OR IGNORE INTO featured_shows(
-    trakt_id,
+    show_id,
     tmdb_id,
     name,
     poster_path,
     overview,
     page_order
 ) VALUES (
-    :traktId,
+    :showId,
     :tmdbId,
     :name,
     :poster_path,
@@ -50,7 +51,7 @@ INSERT OR IGNORE INTO featured_shows(
 
 featuredShows:
 SELECT
-    featured_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     featured_shows.tmdb_id AS show_tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -59,9 +60,11 @@ SELECT
 FROM
     featured_shows
 INNER JOIN
-    tvshow ON tvshow.trakt_id = featured_shows.trakt_id
+    tvshow ON tvshow.id = featured_shows.show_id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     tvshow.ratings >= 7.0
     AND tvshow.vote_count >= 100
@@ -70,7 +73,7 @@ ORDER BY
 
 delete:
 DELETE FROM featured_shows
-WHERE trakt_id = :traktId;
+WHERE show_id = :showId;
 
 deleteAll:
 DELETE FROM featured_shows;

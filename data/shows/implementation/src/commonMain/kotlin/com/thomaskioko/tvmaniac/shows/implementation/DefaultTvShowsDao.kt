@@ -4,9 +4,9 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.mergeShows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -24,14 +24,15 @@ public class DefaultTvShowsDao(
 ) : TvShowsDao {
 
     private val tvShowQueries = database.tvShowQueries
+    private val externalIdQueries = database.tvshowExternalIdQueries
 
-    override fun upsert(show: Tvshow) {
+    override fun upsert(show: ShowToPersist) {
         tvShowQueries.transaction {
             upsertShowWithGenres(show)
         }
     }
 
-    override fun upsert(list: List<Tvshow>) {
+    override fun upsert(list: List<ShowToPersist>) {
         if (list.isEmpty()) return
 
         tvShowQueries.transaction {
@@ -41,24 +42,27 @@ public class DefaultTvShowsDao(
         }
     }
 
-    private fun upsertShowWithGenres(show: Tvshow) {
-        val existingTraktId = tvShowQueries.getTraktIdByTmdbId(show.tmdb_id).executeAsOneOrNull()
-        val resolvedTraktId = existingTraktId ?: show.trakt_id
+    private fun upsertShowWithGenres(show: ShowToPersist) {
         tvShowQueries.upsert(
-            trakt_id = resolvedTraktId,
-            tmdb_id = show.tmdb_id,
+            tmdb_id = show.tmdbId,
             name = show.name,
             overview = show.overview,
             language = show.language,
             year = show.year,
             ratings = show.ratings,
-            vote_count = show.vote_count,
+            vote_count = show.voteCount,
             genres = show.genres,
             status = show.status,
-            episode_numbers = show.episode_numbers,
-            season_numbers = show.season_numbers,
-            poster_path = show.poster_path,
-            backdrop_path = show.backdrop_path,
+            episode_numbers = show.episodeNumbers,
+            season_numbers = show.seasonNumbers,
+            poster_path = show.posterPath,
+            backdrop_path = show.backdropPath,
+        )
+        val showId = tvShowQueries.getShowIdByTmdbId(show.tmdbId).executeAsOne()
+        externalIdQueries.insert(
+            showId = showId,
+            provider = Provider.TRAKT,
+            externalId = show.traktId.id.toString(),
         )
     }
 
@@ -76,7 +80,7 @@ public class DefaultTvShowsDao(
                 query,
             ) { traktId, tmdbId, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
                 ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     title = title,
                     posterPath = imageUrl,
@@ -106,9 +110,9 @@ public class DefaultTvShowsDao(
         tvShowQueries.transaction { tvShowQueries.deleteAll() }
     }
 
-    override fun upsertMerging(show: Tvshow) {
+    override fun upsertMerging(show: ShowToPersist) {
         tvShowQueries.transaction {
-            val existing = tvShowQueries.tvshowByTraktId(show.trakt_id).executeAsOneOrNull()
+            val existing = tvShowQueries.tvshowByTmdbId(show.tmdbId).executeAsOneOrNull()
             upsertShowWithGenres(mergeShows(existing, show))
         }
     }
@@ -116,9 +120,9 @@ public class DefaultTvShowsDao(
     override fun getShowsByTraktIds(traktIds: List<Long>): List<ShowEntity> {
         if (traktIds.isEmpty()) return emptyList()
 
-        return tvShowQueries.showsByTraktIds(traktIds.map(::Id)) { traktId, tmdbId, name, posterPath, overview, inLibrary ->
+        return tvShowQueries.showsByTraktIds(traktIds) { traktId, tmdbId, name, posterPath, overview, inLibrary ->
             ShowEntity(
-                traktId = traktId.id,
+                traktId = traktId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -129,11 +133,11 @@ public class DefaultTvShowsDao(
     }
 
     override fun getTmdbIdByTraktId(traktId: Long): Long? {
-        return tvShowQueries.getTmdbIdByTraktId(Id(traktId)).executeAsOneOrNull()?.id
+        return tvShowQueries.getTmdbIdByTraktId(traktId).executeAsOneOrNull()?.id
     }
 
     override suspend fun existsByTraktId(traktId: Long): Boolean =
         withContext(dispatchers.io) {
-            tvShowQueries.existsByTraktId(Id(traktId)).executeAsOne()
+            tvShowQueries.existsByTraktId(traktId).executeAsOne()
         }
 }

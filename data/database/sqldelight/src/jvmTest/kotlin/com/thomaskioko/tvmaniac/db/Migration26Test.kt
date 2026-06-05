@@ -2,15 +2,15 @@ package com.thomaskioko.tvmaniac.db
 
 import com.thomaskioko.tvmaniac.db.util.WatchProgress
 import com.thomaskioko.tvmaniac.db.util.countNextToWatch
+import com.thomaskioko.tvmaniac.db.util.insertEpisode
+import com.thomaskioko.tvmaniac.db.util.insertFollowedShow
+import com.thomaskioko.tvmaniac.db.util.insertSeason
+import com.thomaskioko.tvmaniac.db.util.insertTvshow
+import com.thomaskioko.tvmaniac.db.util.insertWatchedEpisode
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import com.thomaskioko.tvmaniac.db.util.queryFirstNextToWatch
 import com.thomaskioko.tvmaniac.db.util.queryWatchProgress
-import com.thomaskioko.tvmaniac.db.util.seedEpisode
-import com.thomaskioko.tvmaniac.db.util.seedFollowedShow
-import com.thomaskioko.tvmaniac.db.util.seedSeason
-import com.thomaskioko.tvmaniac.db.util.seedTvshow
-import com.thomaskioko.tvmaniac.db.util.seedWatchedEpisode
 import com.thomaskioko.tvmaniac.db.util.viewNames
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
@@ -35,30 +35,30 @@ class Migration26Test {
         openSnapshot(version = 24).use { driver ->
             migrateToCurrent(driver, oldVersion = 24)
 
-            driver.seedTvshow(traktId = 1001L, tmdbId = 2001L)
-            driver.seedSeason(id = 10010L, showTraktId = 1001L, seasonNumber = 1L)
-            driver.seedEpisode(
+            driver.insertTvshow(traktId = 1001L, tmdbId = 2001L)
+            driver.insertSeason(id = 10010L, showTraktId = 1001L, seasonNumber = 1L)
+            driver.insertEpisode(
                 id = 100101L,
                 seasonId = 10010L,
                 showTraktId = 1001L,
                 episodeNumber = 1L,
                 firstAired = OLD_EPOCH_MS,
             )
-            driver.seedEpisode(
+            driver.insertEpisode(
                 id = 100102L,
                 seasonId = 10010L,
                 showTraktId = 1001L,
                 episodeNumber = 2L,
                 firstAired = OLD_EPOCH_MS,
             )
-            driver.seedWatchedEpisode(
+            driver.insertWatchedEpisode(
                 showTraktId = 1001L,
                 episodeId = 100101L,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
                 pendingAction = "NOTHING",
             )
-            driver.seedWatchedEpisode(
+            driver.insertWatchedEpisode(
                 showTraktId = 1001L,
                 episodeId = 100102L,
                 seasonNumber = 1L,
@@ -76,16 +76,16 @@ class Migration26Test {
         openSnapshot(version = 24).use { driver ->
             migrateToCurrent(driver, oldVersion = 24)
 
-            driver.seedTvshow(traktId = 1002L, tmdbId = 2002L)
-            driver.seedSeason(id = 10020L, showTraktId = 1002L, seasonNumber = 1L)
-            driver.seedEpisode(
+            driver.insertTvshow(traktId = 1002L, tmdbId = 2002L)
+            driver.insertSeason(id = 10020L, showTraktId = 1002L, seasonNumber = 1L)
+            driver.insertEpisode(
                 id = 100201L,
                 seasonId = 10020L,
                 showTraktId = 1002L,
                 episodeNumber = 1L,
                 firstAired = OLD_EPOCH_MS,
             )
-            driver.seedWatchedEpisode(
+            driver.insertWatchedEpisode(
                 showTraktId = 1002L,
                 episodeId = 100201L,
                 seasonNumber = 1L,
@@ -103,10 +103,10 @@ class Migration26Test {
         openSnapshot(version = 24).use { driver ->
             migrateToCurrent(driver, oldVersion = 24)
 
-            driver.seedTvshow(traktId = 1003L, tmdbId = 2003L)
-            driver.seedFollowedShow(traktId = 1003L, tmdbId = 2003L)
-            driver.seedSeason(id = 10030L, showTraktId = 1003L, seasonNumber = 1L)
-            driver.seedEpisode(
+            driver.insertTvshow(traktId = 1003L, tmdbId = 2003L)
+            driver.insertFollowedShow(traktId = 1003L, tmdbId = 2003L)
+            driver.insertSeason(id = 10030L, showTraktId = 1003L, seasonNumber = 1L)
+            driver.insertEpisode(
                 id = 100301L,
                 seasonId = 10030L,
                 showTraktId = 1003L,

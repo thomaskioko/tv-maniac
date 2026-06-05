@@ -1,10 +1,10 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.PageId;
-import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE IF NOT EXISTS popular_shows(
-    trakt_id INTEGER AS Id<TraktId> PRIMARY KEY NOT NULL,
+    show_id INTEGER AS Id<ShowId> PRIMARY KEY NOT NULL,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     page INTEGER AS Id<PageId> NOT NULL,
     name TEXT,
@@ -15,14 +15,13 @@ CREATE TABLE IF NOT EXISTS popular_shows(
 
 -- indices
 
-CREATE UNIQUE INDEX IF NOT EXISTS `index_popular_shows_trakt_id` ON `popular_shows` (`trakt_id`);
 CREATE INDEX IF NOT EXISTS `index_popular_shows_tmdb_id` ON `popular_shows` (`tmdb_id`);
 
 -- queries
 
 insert:
 INSERT OR REPLACE INTO popular_shows(
-    trakt_id,
+    show_id,
     tmdb_id,
     page,
     name,
@@ -30,7 +29,7 @@ INSERT OR REPLACE INTO popular_shows(
     overview,
     page_order
 ) VALUES (
-    :traktId,
+    :showId,
     :tmdbId,
     :page,
     :name,
@@ -40,11 +39,11 @@ INSERT OR REPLACE INTO popular_shows(
 );
 
 count:
-SELECT count(*) FROM popular_shows INNER JOIN tvshow ON tvshow.trakt_id = popular_shows.trakt_id;
+SELECT count(*) FROM popular_shows INNER JOIN tvshow ON tvshow.id = popular_shows.show_id;
 
 entriesInPage:
 SELECT
-    popular_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     popular_shows.tmdb_id AS show_tmdb_id,
     popular_shows.page,
     COALESCE(popular_shows.name, '') AS name,
@@ -52,14 +51,16 @@ SELECT
     popular_shows.overview,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM popular_shows
-LEFT OUTER JOIN followed_shows ON popular_shows.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+INNER JOIN tvshow ON tvshow.id = popular_shows.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE popular_shows.page = :page
   AND popular_shows.name IS NOT NULL
 ORDER BY popular_shows.page_order ASC;
 
 popularShows:
 SELECT
-    popular_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     popular_shows.tmdb_id AS show_tmdb_id,
     popular_shows.page,
     tvshow.name,
@@ -68,14 +69,16 @@ SELECT
 FROM
     popular_shows
 INNER JOIN
-    tvshow ON tvshow.trakt_id = popular_shows.trakt_id
+    tvshow ON tvshow.id = popular_shows.show_id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY popular_shows.page ASC, popular_shows.page_order ASC;
 
 pagedPopularShows:
 SELECT
-    popular_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     popular_shows.tmdb_id AS show_tmdb_id,
     popular_shows.page,
     tvshow.name,
@@ -84,9 +87,11 @@ SELECT
 FROM
     popular_shows
 INNER JOIN
-    tvshow ON tvshow.trakt_id = popular_shows.trakt_id
+    tvshow ON tvshow.id = popular_shows.show_id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     popular_shows.page ASC, popular_shows.page_order ASC
 LIMIT
@@ -97,7 +102,7 @@ SELECT EXISTS(SELECT 1 FROM popular_shows WHERE page = :page LIMIT 1);
 
 delete:
 DELETE FROM popular_shows
-WHERE trakt_id = :traktId;
+WHERE show_id = :showId;
 
 deleteAll:
 DELETE FROM popular_shows;

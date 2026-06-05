@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.shows.testing
 
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.mergeShows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -15,18 +17,18 @@ public class FakeTvShowsDao : TvShowsDao {
 
     public fun entries(): List<Tvshow> = state.value.values.toList()
 
-    override fun upsert(show: Tvshow) {
-        state.value += (show.trakt_id.id to show)
+    override fun upsert(show: ShowToPersist) {
+        state.value += (show.traktId.id to show.toTvshow())
     }
 
-    override fun upsert(list: List<Tvshow>) {
-        state.value += list.associateBy { it.trakt_id.id }
+    override fun upsert(list: List<ShowToPersist>) {
+        state.value += list.associate { it.traktId.id to it.toTvshow() }
     }
 
-    override fun upsertMerging(show: Tvshow) {
-        val existing = state.value[show.trakt_id.id]
+    override fun upsertMerging(show: ShowToPersist) {
+        val existing = state.value[show.traktId.id]
         val merged = mergeShows(local = existing, network = show)
-        state.value = state.value + (merged.trakt_id.id to merged)
+        state.value = state.value + (merged.traktId.id to merged.toTvshow())
     }
 
     override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> =
@@ -47,3 +49,20 @@ public class FakeTvShowsDao : TvShowsDao {
 
     override suspend fun existsByTraktId(traktId: Long): Boolean = traktId in state.value
 }
+
+private fun ShowToPersist.toTvshow(): Tvshow = Tvshow(
+    id = Id(0),
+    tmdb_id = tmdbId,
+    name = name,
+    overview = overview,
+    language = language,
+    year = year,
+    status = status,
+    ratings = ratings,
+    vote_count = voteCount,
+    genres = genres,
+    poster_path = posterPath,
+    backdrop_path = backdropPath,
+    episode_numbers = episodeNumbers,
+    season_numbers = seasonNumbers,
+)

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.genre
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.genre.model.GenreWithShowsEntity
 import com.thomaskioko.tvmaniac.genre.model.TraktGenreEntity
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.map
 @ContributesBinding(AppScope::class)
 public class DefaultTraktGenreDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : TraktGenreDao {
     private val genreQueries = database.traktGenresQueries
@@ -41,9 +43,10 @@ public class DefaultTraktGenreDao(
     }
 
     override fun upsertGenreShow(genreSlug: String, traktId: Long, pageOrder: Long, category: String) {
+        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
         genreShowsQueries.upsert(
             genre_slug = genreSlug,
-            trakt_id = traktId,
+            show_id = showId,
             page_order = pageOrder,
             category = category,
         )
@@ -52,7 +55,7 @@ public class DefaultTraktGenreDao(
     override fun observeShowsByGenreSlug(slug: String): Flow<List<ShowEntity>> =
         genreShowsQueries.showsByGenreSlug(slug) { traktId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                traktId = traktId.id,
+                traktId = traktId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -69,7 +72,7 @@ public class DefaultTraktGenreDao(
     override fun observeShowsByGenreSlugAndCategory(slug: String, category: String): Flow<List<ShowEntity>> =
         genreShowsQueries.showsByGenreSlugAndCategory(slug, category) { traktId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                traktId = traktId.id,
+                traktId = traktId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -89,7 +92,7 @@ public class DefaultTraktGenreDao(
                 genreSlug = genreSlug,
                 genreName = genreName,
                 show = ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,

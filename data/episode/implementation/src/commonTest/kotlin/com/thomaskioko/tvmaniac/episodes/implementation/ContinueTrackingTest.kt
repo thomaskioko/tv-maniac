@@ -45,8 +45,8 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         fakeDateTimeProvider.setCurrentTimeMillis(now)
-        watchedEpisodeDao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
-        episodesDao = DefaultEpisodesDao(database, dispatchers, fakeDateTimeProvider)
+        watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
+        episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         seedShow()
     }
 
@@ -191,7 +191,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         addToFollowedShows: Boolean = true,
     ) {
         database.tvShowQueries.upsert(
-            trakt_id = Id(showId),
             tmdb_id = Id(showId),
             name = "Show $showId",
             overview = "",
@@ -206,10 +205,10 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        val resolvedShowId = showIdForTraktId(showId)
         if (addToFollowedShows) {
             database.followedShowsQueries.upsert(
-                id = null,
-                traktId = Id(showId),
+                showId = resolvedShowId,
                 tmdbId = Id(showId),
                 followedAt = now,
                 pendingAction = "NOTHING",
@@ -217,7 +216,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         }
         database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id(showId),
+            show_id = resolvedShowId,
             season_number = 1L,
             title = "Season 1",
             overview = null,
@@ -227,7 +226,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(airedEpisodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id(showId),
+            show_id = resolvedShowId,
             title = "Aired",
             overview = "",
             episode_number = 1L,
@@ -241,7 +240,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(secondEpisodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id(showId),
+            show_id = resolvedShowId,
             title = "Second",
             overview = "",
             episode_number = 2L,
@@ -256,7 +255,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
 
     private fun seedShow() {
         database.tvShowQueries.upsert(
-            trakt_id = Id(SHOW_ID),
             tmdb_id = Id(SHOW_ID),
             name = "Severance",
             overview = "",
@@ -271,16 +269,16 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        val showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id(SHOW_ID),
+            showId = showId,
             tmdbId = Id(SHOW_ID),
             followedAt = now,
             pendingAction = "NOTHING",
         )
         database.seasonsQueries.upsert(
             id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_number = 1L,
             title = "Season 1",
             overview = null,
@@ -290,7 +288,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(EPISODE_1_ID),
             season_id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Episode 1",
             overview = "",
             episode_number = 1L,
@@ -304,7 +302,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(EPISODE_2_ID),
             season_id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Episode 2",
             overview = "",
             episode_number = 2L,

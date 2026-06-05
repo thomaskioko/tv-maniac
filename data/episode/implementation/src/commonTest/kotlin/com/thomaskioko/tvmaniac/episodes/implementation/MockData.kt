@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowSeasons
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import kotlinx.datetime.LocalDate
@@ -29,13 +28,13 @@ internal object MockData {
 
     val testShowSeasons = listOf(
         ShowSeasons(
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = TEST_SHOW_ID,
             season_id = Id(SEASON_1_ID),
             season_title = "Season 1",
             season_number = SEASON_1_NUMBER,
         ),
         ShowSeasons(
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_trakt_id = TEST_SHOW_ID,
             season_id = Id(SEASON_2_ID),
             season_title = "Season 2",
             season_number = SEASON_2_NUMBER,

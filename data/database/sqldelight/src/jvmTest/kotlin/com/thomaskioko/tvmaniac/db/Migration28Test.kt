@@ -3,11 +3,11 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.util.columnNames
+import com.thomaskioko.tvmaniac.db.util.insertFollowedShowLegacy
+import com.thomaskioko.tvmaniac.db.util.insertTvshow
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
 import com.thomaskioko.tvmaniac.db.util.notNullColumns
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
-import com.thomaskioko.tvmaniac.db.util.seedFollowedShow
-import com.thomaskioko.tvmaniac.db.util.seedTvshow
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
@@ -19,10 +19,10 @@ class Migration28Test {
     @Test
     fun `should preserve followed_shows rows when migrating past version 27`() {
         openSnapshot(version = 27).use { driver ->
-            driver.seedTvshow(traktId = 5001L, tmdbId = 6001L)
-            driver.seedTvshow(traktId = 5002L, tmdbId = 6002L)
-            driver.seedFollowedShow(traktId = 5001L, tmdbId = 6001L, followedAt = 1_700_000_000_000L)
-            driver.seedFollowedShow(traktId = 5002L, tmdbId = 6002L, followedAt = 1_700_000_001_000L)
+            driver.insertTvshow(traktId = 5001L, tmdbId = 6001L)
+            driver.insertTvshow(traktId = 5002L, tmdbId = 6002L)
+            driver.insertFollowedShowLegacy(traktId = 5001L, tmdbId = 6001L, followedAt = 1_700_000_000_000L)
+            driver.insertFollowedShowLegacy(traktId = 5002L, tmdbId = 6002L, followedAt = 1_700_000_001_000L)
 
             migrateToCurrent(driver, oldVersion = 27)
 
@@ -60,12 +60,12 @@ class Migration28Test {
     }
 
     @Test
-    fun `should rebuild show_genres with show_tmdb_id column`() {
+    fun `should rebuild show_genres with show_id column`() {
         openSnapshot(version = 27).use { driver ->
             migrateToCurrent(driver, oldVersion = 27)
 
             val cols = driver.columnNames("show_genres")
-            cols shouldContain "show_tmdb_id"
+            cols shouldContain "show_id"
             cols shouldContain "genre_id"
         }
     }
@@ -76,7 +76,7 @@ class Migration28Test {
             migrateToCurrent(driver, oldVersion = 27)
 
             val notNullColumns = driver.notNullColumns("followed_shows")
-            notNullColumns shouldContain "trakt_id"
+            notNullColumns shouldContain "show_id"
             notNullColumns shouldNotContain "tmdb_id"
         }
     }
@@ -86,12 +86,12 @@ class Migration28Test {
         openSnapshot(version = 27).use { driver ->
             migrateToCurrent(driver, oldVersion = 27)
 
-            driver.seedTvshow(traktId = 7001L, tmdbId = 8001L)
+            driver.insertTvshow(traktId = 7001L, tmdbId = 8001L)
             driver.execute(
                 identifier = null,
                 sql = """
-                    INSERT INTO followed_shows (trakt_id, tmdb_id, followed_at, pending_action)
-                    VALUES (7001, NULL, 1700000000000, 'NOTHING')
+                    INSERT INTO followed_shows (show_id, tmdb_id, followed_at, pending_action)
+                    VALUES ((SELECT show_id FROM show_trakt WHERE trakt_id = 7001), NULL, 1700000000000, 'NOTHING')
                 """.trimIndent(),
                 parameters = 0,
             )
@@ -125,9 +125,10 @@ private data class FollowedShowRow(
 private fun SqlDriver.followedShowsRows(): List<FollowedShowRow> = executeQuery(
     identifier = null,
     sql = """
-        SELECT trakt_id, tmdb_id, followed_at, pending_action
+        SELECT show_trakt.trakt_id, followed_shows.tmdb_id, followed_shows.followed_at, followed_shows.pending_action
         FROM followed_shows
-        ORDER BY trakt_id
+        JOIN show_trakt ON show_trakt.show_id = followed_shows.show_id
+        ORDER BY show_trakt.trakt_id
     """.trimIndent(),
     parameters = 0,
     binders = null,

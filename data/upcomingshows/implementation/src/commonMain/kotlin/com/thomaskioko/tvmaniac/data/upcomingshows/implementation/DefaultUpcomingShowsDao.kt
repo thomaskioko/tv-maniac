@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsDao
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.Upcoming_shows
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 @ContributesBinding(AppScope::class)
 public class DefaultUpcomingShowsDao(
     database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : UpcomingShowsDao {
     private val upcomingShowsQueries = database.upcomingShowsQueries
@@ -26,7 +28,7 @@ public class DefaultUpcomingShowsDao(
     override fun upsert(show: Upcoming_shows) {
         upcomingShowsQueries.transaction {
             upcomingShowsQueries.insert(
-                traktId = show.trakt_id,
+                showId = show.show_id,
                 tmdbId = show.tmdb_id,
                 page = show.page,
                 name = show.name,
@@ -41,7 +43,7 @@ public class DefaultUpcomingShowsDao(
         upcomingShowsQueries
             .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId.id,
+                    traktId = traktId,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
@@ -64,7 +66,7 @@ public class DefaultUpcomingShowsDao(
                     offset = offset,
                 ) { traktId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        traktId = traktId.id,
+                        traktId = traktId,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,
@@ -80,7 +82,8 @@ public class DefaultUpcomingShowsDao(
     }
 
     override fun deleteUpcomingShow(id: Long) {
-        upcomingShowsQueries.delete(Id(id))
+        val showId = showIdResolver.showIdForTraktId(id) ?: return
+        upcomingShowsQueries.delete(showId)
     }
 
     override fun deleteUpcomingShows() {

@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
@@ -396,7 +395,7 @@ internal class EpisodeSheetPresenterTest {
     ) = EpisodeById(
         episode_id = Id<EpisodeId>(1L),
         season_id = Id<SeasonId>(10L),
-        show_trakt_id = Id<TraktId>(100L),
+        show_trakt_id = 100L,
         episode_number = 1L,
         title = "The Pilot",
         overview = overview,

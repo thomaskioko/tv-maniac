@@ -8,11 +8,12 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Season
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAILS
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
@@ -34,6 +35,7 @@ public class ShowDetailsStore(
     private val tvShowsDao: TvShowsDao,
     private val showDetailsDao: ShowDetailsDao,
     private val seasonDao: SeasonsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val requestManagerRepository: RequestManagerRepository,
@@ -80,29 +82,32 @@ public class ShowDetailsStore(
                 val tmdbId = response.tmdbId
 
                 tvShowsDao.upsert(
-                    Tvshow(
-                        trakt_id = Id(traktId),
-                        tmdb_id = Id(tmdbId),
+                    ShowToPersist(
+                        traktId = Id(traktId),
+                        tmdbId = Id(tmdbId),
                         name = show.title,
                         overview = show.overview ?: "",
                         language = show.language,
                         status = show.status,
                         year = show.firstAirDate?.let { dateTimeProvider.extractYear(it) },
-                        episode_numbers = show.airedEpisodes?.toString(),
-                        season_numbers = response.traktSeasons.size.toString(),
+                        episodeNumbers = show.airedEpisodes?.toString(),
+                        seasonNumbers = response.traktSeasons.size.toString(),
                         ratings = show.rating ?: 0.0,
-                        vote_count = show.votes ?: 0L,
+                        voteCount = show.votes ?: 0L,
                         genres = show.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-                        poster_path = response.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        backdrop_path = response.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        posterPath = response.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        backdropPath = response.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                     ),
                 )
+
+                val showId = showIdResolver.showIdForTraktId(traktId)
+                    ?: return@databaseTransactionRunner
 
                 response.traktSeasons.forEach { season ->
                     seasonDao.upsert(
                         Season(
                             id = Id(season.ids.trakt.toLong()),
-                            show_trakt_id = Id(traktId),
+                            show_id = showId,
                             season_number = season.number.toLong(),
                             episode_count = season.episodeCount.toLong(),
                             title = season.title,
@@ -122,7 +127,7 @@ public class ShowDetailsStore(
     Validator.by {
         withContext(dispatchers.io) {
             !requestManagerRepository.isRequestExpired(
-                entityId = it.trakt_id.id,
+                entityId = it.trakt_id,
                 requestType = SHOW_DETAILS.name,
                 threshold = SHOW_DETAILS.duration,
             )

@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
 import com.thomaskioko.tvmaniac.favorites.api.FavoritesDao
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -33,7 +32,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setUp() {
-        dao = DefaultFavoritesDao(database, dispatchers)
+        dao = DefaultFavoritesDao(database, showIdResolver, dispatchers)
     }
 
     @AfterTest
@@ -88,7 +87,6 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
 
     private fun insertShow(id: Long, name: String) {
         database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(id),
             tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = "Overview for $name",
@@ -103,5 +101,6 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = null,
         )
+        showIdForTraktId(id)
     }
 }

@@ -1,10 +1,10 @@
 import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.PageId;
-import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
 CREATE TABLE IF NOT EXISTS upcoming_shows(
-    trakt_id INTEGER AS Id<TraktId> PRIMARY KEY NOT NULL,
+    show_id INTEGER AS Id<ShowId> PRIMARY KEY NOT NULL,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     page INTEGER AS Id<PageId> NOT NULL,
     name TEXT,
@@ -15,14 +15,13 @@ CREATE TABLE IF NOT EXISTS upcoming_shows(
 
 -- indices
 
-CREATE UNIQUE INDEX IF NOT EXISTS `index_upcoming_shows_trakt_id` ON `upcoming_shows` (`trakt_id`);
 CREATE INDEX IF NOT EXISTS `index_upcoming_shows_tmdb_id` ON `upcoming_shows` (`tmdb_id`);
 
 -- queries
 
 insert:
 INSERT OR REPLACE INTO upcoming_shows(
-    trakt_id,
+    show_id,
     tmdb_id,
     page,
     name,
@@ -30,7 +29,7 @@ INSERT OR REPLACE INTO upcoming_shows(
     overview,
     page_order
 ) VALUES (
-    :traktId,
+    :showId,
     :tmdbId,
     :page,
     :name,
@@ -41,7 +40,7 @@ INSERT OR REPLACE INTO upcoming_shows(
 
 entriesInPage:
 SELECT
-    upcoming_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     upcoming_shows.tmdb_id AS show_tmdb_id,
     upcoming_shows.page,
     COALESCE(upcoming_shows.name, '') AS name,
@@ -49,14 +48,16 @@ SELECT
     upcoming_shows.overview,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM upcoming_shows
-LEFT OUTER JOIN followed_shows ON upcoming_shows.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+INNER JOIN tvshow ON tvshow.id = upcoming_shows.show_id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE upcoming_shows.page = :page
   AND upcoming_shows.name IS NOT NULL
 ORDER BY upcoming_shows.page_order ASC;
 
 upcomingShowsByPage:
 SELECT
-    upcoming_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     upcoming_shows.tmdb_id AS show_tmdb_id,
     upcoming_shows.page,
     tvshow.name,
@@ -65,15 +66,17 @@ SELECT
 FROM
     upcoming_shows
 INNER JOIN
-    tvshow ON tvshow.trakt_id = upcoming_shows.trakt_id
+    tvshow ON tvshow.id = upcoming_shows.show_id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     upcoming_shows.page = :page;
 
 pagedUpcomingShows:
 SELECT
-    upcoming_shows.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS show_trakt_id,
     upcoming_shows.tmdb_id AS show_tmdb_id,
     upcoming_shows.page,
     tvshow.name,
@@ -82,9 +85,11 @@ SELECT
 FROM
     upcoming_shows
 INNER JOIN
-    tvshow ON tvshow.trakt_id = upcoming_shows.trakt_id
+    tvshow ON tvshow.id = upcoming_shows.show_id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
     upcoming_shows.page ASC, upcoming_shows.page_order ASC
 LIMIT
@@ -94,11 +99,11 @@ pageExists:
 SELECT EXISTS(SELECT 1 FROM upcoming_shows WHERE page = :page LIMIT 1);
 
 count:
-SELECT count(*) FROM upcoming_shows INNER JOIN tvshow ON tvshow.trakt_id = upcoming_shows.trakt_id;
+SELECT count(*) FROM upcoming_shows INNER JOIN tvshow ON tvshow.id = upcoming_shows.show_id;
 
 delete:
 DELETE FROM upcoming_shows
-WHERE trakt_id = :traktId;
+WHERE show_id = :showId;
 
 deleteAll:
 DELETE FROM upcoming_shows;

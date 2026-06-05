@@ -9,7 +9,7 @@ import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
-import com.thomaskioko.tvmaniac.db.TraktId
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.UpcomingEpisodesFromFollowedShows
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
@@ -18,6 +18,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
@@ -27,6 +28,7 @@ import com.thomaskioko.tvmaniac.db.Episode as EpisodeCache
 @ContributesBinding(AppScope::class)
 public class DefaultEpisodesDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeProvider: DateTimeProvider,
 ) : EpisodesDao {
@@ -44,7 +46,7 @@ public class DefaultEpisodesDao(
                 runtime = entity.runtime,
                 episode_number = entity.episode_number,
                 image_url = entity.image_url,
-                show_trakt_id = entity.show_trakt_id,
+                show_id = entity.show_id,
                 vote_count = entity.vote_count,
                 ratings = entity.ratings,
                 trakt_id = entity.trakt_id,
@@ -75,8 +77,9 @@ public class DefaultEpisodesDao(
         seasonNumber: Long,
         episodeNumber: Long,
     ): GetEpisodeByShowSeasonEpisodeNumber? = withContext(dispatchers.databaseRead) {
+        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext null
         episodeQueries.getEpisodeByShowSeasonEpisodeNumber(
-            showTraktId = Id(showTraktId),
+            showId = showId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
         ).executeAsOneOrNull()
@@ -88,8 +91,9 @@ public class DefaultEpisodesDao(
         episodeNumber: Long,
         firstAired: Long,
     ): Unit = withContext(dispatchers.databaseWrite) {
+        val resolvedShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
         episodeQueries.updateFirstAired(
-            showId = Id(showId),
+            showId = resolvedShowId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             firstAired = firstAired,
@@ -123,18 +127,21 @@ public class DefaultEpisodesDao(
     override fun observeNextEpisodeForShow(
         showTraktId: Long,
         includeSpecials: Boolean,
-    ): Flow<NextEpisodeForShow?> =
-        database.showsNextToWatchQueries.nextEpisodeForShow(
-            showTraktId = Id<TraktId>(showTraktId),
+    ): Flow<NextEpisodeForShow?> {
+        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return flowOf(null)
+        return database.showsNextToWatchQueries.nextEpisodeForShow(
+            showId = showId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).asFlow().mapToOneOrNull(dispatchers.databaseRead)
+    }
 
     override suspend fun getNextEpisodeForShow(
         showTraktId: Long,
         includeSpecials: Boolean,
     ): NextEpisodeForShow? = withContext(dispatchers.databaseRead) {
+        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext null
         database.showsNextToWatchQueries.nextEpisodeForShow(
-            showTraktId = Id<TraktId>(showTraktId),
+            showId = showId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).executeAsOneOrNull()
     }

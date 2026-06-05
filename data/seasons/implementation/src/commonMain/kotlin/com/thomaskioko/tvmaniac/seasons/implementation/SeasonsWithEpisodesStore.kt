@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -28,6 +29,7 @@ public class SeasonsWithEpisodesStore(
     private val traktRemoteDataSource: TraktShowsRemoteDataSource,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
+    private val showIdResolver: ShowIdResolver,
     private val dateTimeProvider: DateTimeProvider,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -41,46 +43,49 @@ public class SeasonsWithEpisodesStore(
             seasonsDao.observeSeasonsByShowTraktId(showTraktId)
         },
         writer = { showTraktId, seasons ->
-            databaseTransactionRunner {
-                seasons.forEach { seasonResponse ->
-                    val seasonId = seasonResponse.ids.trakt.toLong()
+            val showId = showIdResolver.showIdForTraktId(showTraktId)
+            if (showId != null) {
+                databaseTransactionRunner {
+                    seasons.forEach { seasonResponse ->
+                        val seasonId = seasonResponse.ids.trakt.toLong()
 
-                    seasonsDao.upsert(
-                        Season(
-                            id = Id(seasonId),
-                            show_trakt_id = Id(showTraktId),
-                            season_number = seasonResponse.number.toLong(),
-                            episode_count = seasonResponse.episodeCount.toLong(),
-                            title = seasonResponse.title ?: "Season ${seasonResponse.number}",
-                            overview = seasonResponse.overview,
-                            image_url = null,
-                        ),
-                    )
-
-                    seasonResponse.episodes.forEach { episodeResponse ->
-                        episodesDao.insert(
-                            Episode(
-                                id = Id(episodeResponse.ids.trakt.toLong()),
-                                season_id = Id(seasonId),
-                                show_trakt_id = Id(showTraktId),
-                                episode_number = episodeResponse.episodeNumber.toLong(),
-                                title = episodeResponse.title,
-                                overview = episodeResponse.overview ?: "",
-                                runtime = episodeResponse.runtime?.toLong() ?: 0L,
-                                vote_count = episodeResponse.votes?.toLong() ?: 0L,
-                                ratings = episodeResponse.ratings ?: 0.0,
+                        seasonsDao.upsert(
+                            Season(
+                                id = Id(seasonId),
+                                show_id = showId,
+                                season_number = seasonResponse.number.toLong(),
+                                episode_count = seasonResponse.episodeCount.toLong(),
+                                title = seasonResponse.title ?: "Season ${seasonResponse.number}",
+                                overview = seasonResponse.overview,
                                 image_url = null,
-                                trakt_id = episodeResponse.ids.trakt.toLong(),
-                                first_aired = dateTimeProvider.isoDateToEpoch(episodeResponse.firstAired),
                             ),
                         )
-                    }
-                }
 
-                requestManagerRepository.upsert(
-                    entityId = showTraktId,
-                    requestType = SEASONS_EPISODES_SYNC.name,
-                )
+                        seasonResponse.episodes.forEach { episodeResponse ->
+                            episodesDao.insert(
+                                Episode(
+                                    id = Id(episodeResponse.ids.trakt.toLong()),
+                                    season_id = Id(seasonId),
+                                    show_id = showId,
+                                    episode_number = episodeResponse.episodeNumber.toLong(),
+                                    title = episodeResponse.title,
+                                    overview = episodeResponse.overview ?: "",
+                                    runtime = episodeResponse.runtime?.toLong() ?: 0L,
+                                    vote_count = episodeResponse.votes?.toLong() ?: 0L,
+                                    ratings = episodeResponse.ratings ?: 0.0,
+                                    image_url = null,
+                                    trakt_id = episodeResponse.ids.trakt.toLong(),
+                                    first_aired = dateTimeProvider.isoDateToEpoch(episodeResponse.firstAired),
+                                ),
+                            )
+                        }
+                    }
+
+                    requestManagerRepository.upsert(
+                        entityId = showTraktId,
+                        requestType = SEASONS_EPISODES_SYNC.name,
+                    )
+                }
             }
         },
     )
@@ -93,7 +98,7 @@ public class SeasonsWithEpisodesStore(
         seasonsList.firstOrNull()?.let { firstSeason ->
             withContext(dispatchers.io) {
                 !requestManagerRepository.isRequestExpired(
-                    entityId = firstSeason.show_trakt_id.id,
+                    entityId = firstSeason.show_trakt_id,
                     requestType = SEASONS_EPISODES_SYNC.name,
                     threshold = SEASONS_EPISODES_SYNC.duration,
                 )

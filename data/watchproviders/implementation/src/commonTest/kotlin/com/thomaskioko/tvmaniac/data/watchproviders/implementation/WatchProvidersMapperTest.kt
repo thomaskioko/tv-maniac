@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.data.watchproviders.implementation
 
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.tmdb.api.model.FlatRate
 import com.thomaskioko.tvmaniac.tmdb.api.model.US
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
@@ -23,7 +25,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.map { it.name } shouldContainExactly listOf("MGM+")
         rows.single().id.id shouldBe 1L
@@ -39,7 +41,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows shouldHaveSize 1
         rows.single().id.id shouldBe 1L
@@ -54,7 +56,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows shouldHaveSize 1
         rows.single().name shouldBe "MGM+"
@@ -73,7 +75,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.map { it.name } shouldContainExactly listOf(
             "fuboTV",
@@ -101,7 +103,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows shouldHaveSize 1
         rows.single().name shouldBe "Amazon Prime Video"
@@ -123,7 +125,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.map { it.name } shouldContainExactly listOf("Hulu", "Paramount Plus")
     }
@@ -139,7 +141,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.map { it.name } shouldContainExactly listOf(
             "Paramount Plus",
@@ -159,7 +161,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows shouldHaveSize 1
         rows.single().name shouldBe "MGM Plus"
@@ -175,7 +177,7 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.map { it.name } shouldContainExactly listOf(
             "MGM+ Amazon Channel",
@@ -196,20 +198,20 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.map { it.name } shouldContainExactly listOf("Netflix", "MGM+", "Disney+")
     }
 
     @Test
     fun `should return empty list when flatrate has no providers`() {
-        val rows = mapper.mapToRows(US(), tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(US(), tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.shouldBeEmpty()
     }
 
     @Test
-    fun `should stamp every row with tmdb id and trakt id`() {
+    fun `should stamp every row with tmdb id and show id`() {
         val us = US(
             flatrate = arrayListOf(
                 FlatRate(providerId = 1, providerName = "Netflix", logoPath = "/a.png"),
@@ -217,17 +219,17 @@ internal class WatchProvidersMapperTest {
             ),
         )
 
-        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, traktId = TRAKT_ID)
+        val rows = mapper.mapToRows(us, tmdbId = TMDB_ID, showId = SHOW_ID)
 
         rows.forEach { row ->
             row.tmdb_id.id shouldBe TMDB_ID
-            row.trakt_id.id shouldBe TRAKT_ID
+            row.show_id shouldBe SHOW_ID
         }
     }
 
     private companion object {
         private const val TMDB_ID = 1396L
-        private const val TRAKT_ID = 1388L
+        private val SHOW_ID: Id<ShowId> = Id(42L)
     }
 }
 

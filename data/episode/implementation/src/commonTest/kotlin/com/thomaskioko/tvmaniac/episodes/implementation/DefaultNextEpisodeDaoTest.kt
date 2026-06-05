@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -41,6 +42,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var nextEpisodeDao: NextEpisodeDao
+    private val showIdByTraktId = mutableMapOf<Long, Id<ShowId>>()
 
     @BeforeTest
     fun setup() {
@@ -613,16 +615,16 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun followShow(showId: Long, followedAt: Long) {
+        val resolvedShowId = showIdByTraktId.getValue(showId)
         database.transaction {
             database.followedShowsQueries.upsert(
-                id = null,
-                traktId = Id(showId),
+                showId = resolvedShowId,
                 tmdbId = Id(showId),
                 followedAt = followedAt,
                 pendingAction = "NOTHING",
             )
-            database.traktContinueWatchingQueries.upsert(
-                traktId = Id(showId),
+            database.continueWatchingQueries.upsert(
+                showId = resolvedShowId,
                 tmdbId = Id(showId),
                 airedEpisodes = 0L,
                 completedCount = 1L,
@@ -635,9 +637,9 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun followShowOnly(showId: Long, followedAt: Long) {
+        val resolvedShowId = showIdByTraktId.getValue(showId)
         val _ = database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id(showId),
+            showId = resolvedShowId,
             tmdbId = Id(showId),
             followedAt = followedAt,
             pendingAction = "NOTHING",
@@ -652,7 +654,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -670,7 +672,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -686,7 +688,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         status: String = "Returning Series",
     ) {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(id),
             tmdb_id = Id(id),
             name = name,
             overview = overview,
@@ -701,6 +702,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = "/$id-back.jpg",
         )
+        showIdByTraktId[id] = showIdForTraktId(id)
     }
 
     private fun insertSeason(
@@ -712,7 +714,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     ) {
         val _ = database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             season_number = seasonNumber,
             title = title,
             overview = "Overview for $title",
@@ -732,7 +734,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         val _ = database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
@@ -790,13 +792,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShow(id = 2, name = "Test Show 2", status = "Ended")
 
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id(1),
+            show_id = showIdByTraktId.getValue(1L),
             season_count = 1,
             episode_count = 3,
             status = "Returning Series",
         )
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id(2),
+            show_id = showIdByTraktId.getValue(2L),
             season_count = 1,
             episode_count = 2,
             status = "Ended",
@@ -845,7 +847,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,

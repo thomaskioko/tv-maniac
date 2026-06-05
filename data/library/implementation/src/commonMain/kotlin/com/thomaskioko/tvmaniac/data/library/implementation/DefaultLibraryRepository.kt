@@ -127,7 +127,7 @@ public class DefaultLibraryRepository(
 
     private fun LibraryShows.toLibraryItem(watchProviders: List<WatchProvider>): LibraryItem =
         LibraryItem(
-            traktId = show_trakt_id.id,
+            traktId = show_trakt_id,
             tmdbId = show_tmdb_id.id,
             title = title,
             posterPath = poster_path,

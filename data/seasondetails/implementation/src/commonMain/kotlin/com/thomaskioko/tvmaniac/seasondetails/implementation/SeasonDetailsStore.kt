@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonDetails
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SEASON_DETAILS
@@ -40,6 +41,7 @@ public class SeasonDetailsStore(
     private val episodesDao: EpisodesDao,
     private val seasonsDao: SeasonsDao,
     private val seasonDetailsDao: SeasonDetailsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val requestManagerRepository: RequestManagerRepository,
@@ -76,10 +78,8 @@ public class SeasonDetailsStore(
         },
         writer = { params: SeasonDetailsParam, response ->
             databaseTransactionRunner {
-                val showExists = tvShowsDao.getTmdbIdByTraktId(params.showTraktId) != null
-                if (!showExists) {
-                    return@databaseTransactionRunner
-                }
+                val showId = showIdResolver.showIdForTraktId(params.showTraktId)
+                    ?: return@databaseTransactionRunner
 
                 val tmdbEpisodeImages = response.tmdbEpisodes.associate {
                     it.episodeNumber to it.stillPath
@@ -91,7 +91,7 @@ public class SeasonDetailsStore(
                         Episode(
                             id = Id(episode.ids.trakt.toLong()),
                             season_id = Id(params.seasonId),
-                            show_trakt_id = Id(params.showTraktId),
+                            show_id = showId,
                             episode_number = episode.episodeNumber.toLong(),
                             title = episode.title,
                             overview = episode.overview ?: "",
@@ -126,7 +126,7 @@ public class SeasonDetailsStore(
                         Casts(
                             id = Id(cast.id.toLong()),
                             trakt_id = null, // TMDB doesn't provide Trakt ID
-                            show_trakt_id = Id(params.showTraktId),
+                            show_id = showId,
                             season_id = Id(params.seasonId),
                             name = cast.name,
                             character_name = cast.character,

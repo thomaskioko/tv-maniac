@@ -5,9 +5,9 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CONTINUE_WATCHING_SYNC
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
@@ -60,8 +60,8 @@ public class ProgressContinueWatchingStore(
         when (batch) {
             is ProgressBatch.Entry -> withContext(dispatchers.databaseWrite) {
                 transactionRunner {
-                    continueWatchingDao.upsert(batch.entry)
                     batch.entry.toMinimalTvshow()?.let(tvShowsDao::upsertMerging)
+                    continueWatchingDao.upsert(batch.entry)
                 }
             }
             is ProgressBatch.Complete -> {
@@ -89,23 +89,23 @@ public class ProgressContinueWatchingStore(
     }
 }
 
-private fun ContinueWatchingEntry.toMinimalTvshow(): Tvshow? {
+private fun ContinueWatchingEntry.toMinimalTvshow(): ShowToPersist? {
     val tmdb = tmdbId ?: return null
     val name = title ?: return null
-    return Tvshow(
-        trakt_id = Id(traktId),
-        tmdb_id = Id(tmdb),
+    return ShowToPersist(
+        traktId = Id(traktId),
+        tmdbId = Id(tmdb),
         name = name,
         overview = "",
         language = null,
         year = year?.toString(),
         ratings = 0.0,
-        vote_count = 0,
+        voteCount = 0,
         genres = null,
         status = null,
-        episode_numbers = null,
-        season_numbers = null,
-        poster_path = null,
-        backdrop_path = null,
+        episodeNumbers = null,
+        seasonNumbers = null,
+        posterPath = null,
+        backdropPath = null,
     )
 }

@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.shows.api
 
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.Tvshow
 
 internal object MockData {
 
     fun getShow() = Tvshow(
-        trakt_id = Id<TraktId>(84958),
+        id = Id<ShowId>(1),
         tmdb_id = Id<TmdbId>(84958),
         name = "Loki",
         overview = "After stealing the Tesseract during the events of Avengers: Endgame, " +
@@ -31,7 +31,7 @@ internal object MockData {
 
     fun showList() = listOf(
         Tvshow(
-            trakt_id = Id<TraktId>(84958),
+            id = Id<ShowId>(1),
             tmdb_id = Id<TmdbId>(84958),
             name = "Loki",
             overview = "After stealing the Tesseract during the events of Avengers: Endgame, " +
@@ -52,7 +52,7 @@ internal object MockData {
             ratings = 8.1,
         ),
         Tvshow(
-            trakt_id = Id<TraktId>(126280),
+            id = Id<ShowId>(2),
             tmdb_id = Id<TmdbId>(126280),
             name = "Sex/Life",
             overview = "A woman's daring sexual past collides with her married-with-kids " +

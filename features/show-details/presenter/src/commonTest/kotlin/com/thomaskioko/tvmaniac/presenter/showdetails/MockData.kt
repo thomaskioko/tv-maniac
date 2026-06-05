@@ -44,7 +44,7 @@ val similarShowList = listOf(
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
-        show_trakt_id = Id(18495),
+        show_trakt_id = 18495L,
         similar_show_trakt_id = Id(18495),
     ),
 )
@@ -52,14 +52,14 @@ val similarShowList = listOf(
 val seasons = listOf(
     ShowSeasons(
         season_id = Id(84958),
-        show_trakt_id = Id(114355),
+        show_trakt_id = 114355L,
         season_title = "Season 1",
         season_number = 1,
     ),
 )
 
 val tvShowDetails = TvshowDetails(
-    trakt_id = Id(849583),
+    trakt_id = 849583L,
     tmdb_id = Id(849583),
     name = "Loki",
     overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
@@ -120,13 +120,13 @@ val testShowWatchProgress = ShowWatchProgress(
 val testSeasonsWithProgress = listOf(
     ShowSeasons(
         season_id = Id(101),
-        show_trakt_id = Id(84958),
+        show_trakt_id = 84958L,
         season_title = "Season 1",
         season_number = 1,
     ),
     ShowSeasons(
         season_id = Id(102),
-        show_trakt_id = Id(84958),
+        show_trakt_id = 84958L,
         season_title = "Season 2",
         season_number = 2,
     ),
