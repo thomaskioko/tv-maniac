@@ -75,7 +75,6 @@ public class DefaultFollowedShowsDao(
     override fun upsert(entry: FollowedShowEntry): Long {
         val showId = showIdResolver.showIdForTraktId(entry.traktId) ?: return 0
         queries.upsert(
-            id = entry.id.takeIf { it > 0 },
             showId = showId,
             tmdbId = entry.tmdbId?.let { Id(it) },
             followedAt = entry.followedAt.toEpochMilliseconds(),

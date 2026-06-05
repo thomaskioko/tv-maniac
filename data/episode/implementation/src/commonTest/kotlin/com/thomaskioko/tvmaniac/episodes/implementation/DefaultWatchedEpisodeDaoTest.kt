@@ -691,7 +691,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         }
 
         val _ = database.followedShowsQueries.upsert(
-            id = null,
             showId = testShowId,
             tmdbId = Id<TmdbId>(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),

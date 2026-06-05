@@ -78,12 +78,10 @@ public class LibraryStore(
         writer = { _: LibrarySortOption, response: List<FollowedShowWithImages> ->
             transactionRunner {
                 val currentEntries = followedShowsDao.entriesWithNoPendingAction()
-                val currentByTraktId = currentEntries.associateBy { it.traktId }
                 val networkTraktIds = response.map { it.response.show.ids.trakt }.toSet()
 
                 response.forEach { item ->
                     val entry = item.response.toFollowedShowEntry()
-                    val existingEntry = currentByTraktId[entry.traktId]
 
                     tvShowsDao.upsertMerging(
                         item.response.toTvshow(
@@ -92,7 +90,7 @@ public class LibraryStore(
                         ),
                     )
 
-                    val _ = followedShowsDao.upsert(entry.copy(id = existingEntry?.id ?: 0))
+                    val _ = followedShowsDao.upsert(entry)
                 }
 
                 currentEntries.forEach { localEntry ->

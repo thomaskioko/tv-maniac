@@ -249,7 +249,6 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
         val showId = showIdForTraktId(1L)
 
         val _ = database.followedShowsQueries.upsert(
-            id = null,
             showId = showId,
             tmdbId = Id(1),
             followedAt = Clock.System.now().toEpochMilliseconds(),

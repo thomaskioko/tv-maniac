@@ -217,7 +217,6 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
     private fun followShow(showId: Long, pendingAction: String = "NOTHING", followedAt: Long = 1_000L) {
         database.followedShowsQueries.upsert(
-            id = null,
             showId = showIdByTraktId.getValue(showId),
             tmdbId = Id(showId),
             followedAt = followedAt,

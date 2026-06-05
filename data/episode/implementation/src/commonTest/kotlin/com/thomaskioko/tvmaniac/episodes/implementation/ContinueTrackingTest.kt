@@ -209,7 +209,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         val resolvedShowId = showIdForTraktId(showId)
         if (addToFollowedShows) {
             database.followedShowsQueries.upsert(
-                id = null,
                 showId = resolvedShowId,
                 tmdbId = Id(showId),
                 followedAt = now,
@@ -274,7 +273,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         )
         val showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
-            id = null,
             showId = showId,
             tmdbId = Id(SHOW_ID),
             followedAt = now,

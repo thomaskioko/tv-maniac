@@ -81,8 +81,12 @@ JOIN tvshow ON tvshow.id = followed_shows.show_id
 WHERE followed_shows.pending_action = 'DELETE';
 
 upsert:
-INSERT OR REPLACE INTO followed_shows(id, show_id, tmdb_id, followed_at, pending_action)
-VALUES(:id, :showId, :tmdbId, :followedAt, :pendingAction);
+INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
+VALUES(:showId, :tmdbId, :followedAt, :pendingAction)
+ON CONFLICT(show_id) DO UPDATE SET
+    tmdb_id = excluded.tmdb_id,
+    followed_at = excluded.followed_at,
+    pending_action = excluded.pending_action;
 
 insert:
 INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)

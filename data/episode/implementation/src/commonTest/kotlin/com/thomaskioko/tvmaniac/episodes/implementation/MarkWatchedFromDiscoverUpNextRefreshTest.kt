@@ -206,7 +206,6 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         )
         val showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
-            id = null,
             showId = showId,
             tmdbId = Id(SHOW_ID),
             followedAt = now,

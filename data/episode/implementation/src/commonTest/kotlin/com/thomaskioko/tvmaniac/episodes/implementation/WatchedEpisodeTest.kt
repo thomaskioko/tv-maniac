@@ -363,7 +363,6 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         )
         showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
-            id = null,
             showId = showId,
             tmdbId = Id<TmdbId>(SHOW_ID),
             followedAt = now,

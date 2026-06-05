@@ -618,7 +618,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         val resolvedShowId = showIdByTraktId.getValue(showId)
         database.transaction {
             database.followedShowsQueries.upsert(
-                id = null,
                 showId = resolvedShowId,
                 tmdbId = Id(showId),
                 followedAt = followedAt,
@@ -640,7 +639,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     private fun followShowOnly(showId: Long, followedAt: Long) {
         val resolvedShowId = showIdByTraktId.getValue(showId)
         val _ = database.followedShowsQueries.upsert(
-            id = null,
             showId = resolvedShowId,
             tmdbId = Id(showId),
             followedAt = followedAt,
