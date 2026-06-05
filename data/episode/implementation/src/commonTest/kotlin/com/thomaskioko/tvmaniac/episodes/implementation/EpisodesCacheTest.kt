@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 

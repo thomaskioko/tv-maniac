@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingDao
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import io.kotest.matchers.collections.shouldBeEmpty

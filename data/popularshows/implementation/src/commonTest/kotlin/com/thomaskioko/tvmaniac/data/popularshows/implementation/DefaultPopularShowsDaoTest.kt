@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.db.PageId
 import com.thomaskioko.tvmaniac.db.Popular_shows
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

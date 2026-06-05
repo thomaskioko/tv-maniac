@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.PageId
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.Trending_shows
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsDao
 import io.kotest.matchers.shouldBe

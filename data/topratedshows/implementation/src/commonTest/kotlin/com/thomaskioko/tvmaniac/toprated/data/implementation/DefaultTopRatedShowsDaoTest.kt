@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.db.PageId
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.Toprated_shows
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsDao
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers

@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.shows.api
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.Tvshow
 
 internal object MockData {
