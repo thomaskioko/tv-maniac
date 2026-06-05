@@ -8,25 +8,22 @@ import app.cash.sqldelight.driver.native.wrapConnection
 import co.touchlab.sqliter.DatabaseConfiguration
 import co.touchlab.sqliter.DatabaseFileContext
 import co.touchlab.sqliter.JournalMode
-import com.thomaskioko.tvmaniac.core.logger.Logger
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.BindingContainer
-import dev.zacsweers.metro.ContributesTo
-import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 
-@BindingContainer
-@ContributesTo(AppScope::class)
-public object DatabasePlatformBindingContainer {
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+public class IosDatabaseDriverBuilder : DatabaseDriverBuilder {
 
-    @Provides
-    @SingleIn(AppScope::class)
-    public fun provideSqlDriver(logger: Logger): SqlDriver = MigrationDriverFactory(
-        expectedVersion = TvManiacDatabase.Schema.version,
-        buildDriver = { createNativeSqliteDriver(schema = TvManiacDatabase.Schema, name = DATABASE_NAME) },
-        deleteDatabaseFile = { DatabaseFileContext.deleteDatabase(DATABASE_NAME) },
-        logger = logger,
-    ).create()
+    override fun build(): SqlDriver = createNativeSqliteDriver(
+        schema = TvManiacDatabase.Schema,
+        name = DATABASE_NAME,
+    )
+
+    override fun deleteDatabase() {
+        DatabaseFileContext.deleteDatabase(DATABASE_NAME)
+    }
 }
 
 public fun createNativeSqliteDriver(

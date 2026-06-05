@@ -18,80 +18,55 @@ class MigrationDriverFactoryTest {
         override fun error(tag: String, message: String) = Unit
     }
 
+    private val schemaVersion = TvManiacDatabase.Schema.version
+
     @Test
     fun `should return the driver without wiping when the on-disk version matches`() {
-        val driver = FakeSqlDriver(version = 36)
-        var deletions = 0
-        val factory = MigrationDriverFactory(
-            expectedVersion = 36,
-            buildDriver = { driver },
-            deleteDatabaseFile = { deletions++ },
-            logger = logger,
-        )
+        val driver = FakeSqlDriver(version = schemaVersion)
+        val builder = FakeDatabaseDriverBuilder({ driver })
 
-        val result = factory.create()
+        val result = MigrationDriverFactory(builder, logger).create()
 
         result shouldBe driver
-        deletions shouldBe 0
+        builder.deletions shouldBe 0
         driver.closed shouldBe false
     }
 
     @Test
     fun `should close the stale driver then wipe and rebuild when the version does not match`() {
-        val stale = FakeSqlDriver(version = 30)
-        val fresh = FakeSqlDriver(version = 36)
-        val built = ArrayDeque(listOf(stale, fresh))
-        var deletions = 0
-        val factory = MigrationDriverFactory(
-            expectedVersion = 36,
-            buildDriver = { built.removeFirst() },
-            deleteDatabaseFile = { deletions++ },
-            logger = logger,
-        )
+        val stale = FakeSqlDriver(version = schemaVersion - 1)
+        val fresh = FakeSqlDriver(version = schemaVersion)
+        val builder = FakeDatabaseDriverBuilder({ stale }, { fresh })
 
-        val result = factory.create()
+        val result = MigrationDriverFactory(builder, logger).create()
 
         result shouldBe fresh
         stale.closed shouldBe true
-        deletions shouldBe 1
+        builder.deletions shouldBe 1
     }
 
     @Test
     fun `should wipe and rebuild when opening the database throws`() {
-        val broken = FakeSqlDriver(version = 36, throwOnQuery = true)
-        val fresh = FakeSqlDriver(version = 36)
-        val built = ArrayDeque(listOf(broken, fresh))
-        var deletions = 0
-        val factory = MigrationDriverFactory(
-            expectedVersion = 36,
-            buildDriver = { built.removeFirst() },
-            deleteDatabaseFile = { deletions++ },
-            logger = logger,
-        )
+        val broken = FakeSqlDriver(version = schemaVersion, throwOnQuery = true)
+        val fresh = FakeSqlDriver(version = schemaVersion)
+        val builder = FakeDatabaseDriverBuilder({ broken }, { fresh })
 
-        val result = factory.create()
+        val result = MigrationDriverFactory(builder, logger).create()
 
         result shouldBe fresh
         broken.closed shouldBe true
-        deletions shouldBe 1
+        builder.deletions shouldBe 1
     }
 
     @Test
     fun `should wipe and rebuild when building the driver throws`() {
-        val fresh = FakeSqlDriver(version = 36)
-        var attempts = 0
-        var deletions = 0
-        val factory = MigrationDriverFactory(
-            expectedVersion = 36,
-            buildDriver = { if (attempts++ == 0) throw IllegalStateException("cannot open") else fresh },
-            deleteDatabaseFile = { deletions++ },
-            logger = logger,
-        )
+        val fresh = FakeSqlDriver(version = schemaVersion)
+        val builder = FakeDatabaseDriverBuilder({ throw IllegalStateException("cannot open") }, { fresh })
 
-        val result = factory.create()
+        val result = MigrationDriverFactory(builder, logger).create()
 
         result shouldBe fresh
-        deletions shouldBe 1
+        builder.deletions shouldBe 1
     }
 
     @Test
@@ -102,6 +77,22 @@ class MigrationDriverFactoryTest {
         driver.userVersion() shouldBe 36L
 
         driver.close()
+    }
+}
+
+private class FakeDatabaseDriverBuilder(
+    private vararg val builds: () -> SqlDriver,
+) : DatabaseDriverBuilder {
+
+    private var index = 0
+
+    var deletions: Int = 0
+        private set
+
+    override fun build(): SqlDriver = builds[index++].invoke()
+
+    override fun deleteDatabase() {
+        deletions++
     }
 }
 

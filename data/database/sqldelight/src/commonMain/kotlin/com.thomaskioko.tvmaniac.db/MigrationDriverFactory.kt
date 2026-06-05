@@ -3,20 +3,23 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-internal const val DATABASE_NAME: String = "tvShows.db"
-
-internal class MigrationDriverFactory(
-    private val expectedVersion: Long,
-    private val buildDriver: () -> SqlDriver,
-    private val deleteDatabaseFile: () -> Unit,
+@Inject
+@SingleIn(AppScope::class)
+public class MigrationDriverFactory(
+    private val driverBuilder: DatabaseDriverBuilder,
     private val logger: Logger,
 ) {
 
-    fun create(): SqlDriver {
+    private val expectedVersion: Long = TvManiacDatabase.Schema.version
+
+    public fun create(): SqlDriver {
         var driver: SqlDriver? = null
         return try {
-            driver = buildDriver()
+            driver = driverBuilder.build()
             val version = driver.userVersion()
             if (version == expectedVersion) {
                 driver
@@ -33,8 +36,8 @@ internal class MigrationDriverFactory(
     }
 
     private fun rebuild(): SqlDriver {
-        deleteDatabaseFile()
-        return buildDriver()
+        driverBuilder.deleteDatabase()
+        return driverBuilder.build()
     }
 
     private fun closeQuietly(driver: SqlDriver?) {
