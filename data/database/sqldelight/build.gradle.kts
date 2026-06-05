@@ -12,7 +12,7 @@ kotlin {
     sourceSets {
         androidMain { dependencies { implementation(libs.sqldelight.driver.android) } }
 
-        commonMain { dependencies { implementation(projects.core.logger.api) } }
+        commonMain { dependencies { api(projects.core.logger.api) } }
 
         commonTest {
             dependencies {
