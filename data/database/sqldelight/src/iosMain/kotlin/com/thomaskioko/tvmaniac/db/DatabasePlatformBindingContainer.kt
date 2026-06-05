@@ -6,7 +6,9 @@ import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import app.cash.sqldelight.driver.native.wrapConnection
 import co.touchlab.sqliter.DatabaseConfiguration
+import co.touchlab.sqliter.DatabaseFileContext
 import co.touchlab.sqliter.JournalMode
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -19,10 +21,12 @@ public object DatabasePlatformBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSqlDriver(): SqlDriver = createNativeSqliteDriver(
-        schema = TvManiacDatabase.Schema,
-        name = "tvShows.db",
-    )
+    public fun provideSqlDriver(logger: Logger): SqlDriver = MigrationDriverFactory(
+        expectedVersion = TvManiacDatabase.Schema.version,
+        buildDriver = { createNativeSqliteDriver(schema = TvManiacDatabase.Schema, name = DATABASE_NAME) },
+        deleteDatabaseFile = { DatabaseFileContext.deleteDatabase(DATABASE_NAME) },
+        logger = logger,
+    ).create()
 }
 
 public fun createNativeSqliteDriver(
@@ -36,13 +40,16 @@ public fun createNativeSqliteDriver(
         )
         // Force a connection so SQLiter runs the upgrade callback (Schema.migrate) now, then release
         // it. SQLiter opens lazily, so without a statement the migration would not run before close.
-        migrationDriver.executeQuery(
-            identifier = null,
-            sql = "SELECT 1",
-            mapper = { QueryResult.Value(Unit) },
-            parameters = 0,
-        )
-        migrationDriver.close()
+        try {
+            migrationDriver.executeQuery(
+                identifier = null,
+                sql = "SELECT 1",
+                mapper = { QueryResult.Value(Unit) },
+                parameters = 0,
+            )
+        } finally {
+            migrationDriver.close()
+        }
     }
     return NativeSqliteDriver(databaseConfiguration(schema, name, inMemory = inMemory, foreignKeys = true))
 }
