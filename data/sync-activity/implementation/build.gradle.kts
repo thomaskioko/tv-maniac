@@ -16,6 +16,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.util.api)
+                api(projects.data.connectedAccount.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
@@ -29,6 +30,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.connectedAccount.testing)
                 implementation(projects.data.database.testing)
             }
         }
