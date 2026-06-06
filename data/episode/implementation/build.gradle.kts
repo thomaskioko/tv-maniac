@@ -27,6 +27,7 @@ kotlin {
                 api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
                 api(projects.data.upnext.api)
+                api(projects.data.watchStatus.api)
 
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.kotlinx.datetime)
@@ -46,6 +47,7 @@ kotlin {
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.api)
                 implementation(projects.data.syncActivity.testing)
+                implementation(projects.data.watchStatus.testing)
             }
         }
     }

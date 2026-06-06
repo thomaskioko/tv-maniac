@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -36,6 +37,7 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val traktAuthRepository: TraktAuthRepository,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
+    private val watchStatusRepository: ShowWatchStatusRepository,
 ) : WatchedEpisodeSyncRepository {
 
     private val syncMutex = Mutex()
@@ -210,6 +212,8 @@ public class DefaultWatchedEpisodeSyncRepository(
                 includeSpecials = includeSpecials,
             )
         }
+
+        watchStatusRepository.refresh(batch.showId)
     }
 
     private suspend fun syncShowWatches(showId: Long) {
@@ -242,6 +246,8 @@ public class DefaultWatchedEpisodeSyncRepository(
                 includeSpecials = includeSpecials,
             )
         }
+
+        watchStatusRepository.refresh(showId)
 
         logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $showId")
     }
