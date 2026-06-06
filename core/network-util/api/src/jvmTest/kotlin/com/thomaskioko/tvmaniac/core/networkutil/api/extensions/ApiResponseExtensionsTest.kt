@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -264,5 +265,31 @@ class ApiResponseExtensionsTest {
 
         result.shouldBeInstanceOf<ApiResponse.Success<JsonObject>>()
         engine.requestHistory.size shouldBe 1
+    }
+
+    @Test
+    fun `should transform body given Success response is mapped`() {
+        val result = ApiResponse.Success(2).map { value -> value * 2 }
+
+        val success = result.shouldBeInstanceOf<ApiResponse.Success<Int>>()
+        success.body shouldBe 4
+    }
+
+    @Test
+    fun `should preserve Unauthenticated given response is mapped`() {
+        val response: ApiResponse<Int> = ApiResponse.Unauthenticated
+
+        response.map { value -> value * 2 }.shouldBeInstanceOf<ApiResponse.Unauthenticated>()
+    }
+
+    @Test
+    fun `should preserve HttpError and code given response is mapped`() {
+        val response: ApiResponse<Int> =
+            ApiResponse.Error.HttpError(code = 404, errorBody = "missing", errorMessage = "not found")
+
+        val error = response.map { value -> value * 2 }
+            .shouldBeInstanceOf<ApiResponse.Error.HttpError<Int>>()
+        error.code shouldBe 404
+        error.errorBody shouldBe "missing"
     }
 }
