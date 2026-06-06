@@ -176,6 +176,7 @@ dependencies {
     implementation(projects.data.followedshows.implementation)
     implementation(projects.data.library.implementation)
     implementation(projects.data.syncActivity.implementation)
+    implementation(projects.data.syncProvider.implementation)
     implementation(projects.data.upnext.implementation)
     implementation(projects.data.continueWatching.implementation)
     implementation(projects.data.startWatching.api)

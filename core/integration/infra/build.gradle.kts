@@ -86,6 +86,7 @@ kotlin {
             api(projects.data.shows.implementation)
             api(projects.data.similar.implementation)
             api(projects.data.syncActivity.implementation)
+            api(projects.data.syncProvider.implementation)
             api(projects.data.topratedshows.implementation)
             api(projects.data.trailers.implementation)
             api(projects.data.traktauth.api)
