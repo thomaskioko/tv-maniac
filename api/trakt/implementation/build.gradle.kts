@@ -25,6 +25,7 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
                 api(projects.data.connectedAccount.api)
+                api(projects.data.library.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
                 implementation(projects.core.base)
