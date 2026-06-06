@@ -7,6 +7,7 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -43,7 +44,6 @@ import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -75,6 +75,7 @@ public class DefaultRootPresenter(
     homeGraphFactory: HomeScreenGraph.Factory,
     private val notificationRationale: NotificationRationale,
     private val traktAuthRepository: TraktAuthRepository,
+    private val connectedAccountRepository: ConnectedAccountRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
@@ -93,10 +94,10 @@ public class DefaultRootPresenter(
 
     init {
         coroutineScope.launch {
-            traktAuthRepository.state
+            connectedAccountRepository.isConnected
                 .debounce(200.milliseconds)
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .collect { refreshUserProfile() }
         }
 
@@ -112,10 +113,10 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
-            traktAuthRepository.state
+            connectedAccountRepository.isConnected
                 .debounce(500.milliseconds)
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .take(1)
                 .collect { notificationRationale.showIfNeeded() }
         }

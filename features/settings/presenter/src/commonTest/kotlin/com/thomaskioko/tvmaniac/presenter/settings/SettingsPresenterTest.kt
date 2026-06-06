@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.settings
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
@@ -27,7 +29,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
@@ -49,6 +50,7 @@ class SettingsPresenterTest {
     private val datastoreRepository = FakeDatastoreRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val traktAuthRepository = FakeTraktAuthRepository()
+    private val connectedAccountRepository = FakeConnectedAccountRepository()
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
     private val fakeActivitySyncRepository = FakeActivitySyncRepository()
@@ -66,7 +68,7 @@ class SettingsPresenterTest {
             appMetadata = FakeAppMetadata.DEFAULT,
             datastoreRepository = datastoreRepository,
             userRepository = userRepository,
-            traktAuthRepository = traktAuthRepository,
+            connectedAccountRepository = connectedAccountRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = fakeLogger,
@@ -205,7 +207,7 @@ class SettingsPresenterTest {
     fun `should resolve connected labels when logged in`() = runTest {
         presenter.state.test {
             awaitItem()
-            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
 
             var state = awaitItem()
             while (!state.isAuthenticated) {

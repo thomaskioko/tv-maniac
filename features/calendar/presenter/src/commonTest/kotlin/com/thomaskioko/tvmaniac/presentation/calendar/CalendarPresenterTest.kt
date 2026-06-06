@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
@@ -13,8 +15,6 @@ import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -39,7 +39,7 @@ internal class CalendarPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
     private val calendarRepository = FakeCalendarRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val connectedAccountRepository = FakeConnectedAccountRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val formatterUtil = FakeFormatterUtil()
     private val logger = FakeLogger()
@@ -194,7 +194,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigateNext to true given user is logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -209,7 +209,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigateNext to false given user is not logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        connectedAccountRepository.setActiveProvider(null)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -232,7 +232,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigatePrevious to true given user navigated to next week`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -265,7 +265,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should decrement week offset given NavigateToPreviousWeek is dispatched after navigating forward`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -423,7 +423,7 @@ internal class CalendarPresenterTest {
             navigator = navigator,
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
-            traktAuthRepository = traktAuthRepository,
+            connectedAccountRepository = connectedAccountRepository,
             calendarWeekCalculator = calendarWeekCalculator,
             calendarStateMapper = calendarStateMapper,
             errorToStringMapper = { it.message ?: "Test error" },

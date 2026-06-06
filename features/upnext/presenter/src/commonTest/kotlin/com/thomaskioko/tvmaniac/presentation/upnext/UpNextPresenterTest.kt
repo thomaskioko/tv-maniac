@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -28,8 +30,6 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -56,7 +56,7 @@ internal class UpNextPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val connectedAccountRepository = FakeConnectedAccountRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val logger = FakeLogger()
     private val syncObserver = FakeSyncObserver()
@@ -391,7 +391,7 @@ internal class UpNextPresenterTest {
             val state = awaitItem()
             state.episodes shouldHaveSize 1
 
-            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             cancelAndIgnoreRemainingEvents()
@@ -496,7 +496,7 @@ internal class UpNextPresenterTest {
                 libraryRepository = FakeLibraryRepository(),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
-            traktAuthRepository = traktAuthRepository,
+            connectedAccountRepository = connectedAccountRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
             syncObserver = syncObserver,

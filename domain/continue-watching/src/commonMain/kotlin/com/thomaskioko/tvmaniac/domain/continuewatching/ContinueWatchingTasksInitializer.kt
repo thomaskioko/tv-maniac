@@ -1,12 +1,11 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
@@ -22,12 +21,12 @@ public class ContinueWatchingTasksInitializer(
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
     syncContinueWatchingInteractor: Lazy<SyncContinueWatchingInteractor>,
     datastoreRepo: Lazy<DatastoreRepository>,
-    traktAuthRepo: Lazy<TraktAuthRepository>,
+    connectedAccountRepo: Lazy<ConnectedAccountRepository>,
 ) {
 
     private val syncInteractor by syncContinueWatchingInteractor
     private val datastoreRepository by datastoreRepo
-    private val traktAuthRepository by traktAuthRepo
+    private val connectedAccountRepository by connectedAccountRepo
 
     public fun init() {
         observeDataSync()
@@ -36,7 +35,7 @@ public class ContinueWatchingTasksInitializer(
 
     private fun observeDataSync() {
         coroutineScope.launch {
-            traktAuthRepository.loginEvents
+            connectedAccountRepository.connectionEvents
                 .collect {
                     withContext(NonCancellable) {
                         syncInteractor.executeSync(SyncContinueWatchingInteractor.Param())
@@ -49,10 +48,10 @@ public class ContinueWatchingTasksInitializer(
     private fun observeContinueWatchingSync() {
         coroutineScope.launch {
             combine(
-                traktAuthRepository.state,
+                connectedAccountRepository.isConnected,
                 datastoreRepository.observeBackgroundSyncEnabled(),
-            ) { authState, syncEnabled ->
-                authState == TraktAuthState.LOGGED_IN && syncEnabled
+            ) { connected, syncEnabled ->
+                connected && syncEnabled
             }
                 .distinctUntilChanged()
                 .collect { shouldSync ->

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -28,8 +29,6 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
@@ -58,7 +57,7 @@ public class UpNextPresenter(
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val connectedAccountRepository: ConnectedAccountRepository,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     syncObserver: SyncObserver,
@@ -127,9 +126,9 @@ public class UpNextPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            traktAuthRepository.state
+            connectedAccountRepository.isConnected
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .collect { refreshUpNext(isUserInitiated = false) }
         }
     }
