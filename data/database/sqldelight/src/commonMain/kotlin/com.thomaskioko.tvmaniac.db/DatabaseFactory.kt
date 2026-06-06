@@ -124,7 +124,8 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             show_idAdapter = IdAdapter(),
             tmdb_idAdapter = IdAdapter(),
         ),
-        activity_checkpointAdapter = Activity_checkpoint.Adapter(
+        activity_syncAdapter = Activity_sync.Adapter(
+            providerAdapter = ProviderColumnAdapter,
             synced_untilAdapter = InstantColumnAdapter,
             updated_atAdapter = InstantColumnAdapter,
         ),
