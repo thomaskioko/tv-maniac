@@ -85,19 +85,6 @@ public interface WatchedEpisodeDao {
 
     public suspend fun deleteById(id: Long)
 
-    /**
-     * Soft-delete the row after to delete has been pushed to Trakt. Sets pending_action to
-     * SYNCED_DELETE so a subsequent Trakt pull cannot resurrect the row before propagation
-     * completes. The synced_at column doubles as the soft-delete timestamp, used by
-     * [purgeSyncedDeletesOlderThan] for GC.
-     */
-    public suspend fun markAsSyncedDelete(id: Long)
-
-    /**
-     * Garbage collect SYNCED_DELETE rows whose synced_at is older than [thresholdMillis].
-     */
-    public suspend fun purgeSyncedDeletesOlderThan(thresholdMillis: Long)
-
     public suspend fun upsertBatchFromTrakt(
         showId: Long,
         entries: List<WatchedEpisodeEntry>,

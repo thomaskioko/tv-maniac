@@ -329,44 +329,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should resurrect SYNCED_DELETE row when Trakt re-reports the episode as watched`() = runTest {
-        val priorSyncedAt = LocalDate(2024, 1, 1).toEpochMillis()
-        database.watchedEpisodesQueries.upsertFromTrakt(
-            show_id = testShowId,
-            episode_id = Id(101L),
-            season_number = SEASON_1_NUMBER,
-            episode_number = 1L,
-            watched_at = priorSyncedAt,
-            trakt_id = 9001L,
-            synced_at = priorSyncedAt,
-            pending_action = "SYNCED_DELETE",
-        )
-
-        val laterWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(priorSyncedAt + 86_400_000L)
-        watchedEpisodeDao.upsertBatchFromTrakt(
-            showId = TEST_SHOW_ID,
-            entries = listOf(
-                WatchedEpisodeEntry(
-                    id = 0,
-                    showId = TEST_SHOW_ID,
-                    episodeId = 101L,
-                    seasonNumber = SEASON_1_NUMBER,
-                    episodeNumber = 1L,
-                    watchedAt = laterWatchedAt,
-                    traktId = 9001L,
-                ),
-            ),
-            includeSpecials = false,
-        )
-
-        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
-            val progress = awaitItem()
-            progress.watchedCount shouldBe 1
-        }
-    }
-
-    @Test
-    fun `should keep SYNCED_DELETE tombstone given stale Trakt response with older watched_at`() = runTest {
+    fun `should keep a legacy SYNCED_DELETE row hidden when the provider re-reports the episode`() = runTest {
         val syncedAt = LocalDate(2024, 6, 1).toEpochMillis()
         database.watchedEpisodesQueries.upsertFromTrakt(
             show_id = testShowId,
@@ -379,7 +342,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             pending_action = "SYNCED_DELETE",
         )
 
-        val stalerWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(syncedAt - 86_400_000L)
+        val newerWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(syncedAt + 86_400_000L)
         watchedEpisodeDao.upsertBatchFromTrakt(
             showId = TEST_SHOW_ID,
             entries = listOf(
@@ -389,7 +352,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
                     episodeId = 101L,
                     seasonNumber = SEASON_1_NUMBER,
                     episodeNumber = 1L,
-                    watchedAt = stalerWatchedAt,
+                    watchedAt = newerWatchedAt,
                     traktId = 9001L,
                 ),
             ),
