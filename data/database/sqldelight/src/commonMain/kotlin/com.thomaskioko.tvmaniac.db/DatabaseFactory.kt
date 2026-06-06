@@ -4,6 +4,7 @@ import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.adapters.IdAdapter
 import com.thomaskioko.tvmaniac.db.adapters.InstantColumnAdapter
 import com.thomaskioko.tvmaniac.db.adapters.ProviderColumnAdapter
+import com.thomaskioko.tvmaniac.db.adapters.WatchStatusColumnAdapter
 import com.thomaskioko.tvmaniac.db.adapters.stringColumnAdapter
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
@@ -133,6 +134,10 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         tvshow_external_idAdapter = Tvshow_external_id.Adapter(
             show_idAdapter = IdAdapter(),
             providerAdapter = ProviderColumnAdapter,
+        ),
+        show_watch_statusAdapter = Show_watch_status.Adapter(
+            show_idAdapter = IdAdapter(),
+            statusAdapter = WatchStatusColumnAdapter,
         ),
     )
 }
