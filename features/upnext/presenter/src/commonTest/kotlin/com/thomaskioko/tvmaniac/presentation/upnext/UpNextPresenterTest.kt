@@ -87,8 +87,8 @@ internal class UpNextPresenterTest {
     @Test
     fun `should display episodes given episodes are available`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Show 1"),
-            createTestNextEpisode(showTraktId = 2, showName = "Show 2"),
+            createTestNextEpisode(showId = 1, showName = "Show 1"),
+            createTestNextEpisode(showId = 2, showName = "Show 2"),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -107,8 +107,8 @@ internal class UpNextPresenterTest {
     @Test
     fun `should sort episodes by last watched given sort option is LAST_WATCHED`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Old Show", lastWatchedAt = 1000L),
-            createTestNextEpisode(showTraktId = 2, showName = "New Show", lastWatchedAt = 2000L),
+            createTestNextEpisode(showId = 1, showName = "Old Show", lastWatchedAt = 1000L),
+            createTestNextEpisode(showId = 2, showName = "New Show", lastWatchedAt = 2000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
         upNextRepository.setUpNextSortOption(UpNextSortOption.LAST_WATCHED.name)
@@ -128,8 +128,8 @@ internal class UpNextPresenterTest {
     @Test
     fun `should sort episodes by air date given sort option is AIR_DATE`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Old Episode", firstAired = 1000L),
-            createTestNextEpisode(showTraktId = 2, showName = "New Episode", firstAired = 2000L),
+            createTestNextEpisode(showId = 1, showName = "Old Episode", firstAired = 1000L),
+            createTestNextEpisode(showId = 2, showName = "New Episode", firstAired = 2000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
         upNextRepository.setUpNextSortOption(UpNextSortOption.AIR_DATE.name)
@@ -151,8 +151,8 @@ internal class UpNextPresenterTest {
         dateTimeProvider.setCurrentTimeMillis(5000L)
 
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Aired Show", firstAired = 3000L),
-            createTestNextEpisode(showTraktId = 2, showName = "Future Show", firstAired = 10000L),
+            createTestNextEpisode(showId = 1, showName = "Aired Show", firstAired = 3000L),
+            createTestNextEpisode(showId = 2, showName = "Future Show", firstAired = 10000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -172,8 +172,8 @@ internal class UpNextPresenterTest {
         dateTimeProvider.setCurrentTimeMillis(5000L)
 
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "No Air Date", firstAired = null),
-            createTestNextEpisode(showTraktId = 2, showName = "Aired Show", firstAired = 3000L),
+            createTestNextEpisode(showId = 1, showName = "No Air Date", firstAired = null),
+            createTestNextEpisode(showId = 2, showName = "Aired Show", firstAired = 3000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -212,7 +212,7 @@ internal class UpNextPresenterTest {
 
             presenter.dispatch(
                 MarkWatched(
-                    showTraktId = 123L,
+                    showId = 123L,
                     episodeId = 456L,
                     seasonNumber = 1L,
                     episodeNumber = 5L,
@@ -221,7 +221,7 @@ internal class UpNextPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             val call = episodeRepository.lastMarkEpisodeWatchedCall
-            call?.showTraktId shouldBe 123L
+            call?.showId shouldBe 123L
             call?.episodeId shouldBe 456L
             call?.seasonNumber shouldBe 1L
             call?.episodeNumber shouldBe 5L
@@ -232,7 +232,7 @@ internal class UpNextPresenterTest {
 
     @Test
     fun `should navigate to season details given ShowClicked action is dispatched`() = runTest {
-        val episode = createTestNextEpisode(showTraktId = 999, showName = "Test Show")
+        val episode = createTestNextEpisode(showId = 999, showName = "Test Show")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
 
         val presenter = createPresenter()
@@ -241,11 +241,11 @@ internal class UpNextPresenterTest {
             skipItems(1)
             awaitItem()
 
-            presenter.dispatch(UpNextShowClicked(showTraktId = 999L))
+            presenter.dispatch(UpNextShowClicked(showId = 999L))
 
             navigator.lastNavigatedRoute shouldBe SeasonDetailsRoute(
                 SeasonDetailsUiParam(
-                    showTraktId = 999L,
+                    showId = 999L,
                     seasonId = 9990L,
                     seasonNumber = 1L,
                 ),
@@ -256,8 +256,8 @@ internal class UpNextPresenterTest {
 
     @Test
     fun `should remove episode from list given episode is marked as watched`() = runTest {
-        val episode1 = createTestNextEpisode(showTraktId = 1, showName = "Show 1")
-        val episode2 = createTestNextEpisode(showTraktId = 2, showName = "Show 2")
+        val episode1 = createTestNextEpisode(showId = 1, showName = "Show 1")
+        val episode2 = createTestNextEpisode(showId = 2, showName = "Show 2")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode1, episode2))
 
         val presenter = createPresenter()
@@ -267,12 +267,12 @@ internal class UpNextPresenterTest {
 
             val initialState = awaitItem()
             initialState.episodes shouldHaveSize 2
-            initialState.episodes.any { it.showTraktId == 1L } shouldBe true
-            initialState.episodes.any { it.showTraktId == 2L } shouldBe true
+            initialState.episodes.any { it.showId == 1L } shouldBe true
+            initialState.episodes.any { it.showId == 2L } shouldBe true
 
             presenter.dispatch(
                 MarkWatched(
-                    showTraktId = episode1.showTraktId,
+                    showId = episode1.showId,
                     episodeId = 100L,
                     seasonNumber = 1L,
                     episodeNumber = 1L,
@@ -285,15 +285,15 @@ internal class UpNextPresenterTest {
 
             val updatedState = expectMostRecentItem()
             updatedState.episodes shouldHaveSize 1
-            updatedState.episodes.any { it.showTraktId == 1L } shouldBe false
-            updatedState.episodes.any { it.showTraktId == 2L } shouldBe true
+            updatedState.episodes.any { it.showId == 1L } shouldBe false
+            updatedState.episodes.any { it.showId == 2L } shouldBe true
             updatedState.updatingEpisodeIds.shouldBeEmpty()
         }
     }
 
     @Test
     fun `should populate updatingEpisodeIds while mark watched is in flight`() = runTest {
-        val episode = createTestNextEpisode(showTraktId = 1, showName = "Show 1")
+        val episode = createTestNextEpisode(showId = 1, showName = "Show 1")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
 
         val presenter = createPresenter()
@@ -305,7 +305,7 @@ internal class UpNextPresenterTest {
 
             presenter.dispatch(
                 MarkWatched(
-                    showTraktId = episode.showTraktId,
+                    showId = episode.showId,
                     episodeId = 100L,
                     seasonNumber = 1L,
                     episodeNumber = 1L,
@@ -324,7 +324,7 @@ internal class UpNextPresenterTest {
     @Test
     fun `should map all episode fields to ui model correctly`() = runTest {
         val episode = NextEpisodeWithShow(
-            showTraktId = 42L,
+            showId = 42L,
             showTmdbId = 84L,
             episodeId = 100L,
             episodeName = "Pilot",
@@ -355,7 +355,7 @@ internal class UpNextPresenterTest {
             state.episodes shouldHaveSize 1
 
             val uiModel = state.episodes[0]
-            uiModel.showTraktId shouldBe 42L
+            uiModel.showId shouldBe 42L
             uiModel.showTmdbId shouldBe 84L
             uiModel.episodeId shouldBe 100L
             uiModel.episodeName shouldBe "Pilot"
@@ -379,7 +379,7 @@ internal class UpNextPresenterTest {
     @Test
     fun `should refresh data given auth state changes to logged in`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Show 1"),
+            createTestNextEpisode(showId = 1, showName = "Show 1"),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -433,7 +433,7 @@ internal class UpNextPresenterTest {
     @Test
     fun `should not show loading given sync in progress and episodes present`() = runTest {
         upNextRepository.setNextEpisodesForWatchlist(
-            listOf(createTestNextEpisode(showTraktId = 1, showName = "Show 1")),
+            listOf(createTestNextEpisode(showId = 1, showName = "Show 1")),
         )
         syncObserver.setSyncing(true)
 
@@ -504,16 +504,16 @@ internal class UpNextPresenterTest {
     }
 
     private fun createTestNextEpisode(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
         firstAired: Long? = null,
     ): NextEpisodeWithShow = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
-        episodeId = showTraktId * 100,
+        showId = showId,
+        showTmdbId = showId,
+        episodeId = showId * 100,
         episodeName = "Episode 1",
-        seasonId = showTraktId * 10,
+        seasonId = showId * 10,
         seasonNumber = 1L,
         episodeNumber = 1L,
         runtime = 45L,

@@ -61,13 +61,13 @@ internal fun HorizontalRowContent(
                 ) {
                     items(
                         items = tvShows,
-                        key = { tvShow -> "${rowKey}_${tvShow.traktId}" },
+                        key = { tvShow -> "${rowKey}_${tvShow.showId}" },
                         contentType = { "ShowModel" },
                     ) { tvShow ->
                         PosterCard(
                             imageUrl = tvShow.posterImageUrl,
-                            onClick = { onItemClicked(tvShow.traktId) },
-                            modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.traktId)),
+                            onClick = { onItemClicked(tvShow.showId) },
+                            modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.showId)),
                             title = tvShow.title,
                             isInLibrary = tvShow.inLibrary,
                         )

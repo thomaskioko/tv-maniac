@@ -91,8 +91,8 @@ class ContinueWatchingPresenterTest {
     @Test
     fun `should emit watchNextEpisodes when episodes are available`() = runTest {
         val nextEpisodes = listOf(
-            createNextEpisodeWithShow(showTraktId = 1L, showName = "Loki", episodeId = 101L),
-            createNextEpisodeWithShow(showTraktId = 2L, showName = "Wednesday", episodeId = 201L),
+            createNextEpisodeWithShow(showId = 1L, showName = "Loki", episodeId = 101L),
+            createNextEpisodeWithShow(showId = 2L, showName = "Wednesday", episodeId = 201L),
         )
 
         presenter.state.test {
@@ -110,8 +110,8 @@ class ContinueWatchingPresenterTest {
     @Test
     fun `should filter watchNextEpisodes by show name when query is active`() = runTest {
         val nextEpisodes = listOf(
-            createNextEpisodeWithShow(showTraktId = 1L, showName = "Loki", episodeId = 101L),
-            createNextEpisodeWithShow(showTraktId = 2L, showName = "Wednesday", episodeId = 201L),
+            createNextEpisodeWithShow(showId = 1L, showName = "Loki", episodeId = 101L),
+            createNextEpisodeWithShow(showId = 2L, showName = "Wednesday", episodeId = 201L),
         )
 
         presenter.state.test {
@@ -137,7 +137,7 @@ class ContinueWatchingPresenterTest {
         factory.dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val premiereEpisode = createNextEpisodeWithShow(
-            showTraktId = 1L,
+            showId = 1L,
             showName = "Loki",
             episodeId = 101L,
             episodeNumber = 1L,
@@ -165,13 +165,13 @@ class ContinueWatchingPresenterTest {
         factory.dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val staleEpisode = createNextEpisodeWithShow(
-            showTraktId = 1L,
+            showId = 1L,
             showName = "Stale Show",
             episodeId = 101L,
             lastWatchedAt = seventeenDaysAgo,
         )
         val activeEpisode = createNextEpisodeWithShow(
-            showTraktId = 2L,
+            showId = 2L,
             showName = "Active Show",
             episodeId = 201L,
             lastWatchedAt = oneDayAgo,
@@ -196,7 +196,7 @@ class ContinueWatchingPresenterTest {
     }
 
     private fun createNextEpisodeWithShow(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
         episodeId: Long,
         episodeNumber: Long = 2L,
@@ -204,8 +204,8 @@ class ContinueWatchingPresenterTest {
         lastWatchedAt: Long? = null,
         firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
     ) = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
+        showId = showId,
+        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

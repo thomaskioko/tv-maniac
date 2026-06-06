@@ -261,7 +261,7 @@ public class DefaultRootPresenter(
                 navigator.navigateTo(
                     ShowDetailsRoute(
                         param = ShowDetailsParam(
-                            id = destination.showId,
+                            showId = destination.showId,
                             forceRefresh = destination.forceRefresh,
                         ),
                     ),
@@ -271,7 +271,7 @@ public class DefaultRootPresenter(
                 navigator.navigateTo(
                     SeasonDetailsRoute(
                         param = SeasonDetailsUiParam(
-                            showTraktId = destination.showId,
+                            showId = destination.showId,
                             seasonNumber = destination.seasonNumber,
                             seasonId = destination.seasonId,
                             forceRefresh = destination.forceRefresh,

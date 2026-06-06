@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.calendar.model
 
 public data class CalendarEpisodeItem(
-    val showTraktId: Long,
-    val episodeTraktId: Long,
+    val showId: Long,
+    val episodeId: Long,
     val showTitle: String,
     val posterUrl: String?,
     val episodeInfo: String,

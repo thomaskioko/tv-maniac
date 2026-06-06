@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 @AssistedInject
 public class TrailersPresenter(
     componentContext: ComponentContext,
-    @Assisted private val traktShowId: Long,
+    @Assisted private val showId: Long,
     private val repository: TrailerRepository,
 ) {
 
@@ -55,7 +55,7 @@ public class TrailersPresenter(
     }
 
     private suspend fun observeTrailerInfo() {
-        repository.observeTrailers(traktShowId)
+        repository.observeTrailers(showId)
             .collectLatest { result ->
                 _state.update {
                     TrailersContent(
@@ -68,6 +68,6 @@ public class TrailersPresenter(
 
     @AssistedFactory
     public fun interface Factory {
-        public fun create(traktShowId: Long): TrailersPresenter
+        public fun create(showId: Long): TrailersPresenter
     }
 }

@@ -138,7 +138,7 @@ internal class MultiStackNavStateSerializerTest {
                         DiscoverTestRoot,
                         SeasonDetailsRoute(
                             SeasonDetailsUiParam(
-                                showTraktId = 1,
+                                showId = 1,
                                 seasonId = 2,
                                 seasonNumber = 3,
                                 forceRefresh = false,

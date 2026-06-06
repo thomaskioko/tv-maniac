@@ -152,7 +152,7 @@ class ShowDetailsPresenterTest {
             ),
             similarShows = persistentListOf(
                 ShowModel(
-                    traktId = 18495,
+                    showId = 18495,
                     title = "Loki",
                     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                     backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -232,7 +232,7 @@ class ShowDetailsPresenterTest {
         presenter.dispatch(
             SeasonClicked(
                 ShowSeasonDetailsParam(
-                    showTraktId = 2,
+                    showId = 2,
                     selectedSeasonIndex = 2,
                     seasonNumber = 0,
                     seasonId = 0,
@@ -292,7 +292,7 @@ class ShowDetailsPresenterTest {
 
             presenter.dispatch(
                 MarkEpisodeWatched(
-                    showTraktId = 84958,
+                    showId = 84958,
                     episodeId = 1001,
                     seasonNumber = 1,
                     episodeNumber = 1,
@@ -302,7 +302,7 @@ class ShowDetailsPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showTraktId = 84958,
+                showId = 84958,
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -319,7 +319,7 @@ class ShowDetailsPresenterTest {
 
             presenter.dispatch(
                 MarkEpisodeUnwatched(
-                    showTraktId = 84958,
+                    showId = 84958,
                     episodeId = 1001,
                 ),
             )
@@ -327,7 +327,7 @@ class ShowDetailsPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe MarkEpisodeUnwatchedCall(
-                showTraktId = 84958,
+                showId = 84958,
                 episodeId = 1001,
             )
         }
@@ -497,7 +497,7 @@ class ShowDetailsPresenterTest {
 
         presenter.dispatch(
             MarkEpisodeWatched(
-                showTraktId = 84958,
+                showId = 84958,
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -704,7 +704,7 @@ class ShowDetailsPresenterTest {
     }
 
     private fun buildShowDetailsPresenter(
-        param: ShowDetailsParam = ShowDetailsParam(id = 84958),
+        param: ShowDetailsParam = ShowDetailsParam(showId = 84958),
         onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
         val notificationRationale = object : NotificationRationale {

@@ -186,7 +186,7 @@ public class DiscoverShowsPresenter(
 
         public fun dispatch(action: DiscoverShowAction) {
             when (action) {
-                is ShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+                is ShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
                 PopularClicked -> navigator.navigateTo(MoreShowsRoute(Category.POPULAR.id))
                 TopRatedClicked -> navigator.navigateTo(MoreShowsRoute(Category.TOP_RATED.id))
                 TrendingClicked -> navigator.navigateTo(MoreShowsRoute(Category.TRENDING_TODAY.id))
@@ -197,10 +197,10 @@ public class DiscoverShowsPresenter(
                 is UpdateShowInLibrary -> {
                     coroutineScope.launch {
                         if (action.inLibrary) {
-                            unfollowShowInteractor.executeSync(action.traktId)
+                            unfollowShowInteractor.executeSync(action.showId)
                         } else {
                             followShowInteractor.executeSync(
-                                FollowShowInteractor.Param(traktId = action.traktId),
+                                FollowShowInteractor.Param(showId = action.showId),
                             )
                         }
                     }
@@ -211,7 +211,7 @@ public class DiscoverShowsPresenter(
                 is NextEpisodeClicked -> navigator.navigateTo(
                     SeasonDetailsRoute(
                         SeasonDetailsUiParam(
-                            showTraktId = action.showTraktId,
+                            showId = action.showId,
                             seasonId = action.seasonId,
                             seasonNumber = action.seasonNumber,
                         ),
@@ -221,7 +221,7 @@ public class DiscoverShowsPresenter(
                     coroutineScope.launch {
                         markEpisodeWatchedInteractor(
                             MarkEpisodeWatchedParams(
-                                showTraktId = action.showTraktId,
+                                showId = action.showId,
                                 episodeId = action.episodeId,
                                 seasonNumber = action.seasonNumber,
                                 episodeNumber = action.episodeNumber,
@@ -231,20 +231,20 @@ public class DiscoverShowsPresenter(
                 }
                 is UnfollowShowFromUpNext -> {
                     coroutineScope.launch {
-                        unfollowShowInteractor.executeSync(action.showTraktId)
+                        unfollowShowInteractor.executeSync(action.showId)
                     }
                 }
                 is OpenSeasonFromUpNext -> navigator.navigateTo(
                     SeasonDetailsRoute(
                         SeasonDetailsUiParam(
-                            showTraktId = action.showTraktId,
+                            showId = action.showId,
                             seasonId = action.seasonId,
                             seasonNumber = action.seasonNumber,
                         ),
                     ),
                 )
                 is OpenShowFromUpNext -> navigator.navigateTo(
-                    ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)),
+                    ShowDetailsRoute(ShowDetailsParam(showId = action.showId)),
                 )
                 SearchIconClicked -> navigator.navigateTo(SearchRoute)
                 is DiscoverEpisodeLongPressed -> navigator.navigateTo(
@@ -298,7 +298,7 @@ public class DiscoverShowsPresenter(
 
 private fun UpNextEpisode.toUiModel(): NextEpisodeUiModel {
     return NextEpisodeUiModel(
-        showTraktId = showTraktId,
+        showId = showId,
         showName = showName,
         imageUrl = stillPath ?: showPoster,
         episodeId = episodeId,

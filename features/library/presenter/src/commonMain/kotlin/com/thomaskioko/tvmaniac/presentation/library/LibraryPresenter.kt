@@ -117,7 +117,7 @@ public class LibraryPresenter(
 
     public fun dispatch(action: LibraryAction) {
         when (action) {
-            is LibraryShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            is LibraryShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is LibraryQueryChanged -> updateQuery(action.query)
             is ClearLibraryQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
@@ -285,7 +285,7 @@ public class LibraryPresenter(
 }
 
 private fun LibraryItem.toLibraryShowItem(): LibraryShowItem = LibraryShowItem(
-    traktId = traktId,
+    showId = showId,
     tmdbId = tmdbId,
     title = title,
     posterImageUrl = posterPath,

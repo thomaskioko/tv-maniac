@@ -189,7 +189,7 @@ internal class EpisodeSheetPresenterTest {
 
             val call = episodeRepository.lastMarkEpisodeWatchedCall
             call shouldBe com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall(
-                showTraktId = 100L,
+                showId = 100L,
                 episodeId = 1L,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -215,7 +215,7 @@ internal class EpisodeSheetPresenterTest {
 
             val call = episodeRepository.lastMarkEpisodeUnwatchedCall
             call shouldBe com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall(
-                showTraktId = 100L,
+                showId = 100L,
                 episodeId = 1L,
             )
             navigator.overlayDismissCount shouldBe 1
@@ -242,7 +242,7 @@ internal class EpisodeSheetPresenterTest {
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe
                 com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall(
-                    showTraktId = 100L,
+                    showId = 100L,
                     episodeId = 1L,
                     seasonNumber = 1L,
                     episodeNumber = 1L,
@@ -263,7 +263,7 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.OpenShow)
 
-            (navigator.lastNavigatedRoute as ShowDetailsRoute).param.id shouldBe 100L
+            (navigator.lastNavigatedRoute as ShowDetailsRoute).param.showId shouldBe 100L
             navigator.overlayDismissCount shouldBe 1
         }
     }
@@ -282,7 +282,7 @@ internal class EpisodeSheetPresenterTest {
             presenter.dispatch(EpisodeSheetAction.OpenSeason)
 
             val seasonRoute = navigator.lastNavigatedRoute as SeasonDetailsRoute
-            seasonRoute.param.showTraktId shouldBe 100L
+            seasonRoute.param.showId shouldBe 100L
             seasonRoute.param.seasonId shouldBe 10L
             seasonRoute.param.seasonNumber shouldBe 1L
             navigator.overlayDismissCount shouldBe 1

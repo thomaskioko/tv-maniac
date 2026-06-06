@@ -4,7 +4,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 public data class LibraryShowItem(
-    val traktId: Long,
+    val showId: Long,
     val tmdbId: Long?,
     val title: String,
     val posterImageUrl: String? = null,

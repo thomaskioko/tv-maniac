@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class ShowDetailsParam(
-    val id: Long,
+    val showId: Long,
     val forceRefresh: Boolean = false,
 )

@@ -108,7 +108,7 @@ class UpNextScreenshotTest {
 
 private fun sampleEpisodes() = listOf(
     UpNextEpisodeUiModel(
-        showTraktId = 1,
+        showId = 1,
         showTmdbId = 1396,
         showName = "Breaking Bad",
         imageUrl = null,
@@ -131,7 +131,7 @@ private fun sampleEpisodes() = listOf(
         formattedRuntime = "47m",
     ),
     UpNextEpisodeUiModel(
-        showTraktId = 2,
+        showId = 2,
         showTmdbId = 1399,
         showName = "Game of Thrones",
         imageUrl = null,
@@ -154,7 +154,7 @@ private fun sampleEpisodes() = listOf(
         formattedRuntime = "52m",
     ),
     UpNextEpisodeUiModel(
-        showTraktId = 3,
+        showId = 3,
         showTmdbId = 66732,
         showName = "Stranger Things",
         imageUrl = null,

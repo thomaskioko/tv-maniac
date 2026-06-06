@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal class LibraryListItemPreviewParameterProvider : PreviewParameterProvider<LibraryShowItem> {
     override val values: Sequence<LibraryShowItem> = sequenceOf(
         LibraryShowItem(
-            traktId = 1,
+            showId = 1,
             tmdbId = 1396,
             title = "Breaking Bad",
             posterImageUrl = null,
@@ -25,7 +25,7 @@ internal class LibraryListItemPreviewParameterProvider : PreviewParameterProvide
             ),
         ),
         LibraryShowItem(
-            traktId = 2,
+            showId = 2,
             tmdbId = 1399,
             title = "Game of Thrones: A Very Long Title That Should Wrap to Multiple Lines",
             posterImageUrl = null,
@@ -39,7 +39,7 @@ internal class LibraryListItemPreviewParameterProvider : PreviewParameterProvide
             watchProviders = persistentListOf(),
         ),
         LibraryShowItem(
-            traktId = 3,
+            showId = 3,
             tmdbId = null,
             title = "Minimal Show",
             posterImageUrl = null,

@@ -83,7 +83,7 @@ private fun EpisodeRow(
     ) {
         items(
             items = items,
-            key = { "${it.traktId}-${it.episodeLabel}" },
+            key = { "${it.showId}-${it.episodeLabel}" },
         ) { item ->
             EpisodeCard(item = item, posterWidth = posterWidth, onShowClick = onShowClick)
         }
@@ -102,8 +102,8 @@ private fun EpisodeCard(
             title = item.title,
             imageWidth = posterWidth,
             shape = MaterialTheme.shapes.medium,
-            onClick = { onShowClick(item.traktId) },
-            modifier = Modifier.testTag(ProfileTestTags.showCard(item.traktId)),
+            onClick = { onShowClick(item.showId) },
+            modifier = Modifier.testTag(ProfileTestTags.showCard(item.showId)),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -171,14 +171,14 @@ private fun RecentlyWatchedSectionPreview() {
         recentlyWatched = SectionState.Content(
             persistentListOf(
                 ProfileRecentItem(
-                    traktId = 1,
+                    showId = 1,
                     tmdbId = 1396,
                     title = "Breaking Bad",
                     posterUrl = null,
                     episodeLabel = "S05E14",
                 ),
                 ProfileRecentItem(
-                    traktId = 2,
+                    showId = 2,
                     tmdbId = 1399,
                     title = "Game of Thrones",
                     posterUrl = null,

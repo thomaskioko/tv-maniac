@@ -91,7 +91,7 @@ internal fun UpNextScreenContent(
 ) {
     val listState = rememberLazyListState()
 
-    LaunchedEffect(state.episodes.firstOrNull()?.showTraktId, state.sortOption) {
+    LaunchedEffect(state.episodes.firstOrNull()?.showId, state.sortOption) {
         listState.animateScrollToItem(0)
     }
 
@@ -173,7 +173,7 @@ private fun UpNextLoadedContent(
     ) {
         items(
             items = state.episodes,
-            key = { it.showTraktId },
+            key = { it.showId },
             contentType = { "UpNextItem" },
         ) { episode ->
             UpNextListItem(
@@ -183,7 +183,7 @@ private fun UpNextLoadedContent(
                 onMarkWatched = {
                     onAction(
                         MarkWatched(
-                            showTraktId = episode.showTraktId,
+                            showId = episode.showId,
                             episodeId = episode.episodeId!!,
                             seasonNumber = episode.seasonNumber!!,
                             episodeNumber = episode.episodeNumber!!,

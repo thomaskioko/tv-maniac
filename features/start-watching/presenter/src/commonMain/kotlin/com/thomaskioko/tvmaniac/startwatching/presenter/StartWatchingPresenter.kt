@@ -93,14 +93,14 @@ public class StartWatchingPresenter(
 
     public fun dispatch(action: StartWatchingAction) {
         when (action) {
-            is StartWatchingShowClicked -> navigateToShowDetails(action.traktId)
+            is StartWatchingShowClicked -> navigateToShowDetails(action.showId)
             is StartWatchingMessageShown -> clearMessage(action.id)
             is RefreshStartWatching -> syncStartWatching(action.forceRefresh)
         }
     }
 
-    private fun navigateToShowDetails(traktId: Long) {
-        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = traktId)))
+    private fun navigateToShowDetails(showId: Long) {
+        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = showId)))
     }
 
     private fun syncStartWatching(forceRefresh: Boolean) {

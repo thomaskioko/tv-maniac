@@ -59,7 +59,7 @@ internal fun UpNextListItem(
             .fillMaxWidth()
             .height(140.dp)
             .padding(horizontal = 8.dp)
-            .clickable(onClick = { onItemClicked(item.showTraktId) }),
+            .clickable(onClick = { onItemClicked(item.showId) }),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -67,16 +67,16 @@ internal fun UpNextListItem(
     ) {
         Row(
             modifier = Modifier
-                .testTag(UpNextTestTags.episodeRow(item.showTraktId))
+                .testTag(UpNextTestTags.episodeRow(item.showId))
                 .combinedClickable(
-                    onClick = { onItemClicked(item.showTraktId) },
+                    onClick = { onItemClicked(item.showId) },
                     onLongClick = onLongPress,
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PosterCard(
                 imageUrl = item.imageUrl,
-                onClick = { onItemClicked(item.showTraktId) },
+                onClick = { onItemClicked(item.showId) },
                 title = item.showName,
                 aspectRatio = 100f / 140f,
             )
@@ -94,7 +94,7 @@ internal fun UpNextListItem(
             ) {
                 TextTitlePill(
                     showName = item.showName,
-                    onClick = { onItemClicked(item.showTraktId) },
+                    onClick = { onItemClicked(item.showId) },
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -161,7 +161,7 @@ internal fun UpNextListItem(
                 modifier = Modifier
                     .padding(12.dp)
                     .size(28.dp)
-                    .testTag(UpNextTestTags.watchedButton(item.showTraktId)),
+                    .testTag(UpNextTestTags.watchedButton(item.showId)),
                 shape = CircleShape,
                 color = grey,
             ) {

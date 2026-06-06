@@ -381,12 +381,12 @@ class DiscoverShowsPresenterTest {
         )
 
         testNavigator.test {
-            testPresenter.dispatch(NextEpisodeClicked(showTraktId = 123L, seasonId = 10L, seasonNumber = 2L))
+            testPresenter.dispatch(NextEpisodeClicked(showId = 123L, seasonId = 10L, seasonNumber = 2L))
 
             awaitNavigateTo(
                 SeasonDetailsRoute(
                     param = SeasonDetailsUiParam(
-                        showTraktId = 123L,
+                        showId = 123L,
                         seasonId = 10L,
                         seasonNumber = 2L,
                     ),
@@ -436,7 +436,7 @@ class DiscoverShowsPresenterTest {
 
     private fun createNextEpisodesList(size: Int = LIST_SIZE) = List(size) { index ->
         NextEpisodeWithShow(
-            showTraktId = 84958L + index,
+            showId = 84958L + index,
             showTmdbId = 84958L + index,
             showName = "Test Show $index",
             showPoster = "/test-poster-$index.jpg",
@@ -460,7 +460,7 @@ class DiscoverShowsPresenterTest {
     private fun nextEpisodeUiModelList(size: Int = LIST_SIZE) =
         createNextEpisodesList(size).map { episode ->
             NextEpisodeUiModel(
-                showTraktId = episode.showTraktId,
+                showId = episode.showId,
                 showName = episode.showName!!,
                 imageUrl = episode.stillPath ?: episode.showPoster,
                 episodeId = episode.episodeId!!,
@@ -477,7 +477,7 @@ class DiscoverShowsPresenterTest {
 
     private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {
         ShowEntity(
-            traktId = 84958,
+            showId = 84958,
             tmdbId = 84958,
             title = "Loki",
             posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -488,7 +488,7 @@ class DiscoverShowsPresenterTest {
     private fun uiModelList(size: Int = LIST_SIZE) = createDiscoverShowList(size).map {
         DiscoverShow(
             tmdbId = it.tmdbId,
-            traktId = it.traktId,
+            showId = it.showId,
             title = it.title,
             posterImageUrl = it.posterPath,
             inLibrary = it.inLibrary,
@@ -497,11 +497,11 @@ class DiscoverShowsPresenterTest {
     }.toImmutableList()
 
     private val startWatchingShowList = listOf(
-        StartWatchingShow(traktId = 1, tmdbId = 11, title = "Breaking Bad", posterPath = "/1.jpg", year = "2008", inLibrary = true),
+        StartWatchingShow(showId = 1, tmdbId = 11, title = "Breaking Bad", posterPath = "/1.jpg", year = "2008", inLibrary = true),
     )
 
     private val expectedStartWatchingDiscoverShows = listOf(
-        DiscoverShow(traktId = 1, tmdbId = 11, title = "Breaking Bad", posterImageUrl = "/1.jpg", inLibrary = true),
+        DiscoverShow(showId = 1, tmdbId = 11, title = "Breaking Bad", posterImageUrl = "/1.jpg", inLibrary = true),
     ).toImmutableList()
 
     companion object {

@@ -103,7 +103,7 @@ public class CalendarPresenter(
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
             is EpisodeCardClicked -> navigator.navigateTo(
-                EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeTraktId, source = ScreenSource.CALENDAR)),
+                EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeId, source = ScreenSource.CALENDAR)),
             )
             is MessageShown -> clearMessage(action.id)
         }

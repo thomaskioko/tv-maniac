@@ -153,7 +153,7 @@ private fun CalendarBody(
                 moreEpisodesFormat = state.moreEpisodesFormat,
                 contentPadding = contentPadding,
                 scrollBehavior = scrollBehavior,
-                onEpisodeClicked = { episodeTraktId -> onAction(EpisodeCardClicked(episodeTraktId)) },
+                onEpisodeClicked = { episodeId -> onAction(EpisodeCardClicked(episodeId)) },
             )
         }
     }
@@ -258,13 +258,13 @@ private fun CalendarContent(
 
             items(
                 items = dateGroup.episodes,
-                key = { "${dateGroup.dateLabel}_${it.showTraktId}" },
+                key = { "${dateGroup.dateLabel}_${it.showId}" },
             ) { episode ->
                 CalendarEpisodeCard(
-                    modifier = Modifier.testTag(CalendarTestTags.episodeCard(episode.episodeTraktId)),
+                    modifier = Modifier.testTag(CalendarTestTags.episodeCard(episode.episodeId)),
                     episode = episode,
                     moreEpisodesFormat = moreEpisodesFormat,
-                    onClick = { onEpisodeClicked(episode.episodeTraktId) },
+                    onClick = { onEpisodeClicked(episode.episodeId) },
                 )
             }
         }
@@ -364,7 +364,7 @@ private fun CalendarEpisodeCard(
             if (episode.additionalEpisodesCount > 0) {
                 Box(
                     modifier = Modifier
-                        .testTag(CalendarTestTags.additionalEpisodesCount(episode.episodeTraktId))
+                        .testTag(CalendarTestTags.additionalEpisodesCount(episode.episodeId))
                         .semantics(mergeDescendants = true) {}
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -398,8 +398,8 @@ private fun CalendarScreenPreview() {
                     dateLabel = "Today, Jan 31, 2026",
                     episodes = persistentListOf(
                         CalendarEpisodeItem(
-                            showTraktId = 1,
-                            episodeTraktId = 100,
+                            showId = 1,
+                            episodeId = 100,
                             showTitle = "Severance",
                             posterUrl = null,
                             episodeInfo = "S02E01 · Hello, Ms. Cobel",
@@ -418,8 +418,8 @@ private fun CalendarScreenPreview() {
                     dateLabel = "Tomorrow, Feb 1, 2026",
                     episodes = persistentListOf(
                         CalendarEpisodeItem(
-                            showTraktId = 2,
-                            episodeTraktId = 200,
+                            showId = 2,
+                            episodeId = 200,
                             showTitle = "Hell's Paradise",
                             posterUrl = null,
                             episodeInfo = "S02E04 · The Battle Begins",
