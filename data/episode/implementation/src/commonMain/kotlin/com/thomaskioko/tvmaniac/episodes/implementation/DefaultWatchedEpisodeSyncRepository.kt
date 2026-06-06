@@ -146,15 +146,15 @@ public class DefaultWatchedEpisodeSyncRepository(
     ) {
         logger.debug(TAG, "Processing ${pending.size} pending deletes")
 
-        val episodeTraktIds = pending.mapNotNull { episode ->
+        val episodeIds = pending.mapNotNull { episode ->
             episodesDao.getEpisodeByShowSeasonEpisodeNumber(
                 showId = episode.show_trakt_id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
             )?.trakt_id
         }
-        if (episodeTraktIds.isNotEmpty()) {
-            dataSource.removeEpisodeWatches(episodeTraktIds)
+        if (episodeIds.isNotEmpty()) {
+            dataSource.removeEpisodeWatches(episodeIds)
         }
 
         pending.forEach { episode ->

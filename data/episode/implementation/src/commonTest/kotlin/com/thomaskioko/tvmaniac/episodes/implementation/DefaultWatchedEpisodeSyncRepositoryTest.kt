@@ -243,8 +243,8 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         limit: Int,
     ): List<com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch> = emptyList()
     override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {}
-    override suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>) {
-        _removedTraktIds += episodeTraktIds
+    override suspend fun removeEpisodeWatches(episodeIds: List<Long>) {
+        _removedTraktIds += episodeIds
     }
 }
 

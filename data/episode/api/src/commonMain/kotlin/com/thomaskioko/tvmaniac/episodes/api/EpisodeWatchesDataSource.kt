@@ -23,5 +23,5 @@ public interface EpisodeWatchesDataSource {
      * episode in a single call, which matches the app's "unwatch" intent
      * (one episode toggle removes every prior play of that episode).
      */
-    public suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>)
+    public suspend fun removeEpisodeWatches(episodeIds: List<Long>)
 }

@@ -105,11 +105,11 @@ public class TraktEpisodeWatchesDataSource(
         }
     }
 
-    override suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>) {
-        if (episodeTraktIds.isEmpty()) return
+    override suspend fun removeEpisodeWatches(episodeIds: List<Long>) {
+        if (episodeIds.isEmpty()) return
 
         val items = TraktSyncItems(
-            episodes = episodeTraktIds.map { id ->
+            episodes = episodeIds.map { id ->
                 TraktSyncEpisode(ids = TraktEpisodeIds(traktId = id))
             },
         )

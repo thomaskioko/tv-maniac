@@ -72,7 +72,7 @@ public class ProgressContinueWatchingFetcher(
         var rateLimitedAt: Long? = null
         for (showId in candidates) {
             val response = traktSyncDataSource.getShowWatchedProgress(
-                traktId = showId,
+                showId = showId,
                 lastActivity = lastActivity,
                 specials = includeSpecials,
             )

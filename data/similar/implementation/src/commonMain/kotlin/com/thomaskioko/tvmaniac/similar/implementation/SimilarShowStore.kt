@@ -42,7 +42,7 @@ public class SimilarShowStore(
     fetcher = Fetcher.of { param: SimilarParams ->
         coroutineScope {
             val results = traktRemoteDataSource.getRelatedShows(
-                traktId = param.showId,
+                showId = param.showId,
                 page = param.page.toInt(),
             ).getOrThrow()
                 .mapNotNull { show ->

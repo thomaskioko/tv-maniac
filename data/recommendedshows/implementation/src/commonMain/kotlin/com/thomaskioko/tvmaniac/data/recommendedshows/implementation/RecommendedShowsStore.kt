@@ -46,7 +46,7 @@ public class RecommendedShowsStore(
     fetcher = Fetcher.of { param: RecommendedShowsParams ->
         coroutineScope {
             traktRemoteDataSource.getRelatedShows(
-                traktId = param.showId,
+                showId = param.showId,
                 page = param.page.toInt(),
             ).getOrThrow()
                 .mapNotNull { show ->

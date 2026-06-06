@@ -42,7 +42,7 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         addEpisodeWatchesInvocations.add(watches)
     }
 
-    override suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>) {
-        removeEpisodeWatchesInvocations.add(episodeTraktIds)
+    override suspend fun removeEpisodeWatches(episodeIds: List<Long>) {
+        removeEpisodeWatchesInvocations.add(episodeIds)
     }
 }

@@ -115,15 +115,15 @@ public class DefaultTraktListRemoteDataSource(
         }
 
     override suspend fun addShowToWatchListById(
-        traktId: Long,
-    ): ApiResponse<TraktAddShowToListResponse> = addShowsToWatchListByIds(listOf(traktId))
+        showId: Long,
+    ): ApiResponse<TraktAddShowToListResponse> = addShowsToWatchListByIds(listOf(showId))
 
     override suspend fun removeShowFromWatchListById(
-        traktId: Long,
-    ): ApiResponse<TraktAddRemoveShowFromListResponse> = removeShowsFromWatchListByIds(listOf(traktId))
+        showId: Long,
+    ): ApiResponse<TraktAddRemoveShowFromListResponse> = removeShowsFromWatchListByIds(listOf(showId))
 
     override suspend fun addShowsToWatchListByIds(
-        traktIds: List<Long>,
+        showIds: List<Long>,
     ): ApiResponse<TraktAddShowToListResponse> =
         httpClient.authSafeRequest {
             url {
@@ -133,13 +133,13 @@ public class DefaultTraktListRemoteDataSource(
             contentType(ContentType.Application.Json)
             setBody(
                 TraktAddShowRequest(
-                    shows = traktIds.map { TraktShow(ids = TraktShowIds(traktId = it)) },
+                    shows = showIds.map { TraktShow(ids = TraktShowIds(traktId = it)) },
                 ),
             )
         }
 
     override suspend fun removeShowsFromWatchListByIds(
-        traktIds: List<Long>,
+        showIds: List<Long>,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> =
         httpClient.authSafeRequest {
             url {
@@ -149,7 +149,7 @@ public class DefaultTraktListRemoteDataSource(
             contentType(ContentType.Application.Json)
             setBody(
                 TraktAddShowRequest(
-                    shows = traktIds.map { TraktShow(ids = TraktShowIds(traktId = it)) },
+                    shows = showIds.map { TraktShow(ids = TraktShowIds(traktId = it)) },
                 ),
             )
         }
@@ -157,7 +157,7 @@ public class DefaultTraktListRemoteDataSource(
     override suspend fun addShowToList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddShowToListResponse> =
         httpClient.authSafeRequest {
             url {
@@ -170,7 +170,7 @@ public class DefaultTraktListRemoteDataSource(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = traktShowId,
+                                traktId = showId,
                             ),
                         ),
                     ),
@@ -181,7 +181,7 @@ public class DefaultTraktListRemoteDataSource(
     override suspend fun removeShowFromList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> =
         httpClient.authSafeRequest {
             url {
@@ -194,7 +194,7 @@ public class DefaultTraktListRemoteDataSource(
                     shows = listOf(
                         TraktShow(
                             ids = TraktShowIds(
-                                traktId = traktShowId,
+                                traktId = showId,
                             ),
                         ),
                     ),

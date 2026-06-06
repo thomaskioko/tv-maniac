@@ -24,11 +24,11 @@ public class DefaultTraktEpisodeRemoteDataSource(
     private val httpClient: HttpClient,
 ) : TraktEpisodeHistoryRemoteDataSource {
 
-    override suspend fun getShowEpisodeWatches(showTraktId: Long): ApiResponse<List<TraktHistoryEntry>> =
+    override suspend fun getShowEpisodeWatches(showId: Long): ApiResponse<List<TraktHistoryEntry>> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
-                path("users/me/history/shows/$showTraktId")
+                path("users/me/history/shows/$showId")
                 parameters.append("extended", "noseasons")
                 parameters.append("limit", "10000")
             }

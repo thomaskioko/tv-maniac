@@ -142,7 +142,7 @@ class DefaultTraktListRemoteDataSourceTest {
         }
         val dataSource = createDataSource(engine)
 
-        dataSource.addShowsToWatchListByIds(traktIds = listOf(101L, 202L, 303L))
+        dataSource.addShowsToWatchListByIds(showIds = listOf(101L, 202L, 303L))
 
         requestCount shouldBe 1
         capturedBody shouldContain "101"
@@ -168,7 +168,7 @@ class DefaultTraktListRemoteDataSourceTest {
         }
         val dataSource = createDataSource(engine)
 
-        dataSource.removeShowsFromWatchListByIds(traktIds = listOf(404L, 505L))
+        dataSource.removeShowsFromWatchListByIds(showIds = listOf(404L, 505L))
 
         requestCount shouldBe 1
         capturedPath shouldBe "/sync/watchlist/remove"
