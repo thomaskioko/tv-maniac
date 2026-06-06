@@ -278,19 +278,19 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
         tmdbId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 
-    override suspend fun addShowToWatchListByTraktId(
+    override suspend fun addShowToWatchListById(
         showId: Long,
     ): ApiResponse<TraktAddShowToListResponse> = error("not used")
 
-    override suspend fun removeShowFromWatchListByTraktId(
+    override suspend fun removeShowFromWatchListById(
         showId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 
-    override suspend fun addShowsToWatchListByTraktIds(
+    override suspend fun addShowsToWatchListByIds(
         showIds: List<Long>,
     ): ApiResponse<TraktAddShowToListResponse> = error("not used")
 
-    override suspend fun removeShowsFromWatchListByTraktIds(
+    override suspend fun removeShowsFromWatchListByIds(
         showIds: List<Long>,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 

@@ -192,7 +192,7 @@ public class DefaultLibraryRepository(
         val showIds = pendingUploads.map { it.showId }
         logger.debug(TAG, "Processing ${showIds.size} pending uploads")
 
-        return when (val response = traktListDataSource.addShowsToWatchListByTraktIds(showIds)) {
+        return when (val response = traktListDataSource.addShowsToWatchListByIds(showIds)) {
             is ApiResponse.Success -> {
                 val notFoundCount = response.body.notFound.shows.size
                 transactionRunner {
@@ -217,7 +217,7 @@ public class DefaultLibraryRepository(
         val showIds = pendingDeletes.map { it.showId }
         logger.debug(TAG, "Processing ${showIds.size} pending deletes")
 
-        return when (val response = traktListDataSource.removeShowsFromWatchListByTraktIds(showIds)) {
+        return when (val response = traktListDataSource.removeShowsFromWatchListByIds(showIds)) {
             is ApiResponse.Success -> {
                 val notFoundCount = response.body.notFound.shows.size
                 transactionRunner {
