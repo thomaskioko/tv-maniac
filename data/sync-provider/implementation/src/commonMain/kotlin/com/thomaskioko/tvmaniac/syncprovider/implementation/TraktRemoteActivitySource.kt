@@ -11,7 +11,6 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlin.time.Instant
 
-
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class TraktRemoteActivitySource(
