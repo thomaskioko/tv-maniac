@@ -9,8 +9,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAKT_ACTI
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.syncactivity.api.model.TraktLastActivity
-import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktLastActivitiesResponse
+import com.thomaskioko.tvmaniac.syncprovider.api.RemoteActivitySource
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
@@ -24,32 +23,20 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 public class TraktActivityStore(
-    private val remoteDataSource: TraktSyncRemoteDataSource,
+    private val remoteActivitySource: RemoteActivitySource,
     private val activityDao: TraktActivityDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeProvider: DateTimeProvider,
 ) : Store<Unit, List<TraktLastActivity>> by storeBuilder(
-    fetcher = apiFetcher { remoteDataSource.getLastActivities() },
+    fetcher = apiFetcher { remoteActivitySource.getLastActivities() },
     sourceOfTruth = SourceOfTruth.of(
         reader = { _: Unit -> activityDao.observeAll() },
-        writer = { _: Unit, response: TraktLastActivitiesResponse ->
+        writer = { _: Unit, activities: Map<ActivityType, Instant> ->
             val now = dateTimeProvider.now()
 
-            response.shows.watchlistedAt?.parseInstant()?.let { instant ->
-                activityDao.upsert(ActivityType.SHOWS_WATCHLISTED, instant, now)
-            }
-
-            response.shows.favoritedAt?.parseInstant()?.let { instant ->
-                activityDao.upsert(ActivityType.SHOWS_FAVORITED, instant, now)
-            }
-
-            response.episodes.watchedAt?.parseInstant()?.let { instant ->
-                activityDao.upsert(ActivityType.EPISODES_WATCHED, instant, now)
-            }
-
-            response.episodes.pausedAt?.parseInstant()?.let { instant ->
-                activityDao.upsert(ActivityType.EPISODES_PAUSED, instant, now)
+            activities.forEach { (activityType, timestamp) ->
+                activityDao.upsert(activityType, timestamp, now)
             }
 
             requestManagerRepository.upsert(
@@ -72,11 +59,3 @@ public class TraktActivityStore(
         }
     },
 ).build()
-
-private fun String.parseInstant(): Instant? {
-    return try {
-        Instant.parse(this)
-    } catch (_: IllegalArgumentException) {
-        null
-    }
-}

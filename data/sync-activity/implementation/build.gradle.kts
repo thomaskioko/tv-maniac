@@ -12,7 +12,6 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(libs.store5)
-                api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.util.api)
@@ -20,6 +19,7 @@ kotlin {
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
+                api(projects.data.syncProvider.api)
 
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)
