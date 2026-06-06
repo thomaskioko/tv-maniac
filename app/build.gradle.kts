@@ -105,6 +105,7 @@ dependencies {
     implementation(projects.data.trendingshows.implementation)
     implementation(projects.data.upcomingshows.api)
     implementation(projects.data.upcomingshows.implementation)
+    implementation(projects.data.watchStatus.implementation)
     implementation(projects.data.watchproviders.api)
     implementation(projects.data.watchproviders.implementation)
     implementation(projects.data.user.implementation)
