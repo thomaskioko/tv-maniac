@@ -6,12 +6,12 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 /**
  * Intermediate result from fetching show cast data.
  *
- * @property showTraktId The Trakt ID of the show
+ * @property showId The Trakt ID of the show
  * @property traktPeople The people response from Trakt API
  * @property tmdbCredits The credits response from TMDB API (for profile images)
  */
 internal data class ShowCastResult(
-    val showTraktId: Long,
+    val showId: Long,
     val traktPeople: TraktShowPeopleResponse,
     val tmdbCredits: CreditsResponse?,
 )

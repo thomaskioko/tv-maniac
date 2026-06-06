@@ -63,7 +63,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             initial?.is_watched shouldBe 0L
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_1_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -78,14 +78,14 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     @Test
     fun `should advance next episode for show given local mark-as-watched write`() = runTest {
         episodesDao.observeNextEpisodeForShow(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             includeSpecials = false,
         ).test {
             val initial = awaitItem()
             initial?.episode_number shouldBe 1L
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_1_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -110,14 +110,14 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         )
 
         episodesDao.observeNextEpisodeForShow(
-            showTraktId = unfollowedShowId,
+            showId = unfollowedShowId,
             includeSpecials = false,
         ).test {
             val initial = awaitItem()
             initial?.episode_number shouldBe 1L
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = unfollowedShowId,
+                showId = unfollowedShowId,
                 episodeId = 401L,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -141,7 +141,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             secondEpisodeFirstAired = realNow + 7L * 86_400_000L,
         )
         watchedEpisodeDao.markAsWatched(
-            showTraktId = futureShowId,
+            showId = futureShowId,
             episodeId = 201L,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -149,7 +149,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         )
 
         episodesDao.observeNextEpisodeForShow(
-            showTraktId = futureShowId,
+            showId = futureShowId,
             includeSpecials = false,
         ).test {
             awaitItem() shouldBe null
@@ -167,7 +167,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             secondEpisodeFirstAired = null,
         )
         watchedEpisodeDao.markAsWatched(
-            showTraktId = tbdShowId,
+            showId = tbdShowId,
             episodeId = 301L,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -175,7 +175,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         )
 
         episodesDao.observeNextEpisodeForShow(
-            showTraktId = tbdShowId,
+            showId = tbdShowId,
             includeSpecials = false,
         ).test {
             awaitItem() shouldBe null

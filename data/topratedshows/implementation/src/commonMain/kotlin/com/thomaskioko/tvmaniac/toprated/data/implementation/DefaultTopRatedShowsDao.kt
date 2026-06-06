@@ -45,9 +45,9 @@ public class DefaultTopRatedShowsDao(
 
     override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> =
         topRatedShowsQueries
-            .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
+            .entriesInPage(Id(page)) { showId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId,
+                    showId = showId,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
@@ -68,9 +68,9 @@ public class DefaultTopRatedShowsDao(
                 topRatedShowsQueries.pagedTopRatedShows(
                     limit = limit,
                     offset = offset,
-                ) { traktId, tmdbId, page, title, imageUrl, inLib ->
+                ) { showId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        traktId = traktId,
+                        showId = showId,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,

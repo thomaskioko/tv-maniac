@@ -48,9 +48,9 @@ internal val sampleProfileLabels: ProfileLabels = ProfileLabels(
 )
 
 private val sampleShows = persistentListOf(
-    ProfileShowItem(traktId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null),
-    ProfileShowItem(traktId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null),
-    ProfileShowItem(traktId = 3, tmdbId = 66732, title = "Stranger Things", posterUrl = null),
+    ProfileShowItem(showId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null),
+    ProfileShowItem(showId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null),
+    ProfileShowItem(showId = 3, tmdbId = 66732, title = "Stranger Things", posterUrl = null),
 )
 
 internal val unauthenticatedState = ProfileState(
@@ -103,9 +103,9 @@ internal val authenticatedState = ProfileState(
     completed = SectionState.Content(sampleShows),
     recentlyWatched = SectionState.Content(
         persistentListOf(
-            ProfileRecentItem(traktId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null, episodeLabel = "S5E14"),
-            ProfileRecentItem(traktId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null, episodeLabel = "S8E3"),
-            ProfileRecentItem(traktId = 3, tmdbId = 1394, title = "Stranger Things", posterUrl = null, episodeLabel = "S1E3"),
+            ProfileRecentItem(showId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null, episodeLabel = "S5E14"),
+            ProfileRecentItem(showId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null, episodeLabel = "S8E3"),
+            ProfileRecentItem(showId = 3, tmdbId = 1394, title = "Stranger Things", posterUrl = null, episodeLabel = "S1E3"),
         ),
     ),
     library = SectionState.Content(sampleShows),

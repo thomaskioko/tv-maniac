@@ -47,15 +47,15 @@ struct UpNextPageContent: View {
                         ForEach(episodesSwift, id: \.episodeId) { episode in
                             UpNextListItemView(
                                 episode: episode,
-                                onItemClicked: { showTraktId, _ in
-                                    presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
+                                onItemClicked: { showId, _ in
+                                    presenter.dispatch(action: UpNextShowClicked(showId: showId))
                                 },
-                                onShowTitleClicked: { showTraktId in
-                                    presenter.dispatch(action: UpNextShowClicked(showTraktId: showTraktId))
+                                onShowTitleClicked: { showId in
+                                    presenter.dispatch(action: UpNextShowClicked(showId: showId))
                                 },
                                 onMarkWatched: {
                                     presenter.dispatch(action: MarkWatched(
-                                        showTraktId: episode.showTraktId,
+                                        showId: episode.showId,
                                         episodeId: episode.episodeId,
                                         seasonNumber: episode.seasonNumber,
                                         episodeNumber: episode.episodeNumberValue
@@ -73,7 +73,7 @@ struct UpNextPageContent: View {
                     }
                 }
             }
-            .onChange(of: episodesSwift.first?.showTraktId) { _, _ in
+            .onChange(of: episodesSwift.first?.showId) { _, _ in
                 withAnimation {
                     if let firstId = episodesSwift.first?.episodeId {
                         proxy.scrollTo(firstId, anchor: .top)

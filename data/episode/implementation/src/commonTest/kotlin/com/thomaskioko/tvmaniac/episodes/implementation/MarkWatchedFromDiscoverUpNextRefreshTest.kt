@@ -66,7 +66,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             initial[0].totalCount shouldBe 3L
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_1_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -80,7 +80,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             afterFirst[0].totalCount shouldBe 3L
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_2_ID,
                 seasonNumber = 1L,
                 episodeNumber = 2L,
@@ -101,7 +101,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             awaitItem().size shouldBe 1
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_1_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -110,7 +110,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             awaitItem()[0].episodeNumber shouldBe 2L
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_2_ID,
                 seasonNumber = 1L,
                 episodeNumber = 2L,
@@ -119,7 +119,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
             awaitItem()[0].episodeNumber shouldBe 3L
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_3_ID,
                 seasonNumber = 1L,
                 episodeNumber = 3L,
@@ -139,7 +139,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
 
         fakeDateTimeProvider.setCurrentTimeMillis(now + 10_000L)
         watchedEpisodeDao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -158,7 +158,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
     fun `should recompute trakt continue watching last watched at on local unmark`() = runTest {
         fakeDateTimeProvider.setCurrentTimeMillis(now + 1_000L)
         watchedEpisodeDao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -166,7 +166,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         )
         fakeDateTimeProvider.setCurrentTimeMillis(now + 5_000L)
         watchedEpisodeDao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_2_ID,
             seasonNumber = 1L,
             episodeNumber = 2L,
@@ -174,7 +174,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         )
 
         watchedEpisodeDao.markAsUnwatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_2_ID,
             includeSpecials = false,
         )

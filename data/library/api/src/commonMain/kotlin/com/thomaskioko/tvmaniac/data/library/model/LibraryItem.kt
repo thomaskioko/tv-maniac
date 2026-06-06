@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.library.model
 
 public data class LibraryItem(
-    val traktId: Long,
+    val showId: Long,
     val tmdbId: Long?,
     val title: String,
     val posterPath: String?,

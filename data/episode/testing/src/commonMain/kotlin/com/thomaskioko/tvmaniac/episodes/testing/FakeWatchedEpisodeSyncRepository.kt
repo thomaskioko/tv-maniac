@@ -37,8 +37,8 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
         syncPendingCallCount = 0
     }
 
-    override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
-        syncedShowIds.add(showTraktId)
+    override suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean) {
+        syncedShowIds.add(showId)
         lastForceRefresh = forceRefresh
     }
 

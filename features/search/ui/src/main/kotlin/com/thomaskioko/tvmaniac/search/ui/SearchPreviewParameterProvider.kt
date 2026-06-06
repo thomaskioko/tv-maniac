@@ -42,13 +42,13 @@ internal class SearchPreviewParameterProvider : PreviewParameterProvider<SearchS
 internal fun createDiscoverShowList(size: Int = 5) = List(size) { index ->
     discoverShow.copy(
         tmdbId = discoverShow.tmdbId + index.toLong(),
-        traktId = discoverShow.traktId + index.toLong(),
+        showId = discoverShow.showId + index.toLong(),
     )
 }.toImmutableList()
 
 internal val discoverShow = ShowItem(
     tmdbId = 84958,
-    traktId = 84958,
+    showId = 84958,
     title = "Loki",
     posterImageUrl = null,
     overview = "After stealing the Tesseract during the events of Avengers: Endgame, an ",
@@ -63,7 +63,7 @@ internal fun createGenreRowList() = listOf(
         subtitle = "Non-stop thrill and action",
         shows = List(5) {
             ShowItem(
-                traktId = 84958L + it,
+                showId = 84958L + it,
                 tmdbId = 84958L + it,
                 title = "Loki",
                 posterImageUrl = null,
@@ -77,7 +77,7 @@ internal fun createGenreRowList() = listOf(
         subtitle = "Guaranteed laughs in every episode",
         shows = List(5) {
             ShowItem(
-                traktId = 94958L + it,
+                showId = 94958L + it,
                 tmdbId = 94958L + it,
                 title = "Ted Lasso",
                 posterImageUrl = null,

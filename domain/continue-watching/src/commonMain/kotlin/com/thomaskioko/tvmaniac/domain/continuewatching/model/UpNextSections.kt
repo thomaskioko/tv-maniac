@@ -14,7 +14,7 @@ public data class UpNextSections(
 }
 
 public data class UpNextEpisodeInfo(
-    val showTraktId: Long,
+    val showId: Long,
     val showName: String,
     val showPoster: String?,
     val episodeId: Long,

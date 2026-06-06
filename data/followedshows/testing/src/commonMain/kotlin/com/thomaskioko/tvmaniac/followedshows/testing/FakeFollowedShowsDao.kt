@@ -15,8 +15,8 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
 
     override fun entriesObservable(): Flow<List<FollowedShowEntry>> = entriesFlow
 
-    override fun entryWithTraktId(traktId: Long): FollowedShowEntry? =
-        entriesFlow.value.find { it.traktId == traktId }
+    override fun entryWithTraktId(showId: Long): FollowedShowEntry? =
+        entriesFlow.value.find { it.showId == showId }
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> =
         entriesFlow.value.filter { it.pendingAction == PendingAction.NOTHING }
@@ -31,12 +31,12 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
         entriesFlow.value.filter { it.pendingAction == PendingAction.DELETE }
 
     override fun upsert(entry: FollowedShowEntry): Long {
-        val existing = entriesFlow.value.find { it.traktId == entry.traktId }
+        val existing = entriesFlow.value.find { it.showId == entry.showId }
         val id = if (entry.id > 0) entry.id else existing?.id ?: nextId++
         val newEntry = entry.copy(id = id)
 
         entriesFlow.value = if (existing != null) {
-            entriesFlow.value.map { if (it.traktId == entry.traktId) newEntry else it }
+            entriesFlow.value.map { if (it.showId == entry.showId) newEntry else it }
         } else {
             entriesFlow.value + newEntry
         }
@@ -53,8 +53,8 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
         entriesFlow.value = entriesFlow.value.filter { it.id != id }
     }
 
-    override fun deleteByTraktId(traktId: Long) {
-        entriesFlow.value = entriesFlow.value.filter { it.traktId != traktId }
+    override fun deleteByShowId(showId: Long) {
+        entriesFlow.value = entriesFlow.value.filter { it.showId != showId }
     }
 
     public fun clear() {

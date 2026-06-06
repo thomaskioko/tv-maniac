@@ -50,10 +50,10 @@ public class SeasonDetailsStore(
 ) : Store<SeasonDetailsParam, List<SeasonDetails>> by storeBuilder(
     fetcher = Fetcher.of { params: SeasonDetailsParam ->
         coroutineScope {
-            val showTmdbId = tvShowsDao.getTmdbIdByTraktId(params.showTraktId)
+            val showTmdbId = tvShowsDao.getTmdbIdByShowId(params.showId)
 
             val traktSeason = async {
-                traktRemoteDataSource.getShowSeasonEpisodes(params.showTraktId, params.seasonNumber.toInt()).getOrThrow()
+                traktRemoteDataSource.getShowSeasonEpisodes(params.showId, params.seasonNumber.toInt()).getOrThrow()
             }.await()
             val tmdbSeason = async {
                 showTmdbId?.let {
@@ -72,13 +72,13 @@ public class SeasonDetailsStore(
     sourceOfTruth = SourceOfTruth.of<SeasonDetailsParam, SeasonDetailsResponse, List<SeasonDetails>>(
         reader = { params: SeasonDetailsParam ->
             seasonDetailsDao.observeSeasonDetails(
-                params.showTraktId,
+                params.showId,
                 params.seasonNumber,
             )
         },
         writer = { params: SeasonDetailsParam, response ->
             databaseTransactionRunner {
-                val showId = showIdResolver.showIdForTraktId(params.showTraktId)
+                val showId = showIdResolver.showIdForTraktId(params.showId)
                     ?: return@databaseTransactionRunner
 
                 val tmdbEpisodeImages = response.tmdbEpisodes.associate {

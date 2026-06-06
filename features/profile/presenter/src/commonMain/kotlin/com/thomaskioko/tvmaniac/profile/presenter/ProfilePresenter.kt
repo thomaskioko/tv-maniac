@@ -200,7 +200,7 @@ public class ProfilePresenter(
                 fetchUserData(forceRefresh = true)
                 syncFavorites(forceRefresh = true)
             }
-            is ShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            is ShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is MessageShown -> {
                 clearMessage(action.id)
                 coroutineScope.launch { traktAuthRepository.setAuthError(null) }
@@ -311,42 +311,42 @@ private fun TraktListEntity.toListItem(localizer: Localizer): ProfileListItem = 
 )
 
 private fun UpNextEpisode.toShowItem(): ProfileShowItem = ProfileShowItem(
-    traktId = showTraktId,
+    showId = showId,
     tmdbId = showTmdbId,
     title = showName,
     posterUrl = showPoster,
 )
 
 private fun CompletedShow.toShowItem(): ProfileShowItem = ProfileShowItem(
-    traktId = showTraktId,
+    showId = showId,
     tmdbId = showTmdbId,
     title = showName.orEmpty(),
     posterUrl = showPoster,
 )
 
 private fun LibraryItem.toShowItem(): ProfileShowItem = ProfileShowItem(
-    traktId = traktId,
+    showId = showId,
     tmdbId = tmdbId,
     title = title,
     posterUrl = posterPath,
 )
 
 private fun WatchlistShowInfo.toShowItem(): ProfileShowItem = ProfileShowItem(
-    traktId = traktId,
+    showId = showId,
     tmdbId = tmdbId,
     title = title.orEmpty(),
     posterUrl = posterImageUrl,
 )
 
 private fun FavoriteShow.toShowItem(): ProfileShowItem = ProfileShowItem(
-    traktId = traktId,
+    showId = showId,
     tmdbId = tmdbId,
     title = title,
     posterUrl = posterPath,
 )
 
 private fun RecentlyWatchedEpisode.toRecentItem(): ProfileRecentItem = ProfileRecentItem(
-    traktId = showTraktId,
+    showId = showId,
     tmdbId = showTmdbId,
     title = showTitle,
     posterUrl = posterPath,

@@ -30,10 +30,10 @@ public class DefaultFavoritesDao(
             .map { rows -> rows.map { it.toFavoriteShow() } }
             .catch { emit(emptyList()) }
 
-    override fun upsert(traktId: Long, rank: Long, listedAt: String) {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
+    override fun upsert(showId: Long, rank: Long, listedAt: String) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         database.favoritesQueries.upsert(
-            show_id = showId,
+            show_id = internalShowId,
             rank = rank,
             listed_at = listedAt,
         )
@@ -46,7 +46,7 @@ public class DefaultFavoritesDao(
 
 private fun FavoriteShows.toFavoriteShow(): FavoriteShow =
     FavoriteShow(
-        traktId = show_trakt_id,
+        showId = show_trakt_id,
         tmdbId = show_tmdb_id.id,
         title = title,
         posterPath = poster_path,

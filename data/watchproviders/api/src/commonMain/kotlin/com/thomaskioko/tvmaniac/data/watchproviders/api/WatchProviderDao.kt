@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.watchproviders.api
 
 import com.thomaskioko.tvmaniac.db.WatchProviders
-import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
+import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
 import com.thomaskioko.tvmaniac.db.Watch_providers
 import kotlinx.coroutines.flow.Flow
 
@@ -12,9 +12,9 @@ public interface WatchProviderDao {
 
     public fun observeWatchProviders(tmdbId: Long): Flow<List<WatchProviders>>
 
-    public fun observeWatchProvidersByTraktId(traktId: Long): Flow<List<WatchProvidersByTraktId>>
+    public fun observeWatchProvidersByShowId(showId: Long): Flow<List<WatchProvidersByShowId>>
 
-    public fun deleteByTraktId(traktId: Long)
+    public fun deleteByShowId(showId: Long)
 
     public fun deleteAll()
 }

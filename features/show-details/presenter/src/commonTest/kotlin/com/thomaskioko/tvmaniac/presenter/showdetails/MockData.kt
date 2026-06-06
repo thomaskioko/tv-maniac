@@ -112,7 +112,7 @@ val testContinueTrackingResult = ContinueTrackingResult(
 )
 
 val testShowWatchProgress = ShowWatchProgress(
-    showTraktId = 84958L,
+    showId = 84958L,
     watchedCount = 5,
     totalCount = 10,
 )
@@ -134,13 +134,13 @@ val testSeasonsWithProgress = listOf(
 
 val testSeasonWatchProgress = listOf(
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 1L,
         watchedCount = 8,
         totalCount = 10,
     ),
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 2L,
         watchedCount = 3,
         totalCount = 12,
@@ -149,7 +149,7 @@ val testSeasonWatchProgress = listOf(
 
 val testPartialSeasonProgress = listOf(
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 1L,
         watchedCount = 5,
         totalCount = 10,
@@ -158,7 +158,7 @@ val testPartialSeasonProgress = listOf(
 
 val testCompletedSeasonProgress = listOf(
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 1L,
         watchedCount = 10,
         totalCount = 10,

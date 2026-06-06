@@ -35,16 +35,16 @@ public class SeasonsWithEpisodesStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowSeasons>> by storeBuilder(
-    fetcher = Fetcher.of { showTraktId: Long ->
-        traktRemoteDataSource.getSeasonsWithEpisodes(showTraktId).getOrThrow()
+    fetcher = Fetcher.of { showId: Long ->
+        traktRemoteDataSource.getSeasonsWithEpisodes(showId).getOrThrow()
     },
     sourceOfTruth = SourceOfTruth.of<Long, List<TraktSeasonEpisodesResponse>, List<ShowSeasons>>(
-        reader = { showTraktId ->
-            seasonsDao.observeSeasonsByShowTraktId(showTraktId)
+        reader = { showId ->
+            seasonsDao.observeSeasonsByShowId(showId)
         },
-        writer = { showTraktId, seasons ->
-            val showId = showIdResolver.showIdForTraktId(showTraktId)
-            if (showId != null) {
+        writer = { showId, seasons ->
+            val internalShowId = showIdResolver.showIdForTraktId(showId)
+            if (internalShowId != null) {
                 databaseTransactionRunner {
                     seasons.forEach { seasonResponse ->
                         val seasonId = seasonResponse.ids.trakt.toLong()
@@ -52,7 +52,7 @@ public class SeasonsWithEpisodesStore(
                         seasonsDao.upsert(
                             Season(
                                 id = Id(seasonId),
-                                show_id = showId,
+                                show_id = internalShowId,
                                 season_number = seasonResponse.number.toLong(),
                                 episode_count = seasonResponse.episodeCount.toLong(),
                                 title = seasonResponse.title ?: "Season ${seasonResponse.number}",
@@ -66,7 +66,7 @@ public class SeasonsWithEpisodesStore(
                                 Episode(
                                     id = Id(episodeResponse.ids.trakt.toLong()),
                                     season_id = Id(seasonId),
-                                    show_id = showId,
+                                    show_id = internalShowId,
                                     episode_number = episodeResponse.episodeNumber.toLong(),
                                     title = episodeResponse.title,
                                     overview = episodeResponse.overview ?: "",
@@ -82,7 +82,7 @@ public class SeasonsWithEpisodesStore(
                     }
 
                     requestManagerRepository.upsert(
-                        entityId = showTraktId,
+                        entityId = showId,
                         requestType = SEASONS_EPISODES_SYNC.name,
                     )
                 }

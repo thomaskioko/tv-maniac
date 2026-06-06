@@ -21,7 +21,7 @@ public struct DiscoverTab: View {
             currentIndex: $currentIndex,
             toast: $toast,
             selectedEpisode: .constant(nil),
-            onShowClicked: { id in presenter.dispatch(action: ShowClicked(traktId: id)) },
+            onShowClicked: { id in presenter.dispatch(action: ShowClicked(showId: id)) },
             onSearchClicked: { presenter.dispatch(action: SearchIconClicked()) },
             onRefresh: { presenter.dispatch(action: RefreshData()) },
             onTrendingClicked: { presenter.dispatch(action: TrendingClicked()) },
@@ -31,7 +31,7 @@ public struct DiscoverTab: View {
             onStartWatchingMoreClicked: { presenter.dispatch(action: StartWatchingMoreClicked()) },
             onNextEpisodeClicked: { episode in
                 presenter.dispatch(action: DiscoverEpisodeLongPressed(
-                    showTraktId: episode.showTraktId,
+                    showId: episode.showId,
                     episodeId: episode.episodeId
                 ))
             },

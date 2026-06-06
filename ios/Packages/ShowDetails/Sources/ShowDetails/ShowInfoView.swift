@@ -287,21 +287,21 @@ public struct ShowInfoView: View {
             ],
             similarShows: [
                 .init(
-                    traktId: 1234,
+                    showId: 1234,
                     title: "Arcane",
                     posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    traktId: 123,
+                    showId: 123,
                     title: "The Lord of the Rings: The Rings of Power",
                     posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    traktId: 12346,
+                    showId: 12346,
                     title: "Kaos",
                     posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
                     backdropUrl: nil,

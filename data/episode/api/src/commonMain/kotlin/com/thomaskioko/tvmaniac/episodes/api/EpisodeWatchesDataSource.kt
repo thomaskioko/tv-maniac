@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
 public interface EpisodeWatchesDataSource {
-    public suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry>
+    public suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry>
 
     /**
      * Fetches a single page of Trakt's bulk `/sync/watched/shows` endpoint
@@ -23,5 +23,5 @@ public interface EpisodeWatchesDataSource {
      * episode in a single call, which matches the app's "unwatch" intent
      * (one episode toggle removes every prior play of that episode).
      */
-    public suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>)
+    public suspend fun removeEpisodeWatches(episodeIds: List<Long>)
 }

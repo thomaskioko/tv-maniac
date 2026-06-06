@@ -9,7 +9,7 @@ public fun mergeShows(
     if (local == null) return network
 
     return ShowToPersist(
-        traktId = network.traktId,
+        showId = network.showId,
         tmdbId = network.tmdbId,
         name = network.name,
         overview = network.overview.ifEmpty { local.overview },

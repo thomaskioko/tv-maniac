@@ -55,7 +55,7 @@ public struct UpNextListItemView: View {
         .cornerRadius(UpNextListItemViewConstants.cornerRadius)
         .contentShape(Rectangle())
         .onTapGesture {
-            onItemClicked(episode.showTraktId, episode.episodeId)
+            onItemClicked(episode.showId, episode.episodeId)
         }
         .onLongPressGesture {
             onLongPress()
@@ -79,7 +79,7 @@ public struct UpNextListItemView: View {
         VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
             TextTitlePill(
                 title: episode.showName,
-                onTap: { onShowTitleClicked(episode.showTraktId) }
+                onTap: { onShowTitleClicked(episode.showId) }
             )
 
             Text(episodeInfoText)
@@ -163,7 +163,7 @@ private enum UpNextListItemViewConstants {
     VStack {
         UpNextListItemView(
             episode: SwiftNextEpisode(
-                showTraktId: 1,
+                showId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
                 imageUrl: "/still.jpg",
                 episodeId: 123,

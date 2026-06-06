@@ -59,11 +59,11 @@ internal fun NextEpisodesSection(
                 ) {
                     items(
                         items = nextEpisodes,
-                        key = { episode -> "next_episode_${episode.showTraktId}_${episode.episodeId}" },
+                        key = { episode -> "next_episode_${episode.showId}_${episode.episodeId}" },
                         contentType = { "NextEpisode" },
                     ) { episode ->
                         NextEpisodeCard(
-                            modifier = Modifier.testTag(DiscoverTestTags.upNextCard(episode.showTraktId)),
+                            modifier = Modifier.testTag(DiscoverTestTags.upNextCard(episode.showId)),
                             episode = episode,
                             onClick = { onEpisodeClick(episode) },
                         )
@@ -82,7 +82,7 @@ private fun NextEpisodesSectionPreview() {
         title = "Up Next",
         nextEpisodes = persistentListOf(
             NextEpisodeUiModel(
-                showTraktId = 1L,
+                showId = 1L,
                 showName = "The Walking Dead: Daryl Dixon",
                 imageUrl = "/still1.jpg",
                 episodeId = 123L,
@@ -96,7 +96,7 @@ private fun NextEpisodesSectionPreview() {
                 isNew = true,
             ),
             NextEpisodeUiModel(
-                showTraktId = 2L,
+                showId = 2L,
                 showName = "Wednesday",
                 imageUrl = "/still1.jpg",
                 episodeId = 124L,
@@ -110,7 +110,7 @@ private fun NextEpisodesSectionPreview() {
                 isNew = false,
             ),
             NextEpisodeUiModel(
-                showTraktId = 3L,
+                showId = 3L,
                 showName = "House of the Dragon",
                 imageUrl = "/still1.jpg",
                 episodeId = 125L,

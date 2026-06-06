@@ -103,14 +103,14 @@ public interface TraktShowsRemoteDataSource {
      * Related shows are determined by Trakt's recommendation algorithm based on
      * user behavior patterns (users who liked X also liked Y).
      *
-     * @param traktId The Trakt ID of the show to find related shows for
+     * @param showId The Trakt ID of the show to find related shows for
      * @param page Page number for pagination (1-indexed)
      * @param limit Number of results per page (max 100)
      * @return List of related shows
      * @see [Trakt Related Shows](https://trakt.docs.apiary.io/#reference/shows/related)
      */
     public suspend fun getRelatedShows(
-        traktId: Long,
+        showId: Long,
         page: Int = 1,
         limit: Int = 20,
     ): ApiResponse<List<TraktShowResponse>>
@@ -118,31 +118,31 @@ public interface TraktShowsRemoteDataSource {
     /**
      * Fetches detailed information for a specific show.
      *
-     * @param traktId The Trakt ID of the show
+     * @param showId The Trakt ID of the show
      * @return Full show details including all extended information
      * @see [Trakt Show Summary](https://trakt.docs.apiary.io/#reference/shows/summary)
      */
-    public suspend fun getShowDetails(traktId: Long): ApiResponse<TraktShowResponse>
+    public suspend fun getShowDetails(showId: Long): ApiResponse<TraktShowResponse>
 
     /**
      * Fetches all seasons for a specific show with extended information.
      *
-     * @param traktId The Trakt ID of the show
+     * @param showId The Trakt ID of the show
      * @return List of seasons with episode counts, ratings, and air dates
      * @see [Trakt Show Seasons](https://trakt.docs.apiary.io/#reference/seasons/summary)
      */
-    public suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>>
+    public suspend fun getShowSeasons(showId: Long): ApiResponse<List<TraktSeasonsResponse>>
 
     /**
      * Fetches a specific season with all episodes.
      *
-     * @param traktId The Trakt ID of the show
+     * @param showId The Trakt ID of the show
      * @param seasonNumber The season number to fetch
      * @return Season details with all episodes
      * @see [Trakt Season Summary](https://trakt.docs.apiary.io/#reference/seasons/season)
      */
     public suspend fun getShowSeasonEpisodes(
-        traktId: Long,
+        showId: Long,
         seasonNumber: Int,
     ): ApiResponse<List<TraktEpisodesResponse>>
 
@@ -152,11 +152,11 @@ public interface TraktShowsRemoteDataSource {
      * Uses extended=full,episodes to get complete season and episode data,
      * reducing API calls from N (one per season) to 1.
      *
-     * @param traktId The Trakt ID of the show
+     * @param showId The Trakt ID of the show
      * @return List of seasons, each containing its episodes
      * @see [Trakt Seasons](https://trakt.docs.apiary.io/#reference/seasons/summary)
      */
-    public suspend fun getSeasonsWithEpisodes(traktId: Long): ApiResponse<List<TraktSeasonEpisodesResponse>>
+    public suspend fun getSeasonsWithEpisodes(showId: Long): ApiResponse<List<TraktSeasonEpisodesResponse>>
 
     /**
      * Searches for a show by its TMDB ID.
@@ -192,22 +192,22 @@ public interface TraktShowsRemoteDataSource {
      * Returns all cast members with their character names and episode counts.
      * Data is sorted by episode count (most appearances first).
      *
-     * @param traktId The Trakt ID of the show
+     * @param showId The Trakt ID of the show
      * @return Show people response containing cast information
      * @see [Trakt Show People](https://trakt.docs.apiary.io/#reference/shows/people)
      */
-    public suspend fun getShowPeople(traktId: Long): ApiResponse<TraktShowPeopleResponse>
+    public suspend fun getShowPeople(showId: Long): ApiResponse<TraktShowPeopleResponse>
 
     /**
      * Fetches all videos for a specific show.
      *
      * Returns trailers, teasers, and other video content from YouTube and other sites.
      *
-     * @param traktId The Trakt ID of the show
+     * @param showId The Trakt ID of the show
      * @return List of video responses containing URLs and metadata
      * @see [Trakt Show Videos](https://trakt.docs.apiary.io/#reference/shows/videos)
      */
-    public suspend fun getShowVideos(traktId: Long): ApiResponse<List<TraktVideosResponse>>
+    public suspend fun getShowVideos(showId: Long): ApiResponse<List<TraktVideosResponse>>
 
     /**
      * Fetches the user's watch progress for a specific show.
@@ -216,11 +216,11 @@ public interface TraktShowsRemoteDataSource {
      * Requires user authentication. The response includes `aired`, `completed` counts,
      * and nested `next_episode` / `last_episode` objects.
      *
-     * @param traktId The Trakt ID of the show
+     * @param showId The Trakt ID of the show
      * @return Watch progress with next and last episode information
      * @see [Trakt Watched Progress](https://trakt.docs.apiary.io/#reference/shows/watched-progress)
      */
-    public suspend fun getWatchedProgress(traktId: Long): ApiResponse<TraktWatchedProgressResponse>
+    public suspend fun getWatchedProgress(showId: Long): ApiResponse<TraktWatchedProgressResponse>
 }
 
 /**

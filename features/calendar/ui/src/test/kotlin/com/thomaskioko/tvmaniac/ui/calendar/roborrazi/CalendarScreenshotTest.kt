@@ -95,8 +95,8 @@ class CalendarScreenshotTest {
                                 dateLabel = "Today, Jan 31, 2026",
                                 episodes = persistentListOf(
                                     CalendarEpisodeItem(
-                                        showTraktId = 1,
-                                        episodeTraktId = 100,
+                                        showId = 1,
+                                        episodeId = 100,
                                         showTitle = "Severance",
                                         posterUrl = null,
                                         episodeInfo = "S02E01 · Hello, Ms. Cobel",
@@ -115,8 +115,8 @@ class CalendarScreenshotTest {
                                 dateLabel = "Tomorrow, Feb 1, 2026",
                                 episodes = persistentListOf(
                                     CalendarEpisodeItem(
-                                        showTraktId = 2,
-                                        episodeTraktId = 200,
+                                        showId = 2,
+                                        episodeId = 200,
                                         showTitle = "Hell's Paradise",
                                         posterUrl = null,
                                         episodeInfo = "S02E04 · The Battle Begins",

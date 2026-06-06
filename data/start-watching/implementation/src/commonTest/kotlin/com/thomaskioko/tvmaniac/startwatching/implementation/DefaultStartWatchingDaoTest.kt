@@ -142,7 +142,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
         dao.observeStartWatchingShows().test {
             val item = awaitItem().single()
-            item.traktId shouldBe 8
+            item.showId shouldBe 8
             item.episodeId shouldBe 801
             item.episodeTitle shouldBe "Pilot"
             item.seasonNumber shouldBe 1
@@ -153,7 +153,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     private fun expectedShow(id: Long, title: String): StartWatchingShow =
-        StartWatchingShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01", inLibrary = true)
+        StartWatchingShow(showId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01", inLibrary = true)
 
     private fun insertReleasedShow(id: Long, name: String) {
         insertShow(id, name)

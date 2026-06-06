@@ -48,8 +48,8 @@ internal class ObserveWatchlistPreviewInteractorTest {
     fun `should exclude completed shows from the preview`() = runTest {
         upNextRepository.setNextEpisodesForWatchlist(
             listOf(
-                createNextEpisode(showTraktId = 1, showName = "In Progress", watchedCount = 5, totalCount = 10),
-                createNextEpisode(showTraktId = 2, showName = "Completed", watchedCount = 10, totalCount = 10),
+                createNextEpisode(showId = 1, showName = "In Progress", watchedCount = 5, totalCount = 10),
+                createNextEpisode(showId = 2, showName = "Completed", watchedCount = 10, totalCount = 10),
             ),
         )
 
@@ -66,7 +66,7 @@ internal class ObserveWatchlistPreviewInteractorTest {
     @Test
     fun `should cap the preview at the requested limit`() = runTest {
         upNextRepository.setNextEpisodesForWatchlist(
-            (1L..5L).map { createNextEpisode(showTraktId = it, showName = "Show $it") },
+            (1L..5L).map { createNextEpisode(showId = it, showName = "Show $it") },
         )
 
         interactor(ObserveWatchlistPreviewInteractor.Param(limit = 2))
@@ -78,13 +78,13 @@ internal class ObserveWatchlistPreviewInteractorTest {
     }
 
     private fun createNextEpisode(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
         watchedCount: Long = 0,
         totalCount: Long = 10,
     ) = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
+        showId = showId,
+        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

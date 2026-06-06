@@ -68,13 +68,13 @@ internal fun HorizontalShowContentRow(
         ) {
             items(
                 items = tvShows,
-                key = { it.traktId },
+                key = { it.showId },
                 contentType = { "HorizontalShowItem" },
             ) { tvShow ->
                 PosterBackdropCard(
                     imageUrl = tvShow.posterImageUrl,
                     title = tvShow.title,
-                    onClick = { onItemClicked(tvShow.traktId) },
+                    onClick = { onItemClicked(tvShow.showId) },
                 )
             }
         }
@@ -88,7 +88,7 @@ private fun HorizontalRowContentPreview() {
     HorizontalShowContentRow(
         tvShows = List(5) {
             ShowItem(
-                traktId = 84958,
+                showId = 84958,
                 tmdbId = 84958,
                 title = "Loki",
                 posterImageUrl = null,

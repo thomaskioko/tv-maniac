@@ -95,7 +95,7 @@ private enum DimensionConstants {
     VStack {
         NextEpisodeCard(
             episode: SwiftNextEpisode(
-                showTraktId: 1,
+                showId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
                 imageUrl: "/still.jpg",
                 episodeId: 123,

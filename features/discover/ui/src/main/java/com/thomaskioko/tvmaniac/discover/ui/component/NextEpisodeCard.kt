@@ -121,7 +121,7 @@ internal fun NextEpisodeCard(
 private fun NextEpisodeCardPreview() {
     NextEpisodeCard(
         episode = NextEpisodeUiModel(
-            showTraktId = 1L,
+            showId = 1L,
             showName = "The Walking Dead: Daryl Dixon",
             imageUrl = "/still.jpg",
             episodeId = 123L,

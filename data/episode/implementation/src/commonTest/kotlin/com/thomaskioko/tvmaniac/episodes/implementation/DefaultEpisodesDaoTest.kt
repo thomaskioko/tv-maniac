@@ -251,7 +251,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         insertEpisode(episodeId = 100L, seasonId = 10L, showId = 1L, episodeNumber = 3L, title = "Target Ep")
 
         val result = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-            showTraktId = 1L,
+            showId = 1L,
             seasonNumber = 1L,
             episodeNumber = 3L,
         )
@@ -266,7 +266,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         insertSeason(seasonId = 10L, showId = 1L, seasonNumber = 1L)
 
         val result = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-            showTraktId = 1L,
+            showId = 1L,
             seasonNumber = 1L,
             episodeNumber = 99L,
         )

@@ -30,7 +30,7 @@ internal class ObserveRecentlyWatchedInteractorTest {
     private companion object {
         val episodes = listOf(
             RecentlyWatchedEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showTmdbId = 1,
                 showTitle = "Breaking Bad",
                 posterPath = "/1.jpg",
@@ -40,7 +40,7 @@ internal class ObserveRecentlyWatchedInteractorTest {
                 watchedAt = 2_000L,
             ),
             RecentlyWatchedEpisode(
-                showTraktId = 2,
+                showId = 2,
                 showTmdbId = 2,
                 showTitle = "Severance",
                 posterPath = "/2.jpg",

@@ -71,12 +71,12 @@ internal class NitroContinueWatchingFetcherTest {
             ApiResponse.Success(listOf(breakingBadNitro, theWireNitro)),
         )
         userDataSource.setHiddenProgressWatched(
-            ApiResponse.Success(listOf(hiddenItem(traktId = BREAKING_BAD_ID))),
+            ApiResponse.Success(listOf(hiddenItem(showId = BREAKING_BAD_ID))),
         )
 
         val result = fetcher.collectEntries()
 
-        result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(THE_WIRE_ID)
+        result.shouldNotBeNull().map { it.showId } shouldContainExactlyInAnyOrder listOf(THE_WIRE_ID)
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class NitroContinueWatchingFetcherTest {
 
         val result = fetcher.collectEntries()
 
-        result.shouldNotBeNull().map { it.traktId } shouldContainExactlyInAnyOrder listOf(BREAKING_BAD_ID)
+        result.shouldNotBeNull().map { it.showId } shouldContainExactlyInAnyOrder listOf(BREAKING_BAD_ID)
     }
 
     @Test
@@ -202,7 +202,7 @@ private val resetShowNitro = TraktUpNextNitroResponse(
 )
 
 private val breakingBadEntry = ContinueWatchingEntry(
-    traktId = BREAKING_BAD_ID,
+    showId = BREAKING_BAD_ID,
     tmdbId = 1396,
     airedEpisodes = 62,
     completedCount = 30,
@@ -212,7 +212,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
 )
 
 private val theWireEntry = ContinueWatchingEntry(
-    traktId = THE_WIRE_ID,
+    showId = THE_WIRE_ID,
     tmdbId = 1438,
     airedEpisodes = 60,
     completedCount = 12,
@@ -221,13 +221,13 @@ private val theWireEntry = ContinueWatchingEntry(
     title = "The Wire",
 )
 
-private fun hiddenItem(traktId: Long): TraktHiddenItemResponse =
+private fun hiddenItem(showId: Long): TraktHiddenItemResponse =
     TraktHiddenItemResponse(
         hiddenAt = "2026-04-01T12:00:00Z",
         type = "show",
         show = TraktShowResponse(
             title = "Hidden",
-            ids = ShowIds(trakt = traktId, slug = "hidden-$traktId"),
+            ids = ShowIds(trakt = showId, slug = "hidden-$showId"),
         ),
     )
 

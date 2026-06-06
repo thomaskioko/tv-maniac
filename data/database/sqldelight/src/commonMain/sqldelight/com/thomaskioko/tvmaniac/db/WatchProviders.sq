@@ -38,7 +38,7 @@ FROM
 WHERE
     watch_providers.tmdb_id = :showId;
 
-watchProvidersByTraktId:
+watchProvidersByShowId:
 SELECT
     watch_providers.id AS provider_id,
     watch_providers.name,

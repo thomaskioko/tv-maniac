@@ -27,7 +27,7 @@ public struct SearchTab: View {
         SearchScreen(
             state: uiState.toState(categoryLabels: categoryLabels),
             query: searchQueryBinding,
-            onShowClicked: { id in presenter.dispatch(action: SearchShowClicked(id: id)) },
+            onShowClicked: { id in presenter.dispatch(action: SearchShowClicked(showId: id)) },
             onRetry: { presenter.dispatch(action: ReloadShowContent()) },
             onBack: { presenter.dispatch(action: BackClicked__()) },
             onCategoryChanged: { label in

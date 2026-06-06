@@ -43,7 +43,7 @@ internal fun ContinueWatchingListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp),
-        onClick = { onItemClicked(item.traktId) },
+        onClick = { onItemClicked(item.showId) },
         shape = RectangleShape,
     ) {
         Row(
@@ -53,7 +53,7 @@ internal fun ContinueWatchingListItem(
             // Poster image
             PosterCard(
                 imageUrl = item.posterImageUrl,
-                onClick = { onItemClicked(item.traktId) },
+                onClick = { onItemClicked(item.showId) },
                 title = item.title,
                 shape = RectangleShape,
             )

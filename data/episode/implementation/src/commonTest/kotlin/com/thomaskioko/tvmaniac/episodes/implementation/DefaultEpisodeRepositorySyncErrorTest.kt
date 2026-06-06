@@ -65,7 +65,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
         syncObserver.errors.test {
             repository.markEpisodeAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -73,7 +73,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
             val event = awaitItem()
             event.shouldBeInstanceOf<SyncError.MarkWatchedFailed>()
-            event.showTraktId shouldBe SHOW_ID
+            event.showId shouldBe SHOW_ID
             event.cause.message shouldBe "network down"
         }
     }
@@ -85,11 +85,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
         syncObserver.errors.test {
-            repository.markEpisodeAsUnwatched(showTraktId = SHOW_ID, episodeId = EPISODE_ID)
+            repository.markEpisodeAsUnwatched(showId = SHOW_ID, episodeId = EPISODE_ID)
 
             val event = awaitItem()
             event.shouldBeInstanceOf<SyncError.MarkUnwatchedFailed>()
-            event.showTraktId shouldBe SHOW_ID
+            event.showId shouldBe SHOW_ID
         }
     }
 
@@ -100,11 +100,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
         syncObserver.errors.test {
-            repository.markSeasonWatched(showTraktId = SHOW_ID, seasonNumber = 1L)
+            repository.markSeasonWatched(showId = SHOW_ID, seasonNumber = 1L)
 
             val event = awaitItem()
             event.shouldBeInstanceOf<SyncError.BatchMarkFailed>()
-            event.showTraktId shouldBe SHOW_ID
+            event.showId shouldBe SHOW_ID
         }
     }
 
@@ -116,7 +116,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
         syncObserver.errors.test {
             repository.markEpisodeAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,

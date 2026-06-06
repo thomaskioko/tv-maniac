@@ -50,7 +50,7 @@ internal fun LibraryListItem(
             .height(200.dp),
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp,
-        onClick = { onItemClicked(item.traktId) },
+        onClick = { onItemClicked(item.showId) },
     ) {
         Row {
             PosterCard(

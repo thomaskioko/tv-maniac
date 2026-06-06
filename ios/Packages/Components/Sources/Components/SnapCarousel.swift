@@ -51,7 +51,7 @@ public struct SnapCarousel<Content: View>: View {
             let adjustmentWidth = (trailingSpace / 2) - resolvedSpacing
 
             HStack(spacing: resolvedSpacing) {
-                ForEach(list, id: \.traktId) { item in
+                ForEach(list, id: \.showId) { item in
                     content(item)
                         .frame(width: proxy.size.width - trailingSpace)
                         .padding(.leading, currentIndex == 0 ? theme.spacing.xxxLarge : 0)
@@ -92,21 +92,21 @@ public struct SnapCarousel<Content: View>: View {
             index: .constant(2),
             items: [
                 .init(
-                    traktId: 1234,
+                    showId: 1234,
                     title: "Arcane",
                     posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    traktId: 123,
+                    showId: 123,
                     title: "The Lord of the Rings: The Rings of Power",
                     posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
                     backdropUrl: nil,
                     inLibrary: false
                 ),
                 .init(
-                    traktId: 12346,
+                    showId: 12346,
                     title: "Kaos",
                     posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
                     backdropUrl: nil,

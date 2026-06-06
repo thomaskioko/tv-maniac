@@ -128,7 +128,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         requestManagerRepository.requestExpired = true
         recordingDataSource.showWatchesToReturn = listOf(
             WatchedEpisodeEntry(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = null,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -137,7 +137,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             ),
         )
 
-        defaultWatchedEpisodeSyncRepository.syncShowEpisodeWatches(showTraktId = SHOW_ID, forceRefresh = false)
+        defaultWatchedEpisodeSyncRepository.syncShowEpisodeWatches(showId = SHOW_ID, forceRefresh = false)
 
         recordingDataSource.getShowEpisodeWatchesCalls shouldContainExactly listOf(SHOW_ID)
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
@@ -234,8 +234,8 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
 
-    override suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry> {
-        _getShowEpisodeWatchesCalls += showTraktId
+    override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
+        _getShowEpisodeWatchesCalls += showId
         return showWatchesToReturn
     }
     override suspend fun getAllWatchedShows(
@@ -243,8 +243,8 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         limit: Int,
     ): List<com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch> = emptyList()
     override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {}
-    override suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>) {
-        _removedTraktIds += episodeTraktIds
+    override suspend fun removeEpisodeWatches(episodeIds: List<Long>) {
+        _removedTraktIds += episodeIds
     }
 }
 

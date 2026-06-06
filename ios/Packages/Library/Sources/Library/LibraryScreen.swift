@@ -221,9 +221,9 @@ public struct LibraryScreen: View {
                     )
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                     .clipped()
-                    .matchedGeometryEffect(id: item.traktId, in: animation)
+                    .matchedGeometryEffect(id: item.showId, in: animation)
                     .onTapGesture {
-                        onShowClicked(item.traktId)
+                        onShowClicked(item.showId)
                     }
                 }
             }
@@ -240,7 +240,7 @@ public struct LibraryScreen: View {
                     LibraryListItemView(
                         item: item,
                         onItemClicked: {
-                            onShowClicked(item.traktId)
+                            onShowClicked(item.showId)
                         }
                     )
                 }
@@ -275,15 +275,15 @@ public struct LibraryScreen: View {
 
 public struct LibraryGridItem: Identifiable, Equatable {
     public var id: Int64 {
-        traktId
+        showId
     }
 
-    public let traktId: Int64
+    public let showId: Int64
     public let title: String
     public let posterImageUrl: String?
 
-    public init(traktId: Int64, title: String, posterImageUrl: String?) {
-        self.traktId = traktId
+    public init(showId: Int64, title: String, posterImageUrl: String?) {
+        self.showId = showId
         self.title = title
         self.posterImageUrl = posterImageUrl
     }

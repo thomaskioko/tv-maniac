@@ -33,21 +33,21 @@ public class DefaultSeasonDetailsDao(
         get() = database.episodesQueries
 
     override fun observeSeasonDetails(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     ): Flow<List<SeasonDetails>> {
-        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return flowOf(emptyList())
-        return seasonQueries.seasonDetails(showId = showId, seasonNumber = seasonNumber)
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        return seasonQueries.seasonDetails(showId = internalShowId, seasonNumber = seasonNumber)
             .asFlow()
             .mapToList(dispatcher.io)
     }
 
     override fun observeSeasonWithShowInfo(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     ): Flow<GetSeasonWithShowInfo?> {
-        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return flowOf(null)
-        return seasonQueries.getSeasonWithShowInfo(showId = showId, seasonNumber = seasonNumber)
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(null)
+        return seasonQueries.getSeasonWithShowInfo(showId = internalShowId, seasonNumber = seasonNumber)
             .asFlow()
             .mapToOneOrNull(dispatcher.io)
     }
@@ -57,9 +57,9 @@ public class DefaultSeasonDetailsDao(
             .asFlow()
             .mapToList(dispatcher.io)
 
-    override fun delete(showTraktId: Long) {
-        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return
-        seasonQueries.delete(showId)
+    override fun delete(showId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        seasonQueries.delete(internalShowId)
     }
 
     override fun deleteAll() {

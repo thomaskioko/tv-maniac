@@ -95,15 +95,15 @@ private fun StartWatchingGrid(
     ) {
         items(
             items = items,
-            key = { it.traktId },
+            key = { it.showId },
         ) { item ->
             PosterCard(
                 imageUrl = item.posterImageUrl,
                 title = item.title,
-                onClick = { onShowClicked(item.traktId) },
+                onClick = { onShowClicked(item.showId) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag(StartWatchingTestTags.showCard(item.traktId)),
+                    .testTag(StartWatchingTestTags.showCard(item.showId)),
             )
         }
     }

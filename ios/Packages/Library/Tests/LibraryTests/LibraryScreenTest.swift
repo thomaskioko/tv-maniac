@@ -8,10 +8,10 @@ import XCTest
 
 class LibraryScreenTest: SnapshotTestCase {
     private let sampleGridItems: [LibraryGridItem] = [
-        LibraryGridItem(traktId: 1, title: "Breaking Bad", posterImageUrl: nil),
-        LibraryGridItem(traktId: 2, title: "Game of Thrones", posterImageUrl: nil),
-        LibraryGridItem(traktId: 3, title: "The Wire", posterImageUrl: nil),
-        LibraryGridItem(traktId: 4, title: "Stranger Things", posterImageUrl: nil),
+        LibraryGridItem(showId: 1, title: "Breaking Bad", posterImageUrl: nil),
+        LibraryGridItem(showId: 2, title: "Game of Thrones", posterImageUrl: nil),
+        LibraryGridItem(showId: 3, title: "The Wire", posterImageUrl: nil),
+        LibraryGridItem(showId: 4, title: "Stranger Things", posterImageUrl: nil),
     ]
 
     func test_LibraryScreen_Loading() {
@@ -94,7 +94,7 @@ class LibraryScreenTest: SnapshotTestCase {
 
     private let sampleListItems: [SwiftLibraryItem] = [
         SwiftLibraryItem(
-            traktId: 1,
+            showId: 1,
             title: "Breaking Bad",
             posterUrl: nil,
             year: "2008",
@@ -106,7 +106,7 @@ class LibraryScreenTest: SnapshotTestCase {
             watchProviders: []
         ),
         SwiftLibraryItem(
-            traktId: 2,
+            showId: 2,
             title: "Game of Thrones",
             posterUrl: nil,
             year: "2011",
@@ -118,7 +118,7 @@ class LibraryScreenTest: SnapshotTestCase {
             watchProviders: []
         ),
         SwiftLibraryItem(
-            traktId: 3,
+            showId: 3,
             title: "The Wire",
             posterUrl: nil,
             year: "2002",
@@ -130,7 +130,7 @@ class LibraryScreenTest: SnapshotTestCase {
             watchProviders: []
         ),
         SwiftLibraryItem(
-            traktId: 4,
+            showId: 4,
             title: "Stranger Things",
             posterUrl: nil,
             year: "2016",

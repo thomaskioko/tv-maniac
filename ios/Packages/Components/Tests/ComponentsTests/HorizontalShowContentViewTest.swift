@@ -7,9 +7,9 @@ import XCTest
 
 class HorizontalShowContentViewTest: SnapshotTestCase {
     private let sampleItems: [SwiftShow] = [
-        .init(traktId: 124, title: "Terminator", posterUrl: "", backdropUrl: nil, inLibrary: false),
-        .init(traktId: 123_346, title: "The Perfect Couple", posterUrl: "", backdropUrl: nil, inLibrary: false),
-        .init(traktId: 2346, title: "One Piece", posterUrl: "", backdropUrl: nil, inLibrary: false),
+        .init(showId: 124, title: "Terminator", posterUrl: "", backdropUrl: nil, inLibrary: false),
+        .init(showId: 123_346, title: "The Perfect Couple", posterUrl: "", backdropUrl: nil, inLibrary: false),
+        .init(showId: 2346, title: "One Piece", posterUrl: "", backdropUrl: nil, inLibrary: false),
     ]
 
     func test_HorizontalShowContentView_Metallic() {

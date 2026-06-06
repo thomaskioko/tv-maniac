@@ -193,20 +193,20 @@ public struct MyShowsTab: View {
                 staleEpisodes: staleEpisodesSwift
             ),
             onShowClicked: { id in
-                continueWatchingPresenter.dispatch(action: ContinueWatchingShowClicked(traktId: id))
+                continueWatchingPresenter.dispatch(action: ContinueWatchingShowClicked(showId: id))
             },
-            onEpisodeClicked: { showTraktId, episodeId in
+            onEpisodeClicked: { showId, episodeId in
                 continueWatchingPresenter.dispatch(action: UpNextEpisodeClicked(
-                    showTraktId: showTraktId,
+                    showId: showId,
                     episodeId: episodeId
                 ))
             },
-            onShowTitleClicked: { showTraktId in
-                continueWatchingPresenter.dispatch(action: ShowTitleClicked(showTraktId: showTraktId))
+            onShowTitleClicked: { showId in
+                continueWatchingPresenter.dispatch(action: ShowTitleClicked(showId: showId))
             },
             onMarkWatched: { episode in
                 continueWatchingPresenter.dispatch(action: MarkUpNextEpisodeWatched(
-                    showTraktId: episode.showTraktId,
+                    showId: episode.showId,
                     episodeId: episode.episodeId,
                     seasonNumber: episode.seasonNumber,
                     episodeNumber: episode.episodeNumberValue
@@ -230,8 +230,8 @@ public struct MyShowsTab: View {
         } else {
             GridView(
                 items: startWatchingState.items.map { $0.toSwift() },
-                onAction: { traktId in
-                    startWatchingPresenter.dispatch(action: StartWatchingShowClicked(traktId: traktId))
+                onAction: { showId in
+                    startWatchingPresenter.dispatch(action: StartWatchingShowClicked(showId: showId))
                 }
             )
             .refreshable {
@@ -258,7 +258,7 @@ private extension ContinueWatchingState {
             query: query,
             watchNextGridItems: Array(watchNextItems).map {
                 MyShowsGridItem(
-                    traktId: $0.traktId,
+                    showId: $0.showId,
                     title: $0.title,
                     posterImageUrl: $0.posterImageUrl,
                     watchProgress: $0.watchProgress
@@ -266,7 +266,7 @@ private extension ContinueWatchingState {
             },
             staleGridItems: Array(staleItems).map {
                 MyShowsGridItem(
-                    traktId: $0.traktId,
+                    showId: $0.showId,
                     title: $0.title ?? "",
                     posterImageUrl: $0.posterImageUrl,
                     watchProgress: $0.watchProgress

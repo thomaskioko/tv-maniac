@@ -87,7 +87,7 @@ public class ShowDetailsPresenter(
     @Suppress("UNUSED_PARAMETER") dispatchers: AppCoroutineDispatchers,
 ) : ComponentContext by componentContext {
 
-    private val showTraktId: Long = param.id
+    private val showId: Long = param.showId
     private val showDetailsLoadingState = ObservableLoadingCounter()
     private val similarShowsLoadingState = ObservableLoadingCounter()
     private val episodeActionLoadingState = ObservableLoadingCounter()
@@ -100,9 +100,9 @@ public class ShowDetailsPresenter(
     public val stateValue: Value<ShowDetailsContent> = state.asValue(coroutineScope)
 
     init {
-        observableShowDetailsInteractor(showTraktId)
-        observableShowMetadataInteractor(showTraktId)
-        observeShowWatchProgressInteractor(showTraktId)
+        observableShowDetailsInteractor(showId)
+        observableShowMetadataInteractor(showId)
+        observeShowWatchProgressInteractor(showId)
 
         observableShowDetailsInteractor.flow
             .onEach { details ->
@@ -115,7 +115,7 @@ public class ShowDetailsPresenter(
                 _state.update {
                     it.copy(
                         showDetails = mapper.applyMetadata(it.showDetails, metadata),
-                        continueTrackingEpisodes = mapper.mapContinueTrackingEpisodes(metadata.continueTrackingEpisodes, showTraktId),
+                        continueTrackingEpisodes = mapper.mapContinueTrackingEpisodes(metadata.continueTrackingEpisodes, showId),
                         continueTrackingScrollIndex = metadata.continueTrackingScrollIndex,
                     )
                 }
@@ -153,7 +153,7 @@ public class ShowDetailsPresenter(
                 navigator.navigateTo(
                     SeasonDetailsRoute(
                         SeasonDetailsUiParam(
-                            showTraktId = action.params.showTraktId,
+                            showId = action.params.showId,
                             seasonId = action.params.seasonId,
                             seasonNumber = action.params.seasonNumber,
                         ),
@@ -161,15 +161,15 @@ public class ShowDetailsPresenter(
                 )
             }
 
-            is DetailShowClicked -> navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
+            is DetailShowClicked -> navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is WatchTrailerClicked -> navigator.navigateTo(TrailersRoute(action.id))
             is FollowShowClicked -> {
                 coroutineScope.launch {
                     if (action.isInLibrary) {
-                        followedShowsRepository.removeFollowedShow(showTraktId)
-                        notificationManager.cancelNotificationsForShow(showTraktId)
+                        followedShowsRepository.removeFollowedShow(showId)
+                        notificationManager.cancelNotificationsForShow(showId)
                     } else {
-                        followShowInteractor(FollowShowInteractor.Param(traktId = showTraktId))
+                        followShowInteractor(FollowShowInteractor.Param(showId = showId))
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
                         syncTraktCalendarInteractor(SyncTraktCalendarInteractor.Params(forceRefresh = true))
@@ -186,12 +186,12 @@ public class ShowDetailsPresenter(
             DetailBackClicked -> navigator.navigateBack()
             ReloadShowDetails -> refreshShowContent()
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
-            OpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showTraktId)))
+            OpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showId)))
 
             is MarkEpisodeWatched -> launchEpisodeMark(action.episodeId) {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         episodeId = action.episodeId,
                         seasonNumber = action.seasonNumber,
                         episodeNumber = action.episodeNumber,
@@ -203,7 +203,7 @@ public class ShowDetailsPresenter(
             is MarkEpisodeUnwatched -> launchEpisodeMark(action.episodeId) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         episodeId = action.episodeId,
                     ),
                 ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
@@ -213,12 +213,12 @@ public class ShowDetailsPresenter(
 
     private fun observeShowDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
-            showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
+            showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
 
         coroutineScope.launch {
-            similarShowsInteractor(SimilarShowsInteractor.Param(showTraktId, forceReload))
+            similarShowsInteractor(SimilarShowsInteractor.Param(showId, forceReload))
                 .collectStatus(similarShowsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }

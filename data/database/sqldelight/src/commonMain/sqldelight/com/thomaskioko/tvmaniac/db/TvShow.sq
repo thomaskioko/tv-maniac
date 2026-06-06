@@ -165,12 +165,12 @@ SELECT EXISTS(
     SELECT 1 FROM tvshow WHERE tmdb_id = ?
 );
 
-existsByTraktId:
+existsByShowId:
 SELECT EXISTS(
     SELECT 1 FROM show_trakt WHERE trakt_id = ?
 );
 
-showsByTraktIds:
+showsByIds:
 SELECT
     show_trakt.trakt_id,
     tvshow.tmdb_id,
@@ -203,7 +203,7 @@ WHERE tvshow.tmdb_id IN ?;
 getShowIdByTmdbId:
 SELECT id FROM tvshow WHERE tmdb_id = ?;
 
-getTmdbIdByTraktId:
+getTmdbIdByShowId:
 SELECT tvshow.tmdb_id
 FROM tvshow
 INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id

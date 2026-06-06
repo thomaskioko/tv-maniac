@@ -4,10 +4,10 @@ import Models
 
 public struct SwiftLibraryItem: Identifiable, Equatable {
     public var id: Int64 {
-        traktId
+        showId
     }
 
-    public let traktId: Int64
+    public let showId: Int64
     public let title: String
     public let posterUrl: String?
     public let year: String?
@@ -19,7 +19,7 @@ public struct SwiftLibraryItem: Identifiable, Equatable {
     public let watchProviders: [SwiftProviders]
 
     public init(
-        traktId: Int64,
+        showId: Int64,
         title: String,
         posterUrl: String?,
         year: String?,
@@ -30,7 +30,7 @@ public struct SwiftLibraryItem: Identifiable, Equatable {
         genres: [String]?,
         watchProviders: [SwiftProviders]
     ) {
-        self.traktId = traktId
+        self.showId = showId
         self.title = title
         self.posterUrl = posterUrl
         self.year = year

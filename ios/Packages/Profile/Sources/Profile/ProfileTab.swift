@@ -22,7 +22,7 @@ public struct ProfileTab: View {
             onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) },
             onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) },
             onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) },
-            onShowClicked: { traktId in presenter.dispatch(action: ProfileActionShowClicked(traktId: traktId)) },
+            onShowClicked: { showId in presenter.dispatch(action: ProfileActionShowClicked(showId: showId)) },
             onRetryProgress: { presenter.dispatch(action: ProfileActionRefreshProfile()) }
         )
         .onChange(of: uiState.errorMessage) { _, errorMessage in
@@ -151,7 +151,7 @@ private extension SectionState {
         case let content as SectionStateContent<ProfileShowItem>:
             let items = content.items.compactMap { $0 as? ProfileShowItem }.map { item in
                 SwiftProfileShow(
-                    id: item.traktId,
+                    id: item.showId,
                     title: item.title,
                     posterUrl: item.posterUrl
                 )
@@ -173,7 +173,7 @@ private extension SectionState {
         case let content as SectionStateContent<ProfileRecentItem>:
             let items = content.items.compactMap { $0 as? ProfileRecentItem }.map { item in
                 SwiftProfileRecentShow(
-                    traktId: item.traktId,
+                    showId: item.showId,
                     title: item.title,
                     posterUrl: item.posterUrl,
                     episodeLabel: item.episodeLabel

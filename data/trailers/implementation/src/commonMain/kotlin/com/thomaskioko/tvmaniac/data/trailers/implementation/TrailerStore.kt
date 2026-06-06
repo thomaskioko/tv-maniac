@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
-import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -27,22 +27,22 @@ public class TrailerStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<Long, List<SelectByShowTraktId>> by storeBuilder(
-    fetcher = Fetcher.of { traktId: Long ->
-        val videos = traktRemoteDataSource.getShowVideos(traktId).getOrThrow()
+) : Store<Long, List<SelectByShowId>> by storeBuilder(
+    fetcher = Fetcher.of { showId: Long ->
+        val videos = traktRemoteDataSource.getShowVideos(showId).getOrThrow()
         requestManagerRepository.upsert(
-            entityId = traktId,
+            entityId = showId,
             requestType = TRAILERS.name,
         )
         videos
     },
-    sourceOfTruth = SourceOfTruth.of<Long, List<TraktVideosResponse>, List<SelectByShowTraktId>>(
-        reader = { traktId: Long ->
-            trailerDao.observeTrailersByShowTraktId(traktId)
+    sourceOfTruth = SourceOfTruth.of<Long, List<TraktVideosResponse>, List<SelectByShowId>>(
+        reader = { showId: Long ->
+            trailerDao.observeTrailersByShowId(showId)
         },
-        writer = { traktId, videos ->
+        writer = { showId, videos ->
             databaseTransactionRunner {
-                val showId = showIdResolver.showIdForTraktId(traktId)
+                val internalShowId = showIdResolver.showIdForTraktId(showId)
                     ?: return@databaseTransactionRunner
 
                 videos
@@ -52,7 +52,7 @@ public class TrailerStore(
                         trailerDao.upsert(
                             Trailers(
                                 id = youtubeKey,
-                                show_id = showId,
+                                show_id = internalShowId,
                                 youtube_url = video.url,
                                 name = video.title,
                                 site = video.site,
@@ -71,9 +71,9 @@ public class TrailerStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val traktId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = traktId,
+                entityId = showId,
                 requestType = TRAILERS.name,
                 threshold = TRAILERS.duration,
             )

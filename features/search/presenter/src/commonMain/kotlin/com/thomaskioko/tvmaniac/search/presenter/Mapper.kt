@@ -23,7 +23,7 @@ public class Mapper(
         items.map {
             ShowItem(
                 tmdbId = it.tmdbId,
-                traktId = it.traktId,
+                showId = it.showId,
                 title = it.title,
                 posterImageUrl = it.posterPath,
                 inLibrary = it.inLibrary,
@@ -43,7 +43,7 @@ public class Mapper(
                 shows = entity.shows.map { show ->
                     ShowItem(
                         tmdbId = show.tmdbId,
-                        traktId = show.traktId,
+                        showId = show.showId,
                         title = show.title,
                         posterImageUrl = show.posterPath,
                         inLibrary = show.inLibrary,

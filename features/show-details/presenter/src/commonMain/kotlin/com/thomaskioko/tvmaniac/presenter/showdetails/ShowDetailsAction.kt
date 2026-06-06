@@ -14,20 +14,20 @@ public data object ReloadShowDetails : ShowDetailsAction
 
 public data class SeasonClicked(val params: ShowSeasonDetailsParam) : ShowDetailsAction
 
-public data class DetailShowClicked(val id: Long) : ShowDetailsAction
+public data class DetailShowClicked(val showId: Long) : ShowDetailsAction
 
 public data class WatchTrailerClicked(val id: Long) : ShowDetailsAction
 
 public data class FollowShowClicked(val isInLibrary: Boolean) : ShowDetailsAction
 
 public data class MarkEpisodeWatched(
-    val showTraktId: Long,
+    val showId: Long,
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
 ) : ShowDetailsAction
 
 public data class MarkEpisodeUnwatched(
-    val showTraktId: Long,
+    val showId: Long,
     val episodeId: Long,
 ) : ShowDetailsAction

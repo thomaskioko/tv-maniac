@@ -165,7 +165,7 @@ public class ShowListPresenter(
                 toggleShowInListInteractor(
                     ToggleShowInListInteractor.Params(
                         listId = listId,
-                        traktShowId = param.showId,
+                        showId = param.showId,
                         isCurrentlyInList = isCurrentlyInList,
                     ),
                 ).collectStatus(

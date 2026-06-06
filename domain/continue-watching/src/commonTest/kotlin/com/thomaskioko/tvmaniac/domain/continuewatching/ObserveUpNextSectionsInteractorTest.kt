@@ -62,8 +62,8 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should return episodes in watchNext when no lastWatched data`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Loki"),
-            createNextEpisode(showTraktId = 2, showName = "Wednesday"),
+            createNextEpisode(showId = 1, showName = "Loki"),
+            createNextEpisode(showId = 2, showName = "Wednesday"),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -89,8 +89,8 @@ class ObserveUpNextSectionsInteractorTest {
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Stale Show", lastWatchedAt = seventeenDaysAgo, firstAired = pastAiredDate),
-            createNextEpisode(showTraktId = 2, showName = "Active Show", lastWatchedAt = oneDayAgo, firstAired = pastAiredDate),
+            createNextEpisode(showId = 1, showName = "Stale Show", lastWatchedAt = seventeenDaysAgo, firstAired = pastAiredDate),
+            createNextEpisode(showId = 2, showName = "Active Show", lastWatchedAt = oneDayAgo, firstAired = pastAiredDate),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -109,8 +109,8 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should filter episodes by show name when query is provided`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Loki"),
-            createNextEpisode(showTraktId = 2, showName = "Wednesday"),
+            createNextEpisode(showId = 1, showName = "Loki"),
+            createNextEpisode(showId = 2, showName = "Wednesday"),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -127,7 +127,7 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should calculate remaining episodes from episode data`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Loki", watchedCount = 5, totalCount = 10),
+            createNextEpisode(showId = 1, showName = "Loki", watchedCount = 5, totalCount = 10),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -144,8 +144,8 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should handle case insensitive query filtering`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Loki"),
-            createNextEpisode(showTraktId = 2, showName = "Wednesday"),
+            createNextEpisode(showId = 1, showName = "Loki"),
+            createNextEpisode(showId = 2, showName = "Wednesday"),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -163,7 +163,7 @@ class ObserveUpNextSectionsInteractorTest {
     fun `should preserve episode details in output`() = runTest {
         val episodes = listOf(
             NextEpisodeWithShow(
-                showTraktId = 1,
+                showId = 1,
                 showTmdbId = 1,
                 showName = "Loki",
                 showPoster = "/poster.jpg",
@@ -193,7 +193,7 @@ class ObserveUpNextSectionsInteractorTest {
             val result = awaitItem()
             result.watchNext.size shouldBe 1
             val episode = result.watchNext[0]
-            episode.showTraktId shouldBe 1
+            episode.showId shouldBe 1
             episode.showName shouldBe "Loki"
             episode.episodeId shouldBe 101
             episode.episodeTitle shouldBe "Glorious Purpose"
@@ -210,8 +210,8 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should filter out episodes with unknown air date`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Loki", firstAired = LocalDate(2021, 6, 9).toEpochMillis()),
-            createNextEpisode(showTraktId = 2, showName = "Wednesday", firstAired = null),
+            createNextEpisode(showId = 1, showName = "Loki", firstAired = LocalDate(2021, 6, 9).toEpochMillis()),
+            createNextEpisode(showId = 2, showName = "Wednesday", firstAired = null),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -228,7 +228,7 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should format episode number with padding`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Show", seasonNumber = 10, episodeNumber = 5),
+            createNextEpisode(showId = 1, showName = "Show", seasonNumber = 10, episodeNumber = 5),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -244,7 +244,7 @@ class ObserveUpNextSectionsInteractorTest {
     @Test
     fun `should return null formatted runtime when runtime is null`() = runTest {
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Show", runtime = null),
+            createNextEpisode(showId = 1, showName = "Show", runtime = null),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -263,8 +263,8 @@ class ObserveUpNextSectionsInteractorTest {
         val futureEpoch = dateTimeProvider.nowMillis() + (17 * 24 * 60 * 60 * 1000L)
 
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Aired Show", firstAired = pastEpoch),
-            createNextEpisode(showTraktId = 2, showName = "Future Show", firstAired = futureEpoch),
+            createNextEpisode(showId = 1, showName = "Aired Show", firstAired = pastEpoch),
+            createNextEpisode(showId = 2, showName = "Future Show", firstAired = futureEpoch),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -279,7 +279,7 @@ class ObserveUpNextSectionsInteractorTest {
     }
 
     private fun createNextEpisode(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
         firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
@@ -289,13 +289,13 @@ class ObserveUpNextSectionsInteractorTest {
         episodeNumber: Long = 2L,
         runtime: Long? = 45L,
     ) = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
+        showId = showId,
+        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",
         showYear = "2024",
-        episodeId = showTraktId * 100 + 1,
+        episodeId = showId * 100 + 1,
         episodeName = "Episode Title",
         seasonId = 1L,
         seasonNumber = seasonNumber,

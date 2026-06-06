@@ -129,9 +129,9 @@ class ProfileScreenTest: SnapshotTestCase {
     ]
 
     private let sampleRecentShows: [SwiftProfileRecentShow] = [
-        SwiftProfileRecentShow(traktId: 1, title: "Breaking Bad", posterUrl: nil, episodeLabel: "S5E14"),
-        SwiftProfileRecentShow(traktId: 2, title: "Game of Thrones", posterUrl: nil, episodeLabel: "S8E3"),
-        SwiftProfileRecentShow(traktId: 3, title: "Stranger Things", posterUrl: nil, episodeLabel: "S4E9"),
+        SwiftProfileRecentShow(showId: 1, title: "Breaking Bad", posterUrl: nil, episodeLabel: "S5E14"),
+        SwiftProfileRecentShow(showId: 2, title: "Game of Thrones", posterUrl: nil, episodeLabel: "S8E3"),
+        SwiftProfileRecentShow(showId: 3, title: "Stranger Things", posterUrl: nil, episodeLabel: "S4E9"),
     ]
 
     private func authenticatedState(userLists: SwiftSectionState<SwiftProfileList>) -> ProfileScreen.State {

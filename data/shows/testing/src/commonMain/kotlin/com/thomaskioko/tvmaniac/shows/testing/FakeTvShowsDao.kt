@@ -18,17 +18,17 @@ public class FakeTvShowsDao : TvShowsDao {
     public fun entries(): List<Tvshow> = state.value.values.toList()
 
     override fun upsert(show: ShowToPersist) {
-        state.value += (show.traktId.id to show.toTvshow())
+        state.value += (show.showId.id to show.toTvshow())
     }
 
     override fun upsert(list: List<ShowToPersist>) {
-        state.value += list.associate { it.traktId.id to it.toTvshow() }
+        state.value += list.associate { it.showId.id to it.toTvshow() }
     }
 
     override fun upsertMerging(show: ShowToPersist) {
-        val existing = state.value[show.traktId.id]
+        val existing = state.value[show.showId.id]
         val merged = mergeShows(local = existing, network = show)
-        state.value = state.value + (merged.traktId.id to merged.toTvshow())
+        state.value = state.value + (merged.showId.id to merged.toTvshow())
     }
 
     override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> =
@@ -43,11 +43,11 @@ public class FakeTvShowsDao : TvShowsDao {
         state.value = emptyMap()
     }
 
-    override fun getShowsByTraktIds(traktIds: List<Long>): List<ShowEntity> = emptyList()
+    override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> = emptyList()
 
-    override fun getTmdbIdByTraktId(traktId: Long): Long? = state.value[traktId]?.tmdb_id?.id
+    override fun getTmdbIdByShowId(showId: Long): Long? = state.value[showId]?.tmdb_id?.id
 
-    override suspend fun existsByTraktId(traktId: Long): Boolean = traktId in state.value
+    override suspend fun existsByShowId(showId: Long): Boolean = showId in state.value
 }
 
 private fun ShowToPersist.toTvshow(): Tvshow = Tvshow(

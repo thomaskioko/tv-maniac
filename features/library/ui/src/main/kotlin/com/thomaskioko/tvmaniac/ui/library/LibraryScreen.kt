@@ -372,13 +372,13 @@ private fun LibraryGridContent(
     ) {
         items(
             items = items,
-            key = { it.traktId },
+            key = { it.showId },
             contentType = { "LibraryGridItem" },
         ) { item ->
             LibraryGridItem(
                 item = item,
                 onItemClicked = onItemClicked,
-                modifier = Modifier.testTag(LibraryTestTags.showRow(item.traktId)),
+                modifier = Modifier.testTag(LibraryTestTags.showRow(item.showId)),
             )
         }
 
@@ -396,7 +396,7 @@ private fun LibraryGridItem(
 ) {
     PosterCard(
         imageUrl = item.posterImageUrl,
-        onClick = { onItemClicked(item.traktId) },
+        onClick = { onItemClicked(item.showId) },
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(2f / 3f),
@@ -422,13 +422,13 @@ private fun LibraryListContent(
     ) {
         items(
             count = items.size,
-            key = { items[it].traktId },
+            key = { items[it].showId },
             contentType = { "LibraryListItem" },
         ) { index ->
             LibraryListItem(
                 item = items[index],
                 onItemClicked = onItemClicked,
-                modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].traktId)),
+                modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].showId)),
             )
         }
 

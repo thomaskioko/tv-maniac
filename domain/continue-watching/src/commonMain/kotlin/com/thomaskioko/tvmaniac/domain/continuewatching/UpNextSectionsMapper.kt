@@ -80,7 +80,7 @@ public class UpNextSectionsMapper(
         badge: EpisodeBadge,
     ): UpNextEpisodeInfo {
         return UpNextEpisodeInfo(
-            showTraktId = showTraktId,
+            showId = showId,
             showName = showName,
             showPoster = showPoster,
             episodeId = episodeId,

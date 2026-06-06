@@ -184,15 +184,15 @@ private fun PosterRow(
     ) {
         items(
             items = shows,
-            key = { it.traktId },
+            key = { it.showId },
         ) { show ->
             PosterCard(
                 imageUrl = show.posterUrl,
                 title = show.title,
                 imageWidth = posterWidth,
                 shape = MaterialTheme.shapes.medium,
-                onClick = { onShowClick(show.traktId) },
-                modifier = Modifier.testTag(ProfileTestTags.showCard(show.traktId)),
+                onClick = { onShowClick(show.showId) },
+                modifier = Modifier.testTag(ProfileTestTags.showCard(show.showId)),
             )
         }
     }
@@ -239,13 +239,13 @@ private fun ProgressSectionPreview() {
     ProgressSection(
         inProgress = SectionState.Content(
             persistentListOf(
-                ProfileShowItem(traktId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null),
-                ProfileShowItem(traktId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null),
+                ProfileShowItem(showId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null),
+                ProfileShowItem(showId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null),
             ),
         ),
         completed = SectionState.Content(
             persistentListOf(
-                ProfileShowItem(traktId = 3, tmdbId = 66732, title = "Stranger Things", posterUrl = null),
+                ProfileShowItem(showId = 3, tmdbId = 66732, title = "Stranger Things", posterUrl = null),
             ),
         ),
         title = "Progress",

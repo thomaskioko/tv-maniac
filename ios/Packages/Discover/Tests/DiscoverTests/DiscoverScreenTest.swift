@@ -9,7 +9,7 @@ import XCTest
 class DiscoverScreenTest: SnapshotTestCase {
     private let sampleShows: [SwiftShow] = [
         SwiftShow(
-            traktId: 1,
+            showId: 1,
             title: "Breaking Bad",
             posterUrl: nil,
             backdropUrl: nil,
@@ -17,7 +17,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             overview: "A chemistry teacher diagnosed with cancer turns to manufacturing methamphetamine."
         ),
         SwiftShow(
-            traktId: 2,
+            showId: 2,
             title: "Game of Thrones",
             posterUrl: nil,
             backdropUrl: nil,
@@ -27,14 +27,14 @@ class DiscoverScreenTest: SnapshotTestCase {
     ]
 
     private let samplePosters: [SwiftShow] = [
-        SwiftShow(traktId: 1, title: "Breaking Bad", posterUrl: nil, inLibrary: false),
-        SwiftShow(traktId: 2, title: "Game of Thrones", posterUrl: nil, inLibrary: false),
-        SwiftShow(traktId: 3, title: "The Wire", posterUrl: nil, inLibrary: false),
+        SwiftShow(showId: 1, title: "Breaking Bad", posterUrl: nil, inLibrary: false),
+        SwiftShow(showId: 2, title: "Game of Thrones", posterUrl: nil, inLibrary: false),
+        SwiftShow(showId: 3, title: "The Wire", posterUrl: nil, inLibrary: false),
     ]
 
     private let sampleEpisodes: [SwiftNextEpisode] = [
         SwiftNextEpisode(
-            showTraktId: 1,
+            showId: 1,
             showName: "Breaking Bad",
             imageUrl: nil,
             episodeId: 101,
@@ -48,7 +48,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             totalCount: 8
         ),
         SwiftNextEpisode(
-            showTraktId: 2,
+            showId: 2,
             showName: "Game of Thrones",
             imageUrl: nil,
             episodeId: 201,

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.presenter.model
 
 public data class NextEpisodeUiModel(
-    val showTraktId: Long,
+    val showId: Long,
     val showName: String,
     val imageUrl: String?,
     val episodeId: Long,

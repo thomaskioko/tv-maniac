@@ -117,7 +117,7 @@ private fun ContinueTrackingSectionPreview() {
             ContinueTrackingEpisodeModel(
                 episodeId = 1L,
                 seasonId = 1L,
-                showTraktId = 1L,
+                showId = 1L,
                 episodeNumber = 1,
                 seasonNumber = 2,
                 episodeNumberFormatted = "S02 | E01",
@@ -130,7 +130,7 @@ private fun ContinueTrackingSectionPreview() {
             ContinueTrackingEpisodeModel(
                 episodeId = 2L,
                 seasonId = 1L,
-                showTraktId = 1L,
+                showId = 1L,
                 episodeNumber = 2,
                 seasonNumber = 2,
                 episodeNumberFormatted = "S02 | E02",
@@ -143,7 +143,7 @@ private fun ContinueTrackingSectionPreview() {
             ContinueTrackingEpisodeModel(
                 episodeId = 3L,
                 seasonId = 1L,
-                showTraktId = 1L,
+                showId = 1L,
                 episodeNumber = 3,
                 seasonNumber = 2,
                 episodeNumberFormatted = "S02 | E03",

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.presenter.model
 
 public data class DiscoverShow(
-    val traktId: Long,
+    val showId: Long,
     val tmdbId: Long,
     val title: String = "",
     val posterImageUrl: String? = null,

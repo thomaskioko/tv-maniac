@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 internal val continueWatchingItems = List(3) { index ->
     ContinueWatchingItem(
-        traktId = 84958L + index,
+        showId = 84958L + index,
         title = "Loki",
         posterImageUrl = null,
         year = "2021",
@@ -24,7 +24,7 @@ internal val continueWatchingItems = List(3) { index ->
 
 internal val staleContinueWatchingItems = List(2) { index ->
     ContinueWatchingItem(
-        traktId = 94958L + index,
+        showId = 94958L + index,
         title = "The Mandalorian",
         posterImageUrl = null,
         year = "2019",
@@ -38,7 +38,7 @@ internal val staleContinueWatchingItems = List(2) { index ->
 
 internal val watchNextEpisodes = listOf(
     UpNextEpisodeItem(
-        showTraktId = 84958L,
+        showId = 84958L,
         showName = "Loki",
         showPoster = null,
         episodeId = 1L,
@@ -54,7 +54,7 @@ internal val watchNextEpisodes = listOf(
         remainingEpisodes = 5,
     ),
     UpNextEpisodeItem(
-        showTraktId = 95557L,
+        showId = 95557L,
         showName = "The Walking Dead",
         showPoster = null,
         episodeId = 12L,
@@ -73,7 +73,7 @@ internal val watchNextEpisodes = listOf(
 
 internal val staleEpisodes = listOf(
     UpNextEpisodeItem(
-        showTraktId = 94958L,
+        showId = 94958L,
         showName = "The Mandalorian",
         showPoster = null,
         episodeId = 5L,

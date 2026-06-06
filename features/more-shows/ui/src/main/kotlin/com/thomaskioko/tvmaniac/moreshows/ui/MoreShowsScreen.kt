@@ -187,11 +187,11 @@ internal fun GridContent(
                 show?.let {
                     PosterCard(
                         imageUrl = show.posterImageUrl,
-                        onClick = { onAction(MoreShowClicked(show.traktId)) },
+                        onClick = { onAction(MoreShowClicked(show.showId)) },
                         modifier = Modifier
                             .animateItem()
                             .fillMaxWidth()
-                            .testTag(MoreShowsTestTags.showCard(show.traktId)),
+                            .testTag(MoreShowsTestTags.showCard(show.showId)),
                         title = show.title,
                     )
                 }

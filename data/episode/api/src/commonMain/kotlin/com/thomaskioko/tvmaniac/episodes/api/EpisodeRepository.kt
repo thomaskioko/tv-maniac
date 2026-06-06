@@ -16,7 +16,7 @@ public interface EpisodeRepository {
     public fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>>
 
     public suspend fun markEpisodeAsWatched(
-        showTraktId: Long,
+        showId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -27,7 +27,7 @@ public interface EpisodeRepository {
      * Automatically adds the show to the library if not already there.
      */
     public suspend fun markEpisodeAndPreviousEpisodesWatched(
-        showTraktId: Long,
+        showId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -36,50 +36,50 @@ public interface EpisodeRepository {
     /**
      * Mark an episode as unwatched. The SQL view automatically updates next episode calculations.
      */
-    public suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long)
+    public suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long)
 
     /**
      * Observe watch progress for a specific season.
      */
-    public fun observeSeasonWatchProgress(showTraktId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
+    public fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress>
 
     /**
      * Observe watch progress for an entire show (across all seasons).
      */
-    public fun observeShowWatchProgress(showTraktId: Long): Flow<ShowWatchProgress>
+    public fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress>
 
     /**
      * Observe watch progress for all seasons of a show.
      * Returns a list of SeasonWatchProgress, one per season.
      */
-    public fun observeAllSeasonsWatchProgress(showTraktId: Long): Flow<List<SeasonWatchProgress>>
+    public fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>>
 
     /**
      * Mark all episodes in a season as watched.
      * Automatically adds the show to the library if not already there.
      */
-    public suspend fun markSeasonWatched(showTraktId: Long, seasonNumber: Long)
+    public suspend fun markSeasonWatched(showId: Long, seasonNumber: Long)
 
     /**
      * Mark all episodes in a season as watched along with all previous seasons.
      * Automatically adds the show to the library if not already there.
      */
     public suspend fun markSeasonAndPreviousSeasonsWatched(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     )
 
     /**
      * Mark all episodes in a season as unwatched.
      */
-    public suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long)
+    public suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long)
 
     /**
      * Observe count of unwatched episodes in seasons before the specified season number.
      * Used for reactive UI to determine if previous seasons dialog should be shown.
      */
     public fun observeUnwatchedCountInPreviousSeasons(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     ): Flow<Long>
 

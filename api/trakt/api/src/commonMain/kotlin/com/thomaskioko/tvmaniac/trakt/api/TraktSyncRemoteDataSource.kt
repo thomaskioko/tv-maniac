@@ -16,7 +16,7 @@ public interface TraktSyncRemoteDataSource {
     ): ApiResponse<List<TraktPlaybackEpisodeResponse>>
 
     public suspend fun getShowWatchedProgress(
-        traktId: Long,
+        showId: Long,
         lastActivity: String? = null,
         hidden: Boolean = false,
         specials: Boolean = false,

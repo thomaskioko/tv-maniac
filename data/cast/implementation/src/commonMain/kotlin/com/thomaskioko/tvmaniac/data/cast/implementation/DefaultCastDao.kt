@@ -37,15 +37,15 @@ public class DefaultCastDao(
         )
     }
 
-    override suspend fun getShowCast(traktId: Long): List<ShowCast> =
+    override suspend fun getShowCast(showId: Long): List<ShowCast> =
         withContext(dispatcher.io) {
-            val showId = showIdResolver.showIdForTraktId(traktId) ?: return@withContext emptyList()
-            database.castQueries.showCast(showId).executeAsList()
+            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext emptyList()
+            database.castQueries.showCast(internalShowId).executeAsList()
         }
 
-    override fun observeShowCast(traktId: Long): Flow<List<ShowCast>> {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return flowOf(emptyList())
-        return database.castQueries.showCast(showId).asFlow().mapToList(dispatcher.io)
+    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        return database.castQueries.showCast(internalShowId).asFlow().mapToList(dispatcher.io)
     }
 
     override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =

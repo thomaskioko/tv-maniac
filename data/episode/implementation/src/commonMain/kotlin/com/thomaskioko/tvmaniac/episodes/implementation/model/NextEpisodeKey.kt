@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation.model
 
 public data class NextEpisodeKey(
-    val showTraktId: Long,
+    val showId: Long,
     val seasonNumber: Long = 1,
 )

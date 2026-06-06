@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.upnext.model
 
 public data class UpNextEpisodeUiModel(
-    val showTraktId: Long,
+    val showId: Long,
     val showTmdbId: Long,
     val showName: String,
     val imageUrl: String?,

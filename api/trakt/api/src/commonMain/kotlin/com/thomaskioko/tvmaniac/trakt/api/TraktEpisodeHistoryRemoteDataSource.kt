@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncItems
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncResponse
 
 public interface TraktEpisodeHistoryRemoteDataSource {
-    public suspend fun getShowEpisodeWatches(showTraktId: Long): ApiResponse<List<TraktHistoryEntry>>
+    public suspend fun getShowEpisodeWatches(showId: Long): ApiResponse<List<TraktHistoryEntry>>
     public suspend fun addEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse>
     public suspend fun removeEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse>
 }

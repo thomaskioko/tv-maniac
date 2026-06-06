@@ -13,13 +13,13 @@ public class ObserveSeasonWatchProgressInteractor(
 
     override fun createObservable(params: ObserveSeasonWatchProgressParams): Flow<SeasonWatchProgress> {
         return episodeRepository.observeSeasonWatchProgress(
-            showTraktId = params.showTraktId,
+            showId = params.showId,
             seasonNumber = params.seasonNumber,
         )
     }
 }
 
 public data class ObserveSeasonWatchProgressParams(
-    val showTraktId: Long,
+    val showId: Long,
     val seasonNumber: Long,
 )

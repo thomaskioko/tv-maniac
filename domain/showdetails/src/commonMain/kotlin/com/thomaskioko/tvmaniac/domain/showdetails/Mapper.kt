@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.showdetails
 
-import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
@@ -25,7 +25,7 @@ internal fun List<ShowCast>.toCastList(): List<Casts> =
 internal fun List<SimilarShows>.toSimilarShowList(): List<Show> =
     map {
         Show(
-            traktId = it.show_trakt_id,
+            showId = it.show_trakt_id,
             title = it.name,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
@@ -57,7 +57,7 @@ internal fun List<ShowSeasons>.toSeasonsList(
         )
     }
 
-internal fun List<SelectByShowTraktId>.toTrailerList(): List<Trailer> =
+internal fun List<SelectByShowId>.toTrailerList(): List<Trailer> =
     map { trailer ->
         Trailer(
             showTmdbId = trailer.show_tmdb_id.id,

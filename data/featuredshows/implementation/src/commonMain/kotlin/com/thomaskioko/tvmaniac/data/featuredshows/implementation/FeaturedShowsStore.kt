@@ -89,7 +89,7 @@ public class FeaturedShowsStore(
 
                     response.forEach { showWithImages ->
                         val show = showWithImages.traktShow
-                        val traktId = show.ids.trakt
+                        val showId = show.ids.trakt
                         val tmdbId = showWithImages.tmdbId
                         val posterPath = showWithImages.tmdbPosterPath?.let {
                             formatterUtil.formatTmdbPosterPath(it)
@@ -98,13 +98,13 @@ public class FeaturedShowsStore(
                             formatterUtil.formatTmdbPosterPath(it)
                         }
 
-                        tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath, dateTimeProvider))
+                        tvShowsDao.upsertMerging(show.toTvshow(showId, tmdbId, posterPath, backdropPath, dateTimeProvider))
 
-                        val showId = showIdResolver.showIdForTraktId(traktId) ?: return@forEach
+                        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@forEach
 
                         featuredShowsDao.upsert(
                             Featured_shows(
-                                show_id = showId,
+                                show_id = internalShowId,
                                 tmdb_id = Id(tmdbId),
                                 name = show.title,
                                 poster_path = posterPath,
@@ -140,13 +140,13 @@ private data class FeaturedShowWithImages(
 )
 
 private fun TraktShowResponse.toTvshow(
-    traktId: Long,
+    showId: Long,
     tmdbId: Long,
     posterPath: String?,
     backdropPath: String?,
     dateTimeProvider: DateTimeProvider,
 ): ShowToPersist = ShowToPersist(
-    traktId = Id(traktId),
+    showId = Id(showId),
     tmdbId = Id(tmdbId),
     name = title,
     overview = overview ?: "",

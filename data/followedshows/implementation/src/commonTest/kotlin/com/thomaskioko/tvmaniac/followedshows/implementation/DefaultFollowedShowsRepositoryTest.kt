@@ -85,7 +85,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         val entries = dao.entries()
 
         entries.size shouldBe 1
-        entries.first().traktId shouldBe 1L
+        entries.first().showId shouldBe 1L
         entries.first().pendingAction shouldBe PendingAction.UPLOAD
     }
 
@@ -93,7 +93,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should re-add show marked for deletion`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.DELETE,
             ),
@@ -109,7 +109,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should not add show already in watchlist`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -126,7 +126,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should mark show for deletion given trakt id exists`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -142,7 +142,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should delete local entry given pending upload`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.UPLOAD,
             ),
@@ -158,14 +158,14 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
     fun `should get followed shows`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -173,6 +173,6 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
         val entries = repository.getFollowedShows()
         entries.size shouldBe 2
-        entries.map { it.traktId }.toSet() shouldBe setOf(1L, 2L)
+        entries.map { it.showId }.toSet() shouldBe setOf(1L, 2L)
     }
 }

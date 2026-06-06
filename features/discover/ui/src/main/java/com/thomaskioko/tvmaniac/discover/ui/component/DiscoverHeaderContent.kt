@@ -90,7 +90,7 @@ internal fun PosterCardsPager(
                 .height(pagerHeight)
                 .testTag(DiscoverTestTags.FEATURED_PAGER_TEST_TAG),
             state = pagerState,
-            key = { index -> list[index].traktId },
+            key = { index -> list[index].showId },
             verticalAlignment = Alignment.Bottom,
         ) { currentPage ->
 
@@ -100,8 +100,8 @@ internal fun PosterCardsPager(
                 currentPage = currentPage,
                 imageUrl = currentShow.posterImageUrl,
                 modifier = Modifier
-                    .testTag(DiscoverTestTags.featuredShowItem(currentShow.traktId))
-                    .clickable(onClick = { memoizedOnClick(currentShow.traktId) }),
+                    .testTag(DiscoverTestTags.featuredShowItem(currentShow.showId))
+                    .clickable(onClick = { memoizedOnClick(currentShow.showId) }),
             ) {
                 ShowCardOverlay(
                     title = currentShow.title,

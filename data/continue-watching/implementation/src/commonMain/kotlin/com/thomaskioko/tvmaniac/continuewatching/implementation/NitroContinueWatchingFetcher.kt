@@ -72,7 +72,7 @@ public class NitroContinueWatchingFetcher(
                 .map { it.toEntry() }
 
             entries.forEach { emit(ProgressBatch.Entry(it)) }
-            emit(ProgressBatch.Complete(entries.map { it.traktId }.toSet()))
+            emit(ProgressBatch.Complete(entries.map { it.showId }.toSet()))
         }
     }
 
@@ -92,7 +92,7 @@ private fun TraktUpNextNitroResponse.toEntry(): ContinueWatchingEntry {
         ?.let { Instant.parse(it).toEpochMilliseconds() }
         ?: 0L
     return ContinueWatchingEntry(
-        traktId = show.ids.trakt,
+        showId = show.ids.trakt,
         tmdbId = show.ids.tmdb,
         airedEpisodes = progress.aired.toLong(),
         completedCount = progress.completed.toLong(),

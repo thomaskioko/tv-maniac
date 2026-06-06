@@ -78,15 +78,15 @@ private fun PosterRow(
     ) {
         items(
             items = shows,
-            key = { it.traktId },
+            key = { it.showId },
         ) { show ->
             PosterCard(
                 imageUrl = show.posterUrl,
                 title = show.title,
                 imageWidth = posterWidth,
                 shape = MaterialTheme.shapes.medium,
-                onClick = { onShowClick(show.traktId) },
-                modifier = Modifier.testTag(ProfileTestTags.showCard(show.traktId)),
+                onClick = { onShowClick(show.showId) },
+                modifier = Modifier.testTag(ProfileTestTags.showCard(show.showId)),
             )
         }
     }
@@ -116,8 +116,8 @@ private fun FavoritesSectionPreview() {
     FavoritesSection(
         favorites = SectionState.Content(
             persistentListOf(
-                ProfileShowItem(traktId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null),
-                ProfileShowItem(traktId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null),
+                ProfileShowItem(showId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null),
+                ProfileShowItem(showId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null),
             ),
         ),
         title = "Favorites",

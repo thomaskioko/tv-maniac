@@ -38,25 +38,25 @@ public class ShowCastStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowCast>> by storeBuilder(
-    fetcher = Fetcher.of { traktId: Long ->
+    fetcher = Fetcher.of { showId: Long ->
         coroutineScope {
-            val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
+            val tmdbId = tvShowsDao.getTmdbIdByShowId(showId)
 
             val traktDeferred = async {
-                traktRemoteDataSource.getShowPeople(traktId).getOrThrow()
+                traktRemoteDataSource.getShowPeople(showId).getOrThrow()
             }
             val tmdbCreditsDeferred = tmdbId?.let { id ->
                 async { tmdbNetworkDataSource.getShowCredits(id).getOrNull() }
             }
 
             val result = ShowCastResult(
-                showTraktId = traktId,
+                showId = showId,
                 traktPeople = traktDeferred.await(),
                 tmdbCredits = tmdbCreditsDeferred?.await(),
             )
 
             requestManagerRepository.upsert(
-                entityId = traktId,
+                entityId = showId,
                 requestType = SHOW_CAST.name,
             )
 
@@ -64,12 +64,12 @@ public class ShowCastStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowCastResult, List<ShowCast>>(
-        reader = { traktId: Long ->
-            castDao.observeShowCast(traktId)
+        reader = { showId: Long ->
+            castDao.observeShowCast(showId)
         },
-        writer = { traktId, result ->
+        writer = { showId, result ->
             databaseTransactionRunner {
-                val showId = showIdResolver.showIdForTraktId(traktId)
+                val internalShowId = showIdResolver.showIdForTraktId(showId)
                     ?: return@databaseTransactionRunner
 
                 val tmdbCastMap = result.tmdbCredits?.cast
@@ -89,7 +89,7 @@ public class ShowCastStore(
                             Casts(
                                 id = Id(tmdbId),
                                 trakt_id = Id(person.ids.trakt),
-                                show_id = showId,
+                                show_id = internalShowId,
                                 season_id = null,
                                 name = person.name,
                                 character_name = castMember.characters.firstOrNull() ?: "",
@@ -109,9 +109,9 @@ public class ShowCastStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val traktId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = traktId,
+                entityId = showId,
                 requestType = SHOW_CAST.name,
                 threshold = SHOW_CAST.duration,
             )

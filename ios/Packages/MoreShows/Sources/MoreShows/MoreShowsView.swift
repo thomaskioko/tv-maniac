@@ -25,7 +25,7 @@ public struct MoreShowsView: View {
                 presenter.loadMore()
             },
             onAction: { id in
-                presenter.dispatch(action: MoreShowClicked(traktId: id))
+                presenter.dispatch(action: MoreShowClicked(showId: id))
             },
             onBack: {
                 presenter.dispatch(action: MoreBackClicked())

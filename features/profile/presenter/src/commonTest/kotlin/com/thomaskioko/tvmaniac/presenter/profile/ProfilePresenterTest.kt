@@ -348,13 +348,13 @@ internal class ProfilePresenterTest {
             )
 
             val inProgress = loaded.inProgress.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
-            inProgress.items.first().traktId shouldBe 1L
+            inProgress.items.first().showId shouldBe 1L
             inProgress.items.first().title shouldBe "Breaking Bad"
 
             val recent = loaded.recentlyWatched.shouldBeInstanceOf<SectionState.Content<ProfileRecentItem>>()
             recent.items shouldBe listOf(
                 ProfileRecentItem(
-                    traktId = 1L,
+                    showId = 1L,
                     tmdbId = 2L,
                     title = "Breaking Bad",
                     posterUrl = "/poster.jpg",
@@ -363,14 +363,14 @@ internal class ProfilePresenterTest {
             )
 
             val library = loaded.library.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
-            library.items.first().traktId shouldBe 1L
+            library.items.first().showId shouldBe 1L
 
             val watchlist = loaded.watchlist.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
-            watchlist.items.first().traktId shouldBe 1L
+            watchlist.items.first().showId shouldBe 1L
 
             val favorites = loaded.favorites.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
             favorites.items shouldBe listOf(
-                ProfileShowItem(traktId = 1L, tmdbId = 2L, title = "Breaking Bad", posterUrl = "/poster.jpg"),
+                ProfileShowItem(showId = 1L, tmdbId = 2L, title = "Breaking Bad", posterUrl = "/poster.jpg"),
             )
         }
     }
@@ -417,8 +417,8 @@ internal class ProfilePresenterTest {
         val testPresenter = createPresenter(navigator = navigator)
 
         navigator.test {
-            testPresenter.dispatch(ProfileAction.ShowClicked(traktId = 5L))
-            awaitNavigateTo(ShowDetailsRoute(ShowDetailsParam(id = 5L)))
+            testPresenter.dispatch(ProfileAction.ShowClicked(showId = 5L))
+            awaitNavigateTo(ShowDetailsRoute(ShowDetailsParam(showId = 5L)))
         }
     }
 
@@ -464,7 +464,7 @@ internal class ProfilePresenterTest {
     )
 
     private fun createNextEpisode(): NextEpisodeWithShow = NextEpisodeWithShow(
-        showTraktId = 1L,
+        showId = 1L,
         showTmdbId = 2L,
         showName = "Breaking Bad",
         showPoster = "/poster.jpg",
@@ -487,7 +487,7 @@ internal class ProfilePresenterTest {
     )
 
     private fun createRecentlyWatched(): RecentlyWatchedEpisode = RecentlyWatchedEpisode(
-        showTraktId = 1L,
+        showId = 1L,
         showTmdbId = 2L,
         showTitle = "Breaking Bad",
         posterPath = "/poster.jpg",
@@ -498,7 +498,7 @@ internal class ProfilePresenterTest {
     )
 
     private fun createLibraryItem(): LibraryItem = LibraryItem(
-        traktId = 1L,
+        showId = 1L,
         tmdbId = 2L,
         title = "Breaking Bad",
         posterPath = "/poster.jpg",
@@ -516,7 +516,7 @@ internal class ProfilePresenterTest {
     )
 
     private fun createFavorite(): FavoriteShow = FavoriteShow(
-        traktId = 1L,
+        showId = 1L,
         tmdbId = 2L,
         title = "Breaking Bad",
         posterPath = "/poster.jpg",

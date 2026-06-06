@@ -70,7 +70,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     @Test
     fun `should preserve UPLOAD-pending row when upsertBatchFromTrakt has same key`() = runTest {
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -78,7 +78,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         )
 
         dao.upsertBatchFromTrakt(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 999L)),
             includeSpecials = false,
         )
@@ -97,7 +97,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         dao.markAsSyncedDelete(rowId)
 
         dao.upsertBatchFromTrakt(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)),
             includeSpecials = false,
         )
@@ -164,7 +164,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     @Test
     fun `should hard-delete UPLOAD-pending unsynced row when marked unwatched`() = runTest {
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -173,7 +173,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
 
         dao.markAsUnwatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             includeSpecials = false,
         )
@@ -185,14 +185,14 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     fun `should flip DELETE to UPLOAD when re-marked watched`() = runTest {
         seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         dao.markAsUnwatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             includeSpecials = false,
         )
         readRow(seasonNumber = 1L, episodeNumber = 1L)!!.pending_action shouldBe PendingAction.DELETE.value
 
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -212,7 +212,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         readRow(seasonNumber = 1L, episodeNumber = 1L)!!.pending_action shouldBe PendingAction.SYNCED_DELETE.value
 
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -231,7 +231,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         readRow(seasonNumber = 1L, episodeNumber = 1L)!!.trakt_id shouldBe 555L
 
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -249,7 +249,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     fun `markSeasonAsUnwatched should flip synced rows to DELETE and hard-delete unsynced rows`() = runTest {
         seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_2_ID,
             seasonNumber = 1L,
             episodeNumber = 2L,
@@ -257,7 +257,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         )
 
         dao.markSeasonAsUnwatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             seasonNumber = 1L,
             includeSpecials = false,
         )
@@ -335,7 +335,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         episodeNumber: Long,
         traktId: Long,
     ): WatchedEpisodeEntry = WatchedEpisodeEntry(
-        showTraktId = SHOW_ID,
+        showId = SHOW_ID,
         episodeId = null,
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,

@@ -24,7 +24,7 @@ INSERT OR REPLACE INTO trailers(
 )
 VALUES(?,?,?,?,?,?,?);
 
-selectByShowTraktId:
+selectByShowId:
 SELECT
     trailers.id AS trailer_id,
     tvshow.tmdb_id AS show_tmdb_id,

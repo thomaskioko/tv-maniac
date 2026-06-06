@@ -69,14 +69,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             watchlistEpisodes.size shouldBe 2
 
             val show2Episode = watchlistEpisodes[0]
-            show2Episode.showTraktId shouldBe 2L
+            show2Episode.showId shouldBe 2L
             show2Episode.showName shouldBe "Test Show 2"
             show2Episode.episodeName shouldBe "Show 2 Episode 1"
             show2Episode.seasonNumber shouldBe 1
             show2Episode.episodeNumber shouldBe 1
 
             val show1Episode = watchlistEpisodes[1]
-            show1Episode.showTraktId shouldBe 1L
+            show1Episode.showId shouldBe 1L
             show1Episode.showName shouldBe "Test Show 1"
             show1Episode.episodeName shouldBe "Episode 2"
             show1Episode.seasonNumber shouldBe 1
@@ -93,7 +93,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes.size shouldBe 1
 
             val nextEpisode = episodes[0]
-            nextEpisode.showTraktId shouldBe 1L
+            nextEpisode.showId shouldBe 1L
             nextEpisode.showName shouldBe "Test Show 1"
             nextEpisode.episodeName shouldBe "Episode 1"
             nextEpisode.seasonNumber shouldBe 1
@@ -138,7 +138,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 2L
+            episodes[0].showId shouldBe 2L
             episodes[0].showName shouldBe "Test Show 2"
         }
     }
@@ -184,7 +184,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
-            episodes1[0].showTraktId shouldBe 1L
+            episodes1[0].showId shouldBe 1L
             episodes1[0].showName shouldBe "Test Show 1"
 
             followShow(showId = 2L, followedAt = watchDate + 1000)
@@ -192,10 +192,10 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             val episodes2 = awaitItem()
             episodes2.size shouldBe 2
 
-            episodes2[0].showTraktId shouldBe 2L
+            episodes2[0].showId shouldBe 2L
             episodes2[0].showName shouldBe "Test Show 2"
 
-            episodes2[1].showTraktId shouldBe 1L
+            episodes2[1].showId shouldBe 1L
             episodes2[1].showName shouldBe "Test Show 1"
         }
     }
@@ -224,7 +224,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
-            episodes1[0].showTraktId shouldBe 5L
+            episodes1[0].showId shouldBe 5L
             episodes1[0].showName shouldBe "Breaking Bad"
             episodes1[0].episodeName shouldBe "Pilot"
             episodes1[0].seasonNumber shouldBe 1
@@ -235,13 +235,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             val episodes2 = awaitItem()
             episodes2.size shouldBe 2
 
-            episodes2[0].showTraktId shouldBe 6L
+            episodes2[0].showId shouldBe 6L
             episodes2[0].showName shouldBe "Game of Thrones"
             episodes2[0].episodeName shouldBe "Winter Is Coming"
             episodes2[0].seasonNumber shouldBe 1
             episodes2[0].episodeNumber shouldBe 1
 
-            episodes2[1].showTraktId shouldBe 5L
+            episodes2[1].showId shouldBe 5L
             episodes2[1].showName shouldBe "Breaking Bad"
             episodes2[1].episodeName shouldBe "Pilot"
             episodes2[1].seasonNumber shouldBe 1
@@ -339,8 +339,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 2
-            episodes[0].showTraktId shouldBe 2L
-            episodes[1].showTraktId shouldBe 1L
+            episodes[0].showId shouldBe 2L
+            episodes[1].showId shouldBe 1L
         }
     }
 
@@ -485,7 +485,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 1L
+            episodes[0].showId shouldBe 1L
             episodes[0].episodeName shouldBe "Episode 2"
         }
     }
@@ -506,7 +506,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 12L
+            episodes[0].showId shouldBe 12L
             episodes[0].episodeNumber shouldBe 9L
             episodes[0].watchedCount shouldBe 8L
             episodes[0].totalCount shouldBe 10L
@@ -529,7 +529,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 12L
+            episodes[0].showId shouldBe 12L
             episodes[0].episodeNumber shouldBe 9L
             episodes[0].watchedCount shouldBe 8L
             episodes[0].totalCount shouldBe 10L
@@ -566,7 +566,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 12L
+            episodes[0].showId shouldBe 12L
             episodes[0].episodeNumber shouldBe 9L
             episodes[0].watchedCount shouldBe 6L
             episodes[0].totalCount shouldBe 10L

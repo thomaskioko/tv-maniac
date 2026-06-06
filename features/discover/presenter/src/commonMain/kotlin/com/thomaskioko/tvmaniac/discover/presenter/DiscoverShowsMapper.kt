@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
     this?.map {
         DiscoverShow(
-            traktId = it.traktId,
+            showId = it.showId,
             tmdbId = it.tmdbId,
             title = it.title,
             posterImageUrl = it.posterPath,
@@ -24,7 +24,7 @@ internal fun List<ShowEntity>?.toShowList(): ImmutableList<DiscoverShow> =
 internal fun List<StartWatchingShow>.toStartWatchingShowList(): ImmutableList<DiscoverShow> =
     map {
         DiscoverShow(
-            traktId = it.traktId,
+            showId = it.showId,
             tmdbId = it.tmdbId,
             title = it.title,
             posterImageUrl = it.posterPath,

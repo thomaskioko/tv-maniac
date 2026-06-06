@@ -19,13 +19,13 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 private val startWatchingShows = listOf(
-    StartWatchingShow(traktId = 1, tmdbId = 1, title = "Breaking Bad", posterPath = "/1.jpg", year = "2008", inLibrary = true),
-    StartWatchingShow(traktId = 2, tmdbId = 2, title = "Better Call Saul", posterPath = "/2.jpg", year = "2015", inLibrary = true),
+    StartWatchingShow(showId = 1, tmdbId = 1, title = "Breaking Bad", posterPath = "/1.jpg", year = "2008", inLibrary = true),
+    StartWatchingShow(showId = 2, tmdbId = 2, title = "Better Call Saul", posterPath = "/2.jpg", year = "2015", inLibrary = true),
 )
 
 private val expectedItems = listOf(
-    StartWatchingItem(traktId = 1, title = "Breaking Bad", posterImageUrl = "/1.jpg", year = "2008"),
-    StartWatchingItem(traktId = 2, title = "Better Call Saul", posterImageUrl = "/2.jpg", year = "2015"),
+    StartWatchingItem(showId = 1, title = "Breaking Bad", posterImageUrl = "/1.jpg", year = "2008"),
+    StartWatchingItem(showId = 2, title = "Better Call Saul", posterImageUrl = "/2.jpg", year = "2015"),
 )
 
 class StartWatchingPresenterTest {

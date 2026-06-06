@@ -42,26 +42,26 @@ public class ShowDetailsStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TvshowDetails> by storeBuilder(
-    fetcher = Fetcher.of { traktId: Long ->
+    fetcher = Fetcher.of { showId: Long ->
         coroutineScope {
 
             // TODO:: Remove Get or throw and handle exception
             val showDetailsDeferred = async {
-                traktRemoteDataSource.getShowDetails(traktId).getOrThrow()
+                traktRemoteDataSource.getShowDetails(showId).getOrThrow()
             }
             val seasonsDeferred = async {
-                traktRemoteDataSource.getShowSeasons(traktId).getOrThrow()
+                traktRemoteDataSource.getShowSeasons(showId).getOrThrow()
             }
 
             val showDetails = showDetailsDeferred.await()
             val seasons = seasonsDeferred.await()
 
             val tmdbId = showDetails.ids.tmdb
-                ?: error("Show ${showDetails.title} (trakt: $traktId) has no TMDB ID")
+                ?: error("Show ${showDetails.title} (trakt: $showId) has no TMDB ID")
             val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
 
             requestManagerRepository.upsert(
-                entityId = traktId,
+                entityId = showId,
                 requestType = SHOW_DETAILS.name,
             )
 
@@ -75,15 +75,15 @@ public class ShowDetailsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowDetailsResponse, TvshowDetails>(
-        reader = { traktId: Long -> showDetailsDao.observeTvShowByTraktId(traktId) },
-        writer = { traktId, response ->
+        reader = { showId: Long -> showDetailsDao.observeTvShowByShowId(showId) },
+        writer = { showId, response ->
             databaseTransactionRunner {
                 val show = response.traktShow
                 val tmdbId = response.tmdbId
 
                 tvShowsDao.upsert(
                     ShowToPersist(
-                        traktId = Id(traktId),
+                        showId = Id(showId),
                         tmdbId = Id(tmdbId),
                         name = show.title,
                         overview = show.overview ?: "",
@@ -100,14 +100,14 @@ public class ShowDetailsStore(
                     ),
                 )
 
-                val showId = showIdResolver.showIdForTraktId(traktId)
+                val internalShowId = showIdResolver.showIdForTraktId(showId)
                     ?: return@databaseTransactionRunner
 
                 response.traktSeasons.forEach { season ->
                     seasonDao.upsert(
                         Season(
                             id = Id(season.ids.trakt.toLong()),
-                            show_id = showId,
+                            show_id = internalShowId,
                             season_number = season.number.toLong(),
                             episode_count = season.episodeCount.toLong(),
                             title = season.title,

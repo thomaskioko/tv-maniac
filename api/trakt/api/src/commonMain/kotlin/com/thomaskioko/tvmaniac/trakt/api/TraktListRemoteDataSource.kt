@@ -28,25 +28,25 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun removeShowFromWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddRemoveShowFromListResponse>
 
-    public suspend fun addShowToWatchListByTraktId(traktId: Long): ApiResponse<TraktAddShowToListResponse>
+    public suspend fun addShowToWatchListById(showId: Long): ApiResponse<TraktAddShowToListResponse>
 
-    public suspend fun removeShowFromWatchListByTraktId(traktId: Long): ApiResponse<TraktAddRemoveShowFromListResponse>
+    public suspend fun removeShowFromWatchListById(showId: Long): ApiResponse<TraktAddRemoveShowFromListResponse>
 
-    public suspend fun addShowsToWatchListByTraktIds(traktIds: List<Long>): ApiResponse<TraktAddShowToListResponse>
+    public suspend fun addShowsToWatchListByIds(showIds: List<Long>): ApiResponse<TraktAddShowToListResponse>
 
-    public suspend fun removeShowsFromWatchListByTraktIds(
-        traktIds: List<Long>,
+    public suspend fun removeShowsFromWatchListByIds(
+        showIds: List<Long>,
     ): ApiResponse<TraktAddRemoveShowFromListResponse>
 
     public suspend fun addShowToList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddShowToListResponse>
 
     public suspend fun removeShowFromList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse>
 }

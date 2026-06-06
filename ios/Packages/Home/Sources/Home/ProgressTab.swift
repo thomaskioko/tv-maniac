@@ -64,8 +64,8 @@ struct ProgressTab: View {
             onNextWeek: {
                 presenter.calendarPresenter.dispatch(action: NavigateToNextWeek())
             },
-            onEpisodeCardClicked: { episodeTraktId in
-                presenter.calendarPresenter.dispatch(action: EpisodeCardClicked(episodeTraktId: episodeTraktId))
+            onEpisodeCardClicked: { episodeId in
+                presenter.calendarPresenter.dispatch(action: EpisodeCardClicked(episodeId: episodeId))
             }
         )
     }

@@ -30,9 +30,9 @@ internal class RecentlyWatchedSectionTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     private val episodes = persistentListOf(
-        ProfileRecentItem(traktId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null, episodeLabel = "S5E14"),
-        ProfileRecentItem(traktId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null, episodeLabel = "S8E3"),
-        ProfileRecentItem(traktId = 3, tmdbId = 66732, title = "Stranger Things", posterUrl = null, episodeLabel = "S4E9"),
+        ProfileRecentItem(showId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null, episodeLabel = "S5E14"),
+        ProfileRecentItem(showId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null, episodeLabel = "S8E3"),
+        ProfileRecentItem(showId = 3, tmdbId = 66732, title = "Stranger Things", posterUrl = null, episodeLabel = "S4E9"),
     )
 
     @Test

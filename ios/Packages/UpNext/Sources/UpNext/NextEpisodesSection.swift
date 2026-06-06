@@ -66,7 +66,7 @@ public struct NextEpisodesSection: View {
             title: "Up Next",
             episodes: [
                 SwiftNextEpisode(
-                    showTraktId: 123,
+                    showId: 123,
                     showName: "The Walking Dead: Daryl Dixon",
                     imageUrl: "https://image.tmdb.org/t/p/w780/ydlY3iPfeOAvu8gVqrxPoMvzNCn.jpg",
                     episodeId: 456,
@@ -77,7 +77,7 @@ public struct NextEpisodesSection: View {
                     badge: .premiere
                 ),
                 SwiftNextEpisode(
-                    showTraktId: 124,
+                    showId: 124,
                     showName: "Wednesday",
                     imageUrl: "https://image.tmdb.org/t/p/w780/dC0oTEMAPnBzM0RU15qArHoqnH5.jpg",
                     episodeId: 789,

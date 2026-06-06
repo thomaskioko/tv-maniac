@@ -24,7 +24,7 @@ public struct LibraryTab: View {
             },
             onToggleSearch: { presenter.dispatch(action: ToggleSearchActive()) },
             onSortClicked: { showSortOptions = true },
-            onShowClicked: { id in presenter.dispatch(action: LibraryShowClicked(traktId: id)) }
+            onShowClicked: { id in presenter.dispatch(action: LibraryShowClicked(showId: id)) }
         )
         .sheet(isPresented: $showSortOptions) {
             SortOptionsSheet(
@@ -63,7 +63,7 @@ private extension LibraryState {
             isSearchActive: isSearchActive,
             query: query,
             gridItems: Array(items).map {
-                LibraryGridItem(traktId: $0.traktId, title: $0.title, posterImageUrl: $0.posterImageUrl)
+                LibraryGridItem(showId: $0.showId, title: $0.title, posterImageUrl: $0.posterImageUrl)
             },
             listItems: Array(items).map { $0.toSwift() }
         )

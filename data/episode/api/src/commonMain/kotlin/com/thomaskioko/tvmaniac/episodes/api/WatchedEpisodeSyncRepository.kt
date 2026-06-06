@@ -24,5 +24,5 @@ public interface WatchedEpisodeSyncRepository {
      * flow. With [forceRefresh] false the call short-circuits when the bulk
      * consumer is already caught up or the per-show TTL has not expired.
      */
-    public suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean = false)
+    public suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean = false)
 }

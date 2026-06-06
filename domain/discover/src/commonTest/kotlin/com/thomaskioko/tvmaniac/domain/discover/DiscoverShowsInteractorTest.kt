@@ -103,7 +103,7 @@ class DiscoverShowsInteractorTest {
 
     private fun createTestShows() = List(3) {
         ShowEntity(
-            traktId = it.toLong(),
+            showId = it.toLong(),
             tmdbId = it.toLong(),
             title = "Show $it",
             posterPath = "poster_$it.jpg",
