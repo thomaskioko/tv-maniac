@@ -18,9 +18,9 @@ public interface TvShowsDao {
 
     public fun upsertMerging(show: ShowToPersist)
 
-    public fun getShowsByTraktIds(showIds: List<Long>): List<ShowEntity>
+    public fun getShowsByIds(showIds: List<Long>): List<ShowEntity>
 
-    public fun getTmdbIdByTraktId(showId: Long): Long?
+    public fun getTmdbIdByShowId(showId: Long): Long?
 
-    public suspend fun existsByTraktId(showId: Long): Boolean
+    public suspend fun existsByShowId(showId: Long): Boolean
 }

@@ -4,7 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -34,14 +34,14 @@ public class DefaultTrailerDao(
         )
     }
 
-    override fun getTrailersByShowTraktId(showId: Long): List<SelectByShowTraktId> {
+    override fun getTrailersByShowId(showId: Long): List<SelectByShowId> {
         val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return emptyList()
-        return database.trailersQueries.selectByShowTraktId(internalShowId).executeAsList()
+        return database.trailersQueries.selectByShowId(internalShowId).executeAsList()
     }
 
-    override fun observeTrailersByShowTraktId(showId: Long): Flow<List<SelectByShowTraktId>> {
+    override fun observeTrailersByShowId(showId: Long): Flow<List<SelectByShowId>> {
         val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
-        return database.trailersQueries.selectByShowTraktId(internalShowId).asFlow().mapToList(dispatchers.io)
+        return database.trailersQueries.selectByShowId(internalShowId).asFlow().mapToList(dispatchers.io)
     }
 
     override fun delete(id: Long) {

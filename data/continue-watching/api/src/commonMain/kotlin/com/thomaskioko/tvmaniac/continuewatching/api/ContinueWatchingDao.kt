@@ -14,7 +14,7 @@ public interface ContinueWatchingDao {
 
     public fun upsertPlaceholder(showId: Long, tmdbId: Long?, title: String?, year: Long?)
 
-    public fun deleteByTraktId(showId: Long)
+    public fun deleteByShowId(showId: Long)
 
     public fun deleteAll()
 }

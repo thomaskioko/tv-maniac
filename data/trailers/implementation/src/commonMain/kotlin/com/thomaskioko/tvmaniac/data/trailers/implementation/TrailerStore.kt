@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
-import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -27,7 +27,7 @@ public class TrailerStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<Long, List<SelectByShowTraktId>> by storeBuilder(
+) : Store<Long, List<SelectByShowId>> by storeBuilder(
     fetcher = Fetcher.of { showId: Long ->
         val videos = traktRemoteDataSource.getShowVideos(showId).getOrThrow()
         requestManagerRepository.upsert(
@@ -36,9 +36,9 @@ public class TrailerStore(
         )
         videos
     },
-    sourceOfTruth = SourceOfTruth.of<Long, List<TraktVideosResponse>, List<SelectByShowTraktId>>(
+    sourceOfTruth = SourceOfTruth.of<Long, List<TraktVideosResponse>, List<SelectByShowId>>(
         reader = { showId: Long ->
-            trailerDao.observeTrailersByShowTraktId(showId)
+            trailerDao.observeTrailersByShowId(showId)
         },
         writer = { showId, videos ->
             databaseTransactionRunner {

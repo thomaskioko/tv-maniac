@@ -19,7 +19,7 @@ public class DefaultShowDetailsDao(
 ) : ShowDetailsDao {
     private val tvShowQueries = database.tvShowQueries
 
-    override fun observeTvShowByTraktId(showId: Long): Flow<TvshowDetails?> =
+    override fun observeTvShowByShowId(showId: Long): Flow<TvshowDetails?> =
         tvShowQueries.tvshowDetails(showId).asFlow().mapToOneOrNull(dispatchers.io)
 
     override fun getTvShow(showId: Long): TvshowDetails =

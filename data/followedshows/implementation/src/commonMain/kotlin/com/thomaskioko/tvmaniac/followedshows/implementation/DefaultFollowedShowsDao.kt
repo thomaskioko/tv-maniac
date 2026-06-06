@@ -91,7 +91,7 @@ public class DefaultFollowedShowsDao(
         val _ = queries.deleteById(id)
     }
 
-    override fun deleteByTraktId(showId: Long) {
+    override fun deleteByShowId(showId: Long) {
         val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         val _ = queries.deleteByShowId(internalShowId)
     }

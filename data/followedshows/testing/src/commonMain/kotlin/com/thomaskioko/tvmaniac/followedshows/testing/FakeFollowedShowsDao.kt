@@ -53,7 +53,7 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
         entriesFlow.value = entriesFlow.value.filter { it.id != id }
     }
 
-    override fun deleteByTraktId(showId: Long) {
+    override fun deleteByShowId(showId: Long) {
         entriesFlow.value = entriesFlow.value.filter { it.showId != showId }
     }
 

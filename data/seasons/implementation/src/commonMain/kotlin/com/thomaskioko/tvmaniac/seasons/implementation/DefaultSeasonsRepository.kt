@@ -23,7 +23,7 @@ public class DefaultSeasonsRepository(
     override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> {
         return datastoreRepository.observeIncludeSpecials()
             .flatMapLatest { includeSpecials ->
-                seasonsDao.observeSeasonsByShowTraktId(id, includeSpecials)
+                seasonsDao.observeSeasonsByShowId(id, includeSpecials)
             }
     }
 

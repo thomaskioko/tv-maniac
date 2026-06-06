@@ -75,7 +75,7 @@ public class ShowDetailsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowDetailsResponse, TvshowDetails>(
-        reader = { showId: Long -> showDetailsDao.observeTvShowByTraktId(showId) },
+        reader = { showId: Long -> showDetailsDao.observeTvShowByShowId(showId) },
         writer = { showId, response ->
             databaseTransactionRunner {
                 val show = response.traktShow

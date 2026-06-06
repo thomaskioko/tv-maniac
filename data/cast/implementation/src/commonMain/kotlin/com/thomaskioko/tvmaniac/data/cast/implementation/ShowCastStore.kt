@@ -40,7 +40,7 @@ public class ShowCastStore(
 ) : Store<Long, List<ShowCast>> by storeBuilder(
     fetcher = Fetcher.of { showId: Long ->
         coroutineScope {
-            val tmdbId = tvShowsDao.getTmdbIdByTraktId(showId)
+            val tmdbId = tvShowsDao.getTmdbIdByShowId(showId)
 
             val traktDeferred = async {
                 traktRemoteDataSource.getShowPeople(showId).getOrThrow()

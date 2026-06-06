@@ -40,7 +40,7 @@ public class SeasonsWithEpisodesStore(
     },
     sourceOfTruth = SourceOfTruth.of<Long, List<TraktSeasonEpisodesResponse>, List<ShowSeasons>>(
         reader = { showId ->
-            seasonsDao.observeSeasonsByShowTraktId(showId)
+            seasonsDao.observeSeasonsByShowId(showId)
         },
         writer = { showId, seasons ->
             val internalShowId = showIdResolver.showIdForTraktId(showId)

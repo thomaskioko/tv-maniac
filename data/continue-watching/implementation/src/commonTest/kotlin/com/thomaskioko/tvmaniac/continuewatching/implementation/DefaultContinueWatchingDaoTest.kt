@@ -121,7 +121,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
         dao.upsert(breakingBadEntry)
         dao.upsert(theWireEntry)
 
-        dao.deleteByTraktId(breakingBadEntry.showId)
+        dao.deleteByShowId(breakingBadEntry.showId)
 
         dao.entries() shouldContainExactlyInAnyOrder listOf(theWireEntry)
     }

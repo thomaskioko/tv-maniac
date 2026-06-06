@@ -13,5 +13,5 @@ public interface FollowedShowsDao {
     public fun upsert(entry: FollowedShowEntry): Long
     public fun updatePendingAction(id: Long, action: PendingAction)
     public fun deleteById(id: Long)
-    public fun deleteByTraktId(showId: Long)
+    public fun deleteByShowId(showId: Long)
 }

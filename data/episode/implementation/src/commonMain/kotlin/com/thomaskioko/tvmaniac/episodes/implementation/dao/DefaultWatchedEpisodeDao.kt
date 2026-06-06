@@ -545,7 +545,7 @@ public class DefaultWatchedEpisodeDao(
             val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
             database.transaction {
                 val showExists = database.tvShowQueries
-                    .existsByTraktId(showId)
+                    .existsByShowId(showId)
                     .executeAsOne()
                 if (!showExists) return@transaction
 

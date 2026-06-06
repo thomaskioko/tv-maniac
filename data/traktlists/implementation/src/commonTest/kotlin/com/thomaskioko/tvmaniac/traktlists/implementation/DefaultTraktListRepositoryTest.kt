@@ -122,7 +122,7 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
         repository.fetchUserLists(slug = "sean", forceRefresh = true)
 
-        val entries = showDao.observeByShowTraktId(99L).first()
+        val entries = showDao.observeByShowId(99L).first()
         entries.size shouldBe 1
         entries[0].pendingAction shouldBe PendingAction.UPLOAD.value
         val counts = showDao.observeActiveCountByListId().first()
@@ -147,7 +147,7 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
         repository.fetchUserLists(slug = "sean", forceRefresh = true)
 
-        val entries = showDao.observeByShowTraktId(20L).first()
+        val entries = showDao.observeByShowId(20L).first()
         entries.size shouldBe 1
         entries[0].pendingAction shouldBe PendingAction.DELETE.value
         val counts = showDao.observeActiveCountByListId().first()

@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.watchproviders.implementation
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.db.WatchProviders
-import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
+import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -27,10 +27,10 @@ public class DefaultWatchProviderRepository(
     }
 
     override fun observeWatchProviders(showId: Long): Flow<List<WatchProviders>> =
-        dao.observeWatchProvidersByTraktId(showId)
+        dao.observeWatchProvidersByShowId(showId)
             .map { providers -> providers.map { it.toWatchProviders() } }
 
-    private fun WatchProvidersByTraktId.toWatchProviders(): WatchProviders =
+    private fun WatchProvidersByShowId.toWatchProviders(): WatchProviders =
         WatchProviders(
             provider_id = provider_id,
             name = name,

@@ -42,7 +42,7 @@ public class FakeContinueWatchingDao : ContinueWatchingDao {
             )
     }
 
-    override fun deleteByTraktId(showId: Long) {
+    override fun deleteByShowId(showId: Long) {
         state.value -= showId
     }
 

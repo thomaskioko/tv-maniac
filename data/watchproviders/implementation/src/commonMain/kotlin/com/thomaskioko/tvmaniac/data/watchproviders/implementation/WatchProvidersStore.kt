@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
-import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
+import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -30,9 +30,9 @@ public class WatchProvidersStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<Long, List<WatchProvidersByTraktId>> by storeBuilder(
+) : Store<Long, List<WatchProvidersByShowId>> by storeBuilder(
     fetcher = Fetcher.of { showId ->
-        val tmdbId = tvShowsDao.getTmdbIdByTraktId(showId)
+        val tmdbId = tvShowsDao.getTmdbIdByShowId(showId)
             ?: throw Throwable("TMDB ID not found for Trakt ID: $showId")
         when (val response = remoteDataSource.getShowWatchProviders(tmdbId)) {
             is ApiResponse.Success -> {
@@ -49,13 +49,13 @@ public class WatchProvidersStore(
             is ApiResponse.Error.OfflineError -> throw Throwable("No internet connection")
         }
     },
-    sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProvidersByTraktId>>(
+    sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProvidersByShowId>>(
         reader = { showId ->
-            dao.observeWatchProvidersByTraktId(showId)
+            dao.observeWatchProvidersByShowId(showId)
         },
         writer = { showId, result ->
             databaseTransactionRunner {
-                dao.deleteByTraktId(showId)
+                dao.deleteByShowId(showId)
                 val internalShowId = showIdResolver.showIdForTraktId(showId)
                 if (internalShowId != null) {
                     result.response.results.US
@@ -66,7 +66,7 @@ public class WatchProvidersStore(
         },
         delete = { showId ->
             databaseTransactionRunner {
-                dao.deleteByTraktId(showId)
+                dao.deleteByShowId(showId)
             }
         },
         deleteAll = { databaseTransactionRunner(dao::deleteAll) },

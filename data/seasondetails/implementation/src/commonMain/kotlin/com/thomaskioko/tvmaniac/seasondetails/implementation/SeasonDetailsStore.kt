@@ -50,7 +50,7 @@ public class SeasonDetailsStore(
 ) : Store<SeasonDetailsParam, List<SeasonDetails>> by storeBuilder(
     fetcher = Fetcher.of { params: SeasonDetailsParam ->
         coroutineScope {
-            val showTmdbId = tvShowsDao.getTmdbIdByTraktId(params.showId)
+            val showTmdbId = tvShowsDao.getTmdbIdByShowId(params.showId)
 
             val traktSeason = async {
                 traktRemoteDataSource.getShowSeasonEpisodes(params.showId, params.seasonNumber.toInt()).getOrThrow()

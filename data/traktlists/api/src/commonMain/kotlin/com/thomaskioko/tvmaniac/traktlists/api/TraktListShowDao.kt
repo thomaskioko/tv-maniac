@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 public interface TraktListShowDao {
 
-    public fun observeByShowTraktId(showId: Long): Flow<List<TraktListShowEntry>>
+    public fun observeByShowId(showId: Long): Flow<List<TraktListShowEntry>>
 
     public fun observeActiveCountByListId(): Flow<Map<Long, Long>>
 

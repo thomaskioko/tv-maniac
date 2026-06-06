@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.WatchProviders
-import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
+import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
 import com.thomaskioko.tvmaniac.db.Watch_providers
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -46,15 +46,15 @@ public class DefaultWatchProviderDao(
             .mapToList(dispatcher.io)
             .map { rows -> rows.dedupedByBrand { it.name } }
 
-    override fun observeWatchProvidersByTraktId(showId: Long): Flow<List<WatchProvidersByTraktId>> {
+    override fun observeWatchProvidersByShowId(showId: Long): Flow<List<WatchProvidersByShowId>> {
         val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
-        return database.watchProvidersQueries.watchProvidersByTraktId(internalShowId)
+        return database.watchProvidersQueries.watchProvidersByShowId(internalShowId)
             .asFlow()
             .mapToList(dispatcher.io)
             .map { rows -> rows.dedupedByBrand { it.name } }
     }
 
-    override fun deleteByTraktId(showId: Long) {
+    override fun deleteByShowId(showId: Long) {
         val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         database.watchProvidersQueries.deleteByShowId(internalShowId)
     }

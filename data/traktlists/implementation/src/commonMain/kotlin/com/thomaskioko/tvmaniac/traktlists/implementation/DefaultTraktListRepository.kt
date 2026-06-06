@@ -38,7 +38,7 @@ public class DefaultTraktListRepository(
     override fun observeListsForShow(showId: Long): Flow<List<TraktList>> =
         combine(
             traktListDao.observeAll(),
-            traktListShowDao.observeByShowTraktId(showId),
+            traktListShowDao.observeByShowId(showId),
             traktListShowDao.observeActiveCountByListId(),
         ) { lists, showEntries, activeCounts ->
             val activeEntryListIds = showEntries

@@ -71,7 +71,7 @@ public class NitroContinueWatchingStore(
                     transactionRunner {
                         continueWatchingDao.entries()
                             .filter { it.showId !in batch.finalTraktIds }
-                            .forEach { continueWatchingDao.deleteByTraktId(it.showId) }
+                            .forEach { continueWatchingDao.deleteByShowId(it.showId) }
                     }
                 }
                 requestManagerRepository.upsert(

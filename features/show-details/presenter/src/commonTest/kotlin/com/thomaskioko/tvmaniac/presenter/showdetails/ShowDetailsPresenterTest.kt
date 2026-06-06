@@ -14,7 +14,7 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
@@ -692,7 +692,7 @@ class ShowDetailsPresenterTest {
         seasonResult: List<ShowSeasons> = emptyList(),
         watchProviderResult: List<WatchProviders> = emptyList(),
         similarShowResult: List<SimilarShows> = emptyList(),
-        trailersResult: List<SelectByShowTraktId> = emptyList(),
+        trailersResult: List<SelectByShowId> = emptyList(),
     ) {
         showDetailsRepository.setShowDetailsResult(showDetailResult)
         trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)

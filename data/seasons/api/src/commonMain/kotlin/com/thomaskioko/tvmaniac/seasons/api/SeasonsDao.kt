@@ -14,7 +14,7 @@ public interface SeasonsDao {
 
     public fun fetchShowSeasons(showId: Long, includeSpecials: Boolean = true): List<ShowSeasons>
 
-    public fun observeSeasonsByShowTraktId(showId: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
+    public fun observeSeasonsByShowId(showId: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
 
     public suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber?
 

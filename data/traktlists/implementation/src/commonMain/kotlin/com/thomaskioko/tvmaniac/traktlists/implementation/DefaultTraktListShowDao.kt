@@ -25,7 +25,7 @@ public class DefaultTraktListShowDao(
             .mapToList(dispatchers.io)
             .map { rows -> rows.associate { it.list_id to it.show_count } }
 
-    override fun observeByShowTraktId(showId: Long): Flow<List<TraktListShowEntry>> =
+    override fun observeByShowId(showId: Long): Flow<List<TraktListShowEntry>> =
         database.traktListShowsQueries.selectByShowTraktId(showId)
             .asFlow()
             .mapToList(dispatchers.io)

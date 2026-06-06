@@ -318,7 +318,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             ),
         )
 
-        dao.deleteByTraktId(1L)
+        dao.deleteByShowId(1L)
 
         val entries = dao.entries()
         entries.size shouldBe 1

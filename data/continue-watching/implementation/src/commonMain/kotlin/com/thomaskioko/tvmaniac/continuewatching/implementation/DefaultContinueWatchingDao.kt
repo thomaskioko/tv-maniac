@@ -83,7 +83,7 @@ public class DefaultContinueWatchingDao(
         )
     }
 
-    override fun deleteByTraktId(showId: Long) {
+    override fun deleteByShowId(showId: Long) {
         val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         database.continueWatchingQueries.deleteByShowId(internalShowId)
     }

@@ -48,7 +48,7 @@ public class CalendarStore(
                     calendarDao.deleteEntriesInRange(params.startEpoch, params.endEpoch)
 
                     val showIds = response.map { it.show.ids.trakt }.distinct()
-                    val showPosters = tvShowsDao.getShowsByTraktIds(showIds)
+                    val showPosters = tvShowsDao.getShowsByIds(showIds)
                         .associate { it.showId to it.posterPath }
 
                     response.forEach { calendarResponse ->

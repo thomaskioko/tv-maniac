@@ -47,7 +47,7 @@ public class DefaultSeasonsDao(
         entityList.forEach { upsert(it) }
     }
 
-    override fun observeSeasonsByShowTraktId(showId: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
+    override fun observeSeasonsByShowId(showId: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
         val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
         return seasonQueries.showSeasons(
             showId = internalShowId,

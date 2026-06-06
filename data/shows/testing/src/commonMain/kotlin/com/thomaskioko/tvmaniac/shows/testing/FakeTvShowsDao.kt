@@ -43,11 +43,11 @@ public class FakeTvShowsDao : TvShowsDao {
         state.value = emptyMap()
     }
 
-    override fun getShowsByTraktIds(showIds: List<Long>): List<ShowEntity> = emptyList()
+    override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> = emptyList()
 
-    override fun getTmdbIdByTraktId(showId: Long): Long? = state.value[showId]?.tmdb_id?.id
+    override fun getTmdbIdByShowId(showId: Long): Long? = state.value[showId]?.tmdb_id?.id
 
-    override suspend fun existsByTraktId(showId: Long): Boolean = showId in state.value
+    override suspend fun existsByShowId(showId: Long): Boolean = showId in state.value
 }
 
 private fun ShowToPersist.toTvshow(): Tvshow = Tvshow(

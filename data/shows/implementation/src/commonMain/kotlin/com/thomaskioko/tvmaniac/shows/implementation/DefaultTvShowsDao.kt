@@ -117,10 +117,10 @@ public class DefaultTvShowsDao(
         }
     }
 
-    override fun getShowsByTraktIds(showIds: List<Long>): List<ShowEntity> {
+    override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> {
         if (showIds.isEmpty()) return emptyList()
 
-        return tvShowQueries.showsByTraktIds(showIds) { showId, tmdbId, name, posterPath, overview, inLibrary ->
+        return tvShowQueries.showsByIds(showIds) { showId, tmdbId, name, posterPath, overview, inLibrary ->
             ShowEntity(
                 showId = showId,
                 tmdbId = tmdbId.id,
@@ -132,12 +132,12 @@ public class DefaultTvShowsDao(
         }.executeAsList()
     }
 
-    override fun getTmdbIdByTraktId(showId: Long): Long? {
-        return tvShowQueries.getTmdbIdByTraktId(showId).executeAsOneOrNull()?.id
+    override fun getTmdbIdByShowId(showId: Long): Long? {
+        return tvShowQueries.getTmdbIdByShowId(showId).executeAsOneOrNull()?.id
     }
 
-    override suspend fun existsByTraktId(showId: Long): Boolean =
+    override suspend fun existsByShowId(showId: Long): Boolean =
         withContext(dispatchers.io) {
-            tvShowQueries.existsByTraktId(showId).executeAsOne()
+            tvShowQueries.existsByShowId(showId).executeAsOne()
         }
 }
