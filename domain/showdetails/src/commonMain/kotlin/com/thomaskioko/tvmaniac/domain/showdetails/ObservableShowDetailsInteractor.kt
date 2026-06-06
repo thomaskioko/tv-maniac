@@ -21,7 +21,7 @@ public class ObservableShowDetailsInteractor(
         showDetailsRepository.observeShowDetails(params)
             .map { row ->
                 ShowDetails(
-                    traktId = row.trakt_id,
+                    showId = row.trakt_id,
                     tmdbId = row.tmdb_id.id,
                     title = row.name,
                     overview = row.overview,

@@ -25,7 +25,7 @@ internal fun List<ShowCast>.toCastList(): List<Casts> =
 internal fun List<SimilarShows>.toSimilarShowList(): List<Show> =
     map {
         Show(
-            traktId = it.show_trakt_id,
+            showId = it.show_trakt_id,
             title = it.name,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,

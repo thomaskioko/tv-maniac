@@ -32,7 +32,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "New Series",
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -56,7 +56,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Ongoing Series",
                 seasonNumber = 2,
                 episodeNumber = 5,
@@ -80,7 +80,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Returning Show",
                 seasonNumber = 5,
                 episodeNumber = 1,
@@ -104,7 +104,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Old Show Season 1",
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -128,7 +128,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Returning Show Old Premiere",
                 seasonNumber = 5,
                 episodeNumber = 1,
@@ -151,7 +151,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Unknown Air Date Show",
                 seasonNumber = 2,
                 episodeNumber = 1,
@@ -173,8 +173,8 @@ class UpNextSectionsMapperTest {
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Aired", firstAired = pastDate),
-            createNextEpisode(showTraktId = 2, showName = "Future", firstAired = futureDate),
+            createNextEpisode(showId = 1, showName = "Aired", firstAired = pastDate),
+            createNextEpisode(showId = 2, showName = "Future", firstAired = futureDate),
         )
 
         val result = mapper.map(episodes)
@@ -190,8 +190,8 @@ class UpNextSectionsMapperTest {
         dateTimeProvider.setCurrentTimeMillis(currentTime)
 
         val episodes = listOf(
-            createNextEpisode(showTraktId = 1, showName = "Known Date", firstAired = pastDate),
-            createNextEpisode(showTraktId = 2, showName = "Unknown Date", firstAired = null),
+            createNextEpisode(showId = 1, showName = "Known Date", firstAired = pastDate),
+            createNextEpisode(showId = 2, showName = "Unknown Date", firstAired = null),
         )
 
         val result = mapper.map(episodes)
@@ -209,7 +209,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Stale Show",
                 lastWatchedAt = twentyDaysAgo,
                 firstAired = pastAired,
@@ -232,7 +232,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Active Show",
                 lastWatchedAt = fiveDaysAgo,
                 firstAired = pastAired,
@@ -255,7 +255,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Stale Show",
                 lastWatchedAt = staleWatched,
                 firstAired = pastAired,
@@ -277,7 +277,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Show",
                 watchedCount = 3,
                 totalCount = 10,
@@ -298,7 +298,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Show",
                 seasonNumber = 2,
                 episodeNumber = 5,
@@ -319,7 +319,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Show",
                 runtime = 45,
                 firstAired = pastAired,
@@ -339,7 +339,7 @@ class UpNextSectionsMapperTest {
 
         val episodes = listOf(
             createNextEpisode(
-                showTraktId = 1,
+                showId = 1,
                 showName = "Show",
                 runtime = null,
                 firstAired = pastAired,
@@ -352,7 +352,7 @@ class UpNextSectionsMapperTest {
     }
 
     private fun createNextEpisode(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
         firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
@@ -363,13 +363,13 @@ class UpNextSectionsMapperTest {
         runtime: Long? = 45L,
         showYear: String? = "2024",
     ) = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
+        showId = showId,
+        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",
         showYear = showYear,
-        episodeId = showTraktId * 100 + 1,
+        episodeId = showId * 100 + 1,
         episodeName = "Episode Title",
         seasonId = 1L,
         seasonNumber = seasonNumber,

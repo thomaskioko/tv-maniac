@@ -30,14 +30,14 @@ internal class ObserveFavoritesInteractorTest {
     private companion object {
         val shows = listOf(
             FavoriteShow(
-                traktId = 1,
+                showId = 1,
                 tmdbId = 1,
                 title = "Breaking Bad",
                 posterPath = "/1.jpg",
                 year = "2008",
             ),
             FavoriteShow(
-                traktId = 2,
+                showId = 2,
                 tmdbId = 2,
                 title = "Severance",
                 posterPath = "/2.jpg",

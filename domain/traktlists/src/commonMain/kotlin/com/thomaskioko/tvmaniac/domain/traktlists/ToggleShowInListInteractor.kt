@@ -16,14 +16,14 @@ public class ToggleShowInListInteractor(
         repository.toggleShowInList(
             slug = slug,
             listId = params.listId,
-            traktShowId = params.traktShowId,
+            showId = params.showId,
             isCurrentlyInList = params.isCurrentlyInList,
         )
     }
 
     public data class Params(
         val listId: Long,
-        val traktShowId: Long,
+        val showId: Long,
         val isCurrentlyInList: Boolean,
     )
 }

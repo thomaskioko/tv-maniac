@@ -112,9 +112,9 @@ class SyncContinueWatchingInteractorTest {
     fun `should sync metadata for every watched show`() = runTest(testDispatcher) {
         continueWatchingRepository.setEntries(
             listOf(
-                watchedShow(traktId = 42L),
-                watchedShow(traktId = 99L),
-                watchedShow(traktId = 101L),
+                watchedShow(showId = 42L),
+                watchedShow(showId = 99L),
+                watchedShow(showId = 101L),
             ),
         )
 
@@ -122,12 +122,12 @@ class SyncContinueWatchingInteractorTest {
 
         showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
         seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
-        watchProviderRepository.fetchInvocations().map { it.traktId } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
+        watchProviderRepository.fetchInvocations().map { it.showId } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
     }
 
     @Test
     fun `should propagate force refresh to per-show metadata sync`() = runTest(testDispatcher) {
-        continueWatchingRepository.setEntries(listOf(watchedShow(traktId = 7L)))
+        continueWatchingRepository.setEntries(listOf(watchedShow(showId = 7L)))
 
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
 
@@ -144,9 +144,9 @@ class SyncContinueWatchingInteractorTest {
         watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
 
-    private fun watchedShow(traktId: Long): ContinueWatchingEntry = ContinueWatchingEntry(
-        traktId = traktId,
-        tmdbId = traktId,
+    private fun watchedShow(showId: Long): ContinueWatchingEntry = ContinueWatchingEntry(
+        showId = showId,
+        tmdbId = showId,
         airedEpisodes = 10L,
         completedCount = 1L,
         lastWatchedAt = NOW,

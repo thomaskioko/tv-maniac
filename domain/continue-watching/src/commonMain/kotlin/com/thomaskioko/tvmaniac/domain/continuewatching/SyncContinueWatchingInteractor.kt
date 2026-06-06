@@ -90,7 +90,7 @@ public class SyncContinueWatchingInteractor(
                         val result = runCatching {
                             syncShowMetadataInteractor.executeSync(
                                 params = SyncShowMetadataInteractor.Param(
-                                    traktId = show.traktId,
+                                    showId = show.showId,
                                     forceRefresh = forceRefresh,
                                 ),
                             )
@@ -99,13 +99,13 @@ public class SyncContinueWatchingInteractor(
 
                         logger.warning(
                             TAG,
-                            "syncShowMetadata failed for ${show.traktId}: ${failure.message}",
+                            "syncShowMetadata failed for ${show.showId}: ${failure.message}",
                         )
 
                         if (failure.toSyncError() is NetworkSyncError.Retryable) {
                             logger.warning(
                                 TAG,
-                                "Backing off metadata fan-out after retryable failure on ${show.traktId}",
+                                "Backing off metadata fan-out after retryable failure on ${show.showId}",
                             )
                             shouldStopMetadataSync.value = true
                         }

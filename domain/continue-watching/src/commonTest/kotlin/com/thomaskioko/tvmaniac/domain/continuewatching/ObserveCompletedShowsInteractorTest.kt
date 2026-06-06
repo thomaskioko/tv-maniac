@@ -48,8 +48,8 @@ internal class ObserveCompletedShowsInteractorTest {
     fun `should emit completed shows from the repository`() = runTest {
         upNextRepository.setCompletedShows(
             listOf(
-                createCompletedShow(showTraktId = 1, showName = "Breaking Bad"),
-                createCompletedShow(showTraktId = 2, showName = "The Wire"),
+                createCompletedShow(showId = 1, showName = "Breaking Bad"),
+                createCompletedShow(showId = 2, showName = "The Wire"),
             ),
         )
 
@@ -66,7 +66,7 @@ internal class ObserveCompletedShowsInteractorTest {
     @Test
     fun `should cap the result at the requested limit`() = runTest {
         upNextRepository.setCompletedShows(
-            (1L..5L).map { createCompletedShow(showTraktId = it, showName = "Show $it") },
+            (1L..5L).map { createCompletedShow(showId = it, showName = "Show $it") },
         )
 
         interactor(ObserveCompletedShowsInteractor.Param(limit = 2))
@@ -78,11 +78,11 @@ internal class ObserveCompletedShowsInteractorTest {
     }
 
     private fun createCompletedShow(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
     ) = CompletedShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
+        showId = showId,
+        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         lastWatchedAt = 0L,

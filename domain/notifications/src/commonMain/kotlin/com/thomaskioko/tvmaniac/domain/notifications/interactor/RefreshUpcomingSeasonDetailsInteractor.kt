@@ -33,7 +33,7 @@ public class RefreshUpcomingSeasonDetailsInteractor(
                 apiRateLimiter.withRateLimitTracking {
                     seasonDetailsRepository.fetchSeasonDetails(
                         param = SeasonDetailsParam(
-                            showTraktId = season.showTraktId,
+                            showId = season.showId,
                             seasonId = season.seasonId,
                             seasonNumber = season.seasonNumber,
                         ),
