@@ -91,15 +91,15 @@ class ShowInfoViewTest: SnapshotTestCase {
 
     private var showList: [SwiftShow] {
         [
-            .init(traktId: 1234, title: "Arcane", posterUrl: "", backdropUrl: nil, inLibrary: false),
+            .init(showId: 1234, title: "Arcane", posterUrl: "", backdropUrl: nil, inLibrary: false),
             .init(
-                traktId: 123,
+                showId: 123,
                 title: "The Lord of the Rings: The Rings of Power",
                 posterUrl: "",
                 backdropUrl: nil,
                 inLibrary: false
             ),
-            .init(traktId: 12346, title: "Kaos", posterUrl: "", backdropUrl: nil, inLibrary: false),
+            .init(showId: 12346, title: "Kaos", posterUrl: "", backdropUrl: nil, inLibrary: false),
         ]
     }
 }

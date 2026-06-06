@@ -8,12 +8,12 @@ import XCTest
 
 class MoreShowsScreenTest: SnapshotTestCase {
     private let sampleItems: [ShowPosterImage] = [
-        .init(traktId: 1, title: "Arcane", posterUrl: nil),
-        .init(traktId: 2, title: "Loki", posterUrl: nil),
-        .init(traktId: 3, title: "The Bear", posterUrl: nil),
-        .init(traktId: 4, title: "Severance", posterUrl: nil),
-        .init(traktId: 5, title: "Shogun", posterUrl: nil),
-        .init(traktId: 6, title: "Fallout", posterUrl: nil),
+        .init(showId: 1, title: "Arcane", posterUrl: nil),
+        .init(showId: 2, title: "Loki", posterUrl: nil),
+        .init(showId: 3, title: "The Bear", posterUrl: nil),
+        .init(showId: 4, title: "Severance", posterUrl: nil),
+        .init(showId: 5, title: "Shogun", posterUrl: nil),
+        .init(showId: 6, title: "Fallout", posterUrl: nil),
     ]
 
     func test_MoreShowsScreen() {

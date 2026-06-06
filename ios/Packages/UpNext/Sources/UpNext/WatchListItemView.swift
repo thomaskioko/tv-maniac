@@ -34,7 +34,7 @@ public struct WatchListItemView: View {
 
     public var body: some View {
         Button(action: {
-            onItemClicked(episode.showTraktId, episode.episodeId)
+            onItemClicked(episode.showId, episode.episodeId)
         }) {
             HStack(alignment: .top, spacing: 0) {
                 posterView
@@ -66,7 +66,7 @@ public struct WatchListItemView: View {
         VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
             TextTitlePill(
                 title: episode.showName,
-                onTap: { onShowTitleClicked(episode.showTraktId) }
+                onTap: { onShowTitleClicked(episode.showId) }
             )
 
             HStack(spacing: theme.spacing.xxSmall) {
@@ -148,7 +148,7 @@ private enum WatchListItemViewConstants {
     VStack {
         WatchListItemView(
             episode: SwiftNextEpisode(
-                showTraktId: 1,
+                showId: 1,
                 showName: "The Walking Dead: Daryl Dixon",
                 imageUrl: "/still.jpg",
                 episodeId: 123,

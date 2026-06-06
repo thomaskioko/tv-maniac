@@ -111,7 +111,7 @@ public struct LibraryListItemView: View {
     VStack(spacing: 16) {
         LibraryListItemView(
             item: SwiftLibraryItem(
-                traktId: 1,
+                showId: 1,
                 title: "Breaking Bad",
                 posterUrl: nil,
                 year: "2008",
@@ -130,7 +130,7 @@ public struct LibraryListItemView: View {
 
         LibraryListItemView(
             item: SwiftLibraryItem(
-                traktId: 2,
+                showId: 2,
                 title: "Game of Thrones: A Very Long Title That Should Wrap",
                 posterUrl: nil,
                 year: "2011",

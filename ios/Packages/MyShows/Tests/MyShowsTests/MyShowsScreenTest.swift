@@ -8,8 +8,8 @@ import XCTest
 
 class MyShowsScreenTest: SnapshotTestCase {
     private let sampleGridItems: [MyShowsGridItem] = [
-        MyShowsGridItem(traktId: 1, title: "Breaking Bad", posterImageUrl: nil, watchProgress: 0.7),
-        MyShowsGridItem(traktId: 2, title: "Game of Thrones", posterImageUrl: nil, watchProgress: 0.3),
+        MyShowsGridItem(showId: 1, title: "Breaking Bad", posterImageUrl: nil, watchProgress: 0.7),
+        MyShowsGridItem(showId: 2, title: "Game of Thrones", posterImageUrl: nil, watchProgress: 0.3),
     ]
 
     private func makeState(
@@ -61,8 +61,8 @@ class MyShowsScreenTest: SnapshotTestCase {
 
     func test_MyShowsScreen_GridMode_WithStale() {
         let staleItems: [MyShowsGridItem] = [
-            MyShowsGridItem(traktId: 3, title: "The Wire", posterImageUrl: nil, watchProgress: 0.2),
-            MyShowsGridItem(traktId: 4, title: "Severance", posterImageUrl: nil, watchProgress: 0.5),
+            MyShowsGridItem(showId: 3, title: "The Wire", posterImageUrl: nil, watchProgress: 0.2),
+            MyShowsGridItem(showId: 4, title: "Severance", posterImageUrl: nil, watchProgress: 0.5),
         ]
         screen(state: makeState(watchNextGridItems: sampleGridItems, staleGridItems: staleItems))
             .appPreview()

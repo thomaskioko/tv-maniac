@@ -67,10 +67,10 @@ public struct HorizontalShowContentView: View {
     private var scrollContent: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: spacing ?? theme.spacing.xSmall) {
-                ForEach(items, id: \.traktId) { item in
+                ForEach(items, id: \.showId) { item in
                     cardView(for: item)
                         .contentShape(Rectangle())
-                        .onTapGesture { onClick(item.traktId) }
+                        .onTapGesture { onClick(item.showId) }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("\(item.title), tap to view details")
                 }
@@ -112,8 +112,8 @@ public struct HorizontalShowContentView: View {
             chevronStyle: .chevronOnly,
             cardStyle: .poster,
             items: [
-                .init(traktId: 1234, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                .init(traktId: 123, title: "The Rings of Power", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 1234, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 123, title: "The Rings of Power", posterUrl: nil, backdropUrl: nil, inLibrary: false),
             ],
             onClick: { _ in }
         )
@@ -122,8 +122,8 @@ public struct HorizontalShowContentView: View {
             title: "Coming Soon",
             cardStyle: .backdrop,
             items: [
-                .init(traktId: 12346, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                .init(traktId: 124, title: "Terminator", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 12346, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 124, title: "Terminator", posterUrl: nil, backdropUrl: nil, inLibrary: false),
             ],
             onClick: { _ in }
         )
@@ -133,7 +133,7 @@ public struct HorizontalShowContentView: View {
             subtitle: "Non-stop thrill and action",
             chevronStyle: .chevronOnly,
             items: [
-                .init(traktId: 2346, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 2346, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
             ],
             onClick: { _ in }
         )

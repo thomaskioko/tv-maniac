@@ -116,7 +116,7 @@ private enum DimensionConstants {
             episode: SwiftContinueTrackingEpisode(
                 episodeId: 123,
                 seasonId: 1,
-                showTraktId: 1,
+                showId: 1,
                 episodeNumber: 3,
                 seasonNumber: 2,
                 episodeNumberFormatted: "S02 | E03",
@@ -135,7 +135,7 @@ private enum DimensionConstants {
             episode: SwiftContinueTrackingEpisode(
                 episodeId: 122,
                 seasonId: 1,
-                showTraktId: 1,
+                showId: 1,
                 episodeNumber: 2,
                 seasonNumber: 2,
                 episodeNumberFormatted: "S02 | E02",
@@ -154,7 +154,7 @@ private enum DimensionConstants {
             episode: SwiftContinueTrackingEpisode(
                 episodeId: 124,
                 seasonId: 1,
-                showTraktId: 1,
+                showId: 1,
                 episodeNumber: 5,
                 seasonNumber: 2,
                 episodeNumberFormatted: "S02 | E05",
@@ -173,7 +173,7 @@ private enum DimensionConstants {
             episode: SwiftContinueTrackingEpisode(
                 episodeId: 125,
                 seasonId: 1,
-                showTraktId: 1,
+                showId: 1,
                 episodeNumber: 6,
                 seasonNumber: 2,
                 episodeNumberFormatted: "S02 | E06",

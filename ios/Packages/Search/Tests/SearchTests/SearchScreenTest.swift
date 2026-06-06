@@ -13,9 +13,9 @@ class SearchScreenTest: SnapshotTestCase {
             name: "Action",
             subtitle: "Non-stop thrills and action",
             shows: [
-                .init(traktId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                .init(traktId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                .init(traktId: 3, title: "Reacher", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 3, title: "Reacher", posterUrl: nil, backdropUrl: nil, inLibrary: false),
             ]
         ),
         SwiftGenreRow(
@@ -23,22 +23,22 @@ class SearchScreenTest: SnapshotTestCase {
             name: "Drama",
             subtitle: "Compelling stories",
             shows: [
-                .init(traktId: 4, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                .init(traktId: 5, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 4, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                .init(showId: 5, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
             ]
         ),
     ]
 
     private let sampleResults: [SwiftSearchShow] = [
         .init(
-            tmdbId: 44234, traktId: 44234, title: "The Penguin",
+            tmdbId: 44234, showId: 44234, title: "The Penguin",
             overview: "Follow Oswald Oz Cobb's quest for control as he seeks to fill the power vacuum.",
             status: "Ended",
             imageUrl: nil,
             year: "2024", voteAverage: 8.5
         ),
         .init(
-            tmdbId: 1234, traktId: 1234, title: "Kaos",
+            tmdbId: 1234, showId: 1234, title: "Kaos",
             overview: "A renegade fighter battles a powerful robot for vital data.",
             status: "Ended",
             imageUrl: nil,

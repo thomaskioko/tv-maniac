@@ -85,22 +85,22 @@ public struct SwiftProfileShow: Identifiable, Equatable {
 }
 
 public struct SwiftProfileRecentShow: Identifiable, Equatable {
-    public let traktId: Int64
+    public let showId: Int64
     public let title: String
     public let posterUrl: String?
     public let episodeLabel: String
 
     public var id: String {
-        "\(traktId)-\(episodeLabel)"
+        "\(showId)-\(episodeLabel)"
     }
 
     public init(
-        traktId: Int64,
+        showId: Int64,
         title: String,
         posterUrl: String?,
         episodeLabel: String
     ) {
-        self.traktId = traktId
+        self.showId = showId
         self.title = title
         self.posterUrl = posterUrl
         self.episodeLabel = episodeLabel

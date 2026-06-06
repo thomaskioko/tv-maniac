@@ -76,7 +76,7 @@ public struct MoreShowsScreen: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                     .clipped()
-                    .onTapGesture { onAction(item.traktId) }
+                    .onTapGesture { onAction(item.showId) }
                     .onAppear {
                         if let index = state.items.firstIndex(of: item) {
                             onItemAppear(index)
@@ -125,7 +125,7 @@ public struct MoreShowsScreen: View {
         .scrollPosition(id: $scrollPosition)
         .onChange(of: scrollPosition) { _, newPosition in
             guard let newPosition, state.hasNextPage, !state.isLoadingMore else { return }
-            if let index = state.items.firstIndex(where: { $0.traktId == newPosition }),
+            if let index = state.items.firstIndex(where: { $0.showId == newPosition }),
                index >= state.items.count - 6
             {
                 onLoadMore()
@@ -163,12 +163,12 @@ public struct MoreShowsScreen: View {
         state: MoreShowsScreen.State(
             title: "Popular",
             items: [
-                .init(traktId: 1, title: "Arcane", posterUrl: nil),
-                .init(traktId: 2, title: "Loki", posterUrl: nil),
-                .init(traktId: 3, title: "The Bear", posterUrl: nil),
-                .init(traktId: 4, title: "Severance", posterUrl: nil),
-                .init(traktId: 5, title: "Shogun", posterUrl: nil),
-                .init(traktId: 6, title: "Fallout", posterUrl: nil),
+                .init(showId: 1, title: "Arcane", posterUrl: nil),
+                .init(showId: 2, title: "Loki", posterUrl: nil),
+                .init(showId: 3, title: "The Bear", posterUrl: nil),
+                .init(showId: 4, title: "Severance", posterUrl: nil),
+                .init(showId: 5, title: "Shogun", posterUrl: nil),
+                .init(showId: 6, title: "Fallout", posterUrl: nil),
             ],
             isLoadingMore: false,
             hasNextPage: false,
@@ -191,9 +191,9 @@ public struct MoreShowsScreen: View {
         state: MoreShowsScreen.State(
             title: "Trending",
             items: [
-                .init(traktId: 1, title: "Arcane", posterUrl: nil),
-                .init(traktId: 2, title: "Loki", posterUrl: nil),
-                .init(traktId: 3, title: "The Bear", posterUrl: nil),
+                .init(showId: 1, title: "Arcane", posterUrl: nil),
+                .init(showId: 2, title: "Loki", posterUrl: nil),
+                .init(showId: 3, title: "The Bear", posterUrl: nil),
             ],
             isLoadingMore: true,
             hasNextPage: true,

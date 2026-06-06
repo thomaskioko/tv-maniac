@@ -209,9 +209,9 @@ public struct MyShowsScreen: View {
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .clipped()
-                .matchedGeometryEffect(id: item.traktId, in: animation)
+                .matchedGeometryEffect(id: item.showId, in: animation)
                 .onTapGesture {
-                    onShowClicked(item.traktId)
+                    onShowClicked(item.showId)
                 }
             }
         }

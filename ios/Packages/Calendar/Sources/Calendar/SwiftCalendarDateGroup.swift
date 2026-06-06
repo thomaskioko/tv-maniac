@@ -19,8 +19,8 @@ public struct SwiftCalendarDateGroup: Identifiable, Equatable {
 
 public struct SwiftCalendarEpisodeItem: Identifiable, Equatable {
     public let id: String
-    public let showTraktId: Int64
-    public let episodeTraktId: Int64
+    public let showId: Int64
+    public let episodeId: Int64
     public let showTitle: String
     public let posterUrl: String?
     public let episodeInfo: String
@@ -34,8 +34,8 @@ public struct SwiftCalendarEpisodeItem: Identifiable, Equatable {
     public let formattedAirDate: String?
 
     public init(
-        showTraktId: Int64,
-        episodeTraktId: Int64,
+        showId: Int64,
+        episodeId: Int64,
         showTitle: String,
         posterUrl: String?,
         episodeInfo: String,
@@ -48,9 +48,9 @@ public struct SwiftCalendarEpisodeItem: Identifiable, Equatable {
         runtime: Int32? = nil,
         formattedAirDate: String? = nil
     ) {
-        id = "\(showTraktId)_\(episodeTraktId)"
-        self.showTraktId = showTraktId
-        self.episodeTraktId = episodeTraktId
+        id = "\(showId)_\(episodeId)"
+        self.showId = showId
+        self.episodeId = episodeId
         self.showTitle = showTitle
         self.posterUrl = posterUrl
         self.episodeInfo = episodeInfo

@@ -36,7 +36,7 @@ public struct GridView: View {
         )
         ScrollView(.vertical, showsIndicators: false) {
             LazyVGrid(columns: resolvedColumns, spacing: spacing ?? theme.spacing.xxSmall) {
-                ForEach(items, id: \.traktId) { item in
+                ForEach(items, id: \.showId) { item in
                     PosterItemView(
                         title: item.title,
                         posterUrl: item.posterUrl,
@@ -46,7 +46,7 @@ public struct GridView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                     .clipped()
-                    .onTapGesture { onAction(item.traktId) }
+                    .onTapGesture { onAction(item.showId) }
                 }
             }.padding(.all, theme.spacing.xSmall)
         }
@@ -57,32 +57,32 @@ public struct GridView: View {
     GridView(
         items: [
             .init(
-                traktId: 1234,
+                showId: 1234,
                 title: "Arcane",
                 posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg"
             ),
             .init(
-                traktId: 123,
+                showId: 123,
                 title: "The Lord of the Rings: The Rings of Power",
                 posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg"
             ),
             .init(
-                traktId: 12346,
+                showId: 12346,
                 title: "Kaos",
                 posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg"
             ),
             .init(
-                traktId: 124,
+                showId: 124,
                 title: "Terminator",
                 posterUrl: "https://image.tmdb.org/t/p/w780/woH18JkZMYhMSWqtHkPA4F6Gd1z.jpg"
             ),
             .init(
-                traktId: 123_346,
+                showId: 123_346,
                 title: "The Perfect Couple",
                 posterUrl: "https://image.tmdb.org/t/p/w780//3buRSGVnutw8x4Lww0t70k5dG6R.jpg"
             ),
             .init(
-                traktId: 2346,
+                showId: 2346,
                 title: "One Piece",
                 posterUrl: "https://image.tmdb.org/t/p/w780/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg"
             ),

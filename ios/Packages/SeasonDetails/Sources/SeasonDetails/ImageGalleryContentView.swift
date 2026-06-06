@@ -52,37 +52,37 @@ public struct ImageGalleryContentView: View {
     ImageGalleryContentView(
         items: [
             .init(
-                traktId: 1234,
+                showId: 1234,
                 title: "Arcane",
                 posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
                 inLibrary: false
             ),
             .init(
-                traktId: 123,
+                showId: 123,
                 title: "The Lord of the Rings: The Rings of Power",
                 posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
                 inLibrary: false
             ),
             .init(
-                traktId: 12346,
+                showId: 12346,
                 title: "Kaos",
                 posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
                 inLibrary: false
             ),
             .init(
-                traktId: 124,
+                showId: 124,
                 title: "Terminator",
                 posterUrl: "https://image.tmdb.org/t/p/w780/woH18JkZMYhMSWqtHkPA4F6Gd1z.jpg",
                 inLibrary: false
             ),
             .init(
-                traktId: 123_346,
+                showId: 123_346,
                 title: "The Perfect Couple",
                 posterUrl: "https://image.tmdb.org/t/p/w780//3buRSGVnutw8x4Lww0t70k5dG6R.jpg",
                 inLibrary: false
             ),
             .init(
-                traktId: 2346,
+                showId: 2346,
                 title: "One Piece",
                 posterUrl: "https://image.tmdb.org/t/p/w780/2rmK7mnchw9Xr3XdiTFSxTTLXqv.jpg",
                 inLibrary: false

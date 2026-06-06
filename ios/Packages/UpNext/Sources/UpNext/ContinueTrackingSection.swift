@@ -87,7 +87,7 @@ public struct ContinueTrackingSection: View {
                 SwiftContinueTrackingEpisode(
                     episodeId: 1,
                     seasonId: 1,
-                    showTraktId: 1,
+                    showId: 1,
                     episodeNumber: 1,
                     seasonNumber: 2,
                     episodeNumberFormatted: "S02 | E01 (E14)",
@@ -100,7 +100,7 @@ public struct ContinueTrackingSection: View {
                 SwiftContinueTrackingEpisode(
                     episodeId: 2,
                     seasonId: 1,
-                    showTraktId: 1,
+                    showId: 1,
                     episodeNumber: 2,
                     seasonNumber: 2,
                     episodeNumberFormatted: "S02 | E02 (E15)",
@@ -113,7 +113,7 @@ public struct ContinueTrackingSection: View {
                 SwiftContinueTrackingEpisode(
                     episodeId: 3,
                     seasonId: 1,
-                    showTraktId: 1,
+                    showId: 1,
                     episodeNumber: 3,
                     seasonNumber: 2,
                     episodeNumberFormatted: "S02 | E03 (E16)",
@@ -126,7 +126,7 @@ public struct ContinueTrackingSection: View {
                 SwiftContinueTrackingEpisode(
                     episodeId: 4,
                     seasonId: 1,
-                    showTraktId: 1,
+                    showId: 1,
                     episodeNumber: 4,
                     seasonNumber: 2,
                     episodeNumberFormatted: "S02 | E04 (E17)",

@@ -7,7 +7,7 @@ import TvManiacKit
 public extension TvManiac.LibraryShowItem {
     func toSwift() -> SwiftLibraryItem {
         .init(
-            traktId: traktId,
+            showId: showId,
             title: title,
             posterUrl: posterImageUrl,
             year: year,

@@ -32,8 +32,8 @@ import SwiftUI
                         name: "Action",
                         subtitle: "High-octane thrills",
                         shows: [
-                            .init(traktId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                            .init(traktId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 1, title: "Arcane", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 2, title: "The Penguin", posterUrl: nil, backdropUrl: nil, inLibrary: false),
                         ]
                     ),
                     SwiftGenreRow(
@@ -41,8 +41,8 @@ import SwiftUI
                         name: "Drama",
                         subtitle: "Compelling stories",
                         shows: [
-                            .init(traktId: 3, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
-                            .init(traktId: 4, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 3, title: "Kaos", posterUrl: nil, backdropUrl: nil, inLibrary: false),
+                            .init(showId: 4, title: "One Piece", posterUrl: nil, backdropUrl: nil, inLibrary: false),
                         ]
                     ),
                 ],
@@ -70,14 +70,14 @@ import SwiftUI
             screenState: .searchResults(
                 results: [
                     .init(
-                        tmdbId: 44234, traktId: 44234, title: "The Penguin",
+                        tmdbId: 44234, showId: 44234, title: "The Penguin",
                         overview: "Follow Oswald Oz Cobb's quest for control.",
                         status: "Ended",
                         imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg",
                         year: "2024", voteAverage: 8.5
                     ),
                     .init(
-                        tmdbId: 1234, traktId: 1234, title: "Kaos",
+                        tmdbId: 1234, showId: 1234, title: "Kaos",
                         overview: "A renegade fighter battles a powerful robot.",
                         status: "Ended",
                         imageUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",

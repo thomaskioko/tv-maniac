@@ -304,7 +304,7 @@ public struct DiscoverScreen: View {
                 processorHeight: CarouselConstants.fixedImageHeight
             )
             .onTapGesture {
-                onShowClicked(item.traktId)
+                onShowClicked(item.showId)
             }
         }
     }

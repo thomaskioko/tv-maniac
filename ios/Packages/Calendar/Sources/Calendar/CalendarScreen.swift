@@ -180,7 +180,7 @@ public struct CalendarPageContent: View {
 
     private func calendarEpisodeItem(episode: SwiftCalendarEpisodeItem) -> some View {
         Button {
-            onEpisodeCardClicked(episode.episodeTraktId)
+            onEpisodeCardClicked(episode.episodeId)
         } label: {
             VStack(spacing: 0) {
                 HStack(spacing: theme.spacing.small) {
@@ -370,8 +370,8 @@ public struct CalendarScreen: View {
                         dateLabel: "Today, Jan 31, 2026",
                         episodes: [
                             SwiftCalendarEpisodeItem(
-                                showTraktId: 1,
-                                episodeTraktId: 100,
+                                showId: 1,
+                                episodeId: 100,
                                 showTitle: "Severance",
                                 posterUrl: nil,
                                 episodeInfo: "S02E01 · Hello, Ms. Cobel",
@@ -385,8 +385,8 @@ public struct CalendarScreen: View {
                         dateLabel: "Tomorrow, Feb 1, 2026",
                         episodes: [
                             SwiftCalendarEpisodeItem(
-                                showTraktId: 2,
-                                episodeTraktId: 200,
+                                showId: 2,
+                                episodeId: 200,
                                 showTitle: "Hell's Paradise",
                                 posterUrl: nil,
                                 episodeInfo: "S02E04 · The Battle Begins",

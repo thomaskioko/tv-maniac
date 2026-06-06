@@ -5,7 +5,7 @@ import Models
 public struct SwiftSearchShow: Identifiable {
     public let id: UUID = .init()
     public let tmdbId: Int64
-    public let traktId: Int64
+    public let showId: Int64
     public let title: String
     public let overview: String?
     public let status: String?
@@ -15,7 +15,7 @@ public struct SwiftSearchShow: Identifiable {
 
     public init(
         tmdbId: Int64,
-        traktId: Int64,
+        showId: Int64,
         title: String,
         overview: String?,
         status: String?,
@@ -24,7 +24,7 @@ public struct SwiftSearchShow: Identifiable {
         voteAverage: Double?
     ) {
         self.tmdbId = tmdbId
-        self.traktId = traktId
+        self.showId = showId
         self.title = title
         self.overview = overview
         self.status = status

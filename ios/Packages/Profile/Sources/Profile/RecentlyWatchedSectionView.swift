@@ -70,7 +70,7 @@ public struct RecentlyWatchedSectionView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: theme.spacing.small) {
                     ForEach(shows) { show in
-                        Button(action: { onShowClick(show.traktId) }) {
+                        Button(action: { onShowClick(show.showId) }) {
                             episodeCard(show)
                         }
                         .buttonStyle(.plain)
@@ -111,8 +111,8 @@ public struct RecentlyWatchedSectionView: View {
 #Preview {
     RecentlyWatchedSectionView(
         recentlyWatched: .content([
-            SwiftProfileRecentShow(traktId: 1, title: "Breaking Bad", posterUrl: nil, episodeLabel: "S5E14"),
-            SwiftProfileRecentShow(traktId: 2, title: "Game of Thrones", posterUrl: nil, episodeLabel: "S8E3"),
+            SwiftProfileRecentShow(showId: 1, title: "Breaking Bad", posterUrl: nil, episodeLabel: "S5E14"),
+            SwiftProfileRecentShow(showId: 2, title: "Game of Thrones", posterUrl: nil, episodeLabel: "S8E3"),
         ]),
         title: "Recently Watched",
         retryLabel: "Retry",

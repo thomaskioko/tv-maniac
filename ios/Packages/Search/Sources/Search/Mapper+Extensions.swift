@@ -6,7 +6,7 @@ public extension TvManiac.ShowItem {
     func toSwift() -> SwiftSearchShow {
         .init(
             tmdbId: tmdbId,
-            traktId: traktId,
+            showId: showId,
             title: title,
             overview: overview,
             status: status,
