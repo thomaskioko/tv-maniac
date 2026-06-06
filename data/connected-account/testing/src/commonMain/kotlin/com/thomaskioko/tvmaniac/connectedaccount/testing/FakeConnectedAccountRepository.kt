@@ -24,5 +24,5 @@ public class FakeConnectedAccountRepository : ConnectedAccountRepository {
     override val activeProvider: Flow<ConnectedProvider?> = _activeProvider
     override val isConnected: Flow<Boolean> = _activeProvider.map { it != null }
     override val connectionEvents: Flow<ConnectedProvider> = _connectionEvents.asSharedFlow()
-    override fun activeProviderOrNull(): ConnectedProvider? = _activeProvider.value
+    override fun getActiveProvider(): ConnectedProvider? = _activeProvider.value
 }

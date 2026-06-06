@@ -25,7 +25,7 @@ public class DefaultConnectedAccountRepository(
     override val connectionEvents: Flow<ConnectedProvider> =
         traktAuthRepository.loginEvents.map { ConnectedProvider.TRAKT }
 
-    override fun activeProviderOrNull(): ConnectedProvider? =
+    override fun getActiveProvider(): ConnectedProvider? =
         if (traktAuthRepository.isLoggedIn()) ConnectedProvider.TRAKT else null
 }
 

@@ -43,11 +43,11 @@ class DefaultConnectedAccountRepositoryTest {
 
     @Test
     fun `should resolve the active provider synchronously from login state`() = runTest {
-        repository.activeProviderOrNull().shouldBeNull()
+        repository.getActiveProvider().shouldBeNull()
 
         traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
 
-        repository.activeProviderOrNull() shouldBe ConnectedProvider.TRAKT
+        repository.getActiveProvider() shouldBe ConnectedProvider.TRAKT
     }
 
     @Test
