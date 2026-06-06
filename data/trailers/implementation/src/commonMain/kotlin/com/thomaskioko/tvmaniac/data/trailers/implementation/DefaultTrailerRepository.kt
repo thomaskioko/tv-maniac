@@ -19,14 +19,14 @@ public class DefaultTrailerRepository(
 
     override fun isYoutubePlayerInstalled(): Flow<Boolean> = appUtils.isYoutubePlayerInstalled()
 
-    override fun observeTrailers(traktId: Long): Flow<List<SelectByShowTraktId>> =
-        trailerDao.observeTrailersByShowTraktId(traktId)
+    override fun observeTrailers(showId: Long): Flow<List<SelectByShowTraktId>> =
+        trailerDao.observeTrailersByShowTraktId(showId)
 
-    override suspend fun fetchTrailers(traktId: Long, forceRefresh: Boolean) {
-        val isEmpty = trailerDao.getTrailersByShowTraktId(traktId).isEmpty()
+    override suspend fun fetchTrailers(showId: Long, forceRefresh: Boolean) {
+        val isEmpty = trailerDao.getTrailersByShowTraktId(showId).isEmpty()
         when {
-            forceRefresh || isEmpty -> trailerStore.fresh(traktId)
-            else -> trailerStore.get(traktId)
+            forceRefresh || isEmpty -> trailerStore.fresh(showId)
+            else -> trailerStore.get(showId)
         }
     }
 }

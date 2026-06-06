@@ -71,7 +71,7 @@ public class SearchShowStore(
 private fun SearchShowResult.toTvshow(formatterUtil: FormatterUtil, dateTimeProvider: DateTimeProvider): ShowToPersist {
     val tmdb = tmdbDetails
     return ShowToPersist(
-        traktId = Id(traktShow.ids.trakt),
+        showId = Id(traktShow.ids.trakt),
         tmdbId = Id(tmdbId),
         name = traktShow.title,
         overview = traktShow.overview ?: "",

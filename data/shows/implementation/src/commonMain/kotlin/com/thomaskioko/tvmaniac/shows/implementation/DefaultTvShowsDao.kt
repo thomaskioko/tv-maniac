@@ -62,7 +62,7 @@ public class DefaultTvShowsDao(
         externalIdQueries.insert(
             showId = showId,
             provider = Provider.TRAKT,
-            externalId = show.traktId.id.toString(),
+            externalId = show.showId.id.toString(),
         )
     }
 
@@ -78,9 +78,9 @@ public class DefaultTvShowsDao(
                 query,
                 query,
                 query,
-            ) { traktId, tmdbId, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
+            ) { showId, tmdbId, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
                 ShowEntity(
-                    traktId = traktId,
+                    showId = showId,
                     tmdbId = tmdbId.id,
                     title = title,
                     posterPath = imageUrl,
@@ -117,12 +117,12 @@ public class DefaultTvShowsDao(
         }
     }
 
-    override fun getShowsByTraktIds(traktIds: List<Long>): List<ShowEntity> {
-        if (traktIds.isEmpty()) return emptyList()
+    override fun getShowsByTraktIds(showIds: List<Long>): List<ShowEntity> {
+        if (showIds.isEmpty()) return emptyList()
 
-        return tvShowQueries.showsByTraktIds(traktIds) { traktId, tmdbId, name, posterPath, overview, inLibrary ->
+        return tvShowQueries.showsByTraktIds(showIds) { showId, tmdbId, name, posterPath, overview, inLibrary ->
             ShowEntity(
-                traktId = traktId,
+                showId = showId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -132,12 +132,12 @@ public class DefaultTvShowsDao(
         }.executeAsList()
     }
 
-    override fun getTmdbIdByTraktId(traktId: Long): Long? {
-        return tvShowQueries.getTmdbIdByTraktId(traktId).executeAsOneOrNull()?.id
+    override fun getTmdbIdByTraktId(showId: Long): Long? {
+        return tvShowQueries.getTmdbIdByTraktId(showId).executeAsOneOrNull()?.id
     }
 
-    override suspend fun existsByTraktId(traktId: Long): Boolean =
+    override suspend fun existsByTraktId(showId: Long): Boolean =
         withContext(dispatchers.io) {
-            tvShowQueries.existsByTraktId(traktId).executeAsOne()
+            tvShowQueries.existsByTraktId(showId).executeAsOne()
         }
 }

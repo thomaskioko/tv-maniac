@@ -68,8 +68,8 @@ public class ProgressContinueWatchingStore(
                 withContext(dispatchers.databaseWrite) {
                     transactionRunner {
                         continueWatchingDao.entries()
-                            .filter { it.traktId !in batch.finalTraktIds }
-                            .forEach { continueWatchingDao.deleteByTraktId(it.traktId) }
+                            .filter { it.showId !in batch.finalTraktIds }
+                            .forEach { continueWatchingDao.deleteByTraktId(it.showId) }
                     }
                 }
                 requestManagerRepository.upsert(
@@ -93,7 +93,7 @@ private fun ContinueWatchingEntry.toMinimalTvshow(): ShowToPersist? {
     val tmdb = tmdbId ?: return null
     val name = title ?: return null
     return ShowToPersist(
-        traktId = Id(traktId),
+        showId = Id(showId),
         tmdbId = Id(tmdb),
         name = name,
         overview = "",

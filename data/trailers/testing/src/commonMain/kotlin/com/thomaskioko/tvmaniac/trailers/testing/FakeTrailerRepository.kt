@@ -20,10 +20,10 @@ public class FakeTrailerRepository : TrailerRepository {
         youtubePlayerInstalled.send(installed)
     }
 
-    override fun observeTrailers(traktId: Long): Flow<List<SelectByShowTraktId>> = response.asStateFlow()
+    override fun observeTrailers(showId: Long): Flow<List<SelectByShowTraktId>> = response.asStateFlow()
 
     override fun isYoutubePlayerInstalled(): Flow<Boolean> = youtubePlayerInstalled.receiveAsFlow()
 
-    override suspend fun fetchTrailers(traktId: Long, forceRefresh: Boolean) {
+    override suspend fun fetchTrailers(showId: Long, forceRefresh: Boolean) {
     }
 }

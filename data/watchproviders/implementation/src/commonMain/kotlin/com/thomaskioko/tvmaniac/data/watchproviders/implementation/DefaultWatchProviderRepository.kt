@@ -19,15 +19,15 @@ public class DefaultWatchProviderRepository(
     private val dao: WatchProviderDao,
 ) : WatchProviderRepository {
 
-    override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
+    override suspend fun fetchWatchProviders(showId: Long, forceRefresh: Boolean) {
         when {
-            forceRefresh -> store.fresh(traktId)
-            else -> store.get(traktId)
+            forceRefresh -> store.fresh(showId)
+            else -> store.get(showId)
         }
     }
 
-    override fun observeWatchProviders(traktId: Long): Flow<List<WatchProviders>> =
-        dao.observeWatchProvidersByTraktId(traktId)
+    override fun observeWatchProviders(showId: Long): Flow<List<WatchProviders>> =
+        dao.observeWatchProvidersByTraktId(showId)
             .map { providers -> providers.map { it.toWatchProviders() } }
 
     private fun WatchProvidersByTraktId.toWatchProviders(): WatchProviders =

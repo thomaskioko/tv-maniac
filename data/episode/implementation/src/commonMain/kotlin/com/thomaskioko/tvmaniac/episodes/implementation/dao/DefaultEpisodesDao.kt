@@ -73,13 +73,13 @@ public class DefaultEpisodesDao(
             .mapToOneOrNull(dispatchers.databaseRead)
 
     override suspend fun getEpisodeByShowSeasonEpisodeNumber(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ): GetEpisodeByShowSeasonEpisodeNumber? = withContext(dispatchers.databaseRead) {
-        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext null
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext null
         episodeQueries.getEpisodeByShowSeasonEpisodeNumber(
-            showId = showId,
+            showId = internalShowId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
         ).executeAsOneOrNull()
@@ -125,23 +125,23 @@ public class DefaultEpisodesDao(
     }
 
     override fun observeNextEpisodeForShow(
-        showTraktId: Long,
+        showId: Long,
         includeSpecials: Boolean,
     ): Flow<NextEpisodeForShow?> {
-        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return flowOf(null)
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(null)
         return database.showsNextToWatchQueries.nextEpisodeForShow(
-            showId = showId,
+            showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).asFlow().mapToOneOrNull(dispatchers.databaseRead)
     }
 
     override suspend fun getNextEpisodeForShow(
-        showTraktId: Long,
+        showId: Long,
         includeSpecials: Boolean,
     ): NextEpisodeForShow? = withContext(dispatchers.databaseRead) {
-        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return@withContext null
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext null
         database.showsNextToWatchQueries.nextEpisodeForShow(
-            showId = showId,
+            showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).executeAsOneOrNull()
     }

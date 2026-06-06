@@ -193,7 +193,7 @@ internal class ContinueWatchingFetcherTest {
 
             result.size shouldBe 1
             val entry = result.single()
-            entry.traktId shouldBe HELLS_PARADISE_ID
+            entry.showId shouldBe HELLS_PARADISE_ID
             entry.tmdbId shouldBe 117465L
             entry.airedEpisodes shouldBe 25L
             entry.completedCount shouldBe 20L
@@ -276,28 +276,28 @@ private const val RESET_SHOW_ID = 5000L
 private const val HELLS_PARADISE_ID = 181120L
 
 private data class ParityTuple(
-    val traktId: Long,
+    val showId: Long,
     val completedCount: Long,
     val airedEpisodes: Long,
     val lastWatchedAt: Long,
 )
 
 private fun ContinueWatchingEntry.parityTuple(): ParityTuple = ParityTuple(
-    traktId = traktId,
+    showId = showId,
     completedCount = completedCount,
     airedEpisodes = airedEpisodes,
     lastWatchedAt = lastWatchedAt,
 )
 
 private val breakingBadTuple = ParityTuple(
-    traktId = BREAKING_BAD_ID,
+    showId = BREAKING_BAD_ID,
     completedCount = 30,
     airedEpisodes = 62,
     lastWatchedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
 )
 
 private val theWireTuple = ParityTuple(
-    traktId = THE_WIRE_ID,
+    showId = THE_WIRE_ID,
     completedCount = 12,
     airedEpisodes = 60,
     lastWatchedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),

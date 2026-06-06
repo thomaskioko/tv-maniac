@@ -43,7 +43,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     @Test
     fun `should emit favorite show joined with show metadata`() = runTest(testDispatcher) {
         insertShow(id = 1, name = "Breaking Bad")
-        dao.upsert(traktId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
+        dao.upsert(showId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
 
         dao.observeFavoriteShows().test {
             awaitItem() shouldContainExactly listOf(expectedShow(1, "Breaking Bad"))
@@ -55,8 +55,8 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     fun `should order favorites by rank ascending`() = runTest(testDispatcher) {
         insertShow(id = 1, name = "First Rank")
         insertShow(id = 2, name = "Second Rank")
-        dao.upsert(traktId = 2, rank = 1, listedAt = "2020-01-02T00:00:00Z")
-        dao.upsert(traktId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
+        dao.upsert(showId = 2, rank = 1, listedAt = "2020-01-02T00:00:00Z")
+        dao.upsert(showId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
 
         dao.observeFavoriteShows().test {
             awaitItem() shouldContainExactly listOf(
@@ -70,7 +70,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     @Test
     fun `should emit empty list after deleteAll`() = runTest(testDispatcher) {
         insertShow(id = 1, name = "Breaking Bad")
-        dao.upsert(traktId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
+        dao.upsert(showId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
 
         dao.observeFavoriteShows().test {
             awaitItem() shouldContainExactly listOf(expectedShow(1, "Breaking Bad"))
@@ -83,7 +83,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     }
 
     private fun expectedShow(id: Long, title: String): FavoriteShow =
-        FavoriteShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01")
+        FavoriteShow(showId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01")
 
     private fun insertShow(id: Long, name: String) {
         database.tvShowQueries.upsert(

@@ -4,17 +4,17 @@ import kotlinx.coroutines.flow.Flow
 
 public interface TraktListShowDao {
 
-    public fun observeByShowTraktId(showTraktId: Long): Flow<List<TraktListShowEntry>>
+    public fun observeByShowTraktId(showId: Long): Flow<List<TraktListShowEntry>>
 
     public fun observeActiveCountByListId(): Flow<Map<Long, Long>>
 
-    public fun upsert(listId: Long, showTraktId: Long, listedAt: String, pendingAction: String)
+    public fun upsert(listId: Long, showId: Long, listedAt: String, pendingAction: String)
 
-    public fun upsertSynced(listId: Long, showTraktId: Long, listedAt: String)
+    public fun upsertSynced(listId: Long, showId: Long, listedAt: String)
 
     public fun deleteSyncedByListId(listId: Long)
 
-    public fun updatePendingAction(listId: Long, showTraktId: Long, pendingAction: String)
+    public fun updatePendingAction(listId: Long, showId: Long, pendingAction: String)
 
-    public fun deleteByListIdAndShowId(listId: Long, showTraktId: Long)
+    public fun deleteByListIdAndShowId(listId: Long, showId: Long)
 }

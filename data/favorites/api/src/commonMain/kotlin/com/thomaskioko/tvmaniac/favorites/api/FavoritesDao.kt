@@ -6,7 +6,7 @@ public interface FavoritesDao {
 
     public fun observeFavoriteShows(): Flow<List<FavoriteShow>>
 
-    public fun upsert(traktId: Long, rank: Long, listedAt: String)
+    public fun upsert(showId: Long, rank: Long, listedAt: String)
 
     public fun deleteAll()
 }

@@ -41,9 +41,9 @@ public class DefaultPopularShowsDao(
 
     override fun observePopularShows(page: Long): Flow<List<ShowEntity>> =
         popularShowsQueries
-            .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
+            .entriesInPage(Id(page)) { showId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId,
+                    showId = showId,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
@@ -64,9 +64,9 @@ public class DefaultPopularShowsDao(
                 popularShowsQueries.pagedPopularShows(
                     limit = limit,
                     offset = offset,
-                ) { traktId, tmdbId, page, title, imageUrl, inLib ->
+                ) { showId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        traktId = traktId,
+                        showId = showId,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,

@@ -70,8 +70,8 @@ public class NitroContinueWatchingStore(
                 withContext(dispatchers.databaseWrite) {
                     transactionRunner {
                         continueWatchingDao.entries()
-                            .filter { it.traktId !in batch.finalTraktIds }
-                            .forEach { continueWatchingDao.deleteByTraktId(it.traktId) }
+                            .filter { it.showId !in batch.finalTraktIds }
+                            .forEach { continueWatchingDao.deleteByTraktId(it.showId) }
                     }
                 }
                 requestManagerRepository.upsert(
@@ -95,7 +95,7 @@ private fun ContinueWatchingEntry.toMinimalTvshow(): ShowToPersist? {
     val tmdb = tmdbId ?: return null
     val name = title ?: return null
     return ShowToPersist(
-        traktId = Id<TraktId>(traktId),
+        showId = Id<TraktId>(showId),
         tmdbId = Id<TmdbId>(tmdb),
         name = name,
         overview = "",

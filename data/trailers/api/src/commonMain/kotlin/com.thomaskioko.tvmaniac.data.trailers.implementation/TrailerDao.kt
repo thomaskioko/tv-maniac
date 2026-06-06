@@ -8,9 +8,9 @@ public interface TrailerDao {
 
     public fun upsert(trailer: Trailers)
 
-    public fun getTrailersByShowTraktId(showTraktId: Long): List<SelectByShowTraktId>
+    public fun getTrailersByShowTraktId(showId: Long): List<SelectByShowTraktId>
 
-    public fun observeTrailersByShowTraktId(showTraktId: Long): Flow<List<SelectByShowTraktId>>
+    public fun observeTrailersByShowTraktId(showId: Long): Flow<List<SelectByShowTraktId>>
 
     public fun delete(id: Long)
 

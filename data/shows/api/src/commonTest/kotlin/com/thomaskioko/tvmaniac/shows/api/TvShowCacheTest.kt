@@ -169,25 +169,25 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     private fun insertTestShows() {
         listOf(
             TestShow(
-                traktId = 1,
+                showId = 1,
                 tmdbId = 1,
                 name = "Breaking Bad",
                 overview = "A high school chemistry teacher turned meth dealer",
             ),
             TestShow(
-                traktId = 2,
+                showId = 2,
                 tmdbId = 2,
                 name = "The Walking Dead",
                 overview = "Zombie apocalypse drama",
             ),
             TestShow(
-                traktId = 3,
+                showId = 3,
                 tmdbId = 3,
                 name = "In the Dark",
                 overview = "Crime drama series",
             ),
             TestShow(
-                traktId = 4,
+                showId = 4,
                 tmdbId = 4,
                 name = "Theory of Everything",
                 overview = "Crime drama series",
@@ -208,12 +208,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
                 episode_numbers = null,
                 season_numbers = null,
             )
-            showIdForTraktId(traktId = show.traktId, tmdbId = show.tmdbId)
+            showIdForTraktId(traktId = show.showId, tmdbId = show.tmdbId)
         }
     }
 
     private data class TestShow(
-        val traktId: Long,
+        val showId: Long,
         val tmdbId: Long,
         val name: String,
         val overview: String,

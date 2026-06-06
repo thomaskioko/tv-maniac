@@ -79,7 +79,7 @@ public class FavoritesStore(
                         ),
                     )
                     favoritesDao.upsert(
-                        traktId = item.response.show.ids.trakt,
+                        showId = item.response.show.ids.trakt,
                         rank = item.response.rank.toLong(),
                         listedAt = item.response.listedAt,
                     )
@@ -115,7 +115,7 @@ private data class FavoriteWithImages(
 )
 
 private fun TraktFavoriteShowResponse.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
-    traktId = Id(show.ids.trakt),
+    showId = Id(show.ids.trakt),
     tmdbId = Id(show.ids.tmdb),
     name = show.title,
     overview = "",

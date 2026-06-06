@@ -31,13 +31,13 @@ public class WatchProvidersStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<WatchProvidersByTraktId>> by storeBuilder(
-    fetcher = Fetcher.of { traktId ->
-        val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
-            ?: throw Throwable("TMDB ID not found for Trakt ID: $traktId")
+    fetcher = Fetcher.of { showId ->
+        val tmdbId = tvShowsDao.getTmdbIdByTraktId(showId)
+            ?: throw Throwable("TMDB ID not found for Trakt ID: $showId")
         when (val response = remoteDataSource.getShowWatchProviders(tmdbId)) {
             is ApiResponse.Success -> {
                 requestManagerRepository.upsert(
-                    entityId = traktId,
+                    entityId = showId,
                     requestType = WATCH_PROVIDERS.name,
                 )
                 WatchProvidersFetchResult(tmdbId, response.body)
@@ -50,23 +50,23 @@ public class WatchProvidersStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProvidersByTraktId>>(
-        reader = { traktId ->
-            dao.observeWatchProvidersByTraktId(traktId)
+        reader = { showId ->
+            dao.observeWatchProvidersByTraktId(showId)
         },
-        writer = { traktId, result ->
+        writer = { showId, result ->
             databaseTransactionRunner {
-                dao.deleteByTraktId(traktId)
-                val showId = showIdResolver.showIdForTraktId(traktId)
-                if (showId != null) {
+                dao.deleteByTraktId(showId)
+                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                if (internalShowId != null) {
                     result.response.results.US
-                        ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, showId = showId) }
+                        ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, showId = internalShowId) }
                         ?.forEach(dao::upsert)
                 }
             }
         },
-        delete = { traktId ->
+        delete = { showId ->
             databaseTransactionRunner {
-                dao.deleteByTraktId(traktId)
+                dao.deleteByTraktId(showId)
             }
         },
         deleteAll = { databaseTransactionRunner(dao::deleteAll) },
@@ -77,9 +77,9 @@ public class WatchProvidersStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val traktId = result.firstOrNull()?.trakt_id ?: return@withContext false
+            val showId = result.firstOrNull()?.trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = traktId,
+                entityId = showId,
                 requestType = WATCH_PROVIDERS.name,
                 threshold = WATCH_PROVIDERS.duration,
             )

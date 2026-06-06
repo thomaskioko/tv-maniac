@@ -21,7 +21,7 @@ public interface EpisodesDao {
     public fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?>
 
     public suspend fun getEpisodeByShowSeasonEpisodeNumber(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ): GetEpisodeByShowSeasonEpisodeNumber?
@@ -42,12 +42,12 @@ public interface EpisodesDao {
     ): List<UpcomingEpisodesFromFollowedShows>
 
     public fun observeNextEpisodeForShow(
-        showTraktId: Long,
+        showId: Long,
         includeSpecials: Boolean,
     ): Flow<NextEpisodeForShow?>
 
     public suspend fun getNextEpisodeForShow(
-        showTraktId: Long,
+        showId: Long,
         includeSpecials: Boolean,
     ): NextEpisodeForShow?
 }

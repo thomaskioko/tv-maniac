@@ -38,9 +38,9 @@ public class DefaultFeaturedShowsDao(
 
     override fun observeFeaturedShows(page: Long): Flow<List<ShowEntity>> =
         featuredShowsQueries
-            .entriesInPage { traktId, tmdbId, name, posterPath, overview, inLibrary ->
+            .entriesInPage { showId, tmdbId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId,
+                    showId = showId,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,

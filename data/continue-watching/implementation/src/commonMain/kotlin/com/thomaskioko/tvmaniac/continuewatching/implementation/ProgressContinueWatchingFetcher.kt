@@ -70,13 +70,13 @@ public class ProgressContinueWatchingFetcher(
 
         val responses = mutableListOf<Pair<Long, ApiResponse<TraktWatchedProgressResponse>>>()
         var rateLimitedAt: Long? = null
-        for (traktId in candidates) {
+        for (showId in candidates) {
             val response = traktSyncDataSource.getShowWatchedProgress(
-                traktId = traktId,
+                traktId = showId,
                 lastActivity = lastActivity,
                 specials = includeSpecials,
             )
-            responses += traktId to response
+            responses += showId to response
             when (response) {
                 is ApiResponse.Success -> {
                     val progress = response.body
@@ -84,17 +84,17 @@ public class ProgressContinueWatchingFetcher(
                     // Trakt's per-show logic returns null next_episode. Removing it would persist rows
                     // that never render in the watchlist.
                     if (progress.nextEpisode != null) {
-                        send(ProgressBatch.Entry(toEntry(traktId, descriptors[traktId], progress)))
+                        send(ProgressBatch.Entry(toEntry(showId, descriptors[showId], progress)))
                     }
                 }
                 is ApiResponse.Error -> {
                     if (response.toSyncError() is SyncError.Retryable) {
-                        rateLimitedAt = traktId
+                        rateLimitedAt = showId
                         break
                     }
                 }
                 is ApiResponse.Unauthenticated -> {
-                    rateLimitedAt = traktId
+                    rateLimitedAt = showId
                     break
                 }
             }
@@ -115,9 +115,9 @@ public class ProgressContinueWatchingFetcher(
 
         if (responses.all { (_, response) -> response is ApiResponse.Success }) {
             val finalTraktIds = responses
-                .mapNotNull { (traktId, response) ->
+                .mapNotNull { (showId, response) ->
                     val progress = (response as ApiResponse.Success).body
-                    if (progress.nextEpisode != null) traktId else null
+                    if (progress.nextEpisode != null) showId else null
                 }
                 .toSet()
             send(ProgressBatch.Complete(finalTraktIds))
@@ -167,7 +167,7 @@ internal sealed interface ProgressBatch {
 }
 
 private fun toEntry(
-    traktId: Long,
+    showId: Long,
     descriptor: ProgressDescriptor?,
     progress: TraktWatchedProgressResponse,
 ): ContinueWatchingEntry {
@@ -175,7 +175,7 @@ private fun toEntry(
         ?.let { Instant.parse(it).toEpochMilliseconds() }
         ?: 0L
     return ContinueWatchingEntry(
-        traktId = traktId,
+        showId = showId,
         tmdbId = descriptor?.tmdbId,
         airedEpisodes = progress.aired.toLong(),
         completedCount = progress.completed.toLong(),

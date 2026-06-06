@@ -92,16 +92,16 @@ public class UpcomingShowsStore(
 
                     response.forEachIndexed { index, result ->
                         val traktShow = result.traktShow ?: return@forEachIndexed
-                        val traktId = traktShow.ids.trakt
+                        val showId = traktShow.ids.trakt
                         val tmdbId = result.tmdbShow.id.toLong()
 
-                        tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil, dateTimeProvider))
+                        tvShowsDao.upsertMerging(result.toTvshow(showId, tmdbId, formatterUtil, dateTimeProvider))
 
-                        val showId = showIdResolver.showIdForTraktId(traktId) ?: return@forEachIndexed
+                        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@forEachIndexed
 
                         upcomingShowsDao.upsert(
                             Upcoming_shows(
-                                show_id = showId,
+                                show_id = internalShowId,
                                 tmdb_id = Id(tmdbId),
                                 page = Id(params.page),
                                 name = result.tmdbShow.name,
@@ -130,7 +130,7 @@ public class UpcomingShowsStore(
 ).build()
 
 private fun UpcomingShowResult.toTvshow(
-    traktId: Long,
+    showId: Long,
     tmdbId: Long,
     formatterUtil: FormatterUtil,
     dateTimeProvider: DateTimeProvider,
@@ -139,7 +139,7 @@ private fun UpcomingShowResult.toTvshow(
     val trakt = traktShow
     val dateString = tmdb.firstAirDate ?: trakt?.firstAirDate
     return ShowToPersist(
-        traktId = Id(traktId),
+        showId = Id(showId),
         tmdbId = Id(tmdbId),
         name = tmdb.name,
         overview = tmdb.overview,

@@ -8,13 +8,13 @@ public interface ContinueWatchingDao {
 
     public fun entriesObservable(): Flow<List<ContinueWatchingEntry>>
 
-    public fun traktIdsMissingShowDetails(): List<Long>
+    public fun showIdsMissingShowDetails(): List<Long>
 
     public fun upsert(entry: ContinueWatchingEntry)
 
-    public fun upsertPlaceholder(traktId: Long, tmdbId: Long?, title: String?, year: Long?)
+    public fun upsertPlaceholder(showId: Long, tmdbId: Long?, title: String?, year: Long?)
 
-    public fun deleteByTraktId(traktId: Long)
+    public fun deleteByTraktId(showId: Long)
 
     public fun deleteAll()
 }

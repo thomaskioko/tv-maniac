@@ -49,9 +49,9 @@ public class DefaultTrendingShowsDao(
                 trendingShowsQueries.pagedTrendingShows(
                     limit = limit,
                     offset = offset,
-                ) { traktId, tmdbId, page, title, imageUrl, inLib ->
+                ) { showId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        traktId = traktId,
+                        showId = showId,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,
@@ -77,9 +77,9 @@ public class DefaultTrendingShowsDao(
 
     override fun observeTrendingShows(page: Long): Flow<List<ShowEntity>> =
         trendingShowsQueries
-            .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
+            .entriesInPage(Id(page)) { showId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId,
+                    showId = showId,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,

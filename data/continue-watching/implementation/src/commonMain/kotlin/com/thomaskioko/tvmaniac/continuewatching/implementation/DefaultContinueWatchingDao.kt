@@ -25,7 +25,7 @@ public class DefaultContinueWatchingDao(
     override fun entries(): List<ContinueWatchingEntry> =
         database.continueWatchingQueries.entries().executeAsList().map { row ->
             ContinueWatchingEntry(
-                traktId = row.trakt_id,
+                showId = row.trakt_id,
                 tmdbId = row.tmdb_id?.id,
                 airedEpisodes = row.aired_episodes,
                 completedCount = row.completed_count,
@@ -43,7 +43,7 @@ public class DefaultContinueWatchingDao(
             .map { rows ->
                 rows.map { row ->
                     ContinueWatchingEntry(
-                        traktId = row.trakt_id,
+                        showId = row.trakt_id,
                         tmdbId = row.tmdb_id?.id,
                         airedEpisodes = row.aired_episodes,
                         completedCount = row.completed_count,
@@ -55,12 +55,12 @@ public class DefaultContinueWatchingDao(
                 }
             }
 
-    override fun traktIdsMissingShowDetails(): List<Long> =
+    override fun showIdsMissingShowDetails(): List<Long> =
         database.continueWatchingQueries.traktIdsMissingShowDetails()
             .executeAsList()
 
     override fun upsert(entry: ContinueWatchingEntry) {
-        val showId = showIdResolver.showIdForTraktId(entry.traktId) ?: return
+        val showId = showIdResolver.showIdForTraktId(entry.showId) ?: return
         database.continueWatchingQueries.upsert(
             showId = showId,
             tmdbId = entry.tmdbId?.let { Id(it) },
@@ -73,19 +73,19 @@ public class DefaultContinueWatchingDao(
         )
     }
 
-    override fun upsertPlaceholder(traktId: Long, tmdbId: Long?, title: String?, year: Long?) {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
+    override fun upsertPlaceholder(showId: Long, tmdbId: Long?, title: String?, year: Long?) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         database.continueWatchingQueries.upsertPlaceholder(
-            showId = showId,
+            showId = internalShowId,
             tmdbId = tmdbId?.let { Id(it) },
             title = title,
             year = year,
         )
     }
 
-    override fun deleteByTraktId(traktId: Long) {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
-        database.continueWatchingQueries.deleteByShowId(showId)
+    override fun deleteByTraktId(showId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        database.continueWatchingQueries.deleteByShowId(internalShowId)
     }
 
     override fun deleteAll() {

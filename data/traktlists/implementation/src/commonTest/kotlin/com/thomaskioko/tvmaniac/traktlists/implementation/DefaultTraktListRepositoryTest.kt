@@ -96,8 +96,8 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
         remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 2))
         remoteDataSource.itemsByListId = mapOf(
             1L to listOf(
-                traktListItemResponse(traktId = 10L),
-                traktListItemResponse(traktId = 20L),
+                traktListItemResponse(showId = 10L),
+                traktListItemResponse(showId = 20L),
             ),
         )
 
@@ -111,11 +111,11 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
     fun `should preserve pending UPLOAD rows given items sync replaces synced rows`() = runTest {
         remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 1))
         remoteDataSource.itemsByListId = mapOf(
-            1L to listOf(traktListItemResponse(traktId = 10L)),
+            1L to listOf(traktListItemResponse(showId = 10L)),
         )
         showDao.upsert(
             listId = 1L,
-            showTraktId = 99L,
+            showId = 99L,
             listedAt = "",
             pendingAction = PendingAction.UPLOAD.value,
         )
@@ -134,13 +134,13 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
         remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 2))
         remoteDataSource.itemsByListId = mapOf(
             1L to listOf(
-                traktListItemResponse(traktId = 10L),
-                traktListItemResponse(traktId = 20L),
+                traktListItemResponse(showId = 10L),
+                traktListItemResponse(showId = 20L),
             ),
         )
         showDao.upsert(
             listId = 1L,
-            showTraktId = 20L,
+            showId = 20L,
             listedAt = "",
             pendingAction = PendingAction.DELETE.value,
         )
@@ -162,16 +162,16 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
         )
         remoteDataSource.itemsByListId = mapOf(
             1L to listOf(
-                traktListItemResponse(traktId = 10L),
-                traktListItemResponse(traktId = 20L),
-                traktListItemResponse(traktId = 30L),
+                traktListItemResponse(showId = 10L),
+                traktListItemResponse(showId = 20L),
+                traktListItemResponse(showId = 30L),
             ),
-            2L to listOf(traktListItemResponse(traktId = 10L)),
+            2L to listOf(traktListItemResponse(showId = 10L)),
         )
 
         repository.fetchUserLists(slug = "sean", forceRefresh = true)
 
-        val lists = repository.observeListsForShow(traktShowId = 10L).first()
+        val lists = repository.observeListsForShow(showId = 10L).first()
         lists.map { it.id to it.itemCount } shouldContainExactlyInAnyOrder listOf(
             1L to 3L,
             2L to 1L,
@@ -230,13 +230,13 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
             updated_at = "2024-01-01T00:00:00.000Z",
         )
 
-    private fun traktListItemResponse(traktId: Long) = TraktListItemResponse(
+    private fun traktListItemResponse(showId: Long) = TraktListItemResponse(
         listedAt = "2024-01-01T00:00:00.000Z",
         type = "show",
         show = ShowResponse(
-            title = "Show $traktId",
+            title = "Show $showId",
             year = 2024,
-            ids = IdsResponse(slug = "show-$traktId", trakt = traktId, tmdb = traktId),
+            ids = IdsResponse(slug = "show-$showId", trakt = showId, tmdb = showId),
         ),
     )
 }
@@ -279,30 +279,30 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 
     override suspend fun addShowToWatchListByTraktId(
-        traktId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddShowToListResponse> = error("not used")
 
     override suspend fun removeShowFromWatchListByTraktId(
-        traktId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 
     override suspend fun addShowsToWatchListByTraktIds(
-        traktIds: List<Long>,
+        showIds: List<Long>,
     ): ApiResponse<TraktAddShowToListResponse> = error("not used")
 
     override suspend fun removeShowsFromWatchListByTraktIds(
-        traktIds: List<Long>,
+        showIds: List<Long>,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 
     override suspend fun addShowToList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddShowToListResponse> = error("not used")
 
     override suspend fun removeShowFromList(
         userSlug: String,
         listId: Long,
-        traktShowId: Long,
+        showId: Long,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 }

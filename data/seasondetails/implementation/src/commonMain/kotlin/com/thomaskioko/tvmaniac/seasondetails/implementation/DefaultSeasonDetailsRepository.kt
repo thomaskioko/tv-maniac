@@ -59,11 +59,11 @@ public class DefaultSeasonDetailsRepository(
     }
 
     override suspend fun syncShowSeasonDetails(
-        showTraktId: Long,
+        showId: Long,
         forceRefresh: Boolean,
     ) {
         val isCacheValid = !requestManagerRepository.isRequestExpired(
-            entityId = showTraktId,
+            entityId = showId,
             requestType = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.name,
             threshold = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.duration,
         )
@@ -73,14 +73,14 @@ public class DefaultSeasonDetailsRepository(
         }
 
         val includeSpecials = datastoreRepository.getIncludeSpecials()
-        val seasons = seasonsRepository.getSeasonsByShowId(showTraktId, includeSpecials)
+        val seasons = seasonsRepository.getSeasonsByShowId(showId, includeSpecials)
 
         if (seasons.isEmpty()) return
 
         seasons.forEach { season ->
             fetchSeasonDetails(
                 param = SeasonDetailsParam(
-                    showTraktId = showTraktId,
+                    showId = showId,
                     seasonId = season.season_id.id,
                     seasonNumber = season.season_number,
                 ),
@@ -89,23 +89,23 @@ public class DefaultSeasonDetailsRepository(
         }
 
         requestManagerRepository.upsert(
-            entityId = showTraktId,
+            entityId = showId,
             requestType = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.name,
         )
     }
 
     override suspend fun syncPreviousSeasonsEpisodes(
-        showTraktId: Long,
+        showId: Long,
         beforeSeasonNumber: Long,
         forceRefresh: Boolean,
     ) {
-        val seasons = seasonsRepository.getSeasonsByShowId(showTraktId)
+        val seasons = seasonsRepository.getSeasonsByShowId(showId)
         val previousSeasons = seasons.filter { it.season_number in 1..<beforeSeasonNumber }
         previousSeasons.forEach { season ->
             currentCoroutineContext().ensureActive()
             fetchSeasonDetails(
                 SeasonDetailsParam(
-                    showTraktId = showTraktId,
+                    showId = showId,
                     seasonId = season.season_id.id,
                     seasonNumber = season.season_number,
                 ),
@@ -118,7 +118,7 @@ public class DefaultSeasonDetailsRepository(
     override fun observeSeasonDetails(
         param: SeasonDetailsParam,
     ): Flow<SeasonDetailsWithEpisodes> =
-        dao.observeSeasonWithShowInfo(param.showTraktId, param.seasonNumber)
+        dao.observeSeasonWithShowInfo(param.showId, param.seasonNumber)
             .filterNotNull()
             .flatMapLatest { season ->
                 dao.observeEpisodesBySeasonId(season.season_id.id)
@@ -129,17 +129,17 @@ public class DefaultSeasonDetailsRepository(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeContinueTrackingEpisodes(
-        showTraktId: Long,
+        showId: Long,
     ): Flow<ContinueTrackingResult?> =
         datastoreRepository.observeIncludeSpecials()
             .flatMapLatest { includeSpecials ->
-                episodesDao.observeNextEpisodeForShow(showTraktId, includeSpecials)
+                episodesDao.observeNextEpisodeForShow(showId, includeSpecials)
             }
             .flatMapLatest { nextEpisode ->
                 if (nextEpisode == null) return@flatMapLatest flowOf(null)
 
                 val param = SeasonDetailsParam(
-                    showTraktId = showTraktId,
+                    showId = showId,
                     seasonId = nextEpisode.season_id.id,
                     seasonNumber = nextEpisode.season_number,
                 )
@@ -164,7 +164,7 @@ public class DefaultSeasonDetailsRepository(
             name = season.season_title,
             seasonNumber = season.season_number,
             seasonOverview = season.season_overview,
-            showTraktId = season.show_trakt_id,
+            showId = season.show_trakt_id,
             showTmdbId = season.show_tmdb_id.id,
             showTitle = season.show_title,
             imageUrl = season.season_image_url,

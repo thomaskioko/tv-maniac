@@ -10,7 +10,7 @@ public class FakeWatchProviderRepository : WatchProviderRepository {
     private var watchProvidersResult = MutableStateFlow<List<WatchProviders>>(emptyList())
     private val fetchInvocations = mutableListOf<FetchInvocation>()
 
-    public data class FetchInvocation(val traktId: Long, val forceRefresh: Boolean)
+    public data class FetchInvocation(val showId: Long, val forceRefresh: Boolean)
 
     public suspend fun setWatchProvidersResult(result: List<WatchProviders>) {
         watchProvidersResult.emit(result)
@@ -22,11 +22,11 @@ public class FakeWatchProviderRepository : WatchProviderRepository {
         fetchInvocations.clear()
     }
 
-    override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
-        fetchInvocations.add(FetchInvocation(traktId, forceRefresh))
+    override suspend fun fetchWatchProviders(showId: Long, forceRefresh: Boolean) {
+        fetchInvocations.add(FetchInvocation(showId, forceRefresh))
     }
 
     override fun observeWatchProviders(
-        traktId: Long,
+        showId: Long,
     ): Flow<List<WatchProviders>> = watchProvidersResult.asStateFlow()
 }

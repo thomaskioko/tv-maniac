@@ -89,7 +89,7 @@ public class StartWatchingWatchlistStore(
                 }
 
                 currentEntries.forEach { localEntry ->
-                    if (localEntry.traktId !in networkTraktIds) {
+                    if (localEntry.showId !in networkTraktIds) {
                         followedShowsDao.deleteById(localEntry.id)
                     }
                 }
@@ -124,14 +124,14 @@ private data class FollowedShowWithImages(
 )
 
 private fun TraktFollowedShowResponse.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
-    traktId = show.ids.trakt,
+    showId = show.ids.trakt,
     tmdbId = show.ids.tmdb,
     followedAt = Instant.parse(listedAt),
     pendingAction = PendingAction.NOTHING,
 )
 
 private fun TraktFollowedShowResponse.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
-    traktId = Id(show.ids.trakt),
+    showId = Id(show.ids.trakt),
     tmdbId = Id(show.ids.tmdb),
     name = show.title,
     overview = "",

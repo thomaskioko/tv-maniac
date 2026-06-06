@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.shows.api.model
 
 public data class ShowEntity(
-    val traktId: Long,
+    val showId: Long,
     val tmdbId: Long,
     val inLibrary: Boolean,
     val posterPath: String?,

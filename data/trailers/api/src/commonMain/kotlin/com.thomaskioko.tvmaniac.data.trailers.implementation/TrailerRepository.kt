@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 public interface TrailerRepository {
     public fun isYoutubePlayerInstalled(): Flow<Boolean>
 
-    public fun observeTrailers(traktId: Long): Flow<List<SelectByShowTraktId>>
+    public fun observeTrailers(showId: Long): Flow<List<SelectByShowTraktId>>
 
-    public suspend fun fetchTrailers(traktId: Long, forceRefresh: Boolean = false)
+    public suspend fun fetchTrailers(showId: Long, forceRefresh: Boolean = false)
 }

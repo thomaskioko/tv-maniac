@@ -14,8 +14,8 @@ public class FakeSeasonsEpisodesSyncRepository : SeasonsEpisodesSyncRepository {
         error = throwable
     }
 
-    override suspend fun syncSeasonsWithEpisodes(showTraktId: Long, forceRefresh: Boolean) {
+    override suspend fun syncSeasonsWithEpisodes(showId: Long, forceRefresh: Boolean) {
         error?.let { throw it }
-        _syncedShowIds.add(showTraktId)
+        _syncedShowIds.add(showId)
     }
 }

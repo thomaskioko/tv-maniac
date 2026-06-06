@@ -86,18 +86,18 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
     }
 
-    override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
+    override suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean) {
         val authState = traktAuthRepository.getAuthState()
         if (authState == null || !authState.isAuthorized) return
 
-        val perShowExpired = lastRequestStore.isShowRequestExpired(showTraktId)
+        val perShowExpired = lastRequestStore.isShowRequestExpired(showId)
         if (!forceRefresh && !perShowExpired) {
-            logger.debug(TAG, "Per-show sync skipped for $showTraktId — per-show TTL fresh")
+            logger.debug(TAG, "Per-show sync skipped for $showId — per-show TTL fresh")
             return
         }
 
-        syncShowWatches(showTraktId)
-        lastRequestStore.updateShowLastRequest(showTraktId)
+        syncShowWatches(showId)
+        lastRequestStore.updateShowLastRequest(showId)
     }
 
     private suspend fun processPendingEpisodesToUploads() {
@@ -122,7 +122,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         val entries = pending.map { episode ->
             WatchedEpisodeEntry(
                 id = episode.watched_id,
-                showTraktId = episode.show_trakt_id,
+                showId = episode.show_trakt_id,
                 episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
@@ -148,7 +148,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         val episodeTraktIds = pending.mapNotNull { episode ->
             episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                showTraktId = episode.show_trakt_id,
+                showId = episode.show_trakt_id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
             )?.trakt_id
@@ -198,29 +198,29 @@ public class DefaultWatchedEpisodeSyncRepository(
             currentCoroutineContext().ensureActive()
             val resolved = chunk.map { entry ->
                 val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                    showTraktId = entry.showTraktId,
+                    showId = entry.showId,
                     seasonNumber = entry.seasonNumber,
                     episodeNumber = entry.episodeNumber,
                 )
                 entry.copy(episodeId = episode?.episode_id?.id)
             }
             dao.upsertBatchFromTrakt(
-                showTraktId = batch.showTraktId,
+                showId = batch.showId,
                 entries = resolved,
                 includeSpecials = includeSpecials,
             )
         }
     }
 
-    private suspend fun syncShowWatches(showTraktId: Long) {
-        val remoteWatches = dataSource.getShowEpisodeWatches(showTraktId)
+    private suspend fun syncShowWatches(showId: Long) {
+        val remoteWatches = dataSource.getShowEpisodeWatches(showId)
 
         if (remoteWatches.isEmpty()) {
-            logger.debug(TAG, "No remote watches for show $showTraktId")
+            logger.debug(TAG, "No remote watches for show $showId")
             return
         }
 
-        logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $showTraktId")
+        logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $showId")
 
         val includeSpecials = datastoreRepository.getIncludeSpecials()
 
@@ -229,7 +229,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
             val entriesWithEpisodeIds = batch.map { remoteEntry ->
                 val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                    showTraktId = showTraktId,
+                    showId = showId,
                     seasonNumber = remoteEntry.seasonNumber,
                     episodeNumber = remoteEntry.episodeNumber,
                 )
@@ -237,13 +237,13 @@ public class DefaultWatchedEpisodeSyncRepository(
             }
 
             dao.upsertBatchFromTrakt(
-                showTraktId = showTraktId,
+                showId = showId,
                 entries = entriesWithEpisodeIds,
                 includeSpecials = includeSpecials,
             )
         }
 
-        logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $showTraktId")
+        logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $showId")
     }
 
     private companion object {

@@ -12,17 +12,17 @@ public interface SeasonsDao {
 
     public fun upsert(entityList: List<Season>)
 
-    public fun fetchShowSeasons(showTraktId: Long, includeSpecials: Boolean = true): List<ShowSeasons>
+    public fun fetchShowSeasons(showId: Long, includeSpecials: Boolean = true): List<ShowSeasons>
 
-    public fun observeSeasonsByShowTraktId(showTraktId: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
+    public fun observeSeasonsByShowTraktId(showId: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
 
-    public suspend fun getSeasonByShowAndNumber(showTraktId: Long, seasonNumber: Long): GetSeasonByShowAndNumber?
+    public suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber?
 
     public suspend fun getLatestSeasonPerFollowedShow(): List<LatestSeasonPerFollowedShow>
 
     public fun updateImageUrl(seasonId: Long, imageUrl: String)
 
-    public fun delete(showTraktId: Long)
+    public fun delete(showId: Long)
 
     public fun deleteAll()
 }

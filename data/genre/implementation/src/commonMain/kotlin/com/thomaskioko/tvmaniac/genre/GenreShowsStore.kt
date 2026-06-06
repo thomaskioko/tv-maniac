@@ -102,7 +102,7 @@ public class GenreShowsStore(
 
                     response.forEach { showWithImages ->
                         val show = showWithImages.traktShow
-                        val traktId = show.ids.trakt
+                        val showId = show.ids.trakt
                         val tmdbId = showWithImages.tmdbId
                         val posterPath = showWithImages.tmdbPosterPath?.let {
                             formatterUtil.formatTmdbPosterPath(it)
@@ -112,12 +112,12 @@ public class GenreShowsStore(
                         }
 
                         tvShowsDao.upsertMerging(
-                            show.toTvshow(traktId, tmdbId, posterPath, backdropPath, dateTimeProvider),
+                            show.toTvshow(showId, tmdbId, posterPath, backdropPath, dateTimeProvider),
                         )
 
                         traktGenreDao.upsertGenreShow(
                             genreSlug = key.genreSlug,
-                            traktId = traktId,
+                            showId = showId,
                             pageOrder = showWithImages.pageOrder.toLong(),
                             category = key.category.name,
                         )
@@ -142,13 +142,13 @@ internal data class GenreShowWithImages(
 )
 
 private fun TraktShowResponse.toTvshow(
-    traktId: Long,
+    showId: Long,
     tmdbId: Long,
     posterPath: String?,
     backdropPath: String?,
     dateTimeProvider: DateTimeProvider,
 ): ShowToPersist = ShowToPersist(
-    traktId = Id(traktId),
+    showId = Id(showId),
     tmdbId = Id(tmdbId),
     name = title,
     overview = overview ?: "",

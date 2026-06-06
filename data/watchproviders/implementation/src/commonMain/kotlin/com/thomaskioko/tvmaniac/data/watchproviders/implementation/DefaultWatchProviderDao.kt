@@ -46,17 +46,17 @@ public class DefaultWatchProviderDao(
             .mapToList(dispatcher.io)
             .map { rows -> rows.dedupedByBrand { it.name } }
 
-    override fun observeWatchProvidersByTraktId(traktId: Long): Flow<List<WatchProvidersByTraktId>> {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return flowOf(emptyList())
-        return database.watchProvidersQueries.watchProvidersByTraktId(showId)
+    override fun observeWatchProvidersByTraktId(showId: Long): Flow<List<WatchProvidersByTraktId>> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        return database.watchProvidersQueries.watchProvidersByTraktId(internalShowId)
             .asFlow()
             .mapToList(dispatcher.io)
             .map { rows -> rows.dedupedByBrand { it.name } }
     }
 
-    override fun deleteByTraktId(traktId: Long) {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
-        database.watchProvidersQueries.deleteByShowId(showId)
+    override fun deleteByTraktId(showId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        database.watchProvidersQueries.deleteByShowId(internalShowId)
     }
 
     override fun deleteAll() {

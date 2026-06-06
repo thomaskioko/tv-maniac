@@ -45,7 +45,7 @@ public class FakeTraktListRepository : TraktListRepository {
 
     override fun observeLists(): Flow<List<TraktListEntity>> = listsFlow.asStateFlow()
 
-    override fun observeListsForShow(traktShowId: Long): Flow<List<TraktList>> =
+    override fun observeListsForShow(showId: Long): Flow<List<TraktList>> =
         listsWithMembershipFlow.asStateFlow()
 
     override suspend fun fetchUserLists(slug: String, forceRefresh: Boolean) {
@@ -56,7 +56,7 @@ public class FakeTraktListRepository : TraktListRepository {
     override suspend fun createList(slug: String, name: String) {
     }
 
-    override suspend fun toggleShowInList(slug: String, listId: Long, traktShowId: Long, isCurrentlyInList: Boolean) {
+    override suspend fun toggleShowInList(slug: String, listId: Long, showId: Long, isCurrentlyInList: Boolean) {
         toggleShowInListInvocations += 1
         toggleGate?.await()
     }

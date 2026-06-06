@@ -46,7 +46,7 @@ public class RecommendedShowsStore(
     fetcher = Fetcher.of { param: RecommendedShowsParams ->
         coroutineScope {
             traktRemoteDataSource.getRelatedShows(
-                traktId = param.traktId,
+                traktId = param.showId,
                 page = param.page.toInt(),
             ).getOrThrow()
                 .mapNotNull { show ->
@@ -68,31 +68,31 @@ public class RecommendedShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<RecommendedShowsParams, List<RecommendedShowResult>, List<RecommendedShows>>(
-        reader = { param: RecommendedShowsParams -> recommendedShowsDao.observeRecommendedShows(param.traktId) },
+        reader = { param: RecommendedShowsParams -> recommendedShowsDao.observeRecommendedShows(param.showId) },
         writer = { param: RecommendedShowsParams, response ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
                     response.forEachIndexed { _, result ->
-                        val traktId = result.traktShow.ids.trakt
+                        val showId = result.traktShow.ids.trakt
                         val tmdbId = result.tmdbId
 
-                        tvShowsDao.upsertMerging(result.toTvshow(traktId, tmdbId, formatterUtil, dateTimeProvider))
+                        tvShowsDao.upsertMerging(result.toTvshow(showId, tmdbId, formatterUtil, dateTimeProvider))
 
                         recommendedShowsDao.upsert(
-                            showTraktId = traktId,
+                            showId = showId,
                             showTmdbId = tmdbId,
-                            recommendedShowTraktId = param.traktId,
+                            recommendedShowTraktId = param.showId,
                         )
                     }
                 }
 
                 requestManagerRepository.upsert(
-                    entityId = param.traktId,
+                    entityId = param.showId,
                     requestType = RECOMMENDED_SHOWS.name,
                 )
             }
         },
-        delete = { param -> recommendedShowsDao.delete(param.traktId) },
+        delete = { param -> recommendedShowsDao.delete(param.showId) },
         deleteAll = recommendedShowsDao::deleteAll,
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,
@@ -101,9 +101,9 @@ public class RecommendedShowsStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val showTraktId = cachedData.firstOrNull()?.show_trakt_id ?: return@withContext false
+            val showId = cachedData.firstOrNull()?.show_trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = showTraktId,
+                entityId = showId,
                 requestType = RECOMMENDED_SHOWS.name,
                 threshold = RECOMMENDED_SHOWS.duration,
             )
@@ -112,7 +112,7 @@ public class RecommendedShowsStore(
 ).build()
 
 private fun RecommendedShowResult.toTvshow(
-    traktId: Long,
+    showId: Long,
     tmdbId: Long,
     formatterUtil: FormatterUtil,
     dateTimeProvider: DateTimeProvider,
@@ -121,7 +121,7 @@ private fun RecommendedShowResult.toTvshow(
     val trakt = traktShow
     val dateString = tmdb?.firstAirDate ?: trakt.firstAirDate
     return ShowToPersist(
-        traktId = Id(traktId),
+        showId = Id(showId),
         tmdbId = Id(tmdbId),
         name = tmdb?.name ?: trakt.title,
         overview = tmdb?.overview ?: trakt.overview ?: "",

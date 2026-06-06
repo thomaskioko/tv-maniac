@@ -20,20 +20,20 @@ public class DefaultRecommendedShowsDao(
     private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedShowsDao {
-    override fun upsert(showTraktId: Long, showTmdbId: Long, recommendedShowTraktId: Long) {
-        val showId = showIdResolver.showIdForTraktId(showTraktId) ?: return
+    override fun upsert(showId: Long, showTmdbId: Long, recommendedShowTraktId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         database.recommendedShowsQueries.transaction {
             database.recommendedShowsQueries.upsert(
-                show_id = showId,
+                show_id = internalShowId,
                 tmdb_id = Id(showTmdbId),
                 recommended_show_trakt_id = Id(recommendedShowTraktId),
             )
         }
     }
 
-    override fun observeRecommendedShows(showTraktId: Long): Flow<List<RecommendedShows>> {
+    override fun observeRecommendedShows(showId: Long): Flow<List<RecommendedShows>> {
         return database.recommendedShowsQueries
-            .recommendedShows(Id(showTraktId))
+            .recommendedShows(Id(showId))
             .asFlow()
             .mapToList(dispatchers.io)
     }

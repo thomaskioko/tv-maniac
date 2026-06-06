@@ -54,7 +54,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should insert featured shows`() = runTest {
-        val showId = seedShow(traktId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
+        val showId = seedShow(showId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
 
         val featuredShow = Featured_shows(
             show_id = showId,
@@ -70,7 +70,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
         dao.observeFeaturedShows(page = 1).test {
             val shows = awaitItem()
             shows.size shouldBe 3
-            shows.any { it.traktId == 999L } shouldBe true
+            shows.any { it.showId == 999L } shouldBe true
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -81,13 +81,13 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             val shows = awaitItem()
             shows.size shouldBe 2
 
-            val show1 = shows.find { it.traktId == 1L }
+            val show1 = shows.find { it.showId == 1L }
             show1?.title shouldBe "Test Show 1"
             show1?.posterPath shouldBe "/test1.jpg"
             show1?.overview shouldBe "Test overview 1"
             show1?.inLibrary shouldBe false
 
-            val show2 = shows.find { it.traktId == 2L }
+            val show2 = shows.find { it.showId == 2L }
             show2?.title shouldBe "Test Show 2"
             show2?.posterPath shouldBe "/test2.jpg"
             show2?.overview shouldBe "Test overview 2"
@@ -99,7 +99,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should not return shows with null names`() = runTest {
-        val showId = seedShow(traktId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
+        val showId = seedShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
         val _ = featuredShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
@@ -112,7 +112,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
         dao.observeFeaturedShows(1).test {
             val shows = awaitItem()
             shows.size shouldBe 2
-            shows.none { it.traktId == 999L } shouldBe true
+            shows.none { it.showId == 999L } shouldBe true
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -134,7 +134,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             val initialShows = awaitItem()
             initialShows.size shouldBe 2
 
-            val showId = seedShow(traktId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
+            val showId = seedShow(showId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
             val newShow = Featured_shows(
                 show_id = showId,
                 tmdb_id = Id<TmdbId>(999),
@@ -147,7 +147,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
             val updatedShows = awaitItem()
             updatedShows.size shouldBe 3
-            updatedShows.any { it.traktId == 999L && it.title == "New Reactive Show" } shouldBe true
+            updatedShows.any { it.showId == 999L && it.title == "New Reactive Show" } shouldBe true
 
             cancelAndConsumeRemainingEvents()
         }
@@ -178,15 +178,15 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
             val updatedShows = awaitItem()
             updatedShows.size shouldBe 1
-            updatedShows.none { it.traktId == 1L } shouldBe true
+            updatedShows.none { it.showId == 1L } shouldBe true
 
             cancelAndConsumeRemainingEvents()
         }
     }
 
-    private fun seedShow(traktId: Long, name: String, posterPath: String): Id<ShowId> {
+    private fun seedShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
         val _ = database.tvShowQueries.upsert(
-            tmdb_id = Id<TmdbId>(traktId),
+            tmdb_id = Id<TmdbId>(showId),
             name = name,
             overview = "$name overview",
             language = "en",
@@ -200,7 +200,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             poster_path = posterPath,
             backdrop_path = "/new_backdrop.jpg",
         )
-        return showIdForTraktId(traktId)
+        return showIdForTraktId(showId)
     }
 
     private fun insertTestShows() {

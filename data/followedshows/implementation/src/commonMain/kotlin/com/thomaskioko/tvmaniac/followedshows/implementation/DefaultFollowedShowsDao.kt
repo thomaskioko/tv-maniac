@@ -41,9 +41,9 @@ public class DefaultFollowedShowsDao(
             .map { list -> list.map { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) } }
     }
 
-    override fun entryWithTraktId(traktId: Long): FollowedShowEntry? {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return null
-        return queries.entryWithShowId(showId)
+    override fun entryWithTraktId(showId: Long): FollowedShowEntry? {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return null
+        return queries.entryWithShowId(internalShowId)
             .executeAsOneOrNull()
             ?.let { toEntry(it.followed_id, it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
     }
@@ -73,7 +73,7 @@ public class DefaultFollowedShowsDao(
     }
 
     override fun upsert(entry: FollowedShowEntry): Long {
-        val showId = showIdResolver.showIdForTraktId(entry.traktId) ?: return 0
+        val showId = showIdResolver.showIdForTraktId(entry.showId) ?: return 0
         queries.upsert(
             showId = showId,
             tmdbId = entry.tmdbId?.let { Id(it) },
@@ -91,20 +91,20 @@ public class DefaultFollowedShowsDao(
         val _ = queries.deleteById(id)
     }
 
-    override fun deleteByTraktId(traktId: Long) {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
-        val _ = queries.deleteByShowId(showId)
+    override fun deleteByTraktId(showId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val _ = queries.deleteByShowId(internalShowId)
     }
 
     private fun toEntry(
         followedId: Long,
-        traktId: Long,
+        showId: Long,
         tmdbId: Long?,
         followedAt: Long,
         pendingAction: String,
     ): FollowedShowEntry = FollowedShowEntry(
         id = followedId,
-        traktId = traktId,
+        showId = showId,
         tmdbId = tmdbId,
         followedAt = Instant.fromEpochMilliseconds(followedAt),
         pendingAction = PendingAction.fromValue(pendingAction),

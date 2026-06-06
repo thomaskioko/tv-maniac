@@ -35,9 +35,9 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
     @BeforeTest
     fun setUp() {
         dao = DefaultContinueWatchingDao(database, showIdResolver, dispatchers)
-        insertTvShow(traktId = BREAKING_BAD_TRAKT_ID, tmdbId = BREAKING_BAD_TMDB_ID)
-        insertTvShow(traktId = THE_WIRE_TRAKT_ID, tmdbId = THE_WIRE_TMDB_ID)
-        insertTvShow(traktId = ORPHAN_TRAKT_ID, tmdbId = ORPHAN_TMDB_ID)
+        insertTvShow(showId = BREAKING_BAD_TRAKT_ID, tmdbId = BREAKING_BAD_TMDB_ID)
+        insertTvShow(showId = THE_WIRE_TRAKT_ID, tmdbId = THE_WIRE_TMDB_ID)
+        insertTvShow(showId = ORPHAN_TRAKT_ID, tmdbId = ORPHAN_TMDB_ID)
     }
 
     @AfterTest
@@ -84,12 +84,12 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve null tmdb id`() {
-        val orphan = breakingBadEntry.copy(traktId = ORPHAN_TRAKT_ID, tmdbId = null)
+        val orphan = breakingBadEntry.copy(showId = ORPHAN_TRAKT_ID, tmdbId = null)
         dao.upsert(orphan)
 
         val stored = dao.entries().first()
         stored.tmdbId.shouldBeNull()
-        stored.traktId shouldBe ORPHAN_TRAKT_ID
+        stored.showId shouldBe ORPHAN_TRAKT_ID
     }
 
     @Test
@@ -121,7 +121,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
         dao.upsert(breakingBadEntry)
         dao.upsert(theWireEntry)
 
-        dao.deleteByTraktId(breakingBadEntry.traktId)
+        dao.deleteByTraktId(breakingBadEntry.showId)
 
         dao.entries() shouldContainExactlyInAnyOrder listOf(theWireEntry)
     }
@@ -136,10 +136,10 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
         dao.entries().shouldBeEmpty()
     }
 
-    private fun insertTvShow(traktId: Long, tmdbId: Long) {
+    private fun insertTvShow(showId: Long, tmdbId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
-            name = "show-$traktId",
+            name = "show-$showId",
             overview = "overview",
             language = "en",
             year = "2020-01-01",
@@ -152,7 +152,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        showIdForTraktId(traktId = traktId, tmdbId = tmdbId)
+        showIdForTraktId(traktId = showId, tmdbId = tmdbId)
     }
 
     private companion object {
@@ -166,7 +166,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 }
 
 private val breakingBadEntry = ContinueWatchingEntry(
-    traktId = 1388L,
+    showId = 1388L,
     tmdbId = 1396L,
     airedEpisodes = 62L,
     completedCount = 56L,
@@ -175,7 +175,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
 )
 
 private val theWireEntry = ContinueWatchingEntry(
-    traktId = 1429L,
+    showId = 1429L,
     tmdbId = 1438L,
     airedEpisodes = 60L,
     completedCount = 12L,

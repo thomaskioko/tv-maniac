@@ -17,19 +17,19 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
 
     override suspend fun getFollowedShows(): List<FollowedShowEntry> = entries.value
 
-    override suspend fun addFollowedShow(traktId: Long) {
-        _addedShowIds.add(traktId)
+    override suspend fun addFollowedShow(showId: Long) {
+        _addedShowIds.add(showId)
         val newEntry = FollowedShowEntry(
-            id = traktId,
-            traktId = traktId,
+            id = showId,
+            showId = showId,
             followedAt = Clock.System.now(),
         )
         entries.value += newEntry
     }
 
-    override suspend fun removeFollowedShow(traktId: Long) {
-        _removedShowIds.add(traktId)
-        entries.value = entries.value.filter { it.traktId != traktId }
+    override suspend fun removeFollowedShow(showId: Long) {
+        _removedShowIds.add(showId)
+        entries.value = entries.value.filter { it.showId != showId }
     }
 
     public fun setEntries(newEntries: List<FollowedShowEntry>) {

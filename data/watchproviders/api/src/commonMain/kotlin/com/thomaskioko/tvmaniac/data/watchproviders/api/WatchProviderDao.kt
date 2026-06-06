@@ -12,9 +12,9 @@ public interface WatchProviderDao {
 
     public fun observeWatchProviders(tmdbId: Long): Flow<List<WatchProviders>>
 
-    public fun observeWatchProvidersByTraktId(traktId: Long): Flow<List<WatchProvidersByTraktId>>
+    public fun observeWatchProvidersByTraktId(showId: Long): Flow<List<WatchProvidersByTraktId>>
 
-    public fun deleteByTraktId(traktId: Long)
+    public fun deleteByTraktId(showId: Long)
 
     public fun deleteAll()
 }

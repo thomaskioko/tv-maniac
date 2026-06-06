@@ -42,20 +42,20 @@ public class DefaultTraktGenreDao(
         genreQueries.deleteAll()
     }
 
-    override fun upsertGenreShow(genreSlug: String, traktId: Long, pageOrder: Long, category: String) {
-        val showId = showIdResolver.showIdForTraktId(traktId) ?: return
+    override fun upsertGenreShow(genreSlug: String, showId: Long, pageOrder: Long, category: String) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         genreShowsQueries.upsert(
             genre_slug = genreSlug,
-            show_id = showId,
+            show_id = internalShowId,
             page_order = pageOrder,
             category = category,
         )
     }
 
     override fun observeShowsByGenreSlug(slug: String): Flow<List<ShowEntity>> =
-        genreShowsQueries.showsByGenreSlug(slug) { traktId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
+        genreShowsQueries.showsByGenreSlug(slug) { showId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                traktId = traktId,
+                showId = showId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -70,9 +70,9 @@ public class DefaultTraktGenreDao(
             .mapToList(dispatchers.io)
 
     override fun observeShowsByGenreSlugAndCategory(slug: String, category: String): Flow<List<ShowEntity>> =
-        genreShowsQueries.showsByGenreSlugAndCategory(slug, category) { traktId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
+        genreShowsQueries.showsByGenreSlugAndCategory(slug, category) { showId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                traktId = traktId,
+                showId = showId,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -87,12 +87,12 @@ public class DefaultTraktGenreDao(
             .mapToList(dispatchers.io)
 
     override fun observeGenresWithShowsByCategory(category: String): Flow<List<GenreWithShowsEntity>> =
-        genreShowsQueries.genresWithShowsByCategory(category) { genreSlug, genreName, traktId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
+        genreShowsQueries.genresWithShowsByCategory(category) { genreSlug, genreName, showId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             GenreShowRow(
                 genreSlug = genreSlug,
                 genreName = genreName,
                 show = ShowEntity(
-                    traktId = traktId,
+                    showId = showId,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,
