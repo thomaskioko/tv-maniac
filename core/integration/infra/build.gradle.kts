@@ -101,6 +101,7 @@ kotlin {
             api(projects.data.startWatching.implementation)
             api(projects.data.user.api)
             api(projects.data.user.implementation)
+            api(projects.data.watchStatus.implementation)
             api(projects.data.watchlistPrefs.implementation)
             api(projects.data.watchproviders.implementation)
             api(projects.domain.episode)

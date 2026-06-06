@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import com.thomaskioko.tvmaniac.watchstatus.testing.FakeShowWatchStatusRepository
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
@@ -75,6 +76,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             traktAuthRepository = traktAuthRepository,
             dateTimeProvider = fakeDateTimeProvider,
             logger = NoOpLogger,
+            watchStatusRepository = FakeShowWatchStatusRepository(),
         )
     }
 
