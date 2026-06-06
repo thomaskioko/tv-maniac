@@ -214,7 +214,7 @@ internal class ContinueWatchingFetcherTest {
             ApiResponse.Success(baselinePlayback + resetShowPlayback),
         )
         syncDataSource.setShowWatchedProgress(
-            traktId = RESET_SHOW_ID,
+            showId = RESET_SHOW_ID,
             response = ApiResponse.Success(resetShowProgress),
         )
         syncDataSource.setUpNextNitro(
@@ -252,11 +252,11 @@ internal class ContinueWatchingFetcherTest {
         syncDataSource.setUpNextNitro(ApiResponse.Success(nitro))
 
         syncDataSource.setShowWatchedProgress(
-            traktId = BREAKING_BAD_ID,
+            showId = BREAKING_BAD_ID,
             response = ApiResponse.Success(loadProgress("progress_1388.json")),
         )
         syncDataSource.setShowWatchedProgress(
-            traktId = THE_WIRE_ID,
+            showId = THE_WIRE_ID,
             response = ApiResponse.Success(loadProgress("progress_1429.json")),
         )
     }
