@@ -1,32 +1,35 @@
+import com.thomaskioko.tvmaniac.db.Provider;
 import kotlin.time.Instant;
 
-CREATE TABLE activity_checkpoint (
+CREATE TABLE activity_sync (
+    provider TEXT AS Provider NOT NULL,
     consumer_id TEXT NOT NULL,
     activity_type TEXT NOT NULL,
     synced_until INTEGER AS Instant NOT NULL,
     updated_at INTEGER AS Instant NOT NULL,
-    PRIMARY KEY (consumer_id, activity_type)
+    PRIMARY KEY (provider, consumer_id, activity_type)
 );
 
 upsert:
-INSERT OR REPLACE INTO activity_checkpoint (
+INSERT OR REPLACE INTO activity_sync (
+    provider,
     consumer_id,
     activity_type,
     synced_until,
     updated_at
-) VALUES (?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?);
 
 getCheckpoint:
 SELECT *
-FROM activity_checkpoint
-WHERE consumer_id = ? AND activity_type = ?;
+FROM activity_sync
+WHERE provider = ? AND consumer_id = ? AND activity_type = ?;
 
 getAll:
 SELECT *
-FROM activity_checkpoint;
+FROM activity_sync;
 
 deleteAll:
-DELETE FROM activity_checkpoint;
+DELETE FROM activity_sync;
 
 countRows:
-SELECT COUNT(*) FROM activity_checkpoint;
+SELECT COUNT(*) FROM activity_sync;
