@@ -25,6 +25,8 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
                 api(projects.data.connectedAccount.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
                 api(projects.data.library.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)

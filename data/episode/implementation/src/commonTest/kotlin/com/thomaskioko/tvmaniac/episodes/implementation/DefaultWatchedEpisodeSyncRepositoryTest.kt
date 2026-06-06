@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -55,6 +57,9 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     private val requestManagerRepository = FakeRequestManagerRepository()
     private val traktAuthRepository = AuthorizedFakeTraktAuthRepository()
     private val recordingDataSource = RecordingEpisodeWatchesDataSource()
+    private val connectedAccountRepository = FakeConnectedAccountRepository().apply {
+        setActiveProvider(ConnectedProvider.TRAKT)
+    }
     private val syncRepository = FakeActivitySyncRepository()
 
     private lateinit var dao: DefaultWatchedEpisodeDao
@@ -69,7 +74,8 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         defaultWatchedEpisodeSyncRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
             episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
-            dataSource = recordingDataSource,
+            sources = setOf(recordingDataSource),
+            connectedAccountRepository = connectedAccountRepository,
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
             syncRepository = syncRepository,
@@ -229,6 +235,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 }
 
 private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
+    override val provider: ConnectedProvider = ConnectedProvider.TRAKT
     private val _removedTraktIds = mutableListOf<Long>()
     val removedTraktIds: List<Long> get() = _removedTraktIds.toList()
 

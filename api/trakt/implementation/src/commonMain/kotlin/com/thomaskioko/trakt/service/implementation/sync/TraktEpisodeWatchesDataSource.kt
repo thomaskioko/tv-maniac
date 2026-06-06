@@ -1,5 +1,6 @@
-package com.thomaskioko.tvmaniac.episodes.implementation
+package com.thomaskioko.trakt.service.implementation.sync
 
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
@@ -17,17 +18,25 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncSeasonEpisode
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktWatchedShowResponse
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 import kotlin.time.Instant
 
+/**
+ * Trakt adapter for [EpisodeWatchesDataSource], contributed into the multibound set of sources.
+ *
+ * Wraps Trakt's per-show history, bulk watched-shows snapshot, and history add/remove writes, keyed on
+ * `(show, season_number, episode_number)`.
+ */
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class)
+@ContributesIntoSet(AppScope::class)
 public class TraktEpisodeWatchesDataSource(
     private val remoteDataSource: TraktEpisodeHistoryRemoteDataSource,
     private val syncRemoteDataSource: TraktSyncRemoteDataSource,
     private val followedShowsDao: FollowedShowsDao,
 ) : EpisodeWatchesDataSource {
+
+    override val provider: ConnectedProvider = ConnectedProvider.TRAKT
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
         return when (val response = remoteDataSource.getShowEpisodeWatches(showId)) {

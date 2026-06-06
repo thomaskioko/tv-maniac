@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
@@ -30,7 +31,8 @@ import kotlin.time.Instant.Companion.fromEpochMilliseconds
 public class DefaultWatchedEpisodeSyncRepository(
     private val dao: WatchedEpisodeDao,
     private val episodesDao: EpisodesDao,
-    private val dataSource: EpisodeWatchesDataSource,
+    private val sources: Set<EpisodeWatchesDataSource>,
+    private val connectedAccountRepository: ConnectedAccountRepository,
     private val datastoreRepository: DatastoreRepository,
     private val lastRequestStore: EpisodeWatchesLastRequestStore,
     private val syncRepository: ActivitySyncRepository,
@@ -41,6 +43,9 @@ public class DefaultWatchedEpisodeSyncRepository(
 ) : WatchedEpisodeSyncRepository {
 
     private val syncMutex = Mutex()
+
+    private fun activeSource(): EpisodeWatchesDataSource? =
+        sources.firstOrNull { it.provider == connectedAccountRepository.getActiveProvider() }
 
     override suspend fun syncPendingEpisodes() {
         val authState = traktAuthRepository.getAuthState()
@@ -119,6 +124,7 @@ public class DefaultWatchedEpisodeSyncRepository(
     private suspend fun uploadPending(
         pending: List<com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction>,
     ) {
+        val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending uploads")
 
         val entries = pending.map { episode ->
@@ -134,7 +140,7 @@ public class DefaultWatchedEpisodeSyncRepository(
             )
         }
 
-        dataSource.addEpisodeWatches(entries)
+        source.addEpisodeWatches(entries)
 
         pending.forEach { episode ->
             dao.updatePendingAction(episode.watched_id, PendingAction.NOTHING)
@@ -146,6 +152,7 @@ public class DefaultWatchedEpisodeSyncRepository(
     private suspend fun deletePending(
         pending: List<com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction>,
     ) {
+        val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending deletes")
 
         val episodeIds = pending.mapNotNull { episode ->
@@ -156,7 +163,7 @@ public class DefaultWatchedEpisodeSyncRepository(
             )?.trakt_id
         }
         if (episodeIds.isNotEmpty()) {
-            dataSource.removeEpisodeWatches(episodeIds)
+            source.removeEpisodeWatches(episodeIds)
         }
 
         pending.forEach { episode ->
@@ -171,13 +178,14 @@ public class DefaultWatchedEpisodeSyncRepository(
     }
 
     private suspend fun fetchAllWatchedShows() {
+        val source = activeSource() ?: return
         val includeSpecials = datastoreRepository.getIncludeSpecials()
         var page = 1
         var totalShows = 0
 
         while (true) {
             currentCoroutineContext().ensureActive()
-            val batches = dataSource.getAllWatchedShows(page = page, limit = PAGE_LIMIT)
+            val batches = source.getAllWatchedShows(page = page, limit = PAGE_LIMIT)
             if (batches.isEmpty()) break
 
             batches.forEach { batch ->
@@ -217,7 +225,8 @@ public class DefaultWatchedEpisodeSyncRepository(
     }
 
     private suspend fun syncShowWatches(showId: Long) {
-        val remoteWatches = dataSource.getShowEpisodeWatches(showId)
+        val source = activeSource() ?: return
+        val remoteWatches = source.getShowEpisodeWatches(showId)
 
         if (remoteWatches.isEmpty()) {
             logger.debug(TAG, "No remote watches for show $showId")
