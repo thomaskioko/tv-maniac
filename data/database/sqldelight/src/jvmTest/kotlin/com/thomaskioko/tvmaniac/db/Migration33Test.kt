@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.util.columnNames
-import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
+import com.thomaskioko.tvmaniac.db.util.migrateToVersion
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
@@ -15,7 +15,7 @@ class Migration33Test {
     @Test
     fun `should drop synced_remote_timestamp column from trakt_last_activity`() {
         openSnapshot(version = 31).use { driver ->
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 34)
 
             val cols = driver.columnNames("trakt_last_activity")
             cols shouldContain "id"
@@ -39,7 +39,7 @@ class Migration33Test {
                 parameters = 0,
             )
 
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 34)
 
             val rows = driver.traktLastActivityRows()
             rows shouldBe listOf(
@@ -69,7 +69,7 @@ class Migration33Test {
                 parameters = 0,
             )
 
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 34)
 
             val checkpoints = driver.activityPostMigration33CheckpointRows()
             checkpoints shouldBe listOf(
