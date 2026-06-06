@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.startwatching.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -11,7 +12,6 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.watchlistprefs.testing.FakeWatchlistPrefsRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
@@ -19,7 +19,7 @@ class FakeStartWatchingPresenterBuilder {
     val startWatchingRepository = FakeStartWatchingRepository()
     val prefsRepository = FakeWatchlistPrefsRepository()
     val syncObserver = FakeSyncObserver()
-    val traktAuthRepository = FakeTraktAuthRepository()
+    val connectedAccountRepository = FakeConnectedAccountRepository()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
@@ -51,6 +51,6 @@ class FakeStartWatchingPresenterBuilder {
         syncStartWatchingInteractor = syncStartWatchingInteractor,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = fakeLogger,
-        traktAuthRepository = traktAuthRepository,
+        connectedAccountRepository = connectedAccountRepository,
     )
 }

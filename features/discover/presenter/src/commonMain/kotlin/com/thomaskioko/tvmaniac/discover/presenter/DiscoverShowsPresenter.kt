@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -42,8 +43,6 @@ import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.shows.api.model.Category
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -80,7 +79,7 @@ public class DiscoverShowsPresenter(
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,
     private val observeUpNextInteractor: ObserveUpNextInteractor,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val connectedAccountRepository: ConnectedAccountRepository,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -176,10 +175,10 @@ public class DiscoverShowsPresenter(
 
         private fun observeAuthState() {
             coroutineScope.launch {
-                traktAuthRepository.state
+                connectedAccountRepository.isConnected
                     .drop(1)
                     .distinctUntilChanged()
-                    .filter { it == TraktAuthState.LOGGED_IN }
+                    .filter { it }
                     .collect { observeShowData(forceRefresh = true) }
             }
         }

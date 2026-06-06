@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -54,8 +56,6 @@ import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
@@ -91,7 +91,7 @@ class ShowDetailsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val upNextRepository = FakeUpNextRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val connectedAccountRepository = FakeConnectedAccountRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
@@ -640,7 +640,7 @@ class ShowDetailsPresenterTest {
 
         watchedEpisodeSyncRepository.reset()
 
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         testDispatcher.scheduler.advanceUntilIdle()
 
         watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
@@ -649,7 +649,7 @@ class ShowDetailsPresenterTest {
 
     @Test
     fun `should sync watch progress on initial load given user is logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         buildMockData(seasonResult = seasons)
 
         val _ = buildShowDetailsPresenter()
@@ -661,7 +661,7 @@ class ShowDetailsPresenterTest {
 
     @Test
     fun `should always attempt sync on initial load given user is logged out`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        connectedAccountRepository.setActiveProvider(null)
         buildMockData(seasonResult = seasons)
 
         val _ = buildShowDetailsPresenter()
@@ -781,7 +781,7 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
-            traktAuthRepository = traktAuthRepository,
+            connectedAccountRepository = connectedAccountRepository,
             mapper = ShowDetailsMapper(localizer = fakeLocalizer),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,

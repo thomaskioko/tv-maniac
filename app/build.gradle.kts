@@ -79,6 +79,7 @@ dependencies {
     implementation(projects.core.featureFlags.api)
     implementation(projects.core.featureFlags.implementation)
     implementation(projects.data.cast.implementation)
+    implementation(projects.data.connectedAccount.api)
     implementation(projects.data.connectedAccount.implementation)
     implementation(projects.data.episode.implementation)
     implementation(projects.data.featuredshows.api)

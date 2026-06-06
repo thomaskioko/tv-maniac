@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -23,8 +24,6 @@ import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -58,7 +57,7 @@ public class SettingsPresenter(
     private val logger: Logger,
     private val traktAuthManager: TraktAuthManager,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
-    traktAuthRepository: TraktAuthRepository,
+    connectedAccountRepository: ConnectedAccountRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -78,11 +77,11 @@ public class SettingsPresenter(
         logoutState.observable,
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
-        traktAuthRepository.state,
+        connectedAccountRepository.isConnected,
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
-    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, authState, message, userProfile ->
-        val isAuthenticated = authState == TraktAuthState.LOGGED_IN
+    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, isLoggedIn, message, userProfile ->
+        val isAuthenticated = isLoggedIn
         val username = userProfile?.let { it.fullName ?: it.username }
         currentState.copy(
             isLoading = false,

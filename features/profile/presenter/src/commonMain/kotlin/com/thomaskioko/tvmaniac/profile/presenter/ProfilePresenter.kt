@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.profile.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -52,7 +53,6 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.traktauth.api.AuthError
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import com.thomaskioko.tvmaniac.upnext.api.model.CompletedShow
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
@@ -83,6 +83,7 @@ public class ProfilePresenter(
     private val localizer: Localizer,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthRepository: TraktAuthRepository,
+    private val connectedAccountRepository: ConnectedAccountRepository,
     private val updateUserProfileData: UpdateUserProfileData,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -152,13 +153,13 @@ public class ProfilePresenter(
 
     public val state: StateFlow<ProfileState> = combine(
         observeUserProfileInteractor.flow,
-        traktAuthRepository.state,
+        connectedAccountRepository.isConnected,
         traktAuthRepository.authError,
         profileLoadingState.observable,
         uiMessageManager.message,
         sectionsFlow,
-    ) { userProfile, authState, authError, isLoading, uiMessage, sections ->
-        val authenticated = authState == TraktAuthState.LOGGED_IN
+    ) { userProfile, isConnected, authError, isLoading, uiMessage, sections ->
+        val authenticated = isConnected
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
         val profile = userProfile?.toPresentation()
         val displayName = profile?.fullName ?: profile?.username ?: ""
@@ -224,9 +225,9 @@ public class ProfilePresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            traktAuthRepository.state
+            connectedAccountRepository.isConnected
                 .drop(1)
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .collect {
                     fetchUserData(forceRefresh = true)
                     syncFavorites(forceRefresh = true)

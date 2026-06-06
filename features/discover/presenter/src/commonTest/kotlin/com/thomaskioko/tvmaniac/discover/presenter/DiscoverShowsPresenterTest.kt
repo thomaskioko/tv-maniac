@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -49,7 +50,6 @@ import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.equals.shouldBeEqual
@@ -84,7 +84,7 @@ class DiscoverShowsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val connectedAccountRepository = FakeConnectedAccountRepository()
     private val watchProviderRepository = FakeWatchProviderRepository()
     private val startWatchingRepository = FakeStartWatchingRepository()
     private val fakeLocalizer = FakeLocalizer()
@@ -374,7 +374,7 @@ class DiscoverShowsPresenterTest {
             ),
             observeStartWatchingInteractor = observeStartWatchingInteractor,
             observeUpNextInteractor = observeUpNextInteractor,
-            traktAuthRepository = traktAuthRepository,
+            connectedAccountRepository = connectedAccountRepository,
             localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
@@ -567,7 +567,7 @@ class DiscoverShowsPresenterTest {
         ),
         observeStartWatchingInteractor = observeStartWatchingInteractor,
         observeUpNextInteractor = observeUpNextInteractor,
-        traktAuthRepository = traktAuthRepository,
+        connectedAccountRepository = connectedAccountRepository,
         localizer = fakeLocalizer,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),

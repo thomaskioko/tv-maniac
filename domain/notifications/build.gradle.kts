@@ -27,11 +27,11 @@ kotlin {
                 api(projects.core.syncstate.api)
                 api(projects.core.tasks.api)
                 api(projects.core.util.api)
+                api(projects.data.connectedAccount.api)
                 api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.seasondetails.api)
                 api(projects.data.seasons.api)
-                api(projects.data.traktauth.api)
                 api(projects.i18n.api)
 
                 implementation(libs.kotlinx.datetime)

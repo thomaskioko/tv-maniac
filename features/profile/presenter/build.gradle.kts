@@ -24,6 +24,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.view)
+                api(projects.data.connectedAccount.api)
                 api(projects.data.traktauth.api)
                 api(projects.domain.continueWatching)
                 api(projects.domain.favorites)
@@ -49,6 +50,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
+                implementation(projects.data.connectedAccount.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.favorites.testing)
                 implementation(projects.data.library.testing)

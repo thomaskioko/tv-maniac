@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.showlist
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -14,9 +16,7 @@ import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.traktlists.api.TraktList
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import io.kotest.matchers.collections.shouldHaveSize
@@ -40,7 +40,7 @@ internal class ShowListPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val traktListRepository = FakeTraktListRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val connectedAccountRepository = FakeConnectedAccountRepository()
     private val traktAuthManager = FakeTraktAuthManager()
     private val userRepository = FakeUserRepository()
     private val localizer = FakeLocalizer()
@@ -78,7 +78,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should clear loading flag once combine emits`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -106,7 +106,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should emit lists given user is logged in and lists exist`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -137,7 +137,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should emit correct show counts given lists are synced`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -180,7 +180,7 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem()
 
-            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             traktListRepository.fetchUserListsInvocations shouldBe 1
@@ -265,7 +265,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should close field and clear name given CreateListSubmitted succeeds`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -287,7 +287,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should surface error message given CreateListSubmitted is dispatched with blank name`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -324,7 +324,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should invoke toggle interactor given ToggleShowInList is dispatched`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -345,7 +345,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should mark list as toggling while interactor is running`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -386,7 +386,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should ignore duplicate ToggleShowInList given a toggle is already in flight`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -464,7 +464,7 @@ internal class ShowListPresenterTest {
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
         navigator = navigator,
-        traktAuthRepository = traktAuthRepository,
+        connectedAccountRepository = connectedAccountRepository,
         traktAuthManager = traktAuthManager,
         syncTraktListsInteractor = SyncTraktListsInteractor(traktListRepository, userRepository),
         createTraktListInteractor = CreateTraktListInteractor(traktListRepository, userRepository),
