@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
@@ -21,6 +22,8 @@ public class TraktAccountAuthRepository(
     override val provider: AccountProvider = AccountProvider.TRAKT
 
     override val state: Flow<AccountAuthState> = traktAuthRepository.state
+
+    override val authState: Flow<AuthState?> = traktAuthRepository.authState
 
     override val authError: Flow<AuthError?> = traktAuthRepository.authError
 
