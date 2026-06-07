@@ -20,8 +20,6 @@ import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -43,36 +41,24 @@ public class ShowDetailsStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TvshowDetails> by storeBuilder(
     fetcher = Fetcher.of { showId: Long ->
-        coroutineScope {
+        val showDetails = traktRemoteDataSource.getShowDetails(showId).getOrThrow()
 
-            // TODO:: Remove Get or throw and handle exception
-            val showDetailsDeferred = async {
-                traktRemoteDataSource.getShowDetails(showId).getOrThrow()
-            }
-            val seasonsDeferred = async {
-                traktRemoteDataSource.getShowSeasons(showId).getOrThrow()
-            }
+        val tmdbId = showDetails.ids.tmdb
+            ?: error("Show ${showDetails.title} (trakt: $showId) has no TMDB ID")
+        val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
 
-            val showDetails = showDetailsDeferred.await()
-            val seasons = seasonsDeferred.await()
+        requestManagerRepository.upsert(
+            entityId = showId,
+            requestType = SHOW_DETAILS.name,
+        )
 
-            val tmdbId = showDetails.ids.tmdb
-                ?: error("Show ${showDetails.title} (trakt: $showId) has no TMDB ID")
-            val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
-
-            requestManagerRepository.upsert(
-                entityId = showId,
-                requestType = SHOW_DETAILS.name,
-            )
-
-            ShowDetailsResponse(
-                traktShow = showDetails,
-                traktSeasons = seasons,
-                tmdbId = tmdbId,
-                tmdbPosterPath = tmdbDetails.posterPath,
-                tmdbBackdropPath = tmdbDetails.backdropPath,
-            )
-        }
+        ShowDetailsResponse(
+            traktShow = showDetails,
+            tmdbSeasons = tmdbDetails.seasons,
+            tmdbId = tmdbId,
+            tmdbPosterPath = tmdbDetails.posterPath,
+            tmdbBackdropPath = tmdbDetails.backdropPath,
+        )
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowDetailsResponse, TvshowDetails>(
         reader = { showId: Long -> showDetailsDao.observeTvShowByShowId(showId) },
@@ -91,7 +77,7 @@ public class ShowDetailsStore(
                         status = show.status,
                         year = show.firstAirDate?.let { dateTimeProvider.extractYear(it) },
                         episodeNumbers = show.airedEpisodes?.toString(),
-                        seasonNumbers = response.traktSeasons.size.toString(),
+                        seasonNumbers = response.tmdbSeasons.size.toString(),
                         ratings = show.rating ?: 0.0,
                         voteCount = show.votes ?: 0L,
                         genres = show.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
@@ -103,15 +89,15 @@ public class ShowDetailsStore(
                 val internalShowId = showIdResolver.showIdForTraktId(showId)
                     ?: return@databaseTransactionRunner
 
-                response.traktSeasons.forEach { season ->
+                response.tmdbSeasons.forEach { season ->
                     seasonDao.upsert(
                         Season(
-                            id = Id(season.ids.trakt.toLong()),
+                            id = Id(season.id.toLong()),
                             show_id = internalShowId,
-                            season_number = season.number.toLong(),
+                            season_number = season.seasonNumber.toLong(),
                             episode_count = season.episodeCount.toLong(),
-                            title = season.title,
-                            overview = season.overview,
+                            title = season.name,
+                            overview = season.overview ?: "",
                             image_url = null,
                         ),
                     )
