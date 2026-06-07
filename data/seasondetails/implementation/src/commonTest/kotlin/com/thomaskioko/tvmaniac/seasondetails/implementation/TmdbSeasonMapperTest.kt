@@ -10,16 +10,13 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.Test
 
 internal class TmdbSeasonMapperTest {
 
     private val mapper = TmdbSeasonMapper(
         formatterUtil = FakeFormatterUtil(),
-        dateTimeProvider = FakeDateTimeProvider(),
+        dateTimeProvider = FakeDateTimeProvider(isoDateToEpochResult = FIRST_AIRED),
     )
 
     @Test
@@ -51,16 +48,15 @@ internal class TmdbSeasonMapperTest {
         first.vote_count shouldBe 100L
         first.ratings shouldBe 8.5
         first.trakt_id.shouldBeNull()
-        first.first_aired shouldBe LocalDate(2024, 6, 1).atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+        first.first_aired shouldBe FIRST_AIRED
     }
 
     @Test
-    fun `should default missing runtime and null air date and still path`() {
+    fun `should default missing runtime and null still path`() {
         val second = mapper.mapToEpisodes(seasonResponse(), Id(SHOW_ID))[1]
 
         second.runtime shouldBe 0L
         second.image_url.shouldBeNull()
-        second.first_aired.shouldBeNull()
     }
 
     @Test
@@ -116,5 +112,6 @@ internal class TmdbSeasonMapperTest {
 
     private companion object {
         private const val SHOW_ID = 1L
+        private const val FIRST_AIRED = 1_717_200_000_000L
     }
 }
