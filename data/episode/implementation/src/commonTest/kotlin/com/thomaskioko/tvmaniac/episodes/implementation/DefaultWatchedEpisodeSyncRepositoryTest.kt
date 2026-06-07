@@ -223,7 +223,6 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             ratings = 8.0,
             episode_number = episodeNumber,
             image_url = null,
-            trakt_id = episodeTraktId,
             first_aired = null,
         )
     }

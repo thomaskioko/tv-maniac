@@ -81,7 +81,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             show_id = show_id,
             vote_count = vote_count,
             image_url = image_url,
-            trakt_id = trakt_id,
             first_aired = first_aired,
         )
     }
@@ -98,7 +97,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-            trakt_id = null,
             first_aired = 1623196800000,
         ),
         Episode(
@@ -112,7 +110,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-            trakt_id = null,
             first_aired = 1623801600000,
         ),
     )

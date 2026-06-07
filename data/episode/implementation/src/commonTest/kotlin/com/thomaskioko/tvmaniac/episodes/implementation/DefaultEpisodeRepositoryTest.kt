@@ -180,7 +180,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
                 image_url = "/episode$episodeNumber.jpg",
                 ratings = 8.5,
                 vote_count = 50L,
-                trakt_id = null,
                 first_aired = LocalDate(2023, 1, episodeNumber).toEpochMillis(),
             )
         }
@@ -199,7 +198,6 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
                 image_url = "/s2e$episodeNumber.jpg",
                 ratings = 9.0,
                 vote_count = 75L,
-                trakt_id = null,
                 first_aired = LocalDate(2023, 2, 20).toEpochMillis(),
             )
         }

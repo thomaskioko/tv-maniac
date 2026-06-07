@@ -338,7 +338,6 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = now - 86_400_000L,
         )
         database.episodesQueries.upsert(
@@ -352,7 +351,6 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = now - 86_400_000L,
         )
         database.showMetadataQueries.upsert(

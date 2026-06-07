@@ -39,7 +39,6 @@ public class TmdbSeasonMapper(
                 vote_count = episode.voteCount.toLong(),
                 ratings = episode.voteAverage,
                 image_url = episode.stillPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                trakt_id = null,
                 first_aired = dateTimeProvider.isoDateToEpoch(episode.airDate),
             )
         }
