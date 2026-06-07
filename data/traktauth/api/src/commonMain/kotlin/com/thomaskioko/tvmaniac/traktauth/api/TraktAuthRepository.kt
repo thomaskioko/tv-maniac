@@ -1,11 +1,15 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 public interface TraktAuthRepository {
 
-    public val state: Flow<TraktAuthState>
+    public val state: Flow<AccountAuthState>
 
     public val authState: Flow<AuthState?>
 

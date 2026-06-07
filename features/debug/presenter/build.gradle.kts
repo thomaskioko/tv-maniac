@@ -29,6 +29,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
+                implementation(projects.data.accountManager.api)
                 implementation(projects.i18n.generator)
             }
         }

@@ -1,6 +1,10 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -15,11 +19,7 @@ import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisod
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
-import com.thomaskioko.tvmaniac.traktauth.api.AuthError
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
-import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.testing.FakeShowWatchStatusRepository
 import io.kotest.matchers.collections.shouldContainExactly
@@ -281,14 +281,14 @@ private object NoOpLogger : Logger {
 }
 
 private class AuthorizedFakeTraktAuthRepository : TraktAuthRepository {
-    private val _state = MutableStateFlow(TraktAuthState.LOGGED_IN)
+    private val _state = MutableStateFlow(AccountAuthState.LOGGED_IN)
     private val _authState = MutableStateFlow<AuthState?>(
         AuthState(accessToken = "test-access", refreshToken = "test-refresh", isAuthorized = true),
     )
     private val _authError = MutableStateFlow<AuthError?>(null)
     private val _loginEvents = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
-    override val state: Flow<TraktAuthState> = _state.asStateFlow()
+    override val state: Flow<AccountAuthState> = _state.asStateFlow()
     override val authState: Flow<AuthState?> = _authState.asStateFlow()
     override val authError: Flow<AuthError?> = _authError.asStateFlow()
     override val loginEvents: kotlinx.coroutines.flow.SharedFlow<Unit> = _loginEvents

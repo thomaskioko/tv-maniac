@@ -11,7 +11,6 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.data.accountManager.api)
-                api(projects.data.traktauth.api)
                 api(libs.coroutines.core)
             }
         }
@@ -19,7 +18,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.data.traktauth.testing)
+                implementation(projects.data.accountManager.testing)
             }
         }
     }

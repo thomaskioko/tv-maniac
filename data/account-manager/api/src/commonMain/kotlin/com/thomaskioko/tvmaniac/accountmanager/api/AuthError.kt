@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.traktauth.api
+package com.thomaskioko.tvmaniac.accountmanager.api
 
 public sealed class AuthError {
     public data class OAuthFailed(val message: String) : AuthError()

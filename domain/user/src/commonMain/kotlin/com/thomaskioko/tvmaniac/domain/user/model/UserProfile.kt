@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.user.model
 
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 
 public data class UserProfile(
     val slug: String,
@@ -9,6 +9,6 @@ public data class UserProfile(
     val avatarUrl: String?,
     val backgroundUrl: String?,
     val stats: UserStats,
-    val authState: TraktAuthState,
+    val authState: AccountAuthState,
     val statsLoaded: Boolean = true,
 )

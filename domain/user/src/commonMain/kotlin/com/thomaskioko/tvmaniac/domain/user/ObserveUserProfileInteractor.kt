@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.domain.user
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.domain.user.model.UserStats
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -27,7 +27,7 @@ public class ObserveUserProfileInteractor(
     }
 }
 
-private fun DataUserProfile.toDomain(authState: TraktAuthState): UserProfile {
+private fun DataUserProfile.toDomain(authState: AccountAuthState): UserProfile {
     return UserProfile(
         slug = slug,
         username = username,
