@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharedFlow
  */
 public interface AccountAuthRepository : ProviderScoped {
     public val state: Flow<AccountAuthState>
+    public val authState: Flow<AuthState?>
     public val authError: Flow<AuthError?>
 
     /** Emits once per explicit sign-in completion. Cache restore and token refresh do not emit. */

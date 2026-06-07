@@ -5,15 +5,18 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -60,6 +63,16 @@ public class DefaultAccountManager(
 
     override val authError: Flow<AuthError?> =
         if (repositories.isEmpty()) flowOf(null) else repositories.map { it.authError }.merge()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val activeAuthState: Flow<AuthState?> =
+        if (repositories.isEmpty()) {
+            flowOf(null)
+        } else {
+            activeProvider.flatMapLatest { provider ->
+                repositories.firstOrNull { it.provider == provider }?.authState ?: flowOf(null)
+            }
+        }
 
     override fun getActiveProvider(): AccountProvider? {
         val selected = selectedProvider.value

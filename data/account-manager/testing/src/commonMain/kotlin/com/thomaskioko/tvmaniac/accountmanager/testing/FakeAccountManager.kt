@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.accountmanager.testing
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,7 @@ public class FakeAccountManager : AccountManager {
     private val _connectionEvents = MutableSharedFlow<AccountProvider>(replay = 1, extraBufferCapacity = 1)
     private val _accounts = MutableStateFlow<List<ConnectedAccount>>(emptyList())
     private val _authError = MutableStateFlow<AuthError?>(null)
+    private val _activeAuthState = MutableStateFlow<AuthState?>(null)
     private var refreshOutcome: TokenRefreshResult = TokenRefreshResult.NotLoggedIn
 
     public var lastLogoutProvider: AccountProvider? = null
@@ -38,6 +40,10 @@ public class FakeAccountManager : AccountManager {
         _authError.value = error
     }
 
+    public fun setActiveAuthState(authState: AuthState?) {
+        _activeAuthState.value = authState
+    }
+
     public fun setRefreshOutcome(outcome: TokenRefreshResult) {
         refreshOutcome = outcome
     }
@@ -48,6 +54,7 @@ public class FakeAccountManager : AccountManager {
     override val accounts: Flow<List<ConnectedAccount>> = _accounts
     override val activeAccount: Flow<ConnectedAccount?> = _accounts.map { list -> list.firstOrNull { it.isActive } }
     override val authError: Flow<AuthError?> = _authError
+    override val activeAuthState: Flow<AuthState?> = _activeAuthState
 
     override fun getActiveProvider(): AccountProvider? = _activeProvider.value
 
