@@ -234,7 +234,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = now - 86_400_000L,
         )
         database.episodesQueries.upsert(
@@ -248,7 +247,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = secondEpisodeFirstAired,
         )
     }
@@ -296,7 +294,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = now - 86_400_000L,
         )
         database.episodesQueries.upsert(
@@ -310,7 +307,6 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = now - 43_200_000L,
         )
     }

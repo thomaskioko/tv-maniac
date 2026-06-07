@@ -49,7 +49,6 @@ public class DefaultEpisodesDao(
                 show_id = entity.show_id,
                 vote_count = entity.vote_count,
                 ratings = entity.ratings,
-                trakt_id = entity.trakt_id,
                 first_aired = entity.first_aired,
             )
         }

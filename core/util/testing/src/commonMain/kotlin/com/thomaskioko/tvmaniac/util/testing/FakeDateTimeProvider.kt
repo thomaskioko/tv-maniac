@@ -10,6 +10,7 @@ import kotlin.time.Instant
 
 public class FakeDateTimeProvider(
     private var currentTime: Instant = Clock.System.now(),
+    private val isoDateToEpochResult: Long? = null,
 ) : DateTimeProvider {
     private var epochToIsoDateResult: String = "2024-01-01"
     private var epochToDisplayDateTimeResult: String = "2024-01-01 12:00"
@@ -33,11 +34,7 @@ public class FakeDateTimeProvider(
     override fun extractYear(dateString: String): String = extractYearResult
     override fun todayAsIsoDate(timeZone: TimeZone): String = today(timeZone).toString()
 
-    override fun isoDateToEpoch(dateStr: String?): Long? {
-        if (dateStr.isNullOrBlank()) return null
-        return runCatching { Instant.parse(dateStr).toEpochMilliseconds() }
-            .getOrNull()
-    }
+    override fun isoDateToEpoch(dateStr: String?): Long? = isoDateToEpochResult
 
     override fun currentYear(timeZone: TimeZone): Int = currentYearResult
 

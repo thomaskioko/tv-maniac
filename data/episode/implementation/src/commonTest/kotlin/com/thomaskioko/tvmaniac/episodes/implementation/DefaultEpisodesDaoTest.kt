@@ -329,7 +329,6 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = firstAired,
         )
     }

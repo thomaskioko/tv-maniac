@@ -12,7 +12,6 @@ kotlin {
             dependencies {
                 api(libs.store5)
                 api(projects.api.tmdb.api)
-                api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.util.api)
                 api(projects.data.cast.api)
@@ -26,6 +25,13 @@ kotlin {
 
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.core.util.testing)
             }
         }
     }

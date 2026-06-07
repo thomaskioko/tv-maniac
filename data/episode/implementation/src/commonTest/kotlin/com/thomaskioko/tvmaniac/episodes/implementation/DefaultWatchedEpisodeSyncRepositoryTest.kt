@@ -22,8 +22,8 @@ import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.testing.FakeShowWatchStatusRepository
-import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlinx.coroutines.Dispatchers
@@ -91,36 +91,23 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should hard-delete pending DELETE row that was never synced to Trakt`() = runTest {
-        seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = null)
-
-        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
-
-        recordingDataSource.removedTraktIds.shouldBeEmpty()
-        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
-    }
-
-    @Test
     fun `should hard-delete pending DELETE row after pushing to Trakt`() = runTest {
-        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 999L)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 999L)
 
         defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
-        recordingDataSource.removedTraktIds shouldContainExactly listOf(999L)
+        recordingDataSource.removed shouldContainExactly listOf(1L to 1L)
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
     }
 
     @Test
     fun `should hard-delete both synced and unsynced rows after pushing deletes`() = runTest {
-        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 555L)
-        seedEpisode(seasonId = 101L, seasonNumber = 1L, episodeNumber = 2L, episodeTraktId = null)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 2L, traktId = null)
 
         defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
-        recordingDataSource.removedTraktIds shouldContainExactly listOf(555L)
+        recordingDataSource.removed shouldContainExactlyInAnyOrder listOf(1L to 1L, 1L to 2L)
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
         readRow(seasonNumber = 1L, episodeNumber = 2L).shouldBeNull()
     }
@@ -236,7 +223,6 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             ratings = 8.0,
             episode_number = episodeNumber,
             image_url = null,
-            trakt_id = episodeTraktId,
             first_aired = null,
         )
     }
@@ -268,8 +254,8 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
 private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     override val provider: ConnectedProvider = ConnectedProvider.TRAKT
-    private val _removedTraktIds = mutableListOf<Long>()
-    val removedTraktIds: List<Long> get() = _removedTraktIds.toList()
+    private val _removed = mutableListOf<Pair<Long, Long>>()
+    val removed: List<Pair<Long, Long>> get() = _removed.toList()
 
     private val _getShowEpisodeWatchesCalls = mutableListOf<Long>()
     val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
@@ -283,9 +269,9 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         page: Int,
         limit: Int,
     ): List<com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch> = emptyList()
-    override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {}
-    override suspend fun removeEpisodeWatches(episodeIds: List<Long>) {
-        _removedTraktIds += episodeIds
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {}
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        _removed += entries.map { it.seasonNumber to it.episodeNumber }
     }
 }
 

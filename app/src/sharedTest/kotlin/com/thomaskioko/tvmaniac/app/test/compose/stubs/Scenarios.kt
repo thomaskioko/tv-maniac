@@ -187,7 +187,12 @@ internal class Scenarios(
             // Per-show TMDB endpoints — single canonical fixture for any tmdb id.
             mockHandler.stubEndpoint(Endpoints.Tmdb.ShowDetails)
             mockHandler.stubEndpoint(Endpoints.Tmdb.Credits)
+            // Per-season episodes: catch-all returns empty so unstubbed seasons don't re-write
+            // episode rows. The per-season stubs registered after win under last-registered-first-match
+            // ordering.
             mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetails)
+            mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetailsS1)
+            mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetailsS2)
             mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
             mockHandler.stubPatternFixture(
                 pathRegex = "/users/me/history/shows/\\d+",

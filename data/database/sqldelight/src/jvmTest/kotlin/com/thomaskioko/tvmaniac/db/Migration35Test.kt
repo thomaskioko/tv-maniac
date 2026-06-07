@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.util.columnNames
-import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
+import com.thomaskioko.tvmaniac.db.util.migrateToVersion
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.collections.shouldContain
@@ -20,7 +20,7 @@ class Migration35Test {
             driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
             driver.insertShow(traktId = 101, tmdbId = 201, ratings = 9.1, voteCount = 99)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             driver.columnNames("tvshow") shouldContain "id"
             val first = driver.showRow(traktId = 100)
@@ -39,7 +39,7 @@ class Migration35Test {
         openSnapshot(version = 35).use { driver ->
             driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             val show = driver.showRow(traktId = 100)
             show.shouldNotBeNull()
@@ -55,7 +55,7 @@ class Migration35Test {
             driver.insertEpisodeV35(id = 1, seasonId = 1, showTraktId = 100, episodeNumber = 1, firstAired = 1_700_000_000_000L)
             driver.insertWatchedEpisodeV35(showTraktId = 100, episodeId = 1, seasonNumber = 1, episodeNumber = 1, pendingAction = "UPLOAD")
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             driver.count("season") shouldBe 1
             driver.count("episode") shouldBe 1
@@ -180,7 +180,7 @@ class Migration35Test {
             driver.insertTrendingShowV35(traktId = 100, tmdbId = 200)
             driver.insertGenreShowV35(genreSlug = "action", traktId = 100)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             val internalId = driver.showRow(traktId = 100)!!.id
 
@@ -211,7 +211,7 @@ class Migration35Test {
             driver.insertFollowedShowV35(traktId = 100, tmdbId = 200, pendingAction = "UPLOAD")
             driver.insertTraktContinueWatchingV35(traktId = 100, tmdbId = 200)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             val internalId = driver.showRow(traktId = 100)!!.id
 
@@ -234,7 +234,7 @@ class Migration35Test {
             driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
             driver.insertFavoriteShowV35(showTraktId = 100, rank = 0, listedAt = "2026-01-01")
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             val internalId = driver.showRow(traktId = 100)!!.id
 
@@ -253,7 +253,7 @@ class Migration35Test {
             driver.insertTrailerV35(id = "t1", showTmdbId = 200)
             driver.insertWatchProviderV35(id = 1, tmdbId = 200, traktId = 100)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             val internalId = driver.showRow(traktId = 100)!!.id
 
@@ -278,7 +278,7 @@ class Migration35Test {
         openSnapshot(version = 35).use { driver ->
             driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             val cols = driver.columnNames("tvshow")
             cols shouldContain "id"
@@ -296,7 +296,7 @@ class Migration35Test {
             driver.insertTraktContinueWatchingV35(traktId = 100, tmdbId = 200)
             driver.insertTraktContinueWatchingV35(traktId = 999, tmdbId = 999)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             driver.count("followed_shows") shouldBe 1
             driver.count("continue_watching") shouldBe 1
@@ -310,7 +310,7 @@ class Migration35Test {
             driver.insertFollowedShowV35(traktId = 100, tmdbId = 200, pendingAction = "NOTHING")
             driver.insertUpcomingShowV35(traktId = 100, tmdbId = 200)
 
-            migrateToCurrent(driver, oldVersion = 35)
+            migrateToVersion(driver, oldVersion = 35, newVersion = 36)
 
             val followedCount = driver.singleLong(
                 "SELECT COUNT(*) FROM followed_shows JOIN show_trakt ON show_trakt.show_id = followed_shows.show_id WHERE show_trakt.trakt_id = 100",

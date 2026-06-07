@@ -1,0 +1,119 @@
+-- Phase 1b: episode and season metadata move to TMDB.
+-- Drops episode.trakt_id and clears the Trakt-keyed episode/season rows (and their re-fetchable
+-- child metadata) so TMDB-keyed rows repopulate without colliding on (show, season_number).
+-- watched_episodes is preserved; its episode_id is nulled and re-resolves by (show, season, episode).
+-- Runs with foreign keys off (Android enables them after migrate; iOS migrates foreignKeys=false then
+-- reopens), so clearing parents does not cascade into watched_episodes.
+
+PRAGMA legacy_alter_table=1;
+
+DROP VIEW IF EXISTS show_watch_progress;
+DROP VIEW IF EXISTS shows_last_watched;
+DROP VIEW IF EXISTS shows_next_to_watch;
+
+CREATE TABLE episode_new (
+    id INTEGER NOT NULL PRIMARY KEY,
+    season_id INTEGER NOT NULL,
+    show_id INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    overview TEXT NOT NULL,
+    runtime INTEGER DEFAULT NULL,
+    vote_count INTEGER NOT NULL,
+    ratings REAL NOT NULL,
+    image_url TEXT DEFAULT NULL,
+    first_aired INTEGER DEFAULT NULL,
+    FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE episode;
+ALTER TABLE episode_new RENAME TO episode;
+
+CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
+CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);
+CREATE INDEX IF NOT EXISTS idx_episode_first_aired ON episode(first_aired);
+CREATE INDEX IF NOT EXISTS idx_episode_show_first_aired ON episode(show_id, first_aired);
+
+DELETE FROM season;
+DELETE FROM casts;
+DELETE FROM episode_image;
+DELETE FROM season_images;
+DELETE FROM season_videos;
+
+UPDATE watched_episodes SET episode_id = NULL;
+
+CREATE VIEW show_watch_progress AS
+SELECT
+    tvshow.id AS show_id,
+    COALESCE(watched.count, 0) AS watched_count,
+    COALESCE(total.count, 0) AS total_count
+FROM tvshow
+LEFT JOIN (
+    SELECT show_id, COUNT(*) AS count
+    FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY show_id
+) AS watched ON watched.show_id = tvshow.id
+LEFT JOIN (
+    SELECT episode.show_id, COUNT(*) AS count
+    FROM episode
+    INNER JOIN season ON episode.season_id = season.id
+    WHERE season.season_number > 0
+    AND episode.first_aired IS NOT NULL
+    AND episode.first_aired <= strftime('%s', 'now') * 1000
+    GROUP BY episode.show_id
+) AS total ON total.show_id = tvshow.id;
+
+CREATE VIEW shows_last_watched AS
+SELECT
+    tvshow.id AS show_id,
+    MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
+    MAX(watched_episode.watched_at) AS last_watched_at
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+INNER JOIN watched_episodes AS watched_episode ON watched_episode.show_id = tvshow.id AND watched_episode.episode_id = episode.id AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+WHERE season.season_number > 0 OR season.title != 'Specials'
+GROUP BY tvshow.id;
+
+CREATE VIEW shows_next_to_watch AS
+SELECT
+    tvshow.id AS show_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    episode.id AS episode_id,
+    episode.title AS episode_name,
+    season.id AS season_id,
+    season.season_number,
+    episode.episode_number,
+    episode.runtime,
+    episode.image_url AS still_path,
+    episode.overview,
+    tvshow.name AS show_name,
+    tvshow.poster_path AS show_poster,
+    ((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number,
+    episode.first_aired,
+    last_watched.last_watched_at,
+    episode.ratings,
+    episode.vote_count
+FROM tvshow
+INNER JOIN season ON tvshow.id = season.show_id
+INNER JOIN episode ON episode.season_id = season.id AND episode.show_id = tvshow.id
+LEFT JOIN watched_episodes AS watched_episode
+    ON watched_episode.show_id = tvshow.id
+    AND watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    AND (
+        watched_episode.episode_id = episode.id
+        OR (
+            watched_episode.episode_id IS NULL
+            AND watched_episode.season_number = season.season_number
+            AND watched_episode.episode_number = episode.episode_number
+        )
+    )
+LEFT JOIN shows_last_watched AS last_watched ON last_watched.show_id = tvshow.id
+WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+  AND watched_episode.id IS NULL
+  AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+  AND episode.first_aired IS NOT NULL
+  AND episode.first_aired <= strftime('%s', 'now') * 1000
+ORDER BY tvshow.id, season.season_number, episode.episode_number;

@@ -14,13 +14,11 @@ CREATE TABLE episode (
     vote_count INTEGER NOT NULL,
     ratings REAL NOT NULL,
     image_url TEXT DEFAULT NULL,
-    trakt_id INTEGER DEFAULT NULL,
     first_aired INTEGER DEFAULT NULL,
     FOREIGN KEY(season_id) REFERENCES season(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_episode_trakt_id ON episode(trakt_id);
 CREATE INDEX IF NOT EXISTS idx_episode_show_id ON episode(show_id);
 CREATE INDEX IF NOT EXISTS idx_episode_show_season ON episode(show_id, season_id);
 CREATE INDEX IF NOT EXISTS idx_episode_first_aired ON episode(first_aired);
@@ -38,10 +36,9 @@ INSERT INTO episode(
     ratings,
     episode_number,
     image_url,
-    trakt_id,
     first_aired
 )
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+VALUES(?,?,?,?,?,?,?,?,?,?,?)
 ON CONFLICT(id) DO UPDATE SET
     season_id = excluded.season_id,
     show_id = excluded.show_id,
@@ -52,7 +49,6 @@ ON CONFLICT(id) DO UPDATE SET
     ratings = excluded.ratings,
     episode_number = excluded.episode_number,
     image_url = excluded.image_url,
-    trakt_id = excluded.trakt_id,
     first_aired = excluded.first_aired;
 
 episodeDetails:
@@ -80,22 +76,6 @@ DELETE FROM episode WHERE id = ?;
 deleteAll:
 DELETE FROM episode;
 
-getEpisodeByTraktId:
-SELECT
-    episode.id AS episode_id,
-    episode.season_id,
-    episode.show_id,
-    episode.episode_number,
-    episode.title,
-    episode.overview,
-    episode.runtime,
-    episode.vote_count,
-    episode.ratings,
-    episode.image_url,
-    episode.trakt_id,
-    episode.first_aired
-FROM episode WHERE trakt_id = ?;
-
 countEpisodesForShow:
 SELECT COUNT(*)
 FROM episode
@@ -118,7 +98,6 @@ SELECT
     episode.vote_count,
     episode.ratings,
     episode.image_url,
-    episode.trakt_id,
     episode.first_aired
 FROM episode
 INNER JOIN season ON episode.season_id = season.id

@@ -55,6 +55,7 @@ public class DefaultDateTimeProvider(
     override fun isoDateToEpoch(dateStr: String?): Long? {
         if (dateStr.isNullOrBlank()) return null
         return runCatching { Instant.parse(dateStr).toEpochMilliseconds() }
+            .recoverCatching { LocalDate.parse(dateStr).atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds() }
             .getOrNull()
     }
 

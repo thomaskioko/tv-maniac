@@ -742,7 +742,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/ep$episodeId.jpg",
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = firstAired,
         )
     }

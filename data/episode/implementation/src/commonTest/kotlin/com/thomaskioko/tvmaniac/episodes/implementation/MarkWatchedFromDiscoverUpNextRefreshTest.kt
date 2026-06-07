@@ -245,7 +245,6 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
                 image_url = null,
                 ratings = 8.0,
                 vote_count = 100L,
-                trakt_id = null,
                 first_aired = now - (4 - episodeNumber) * 86_400_000L,
             )
         }

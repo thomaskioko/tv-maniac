@@ -9,9 +9,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.trakt.api.TraktEpisodeHistoryRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktSyncRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncEpisode
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncItems
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncSeason
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSyncSeasonEpisode
@@ -68,18 +66,36 @@ public class TraktEpisodeWatchesDataSource(
         }
     }
 
-    override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {
-        if (watches.isEmpty()) return
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        if (entries.isEmpty()) return
+        val shows = entries.toShowSyncItems()
+        if (shows.isEmpty()) return
 
-        val showsMap = watches.groupBy { it.showId }
+        when (remoteDataSource.addEpisodeWatches(TraktSyncItems(shows = shows))) {
+            is ApiResponse.Success -> Unit
+            is ApiResponse.Unauthenticated -> return
+            is ApiResponse.Error -> throw Exception("Failed to add episodes to history")
+        }
+    }
 
-        val shows = showsMap.mapNotNull { (showId, showWatches) ->
-            val showEntry = followedShowsDao.entryWithTraktId(showId)
-            val traktId = showEntry?.showId ?: return@mapNotNull null
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        if (entries.isEmpty()) return
+        val shows = entries.toShowSyncItems()
+        if (shows.isEmpty()) return
 
-            val seasons = showWatches
-                .groupBy { it.seasonNumber }
-                .map { (seasonNumber, seasonWatches) ->
+        when (remoteDataSource.removeEpisodeWatches(TraktSyncItems(shows = shows))) {
+            is ApiResponse.Success -> Unit
+            is ApiResponse.Unauthenticated -> return
+            is ApiResponse.Error -> throw Exception("Failed to remove episodes from history")
+        }
+    }
+
+    private suspend fun List<WatchedEpisodeEntry>.toShowSyncItems(): List<TraktSyncShow> =
+        groupBy { it.showId }.mapNotNull { (showId, showWatches) ->
+            val traktId = followedShowsDao.entryWithTraktId(showId)?.showId ?: return@mapNotNull null
+            TraktSyncShow(
+                ids = TraktShowIds(traktId = traktId),
+                seasons = showWatches.groupBy { it.seasonNumber }.map { (seasonNumber, seasonWatches) ->
                     TraktSyncSeason(
                         number = seasonNumber,
                         episodes = seasonWatches.map { watch ->
@@ -89,40 +105,9 @@ public class TraktEpisodeWatchesDataSource(
                             )
                         },
                     )
-                }
-
-            TraktSyncShow(
-                ids = TraktShowIds(traktId = traktId),
-                seasons = seasons,
+                },
             )
         }
-
-        if (shows.isEmpty()) return
-
-        val items = TraktSyncItems(shows = shows)
-
-        when (remoteDataSource.addEpisodeWatches(items)) {
-            is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> return
-            is ApiResponse.Error -> throw Exception("Failed to add episodes to history")
-        }
-    }
-
-    override suspend fun removeEpisodeWatches(episodeIds: List<Long>) {
-        if (episodeIds.isEmpty()) return
-
-        val items = TraktSyncItems(
-            episodes = episodeIds.map { id ->
-                TraktSyncEpisode(ids = TraktEpisodeIds(traktId = id))
-            },
-        )
-
-        when (remoteDataSource.removeEpisodeWatches(items)) {
-            is ApiResponse.Success -> Unit
-            is ApiResponse.Unauthenticated -> return
-            is ApiResponse.Error -> throw Exception("Failed to remove episodes from history")
-        }
-    }
 }
 
 internal class BulkWatchedShowsFetchException(message: String) : Exception(message)

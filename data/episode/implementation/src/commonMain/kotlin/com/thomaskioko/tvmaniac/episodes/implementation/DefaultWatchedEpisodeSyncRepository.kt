@@ -139,7 +139,7 @@ public class DefaultWatchedEpisodeSyncRepository(
             )
         }
 
-        source.addEpisodeWatches(entries)
+        source.addEpisodeEntries(entries)
 
         pending.forEach { episode ->
             dao.updatePendingAction(episode.watched_id, PendingAction.NOTHING)
@@ -154,16 +154,19 @@ public class DefaultWatchedEpisodeSyncRepository(
         val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending deletes")
 
-        val episodeIds = pending.mapNotNull { episode ->
-            episodesDao.getEpisodeByShowSeasonEpisodeNumber(
+        val entries = pending.map { episode ->
+            WatchedEpisodeEntry(
+                id = episode.watched_id,
                 showId = episode.show_trakt_id,
+                episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
-            )?.trakt_id
+                watchedAt = fromEpochMilliseconds(episode.watched_at),
+                traktId = episode.trakt_id,
+                pendingAction = PendingAction.DELETE,
+            )
         }
-        if (episodeIds.isNotEmpty()) {
-            source.removeEpisodeWatches(episodeIds)
-        }
+        source.removeEpisodeEntries(entries)
 
         pending.forEach { episode ->
             dao.deleteById(episode.watched_id)
