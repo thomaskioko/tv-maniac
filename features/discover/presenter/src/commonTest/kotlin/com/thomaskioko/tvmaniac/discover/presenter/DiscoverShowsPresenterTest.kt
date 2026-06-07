@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -84,7 +84,7 @@ class DiscoverShowsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
-    private val connectedAccountRepository = FakeConnectedAccountRepository()
+    private val accountManager = FakeAccountManager()
     private val watchProviderRepository = FakeWatchProviderRepository()
     private val startWatchingRepository = FakeStartWatchingRepository()
     private val fakeLocalizer = FakeLocalizer()
@@ -374,7 +374,7 @@ class DiscoverShowsPresenterTest {
             ),
             observeStartWatchingInteractor = observeStartWatchingInteractor,
             observeUpNextInteractor = observeUpNextInteractor,
-            connectedAccountRepository = connectedAccountRepository,
+            accountManager = accountManager,
             localizer = fakeLocalizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
@@ -567,7 +567,7 @@ class DiscoverShowsPresenterTest {
         ),
         observeStartWatchingInteractor = observeStartWatchingInteractor,
         observeUpNextInteractor = observeUpNextInteractor,
-        connectedAccountRepository = connectedAccountRepository,
+        accountManager = accountManager,
         localizer = fakeLocalizer,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),

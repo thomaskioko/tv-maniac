@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.startwatching.presenter.model.StartWatchingItem
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
@@ -86,7 +86,7 @@ class StartWatchingPresenterTest {
 
     @Test
     fun `should sync watchlist without forcing refresh given auth state changes to logged in`() = runTest {
-        factory.connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+        factory.accountManager.setActiveProvider(AccountProvider.TRAKT)
         testDispatcher.scheduler.advanceUntilIdle()
 
         factory.startWatchingRepository.syncInvocations() shouldBe listOf(

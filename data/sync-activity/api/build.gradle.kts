@@ -8,7 +8,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.networkUtil.api)
-                api(projects.data.connectedAccount.api)
+                api(projects.data.accountManager.api)
             }
         }
     }

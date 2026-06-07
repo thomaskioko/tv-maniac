@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ProviderScoped
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderScoped
 
 public interface EpisodeWatchesDataSource : ProviderScoped {
 

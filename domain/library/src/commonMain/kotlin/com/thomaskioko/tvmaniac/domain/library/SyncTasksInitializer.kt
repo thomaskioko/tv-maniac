@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.library
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -20,16 +20,16 @@ public class SyncTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
     datastoreRepo: Lazy<DatastoreRepository>,
-    connectedAccountRepo: Lazy<ConnectedAccountRepository>,
+    accountManagerLazy: Lazy<AccountManager>,
 ) {
 
     private val datastoreRepository by datastoreRepo
-    private val connectedAccountRepository by connectedAccountRepo
+    private val accountManager by accountManagerLazy
 
     public fun init() {
         coroutineScope.launch {
             combine(
-                connectedAccountRepository.isConnected,
+                accountManager.isConnected,
                 datastoreRepository.observeBackgroundSyncEnabled(),
             ) { connected, syncEnabled ->
                 connected && syncEnabled

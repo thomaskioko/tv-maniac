@@ -68,7 +68,7 @@ kotlin {
             api(projects.core.util.testing)
             api(projects.data.calendar.implementation)
             api(projects.data.cast.implementation)
-            api(projects.data.connectedAccount.implementation)
+            api(projects.data.accountManager.implementation)
             api(projects.data.database.sqldelight)
             api(projects.data.datastore.api)
             api(projects.data.datastore.implementation)

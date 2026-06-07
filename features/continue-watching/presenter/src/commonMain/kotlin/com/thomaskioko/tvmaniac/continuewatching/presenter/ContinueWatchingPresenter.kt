@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.continuewatching.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -61,7 +61,7 @@ public class ContinueWatchingPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val mapper: ContinueWatchingMapper,
     private val logger: Logger,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
 ) : ComponentContext by componentContext {
 
     private val watchlistLoadingState = ObservableLoadingCounter()
@@ -89,7 +89,7 @@ public class ContinueWatchingPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .distinctUntilChanged()
                 .filter { it }
                 .collect { syncWatchlist(forceRefresh = false) }

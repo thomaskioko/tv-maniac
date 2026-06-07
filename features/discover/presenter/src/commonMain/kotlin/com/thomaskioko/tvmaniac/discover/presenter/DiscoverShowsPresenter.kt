@@ -4,7 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -79,7 +79,7 @@ public class DiscoverShowsPresenter(
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,
     private val observeUpNextInteractor: ObserveUpNextInteractor,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -175,7 +175,7 @@ public class DiscoverShowsPresenter(
 
         private fun observeAuthState() {
             coroutineScope.launch {
-                connectedAccountRepository.isConnected
+                accountManager.isConnected
                     .drop(1)
                     .distinctUntilChanged()
                     .filter { it }

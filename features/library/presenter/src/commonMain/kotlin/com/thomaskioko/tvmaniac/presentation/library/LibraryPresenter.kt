@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.library
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -52,7 +52,7 @@ public class LibraryPresenter(
     private val repository: LibraryRepository,
     private val observeLibraryInteractor: ObserveLibraryInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -176,7 +176,7 @@ public class LibraryPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .distinctUntilChanged()
                 .filter { it }
                 .collect { syncLibrary() }

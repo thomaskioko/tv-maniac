@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.showlist
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -48,7 +48,7 @@ public class ShowListPresenter(
     componentContext: ComponentContext,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val navigator: Navigator,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val traktAuthManager: TraktAuthManager,
     private val syncTraktListsInteractor: SyncTraktListsInteractor,
     private val createTraktListInteractor: CreateTraktListInteractor,
@@ -68,7 +68,7 @@ public class ShowListPresenter(
 
     public val state: StateFlow<ShowListState> = combine(
         observeTraktListsInteractor.flow,
-        connectedAccountRepository.isConnected,
+        accountManager.isConnected,
         uiMessageManager.message,
         createListState,
         togglingListIds,
@@ -88,7 +88,7 @@ public class ShowListPresenter(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
         initialValue = ShowListState(
-            isLoggedIn = connectedAccountRepository.getActiveProvider() != null,
+            isLoggedIn = accountManager.getActiveProvider() != null,
             labels = labels,
         ),
     )
@@ -125,7 +125,7 @@ public class ShowListPresenter(
 
     private fun observeAuthAndSync() {
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .filter { it }
                 .collect {
                     syncTraktListsInteractor(SyncTraktListsInteractor.Params())

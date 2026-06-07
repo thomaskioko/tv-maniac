@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
-import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -56,8 +56,8 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     private val requestManagerRepository = FakeRequestManagerRepository()
     private val traktAuthRepository = AuthorizedFakeTraktAuthRepository()
     private val recordingDataSource = RecordingEpisodeWatchesDataSource()
-    private val connectedAccountRepository = FakeConnectedAccountRepository().apply {
-        setActiveProvider(ConnectedProvider.TRAKT)
+    private val accountManager = FakeAccountManager().apply {
+        setActiveProvider(AccountProvider.TRAKT)
     }
     private val syncRepository = FakeActivitySyncRepository()
 
@@ -74,7 +74,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             dao = dao,
             episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
             sources = setOf(recordingDataSource),
-            connectedAccountRepository = connectedAccountRepository,
+            accountManager = accountManager,
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
             syncRepository = syncRepository,
@@ -253,7 +253,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 }
 
 private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
-    override val provider: ConnectedProvider = ConnectedProvider.TRAKT
+    override val provider: AccountProvider = AccountProvider.TRAKT
     private val _removed = mutableListOf<Pair<Long, Long>>()
     val removed: List<Pair<Long, Long>> get() = _removed.toList()
 

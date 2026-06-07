@@ -7,7 +7,7 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.root.nav.NotificationRationale
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -75,7 +75,7 @@ public class DefaultRootPresenter(
     homeGraphFactory: HomeScreenGraph.Factory,
     private val notificationRationale: NotificationRationale,
     private val traktAuthRepository: TraktAuthRepository,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
@@ -94,7 +94,7 @@ public class DefaultRootPresenter(
 
     init {
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .debounce(200.milliseconds)
                 .distinctUntilChanged()
                 .filter { it }
@@ -113,7 +113,7 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .debounce(500.milliseconds)
                 .distinctUntilChanged()
                 .filter { it }

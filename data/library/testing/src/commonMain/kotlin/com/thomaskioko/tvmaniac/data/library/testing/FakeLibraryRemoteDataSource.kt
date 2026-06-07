@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.library.testing
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
@@ -8,7 +8,7 @@ import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
 
 public class FakeLibraryRemoteDataSource : LibraryRemoteDataSource {
 
-    override var provider: ConnectedProvider = ConnectedProvider.TRAKT
+    override var provider: AccountProvider = AccountProvider.TRAKT
 
     private var watchlistResponse: ApiResponse<List<RemoteFollowedShow>> = ApiResponse.Success(emptyList())
     private var addResponse: ApiResponse<WatchlistSyncResult> =

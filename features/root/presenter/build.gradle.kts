@@ -21,7 +21,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.syncstate.api)
-                api(projects.data.connectedAccount.api)
+                api(projects.data.accountManager.api)
                 api(projects.data.datastore.api)
                 api(projects.data.traktauth.api)
                 api(projects.domain.logout)

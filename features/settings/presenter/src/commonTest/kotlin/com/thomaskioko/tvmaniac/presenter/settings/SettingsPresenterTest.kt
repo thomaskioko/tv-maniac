@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.settings
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
-import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
@@ -50,7 +50,7 @@ class SettingsPresenterTest {
     private val datastoreRepository = FakeDatastoreRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val traktAuthRepository = FakeTraktAuthRepository()
-    private val connectedAccountRepository = FakeConnectedAccountRepository()
+    private val accountManager = FakeAccountManager()
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
     private val fakeActivitySyncRepository = FakeActivitySyncRepository()
@@ -68,7 +68,7 @@ class SettingsPresenterTest {
             appMetadata = FakeAppMetadata.DEFAULT,
             datastoreRepository = datastoreRepository,
             userRepository = userRepository,
-            connectedAccountRepository = connectedAccountRepository,
+            accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = fakeLogger,
@@ -207,7 +207,7 @@ class SettingsPresenterTest {
     fun `should resolve connected labels when logged in`() = runTest {
         presenter.state.test {
             awaitItem()
-            connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+            accountManager.setActiveProvider(AccountProvider.TRAKT)
 
             var state = awaitItem()
             while (!state.isAuthenticated) {

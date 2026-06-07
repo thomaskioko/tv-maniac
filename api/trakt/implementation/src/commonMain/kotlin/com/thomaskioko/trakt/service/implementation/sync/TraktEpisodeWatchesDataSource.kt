@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
@@ -28,7 +28,7 @@ public class TraktEpisodeWatchesDataSource(
     private val followedShowsDao: FollowedShowsDao,
 ) : EpisodeWatchesDataSource {
 
-    override val provider: ConnectedProvider = ConnectedProvider.TRAKT
+    override val provider: AccountProvider = AccountProvider.TRAKT
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
         return when (val response = remoteDataSource.getShowEpisodeWatches(showId)) {

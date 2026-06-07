@@ -147,7 +147,7 @@ kotlin {
                 api(projects.data.library.implementation)
                 api(projects.data.upnext.api)
                 api(projects.data.upnext.implementation)
-                api(projects.data.connectedAccount.implementation)
+                api(projects.data.accountManager.implementation)
                 api(projects.data.continueWatching.api)
                 api(projects.data.continueWatching.implementation)
                 api(projects.data.startWatching.api)

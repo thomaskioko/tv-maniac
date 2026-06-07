@@ -18,7 +18,7 @@ kotlin {
                 api(projects.core.networkUtil.api)
                 api(projects.core.syncstate.api)
                 api(projects.core.util.api)
-                api(projects.data.connectedAccount.api)
+                api(projects.data.accountManager.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.datastore.api)
                 api(projects.data.followedshows.api)

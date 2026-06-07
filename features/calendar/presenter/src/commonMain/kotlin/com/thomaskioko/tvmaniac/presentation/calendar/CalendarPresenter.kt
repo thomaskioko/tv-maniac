@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -43,7 +43,7 @@ public class CalendarPresenter(
     private val navigator: Navigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val calendarWeekCalculator: CalendarWeekCalculator,
     private val calendarStateMapper: CalendarStateMapper,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -64,7 +64,7 @@ public class CalendarPresenter(
     public val state: StateFlow<CalendarState> = combine(
         loadingState.observable,
         observeCalendarInteractor.flow,
-        connectedAccountRepository.isConnected,
+        accountManager.isConnected,
         uiMessageManager.message,
         _state,
     ) { isLoading, entries, isLoggedIn, message, currentState ->
@@ -109,7 +109,7 @@ public class CalendarPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .distinctUntilChanged()
                 .collect { isLoggedIn ->
                     if (isLoggedIn) {

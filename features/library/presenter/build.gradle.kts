@@ -14,7 +14,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.view)
-                api(projects.data.connectedAccount.api)
+                api(projects.data.accountManager.api)
                 api(projects.data.library.api)
                 api(projects.domain.library)
                 api(projects.features.library.nav)

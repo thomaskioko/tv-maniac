@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
-import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
@@ -39,7 +39,7 @@ internal class CalendarPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
     private val calendarRepository = FakeCalendarRepository()
-    private val connectedAccountRepository = FakeConnectedAccountRepository()
+    private val accountManager = FakeAccountManager()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val formatterUtil = FakeFormatterUtil()
     private val logger = FakeLogger()
@@ -194,7 +194,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigateNext to true given user is logged in`() = runTest {
-        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -209,7 +209,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigateNext to false given user is not logged in`() = runTest {
-        connectedAccountRepository.setActiveProvider(null)
+        accountManager.setActiveProvider(null)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -232,7 +232,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigatePrevious to true given user navigated to next week`() = runTest {
-        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -265,7 +265,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should decrement week offset given NavigateToPreviousWeek is dispatched after navigating forward`() = runTest {
-        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -423,7 +423,7 @@ internal class CalendarPresenterTest {
             navigator = navigator,
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
-            connectedAccountRepository = connectedAccountRepository,
+            accountManager = accountManager,
             calendarWeekCalculator = calendarWeekCalculator,
             calendarStateMapper = calendarStateMapper,
             errorToStringMapper = { it.message ?: "Test error" },
