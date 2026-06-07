@@ -3,8 +3,9 @@ package com.thomaskioko.tvmaniac.debug.presenter
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -30,7 +31,6 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -53,7 +53,7 @@ class DebugPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
     private val datastoreRepository = FakeDatastoreRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val accountManager = FakeAccountManager()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val logger = FakeLogger()
     private val localizer = FakeLocalizer()
@@ -70,7 +70,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should omit token status item given logged out`() = runTest {
-        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
+        accountManager.setActiveProvider(null)
 
         val presenter = createPresenter()
 
@@ -86,8 +86,8 @@ class DebugPresenterTest {
     fun `should expose expires-in subtitle on token status item given logged in with future expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
-        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
-        traktAuthRepository.setAuthState(
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
                 refreshToken = "test-refresh",
@@ -114,8 +114,8 @@ class DebugPresenterTest {
 
     @Test
     fun `should expose expired subtitle on token status item given logged in with unauthorized auth state`() = runTest {
-        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
-        traktAuthRepository.setAuthState(
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
                 refreshToken = "test-refresh",
@@ -142,8 +142,8 @@ class DebugPresenterTest {
     fun `should expose expired subtitle on token status item given logged in with past expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
-        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
-        traktAuthRepository.setAuthState(
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
                 refreshToken = "test-refresh",
@@ -169,8 +169,8 @@ class DebugPresenterTest {
 
     @Test
     fun `should expose never refreshed subtitle on token status item given logged in with no refresh timestamp`() = runTest {
-        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
-        traktAuthRepository.setAuthState(
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
                 refreshToken = "test-refresh",
@@ -212,7 +212,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should emit login required message given TriggerLibrarySync while logged out`() = runTest {
-        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
+        accountManager.setActiveProvider(null)
 
         val presenter = createPresenter()
         advanceUntilIdle()
@@ -229,7 +229,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should emit login required message given TriggerUpNextSync while logged out`() = runTest {
-        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
+        accountManager.setActiveProvider(null)
 
         val presenter = createPresenter()
         advanceUntilIdle()
@@ -318,7 +318,7 @@ class DebugPresenterTest {
             localizer = localizer,
             errorToStringMapper = { it.message ?: "Test error" },
             logger = logger,
-            traktAuthRepository = traktAuthRepository,
+            accountManager = accountManager,
         )
     }
 }

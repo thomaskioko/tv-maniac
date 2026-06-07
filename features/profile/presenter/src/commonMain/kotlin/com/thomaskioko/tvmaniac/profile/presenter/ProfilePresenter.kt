@@ -3,7 +3,9 @@ package com.thomaskioko.tvmaniac.profile.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -51,8 +53,6 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import com.thomaskioko.tvmaniac.upnext.api.model.CompletedShow
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
@@ -81,8 +81,7 @@ public class ProfilePresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val localizer: Localizer,
-    private val traktAuthManager: TraktAuthManager,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val authManagers: Set<AuthManager>,
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -154,7 +153,7 @@ public class ProfilePresenter(
     public val state: StateFlow<ProfileState> = combine(
         observeUserProfileInteractor.flow,
         accountManager.isConnected,
-        traktAuthRepository.authError,
+        accountManager.authError,
         profileLoadingState.observable,
         uiMessageManager.message,
         sectionsFlow,
@@ -190,7 +189,7 @@ public class ProfilePresenter(
         when (action) {
             LoginClicked -> {
                 coroutineScope.launch {
-                    traktAuthManager.launchWebView()
+                    authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
                 }
             }
             SettingsClicked -> navigator.navigateTo(SettingsRoute)
@@ -204,7 +203,7 @@ public class ProfilePresenter(
             is ShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is MessageShown -> {
                 clearMessage(action.id)
-                coroutineScope.launch { traktAuthRepository.setAuthError(null) }
+                coroutineScope.launch { accountManager.setAuthError(null) }
             }
         }
     }

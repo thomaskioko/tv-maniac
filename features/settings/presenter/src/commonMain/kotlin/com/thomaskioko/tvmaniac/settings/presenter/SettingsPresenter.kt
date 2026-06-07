@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -23,7 +25,6 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -55,7 +56,7 @@ public class SettingsPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
-    private val traktAuthManager: TraktAuthManager,
+    private val authManagers: Set<AuthManager>,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     accountManager: AccountManager,
 ) : ComponentContext by componentContext {
@@ -134,7 +135,7 @@ public class SettingsPresenter(
 
             TraktLoginClicked -> {
                 coroutineScope.launch {
-                    traktAuthManager.launchWebView()
+                    authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
                 }
             }
 

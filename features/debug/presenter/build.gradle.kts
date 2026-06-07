@@ -15,8 +15,8 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.util.api)
                 api(projects.core.view)
+                api(projects.data.accountManager.api)
                 api(projects.data.datastore.api)
-                api(projects.data.traktauth.api)
                 api(projects.domain.library)
                 api(projects.domain.notifications)
                 api(projects.domain.continueWatching)
@@ -29,7 +29,6 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
-                implementation(projects.data.accountManager.api)
                 implementation(projects.i18n.generator)
             }
         }
@@ -43,6 +42,7 @@ kotlin {
                 implementation(projects.core.notifications.testing)
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.continueWatching.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.api)
@@ -57,7 +57,6 @@ kotlin {
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.syncActivity.api)
                 implementation(projects.data.syncActivity.testing)
-                implementation(projects.data.traktauth.testing)
                 implementation(projects.data.watchproviders.api)
                 implementation(projects.data.watchproviders.testing)
                 implementation(projects.i18n.testing)

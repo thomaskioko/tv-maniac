@@ -1,11 +1,11 @@
 package com.thomaskioko.tvmaniac.domain.user
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.domain.user.model.UserStats
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -14,15 +14,15 @@ import com.thomaskioko.tvmaniac.data.user.api.model.UserProfile as DataUserProfi
 @Inject
 public class ObserveUserProfileInteractor(
     private val userRepository: UserRepository,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val accountManager: AccountManager,
 ) : SubjectInteractor<Unit, UserProfile?>() {
 
     override fun createObservable(params: Unit): Flow<UserProfile?> {
         return combine(
-            traktAuthRepository.state,
+            accountManager.isConnected,
             userRepository.observeCurrentUser(),
-        ) { authState, user ->
-            user?.toDomain(authState)
+        ) { isConnected, user ->
+            user?.toDomain(if (isConnected) AccountAuthState.LOGGED_IN else AccountAuthState.LOGGED_OUT)
         }
     }
 }
