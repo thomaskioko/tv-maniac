@@ -24,6 +24,11 @@ kotlin {
                 api(projects.core.connectivity.api)
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
+                api(projects.data.connectedAccount.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
+                api(projects.data.library.api)
+                api(projects.data.syncActivity.api)
                 api(projects.data.traktauth.api)
                 implementation(projects.core.base)
                 implementation(libs.ktor.auth)
@@ -40,14 +45,13 @@ kotlin {
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(projects.api.trakt.api)
+                implementation(projects.api.trakt.testing)
                 implementation(projects.core.networkUtil.api)
             }
         }
 
         iosMain {
             dependencies {
-                implementation(projects.api.trakt.api)
-
                 implementation(libs.ktor.darwin)
             }
         }

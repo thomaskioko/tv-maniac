@@ -282,21 +282,6 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
-    override suspend fun markAsSyncedDelete(id: Long) {
-        withContext(dispatchers.databaseWrite) {
-            database.watchedEpisodesQueries.markAsSyncedDelete(
-                now = dateTimeProvider.nowMillis(),
-                id = id,
-            )
-        }
-    }
-
-    override suspend fun purgeSyncedDeletesOlderThan(thresholdMillis: Long) {
-        withContext(dispatchers.databaseWrite) {
-            database.watchedEpisodesQueries.purgeSyncedDeletesOlderThan(threshold = thresholdMillis)
-        }
-    }
-
     override suspend fun markSeasonAndPreviousAsWatched(
         showId: Long,
         seasonNumber: Long,
@@ -567,6 +552,11 @@ public class DefaultWatchedEpisodeDao(
                         pending_action = PendingAction.NOTHING.value,
                     )
                 }
+
+                database.watchedEpisodesQueries.deleteStaleWatchedEpisodes(
+                    showId = internalShowId,
+                    syncedAt = syncedAt,
+                )
 
                 val _ = database.showMetadataQueries.recalculateLastWatched(
                     showId = internalShowId,

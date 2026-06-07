@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.connectedaccount.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
@@ -8,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.data.library.LibraryDao
+import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
@@ -23,7 +26,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.AppScope
@@ -49,7 +51,8 @@ public class DefaultLibraryRepository(
     private val libraryStore: LibraryStore,
     private val datastoreRepository: DatastoreRepository,
     private val followedShowsDao: FollowedShowsDao,
-    private val traktListDataSource: TraktListRemoteDataSource,
+    private val sources: Set<LibraryRemoteDataSource>,
+    private val connectedAccountRepository: ConnectedAccountRepository,
     private val requestManagerRepository: RequestManagerRepository,
     private val traktAuthRepository: TraktAuthRepository,
     private val transactionRunner: DatabaseTransactionRunner,
@@ -185,16 +188,20 @@ public class DefaultLibraryRepository(
             threshold = expiry,
         )
 
+    private fun activeSource(): LibraryRemoteDataSource? =
+        sources.getActiveProvider(connectedAccountRepository)
+
     private suspend fun processPendingUploadActions(): PendingActionOutcome {
         val pendingUploads = followedShowsDao.entriesWithUploadPendingAction()
         if (pendingUploads.isEmpty()) return PendingActionOutcome.CONTINUE
 
+        val source = activeSource() ?: return PendingActionOutcome.BACK_OFF
         val showIds = pendingUploads.map { it.showId }
         logger.debug(TAG, "Processing ${showIds.size} pending uploads")
 
-        return when (val response = traktListDataSource.addShowsToWatchListByIds(showIds)) {
+        return when (val response = source.addToWatchlist(showIds)) {
             is ApiResponse.Success -> {
-                val notFoundCount = response.body.notFound.shows.size
+                val notFoundCount = response.body.notFoundCount
                 transactionRunner {
                     pendingUploads.forEach { entry ->
                         followedShowsDao.updatePendingAction(entry.id, PendingAction.NOTHING)
@@ -214,12 +221,13 @@ public class DefaultLibraryRepository(
         val pendingDeletes = followedShowsDao.entriesWithDeletePendingAction()
         if (pendingDeletes.isEmpty()) return PendingActionOutcome.CONTINUE
 
+        val source = activeSource() ?: return PendingActionOutcome.BACK_OFF
         val showIds = pendingDeletes.map { it.showId }
         logger.debug(TAG, "Processing ${showIds.size} pending deletes")
 
-        return when (val response = traktListDataSource.removeShowsFromWatchListByIds(showIds)) {
+        return when (val response = source.removeFromWatchlist(showIds)) {
             is ApiResponse.Success -> {
-                val notFoundCount = response.body.notFound.shows.size
+                val notFoundCount = response.body.notFoundCount
                 transactionRunner {
                     pendingDeletes.forEach { entry ->
                         followedShowsDao.deleteById(entry.id)

@@ -214,15 +214,11 @@ WHERE show_id = ? AND episode_id = ?;
 deleteById:
 DELETE FROM watched_episodes WHERE id = ?;
 
-markAsSyncedDelete:
-UPDATE watched_episodes
-SET pending_action = 'SYNCED_DELETE',
-    synced_at = :now
-WHERE id = :id;
-
-purgeSyncedDeletesOlderThan:
+deleteStaleWatchedEpisodes:
 DELETE FROM watched_episodes
-WHERE pending_action = 'SYNCED_DELETE' AND synced_at < :threshold;
+WHERE show_id = :showId
+  AND pending_action = 'NOTHING'
+  AND (synced_at IS NULL OR synced_at < :syncedAt);
 
 getEntryByShowAndEpisode:
 SELECT
@@ -246,23 +242,17 @@ FROM watched_episodes
 WHERE show_id = ?
   AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE');
 
--- Resurrects SYNCED_DELETE tombstones only when Trakt reports a re-watch with a
--- watched_at newer than the existing synced_at. A stale Trakt response that pre-dates
--- our delete will compare equal-or-older and leave the tombstone intact so the local
--- delete is not undone. UPLOAD/DELETE stay protected unconditionally.
 upsertFromTrakt:
 INSERT INTO watched_episodes(
     show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT(show_id, season_number, episode_number) DO UPDATE SET
     episode_id = excluded.episode_id,
-    watched_at = excluded.watched_at,
+    watched_at = MAX(excluded.watched_at, watched_episodes.watched_at),
     trakt_id = excluded.trakt_id,
     synced_at = excluded.synced_at,
-    pending_action = excluded.pending_action
-WHERE watched_episodes.pending_action = 'NOTHING'
-   OR (watched_episodes.pending_action = 'SYNCED_DELETE'
-       AND excluded.watched_at > COALESCE(watched_episodes.synced_at, 0));
+    pending_action = 'NOTHING'
+WHERE watched_episodes.pending_action = 'NOTHING';
 
 getAllSeasonsWatchProgress:
 SELECT

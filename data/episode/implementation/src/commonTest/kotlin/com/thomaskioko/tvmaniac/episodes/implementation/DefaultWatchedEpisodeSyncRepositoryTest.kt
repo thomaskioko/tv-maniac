@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -24,7 +26,6 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -55,6 +56,9 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     private val requestManagerRepository = FakeRequestManagerRepository()
     private val traktAuthRepository = AuthorizedFakeTraktAuthRepository()
     private val recordingDataSource = RecordingEpisodeWatchesDataSource()
+    private val connectedAccountRepository = FakeConnectedAccountRepository().apply {
+        setActiveProvider(ConnectedProvider.TRAKT)
+    }
     private val syncRepository = FakeActivitySyncRepository()
 
     private lateinit var dao: DefaultWatchedEpisodeDao
@@ -69,12 +73,12 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         defaultWatchedEpisodeSyncRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
             episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
-            dataSource = recordingDataSource,
+            sources = setOf(recordingDataSource),
+            connectedAccountRepository = connectedAccountRepository,
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
             syncRepository = syncRepository,
             traktAuthRepository = traktAuthRepository,
-            dateTimeProvider = fakeDateTimeProvider,
             logger = NoOpLogger,
             watchStatusRepository = FakeShowWatchStatusRepository(),
         )
@@ -97,20 +101,18 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should mark pending DELETE row as SYNCED_DELETE when trakt_id is present`() = runTest {
+    fun `should hard-delete pending DELETE row after pushing to Trakt`() = runTest {
         seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 999L)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 999L)
 
         defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
         recordingDataSource.removedTraktIds shouldContainExactly listOf(999L)
-        val row = readRow(seasonNumber = 1L, episodeNumber = 1L)
-        row.shouldNotBeNull()
-        row.pending_action shouldBe PendingAction.SYNCED_DELETE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
     }
 
     @Test
-    fun `should hard-delete unsynced rows and tombstone synced rows in same batch`() = runTest {
+    fun `should hard-delete both synced and unsynced rows after pushing deletes`() = runTest {
         seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 555L)
         seedEpisode(seasonId = 101L, seasonNumber = 1L, episodeNumber = 2L, episodeTraktId = null)
         seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
@@ -119,8 +121,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
         recordingDataSource.removedTraktIds shouldContainExactly listOf(555L)
-        readRow(seasonNumber = 1L, episodeNumber = 1L)
-            .shouldNotBeNull().pending_action shouldBe PendingAction.SYNCED_DELETE.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
         readRow(seasonNumber = 1L, episodeNumber = 2L).shouldBeNull()
     }
 
@@ -143,6 +144,29 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
         recordingDataSource.getShowEpisodeWatchesCalls shouldContainExactly listOf(SHOW_ID)
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
+    }
+
+    @Test
+    fun `should remove a locally-watched episode the provider no longer reports on per-show sync`() = runTest {
+        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 555L)
+        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 2L, episodeTraktId = 556L)
+        seedSynced(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+        seedSynced(seasonNumber = 1L, episodeNumber = 2L, traktId = 556L)
+        recordingDataSource.showWatchesToReturn = listOf(
+            WatchedEpisodeEntry(
+                showId = SHOW_ID,
+                episodeId = null,
+                seasonNumber = 1L,
+                episodeNumber = 1L,
+                watchedAt = Instant.fromEpochMilliseconds(PAST_MILLIS),
+                pendingAction = PendingAction.NOTHING,
+            ),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncShowEpisodeWatches(showId = SHOW_ID, forceRefresh = true)
+
+        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
+        readRow(seasonNumber = 1L, episodeNumber = 2L).shouldBeNull()
     }
 
     private data class WatchedRow(
@@ -170,6 +194,19 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             trakt_id = traktId,
             synced_at = traktId?.let { fakeDateTimeProvider.nowMillis() },
             pending_action = PendingAction.DELETE.value,
+        )
+    }
+
+    private fun seedSynced(seasonNumber: Long, episodeNumber: Long, traktId: Long) {
+        database.watchedEpisodesQueries.upsertFromTrakt(
+            show_id = showId,
+            episode_id = null,
+            season_number = seasonNumber,
+            episode_number = episodeNumber,
+            watched_at = PAST_MILLIS,
+            trakt_id = traktId,
+            synced_at = PAST_MILLIS,
+            pending_action = PendingAction.NOTHING.value,
         )
     }
 
@@ -225,10 +262,12 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     private companion object {
         private const val SHOW_ID = 1L
+        private const val PAST_MILLIS = 1_600_000_000_000L
     }
 }
 
 private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
+    override val provider: ConnectedProvider = ConnectedProvider.TRAKT
     private val _removedTraktIds = mutableListOf<Long>()
     val removedTraktIds: List<Long> get() = _removedTraktIds.toList()
 
