@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
-import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -56,7 +56,7 @@ internal class UpNextPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
-    private val connectedAccountRepository = FakeConnectedAccountRepository()
+    private val accountManager = FakeAccountManager()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val logger = FakeLogger()
     private val syncObserver = FakeSyncObserver()
@@ -391,7 +391,7 @@ internal class UpNextPresenterTest {
             val state = awaitItem()
             state.episodes shouldHaveSize 1
 
-            connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+            accountManager.setActiveProvider(AccountProvider.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             cancelAndIgnoreRemainingEvents()
@@ -496,7 +496,7 @@ internal class UpNextPresenterTest {
                 libraryRepository = FakeLibraryRepository(),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
-            connectedAccountRepository = connectedAccountRepository,
+            accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
             syncObserver = syncObserver,

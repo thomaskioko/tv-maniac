@@ -13,7 +13,7 @@ kotlin {
             dependencies {
                 api(projects.core.view)
                 api(projects.core.logger.api)
-                api(projects.data.connectedAccount.api)
+                api(projects.data.accountManager.api)
                 api(projects.domain.calendar)
                 api(projects.features.progress.nav)
                 api(projects.i18n.api)
@@ -38,7 +38,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.calendar.testing)
-                implementation(projects.data.connectedAccount.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }

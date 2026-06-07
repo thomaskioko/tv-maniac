@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.episodes.testing
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 
 public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
-    override var provider: ConnectedProvider = ConnectedProvider.TRAKT
+    override var provider: AccountProvider = AccountProvider.TRAKT
     private val watchesMap = mutableMapOf<Long, List<WatchedEpisodeEntry>>()
     private val allWatchedShowsPages = mutableMapOf<Int, List<WatchedShowBatch>>()
     private val addEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()

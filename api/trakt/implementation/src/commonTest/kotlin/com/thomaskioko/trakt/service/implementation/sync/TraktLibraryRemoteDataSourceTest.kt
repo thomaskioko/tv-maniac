@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
@@ -29,7 +29,7 @@ class TraktLibraryRemoteDataSourceTest {
 
     @Test
     fun `should report trakt as its provider`() {
-        source.provider shouldBe ConnectedProvider.TRAKT
+        source.provider shouldBe AccountProvider.TRAKT
     }
 
     @Test

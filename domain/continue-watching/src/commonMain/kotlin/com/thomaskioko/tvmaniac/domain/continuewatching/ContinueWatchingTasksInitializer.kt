@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
@@ -21,12 +21,12 @@ public class ContinueWatchingTasksInitializer(
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
     syncContinueWatchingInteractor: Lazy<SyncContinueWatchingInteractor>,
     datastoreRepo: Lazy<DatastoreRepository>,
-    connectedAccountRepo: Lazy<ConnectedAccountRepository>,
+    accountManagerLazy: Lazy<AccountManager>,
 ) {
 
     private val syncInteractor by syncContinueWatchingInteractor
     private val datastoreRepository by datastoreRepo
-    private val connectedAccountRepository by connectedAccountRepo
+    private val accountManager by accountManagerLazy
 
     public fun init() {
         observeDataSync()
@@ -35,7 +35,7 @@ public class ContinueWatchingTasksInitializer(
 
     private fun observeDataSync() {
         coroutineScope.launch {
-            connectedAccountRepository.connectionEvents
+            accountManager.connectionEvents
                 .collect {
                     withContext(NonCancellable) {
                         syncInteractor.executeSync(SyncContinueWatchingInteractor.Param())
@@ -48,7 +48,7 @@ public class ContinueWatchingTasksInitializer(
     private fun observeContinueWatchingSync() {
         coroutineScope.launch {
             combine(
-                connectedAccountRepository.isConnected,
+                accountManager.isConnected,
                 datastoreRepository.observeBackgroundSyncEnabled(),
             ) { connected, syncEnabled ->
                 connected && syncEnabled

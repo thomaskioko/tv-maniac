@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.syncactivity.api.RemoteActivitySource
@@ -18,7 +18,7 @@ public class TraktRemoteActivitySource(
     private val remoteDataSource: TraktSyncRemoteDataSource,
 ) : RemoteActivitySource {
 
-    override val provider: ConnectedProvider = ConnectedProvider.TRAKT
+    override val provider: AccountProvider = AccountProvider.TRAKT
 
     override suspend fun getLastActivities(): ApiResponse<Map<ActivityType, Instant>> =
         remoteDataSource.getLastActivities().map { it.toActivityMap() }

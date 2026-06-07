@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.syncactivity.implementation
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
-import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
@@ -35,19 +35,19 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
 
     private val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = now)
-    private val connectedAccountRepository = FakeConnectedAccountRepository()
+    private val accountManager = FakeAccountManager()
 
     private lateinit var activityDao: TraktActivityDao
     private lateinit var repository: ActivitySyncRepository
 
     @BeforeTest
     fun setup() {
-        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         activityDao = DefaultTraktActivityDao(database, dispatchers)
         repository = DefaultActivitySyncRepository(
             database = database,
             activityDao = activityDao,
-            connectedAccountRepository = connectedAccountRepository,
+            accountManager = accountManager,
             dateTimeProvider = dateTimeProvider,
             dispatchers = dispatchers,
         )
@@ -68,7 +68,7 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return false given no active provider`() = runTest {
-        connectedAccountRepository.setActiveProvider(null)
+        accountManager.setActiveProvider(null)
         activityDao.upsert(ActivityType.EPISODES_WATCHED, remoteTimestamp = now, fetchedAt = now)
 
         repository.isAheadOf(
@@ -149,7 +149,7 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
             ActivityType.EPISODES_WATCHED,
         ) shouldBe false
 
-        connectedAccountRepository.setActiveProvider(ConnectedProvider.SIMKL)
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
         repository.isAheadOf(
             ActivitySyncTypes.BULK_WATCHED_EPISODES,
             ActivityType.EPISODES_WATCHED,

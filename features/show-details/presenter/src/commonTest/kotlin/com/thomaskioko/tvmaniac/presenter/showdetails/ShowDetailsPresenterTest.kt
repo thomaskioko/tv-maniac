@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
-import com.thomaskioko.tvmaniac.connectedaccount.testing.FakeConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -91,7 +91,7 @@ class ShowDetailsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val upNextRepository = FakeUpNextRepository()
-    private val connectedAccountRepository = FakeConnectedAccountRepository()
+    private val accountManager = FakeAccountManager()
     private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
@@ -640,7 +640,7 @@ class ShowDetailsPresenterTest {
 
         watchedEpisodeSyncRepository.reset()
 
-        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         testDispatcher.scheduler.advanceUntilIdle()
 
         watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
@@ -649,7 +649,7 @@ class ShowDetailsPresenterTest {
 
     @Test
     fun `should sync watch progress on initial load given user is logged in`() = runTest {
-        connectedAccountRepository.setActiveProvider(ConnectedProvider.TRAKT)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         buildMockData(seasonResult = seasons)
 
         val _ = buildShowDetailsPresenter()
@@ -661,7 +661,7 @@ class ShowDetailsPresenterTest {
 
     @Test
     fun `should always attempt sync on initial load given user is logged out`() = runTest {
-        connectedAccountRepository.setActiveProvider(null)
+        accountManager.setActiveProvider(null)
         buildMockData(seasonResult = seasons)
 
         val _ = buildShowDetailsPresenter()
@@ -781,7 +781,7 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
-            connectedAccountRepository = connectedAccountRepository,
+            accountManager = accountManager,
             mapper = ShowDetailsMapper(localizer = fakeLocalizer),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
-import com.thomaskioko.tvmaniac.connectedaccount.api.getActiveProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
@@ -52,7 +52,7 @@ public class DefaultLibraryRepository(
     private val datastoreRepository: DatastoreRepository,
     private val followedShowsDao: FollowedShowsDao,
     private val sources: Set<LibraryRemoteDataSource>,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val requestManagerRepository: RequestManagerRepository,
     private val traktAuthRepository: TraktAuthRepository,
     private val transactionRunner: DatabaseTransactionRunner,
@@ -189,7 +189,7 @@ public class DefaultLibraryRepository(
         )
 
     private fun activeSource(): LibraryRemoteDataSource? =
-        sources.getActiveProvider(connectedAccountRepository)
+        sources.getActiveProvider(accountManager)
 
     private suspend fun processPendingUploadActions(): PendingActionOutcome {
         val pendingUploads = followedShowsDao.entriesWithUploadPendingAction()

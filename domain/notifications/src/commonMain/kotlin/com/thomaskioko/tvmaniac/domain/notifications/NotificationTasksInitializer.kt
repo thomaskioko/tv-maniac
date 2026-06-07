@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.notifications
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
@@ -17,7 +17,7 @@ public class NotificationTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
     private val notificationManager: Lazy<NotificationManager>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
-    private val connectedAccountRepository: Lazy<ConnectedAccountRepository>,
+    private val accountManager: Lazy<AccountManager>,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
 ) {
@@ -25,7 +25,7 @@ public class NotificationTasksInitializer(
     public fun init() {
         coroutineScope.launch {
             combine(
-                connectedAccountRepository.value.isConnected,
+                accountManager.value.isConnected,
                 datastoreRepository.value.observeEpisodeNotificationsEnabled(),
                 datastoreRepository.value.observeBackgroundSyncEnabled(),
             ) { connected, notificationsEnabled, syncEnabled ->

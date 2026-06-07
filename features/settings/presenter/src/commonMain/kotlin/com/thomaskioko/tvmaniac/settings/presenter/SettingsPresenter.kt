@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -57,7 +57,7 @@ public class SettingsPresenter(
     private val logger: Logger,
     private val traktAuthManager: TraktAuthManager,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
-    connectedAccountRepository: ConnectedAccountRepository,
+    accountManager: AccountManager,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -77,7 +77,7 @@ public class SettingsPresenter(
         logoutState.observable,
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
-        connectedAccountRepository.isConnected,
+        accountManager.isConnected,
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
     ) { currentState, isLoggingOut, isTogglingNotifications, preferences, isLoggedIn, message, userProfile ->

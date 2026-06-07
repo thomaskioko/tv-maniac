@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.library
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ProviderScoped
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderScoped
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult

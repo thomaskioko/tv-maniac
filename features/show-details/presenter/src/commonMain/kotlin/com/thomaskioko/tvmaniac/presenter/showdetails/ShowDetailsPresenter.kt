@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.nav.NotificationRationale
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -79,7 +79,7 @@ public class ShowDetailsPresenter(
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observableShowMetadataInteractor: ObservableShowMetadataInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val mapper: ShowDetailsMapper,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -234,7 +234,7 @@ public class ShowDetailsPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .drop(1)
                 .distinctUntilChanged()
                 .filter { it }

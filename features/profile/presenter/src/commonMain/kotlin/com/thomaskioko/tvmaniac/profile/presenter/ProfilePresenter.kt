@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.profile.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -83,7 +83,7 @@ public class ProfilePresenter(
     private val localizer: Localizer,
     private val traktAuthManager: TraktAuthManager,
     private val traktAuthRepository: TraktAuthRepository,
-    private val connectedAccountRepository: ConnectedAccountRepository,
+    private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -153,7 +153,7 @@ public class ProfilePresenter(
 
     public val state: StateFlow<ProfileState> = combine(
         observeUserProfileInteractor.flow,
-        connectedAccountRepository.isConnected,
+        accountManager.isConnected,
         traktAuthRepository.authError,
         profileLoadingState.observable,
         uiMessageManager.message,
@@ -225,7 +225,7 @@ public class ProfilePresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            connectedAccountRepository.isConnected
+            accountManager.isConnected
                 .drop(1)
                 .filter { it }
                 .collect {
