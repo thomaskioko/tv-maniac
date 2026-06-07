@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.debug.presenter
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -28,8 +30,6 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.assertions.throwables.shouldThrow
@@ -70,7 +70,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should omit token status item given logged out`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
 
         val presenter = createPresenter()
 
@@ -86,7 +86,7 @@ class DebugPresenterTest {
     fun `should expose expires-in subtitle on token status item given logged in with future expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -114,7 +114,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should expose expired subtitle on token status item given logged in with unauthorized auth state`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -142,7 +142,7 @@ class DebugPresenterTest {
     fun `should expose expired subtitle on token status item given logged in with past expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -169,7 +169,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should expose never refreshed subtitle on token status item given logged in with no refresh timestamp`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         traktAuthRepository.setAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -212,7 +212,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should emit login required message given TriggerLibrarySync while logged out`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
 
         val presenter = createPresenter()
         advanceUntilIdle()
@@ -229,7 +229,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should emit login required message given TriggerUpNextSync while logged out`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
 
         val presenter = createPresenter()
         advanceUntilIdle()

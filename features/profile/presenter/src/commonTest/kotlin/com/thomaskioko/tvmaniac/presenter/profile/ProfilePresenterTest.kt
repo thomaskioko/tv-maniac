@@ -3,7 +3,9 @@ package com.thomaskioko.tvmaniac.presenter.profile
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -45,8 +47,6 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.traktauth.api.AuthError
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
@@ -138,7 +138,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should load profile when user is authenticated`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         accountManager.setActiveProvider(AccountProvider.TRAKT)
         userRepository.setUserProfile(testProfile)
 
@@ -158,7 +158,7 @@ internal class ProfilePresenterTest {
             awaitItem() shouldBe ProfileState.DEFAULT_STATE
 
             userRepository.setUserProfile(testProfile)
-            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
             accountManager.setActiveProvider(AccountProvider.TRAKT)
 
             val loadedState = awaitItem()
@@ -170,7 +170,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should update profile when user data changes`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         accountManager.setActiveProvider(AccountProvider.TRAKT)
         userRepository.setUserProfile(testProfile)
 
@@ -203,7 +203,7 @@ internal class ProfilePresenterTest {
         testPresenter.state.test {
             awaitItem() shouldBe ProfileState.DEFAULT_STATE
 
-            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
             accountManager.setActiveProvider(AccountProvider.TRAKT)
             userRepository.setUserProfile(testProfile)
 
@@ -216,7 +216,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should hide loading when user logs out`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         accountManager.setActiveProvider(AccountProvider.TRAKT)
         userRepository.setUserProfile(testProfile)
 
@@ -228,7 +228,7 @@ internal class ProfilePresenterTest {
             loadedState.authenticated shouldBe true
             loadedState.showLoading shouldBe false
 
-            traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+            traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
             accountManager.setActiveProvider(null)
             userRepository.setUserProfile(null)
 
@@ -246,7 +246,7 @@ internal class ProfilePresenterTest {
     @Test
     fun `should reset loading state on successful authentication`() = runTest {
         userRepository.setUserProfile(null)
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
         accountManager.setActiveProvider(null)
 
         val testPresenter = createPresenter()
@@ -254,7 +254,7 @@ internal class ProfilePresenterTest {
         testPresenter.state.test {
             awaitItem() shouldBe ProfileState.DEFAULT_STATE
 
-            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
             accountManager.setActiveProvider(AccountProvider.TRAKT)
             userRepository.setUserProfile(testProfile)
 
@@ -268,7 +268,7 @@ internal class ProfilePresenterTest {
     @Test
     fun `should keep showing loading given profile present but stats not yet loaded`() = runTest {
         userRepository.holdStatsFetch()
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         accountManager.setActiveProvider(AccountProvider.TRAKT)
         userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
 
@@ -291,7 +291,7 @@ internal class ProfilePresenterTest {
     @Test
     fun `should not show loading after auth error is dismissed`() = runTest {
         userRepository.setUserProfile(null)
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
         accountManager.setActiveProvider(null)
 
         val testPresenter = createPresenter()
@@ -318,7 +318,7 @@ internal class ProfilePresenterTest {
     @Test
     fun `should surface no-browser error when sign-in cannot launch`() = runTest {
         userRepository.setUserProfile(null)
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_OUT)
         accountManager.setActiveProvider(null)
 
         val testPresenter = createPresenter()
@@ -337,7 +337,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should map each section to content when data is available`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         accountManager.setActiveProvider(AccountProvider.TRAKT)
         userRepository.setUserProfile(testProfile)
         traktListRepository.setLists(listOf(createListEntity()))
@@ -392,7 +392,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should map sections to empty when no data is available`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         accountManager.setActiveProvider(AccountProvider.TRAKT)
         userRepository.setUserProfile(testProfile)
 
@@ -411,7 +411,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should map a single section to error without collapsing the others`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        traktAuthRepository.setState(AccountAuthState.LOGGED_IN)
         accountManager.setActiveProvider(AccountProvider.TRAKT)
         userRepository.setUserProfile(testProfile)
         favoritesRepository.setObserveError(IllegalStateException("favorites boom"))

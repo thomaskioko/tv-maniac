@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.debug.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -21,9 +23,7 @@ import com.thomaskioko.tvmaniac.featureflags.nav.FeatureFlagsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -80,7 +80,7 @@ public class DebugPresenter(
             isSchedulingDebugNotification, isSchedulingDelayedNotification, isSyncingLibrary, isSyncingUpNext,
             lastLibrarySyncDate, lastUpNextSyncDate, lastTokenRefreshDate, message, traktAuthState, authState,
         ->
-        val isLoggedIn = traktAuthState == TraktAuthState.LOGGED_IN
+        val isLoggedIn = traktAuthState == AccountAuthState.LOGGED_IN
         val tokenSubtitle = formatTokenStatus(
             isLoggedIn = isLoggedIn,
             lastTokenRefreshTimestamp = lastTokenRefreshDate,
