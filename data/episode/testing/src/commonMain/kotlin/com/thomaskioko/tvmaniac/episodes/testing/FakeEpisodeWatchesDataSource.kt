@@ -10,7 +10,7 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     private val watchesMap = mutableMapOf<Long, List<WatchedEpisodeEntry>>()
     private val allWatchedShowsPages = mutableMapOf<Int, List<WatchedShowBatch>>()
     private val addEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
-    private val removeEpisodeWatchesInvocations = mutableListOf<List<Long>>()
+    private val removeEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
     private var allWatchedShowsError: Throwable? = null
 
     public fun setShowEpisodeWatches(showId: Long, watches: List<WatchedEpisodeEntry>) {
@@ -28,7 +28,7 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     public fun addEpisodeWatchesInvocations(): List<List<WatchedEpisodeEntry>> =
         addEpisodeWatchesInvocations.toList()
 
-    public fun removeEpisodeWatchesInvocations(): List<List<Long>> =
+    public fun removeEpisodeWatchesInvocations(): List<List<WatchedEpisodeEntry>> =
         removeEpisodeWatchesInvocations.toList()
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
@@ -40,11 +40,11 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         return allWatchedShowsPages[page] ?: emptyList()
     }
 
-    override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {
-        addEpisodeWatchesInvocations.add(watches)
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        addEpisodeWatchesInvocations.add(entries)
     }
 
-    override suspend fun removeEpisodeWatches(episodeIds: List<Long>) {
-        removeEpisodeWatchesInvocations.add(episodeIds)
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        removeEpisodeWatchesInvocations.add(entries)
     }
 }

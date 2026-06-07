@@ -8,7 +8,7 @@ public interface EpisodeWatchesDataSource : ProviderScoped {
 
     public suspend fun getAllWatchedShows(page: Int = 1, limit: Int = 100): List<WatchedShowBatch>
 
-    public suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>)
+    public suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>)
 
-    public suspend fun removeEpisodeWatches(episodeIds: List<Long>)
+    public suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>)
 }
