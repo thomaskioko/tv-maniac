@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.buildAnnotatedString
@@ -429,7 +430,7 @@ internal fun ShowMetadata(
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
 
     val divider = remember(colorScheme.secondary, typography.labelMedium) {
         buildAnnotatedString {
