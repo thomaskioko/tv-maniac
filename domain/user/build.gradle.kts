@@ -15,6 +15,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
+                api(projects.data.accountManager.api)
                 api(projects.data.traktauth.api)
                 api(projects.data.traktlists.api)
                 api(projects.data.user.api)

@@ -23,6 +23,7 @@ kotlin {
                 api(projects.data.traktauth.api)
 
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.data.accountManager.api)
                 implementation(libs.sqldelight.extensions)
             }
         }
