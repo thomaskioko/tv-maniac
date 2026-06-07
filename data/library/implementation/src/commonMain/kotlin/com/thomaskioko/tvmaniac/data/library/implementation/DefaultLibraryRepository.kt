@@ -26,7 +26,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -54,7 +53,6 @@ public class DefaultLibraryRepository(
     private val sources: Set<LibraryRemoteDataSource>,
     private val accountManager: AccountManager,
     private val requestManagerRepository: RequestManagerRepository,
-    private val traktAuthRepository: TraktAuthRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val formatterUtil: FormatterUtil,
     private val syncObserver: SyncObserver,
@@ -155,8 +153,7 @@ public class DefaultLibraryRepository(
     )
 
     override suspend fun syncLibrary(forceRefresh: Boolean) {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+        if (accountManager.getActiveProvider() == null) return
 
         if (flushPendingFollowActions() == PendingActionOutcome.BACK_OFF) return
 
@@ -170,8 +167,7 @@ public class DefaultLibraryRepository(
     }
 
     override suspend fun syncPendingFollowedShows() {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+        if (accountManager.getActiveProvider() == null) return
 
         val _ = flushPendingFollowActions()
     }

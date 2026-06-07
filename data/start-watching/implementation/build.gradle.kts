@@ -17,15 +17,14 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.util.api)
+                api(projects.data.accountManager.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.followedshows.api)
                 api(projects.data.requestManager.api)
                 api(projects.data.shows.api)
                 api(projects.data.startWatching.api)
-                api(projects.data.traktauth.api)
 
                 implementation(projects.core.networkUtil.api)
-                implementation(projects.data.accountManager.api)
                 implementation(libs.sqldelight.extensions)
             }
         }

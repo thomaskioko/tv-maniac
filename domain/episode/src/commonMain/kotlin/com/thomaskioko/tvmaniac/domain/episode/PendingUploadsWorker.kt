@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.episode
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
@@ -9,7 +10,6 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
@@ -20,7 +20,7 @@ import kotlinx.coroutines.CancellationException
 public class PendingUploadsWorker(
     private val syncRepository: Lazy<WatchedEpisodeSyncRepository>,
     private val libraryRepository: Lazy<LibraryRepository>,
-    private val traktAuthRepository: Lazy<TraktAuthRepository>,
+    private val accountManager: Lazy<AccountManager>,
     private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
@@ -30,7 +30,7 @@ public class PendingUploadsWorker(
     override suspend fun doWork(): WorkerResult {
         logger.debug(TAG, "Pending uploads worker starting")
 
-        if (!traktAuthRepository.value.isLoggedIn()) {
+        if (accountManager.value.getActiveProvider() == null) {
             logger.debug(TAG, "User not logged in, skipping pending uploads sync")
             return WorkerResult.Success
         }

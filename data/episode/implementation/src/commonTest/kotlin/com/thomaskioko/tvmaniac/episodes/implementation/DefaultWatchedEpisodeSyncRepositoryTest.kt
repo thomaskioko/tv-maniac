@@ -1,10 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
-import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -19,7 +15,6 @@ import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisod
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.testing.FakeShowWatchStatusRepository
 import io.kotest.matchers.collections.shouldContainExactly
@@ -28,9 +23,6 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -54,7 +46,6 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
     private val datastoreRepository = FakeDatastoreRepository()
     private val requestManagerRepository = FakeRequestManagerRepository()
-    private val traktAuthRepository = AuthorizedFakeTraktAuthRepository()
     private val recordingDataSource = RecordingEpisodeWatchesDataSource()
     private val accountManager = FakeAccountManager().apply {
         setActiveProvider(AccountProvider.TRAKT)
@@ -78,7 +69,6 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
             syncRepository = syncRepository,
-            traktAuthRepository = traktAuthRepository,
             logger = NoOpLogger,
             watchStatusRepository = FakeShowWatchStatusRepository(),
         )
@@ -278,25 +268,4 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
 private object NoOpLogger : Logger {
     override fun error(message: String, throwable: Throwable) {}
     override fun error(tag: String, message: String) {}
-}
-
-private class AuthorizedFakeTraktAuthRepository : TraktAuthRepository {
-    private val _state = MutableStateFlow(AccountAuthState.LOGGED_IN)
-    private val _authState = MutableStateFlow<AuthState?>(
-        AuthState(accessToken = "test-access", refreshToken = "test-refresh", isAuthorized = true),
-    )
-    private val _authError = MutableStateFlow<AuthError?>(null)
-    private val _loginEvents = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-
-    override val state: Flow<AccountAuthState> = _state.asStateFlow()
-    override val authState: Flow<AuthState?> = _authState.asStateFlow()
-    override val authError: Flow<AuthError?> = _authError.asStateFlow()
-    override val loginEvents: kotlinx.coroutines.flow.SharedFlow<Unit> = _loginEvents
-
-    override fun isLoggedIn(): Boolean = true
-    override suspend fun getAuthState(): AuthState? = _authState.value
-    override suspend fun refreshTokens(): TokenRefreshResult = TokenRefreshResult.NotLoggedIn
-    override suspend fun logout() {}
-    override suspend fun saveTokens(accessToken: String, refreshToken: String, expiresAtSeconds: Long) {}
-    override suspend fun setAuthError(error: AuthError?) {}
 }

@@ -14,7 +14,6 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -35,7 +34,6 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val datastoreRepository: DatastoreRepository,
     private val lastRequestStore: EpisodeWatchesLastRequestStore,
     private val syncRepository: ActivitySyncRepository,
-    private val traktAuthRepository: TraktAuthRepository,
     private val logger: Logger,
     private val watchStatusRepository: ShowWatchStatusRepository,
 ) : WatchedEpisodeSyncRepository {
@@ -46,16 +44,14 @@ public class DefaultWatchedEpisodeSyncRepository(
         sources.getActiveProvider(accountManager)
 
     override suspend fun syncPendingEpisodes() {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+        if (accountManager.getActiveProvider() == null) return
 
         processPendingEpisodesToUploads()
         processPendingEpisodesDeletes()
     }
 
     override suspend fun syncAllWatchedEpisodes(forceRefresh: Boolean) {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+        if (accountManager.getActiveProvider() == null) return
 
         syncMutex.withLock {
             val pendingUploads = dao.entriesByPendingAction(PendingAction.UPLOAD)
@@ -93,8 +89,7 @@ public class DefaultWatchedEpisodeSyncRepository(
     }
 
     override suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean) {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+        if (accountManager.getActiveProvider() == null) return
 
         val perShowExpired = lastRequestStore.isShowRequestExpired(showId)
         if (!forceRefresh && !perShowExpired) {
