@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.connectedaccount.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
@@ -42,7 +43,7 @@ public class DefaultWatchedEpisodeSyncRepository(
     private val syncMutex = Mutex()
 
     private fun activeSource(): EpisodeWatchesDataSource? =
-        sources.firstOrNull { it.provider == connectedAccountRepository.getActiveProvider() }
+        sources.getActiveProvider(connectedAccountRepository)
 
     override suspend fun syncPendingEpisodes() {
         val authState = traktAuthRepository.getAuthState()

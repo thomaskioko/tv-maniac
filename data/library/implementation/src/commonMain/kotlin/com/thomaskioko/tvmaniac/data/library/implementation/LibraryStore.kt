@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
 import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.connectedaccount.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
@@ -52,7 +53,7 @@ public class LibraryStore(
 ) : Store<LibrarySortOption, List<FollowedShowEntry>> by storeBuilder(
     fetcher = Fetcher.of { _: LibrarySortOption ->
         coroutineScope {
-            val source = sources.firstOrNull { it.provider == connectedAccountRepository.getActiveProvider() }
+            val source = sources.getActiveProvider(connectedAccountRepository)
                 ?: throw AuthenticationException("No active sync provider")
             source.getWatchlist()
                 .getOrThrow()

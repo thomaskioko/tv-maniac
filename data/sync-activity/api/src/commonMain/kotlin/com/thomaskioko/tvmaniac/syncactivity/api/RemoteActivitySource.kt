@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.syncactivity.api
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.api.ProviderScoped
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import kotlin.time.Instant
@@ -12,10 +12,7 @@ import kotlin.time.Instant
  * supplies an adapter contributed into a multibound set; the consumer selects the one whose
  * [provider] is active. [ActivitySyncRepository] consumes these timestamps.
  */
-public interface RemoteActivitySource {
-
-    /** The backend this source talks to; used to select the active source from the multibound set. */
-    public val provider: ConnectedProvider
+public interface RemoteActivitySource : ProviderScoped {
 
     /**
      * Most recent remote timestamp per [ActivityType]. Absent keys carry no server-side activity;

@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
 import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.connectedaccount.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
@@ -188,7 +189,7 @@ public class DefaultLibraryRepository(
         )
 
     private fun activeSource(): LibraryRemoteDataSource? =
-        sources.firstOrNull { it.provider == connectedAccountRepository.getActiveProvider() }
+        sources.getActiveProvider(connectedAccountRepository)
 
     private suspend fun processPendingUploadActions(): PendingActionOutcome {
         val pendingUploads = followedShowsDao.entriesWithUploadPendingAction()

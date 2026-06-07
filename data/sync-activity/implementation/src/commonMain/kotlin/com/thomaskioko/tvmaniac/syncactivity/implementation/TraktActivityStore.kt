@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.syncactivity.implementation
 
 import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedAccountRepository
+import com.thomaskioko.tvmaniac.connectedaccount.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
@@ -33,7 +34,7 @@ public class TraktActivityStore(
     private val dateTimeProvider: DateTimeProvider,
 ) : Store<Unit, List<TraktLastActivity>> by storeBuilder(
     fetcher = apiFetcher {
-        val source = sources.firstOrNull { it.provider == connectedAccountRepository.getActiveProvider() }
+        val source = sources.getActiveProvider(connectedAccountRepository)
         source?.getLastActivities() ?: ApiResponse.Unauthenticated
     },
     sourceOfTruth = SourceOfTruth.of(

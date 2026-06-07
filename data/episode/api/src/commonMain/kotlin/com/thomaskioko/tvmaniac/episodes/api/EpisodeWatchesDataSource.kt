@@ -1,11 +1,8 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.connectedaccount.api.ConnectedProvider
+import com.thomaskioko.tvmaniac.connectedaccount.api.ProviderScoped
 
-public interface EpisodeWatchesDataSource {
-
-    /** The backend this source talks to; used to select the active source from the multibound set. */
-    public val provider: ConnectedProvider
+public interface EpisodeWatchesDataSource : ProviderScoped {
 
     public suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry>
 
