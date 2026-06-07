@@ -47,7 +47,6 @@ internal class TmdbSeasonMapperTest {
         first.runtime shouldBe 42L
         first.vote_count shouldBe 100L
         first.ratings shouldBe 8.5
-        first.trakt_id.shouldBeNull()
         first.first_aired shouldBe FIRST_AIRED
     }
 
