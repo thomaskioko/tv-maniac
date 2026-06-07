@@ -57,7 +57,8 @@ private const val MAX_STUBBED_SEASON_NUMBER = 5
  *   with each season's `ids.trakt` rewritten to a per-show value so seasons don't collide on the
  *   shared PRIMARY KEY when multiple shows are synced from the same fixture.
  * - TMDB `/3/tv/{tmdbId}` returns the canonical `Endpoints.Tmdb.ShowDetails` body with the root
- *   `id` rewritten.
+ *   `id` rewritten. For non-canonical shows the `seasons` array is emptied so their metadata sync
+ *   does not re-fetch the canonical TMDB season-episode bodies, which would collide on `episode.id`.
  * - TMDB `/3/tv/{tmdbId}/watch/providers` returns the canonical
  *   `Endpoints.Tmdb.WatchProviders` body with the root `id` rewritten.
  *
@@ -89,7 +90,11 @@ public fun MockEngineHandler.stubShow(show: ShowFixture) {
     )
     stub(
         path = "/3/tv/${show.tmdbId}",
-        body = rewriteRootId(tmdbDetailsTemplate, show.tmdbId),
+        body = if (show.traktId == CANONICAL_SHOW_TRAKT_ID) {
+            rewriteRootId(tmdbDetailsTemplate, show.tmdbId)
+        } else {
+            rewriteRootIdAndEmptySeasons(tmdbDetailsTemplate, show.tmdbId)
+        },
     )
     stub(
         path = "/3/tv/${show.tmdbId}/watch/providers",
@@ -130,6 +135,17 @@ private fun rewriteTraktShowIds(template: String, show: ShowFixture): String {
 private fun rewriteRootId(template: String, id: Long): String {
     val obj = Json.parseToJsonElement(template).jsonObject
     val updated = JsonObject(obj.toMutableMap().apply { this["id"] = JsonPrimitive(id) })
+    return Json.encodeToString(JsonObject.serializer(), updated)
+}
+
+private fun rewriteRootIdAndEmptySeasons(template: String, id: Long): String {
+    val obj = Json.parseToJsonElement(template).jsonObject
+    val updated = JsonObject(
+        obj.toMutableMap().apply {
+            this["id"] = JsonPrimitive(id)
+            this["seasons"] = kotlinx.serialization.json.JsonArray(emptyList())
+        },
+    )
     return Json.encodeToString(JsonObject.serializer(), updated)
 }
 

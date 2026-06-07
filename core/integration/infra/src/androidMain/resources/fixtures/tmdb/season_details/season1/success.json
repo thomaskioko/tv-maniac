@@ -1,0 +1,111 @@
+{
+    "air_date": "2008-01-20",
+    "episodes": [
+        {
+            "air_date": "2008-01-21",
+            "episode_number": 1,
+            "id": 73640,
+            "name": "Pilot",
+            "overview": "Walter White, a struggling high school chemistry teacher, is diagnosed with lung cancer.",
+            "runtime": 58,
+            "season_number": 1,
+            "show_id": 1396,
+            "still_path": "/season1/episode1.jpg",
+            "vote_average": 8.5,
+            "vote_count": 100
+        },
+        {
+            "air_date": "2008-01-28",
+            "episode_number": 2,
+            "id": 73641,
+            "name": "Cat's in the Bag...",
+            "overview": "Walt and Jesse attempt to tie up loose ends.",
+            "runtime": 48,
+            "season_number": 1,
+            "show_id": 1396,
+            "still_path": "/season1/episode2.jpg",
+            "vote_average": 8.2,
+            "vote_count": 90
+        },
+        {
+            "air_date": "2008-02-11",
+            "episode_number": 3,
+            "id": 73484,
+            "name": "...And the Bag's in the River",
+            "overview": "Walt faces a difficult decision.",
+            "runtime": 48,
+            "season_number": 1,
+            "show_id": 1396,
+            "still_path": "/season1/episode3.jpg",
+            "vote_average": 8.2,
+            "vote_count": 85
+        },
+        {
+            "air_date": "2008-02-18",
+            "episode_number": 4,
+            "id": 73485,
+            "name": "Cancer Man",
+            "overview": "Walt tells his family about his diagnosis.",
+            "runtime": 48,
+            "season_number": 1,
+            "show_id": 1396,
+            "still_path": "/season1/episode4.jpg",
+            "vote_average": 8.1,
+            "vote_count": 80
+        },
+        {
+            "air_date": "2008-02-25",
+            "episode_number": 5,
+            "id": 73486,
+            "name": "Gray Matter",
+            "overview": "Walt rejects a generous offer from old friends.",
+            "runtime": 48,
+            "season_number": 1,
+            "show_id": 1396,
+            "still_path": "/season1/episode5.jpg",
+            "vote_average": 8.1,
+            "vote_count": 78
+        },
+        {
+            "air_date": "2008-03-03",
+            "episode_number": 6,
+            "id": 73487,
+            "name": "Crazy Handful of Nothin'",
+            "overview": "The pressures of the business begin to mount.",
+            "runtime": 48,
+            "season_number": 1,
+            "show_id": 1396,
+            "still_path": "/season1/episode6.jpg",
+            "vote_average": 8.6,
+            "vote_count": 88
+        },
+        {
+            "air_date": "2008-03-10",
+            "episode_number": 7,
+            "id": 73488,
+            "name": "A No-Rough-Stuff-Type Deal",
+            "overview": "Walt and Jesse adjust to a new supplier.",
+            "runtime": 48,
+            "season_number": 1,
+            "show_id": 1396,
+            "still_path": "/season1/episode7.jpg",
+            "vote_average": 8.3,
+            "vote_count": 82
+        }
+    ],
+    "name": "Season 1",
+    "overview": "High school chemistry teacher Walter White turns to a life of crime.",
+    "id": 3572,
+    "poster_path": "/season1/poster.jpg",
+    "season_number": 1,
+    "vote_average": 8.5,
+    "videos": {
+        "results": []
+    },
+    "images": {
+        "posters": []
+    },
+    "credits": {
+        "cast": []
+    }
+}
