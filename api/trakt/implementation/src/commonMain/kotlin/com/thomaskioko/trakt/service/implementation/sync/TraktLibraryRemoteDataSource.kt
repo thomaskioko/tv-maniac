@@ -13,13 +13,6 @@ import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 import kotlin.time.Instant
 
-/**
- * Trakt adapter for [LibraryRemoteDataSource], contributed into the multibound set of sources.
- *
- * Maps [TraktFollowedShowResponse] onto [RemoteFollowedShow] and the write-back responses onto
- * [WatchlistSyncResult]. The watchlist pull is sorted server-side only to get a stable order; the
- * displayed order is applied locally by the repository.
- */
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class TraktLibraryRemoteDataSource(

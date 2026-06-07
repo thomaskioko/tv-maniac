@@ -22,12 +22,6 @@ import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 import kotlin.time.Instant
 
-/**
- * Trakt adapter for [EpisodeWatchesDataSource], contributed into the multibound set of sources.
- *
- * Wraps Trakt's per-show history, bulk watched-shows snapshot, and history add/remove writes, keyed on
- * `(show, season_number, episode_number)`.
- */
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class TraktEpisodeWatchesDataSource(

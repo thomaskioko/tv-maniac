@@ -214,10 +214,6 @@ WHERE show_id = ? AND episode_id = ?;
 deleteById:
 DELETE FROM watched_episodes WHERE id = ?;
 
--- Implicit remove for last-write-wins reconciliation: drops synced rows for a show that a
--- fresh, non-empty provider pull no longer reports as watched (a cross-device unwatch). Bound
--- to pending_action = 'NOTHING' so an unflushed local write is never reconciled away, and to
--- synced_at < :syncedAt so rows touched by the current pull survive.
 deleteStaleWatchedEpisodes:
 DELETE FROM watched_episodes
 WHERE show_id = :showId
@@ -246,10 +242,6 @@ FROM watched_episodes
 WHERE show_id = ?
   AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE');
 
--- Last-write-wins ingest from the active provider. Synced rows keep the later watched_at
--- (MAX) so a stale or paginated response cannot regress a newer local timestamp, and
--- synced_at is bumped to mark the row as seen by this pull (see deleteStaleWatchedEpisodes).
--- UPLOAD/DELETE rows are unflushed local writes and stay protected.
 upsertFromTrakt:
 INSERT INTO watched_episodes(
     show_id, episode_id, season_number, episode_number, watched_at, trakt_id, synced_at, pending_action

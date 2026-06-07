@@ -12,12 +12,6 @@ import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
 import kotlin.time.Instant
 
-/**
- * Trakt adapter for [RemoteActivitySource], contributed into the multibound set of sources.
- *
- * Maps [TraktLastActivitiesResponse] onto the provider-neutral [ActivityType] timestamps the sync
- * layer consumes.
- */
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class TraktRemoteActivitySource(

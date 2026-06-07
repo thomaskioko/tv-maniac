@@ -11,8 +11,8 @@ public interface ProviderScoped {
 }
 
 /**
- *  Source serving the active account, or null when no provider is connected or none serves it.
- * */
+ * Returns the source serving the active account, or null when no provider is connected or none serves it.
+ */
 public fun <T : ProviderScoped> Set<T>.getActiveProvider(
     connectedAccountRepository: ConnectedAccountRepository,
 ): T? = firstOrNull { it.provider == connectedAccountRepository.getActiveProvider() }
