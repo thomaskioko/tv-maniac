@@ -9,7 +9,7 @@ import dev.zacsweers.metro.SingleIn
 
 @SingleIn(ActivityScope::class)
 @ContributesIntoSet(ActivityScope::class)
-public class TraktAuthManagerAdapter(
+public class TraktAccountAuthManager(
     private val traktAuthManager: TraktAuthManager,
 ) : AuthManager {
 
