@@ -67,21 +67,6 @@ jobs:
                     name: dependency-health-report
                     path: '**/build/reports/dependency-analysis/build-health-report.txt'
 
-    static-analysis:
-        needs: [spotless, lint, dependency-health]
-        if: always()
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Verify static checks passed
-                run: |
-                    if [ "${{ needs.spotless.result }}" != "success" ] || \
-                       [ "${{ needs.lint.result }}" != "success" ] || \
-                       [ "${{ needs.dependency-health.result }}" != "success" ]; then
-                      echo "::error::Static checks failed (spotless=${{ needs.spotless.result }}, lint=${{ needs.lint.result }}, dependency-health=${{ needs.dependency-health.result }})"
-                      exit 1
-                    fi
-                    echo "All static checks passed."
-
     swift-lint:
         runs-on: ubuntu-latest
         steps:
