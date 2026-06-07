@@ -12,6 +12,7 @@ kotlin {
 
         commonMain {
             dependencies {
+                api(projects.data.accountManager.api)
                 api(libs.coroutines.core)
             }
         }
