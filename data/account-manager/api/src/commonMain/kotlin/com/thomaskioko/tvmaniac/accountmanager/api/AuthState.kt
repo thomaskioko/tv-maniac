@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.traktauth.api
+package com.thomaskioko.tvmaniac.accountmanager.api
 
 import kotlin.time.Clock
 import kotlin.time.Instant

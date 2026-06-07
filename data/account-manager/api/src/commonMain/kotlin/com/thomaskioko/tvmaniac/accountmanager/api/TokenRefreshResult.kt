@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.traktauth.api
+package com.thomaskioko.tvmaniac.accountmanager.api
 
 public sealed interface TokenRefreshResult {
     public data object NotLoggedIn : TokenRefreshResult
