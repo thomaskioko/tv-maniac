@@ -57,9 +57,8 @@ public inline fun <Key : Any, reified Output : Any> apiFetcher(
  * This handles the case where the user is not logged in and the endpoint requires
  * authentication. The request is skipped as a no-op rather than surfacing an error.
  *
- * Note: Token expiry for authenticated users is handled upstream by Ktor's Auth plugin,
- * which triggers [TraktAuthRepository.refreshTokens] and emits [AuthError.TokenExpired]
- * for the presentation layer to handle.
+ * Note: Token expiry for authenticated users is handled upstream by the active provider's Ktor
+ * Auth plugin, which refreshes the token and surfaces a session-expired error to the presentation layer.
  *
  * @param onSkipped Optional callback invoked with a message when a fetch is skipped
  *   due to missing authentication. Useful for debug logging.
@@ -81,9 +80,8 @@ public suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(
  * This handles the case where the user is not logged in and the endpoint requires
  * authentication. The request is skipped as a no-op rather than surfacing an error.
  *
- * Note: Token expiry for authenticated users is handled upstream by Ktor's Auth plugin,
- * which triggers [TraktAuthRepository.refreshTokens] and emits [AuthError.TokenExpired]
- * for the presentation layer to handle.
+ * Note: Token expiry for authenticated users is handled upstream by the active provider's Ktor
+ * Auth plugin, which refreshes the token and surfaces a session-expired error to the presentation layer.
  *
  * @param onSkipped Optional callback invoked with a message when a fetch is skipped
  *   due to missing authentication. Useful for debug logging.
