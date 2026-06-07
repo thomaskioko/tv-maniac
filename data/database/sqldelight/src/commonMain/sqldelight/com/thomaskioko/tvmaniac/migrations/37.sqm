@@ -2,6 +2,7 @@
 -- Drops episode.trakt_id and clears the Trakt-keyed episode/season rows (and their re-fetchable
 -- child metadata) so TMDB-keyed rows repopulate without colliding on (show, season_number).
 -- watched_episodes is preserved; its episode_id is nulled and re-resolves by (show, season, episode).
+-- last_requests freshness for the wiped data is cleared so the offline-first Stores/workers re-fetch it.
 -- Runs with foreign keys off (Android enables them after migrate; iOS migrates foreignKeys=false then
 -- reopens), so clearing parents does not cascade into watched_episodes.
 
@@ -40,6 +41,9 @@ DELETE FROM casts;
 DELETE FROM episode_image;
 DELETE FROM season_images;
 DELETE FROM season_videos;
+
+-- Clear request freshness so the offline-first Stores/workers see the wiped data as stale and re-fetch.
+DELETE FROM last_requests;
 
 UPDATE watched_episodes SET episode_id = NULL;
 

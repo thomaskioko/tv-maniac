@@ -43,11 +43,17 @@ class Migration37Test {
                 episodeNumber = 1,
                 pendingAction = "UPLOAD",
             )
+            driver.execute(
+                identifier = null,
+                sql = "INSERT INTO last_requests (entity_id, request_type, timestamp) VALUES (100, 'SHOW_DETAILS', 1700000000000)",
+                parameters = 0,
+            )
 
             migrateToVersion(driver, oldVersion = 37, newVersion = 38)
 
             driver.rowCount("episode") shouldBe 0L
             driver.rowCount("season") shouldBe 0L
+            driver.rowCount("last_requests") shouldBe 0L
 
             val watched = driver.watchedRows()
             watched.size shouldBe 1
