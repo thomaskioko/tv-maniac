@@ -6,11 +6,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TimePeriod
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktGenreResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSearchResult
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
@@ -135,36 +132,6 @@ public class DefaultTraktShowsRemoteDataSource(
                 path("shows/$showId")
             }
             parameter("extended", "full")
-        }
-
-    override suspend fun getShowSeasons(showId: Long): ApiResponse<List<TraktSeasonsResponse>> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("shows/$showId/seasons")
-            }
-            parameter("extended", "full")
-        }
-
-    override suspend fun getShowSeasonEpisodes(
-        showId: Long,
-        seasonNumber: Int,
-    ): ApiResponse<List<TraktEpisodesResponse>> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("shows/$showId/seasons/$seasonNumber")
-            }
-            parameter("extended", "full")
-        }
-
-    override suspend fun getSeasonsWithEpisodes(showId: Long): ApiResponse<List<TraktSeasonEpisodesResponse>> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("shows/$showId/seasons")
-            }
-            parameter("extended", "full,episodes")
         }
 
     override suspend fun getShowByTmdbId(tmdbId: Long): ApiResponse<List<TraktSearchResult>> =
