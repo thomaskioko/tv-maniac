@@ -9,6 +9,7 @@ public interface AccountManager {
     public val accounts: Flow<List<ConnectedAccount>>
     public val activeAccount: Flow<ConnectedAccount?>
     public val authError: Flow<AuthError?>
+    public val activeAuthState: Flow<AuthState?>
 
     public fun getActiveProvider(): AccountProvider?
 

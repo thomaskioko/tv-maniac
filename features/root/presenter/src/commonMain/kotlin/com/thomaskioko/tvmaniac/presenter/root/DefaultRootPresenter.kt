@@ -43,7 +43,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.toTheme
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -74,7 +73,6 @@ public class DefaultRootPresenter(
     private val navDestinations: Set<NavDestination<*>>,
     homeGraphFactory: HomeScreenGraph.Factory,
     private val notificationRationale: NotificationRationale,
-    private val traktAuthRepository: TraktAuthRepository,
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
@@ -102,11 +100,11 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
-            traktAuthRepository.authError
+            accountManager.authError
                 .filterIsInstance<AuthError.TokenExpired>()
                 .collectLatest {
-                    when (traktAuthRepository.refreshTokens()) {
-                        is TokenRefreshResult.Success -> traktAuthRepository.setAuthError(null)
+                    when (accountManager.refreshActiveTokens()) {
+                        is TokenRefreshResult.Success -> accountManager.setAuthError(null)
                         else -> logoutInteractor.executeSync(Unit)
                     }
                 }

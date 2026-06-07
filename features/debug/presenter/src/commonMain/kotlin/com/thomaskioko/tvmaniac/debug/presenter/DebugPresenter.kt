@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.debug.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -23,7 +23,6 @@ import com.thomaskioko.tvmaniac.featureflags.nav.FeatureFlagsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -55,7 +54,7 @@ public class DebugPresenter(
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
-    traktAuthRepository: TraktAuthRepository,
+    accountManager: AccountManager,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -74,13 +73,12 @@ public class DebugPresenter(
         datastoreRepository.observeLastUpNextSyncTimestamp(),
         datastoreRepository.observeLastTokenRefreshTimestamp(),
         uiMessageManager.message,
-        traktAuthRepository.state,
-        traktAuthRepository.authState,
+        accountManager.isConnected,
+        accountManager.activeAuthState,
     ) {
             isSchedulingDebugNotification, isSchedulingDelayedNotification, isSyncingLibrary, isSyncingUpNext,
-            lastLibrarySyncDate, lastUpNextSyncDate, lastTokenRefreshDate, message, traktAuthState, authState,
+            lastLibrarySyncDate, lastUpNextSyncDate, lastTokenRefreshDate, message, isLoggedIn, authState,
         ->
-        val isLoggedIn = traktAuthState == AccountAuthState.LOGGED_IN
         val tokenSubtitle = formatTokenStatus(
             isLoggedIn = isLoggedIn,
             lastTokenRefreshTimestamp = lastTokenRefreshDate,

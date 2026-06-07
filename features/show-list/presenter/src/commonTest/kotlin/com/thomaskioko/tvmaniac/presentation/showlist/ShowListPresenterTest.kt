@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -16,7 +17,6 @@ import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import com.thomaskioko.tvmaniac.traktlists.api.TraktList
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import io.kotest.matchers.collections.shouldHaveSize
@@ -41,7 +41,7 @@ internal class ShowListPresenterTest {
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val traktListRepository = FakeTraktListRepository()
     private val accountManager = FakeAccountManager()
-    private val traktAuthManager = FakeTraktAuthManager()
+    private val authManager = FakeAuthManager()
     private val userRepository = FakeUserRepository()
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
@@ -191,7 +191,7 @@ internal class ShowListPresenterTest {
     @Test
     fun `should launch web view given Login is dispatched`() = runTest {
         var launchCount = 0
-        traktAuthManager.setOnLaunchWebView { launchCount += 1 }
+        authManager.setOnLaunchWebView { launchCount += 1 }
 
         val presenter = createPresenter()
 
@@ -465,7 +465,7 @@ internal class ShowListPresenterTest {
         observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
         navigator = navigator,
         accountManager = accountManager,
-        traktAuthManager = traktAuthManager,
+        authManagers = setOf(authManager),
         syncTraktListsInteractor = SyncTraktListsInteractor(traktListRepository, userRepository),
         createTraktListInteractor = CreateTraktListInteractor(traktListRepository, userRepository),
         toggleShowInListInteractor = ToggleShowInListInteractor(traktListRepository, userRepository),

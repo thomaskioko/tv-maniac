@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
@@ -29,8 +30,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
@@ -49,7 +48,6 @@ class SettingsPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val datastoreRepository = FakeDatastoreRepository()
     private val dateTimeProvider = FakeDateTimeProvider()
-    private val traktAuthRepository = FakeTraktAuthRepository()
     private val accountManager = FakeAccountManager()
     private val userRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
@@ -57,7 +55,7 @@ class SettingsPresenterTest {
     private val fakeRequestManagerRepository = FakeRequestManagerRepository()
     private val fakeLogger = FakeLogger()
     private val localizer = FakeLocalizer()
-    private val traktAuthManager = FakeTraktAuthManager()
+    private val authManager = FakeAuthManager()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -72,9 +70,9 @@ class SettingsPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = fakeLogger,
-            traktAuthManager = traktAuthManager,
+            authManagers = setOf(authManager),
             logoutInteractor = LogoutInteractor(
-                traktAuthRepository = traktAuthRepository,
+                accountManager = accountManager,
                 userRepository = userRepository,
                 datastoreRepository = datastoreRepository,
                 traktActivityRepository = fakeTraktActivityRepository,
@@ -227,7 +225,7 @@ class SettingsPresenterTest {
     @Test
     fun `should launch web view when login is clicked`() = runTest {
         var launched = false
-        traktAuthManager.setOnLaunchWebView { launched = true }
+        authManager.setOnLaunchWebView { launched = true }
 
         presenter.dispatch(TraktLoginClicked)
         testScheduler.advanceUntilIdle()

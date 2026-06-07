@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.accountmanager.implementation
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountAuthRepository
 import io.kotest.matchers.nulls.shouldBeNull
@@ -94,6 +95,25 @@ class DefaultAccountManagerTest {
             account?.provider shouldBe AccountProvider.TRAKT
             account?.isConnected shouldBe true
             account?.isActive shouldBe true
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should expose the active provider token state when logged in`() = runTest {
+        val authState = AuthState(
+            accessToken = "token",
+            refreshToken = "refresh",
+            isAuthorized = true,
+        )
+
+        accountManager.activeAuthState.test {
+            awaitItem().shouldBeNull()
+
+            traktRepository.setAuthState(authState)
+            traktRepository.setState(AccountAuthState.LOGGED_IN)
+            awaitItem() shouldBe authState
 
             cancelAndIgnoreRemainingEvents()
         }
