@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.util.columnNames
-import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
+import com.thomaskioko.tvmaniac.db.util.migrateToVersion
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.collections.shouldContain
@@ -16,7 +16,7 @@ class Migration36Test {
     @Test
     fun `should rename activity_checkpoint to activity_sync with a provider column`() {
         openSnapshot(version = 36).use { driver ->
-            migrateToCurrent(driver, oldVersion = 36)
+            migrateToVersion(driver, oldVersion = 36, newVersion = 37)
 
             val tables = driver.tableNames()
             tables shouldContain "activity_sync"
@@ -44,7 +44,7 @@ class Migration36Test {
                 parameters = 0,
             )
 
-            migrateToCurrent(driver, oldVersion = 36)
+            migrateToVersion(driver, oldVersion = 36, newVersion = 37)
 
             val rows = driver.activitySyncRows()
             rows shouldBe listOf(
