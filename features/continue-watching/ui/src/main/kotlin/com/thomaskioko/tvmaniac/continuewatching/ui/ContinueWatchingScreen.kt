@@ -65,7 +65,6 @@ import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableList
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
