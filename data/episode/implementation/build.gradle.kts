@@ -26,7 +26,6 @@ kotlin {
                 api(projects.data.followedshows.api)
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
-                api(projects.data.traktauth.api)
                 api(projects.data.upnext.api)
                 api(projects.data.watchStatus.api)
 

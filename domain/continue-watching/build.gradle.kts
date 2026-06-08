@@ -29,7 +29,6 @@ kotlin {
                 api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.requestManager.api)
-                api(projects.data.traktauth.api)
                 api(projects.data.upnext.api)
                 api(projects.domain.showdetails)
                 api(projects.domain.syncActivity)
