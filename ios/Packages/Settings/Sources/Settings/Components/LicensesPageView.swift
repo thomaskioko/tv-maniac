@@ -29,9 +29,9 @@ struct LicensesPageView: View {
 }
 
 #if DEBUG
-#Preview {
-    LicensesPageView(sections: SettingsPreviewSamples.licenseSections)
-        .padding()
-        .appPreview()
-}
+    #Preview {
+        LicensesPageView(sections: SettingsPreviewSamples.licenseSections)
+            .padding()
+            .appPreview()
+    }
 #endif

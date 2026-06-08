@@ -21,15 +21,15 @@ struct SettingsTogglesPageView: View {
 }
 
 #if DEBUG
-#Preview("Behavior") {
-    SettingsTogglesPageView(toggles: SettingsPreviewSamples.behaviorToggles)
-        .padding()
-        .appPreview()
-}
+    #Preview("Behavior") {
+        SettingsTogglesPageView(toggles: SettingsPreviewSamples.behaviorToggles)
+            .padding()
+            .appPreview()
+    }
 
-#Preview("Notifications") {
-    SettingsTogglesPageView(toggles: SettingsPreviewSamples.notificationToggles)
-        .padding()
-        .appPreview()
-}
+    #Preview("Notifications") {
+        SettingsTogglesPageView(toggles: SettingsPreviewSamples.notificationToggles)
+            .padding()
+            .appPreview()
+    }
 #endif

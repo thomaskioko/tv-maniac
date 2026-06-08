@@ -37,12 +37,12 @@ struct SettingsRootContentView: View {
 }
 
 #if DEBUG
-#Preview {
-    SettingsRootContentView(
-        sections: SettingsPreviewSamples.rootSections(authenticated: true),
-        versionFooter: "Version 1.0.0"
-    )
-    .padding()
-    .appPreview()
-}
+    #Preview {
+        SettingsRootContentView(
+            sections: SettingsPreviewSamples.rootSections(authenticated: true),
+            versionFooter: "Version 1.0.0"
+        )
+        .padding()
+        .appPreview()
+    }
 #endif

@@ -145,12 +145,12 @@ internal fun SettingsScreen(
                         SettingsPage.ROOT -> SettingsRootContent(state = state, onAction = onAction)
                         SettingsPage.APPEARANCE -> AppearancePage(
                             state = state,
-                            onAction = onAction
+                            onAction = onAction,
                         )
                         SettingsPage.BEHAVIOR -> BehaviorPage(state = state, onAction = onAction)
                         SettingsPage.NOTIFICATIONS -> NotificationsPage(
                             state = state,
-                            onAction = onAction
+                            onAction = onAction,
                         )
                         SettingsPage.PRIVACY -> PrivacyPage(state = state, onAction = onAction)
                         SettingsPage.INFO -> InfoPage(state = state, onAction = onAction)

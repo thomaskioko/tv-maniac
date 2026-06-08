@@ -68,15 +68,15 @@ struct TraktPageView: View {
 }
 
 #if DEBUG
-#Preview("Connected") {
-    TraktPageView(content: SettingsPreviewSamples.traktContent(authenticated: true))
-        .padding()
-        .appPreview()
-}
+    #Preview("Connected") {
+        TraktPageView(content: SettingsPreviewSamples.traktContent(authenticated: true))
+            .padding()
+            .appPreview()
+    }
 
-#Preview("Logged Out") {
-    TraktPageView(content: SettingsPreviewSamples.traktContent(authenticated: false))
-        .padding()
-        .appPreview()
-}
+    #Preview("Logged Out") {
+        TraktPageView(content: SettingsPreviewSamples.traktContent(authenticated: false))
+            .padding()
+            .appPreview()
+    }
 #endif

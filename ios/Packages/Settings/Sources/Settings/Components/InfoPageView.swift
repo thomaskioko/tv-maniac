@@ -56,9 +56,9 @@ struct InfoPageView: View {
 }
 
 #if DEBUG
-#Preview {
-    InfoPageView(content: SettingsPreviewSamples.infoContent)
-        .padding()
-        .appPreview()
-}
+    #Preview {
+        InfoPageView(content: SettingsPreviewSamples.infoContent)
+            .padding()
+            .appPreview()
+    }
 #endif

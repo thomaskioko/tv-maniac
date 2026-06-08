@@ -51,12 +51,12 @@ struct AppearancePageView<Theme: ThemeItem>: View {
 }
 
 #if DEBUG
-#Preview {
-    AppearancePageView(
-        themeItem: SettingsPreviewSamples.themeItem,
-        imageQualityItem: SettingsPreviewSamples.imageQualityItem
-    )
-    .padding()
-    .appPreview()
-}
+    #Preview {
+        AppearancePageView(
+            themeItem: SettingsPreviewSamples.themeItem,
+            imageQualityItem: SettingsPreviewSamples.imageQualityItem
+        )
+        .padding()
+        .appPreview()
+    }
 #endif

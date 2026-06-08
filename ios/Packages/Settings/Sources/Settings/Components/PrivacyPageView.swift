@@ -24,12 +24,12 @@ struct PrivacyPageView: View {
 }
 
 #if DEBUG
-#Preview {
-    PrivacyPageView(
-        toggles: SettingsPreviewSamples.privacyToggles,
-        links: SettingsPreviewSamples.privacyLinks
-    )
-    .padding()
-    .appPreview()
-}
+    #Preview {
+        PrivacyPageView(
+            toggles: SettingsPreviewSamples.privacyToggles,
+            links: SettingsPreviewSamples.privacyLinks
+        )
+        .padding()
+        .appPreview()
+    }
 #endif
