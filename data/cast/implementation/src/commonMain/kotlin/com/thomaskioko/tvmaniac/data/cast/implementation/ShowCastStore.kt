@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.Casts
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowCast
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_CAST
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -31,30 +32,31 @@ public class ShowCastStore(
     private val tmdbNetworkDataSource: TmdbShowsNetworkDataSource,
     private val tvShowsDao: TvShowsDao,
     private val castDao: CastDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowCast>> by storeBuilder(
-    fetcher = Fetcher.of { traktId: Long ->
+    fetcher = Fetcher.of { showId: Long ->
         coroutineScope {
-            val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
+            val tmdbId = tvShowsDao.getTmdbIdByShowId(showId)
 
             val traktDeferred = async {
-                traktRemoteDataSource.getShowPeople(traktId).getOrThrow()
+                traktRemoteDataSource.getShowPeople(showId).getOrThrow()
             }
             val tmdbCreditsDeferred = tmdbId?.let { id ->
                 async { tmdbNetworkDataSource.getShowCredits(id).getOrNull() }
             }
 
             val result = ShowCastResult(
-                showTraktId = traktId,
+                showId = showId,
                 traktPeople = traktDeferred.await(),
                 tmdbCredits = tmdbCreditsDeferred?.await(),
             )
 
             requestManagerRepository.upsert(
-                entityId = traktId,
+                entityId = showId,
                 requestType = SHOW_CAST.name,
             )
 
@@ -62,11 +64,14 @@ public class ShowCastStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowCastResult, List<ShowCast>>(
-        reader = { traktId: Long ->
-            castDao.observeShowCast(traktId)
+        reader = { showId: Long ->
+            castDao.observeShowCast(showId)
         },
-        writer = { traktId, result ->
+        writer = { showId, result ->
             databaseTransactionRunner {
+                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                    ?: return@databaseTransactionRunner
+
                 val tmdbCastMap = result.tmdbCredits?.cast
                     ?.associateBy { it.id.toLong() }
                     ?: emptyMap()
@@ -84,7 +89,7 @@ public class ShowCastStore(
                             Casts(
                                 id = Id(tmdbId),
                                 trakt_id = Id(person.ids.trakt),
-                                show_trakt_id = Id(traktId),
+                                show_id = internalShowId,
                                 season_id = null,
                                 name = person.name,
                                 character_name = castMember.characters.firstOrNull() ?: "",
@@ -104,9 +109,9 @@ public class ShowCastStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val traktId = result.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = traktId,
+                entityId = showId,
                 requestType = SHOW_CAST.name,
                 threshold = SHOW_CAST.duration,
             )

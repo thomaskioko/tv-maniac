@@ -34,8 +34,8 @@ public class DefaultCalendarDao(
 
     override fun upsert(entry: CalendarEntry) {
         database.calendarQueries.upsert(
-            show_trakt_id = Id<TraktId>(entry.showTraktId),
-            episode_trakt_id = entry.episodeTraktId,
+            show_trakt_id = Id<TraktId>(entry.showId),
+            episode_trakt_id = entry.episodeId,
             season_number = entry.seasonNumber.toLong(),
             episode_number = entry.episodeNumber.toLong(),
             episode_title = entry.episodeTitle,
@@ -64,8 +64,8 @@ public class DefaultCalendarDao(
 }
 
 private fun ObserveEntriesBetweenDates.toCalendarEntry(): CalendarEntry = CalendarEntry(
-    showTraktId = show_trakt_id.id,
-    episodeTraktId = episode_trakt_id,
+    showId = show_trakt_id.id,
+    episodeId = episode_trakt_id,
     seasonNumber = season_number.toInt(),
     episodeNumber = episode_number.toInt(),
     episodeTitle = episode_title,

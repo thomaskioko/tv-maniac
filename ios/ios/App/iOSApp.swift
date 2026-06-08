@@ -1,6 +1,7 @@
+import Components
 import DesignSystem
+import Root
 import SwiftUI
-import SwiftUIComponents
 import TvManiac
 import TvManiacKit
 
@@ -18,7 +19,7 @@ struct iOSApp: App {
     private let screenRegistry = ScreenRegistryBootstrap.makeRegistry()
 
     init() {
-        TvManiacTypographyScheme.configureMoko()
+        TvManiacTypographyScheme.configure()
     }
 
     @State private var dragOffsetX: CGFloat = 0
@@ -82,6 +83,7 @@ struct iOSApp: App {
                     }
                 }
                 .animation(.spring(), value: toastManager.toast)
+                .provideWidthSizeClass()
                 .onAppear {
                     setupAuthCoordinator()
                     appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)

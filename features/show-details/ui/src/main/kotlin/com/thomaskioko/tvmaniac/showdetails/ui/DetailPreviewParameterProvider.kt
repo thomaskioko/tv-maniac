@@ -54,7 +54,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ),
         similarShows = persistentListOf(
             ShowModel(
-                traktId = 1232,
+                showId = 1232,
                 title = "Loki",
                 posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                 backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -74,7 +74,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ContinueTrackingEpisodeModel(
             episodeId = 121L,
             seasonId = 1L,
-            showTraktId = 1L,
+            showId = 1L,
             episodeNumber = 1,
             seasonNumber = 2,
             episodeNumberFormatted = "S01 | E01",
@@ -87,7 +87,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ContinueTrackingEpisodeModel(
             episodeId = 122L,
             seasonId = 1L,
-            showTraktId = 1L,
+            showId = 1L,
             episodeNumber = 2,
             seasonNumber = 2,
             episodeNumberFormatted = "S01 | E02",
@@ -100,7 +100,7 @@ internal val showDetailsContent = ShowDetailsContent(
         ContinueTrackingEpisodeModel(
             episodeId = 123L,
             seasonId = 1L,
-            showTraktId = 1L,
+            showId = 1L,
             episodeNumber = 3,
             seasonNumber = 2,
             episodeNumberFormatted = "S01 | E03",

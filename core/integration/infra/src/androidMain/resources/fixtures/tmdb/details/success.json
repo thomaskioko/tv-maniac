@@ -28,7 +28,28 @@
     "overview": "When Walter White is diagnosed with terminal cancer, he turns to a life of crime.",
     "popularity": 200.0,
     "poster_path": "/ggFHVNu6YYI5L9pCfOacjizRGt.jpg",
-    "seasons": [],
+    "seasons": [
+        {
+            "air_date": "2008-01-20",
+            "episode_count": 7,
+            "id": 3572,
+            "name": "Season 1",
+            "overview": "High school chemistry teacher Walter White turns to a life of crime.",
+            "poster_path": "/season1/poster.jpg",
+            "season_number": 1,
+            "vote_average": 8.5
+        },
+        {
+            "air_date": "2009-03-08",
+            "episode_count": 2,
+            "id": 3573,
+            "name": "Season 2",
+            "overview": "Walt and Jesse expand their operation amid growing danger.",
+            "poster_path": "/season2/poster.jpg",
+            "season_number": 2,
+            "vote_average": 8.6
+        }
+    ],
     "status": "Ended",
     "vote_average": 8.9,
     "vote_count": 10000,

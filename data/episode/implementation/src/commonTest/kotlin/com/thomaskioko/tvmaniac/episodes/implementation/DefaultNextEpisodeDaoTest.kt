@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultNextEpisodeDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -41,6 +42,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var nextEpisodeDao: NextEpisodeDao
+    private val showIdByTraktId = mutableMapOf<Long, Id<ShowId>>()
 
     @BeforeTest
     fun setup() {
@@ -67,14 +69,14 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             watchlistEpisodes.size shouldBe 2
 
             val show2Episode = watchlistEpisodes[0]
-            show2Episode.showTraktId shouldBe 2L
+            show2Episode.showId shouldBe 2L
             show2Episode.showName shouldBe "Test Show 2"
             show2Episode.episodeName shouldBe "Show 2 Episode 1"
             show2Episode.seasonNumber shouldBe 1
             show2Episode.episodeNumber shouldBe 1
 
             val show1Episode = watchlistEpisodes[1]
-            show1Episode.showTraktId shouldBe 1L
+            show1Episode.showId shouldBe 1L
             show1Episode.showName shouldBe "Test Show 1"
             show1Episode.episodeName shouldBe "Episode 2"
             show1Episode.seasonNumber shouldBe 1
@@ -91,7 +93,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             episodes.size shouldBe 1
 
             val nextEpisode = episodes[0]
-            nextEpisode.showTraktId shouldBe 1L
+            nextEpisode.showId shouldBe 1L
             nextEpisode.showName shouldBe "Test Show 1"
             nextEpisode.episodeName shouldBe "Episode 1"
             nextEpisode.seasonNumber shouldBe 1
@@ -136,7 +138,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 2L
+            episodes[0].showId shouldBe 2L
             episodes[0].showName shouldBe "Test Show 2"
         }
     }
@@ -182,7 +184,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
-            episodes1[0].showTraktId shouldBe 1L
+            episodes1[0].showId shouldBe 1L
             episodes1[0].showName shouldBe "Test Show 1"
 
             followShow(showId = 2L, followedAt = watchDate + 1000)
@@ -190,10 +192,10 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             val episodes2 = awaitItem()
             episodes2.size shouldBe 2
 
-            episodes2[0].showTraktId shouldBe 2L
+            episodes2[0].showId shouldBe 2L
             episodes2[0].showName shouldBe "Test Show 2"
 
-            episodes2[1].showTraktId shouldBe 1L
+            episodes2[1].showId shouldBe 1L
             episodes2[1].showName shouldBe "Test Show 1"
         }
     }
@@ -222,7 +224,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes1 = awaitItem()
             episodes1.size shouldBe 1
-            episodes1[0].showTraktId shouldBe 5L
+            episodes1[0].showId shouldBe 5L
             episodes1[0].showName shouldBe "Breaking Bad"
             episodes1[0].episodeName shouldBe "Pilot"
             episodes1[0].seasonNumber shouldBe 1
@@ -233,13 +235,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             val episodes2 = awaitItem()
             episodes2.size shouldBe 2
 
-            episodes2[0].showTraktId shouldBe 6L
+            episodes2[0].showId shouldBe 6L
             episodes2[0].showName shouldBe "Game of Thrones"
             episodes2[0].episodeName shouldBe "Winter Is Coming"
             episodes2[0].seasonNumber shouldBe 1
             episodes2[0].episodeNumber shouldBe 1
 
-            episodes2[1].showTraktId shouldBe 5L
+            episodes2[1].showId shouldBe 5L
             episodes2[1].showName shouldBe "Breaking Bad"
             episodes2[1].episodeName shouldBe "Pilot"
             episodes2[1].seasonNumber shouldBe 1
@@ -337,8 +339,8 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 2
-            episodes[0].showTraktId shouldBe 2L
-            episodes[1].showTraktId shouldBe 1L
+            episodes[0].showId shouldBe 2L
+            episodes[1].showId shouldBe 1L
         }
     }
 
@@ -483,7 +485,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 1L
+            episodes[0].showId shouldBe 1L
             episodes[0].episodeName shouldBe "Episode 2"
         }
     }
@@ -504,7 +506,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 12L
+            episodes[0].showId shouldBe 12L
             episodes[0].episodeNumber shouldBe 9L
             episodes[0].watchedCount shouldBe 8L
             episodes[0].totalCount shouldBe 10L
@@ -527,7 +529,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 12L
+            episodes[0].showId shouldBe 12L
             episodes[0].episodeNumber shouldBe 9L
             episodes[0].watchedCount shouldBe 8L
             episodes[0].totalCount shouldBe 10L
@@ -564,7 +566,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
             val episodes = awaitItem()
             episodes.size shouldBe 1
-            episodes[0].showTraktId shouldBe 12L
+            episodes[0].showId shouldBe 12L
             episodes[0].episodeNumber shouldBe 9L
             episodes[0].watchedCount shouldBe 6L
             episodes[0].totalCount shouldBe 10L
@@ -613,16 +615,16 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun followShow(showId: Long, followedAt: Long) {
+        val resolvedShowId = showIdByTraktId.getValue(showId)
         database.transaction {
             database.followedShowsQueries.upsert(
-                id = null,
-                traktId = Id(showId),
+                showId = resolvedShowId,
                 tmdbId = Id(showId),
                 followedAt = followedAt,
                 pendingAction = "NOTHING",
             )
-            database.traktContinueWatchingQueries.upsert(
-                traktId = Id(showId),
+            database.continueWatchingQueries.upsert(
+                showId = resolvedShowId,
                 tmdbId = Id(showId),
                 airedEpisodes = 0L,
                 completedCount = 1L,
@@ -635,9 +637,9 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun followShowOnly(showId: Long, followedAt: Long) {
+        val resolvedShowId = showIdByTraktId.getValue(showId)
         val _ = database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id(showId),
+            showId = resolvedShowId,
             tmdbId = Id(showId),
             followedAt = followedAt,
             pendingAction = "NOTHING",
@@ -652,7 +654,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -670,7 +672,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         val _ = database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -686,7 +688,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         status: String = "Returning Series",
     ) {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(id),
             tmdb_id = Id(id),
             name = name,
             overview = overview,
@@ -701,6 +702,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = "/$id-back.jpg",
         )
+        showIdByTraktId[id] = showIdForTraktId(id)
     }
 
     private fun insertSeason(
@@ -712,7 +714,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     ) {
         val _ = database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             season_number = seasonNumber,
             title = title,
             overview = "Overview for $title",
@@ -732,7 +734,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         val _ = database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
@@ -740,7 +742,6 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/ep$episodeId.jpg",
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = firstAired,
         )
     }
@@ -790,13 +791,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShow(id = 2, name = "Test Show 2", status = "Ended")
 
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id(1),
+            show_id = showIdByTraktId.getValue(1L),
             season_count = 1,
             episode_count = 3,
             status = "Returning Series",
         )
         val _ = database.showMetadataQueries.upsert(
-            show_trakt_id = Id(2),
+            show_id = showIdByTraktId.getValue(2L),
             season_count = 1,
             episode_count = 2,
             status = "Ended",
@@ -845,7 +846,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         watchedAt: Long = watchDate,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = null,
             season_number = seasonNumber,
             episode_number = episodeNumber,

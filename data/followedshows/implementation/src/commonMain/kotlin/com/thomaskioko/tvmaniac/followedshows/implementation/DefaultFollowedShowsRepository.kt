@@ -26,36 +26,35 @@ public class DefaultFollowedShowsRepository(
     override suspend fun getFollowedShows(): List<FollowedShowEntry> =
         withContext(dispatchers.io) { followedShowsDao.entries() }
 
-    override suspend fun addFollowedShow(traktId: Long) {
+    override suspend fun addFollowedShow(showId: Long) {
         withContext(dispatchers.io) {
             transactionRunner {
-                val existingEntry = followedShowsDao.entryWithTraktId(traktId)
+                val existingEntry = followedShowsDao.entryWithTraktId(showId)
                 if (existingEntry == null || existingEntry.pendingAction == PendingAction.DELETE) {
                     val _ = followedShowsDao.upsert(
                         FollowedShowEntry(
-                            id = existingEntry?.id ?: 0,
-                            traktId = traktId,
+                            showId = showId,
                             tmdbId = existingEntry?.tmdbId,
                             followedAt = dateTimeProvider.now(),
                             pendingAction = PendingAction.UPLOAD,
                         ),
                     )
-                    logger.debug(TAG, "Marked show $traktId for upload")
+                    logger.debug(TAG, "Marked show $showId for upload")
                 }
             }
         }
     }
 
-    override suspend fun removeFollowedShow(traktId: Long) {
+    override suspend fun removeFollowedShow(showId: Long) {
         withContext(dispatchers.io) {
             transactionRunner {
-                followedShowsDao.entryWithTraktId(traktId)?.also { entry ->
+                followedShowsDao.entryWithTraktId(showId)?.also { entry ->
                     if (entry.pendingAction == PendingAction.UPLOAD) {
                         followedShowsDao.deleteById(entry.id)
-                        logger.debug(TAG, "Deleted local-only show $traktId")
+                        logger.debug(TAG, "Deleted local-only show $showId")
                     } else {
                         val _ = followedShowsDao.upsert(entry.copy(pendingAction = PendingAction.DELETE))
-                        logger.debug(TAG, "Marked show $traktId for deletion")
+                        logger.debug(TAG, "Marked show $showId for deletion")
                     }
                 }
             }

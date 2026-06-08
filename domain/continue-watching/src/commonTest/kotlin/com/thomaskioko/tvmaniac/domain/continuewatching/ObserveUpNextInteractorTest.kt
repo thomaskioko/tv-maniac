@@ -34,41 +34,41 @@ class ObserveUpNextInteractorTest {
 
     @Test
     fun `should sort shows by last watched descending`() = runTest {
-        val watchedNow = createEpisode(showTraktId = 1, lastWatchedAt = 5_000L)
-        val watchedEarlier = createEpisode(showTraktId = 2, lastWatchedAt = 2_000L)
-        val watchedLongAgo = createEpisode(showTraktId = 3, lastWatchedAt = 1_000L)
+        val watchedNow = createEpisode(showId = 1, lastWatchedAt = 5_000L)
+        val watchedEarlier = createEpisode(showId = 2, lastWatchedAt = 2_000L)
+        val watchedLongAgo = createEpisode(showId = 3, lastWatchedAt = 1_000L)
         repository.setNextEpisodesForWatchlist(listOf(watchedEarlier, watchedLongAgo, watchedNow))
         repository.setUpNextSortOption(UpNextSortOption.LAST_WATCHED.name)
 
         interactor.flow.test {
-            awaitItem().episodes.map { it.showTraktId } shouldBe listOf(1L, 2L, 3L)
+            awaitItem().episodes.map { it.showId } shouldBe listOf(1L, 2L, 3L)
         }
     }
 
     @Test
     fun `should sort by air date descending when sort option is air date`() = runTest {
-        val airedNow = createEpisode(showTraktId = 1, firstAired = 5_000L)
-        val airedEarlier = createEpisode(showTraktId = 2, firstAired = 2_000L)
+        val airedNow = createEpisode(showId = 1, firstAired = 5_000L)
+        val airedEarlier = createEpisode(showId = 2, firstAired = 2_000L)
         repository.setNextEpisodesForWatchlist(listOf(airedEarlier, airedNow))
         repository.setUpNextSortOption(UpNextSortOption.AIR_DATE.name)
 
         interactor.flow.test {
-            awaitItem().episodes.map { it.showTraktId } shouldBe listOf(1L, 2L)
+            awaitItem().episodes.map { it.showId } shouldBe listOf(1L, 2L)
         }
     }
 
     private fun createEpisode(
-        showTraktId: Long,
+        showId: Long,
         lastWatchedAt: Long? = null,
         firstAired: Long? = null,
     ) = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
-        showName = "Show $showTraktId",
+        showId = showId,
+        showTmdbId = showId,
+        showName = "Show $showId",
         showPoster = null,
         showStatus = null,
         showYear = null,
-        episodeId = showTraktId * 100,
+        episodeId = showId * 100,
         episodeName = "Episode",
         seasonId = 1L,
         seasonNumber = 1L,

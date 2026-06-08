@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
@@ -42,113 +43,117 @@ public class DefaultEpisodeRepository(
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
         episodesDao.observeEpisodeById(episodeId)
 
+    override fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>> =
+        watchedEpisodeDao.observeRecentlyWatched(limit)
+            .distinctUntilChanged()
+
     override suspend fun markEpisodeAsWatched(
-        showTraktId: Long,
+        showId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markAsWatched(
-            showTraktId = showTraktId,
+            showId = showId,
             episodeId = episodeId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
 
-        launchSyncReporting { SyncError.MarkWatchedFailed(showTraktId, it) }
+        launchSyncReporting { SyncError.MarkWatchedFailed(showId, it) }
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
-        showTraktId: Long,
+        showId: Long,
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
     ) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markEpisodeAndPreviousAsWatched(
-            showTraktId = showTraktId,
+            showId = showId,
             episodeId = episodeId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
 
-        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
+        launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
     }
 
-    override suspend fun markEpisodeAsUnwatched(showTraktId: Long, episodeId: Long) {
+    override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markAsUnwatched(
-            showTraktId = showTraktId,
+            showId = showId,
             episodeId = episodeId,
             includeSpecials = includeSpecials,
         )
 
-        launchSyncReporting { SyncError.MarkUnwatchedFailed(showTraktId, it) }
+        launchSyncReporting { SyncError.MarkUnwatchedFailed(showId, it) }
     }
 
     override fun observeSeasonWatchProgress(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     ): Flow<SeasonWatchProgress> =
-        watchedEpisodeDao.observeSeasonWatchProgress(showTraktId, seasonNumber)
+        watchedEpisodeDao.observeSeasonWatchProgress(showId, seasonNumber)
             .distinctUntilChanged()
 
-    override fun observeShowWatchProgress(showTraktId: Long): Flow<ShowWatchProgress> =
-        watchedEpisodeDao.observeShowWatchProgress(showTraktId)
+    override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> =
+        watchedEpisodeDao.observeShowWatchProgress(showId)
             .distinctUntilChanged()
 
-    override fun observeAllSeasonsWatchProgress(showTraktId: Long): Flow<List<SeasonWatchProgress>> =
-        watchedEpisodeDao.observeAllSeasonsWatchProgress(showTraktId)
+    override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> =
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(showId)
             .distinctUntilChanged()
 
     override suspend fun markSeasonWatched(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     ) {
         val includeSpecials = getIncludeSpecials()
-        val episodes = watchedEpisodeDao.getEpisodesForSeason(showTraktId, seasonNumber)
+        val episodes = watchedEpisodeDao.getEpisodesForSeason(showId, seasonNumber)
         watchedEpisodeDao.markSeasonAsWatched(
-            showTraktId = showTraktId,
+            showId = showId,
             seasonNumber = seasonNumber,
             episodes = episodes,
             includeSpecials = includeSpecials,
         )
 
-        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
+        launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     ) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markSeasonAndPreviousAsWatched(
-            showTraktId = showTraktId,
+            showId = showId,
             seasonNumber = seasonNumber,
             includeSpecials = includeSpecials,
         )
 
-        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
+        launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
     }
 
-    override suspend fun markSeasonUnwatched(showTraktId: Long, seasonNumber: Long) {
+    override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {
         val includeSpecials = getIncludeSpecials()
-        watchedEpisodeDao.markSeasonAsUnwatched(showTraktId, seasonNumber, includeSpecials)
+        watchedEpisodeDao.markSeasonAsUnwatched(showId, seasonNumber, includeSpecials)
 
-        launchSyncReporting { SyncError.BatchMarkFailed(showTraktId, it) }
+        launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeUnwatchedCountInPreviousSeasons(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
     ): Flow<Long> = datastoreRepository.observeIncludeSpecials()
         .flatMapLatest { includeSpecials ->
             watchedEpisodeDao.observeUnwatchedCountInPreviousSeasons(
-                showTraktId,
+                showId,
                 seasonNumber,
                 includeSpecials,
             )
@@ -163,7 +168,7 @@ public class DefaultEpisodeRepository(
                     UpcomingEpisode(
                         episodeId = episode.episode_id.id,
                         seasonId = episode.season_id.id,
-                        showId = episode.show_trakt_id.id,
+                        showId = episode.show_trakt_id,
                         episodeNumber = episode.episode_number,
                         seasonNumber = episode.season_number,
                         title = episode.title,

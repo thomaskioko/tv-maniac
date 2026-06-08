@@ -33,12 +33,12 @@ public class DefaultTraktListRepository(
 ) : TraktListRepository {
 
     override fun observeLists(): Flow<List<TraktListEntity>> =
-        traktListDao.observeAll().distinctUntilChanged()
+        traktListDao.observeListsWithPosters().distinctUntilChanged()
 
-    override fun observeListsForShow(traktShowId: Long): Flow<List<TraktList>> =
+    override fun observeListsForShow(showId: Long): Flow<List<TraktList>> =
         combine(
             traktListDao.observeAll(),
-            traktListShowDao.observeByShowTraktId(traktShowId),
+            traktListShowDao.observeByShowId(showId),
             traktListShowDao.observeActiveCountByListId(),
         ) { lists, showEntries, activeCounts ->
             val activeEntryListIds = showEntries
@@ -86,25 +86,25 @@ public class DefaultTraktListRepository(
         createTraktListStore.fresh(key = CreateTraktListParams(slug = slug, name = name))
     }
 
-    override suspend fun toggleShowInList(slug: String, listId: Long, traktShowId: Long, isCurrentlyInList: Boolean) {
+    override suspend fun toggleShowInList(slug: String, listId: Long, showId: Long, isCurrentlyInList: Boolean) {
         withContext(dispatchers.io) {
             if (isCurrentlyInList) {
                 traktListShowDao.updatePendingAction(
                     listId = listId,
-                    showTraktId = traktShowId,
+                    showId = showId,
                     pendingAction = PendingAction.DELETE.value,
                 )
-                when (traktListRemoteDataSource.removeShowFromList(slug, listId, traktShowId)) {
+                when (traktListRemoteDataSource.removeShowFromList(slug, listId, showId)) {
                     is ApiResponse.Success -> {
                         traktListShowDao.deleteByListIdAndShowId(
                             listId = listId,
-                            showTraktId = traktShowId,
+                            showId = showId,
                         )
                     }
                     else -> {
                         traktListShowDao.updatePendingAction(
                             listId = listId,
-                            showTraktId = traktShowId,
+                            showId = showId,
                             pendingAction = PendingAction.NOTHING.value,
                         )
                     }
@@ -112,22 +112,22 @@ public class DefaultTraktListRepository(
             } else {
                 traktListShowDao.upsert(
                     listId = listId,
-                    showTraktId = traktShowId,
+                    showId = showId,
                     listedAt = "",
                     pendingAction = PendingAction.UPLOAD.value,
                 )
-                when (traktListRemoteDataSource.addShowToList(slug, listId, traktShowId)) {
+                when (traktListRemoteDataSource.addShowToList(slug, listId, showId)) {
                     is ApiResponse.Success -> {
                         traktListShowDao.updatePendingAction(
                             listId = listId,
-                            showTraktId = traktShowId,
+                            showId = showId,
                             pendingAction = PendingAction.NOTHING.value,
                         )
                     }
                     else -> {
                         traktListShowDao.deleteByListIdAndShowId(
                             listId = listId,
-                            showTraktId = traktShowId,
+                            showId = showId,
                         )
                     }
                 }

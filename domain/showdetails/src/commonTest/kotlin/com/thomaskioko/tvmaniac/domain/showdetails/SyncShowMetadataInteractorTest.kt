@@ -35,17 +35,17 @@ class SyncShowMetadataInteractorTest {
     @Test
     fun `should fan out show details season details and watch providers for the given trakt id`() =
         runTest(testDispatcher) {
-            interactor.executeSync(SyncShowMetadataInteractor.Param(traktId = 1388L))
+            interactor.executeSync(SyncShowMetadataInteractor.Param(showId = 1388L))
 
             showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1388L)
             seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1388L)
-            watchProviderRepository.fetchInvocations().map { it.traktId } shouldBe listOf(1388L)
+            watchProviderRepository.fetchInvocations().map { it.showId } shouldBe listOf(1388L)
         }
 
     @Test
     fun `should propagate force refresh to every downstream repository`() = runTest(testDispatcher) {
         interactor.executeSync(
-            SyncShowMetadataInteractor.Param(traktId = 1388L, forceRefresh = true),
+            SyncShowMetadataInteractor.Param(showId = 1388L, forceRefresh = true),
         )
 
         showDetailsRepository.fetchInvocations().single().forceRefresh shouldBe true

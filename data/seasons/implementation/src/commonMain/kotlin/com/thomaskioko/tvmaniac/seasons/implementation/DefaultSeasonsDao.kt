@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.GetSeasonByShowAndNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.LatestSeasonPerFollowedShow
 import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
@@ -14,12 +15,14 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultSeasonsDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonsDao {
 
@@ -30,7 +33,7 @@ public class DefaultSeasonsDao(
         database.transaction {
             seasonQueries.upsert(
                 id = season.id,
-                show_trakt_id = season.show_trakt_id,
+                show_id = season.show_id,
                 season_number = season.season_number,
                 episode_count = season.episode_count,
                 title = season.title,
@@ -44,23 +47,27 @@ public class DefaultSeasonsDao(
         entityList.forEach { upsert(it) }
     }
 
-    override fun observeSeasonsByShowTraktId(showTraktId: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
-        return database.seasonsQueries.showSeasons(
-            showTraktId = Id(showTraktId),
+    override fun observeSeasonsByShowId(showId: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        return seasonQueries.showSeasons(
+            showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).asFlow().mapToList(dispatcher.io)
     }
 
-    override fun fetchShowSeasons(showTraktId: Long, includeSpecials: Boolean): List<ShowSeasons> =
-        database.seasonsQueries.showSeasons(
-            showTraktId = Id(showTraktId),
+    override fun fetchShowSeasons(showId: Long, includeSpecials: Boolean): List<ShowSeasons> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return emptyList()
+        return seasonQueries.showSeasons(
+            showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).executeAsList()
+    }
 
-    override suspend fun getSeasonByShowAndNumber(showTraktId: Long, seasonNumber: Long): GetSeasonByShowAndNumber? =
+    override suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber? =
         withContext(dispatcher.databaseRead) {
+            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext null
             seasonQueries.getSeasonByShowAndNumber(
-                showTraktId = Id(showTraktId),
+                showId = internalShowId,
                 seasonNumber = seasonNumber,
             ).executeAsOneOrNull()
         }
@@ -74,8 +81,9 @@ public class DefaultSeasonsDao(
         seasonQueries.updateImageUrl(image_url = imageUrl, id = Id(seasonId))
     }
 
-    override fun delete(showTraktId: Long) {
-        seasonQueries.delete(Id(showTraktId))
+    override fun delete(showId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        seasonQueries.delete(internalShowId)
     }
 
     override fun deleteAll() {

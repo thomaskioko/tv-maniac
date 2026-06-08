@@ -4,17 +4,17 @@ public sealed interface SyncError {
     public val cause: Throwable
 
     public data class MarkWatchedFailed(
-        public val showTraktId: Long,
+        public val showId: Long,
         override val cause: Throwable,
     ) : SyncError
 
     public data class MarkUnwatchedFailed(
-        public val showTraktId: Long,
+        public val showId: Long,
         override val cause: Throwable,
     ) : SyncError
 
     public data class BatchMarkFailed(
-        public val showTraktId: Long,
+        public val showId: Long,
         override val cause: Throwable,
     ) : SyncError
 

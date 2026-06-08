@@ -1,11 +1,11 @@
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
-import com.thomaskioko.tvmaniac.db.TraktId;
 import kotlin.String;
 import kotlin.collections.List;
 
 CREATE TABLE IF NOT EXISTS tvshow(
-    trakt_id INTEGER AS Id<TraktId> NOT NULL PRIMARY KEY,
+    id INTEGER AS Id<ShowId> NOT NULL PRIMARY KEY AUTOINCREMENT,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL UNIQUE,
     backdrop_path TEXT DEFAULT NULL,
     year TEXT DEFAULT NULL,
@@ -27,7 +27,6 @@ CREATE INDEX IF NOT EXISTS idx_tvshow_tmdb_id ON tvshow(tmdb_id);
 
 upsert:
 INSERT INTO tvshow(
-    trakt_id,
     tmdb_id,
     name,
     overview,
@@ -42,9 +41,8 @@ INSERT INTO tvshow(
     poster_path,
     backdrop_path
 )
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-ON CONFLICT(trakt_id) DO UPDATE SET
-    tmdb_id = excluded.tmdb_id,
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+ON CONFLICT(tmdb_id) DO UPDATE SET
     name = excluded.name,
     overview = excluded.overview,
     language = excluded.language,
@@ -60,7 +58,7 @@ ON CONFLICT(trakt_id) DO UPDATE SET
 
 tvshowDetails:
 SELECT
-    tvshow.trakt_id,
+    show_trakt.trakt_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.overview,
@@ -76,14 +74,15 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    tvshow.trakt_id = ?;
+    show_trakt.trakt_id = ?;
 
 tvshowDetailsByTmdbId:
 SELECT
-    tvshow.trakt_id,
+    show_trakt.trakt_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.overview,
@@ -99,14 +98,15 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     tvshow.tmdb_id = ?;
 
 searchShows:
 SELECT
-    tvshow.trakt_id,
+    show_trakt.trakt_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -117,8 +117,9 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     -- First try exact match on name start (most efficient, can use index)
     name LIKE ? || '%'
@@ -154,7 +155,7 @@ WHERE
 delete:
 DELETE
 FROM tvshow
-WHERE trakt_id = ?;
+WHERE id IN (SELECT show_id FROM show_trakt WHERE trakt_id = ?);
 
 deleteAll:
 DELETE FROM tvshow;
@@ -164,14 +165,14 @@ SELECT EXISTS(
     SELECT 1 FROM tvshow WHERE tmdb_id = ?
 );
 
-existsByTraktId:
+existsByShowId:
 SELECT EXISTS(
-    SELECT 1 FROM tvshow WHERE trakt_id = ?
+    SELECT 1 FROM show_trakt WHERE trakt_id = ?
 );
 
-showsByTraktIds:
+showsByIds:
 SELECT
-    tvshow.trakt_id,
+    show_trakt.trakt_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -179,13 +180,14 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
-WHERE tvshow.trakt_id IN ?;
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
+WHERE show_trakt.trakt_id IN ?;
 
 showsByTmdbIds:
 SELECT
-    tvshow.trakt_id,
+    show_trakt.trakt_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -193,15 +195,31 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE tvshow.tmdb_id IN ?;
 
-getTmdbIdByTraktId:
-SELECT tmdb_id FROM tvshow WHERE trakt_id = ?;
+getShowIdByTmdbId:
+SELECT id FROM tvshow WHERE tmdb_id = ?;
+
+getTmdbIdByShowId:
+SELECT tvshow.tmdb_id
+FROM tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+WHERE show_trakt.trakt_id = ?;
 
 getTraktIdByTmdbId:
-SELECT trakt_id FROM tvshow WHERE tmdb_id = ?;
+SELECT show_trakt.trakt_id
+FROM tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+WHERE tvshow.tmdb_id = ?;
+
+tvshowByTmdbId:
+SELECT * FROM tvshow WHERE tmdb_id = ?;
 
 tvshowByTraktId:
-SELECT * FROM tvshow WHERE trakt_id = ?;
+SELECT tvshow.*
+FROM tvshow
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+WHERE show_trakt.trakt_id = ?;

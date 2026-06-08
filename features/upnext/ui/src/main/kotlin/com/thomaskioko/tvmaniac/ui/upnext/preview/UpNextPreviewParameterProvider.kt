@@ -38,7 +38,7 @@ internal class UpNextStatePreviewParameterProvider : PreviewParameterProvider<Up
 internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<UpNextEpisodeUiModel> {
     override val values: Sequence<UpNextEpisodeUiModel> = sequenceOf(
         UpNextEpisodeUiModel(
-            showTraktId = 1,
+            showId = 1,
             showTmdbId = 1396,
             showName = "Breaking Bad",
             imageUrl = null,
@@ -61,7 +61,7 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
             formattedRuntime = "47m",
         ),
         UpNextEpisodeUiModel(
-            showTraktId = 2,
+            showId = 2,
             showTmdbId = 1399,
             showName = "Game of Thrones: A Very Long Title That Wraps",
             imageUrl = null,
@@ -84,7 +84,7 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
             formattedRuntime = "52m",
         ),
         UpNextEpisodeUiModel(
-            showTraktId = 3,
+            showId = 3,
             showTmdbId = 66732,
             showName = "Stranger Things",
             imageUrl = null,
@@ -111,7 +111,7 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
 
 private fun previewEpisodes() = listOf(
     UpNextEpisodeUiModel(
-        showTraktId = 1,
+        showId = 1,
         showTmdbId = 1396,
         showName = "Breaking Bad",
         showStatus = "Ended",
@@ -134,7 +134,7 @@ private fun previewEpisodes() = listOf(
         imageUrl = null,
     ),
     UpNextEpisodeUiModel(
-        showTraktId = 2,
+        showId = 2,
         showTmdbId = 1399,
         showName = "Game of Thrones",
         showStatus = "Ended",
@@ -157,7 +157,7 @@ private fun previewEpisodes() = listOf(
         imageUrl = null,
     ),
     UpNextEpisodeUiModel(
-        showTraktId = 3,
+        showId = 3,
         showTmdbId = 66732,
         showName = "Stranger Things",
         showStatus = "Returning Series",
@@ -180,7 +180,7 @@ private fun previewEpisodes() = listOf(
         imageUrl = null,
     ),
     UpNextEpisodeUiModel(
-        showTraktId = 4,
+        showId = 4,
         showTmdbId = 94997,
         showName = "House of the Dragon",
         imageUrl = null,

@@ -37,7 +37,7 @@ atomicfu = "0.32.1"
 baselineprofile = "1.5.0-alpha06"
 benchmarkMacroJunit4 = "1.4.1"
 coil = "2.7.0"
-compose-bom = "2026.05.00"
+compose-bom = "2026.05.01"
 compose-constraintlayout = "1.1.1"
 compose-runtime = "1.11.2"
 coroutines = "1.11.0"
@@ -57,7 +57,7 @@ kotest = "6.1.11"
 kotlin = "2.3.21"
 kotlinx-collections = "0.4.0"
 ktor = "3.5.0"
-lint = "1.5.0"
+lint = "1.5.2"
 metro = "1.1.1"
 moko-resources = "0.26.4"
 monitor = "1.8.0"
@@ -106,6 +106,7 @@ androidx-compose-activity = { module = "androidx.activity:activity-compose", ver
 androidx-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-constraintlayout" }
 androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "androidx-material" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-material3" }
+androidx-compose-material3-windowsize = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidx-material3" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose-runtime" }
 androidx-core-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }

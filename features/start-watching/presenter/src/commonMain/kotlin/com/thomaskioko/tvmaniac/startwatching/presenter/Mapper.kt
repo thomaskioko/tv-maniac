@@ -14,7 +14,7 @@ internal fun List<StartWatchingShow>.toStartWatchingItems(
         .sortedWith(sortComparator(sortOption))
         .map {
             StartWatchingItem(
-                traktId = it.traktId,
+                showId = it.showId,
                 title = it.title,
                 posterImageUrl = it.posterPath,
                 year = it.year,

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.profile.presenter.model
 
 public data class ProfileStats(
-    val showsWatched: Int,
-    val episodesWatched: Int,
+    val showsWatched: String,
+    val episodesWatched: String,
     val years: Int = 0,
     val months: Int = 0,
     val days: Int = 0,

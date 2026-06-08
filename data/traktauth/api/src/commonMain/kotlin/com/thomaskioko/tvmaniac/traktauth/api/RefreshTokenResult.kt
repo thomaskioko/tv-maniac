@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.api
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+
 public sealed class RefreshTokenResult {
     public data class Success(val authState: AuthState) : RefreshTokenResult()
     public data object TokenExpired : RefreshTokenResult()

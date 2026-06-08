@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.continuewatching.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -19,8 +19,6 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.myshows.nav.scope.MyShowsChildScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -29,14 +27,9 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
-import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,9 +59,9 @@ public class ContinueWatchingPresenter(
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
-    private val localizer: Localizer,
+    private val mapper: ContinueWatchingMapper,
     private val logger: Logger,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val accountManager: AccountManager,
 ) : ComponentContext by componentContext {
 
     private val watchlistLoadingState = ObservableLoadingCounter()
@@ -96,9 +89,9 @@ public class ContinueWatchingPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            traktAuthRepository.state
+            accountManager.isConnected
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .collect { syncWatchlist(forceRefresh = false) }
         }
     }
@@ -114,23 +107,16 @@ public class ContinueWatchingPresenter(
         queryFlow,
         syncObserver.isSyncing,
     ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
-
-        // TODO:: Move to Mapper object and inject the mapper in the presenter
-        val sectionedItems = watchlistSections.toPresenter()
-        val sectionedEpisodes = upNextSections.toPresenter()
-        val emptyStateKey = if (query.isBlank()) {
-            StringResourceKey.LabelWatchlistEmptyInProgress
-        } else {
-            StringResourceKey.GenericEmptyContent
-        }
+        val sectionedItems = mapper.toSectionedItems(watchlistSections, sortOption)
+        val sectionedEpisodes = mapper.toSectionedEpisodes(upNextSections)
         currentState.copy(
             query = query,
             isGridMode = isGridMode,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,
-            emptyStateText = localizer.getString(emptyStateKey),
-            watchNextItems = sectionedItems.watchNext.applySorting(sortOption),
-            staleItems = sectionedItems.stale.applySorting(sortOption),
+            labels = mapper.resolveLabels(query),
+            watchNextItems = sectionedItems.watchNext,
+            staleItems = sectionedItems.stale,
             watchNextEpisodes = sectionedEpisodes.watchNext,
             staleEpisodes = sectionedEpisodes.stale,
             message = message,
@@ -145,16 +131,16 @@ public class ContinueWatchingPresenter(
 
     public fun dispatch(action: ContinueWatchingAction) {
         when (action) {
-            is ContinueWatchingShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            is ContinueWatchingShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is ContinueWatchingMessageShown -> clearMessage(action.id)
-            is UpNextEpisodeClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
-            is ShowTitleClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
+            is UpNextEpisodeClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
+            is ShowTitleClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)
-            is UnfollowShowFromUpNext -> unfollowShow(action.showTraktId)
+            is UnfollowShowFromUpNext -> unfollowShow(action.showId)
             is OpenSeasonFromUpNext -> navigator.navigateTo(
                 SeasonDetailsRoute(
                     SeasonDetailsUiParam(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         seasonId = action.seasonId,
                         seasonNumber = action.seasonNumber,
                     ),
@@ -173,7 +159,7 @@ public class ContinueWatchingPresenter(
             try {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         episodeId = action.episodeId,
                         seasonNumber = action.seasonNumber,
                         episodeNumber = action.episodeNumber,
@@ -198,9 +184,9 @@ public class ContinueWatchingPresenter(
         private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 
-    private fun unfollowShow(showTraktId: Long) {
+    private fun unfollowShow(showId: Long) {
         coroutineScope.launch {
-            unfollowShowInteractor.executeSync(showTraktId)
+            unfollowShowInteractor.executeSync(showId)
         }
     }
 
@@ -236,14 +222,3 @@ public class ContinueWatchingPresenter(
         }
     }
 }
-
-private fun ImmutableList<ContinueWatchingItem>.applySorting(
-    sortOption: WatchlistSortOption,
-): ImmutableList<ContinueWatchingItem> = when (sortOption) {
-    WatchlistSortOption.ADDED_DESC -> sortedByDescending { it.lastWatchedAt ?: 0L }
-    WatchlistSortOption.ADDED_ASC -> sortedBy { it.lastWatchedAt ?: Long.MAX_VALUE }
-    WatchlistSortOption.RELEASED_DESC -> sortedByDescending { it.year.orEmpty() }
-    WatchlistSortOption.RELEASED_ASC -> sortedBy { it.year.orEmpty() }
-    WatchlistSortOption.TITLE_ASC -> sortedBy { it.title.lowercase() }
-    WatchlistSortOption.TITLE_DESC -> sortedByDescending { it.title.lowercase() }
-}.toImmutableList()

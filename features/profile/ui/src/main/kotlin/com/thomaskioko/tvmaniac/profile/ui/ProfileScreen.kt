@@ -3,8 +3,6 @@ package com.thomaskioko.tvmaniac.profile.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,14 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,9 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -54,32 +47,34 @@ import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
+import com.thomaskioko.tvmaniac.compose.components.ScrimButton
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_profile_pic
-import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_settings
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_edit_button
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_episodes_watched
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_stats_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_days
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_hours
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_time_months
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.profile_watch_time
-import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfilePresenter
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
+import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileState
-import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
+import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
+import com.thomaskioko.tvmaniac.profile.ui.components.FavoritesSection
+import com.thomaskioko.tvmaniac.profile.ui.components.ProfileLoadingSkeleton
+import com.thomaskioko.tvmaniac.profile.ui.components.ProgressSection
+import com.thomaskioko.tvmaniac.profile.ui.components.RecentlyWatchedSection
+import com.thomaskioko.tvmaniac.profile.ui.components.StatsCard
+import com.thomaskioko.tvmaniac.profile.ui.components.UnauthenticatedContent
+import com.thomaskioko.tvmaniac.profile.ui.components.UserListsSection
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import io.github.thomaskioko.codegen.annotations.TabUi
 
@@ -105,6 +100,7 @@ internal fun ProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
+    val listCount = state.listCount
 
     TvManiacBottomSheetScaffold(
         modifier = modifier.testTag(ProfileTestTags.SCREEN_TEST_TAG),
@@ -116,7 +112,18 @@ internal fun ProfileScreen(
                 ProfileContent(
                     showLoading = state.showLoading,
                     userProfile = state.userProfile,
+                    labels = state.labels,
+                    listCount = listCount,
+                    userLists = state.userLists,
+                    inProgress = state.inProgress,
+                    completed = state.completed,
+                    recentlyWatched = state.recentlyWatched,
+                    favorites = state.favorites,
                     onLoginClicked = { onAction(LoginClicked) },
+                    onViewLists = { onAction(ProfileAction.ViewListsClicked) },
+                    onListClick = {},
+                    onShowClick = { onAction(ProfileAction.ShowClicked(it)) },
+                    onRetry = { onAction(ProfileAction.RefreshProfile) },
                     listState = listState,
                     contentPadding = contentPadding,
                     modifier = Modifier.fillMaxSize(),
@@ -124,31 +131,45 @@ internal fun ProfileScreen(
 
                 RefreshCollapsableTopAppBar(
                     listState = listState,
+                    centeredTitle = true,
                     title = {
                         Text(
-                            text = profile_title.resolve(LocalContext.current),
-                            style = MaterialTheme.typography.titleMedium.copy(
+                            text = state.labels.title,
+                            style = MaterialTheme.typography.titleLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface,
                             ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
-                    actionIcon = {
-                        Box(
+                    actions = { showAppBarBackground ->
+                        if (state.isLoading) {
+                            ScrimButton(
+                                show = showAppBarBackground,
+                                onClick = {},
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                )
+                            }
+                        }
+
+                        ScrimButton(
+                            show = showAppBarBackground,
+                            onClick = { onAction(SettingsClicked) },
                             modifier = Modifier
-                                .testTag(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
-                                .clickable(onClick = { onAction(SettingsClicked) }),
+                                .padding(end = 8.dp)
+                                .testTag(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG),
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
-                                contentDescription = cd_settings.resolve(LocalContext.current),
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                contentDescription = state.labels.settingsContentDescription,
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     },
-                    isRefreshing = state.isLoading,
-                    onActionIconClicked = { onAction(SettingsClicked) },
                 )
 
                 TvManiacSnackBarHost(
@@ -165,7 +186,18 @@ internal fun ProfileScreen(
 private fun ProfileContent(
     showLoading: Boolean,
     userProfile: ProfileInfo?,
+    labels: ProfileLabels,
+    listCount: Int,
+    userLists: SectionState<ProfileListItem>,
+    inProgress: SectionState<ProfileShowItem>,
+    completed: SectionState<ProfileShowItem>,
+    recentlyWatched: SectionState<ProfileRecentItem>,
+    favorites: SectionState<ProfileShowItem>,
     onLoginClicked: () -> Unit,
+    onViewLists: () -> Unit,
+    onListClick: (Long) -> Unit,
+    onShowClick: (Long) -> Unit,
+    onRetry: () -> Unit,
     listState: LazyListState,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -174,15 +206,10 @@ private fun ProfileContent(
 
     when {
         showLoading -> {
-            Box(
+            ProfileLoadingSkeleton(
+                contentPadding = contentPadding,
                 modifier = modifier,
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(48.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            }
+            )
         }
 
         userProfile != null -> {
@@ -197,6 +224,8 @@ private fun ProfileContent(
                         imageUrl = userProfile.backgroundUrl,
                         username = userProfile.fullName ?: userProfile.username,
                         avatarUrl = userProfile.avatarUrl,
+                        editButtonLabel = labels.editButton,
+                        avatarContentDescription = labels.profilePictureContentDescription,
                         listState = listState,
                         onEditClicked = {},
                     )
@@ -209,8 +238,80 @@ private fun ProfileContent(
                 item {
                     StatsCard(
                         stats = userProfile.stats,
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        labels = labels,
+                        listCount = listCount,
+                        onViewLists = onViewLists,
                     )
+                }
+
+                if (recentlyWatched !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        RecentlyWatchedSection(
+                            recentlyWatched = recentlyWatched,
+                            title = labels.recentlyWatchedTitle,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                if (inProgress !is SectionState.Empty || completed !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        ProgressSection(
+                            inProgress = inProgress,
+                            completed = completed,
+                            title = labels.progressTitle,
+                            inProgressLabel = labels.inProgressFilter,
+                            completedLabel = labels.completedFilter,
+                            emptyLabel = labels.progressEmpty,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                if (userLists !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        UserListsSection(
+                            userLists = userLists,
+                            title = labels.userListsTitle,
+                            viewAllLabel = labels.viewAllButton,
+                            retryLabel = labels.retry,
+                            onViewAll = onViewLists,
+                            onListClick = onListClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                if (favorites !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        FavoritesSection(
+                            favorites = favorites,
+                            title = labels.favoritesTitle,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
+                    }
                 }
 
                 item {
@@ -221,109 +322,10 @@ private fun ProfileContent(
 
         else -> {
             UnauthenticatedContent(
+                labels = labels,
                 onLoginClicked = onLoginClicked,
                 modifier = modifier,
                 contentPadding = contentPadding,
-            )
-        }
-    }
-}
-
-@Composable
-private fun StatsCard(
-    stats: ProfileStats,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = profile_stats_title.resolve(LocalContext.current),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            item {
-                StatsCardItem(
-                    imageVector = Icons.Outlined.Tv,
-                    title = profile_watch_time.resolve(LocalContext.current),
-                    content = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                        ) {
-                            StatColumnItem(
-                                value = stats.months.toString(),
-                                title = profile_time_months.resolve(LocalContext.current),
-                            )
-                            StatColumnItem(
-                                value = stats.days.toString(),
-                                title = profile_time_days.resolve(LocalContext.current),
-                            )
-                            StatColumnItem(
-                                value = stats.hours.toString(),
-                                title = profile_time_hours.resolve(LocalContext.current),
-                            )
-                        }
-                    },
-                )
-            }
-
-            item {
-                StatsCardItem(
-                    imageVector = Icons.Outlined.Tv,
-                    title = profile_episodes_watched.resolve(LocalContext.current),
-                    content = {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            StatColumnItem(
-                                value = "%,d".format(stats.episodesWatched),
-                            )
-                        }
-                    },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun StatColumnItem(
-    value: String,
-    title: String? = null,
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Normal,
-        )
-        title?.let {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -335,6 +337,8 @@ private fun HeaderContent(
     imageUrl: String?,
     username: String,
     avatarUrl: String?,
+    editButtonLabel: String,
+    avatarContentDescription: String,
     listState: LazyListState,
     onEditClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -361,7 +365,7 @@ private fun HeaderContent(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(350.dp)
+            .height(ImageDimens.HeroProfileHeight)
             .clipToBounds()
             .offset { headerOffset },
         contentAlignment = Alignment.BottomCenter,
@@ -400,10 +404,7 @@ private fun HeaderContent(
                 imageUrl = avatarUrl,
                 size = 80.dp,
                 placeholderIcon = Icons.Filled.Person,
-                contentDescription = stringResource(
-                    cd_profile_pic.resourceId,
-                    username,
-                ),
+                contentDescription = avatarContentDescription,
                 border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
             )
 
@@ -427,7 +428,7 @@ private fun HeaderContent(
                     borderColor = MaterialTheme.colorScheme.onSecondary,
                     text = {
                         Text(
-                            text = profile_edit_button.resolve(LocalContext.current),
+                            text = editButtonLabel,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 2.dp),
                         )
@@ -448,6 +449,7 @@ private fun ProfileScreenLoadingPreview() {
             userProfile = null,
             errorMessage = null,
             authenticated = false,
+            labels = sampleProfileLabels,
         ),
         onAction = {},
     )

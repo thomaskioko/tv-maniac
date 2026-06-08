@@ -15,13 +15,13 @@ public class FollowShowInteractor(
 ) : Interactor<FollowShowInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
-        followedShowsRepository.addFollowedShow(params.traktId)
+        followedShowsRepository.addFollowedShow(params.showId)
 
         appScopeLauncher.launch(TAG) {
             libraryRepository.syncPendingFollowedShows()
             syncShowMetadataInteractor.executeSync(
                 SyncShowMetadataInteractor.Param(
-                    traktId = params.traktId,
+                    showId = params.showId,
                     forceRefresh = params.forceRefresh,
                 ),
             )
@@ -29,7 +29,7 @@ public class FollowShowInteractor(
     }
 
     public data class Param(
-        val traktId: Long,
+        val showId: Long,
         val forceRefresh: Boolean = false,
     )
 

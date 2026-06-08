@@ -1,16 +1,16 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
-import com.thomaskioko.tvmaniac.traktauth.api.AuthError
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.AuthStore
 import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
-import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
@@ -64,11 +64,11 @@ public class DefaultTraktAuthRepository(
         }
     }
 
-    override val state: Flow<TraktAuthState> = _authState.map { state ->
+    override val state: Flow<AccountAuthState> = _authState.map { state ->
         if (state?.isAuthorized == true) {
-            TraktAuthState.LOGGED_IN
+            AccountAuthState.LOGGED_IN
         } else {
-            TraktAuthState.LOGGED_OUT
+            AccountAuthState.LOGGED_OUT
         }
     }
 

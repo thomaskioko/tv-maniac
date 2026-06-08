@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.watchproviders.implementation
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderRepository
 import com.thomaskioko.tvmaniac.db.WatchProviders
-import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
+import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -19,18 +19,18 @@ public class DefaultWatchProviderRepository(
     private val dao: WatchProviderDao,
 ) : WatchProviderRepository {
 
-    override suspend fun fetchWatchProviders(traktId: Long, forceRefresh: Boolean) {
+    override suspend fun fetchWatchProviders(showId: Long, forceRefresh: Boolean) {
         when {
-            forceRefresh -> store.fresh(traktId)
-            else -> store.get(traktId)
+            forceRefresh -> store.fresh(showId)
+            else -> store.get(showId)
         }
     }
 
-    override fun observeWatchProviders(traktId: Long): Flow<List<WatchProviders>> =
-        dao.observeWatchProvidersByTraktId(traktId)
+    override fun observeWatchProviders(showId: Long): Flow<List<WatchProviders>> =
+        dao.observeWatchProvidersByShowId(showId)
             .map { providers -> providers.map { it.toWatchProviders() } }
 
-    private fun WatchProvidersByTraktId.toWatchProviders(): WatchProviders =
+    private fun WatchProvidersByShowId.toWatchProviders(): WatchProviders =
         WatchProviders(
             provider_id = provider_id,
             name = name,

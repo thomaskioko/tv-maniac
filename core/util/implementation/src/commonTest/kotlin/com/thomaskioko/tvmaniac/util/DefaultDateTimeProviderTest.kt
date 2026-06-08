@@ -2,7 +2,9 @@ package com.thomaskioko.tvmaniac.util
 
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.longs.shouldBeGreaterThan
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -10,6 +12,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.test.Test
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Instant
 
 internal class DefaultDateTimeProviderTest {
 
@@ -120,5 +123,26 @@ internal class DefaultDateTimeProviderTest {
         val result = underTest.epochToDisplayDateTime(epochMillis, TimeZone.UTC)
 
         result shouldBe "Jan 23, 2025 at 11:24"
+    }
+
+    @Test
+    fun `should return epoch given full ISO instant string`() {
+        val result = underTest.isoDateToEpoch("2024-06-01T00:00:00Z")
+
+        result shouldBe Instant.parse("2024-06-01T00:00:00Z").toEpochMilliseconds()
+    }
+
+    @Test
+    fun `should return UTC start of day epoch given date-only string`() {
+        val result = underTest.isoDateToEpoch("2024-06-01")
+
+        result shouldBe LocalDate(2024, 6, 1).atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+    }
+
+    @Test
+    fun `should return null given null blank or invalid date string`() {
+        underTest.isoDateToEpoch(null).shouldBeNull()
+        underTest.isoDateToEpoch("").shouldBeNull()
+        underTest.isoDateToEpoch("not-a-date").shouldBeNull()
     }
 }

@@ -47,20 +47,20 @@ public class CalendarStore(
                 databaseTransactionRunner {
                     calendarDao.deleteEntriesInRange(params.startEpoch, params.endEpoch)
 
-                    val showTraktIds = response.map { it.show.ids.trakt }.distinct()
-                    val showPosters = tvShowsDao.getShowsByTraktIds(showTraktIds)
-                        .associate { it.traktId to it.posterPath }
+                    val showIds = response.map { it.show.ids.trakt }.distinct()
+                    val showPosters = tvShowsDao.getShowsByIds(showIds)
+                        .associate { it.showId to it.posterPath }
 
                     response.forEach { calendarResponse ->
-                        val showTraktId = calendarResponse.show.ids.trakt
+                        val showId = calendarResponse.show.ids.trakt
                         val firstAiredEpoch = Instant.parse(calendarResponse.firstAired).toEpochMilliseconds()
 
-                        val posterPath = showPosters[showTraktId]
+                        val posterPath = showPosters[showId]
 
                         calendarDao.upsert(
                             CalendarEntry(
-                                showTraktId = showTraktId,
-                                episodeTraktId = calendarResponse.episode.ids.trakt.toLong(),
+                                showId = showId,
+                                episodeId = calendarResponse.episode.ids.trakt.toLong(),
                                 seasonNumber = calendarResponse.episode.seasonNumber,
                                 episodeNumber = calendarResponse.episode.episodeNumber,
                                 episodeTitle = calendarResponse.episode.title,

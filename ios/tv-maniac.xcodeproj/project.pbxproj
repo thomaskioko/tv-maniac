@@ -9,9 +9,22 @@
 /* Begin PBXBuildFile section */
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
 		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
-		D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = D6619D362C89D37900D273E7 /* SwiftUIComponents */; };
 		D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = D6A2A0ED2EC800000001CD83 /* CoreKit */; };
 		D6F1A0012F61B0A100000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */; };
+		D6FEA700000000000001AA01 /* MyShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA01 /* MyShows */; };
+		D6FEA700000000000001AA02 /* Search in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA02 /* Search */; };
+		D6FEA700000000000001AA03 /* Library in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA03 /* Library */; };
+		D6FEA700000000000001AA04 /* Progress in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA04 /* Progress */; };
+		D6FEA700000000000001AA05 /* Discover in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA05 /* Discover */; };
+		D6FEA700000000000001AA06 /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA06 /* Profile */; };
+		D6FEA700000000000001AA07 /* ShowDetails in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA07 /* ShowDetails */; };
+		D6FEA700000000000001AA08 /* Settings in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA08 /* Settings */; };
+		D6FEA700000000000001AA09 /* Debug in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA09 /* Debug */; };
+		D6FEA700000000000001AA10 /* FeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA10 /* FeatureFlags */; };
+		D6FEA700000000000001AA11 /* MoreShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA11 /* MoreShows */; };
+		D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA12 /* SeasonDetails */; };
+		D6FEA700000000000001AA13 /* Calendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA13 /* Calendar */; };
+		D6FEA700000000000001AA14 /* Root in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA14 /* Root */; };
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -39,8 +52,7 @@
 		D639FA9E2F77530500F3C67B /* Firebase */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Firebase; sourceTree = "<group>"; };
 		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		D68A22262F415DC30034550F /* Config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Config; sourceTree = "<group>"; };
-		D6A2A0EB2EC7FD8C0001CD82 /* Modules */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Modules; sourceTree = "<group>"; };
-		D6FE248E2D060E7200AB7700 /* UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UI; sourceTree = "<group>"; };
+		D6A2A0EB2EC7FD8C0001CD82 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,8 +62,21 @@
 			files = (
 				D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */,
 				D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */,
-				D6619D372C89D37900D273E7 /* SwiftUIComponents in Frameworks */,
 				D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */,
+				D6FEA700000000000001AA01 /* MyShows in Frameworks */,
+				D6FEA700000000000001AA02 /* Search in Frameworks */,
+				D6FEA700000000000001AA03 /* Library in Frameworks */,
+				D6FEA700000000000001AA04 /* Progress in Frameworks */,
+				D6FEA700000000000001AA05 /* Discover in Frameworks */,
+				D6FEA700000000000001AA06 /* Profile in Frameworks */,
+				D6FEA700000000000001AA07 /* ShowDetails in Frameworks */,
+				D6FEA700000000000001AA08 /* Settings in Frameworks */,
+				D6FEA700000000000001AA09 /* Debug in Frameworks */,
+				D6FEA700000000000001AA10 /* FeatureFlags in Frameworks */,
+				D6FEA700000000000001AA11 /* MoreShows in Frameworks */,
+				D6FEA700000000000001AA12 /* SeasonDetails in Frameworks */,
+				D6FEA700000000000001AA13 /* Calendar in Frameworks */,
+				D6FEA700000000000001AA14 /* Root in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,7 +88,7 @@
 			children = (
 				D68A22262F415DC30034550F /* Config */,
 				7555FF7D242A565900829871 /* ios */,
-				D6A2A0EB2EC7FD8C0001CD82 /* Modules */,
+				D6A2A0EB2EC7FD8C0001CD82 /* Packages */,
 				7555FF7C242A565900829871 /* Products */,
 				D6619D2A2C8738F200D273E7 /* Frameworks */,
 			);
@@ -84,7 +109,6 @@
 				E9AC834B26CEE00D00829A0D /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				D65009DC2CF644BE00394D67 /* App */,
-				D6FE248E2D060E7200AB7700 /* UI */,
 				D639FA9E2F77530500F3C67B /* Firebase */,
 			);
 			path = ios;
@@ -118,14 +142,26 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D65009DC2CF644BE00394D67 /* App */,
-				D6FE248E2D060E7200AB7700 /* UI */,
 			);
 			name = "tv-maniac";
 			packageProductDependencies = (
 				D6A2A0ED2EC800000001CD83 /* CoreKit */,
-				D6619D362C89D37900D273E7 /* SwiftUIComponents */,
 				D60D952A2CDBE1160039884B /* TvManiacKit */,
 				D60F8D262EC8060C00916042 /* TraktAuthKit */,
+				D6FEA700000000000002AA01 /* MyShows */,
+				D6FEA700000000000002AA02 /* Search */,
+				D6FEA700000000000002AA03 /* Library */,
+				D6FEA700000000000002AA04 /* Progress */,
+				D6FEA700000000000002AA05 /* Discover */,
+				D6FEA700000000000002AA06 /* Profile */,
+				D6FEA700000000000002AA07 /* ShowDetails */,
+				D6FEA700000000000002AA08 /* Settings */,
+				D6FEA700000000000002AA09 /* Debug */,
+				D6FEA700000000000002AA10 /* FeatureFlags */,
+				D6FEA700000000000002AA11 /* MoreShows */,
+				D6FEA700000000000002AA12 /* SeasonDetails */,
+				D6FEA700000000000002AA13 /* Calendar */,
+				D6FEA700000000000002AA14 /* Root */,
 			);
 			productName = ios;
 			productReference = 7555FF7B242A565900829871 /* tv-maniac.app */;
@@ -531,13 +567,65 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = TraktAuthKit;
 		};
-		D6619D362C89D37900D273E7 /* SwiftUIComponents */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SwiftUIComponents;
-		};
 		D6A2A0ED2EC800000001CD83 /* CoreKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CoreKit;
+		};
+		D6FEA700000000000002AA01 /* MyShows */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MyShows;
+		};
+		D6FEA700000000000002AA02 /* Search */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Search;
+		};
+		D6FEA700000000000002AA03 /* Library */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Library;
+		};
+		D6FEA700000000000002AA04 /* Progress */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Progress;
+		};
+		D6FEA700000000000002AA05 /* Discover */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Discover;
+		};
+		D6FEA700000000000002AA06 /* Profile */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Profile;
+		};
+		D6FEA700000000000002AA07 /* ShowDetails */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ShowDetails;
+		};
+		D6FEA700000000000002AA08 /* Settings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Settings;
+		};
+		D6FEA700000000000002AA09 /* Debug */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Debug;
+		};
+		D6FEA700000000000002AA10 /* FeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FeatureFlags;
+		};
+		D6FEA700000000000002AA11 /* MoreShows */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoreShows;
+		};
+		D6FEA700000000000002AA12 /* SeasonDetails */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SeasonDetails;
+		};
+		D6FEA700000000000002AA13 /* Calendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Calendar;
+		};
+		D6FEA700000000000002AA14 /* Root */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Root;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

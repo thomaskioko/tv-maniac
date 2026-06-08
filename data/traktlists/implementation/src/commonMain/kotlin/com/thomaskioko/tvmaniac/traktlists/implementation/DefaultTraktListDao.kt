@@ -24,16 +24,36 @@ public class DefaultTraktListDao(
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows ->
-                rows.map { row ->
+                rows.map { list ->
                     TraktListEntity(
-                        id = row.id,
-                        slug = row.slug,
-                        name = row.name,
-                        description = row.description,
-                        itemCount = row.item_count,
-                        createdAt = row.created_at,
+                        id = list.id,
+                        slug = list.slug,
+                        name = list.name,
+                        description = list.description,
+                        itemCount = list.item_count,
+                        createdAt = list.created_at,
                     )
                 }
+            }
+
+    override fun observeListsWithPosters(): Flow<List<TraktListEntity>> =
+        database.traktListsQueries.selectAllWithPosters()
+            .asFlow()
+            .mapToList(dispatchers.io)
+            .map { rows ->
+                rows.groupBy { it.id }
+                    .map { (_, group) ->
+                        val list = group.first()
+                        TraktListEntity(
+                            id = list.id,
+                            slug = list.slug,
+                            name = list.name,
+                            description = list.description,
+                            itemCount = list.item_count,
+                            createdAt = list.created_at,
+                            posterPaths = group.mapNotNull { it.poster_url }.take(4),
+                        )
+                    }
             }
 
     override fun upsert(entity: TraktListEntity) {

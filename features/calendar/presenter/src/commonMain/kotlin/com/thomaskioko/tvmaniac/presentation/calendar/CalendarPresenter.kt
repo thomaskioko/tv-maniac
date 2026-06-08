@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -23,8 +24,6 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +43,7 @@ public class CalendarPresenter(
     private val navigator: Navigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val accountManager: AccountManager,
     private val calendarWeekCalculator: CalendarWeekCalculator,
     private val calendarStateMapper: CalendarStateMapper,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -65,11 +64,10 @@ public class CalendarPresenter(
     public val state: StateFlow<CalendarState> = combine(
         loadingState.observable,
         observeCalendarInteractor.flow,
-        traktAuthRepository.state,
+        accountManager.isConnected,
         uiMessageManager.message,
         _state,
-    ) { isLoading, entries, authState, message, currentState ->
-        val isLoggedIn = authState == TraktAuthState.LOGGED_IN
+    ) { isLoading, entries, isLoggedIn, message, currentState ->
         currentState.copy(
             isLoading = isLoading && entries.isEmpty(),
             isRefreshing = isLoading,
@@ -103,7 +101,7 @@ public class CalendarPresenter(
             is NavigateToPreviousWeek -> navigateToPreviousWeek()
             is NavigateToNextWeek -> navigateToNextWeek()
             is EpisodeCardClicked -> navigator.navigateTo(
-                EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeTraktId, source = ScreenSource.CALENDAR)),
+                EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeId, source = ScreenSource.CALENDAR)),
             )
             is MessageShown -> clearMessage(action.id)
         }
@@ -111,10 +109,10 @@ public class CalendarPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            traktAuthRepository.state
+            accountManager.isConnected
                 .distinctUntilChanged()
-                .collect { authState ->
-                    if (authState == TraktAuthState.LOGGED_IN) {
+                .collect { isLoggedIn ->
+                    if (isLoggedIn) {
                         fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
                     }
                 }

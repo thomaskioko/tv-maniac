@@ -27,7 +27,7 @@ internal fun buildSeasonDetailsLoaded(
 
 internal fun buildSeasonDetailsWithEpisodes(
     seasonId: Long = 12343,
-    showTraktId: Long = 84958,
+    showId: Long = 84958,
     showTmdbId: Long = 84958,
     name: String = "Season 01",
     seasonOverview: String =
@@ -47,7 +47,7 @@ internal fun buildSeasonDetailsWithEpisodes(
         episodes = episodes,
         seasonNumber = seasonNumber,
         showTitle = showTitle,
-        showTraktId = showTraktId,
+        showId = showId,
         showTmdbId = showTmdbId,
     )
 }

@@ -20,17 +20,17 @@ public class FakeContinueWatchingDao : ContinueWatchingDao {
     override fun entriesObservable(): Flow<List<ContinueWatchingEntry>> =
         state.map { it.values.toList() }
 
-    override fun traktIdsMissingShowDetails(): List<Long> = idsMissingShowDetails
+    override fun showIdsMissingShowDetails(): List<Long> = idsMissingShowDetails
 
     override fun upsert(entry: ContinueWatchingEntry) {
-        state.value += (entry.traktId to entry)
+        state.value += (entry.showId to entry)
     }
 
-    override fun upsertPlaceholder(traktId: Long, tmdbId: Long?, title: String?, year: Long?) {
-        if (state.value.containsKey(traktId)) return
+    override fun upsertPlaceholder(showId: Long, tmdbId: Long?, title: String?, year: Long?) {
+        if (state.value.containsKey(showId)) return
         state.value += (
-            traktId to ContinueWatchingEntry(
-                traktId = traktId,
+            showId to ContinueWatchingEntry(
+                showId = showId,
                 tmdbId = tmdbId,
                 airedEpisodes = 0L,
                 completedCount = 0L,
@@ -42,8 +42,8 @@ public class FakeContinueWatchingDao : ContinueWatchingDao {
             )
     }
 
-    override fun deleteByTraktId(traktId: Long) {
-        state.value -= traktId
+    override fun deleteByShowId(showId: Long) {
+        state.value -= showId
     }
 
     override fun deleteAll() {

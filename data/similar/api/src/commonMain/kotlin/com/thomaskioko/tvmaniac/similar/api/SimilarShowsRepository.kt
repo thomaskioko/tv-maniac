@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 public interface SimilarShowsRepository {
     public suspend fun fetchSimilarShows(
-        traktId: Long,
+        showId: Long,
         forceRefresh: Boolean = false,
     )
 

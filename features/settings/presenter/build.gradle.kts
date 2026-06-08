@@ -10,30 +10,28 @@ scaffold {
 
 kotlin {
     sourceSets {
-        androidMain {
-            dependencies {
-                api(projects.i18n.generator)
-            }
-        }
-
         commonMain {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.util.api)
                 api(projects.core.view)
+                api(projects.data.accountManager.api)
                 api(projects.data.datastore.api)
-                api(projects.data.traktauth.api)
+                api(projects.data.user.api)
                 api(projects.domain.logout)
                 api(projects.domain.notifications)
                 api(projects.domain.settings)
                 api(projects.domain.theme)
                 api(projects.core.appconfig.api)
                 api(projects.features.settings.nav)
+                api(projects.i18n.api)
                 api(projects.navigation.api)
+                api(projects.i18n.generator)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
+                api(libs.kotlinx.collections)
 
                 implementation(projects.features.debug.nav)
             }
@@ -44,13 +42,13 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.syncActivity.api)
                 implementation(projects.data.syncActivity.testing)
-                implementation(projects.data.traktauth.testing)
-                implementation(projects.data.user.api)
                 implementation(projects.data.user.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
         }

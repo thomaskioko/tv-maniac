@@ -2,7 +2,9 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -26,6 +28,7 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
@@ -36,7 +39,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -53,8 +57,10 @@ public class UpNextPresenter(
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val upNextRepository: UpNextRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
+    private val accountManager: AccountManager,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
+    syncObserver: SyncObserver,
     observeUpNextInteractor: ObserveUpNextInteractor,
 ) : ComponentContext by componentContext {
 
@@ -65,15 +71,21 @@ public class UpNextPresenter(
     private val refreshingState = ObservableLoadingCounter()
     private val updatingEpisodeIdsState = MutableStateFlow(persistentSetOf<Long>())
 
+    init {
+        observeAuthState()
+    }
+
     public val state: StateFlow<UpNextState> = combine(
         observeUpNextInteractor.flow,
         uiMessageManager.message,
         refreshingState.observable,
         loadingState.observable,
         updatingEpisodeIdsState,
-    ) { result, message, isRefreshing, isLoading, updatingEpisodeIds ->
+        syncObserver.isSyncing,
+    ) { result, message, isRefreshing, isLoading, updatingEpisodeIds, isSyncing ->
         UpNextState(
             isLoading = isLoading,
+            isSyncing = isSyncing,
             isRefreshing = isRefreshing,
             sortOption = result.sortOption,
             episodes = result.episodes.map { it.toUiModel() }.toImmutableList(),
@@ -90,25 +102,34 @@ public class UpNextPresenter(
 
     public fun dispatch(action: UpNextAction) {
         when (action) {
-            is UpNextShowClicked -> navigateToSeasonFromEpisode(action.showTraktId)
+            is UpNextShowClicked -> navigateToSeasonFromEpisode(action.showId)
             is MarkWatched -> markEpisodeWatched(action)
             is UpNextChangeSortOption -> changeSortOption(action.sortOption)
             is RefreshUpNext -> refreshUpNext(isUserInitiated = true)
             is UpNextMessageShown -> clearMessage(action.id)
-            is OpenShow -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.showTraktId)))
+            is OpenShow -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is OpenSeason -> navigator.navigateTo(
                 SeasonDetailsRoute(
                     SeasonDetailsUiParam(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         seasonId = action.seasonId,
                         seasonNumber = action.seasonNumber,
                     ),
                 ),
             )
-            is UnfollowShow -> unfollowShow(action.showTraktId)
+            is UnfollowShow -> unfollowShow(action.showId)
             is UpNextEpisodeLongPressed -> navigator.navigateTo(
                 EpisodeSheetRoute(EpisodeSheetParam(episodeId = action.episodeId, source = ScreenSource.UP_NEXT)),
             )
+        }
+    }
+
+    private fun observeAuthState() {
+        coroutineScope.launch {
+            accountManager.isConnected
+                .distinctUntilChanged()
+                .filter { it }
+                .collect { refreshUpNext(isUserInitiated = false) }
         }
     }
 
@@ -128,7 +149,7 @@ public class UpNextPresenter(
             try {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         episodeId = action.episodeId,
                         seasonNumber = action.seasonNumber,
                         episodeNumber = action.episodeNumber,
@@ -154,13 +175,13 @@ public class UpNextPresenter(
         }
     }
 
-    private fun navigateToSeasonFromEpisode(showTraktId: Long) {
-        val episode = state.value.episodes.firstOrNull { it.showTraktId == showTraktId }
+    private fun navigateToSeasonFromEpisode(showId: Long) {
+        val episode = state.value.episodes.firstOrNull { it.showId == showId }
         if (episode?.seasonId != null && episode.seasonNumber != null) {
             navigator.navigateTo(
                 SeasonDetailsRoute(
                     SeasonDetailsUiParam(
-                        showTraktId = showTraktId,
+                        showId = showId,
                         seasonId = episode.seasonId,
                         seasonNumber = episode.seasonNumber,
                     ),
@@ -169,9 +190,9 @@ public class UpNextPresenter(
         }
     }
 
-    private fun unfollowShow(showTraktId: Long) {
+    private fun unfollowShow(showId: Long) {
         coroutineScope.launch {
-            unfollowShowInteractor.executeSync(showTraktId)
+            unfollowShowInteractor.executeSync(showId)
         }
     }
 
@@ -186,7 +207,7 @@ private fun UpNextEpisode.toUiModel(): UpNextEpisodeUiModel {
     val season = seasonNumber.toString().padStart(2, '0')
     val episode = episodeNumber.toString().padStart(2, '0')
     return UpNextEpisodeUiModel(
-        showTraktId = showTraktId,
+        showId = showId,
         showTmdbId = showTmdbId,
         showName = showName,
         imageUrl = stillPath ?: showPoster,

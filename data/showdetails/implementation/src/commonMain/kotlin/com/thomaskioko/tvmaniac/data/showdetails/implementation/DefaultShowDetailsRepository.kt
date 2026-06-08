@@ -26,5 +26,5 @@ public class DefaultShowDetailsRepository(
     }
 
     override fun observeShowDetails(id: Long): Flow<TvshowDetails> =
-        dao.observeTvShowByTraktId(id).filterNotNull()
+        dao.observeTvShowByShowId(id).filterNotNull()
 }

@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -61,13 +60,6 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.UpNextEpisodeClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
-import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_new
-import com.thomaskioko.tvmaniac.i18n.MR.strings.badge_premiere
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_up_to_date
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_not_watched_for_while
-import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -82,7 +74,6 @@ public fun ContinueWatchingScreen(
     onAction: (ContinueWatchingAction) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -117,21 +108,16 @@ public fun ContinueWatchingScreen(
 
                     isGridMode -> {
                         if (hasNoItems) {
-                            val message = if (state.query.isNotBlank()) {
-                                label_watchlist_empty_result.resolve(context).format(state.query)
-                            } else {
-                                null
-                            }
                             EmptyStateView(
                                 modifier = Modifier.testTag(MyShowsTestTags.EMPTY_STATE_TEST_TAG),
                                 imageVector = Icons.Outlined.Inbox,
-                                title = state.emptyStateText,
-                                message = message,
+                                title = state.labels.emptyTitle,
+                                message = state.labels.emptyResultMessage.ifBlank { null },
                             )
                         } else {
                             SectionedContinueWatchingGridContent(
-                                watchNextTitle = label_discover_up_next.resolve(context),
-                                staleTitle = title_not_watched_for_while.resolve(context),
+                                watchNextTitle = state.labels.watchingTitle,
+                                staleTitle = state.labels.staleTitle,
                                 watchNextItems = state.watchNextItems,
                                 staleItems = state.staleItems,
                                 scrollBehavior = scrollBehavior,
@@ -144,14 +130,14 @@ public fun ContinueWatchingScreen(
                         if (hasNoEpisodes) {
                             EmptyStateView(
                                 imageVector = Icons.Outlined.CheckCircle,
-                                title = label_up_to_date.resolve(context),
+                                title = state.labels.upToDate,
                             )
                         } else {
                             SectionedUpNextListContent(
-                                watchNextTitle = label_discover_up_next.resolve(context),
-                                staleTitle = title_not_watched_for_while.resolve(context),
-                                premiereLabel = badge_premiere.resolve(context),
-                                newLabel = badge_new.resolve(context),
+                                watchNextTitle = state.labels.watchingTitle,
+                                staleTitle = state.labels.staleTitle,
+                                premiereLabel = state.labels.premiereBadge,
+                                newLabel = state.labels.newBadge,
                                 watchNextEpisodes = state.watchNextEpisodes,
                                 staleEpisodes = state.staleEpisodes,
                                 updatingEpisodeIds = state.updatingEpisodeIds,
@@ -165,7 +151,7 @@ public fun ContinueWatchingScreen(
                                 onMarkWatched = { episode ->
                                     onAction(
                                         MarkUpNextEpisodeWatched(
-                                            showTraktId = episode.showTraktId,
+                                            showId = episode.showId,
                                             episodeId = episode.episodeId,
                                             seasonNumber = episode.seasonNumber,
                                             episodeNumber = episode.episodeNumber,
@@ -217,7 +203,7 @@ private fun SectionedContinueWatchingGridContent(
             }
             items(
                 items = chunkedWatchNext,
-                key = { "watchnext_row_${it.first().traktId}" },
+                key = { "watchnext_row_${it.first().showId}" },
                 contentType = { "WatchnextRow" },
             ) { rowItems ->
                 GridRow(
@@ -233,7 +219,7 @@ private fun SectionedContinueWatchingGridContent(
             }
             items(
                 items = chunkedStale,
-                key = { "stale_row_${it.first().traktId}" },
+                key = { "stale_row_${it.first().showId}" },
                 contentType = { "StaleRow" },
             ) { rowItems ->
                 GridRow(
@@ -284,11 +270,11 @@ private fun ContinueWatchingGridItem(
     ) {
         PosterCard(
             imageUrl = show.posterImageUrl,
-            onClick = { onItemClicked(show.traktId) },
+            onClick = { onItemClicked(show.showId) },
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2f / 3f)
-                .testTag(MyShowsTestTags.showCard(show.traktId)),
+                .testTag(MyShowsTestTags.showCard(show.showId)),
             title = show.title.orEmpty(),
             shape = RectangleShape,
         )
@@ -331,7 +317,7 @@ private fun SectionedUpNextListContent(
             }
             items(
                 items = watchNextEpisodes,
-                key = { "watchnext_${it.showTraktId}_${it.episodeId}" },
+                key = { "watchnext_${it.showId}_${it.episodeId}" },
                 contentType = { "WatchnextEpisode" },
             ) { episode ->
                 ContinueWatchingUpNextListItem(
@@ -339,7 +325,7 @@ private fun SectionedUpNextListContent(
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
                     onItemClicked = onEpisodeClicked,
-                    onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
+                    onShowTitleClicked = { onShowTitleClicked(episode.showId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
                     isUpdating = episode.episodeId in updatingEpisodeIds,
@@ -356,7 +342,7 @@ private fun SectionedUpNextListContent(
             }
             items(
                 items = staleEpisodes,
-                key = { "stale_${it.showTraktId}_${it.episodeId}" },
+                key = { "stale_${it.showId}_${it.episodeId}" },
                 contentType = { "StaleEpisode" },
             ) { episode ->
                 ContinueWatchingUpNextListItem(
@@ -364,7 +350,7 @@ private fun SectionedUpNextListContent(
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
                     onItemClicked = onEpisodeClicked,
-                    onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
+                    onShowTitleClicked = { onShowTitleClicked(episode.showId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
                     isUpdating = episode.episodeId in updatingEpisodeIds,

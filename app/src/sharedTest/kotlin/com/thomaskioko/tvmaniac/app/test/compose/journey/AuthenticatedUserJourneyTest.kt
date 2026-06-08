@@ -14,6 +14,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
     private val betterCallSaulTraktId = 59660L
+    private val favoritesListId = 34223248L
+    private val animeListId = 34223402L
 
     @Test
     fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {
@@ -40,7 +42,6 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
             .also { scenarios.stubAuthenticatedSyncOnSignIn() }
             .clickSignInButton()
@@ -180,21 +181,33 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         profileRobot
             .assertUserNameDisplayed()
+            .scrollToUserLists(slug = TEST_PROFILE_SLUG)
+            .assertUserListsRowDisplayed()
+            .assertListCardDisplayed(favoritesListId)
+            .assertListCardExists(animeListId)
+            // Collapse the section, then expand it again
+            .clickUserListsToggle()
+            .assertUserListsRowDoesNotExist()
+            .clickUserListsToggle()
+            .assertUserListsRowDisplayed()
             .clickSettingsButton()
 
         settingsRobot
             .assertSettingsScreenDisplayed()
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
+            .openTraktPage()
             .scrollToTraktAccountRow()
             .clickTraktAccountRow()
             .assertLogoutDialogDisplayed()
             .clickLogoutConfirm()
             .assertLogoutDialogDoesNotExist()
+            .scrollToTraktAccountRow()
+            .assertTraktAccountButtonDisplayed()
+            .clickBackButton()
             .clickBackButton()
 
         // Verify unauthenticated state
         profileRobot
-            .scrollToSignInButton()
             .assertSignInButtonDisplayed()
     }
 }

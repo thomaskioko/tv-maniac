@@ -63,8 +63,8 @@ class ObserveWatchlistSectionsInteractorTest {
 
         upNextRepository.setNextEpisodesForWatchlist(
             listOf(
-                createNextEpisode(showTraktId = 84958, showName = "Loki", lastWatchedAt = twentyTwoDaysAgo),
-                createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project", lastWatchedAt = recentWatch),
+                createNextEpisode(showId = 84958, showName = "Loki", lastWatchedAt = twentyTwoDaysAgo),
+                createNextEpisode(showId = 1232, showName = "The Lazarus Project", lastWatchedAt = recentWatch),
             ),
         )
 
@@ -84,8 +84,8 @@ class ObserveWatchlistSectionsInteractorTest {
     fun `should filter watchlist by query`() = runTest {
         upNextRepository.setNextEpisodesForWatchlist(
             listOf(
-                createNextEpisode(showTraktId = 84958, showName = "Loki"),
-                createNextEpisode(showTraktId = 1232, showName = "The Lazarus Project"),
+                createNextEpisode(showId = 84958, showName = "Loki"),
+                createNextEpisode(showId = 1232, showName = "The Lazarus Project"),
             ),
         )
 
@@ -104,7 +104,7 @@ class ObserveWatchlistSectionsInteractorTest {
         upNextRepository.setNextEpisodesForWatchlist(
             listOf(
                 createNextEpisode(
-                    showTraktId = 1,
+                    showId = 1,
                     showName = "Show with Progress",
                     watchedCount = 5,
                     totalCount = 10,
@@ -128,8 +128,8 @@ class ObserveWatchlistSectionsInteractorTest {
     fun `should exclude completed shows from sections`() = runTest {
         upNextRepository.setNextEpisodesForWatchlist(
             listOf(
-                createNextEpisode(showTraktId = 1, showName = "In Progress", watchedCount = 5, totalCount = 10),
-                createNextEpisode(showTraktId = 2, showName = "Completed", watchedCount = 10, totalCount = 10),
+                createNextEpisode(showId = 1, showName = "In Progress", watchedCount = 5, totalCount = 10),
+                createNextEpisode(showId = 2, showName = "Completed", watchedCount = 10, totalCount = 10),
             ),
         )
 
@@ -145,14 +145,14 @@ class ObserveWatchlistSectionsInteractorTest {
     }
 
     private fun createNextEpisode(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
         watchedCount: Long = 0,
         totalCount: Long = 10,
     ) = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
+        showId = showId,
+        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

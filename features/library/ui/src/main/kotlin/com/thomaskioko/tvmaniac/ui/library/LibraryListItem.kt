@@ -50,13 +50,12 @@ internal fun LibraryListItem(
             .height(200.dp),
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp,
-        onClick = { onItemClicked(item.traktId) },
+        onClick = { onItemClicked(item.showId) },
     ) {
         Row {
             PosterCard(
                 imageUrl = item.posterImageUrl,
                 title = item.title,
-                imageWidth = 120.dp,
                 aspectRatio = 120f / 200f,
             )
 

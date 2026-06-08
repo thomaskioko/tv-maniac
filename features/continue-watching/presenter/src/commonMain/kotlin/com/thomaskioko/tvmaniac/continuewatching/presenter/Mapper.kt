@@ -27,7 +27,7 @@ public fun List<FollowedShows>.entityToWatchlistShowList(
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         ContinueWatchingItem(
-            traktId = it.show_trakt_id.id,
+            showId = it.show_trakt_id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,
@@ -37,7 +37,7 @@ public fun List<FollowedShows>.entityToWatchlistShowList(
             episodesWatched = watched,
             totalEpisodesTracked = total,
             watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_trakt_id.id],
+            lastWatchedAt = lastWatchedMap[it.show_trakt_id],
         )
     }
         .toPersistentList()
@@ -51,7 +51,7 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         ContinueWatchingItem(
-            traktId = it.show_trakt_id.id,
+            showId = it.show_trakt_id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,
@@ -61,7 +61,7 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
             episodesWatched = watched,
             totalEpisodesTracked = total,
             watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_trakt_id.id],
+            lastWatchedAt = lastWatchedMap[it.show_trakt_id],
         )
     }
         .toPersistentList()
@@ -73,7 +73,7 @@ internal fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
 )
 
 internal fun WatchlistShowInfo.toPresenter(): ContinueWatchingItem = ContinueWatchingItem(
-    traktId = traktId,
+    showId = showId,
     title = title ?: "",
     posterImageUrl = posterImageUrl,
     status = status,
@@ -104,7 +104,7 @@ internal fun UpNextSections.toPresenter(): SectionedEpisodes = SectionedEpisodes
 
 internal fun UpNextEpisodeInfo.toPresenter(): UpNextEpisodeItem {
     return UpNextEpisodeItem(
-        showTraktId = showTraktId,
+        showId = showId,
         showName = showName,
         showPoster = showPoster,
         episodeId = episodeId,

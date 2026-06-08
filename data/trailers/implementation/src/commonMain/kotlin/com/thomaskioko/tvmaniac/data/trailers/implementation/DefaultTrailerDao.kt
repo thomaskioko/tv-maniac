@@ -4,25 +4,28 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
+import com.thomaskioko.tvmaniac.db.SelectByShowId
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultTrailerDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : TrailerDao {
 
     override fun upsert(trailer: Trailers) {
         database.trailersQueries.insertOrReplace(
             id = trailer.id,
-            show_tmdb_id = trailer.show_tmdb_id,
+            show_id = trailer.show_id,
             youtube_url = trailer.youtube_url,
             name = trailer.name,
             site = trailer.site,
@@ -31,11 +34,14 @@ public class DefaultTrailerDao(
         )
     }
 
-    override fun getTrailersByShowTraktId(showTraktId: Long): List<SelectByShowTraktId> =
-        database.trailersQueries.selectByShowTraktId(Id(showTraktId)).executeAsList()
+    override fun getTrailersByShowId(showId: Long): List<SelectByShowId> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return emptyList()
+        return database.trailersQueries.selectByShowId(internalShowId).executeAsList()
+    }
 
-    override fun observeTrailersByShowTraktId(showTraktId: Long): Flow<List<SelectByShowTraktId>> {
-        return database.trailersQueries.selectByShowTraktId(Id(showTraktId)).asFlow().mapToList(dispatchers.io)
+    override fun observeTrailersByShowId(showId: Long): Flow<List<SelectByShowId>> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        return database.trailersQueries.selectByShowId(internalShowId).asFlow().mapToList(dispatchers.io)
     }
 
     override fun delete(id: Long) {

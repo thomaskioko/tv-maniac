@@ -10,13 +10,13 @@ public class FetchPreviousSeasonsInteractor(
 ) : Interactor<FetchPreviousSeasonsParams>() {
     override suspend fun doWork(params: FetchPreviousSeasonsParams) {
         seasonDetailsRepository.syncPreviousSeasonsEpisodes(
-            showTraktId = params.showTraktId,
+            showId = params.showId,
             beforeSeasonNumber = params.seasonNumber,
         )
     }
 }
 
 public data class FetchPreviousSeasonsParams(
-    val showTraktId: Long,
+    val showId: Long,
     val seasonNumber: Long,
 )

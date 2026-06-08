@@ -82,7 +82,7 @@ public class MoreShowsPresenter(
 
     public fun dispatch(action: MoreShowsActions) {
         when (action) {
-            is MoreShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            is MoreShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             MoreBackClicked -> navigator.navigateBack()
             RefreshMoreShows -> {
                 when (categoryId) {
@@ -205,7 +205,7 @@ public class MoreShowsPresenter(
         it.map { show ->
             TvShow(
                 tmdbId = show.tmdbId,
-                traktId = show.traktId,
+                showId = show.showId,
                 title = show.title,
                 posterImageUrl = show.posterPath,
                 inLibrary = show.inLibrary,

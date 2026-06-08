@@ -25,16 +25,16 @@ internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot<DiscoverRobot
         val cardTag = DiscoverTestTags.showCard(rowTag, traktId)
 
         assertFeaturedPagerDisplayed()
-        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, rowTag)
+        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, cardTag)
         assertDisplayed(cardTag)
     }
 
     fun assertUpNextCardDisplayed(traktId: Long) = apply {
-        val rowTag = DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG
+        val cardTag = DiscoverTestTags.upNextCard(traktId)
 
         assertFeaturedPagerDisplayed()
-        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, rowTag)
-        assertDisplayed(DiscoverTestTags.upNextCard(traktId))
+        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, cardTag)
+        assertDisplayed(cardTag)
     }
 
     fun assertUpNextCardDoesNotExist(traktId: Long) = apply {
@@ -59,12 +59,19 @@ internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot<DiscoverRobot
         waitForIdle()
     }
 
+    fun clickFeaturedShow(traktId: Long): ShowDetailsRobot {
+        val tag = DiscoverTestTags.featuredShowItem(traktId)
+        click(tag)
+        return ShowDetailsRobot(composeUi)
+    }
+
     fun clickShowCard(traktId: Long): ShowDetailsRobot {
         val rowTag = DiscoverTestTags.ROW_KEY_TRENDING
         val cardTag = DiscoverTestTags.showCard(rowTag, traktId)
 
+        waitForIdle()
         // Use swipe-based scroll down for better reliability
-        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, rowTag)
+        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, cardTag)
 
         // Now click the card (will wait for it to be visible/composed)
         click(cardTag)
@@ -77,10 +84,10 @@ internal class DiscoverRobot(composeUi: ComposeUiTest) : BaseRobot<DiscoverRobot
     }
 
     fun clickUpNextCard(traktId: Long): EpisodeSheetRobot {
-        val rowTag = DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG
+        val cardTag = DiscoverTestTags.upNextCard(traktId)
 
-        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, rowTag)
-        click(DiscoverTestTags.upNextCard(traktId))
+        scrollDownUntilTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG, cardTag)
+        click(cardTag)
         return EpisodeSheetRobot(composeUi)
     }
 

@@ -127,7 +127,7 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
-    fun `should batch all trakt ids into a single POST given addShowsToWatchListByTraktIds`() = runTest {
+    fun `should batch all trakt ids into a single POST given addShowsToWatchListByIds`() = runTest {
         var requestCount = 0
         var capturedBody: String? = null
 
@@ -142,7 +142,7 @@ class DefaultTraktListRemoteDataSourceTest {
         }
         val dataSource = createDataSource(engine)
 
-        dataSource.addShowsToWatchListByTraktIds(traktIds = listOf(101L, 202L, 303L))
+        dataSource.addShowsToWatchListByIds(showIds = listOf(101L, 202L, 303L))
 
         requestCount shouldBe 1
         capturedBody shouldContain "101"
@@ -151,7 +151,7 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
-    fun `should batch all trakt ids into a single POST given removeShowsFromWatchListByTraktIds`() = runTest {
+    fun `should batch all trakt ids into a single POST given removeShowsFromWatchListByIds`() = runTest {
         var requestCount = 0
         var capturedPath: String? = null
         var capturedBody: String? = null
@@ -168,7 +168,7 @@ class DefaultTraktListRemoteDataSourceTest {
         }
         val dataSource = createDataSource(engine)
 
-        dataSource.removeShowsFromWatchListByTraktIds(traktIds = listOf(404L, 505L))
+        dataSource.removeShowsFromWatchListByIds(showIds = listOf(404L, 505L))
 
         requestCount shouldBe 1
         capturedPath shouldBe "/sync/watchlist/remove"

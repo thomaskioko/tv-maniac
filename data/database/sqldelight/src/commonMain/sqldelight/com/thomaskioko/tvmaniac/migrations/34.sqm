@@ -1,0 +1,12 @@
+-- Migration 34: add `favorite_shows` for the profile Favorites lane.
+--
+-- Stores the user's Trakt favorited shows (synced from /users/me/favorites/shows).
+-- No foreign key to `tvshow`: the favorites sync writes the show row in the same
+-- transaction, and a hard FK with cascade would let an unrelated `tvshow` REPLACE
+-- wipe favorites between syncs.
+
+CREATE TABLE IF NOT EXISTS favorite_shows(
+    show_trakt_id INTEGER NOT NULL PRIMARY KEY,
+    rank INTEGER NOT NULL,
+    listed_at TEXT NOT NULL
+);

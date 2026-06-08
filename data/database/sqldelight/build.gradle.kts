@@ -12,6 +12,8 @@ kotlin {
     sourceSets {
         androidMain { dependencies { implementation(libs.sqldelight.driver.android) } }
 
+        commonMain { dependencies { api(projects.core.logger.api) } }
+
         commonTest {
             dependencies {
                 implementation(libs.kotest.assertions)

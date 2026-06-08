@@ -18,7 +18,7 @@ class MarkEpisodeWatchedInteractorTest {
     @Test
     fun `should mark episode as watched successfully`() = runTest {
         val params = MarkEpisodeWatchedParams(
-            showTraktId = 84958,
+            showId = 84958,
             episodeId = 123456,
             seasonNumber = 1,
             episodeNumber = 5,
@@ -34,14 +34,14 @@ class MarkEpisodeWatchedInteractorTest {
     @Test
     fun `should handle multiple episodes being marked as watched`() = runTest {
         val episode1 = MarkEpisodeWatchedParams(
-            showTraktId = 84958,
+            showId = 84958,
             episodeId = 123456,
             seasonNumber = 1,
             episodeNumber = 1,
         )
 
         val episode2 = MarkEpisodeWatchedParams(
-            showTraktId = 84958,
+            showId = 84958,
             episodeId = 123457,
             seasonNumber = 1,
             episodeNumber = 2,
@@ -63,7 +63,7 @@ class MarkEpisodeWatchedInteractorTest {
     @Test
     fun `should complete successfully when marking episode from different season`() = runTest {
         val params = MarkEpisodeWatchedParams(
-            showTraktId = 84958,
+            showId = 84958,
             episodeId = 123456,
             seasonNumber = 2,
             episodeNumber = 3,
@@ -79,14 +79,14 @@ class MarkEpisodeWatchedInteractorTest {
     @Test
     fun `should handle episodes from different shows`() = runTest {
         val lokiEpisode = MarkEpisodeWatchedParams(
-            showTraktId = 84958,
+            showId = 84958,
             episodeId = 123456,
             seasonNumber = 1,
             episodeNumber = 1,
         )
 
         val lazarusEpisode = MarkEpisodeWatchedParams(
-            showTraktId = 1232,
+            showId = 1232,
             episodeId = 789012,
             seasonNumber = 1,
             episodeNumber = 1,

@@ -48,7 +48,7 @@ internal class LibraryStatePreviewParameterProvider : PreviewParameterProvider<L
             isGridMode = false,
             items = persistentListOf(
                 LibraryShowItem(
-                    traktId = 1,
+                    showId = 1,
                     tmdbId = 1396,
                     title = "Breaking Bad",
                     posterImageUrl = null,
@@ -86,7 +86,7 @@ private fun previewStatuses() = persistentListOf(
 
 private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
     LibraryShowItem(
-        traktId = 1,
+        showId = 1,
         tmdbId = 1396,
         title = "Breaking Bad",
         posterImageUrl = null,
@@ -103,7 +103,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         ),
     ),
     LibraryShowItem(
-        traktId = 2,
+        showId = 2,
         tmdbId = 1399,
         title = "Game of Thrones",
         posterImageUrl = null,
@@ -119,7 +119,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         ),
     ),
     LibraryShowItem(
-        traktId = 3,
+        showId = 3,
         tmdbId = 66732,
         title = "Stranger Things",
         posterImageUrl = null,
@@ -135,7 +135,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         ),
     ),
     LibraryShowItem(
-        traktId = 4,
+        showId = 4,
         tmdbId = 94997,
         title = "House of the Dragon",
         posterImageUrl = null,
@@ -149,7 +149,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         watchProviders = persistentListOf(),
     ),
     LibraryShowItem(
-        traktId = 5,
+        showId = 5,
         tmdbId = 60625,
         title = "Rick and Morty",
         posterImageUrl = null,

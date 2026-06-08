@@ -23,8 +23,6 @@ import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -55,57 +53,6 @@ internal data class SheetAction(
 )
 
 @Composable
-internal fun EpisodeDetailBottomSheet(
-    episode: EpisodeDetailInfo,
-    sheetState: SheetState,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-    actions: @Composable (ColumnScope.() -> Unit)? = null,
-) {
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surface,
-        dragHandle = null,
-        modifier = modifier,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(EpisodeSheetTestTags.SHEET_TEST_TAG)
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
-        ) {
-            EpisodeDetailHeader(
-                imageUrl = episode.imageUrl,
-                contentDescription = episode.title,
-            )
-
-            EpisodeDetailContentLayout(
-                title = episode.title,
-                episodeInfo = episode.episodeInfo,
-                overview = episode.overview,
-                rating = episode.rating,
-                voteCount = episode.voteCount,
-            )
-
-            actions?.let { actions ->
-                Spacer(modifier = Modifier.height(16.dp))
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                actions()
-            }
-        }
-    }
-}
-
-@Composable
 internal fun EpisodeDetailSheetContent(
     episode: EpisodeDetailInfo,
     modifier: Modifier = Modifier,
@@ -114,6 +61,7 @@ internal fun EpisodeDetailSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .testTag(EpisodeSheetTestTags.SHEET_TEST_TAG)
             .verticalScroll(rememberScrollState())
             .padding(bottom = 24.dp),
     ) {

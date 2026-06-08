@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.presentation.library
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -23,8 +24,6 @@ import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -53,7 +52,7 @@ public class LibraryPresenter(
     private val repository: LibraryRepository,
     private val observeLibraryInteractor: ObserveLibraryInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val accountManager: AccountManager,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -117,7 +116,7 @@ public class LibraryPresenter(
 
     public fun dispatch(action: LibraryAction) {
         when (action) {
-            is LibraryShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.traktId)))
+            is LibraryShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is LibraryQueryChanged -> updateQuery(action.query)
             is ClearLibraryQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
@@ -177,9 +176,9 @@ public class LibraryPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            traktAuthRepository.state
+            accountManager.isConnected
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .collect { syncLibrary() }
         }
     }
@@ -285,7 +284,7 @@ public class LibraryPresenter(
 }
 
 private fun LibraryItem.toLibraryShowItem(): LibraryShowItem = LibraryShowItem(
-    traktId = traktId,
+    showId = showId,
     tmdbId = tmdbId,
     title = title,
     posterImageUrl = posterPath,

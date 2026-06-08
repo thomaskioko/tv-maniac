@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 import dev.zacsweers.metro.AppScope

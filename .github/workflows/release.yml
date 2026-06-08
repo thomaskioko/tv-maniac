@@ -27,8 +27,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Gradle Environment
-        uses: ./.github/actions/setup-gradle
+      - name: Install git-cliff
+        uses: kenji-miyake/setup-git-cliff@2778609c643a39a2576c4bae2e493b855eb4aee8 # v2.0.1
 
       - name: Read version info
         id: info

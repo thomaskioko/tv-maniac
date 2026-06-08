@@ -51,6 +51,26 @@
     <string name="label_settings_section_app_theme">Thème de l\'application</string>
     <string name="label_settings_section_appearance">Apparence</string>
     <string name="label_settings_section_behavior">Comportement</string>
+    <string name="label_settings_section_notifications">Notifications</string>
+    <string name="label_settings_group_general">Général</string>
+    <string name="label_settings_group_account">Compte</string>
+    <string name="label_settings_section_licenses">Licences et attributions</string>
+    <string name="label_settings_licenses_section_app">Application</string>
+    <string name="label_settings_licenses_section_data">Données et services</string>
+    <string name="label_settings_licenses_tmdb_title">The Movie Database (TMDB)</string>
+    <string name="label_settings_licenses_tmdb_body">TvManiac utilise l\'API TMDB pour les métadonnées, les visuels, les bandes-annonces et la distribution des séries. Ce produit utilise l\'API TMDB mais n\'est ni approuvé ni certifié par TMDB.</string>
+    <string name="label_settings_licenses_trakt_body">TvManiac utilise Trakt pour synchroniser votre historique de visionnage, votre liste de suivi et votre progression des épisodes sur tous vos appareils.</string>
+    <string name="label_settings_appearance_description">Thème et qualité d\'image</string>
+    <string name="label_settings_behavior_description">Sync, épisodes spéciaux et bandes-annonces</string>
+    <string name="label_settings_notifications_description">Alertes de sortie d\'épisodes</string>
+    <string name="label_settings_privacy_description">Rapports de plantage et confidentialité</string>
+    <string name="label_settings_info_description">Version de l\'app et code source</string>
+    <string name="label_settings_licenses_description">Sources de données et remerciements</string>
+    <string name="label_settings_trakt_description">Gérer votre connexion Trakt</string>
+    <string name="label_settings_trakt_authentication">Authentification</string>
+    <string name="label_settings_trakt_connected">Connecté</string>
+    <string name="label_settings_trakt_connected_as">Connecté en tant que %s</string>
+    <string name="label_settings_trakt_connected_description">Votre historique de visionnage, votre liste de suivi et votre progression des épisodes sont synchronisés avec Trakt.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Bandes-annonces</string>
     <string name="label_settings_youtube_description">Ouvrir les bandes-annonces dans l\'application Youtube</string>
@@ -107,6 +127,7 @@
     <string name="cd_next_week">Semaine suivante</string>
     <string name="cd_expand_collapse">Agrandir ou réduire</string>
     <string name="cd_connectivity_icon">Icône de connectivité</string>
+    <string name="cd_dismiss">Fermer</string>
 
     <string name="details_episodes">Épisodes</string>
     <string name="details_cast">Distribution</string>
@@ -162,6 +183,7 @@
     <string name="title_all_episodes">Tous les épisodes</string>
     <string name="title_episodes">Épisodes</string>
     <string name="title_watch_next">Regarder ensuite</string>
+    <string name="title_watching">En cours de visionnage</string>
     <string name="title_not_watched_for_while">Pas regardé depuis longtemps</string>
     <string name="title_continue_tracking">Continuer à Suivre</string>
     <string name="badge_premiere">PREMIÈRE</string>
@@ -221,9 +243,7 @@
     <string name="settings_about_source_code">Code source</string>
     <string name="settings_about_website">Site web</string>
     <string name="settings_about_section_title">À propos</string>
-    <string name="trakt_description">Trakt est une plateforme qui fait beaucoup de choses, mais qui suit principalement
-        les émissions de télévision et les films que vous regardez.
-    </string>
+    <string name="trakt_description">Synchronisez votre watchlist, votre progression, vos lectures en cours et vos listes personnelles avec Trakt.</string>
     <string name="settings_trakt_detail_description">Vous allez être redirigé vers votre navigateur et en dehors de
         l'application TvManiac, où vous serez dirigé vers le site Web de Trakt. De là, vous devrez autoriser TvManiac à
         accéder à votre compte Trakt afin d'utiliser les fonctionnalités de Trakt dans l'application. Après avoir
@@ -244,13 +264,24 @@
 
     <string name="profile_title">Profil</string>
     <string name="profile_shows_watched">Émissions vues</string>
+    <string name="profile_lists">Listes</string>
     <string name="profile_episodes_watched">Épisodes vus</string>
     <string name="profile_watch_time">Temps de visionnage</string>
     <string name="profile_stats_title">Statistiques</string>
-    <string name="profile_time_months">MOIS</string>
-    <string name="profile_time_days">JOURS</string>
-    <string name="profile_time_hours">HEURES</string>
+    <string name="profile_progress_title">Progression</string>
+    <string name="profile_filter_completed">Terminées</string>
+    <string name="profile_filter_in_progress">En cours</string>
+    <string name="profile_progress_empty">Rien pour le moment</string>
+    <string name="profile_recently_watched_title">Vu récemment</string>
+    <string name="profile_favorites_title">Favoris</string>
+    <string name="profile_time_months">Mois</string>
+    <string name="profile_time_days">Jours</string>
+    <string name="profile_time_hours">Heures</string>
+    <string name="profile_time_months_short">M</string>
+    <string name="profile_time_days_short">J</string>
+    <string name="profile_time_hours_short">H</string>
     <string name="profile_edit_button">Modifier</string>
+    <string name="profile_view_button">Voir</string>
 
     <string name="profile_unauthenticated_title">Découvrir.\nSuivre.\nListe de suivi.\n&amp; Plus ...</string>
     <string name="profile_feature_track_title">Suivre</string>

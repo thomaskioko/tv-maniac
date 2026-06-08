@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.traktauth.testing
 
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
 import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 

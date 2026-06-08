@@ -2,6 +2,9 @@ package com.thomaskioko.tvmaniac.presentation.showlist
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -18,9 +21,6 @@ import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -49,8 +49,8 @@ public class ShowListPresenter(
     componentContext: ComponentContext,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val navigator: Navigator,
-    private val traktAuthRepository: TraktAuthRepository,
-    private val traktAuthManager: TraktAuthManager,
+    private val accountManager: AccountManager,
+    private val authManagers: Set<AuthManager>,
     private val syncTraktListsInteractor: SyncTraktListsInteractor,
     private val createTraktListInteractor: CreateTraktListInteractor,
     private val toggleShowInListInteractor: ToggleShowInListInteractor,
@@ -69,12 +69,11 @@ public class ShowListPresenter(
 
     public val state: StateFlow<ShowListState> = combine(
         observeTraktListsInteractor.flow,
-        traktAuthRepository.state,
+        accountManager.isConnected,
         uiMessageManager.message,
         createListState,
         togglingListIds,
-    ) { lists, authState, message, createUi, togglingIds ->
-        val isLoggedIn = authState == TraktAuthState.LOGGED_IN
+    ) { lists, isLoggedIn, message, createUi, togglingIds ->
         ShowListState(
             isLoggedIn = isLoggedIn,
             isLoading = false,
@@ -90,7 +89,7 @@ public class ShowListPresenter(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
         initialValue = ShowListState(
-            isLoggedIn = traktAuthRepository.isLoggedIn(),
+            isLoggedIn = accountManager.getActiveProvider() != null,
             labels = labels,
         ),
     )
@@ -104,7 +103,7 @@ public class ShowListPresenter(
 
     public fun dispatch(action: ShowListAction) {
         when (action) {
-            ShowListAction.Login -> traktAuthManager.launchWebView()
+            ShowListAction.Login -> authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
             ShowListAction.ShowCreateListField -> createListState.update {
                 it.copy(showField = true, error = null)
             }
@@ -127,8 +126,8 @@ public class ShowListPresenter(
 
     private fun observeAuthAndSync() {
         coroutineScope.launch {
-            traktAuthRepository.state
-                .filter { it == TraktAuthState.LOGGED_IN }
+            accountManager.isConnected
+                .filter { it }
                 .collect {
                     syncTraktListsInteractor(SyncTraktListsInteractor.Params())
                         .collectStatus(
@@ -165,7 +164,7 @@ public class ShowListPresenter(
                 toggleShowInListInteractor(
                     ToggleShowInListInteractor.Params(
                         listId = listId,
-                        traktShowId = param.showId,
+                        showId = param.showId,
                         isCurrentlyInList = isCurrentlyInList,
                     ),
                 ).collectStatus(

@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailContent
+import com.thomaskioko.tvmaniac.episodedetail.ui.EpisodeDetailSheetLoadingUi
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionUi
@@ -120,6 +121,15 @@ class EpisodeSheetScreenshotTest {
                         ),
                     ),
                 )
+            }
+        }
+    }
+
+    @Test
+    fun episodeDetailLoading() {
+        composeTestRule.captureMultiDevice("EpisodeDetailLoading") {
+            TvManiacBackground {
+                EpisodeDetailSheetLoadingUi()
             }
         }
     }

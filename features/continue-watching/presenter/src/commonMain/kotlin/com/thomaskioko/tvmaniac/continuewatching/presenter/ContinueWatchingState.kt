@@ -13,7 +13,7 @@ public data class ContinueWatchingState(
     val isGridMode: Boolean = true,
     val isRefreshing: Boolean = false,
     val isSyncing: Boolean = false,
-    val emptyStateText: String = "",
+    val labels: ContinueWatchingLabels = ContinueWatchingLabels(),
     val watchNextItems: ImmutableList<ContinueWatchingItem> = persistentListOf(),
     val staleItems: ImmutableList<ContinueWatchingItem> = persistentListOf(),
     val watchNextEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),

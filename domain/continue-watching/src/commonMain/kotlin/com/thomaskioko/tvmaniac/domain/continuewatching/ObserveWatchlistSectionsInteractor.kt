@@ -1,11 +1,9 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
-import com.thomaskioko.tvmaniac.domain.continuewatching.model.NextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistSections
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistShowInfo
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
-import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
@@ -29,43 +27,6 @@ public class ObserveWatchlistSectionsInteractor(
                     .groupBySections(dateTimeProvider.nowMillis())
             }
     }
-}
-
-private fun WatchlistShowInfo.isCompleted(): Boolean {
-    return totalEpisodesTracked in 1..episodesWatched
-}
-
-private fun NextEpisodeWithShow.toWatchlistShowInfo(): WatchlistShowInfo {
-    val progress = if (totalCount > 0) watchedCount.toFloat() / totalCount else 0f
-    return WatchlistShowInfo(
-        traktId = showTraktId,
-        tmdbId = showTmdbId,
-        title = showName,
-        posterImageUrl = showPoster,
-        status = showStatus,
-        year = showYear,
-        seasonCount = seasonCount,
-        episodeCount = episodeCount,
-        episodesWatched = watchedCount,
-        totalEpisodesTracked = totalCount,
-        watchProgress = progress,
-        lastWatchedAt = lastWatchedAt,
-        nextEpisode = toNextEpisodeInfo(),
-    )
-}
-
-private fun NextEpisodeWithShow.toNextEpisodeInfo(): NextEpisodeInfo? {
-    val resolvedEpisodeId = episodeId ?: return null
-    val resolvedSeasonNumber = seasonNumber ?: return null
-    val resolvedEpisodeNumber = episodeNumber ?: return null
-    return NextEpisodeInfo(
-        episodeId = resolvedEpisodeId,
-        episodeTitle = episodeName ?: "",
-        seasonNumber = resolvedSeasonNumber,
-        episodeNumber = resolvedEpisodeNumber,
-        stillPath = stillPath,
-        firstAired = firstAired,
-    )
 }
 
 private fun List<WatchlistShowInfo>.groupBySections(currentTimeMillis: Long): WatchlistSections {

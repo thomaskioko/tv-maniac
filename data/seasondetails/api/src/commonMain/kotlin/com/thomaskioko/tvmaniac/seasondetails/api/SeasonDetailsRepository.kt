@@ -12,12 +12,12 @@ public interface SeasonDetailsRepository {
     )
 
     public suspend fun syncShowSeasonDetails(
-        showTraktId: Long,
+        showId: Long,
         forceRefresh: Boolean = false,
     )
 
     public suspend fun syncPreviousSeasonsEpisodes(
-        showTraktId: Long,
+        showId: Long,
         beforeSeasonNumber: Long,
         forceRefresh: Boolean = false,
     )
@@ -28,5 +28,5 @@ public interface SeasonDetailsRepository {
 
     public fun observeSeasonImages(id: Long): Flow<List<SeasonImages>>
 
-    public fun observeContinueTrackingEpisodes(showTraktId: Long): Flow<ContinueTrackingResult?>
+    public fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?>
 }

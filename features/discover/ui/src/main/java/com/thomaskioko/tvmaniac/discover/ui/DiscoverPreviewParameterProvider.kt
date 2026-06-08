@@ -9,14 +9,14 @@ import kotlinx.collections.immutable.toImmutableList
 
 internal val discoverShow = DiscoverShow(
     tmdbId = 84958,
-    traktId = 84958,
+    showId = 84958,
     title = "Loki",
     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     overView = "After stealing the Tesseract during the events of Avengers: Endgame, an ",
 )
 
 internal val nextEpisodeUiModel = NextEpisodeUiModel(
-    showTraktId = 1L,
+    showId = 1L,
     showName = "The Walking Dead: Daryl Dixon",
     imageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
     episodeId = 123L,
@@ -42,13 +42,13 @@ internal val discoverContentSuccess = DiscoverViewState(
 private fun createDiscoverShowList(size: Int = 20) = List(size) { index ->
     discoverShow.copy(
         tmdbId = discoverShow.tmdbId + index,
-        traktId = discoverShow.traktId + index,
+        showId = discoverShow.showId + index,
     )
 }.toImmutableList()
 
 private fun createNextEpisodesList(size: Int = 3) = List(size) { index ->
     nextEpisodeUiModel.copy(
-        showTraktId = (index + 1).toLong(),
+        showId = (index + 1).toLong(),
         showName = when (index) {
             0 -> "The Walking Dead: Daryl Dixon"
             1 -> "Wednesday"

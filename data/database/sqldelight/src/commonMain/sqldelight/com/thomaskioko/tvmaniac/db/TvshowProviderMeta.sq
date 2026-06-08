@@ -1,0 +1,15 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.Provider;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+-- Per-provider catalog data (ratings) that survives a provider switch. `last_synced_at` enables
+-- stale-rating expiry later; cheap to add now, painful to add via a migration later.
+CREATE TABLE IF NOT EXISTS tvshow_provider_meta(
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    provider TEXT AS Provider NOT NULL,
+    rating REAL,
+    vote_count INTEGER,
+    last_synced_at INTEGER,
+    PRIMARY KEY (show_id, provider),
+    FOREIGN KEY (show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);

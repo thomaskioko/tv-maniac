@@ -18,6 +18,41 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         click(SettingsTestTags.BACK_BUTTON_TEST_TAG)
     }
 
+    fun openAppearancePage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG)
+        click(SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG)
+    }
+
+    fun openBehaviorPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.GENERAL_BEHAVIOR_ROW_TEST_TAG)
+        click(SettingsTestTags.GENERAL_BEHAVIOR_ROW_TEST_TAG)
+    }
+
+    fun openNotificationsPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.GENERAL_NOTIFICATIONS_ROW_TEST_TAG)
+        click(SettingsTestTags.GENERAL_NOTIFICATIONS_ROW_TEST_TAG)
+    }
+
+    fun openPrivacyPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG)
+        click(SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG)
+    }
+
+    fun openInfoPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG)
+        click(SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG)
+    }
+
+    fun openLicensesPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG)
+        click(SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG)
+    }
+
+    fun openTraktPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG)
+        click(SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG)
+    }
+
     fun assertImageQualitySelected(quality: ImageQuality) = apply {
         assertSelected(SettingsTestTags.imageQualityChip(quality.name))
     }
@@ -43,6 +78,10 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
 
     fun clickTraktAccountRow() = apply {
         click(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
+    }
+
+    fun assertTraktAccountButtonDisplayed() = apply {
+        assertDisplayed(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
     }
 
     fun assertLogoutDialogDisplayed() = apply {

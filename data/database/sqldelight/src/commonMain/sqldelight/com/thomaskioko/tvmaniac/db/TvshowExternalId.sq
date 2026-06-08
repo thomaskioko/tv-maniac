@@ -1,0 +1,34 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.Provider;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+-- Provider ids for a show EXCEPT tmdb (which stays a dedicated column on `tvshow`). `external_id` is
+-- TEXT so it can hold imdb `ttXXXX` ids; numeric provider ids are stored as their string form.
+CREATE TABLE IF NOT EXISTS tvshow_external_id(
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    provider TEXT AS Provider NOT NULL,
+    external_id TEXT NOT NULL,
+    PRIMARY KEY (show_id, provider),
+    FOREIGN KEY (show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+-- Makes a mis-merge impossible: a given provider id maps to at most one internal show.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_external_lookup
+    ON tvshow_external_id(provider, external_id);
+
+-- Trakt id per internal show, as a typed numeric column. Used by queries that still expose the
+-- `traktId` data-layer boundary (Phase 0) to re-source `show_trakt_id` once `tvshow.trakt_id` is
+-- dropped: they join `show_trakt ON show_trakt.show_id = tvshow.id`.
+CREATE VIEW show_trakt AS
+SELECT show_id, CAST(external_id AS INTEGER) AS trakt_id
+FROM tvshow_external_id
+WHERE provider = 'TRAKT';
+
+showIdForExternalId:
+SELECT show_id
+FROM tvshow_external_id
+WHERE provider = :provider AND external_id = :externalId;
+
+insert:
+INSERT OR IGNORE INTO tvshow_external_id(show_id, provider, external_id)
+VALUES (:showId, :provider, :externalId);

@@ -23,8 +23,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
@@ -58,6 +57,7 @@ class SeasonPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val castRepository = FakeCastRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val navigator = FakeNavigator()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -231,15 +231,12 @@ class SeasonPresenterTest {
     }
 
     @Test
-    fun `should invoke onBack when SeasonDetailsBackClicked action is dispatched`() = runTest {
-        var backCalled = false
-        presenter = buildSeasonDetailsPresenter(onBack = { backCalled = true })
-
+    fun `should navigate back when SeasonDetailsBackClicked action is dispatched`() = runTest {
         presenter.dispatch(SeasonDetailsBackClicked)
 
         advanceUntilIdle()
 
-        backCalled shouldBe true
+        navigator.navigateBackCount shouldBe 1
     }
 
     @Test
@@ -270,7 +267,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showTraktId = 1L,
+                showId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 5,
                 totalCount = 10,
@@ -293,7 +290,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showTraktId = 1L,
+                showId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -316,7 +313,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showTraktId = 1L,
+                showId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -341,7 +338,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showTraktId = 1L,
+                showId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -404,7 +401,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -438,7 +435,7 @@ class SeasonPresenterTest {
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
             SeasonWatchProgress(
-                showTraktId = 1L,
+                showId = 1L,
                 seasonNumber = 1L,
                 watchedCount = 10,
                 totalCount = 10,
@@ -518,7 +515,7 @@ class SeasonPresenterTest {
             finalState.updatingEpisodeIds.shouldBeEmpty()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 5,
@@ -592,7 +589,7 @@ class SeasonPresenterTest {
             finalState.updatingEpisodeIds.shouldBeEmpty()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 5,
@@ -626,7 +623,7 @@ class SeasonPresenterTest {
             finalState.updatingEpisodeIds.shouldBeEmpty()
 
             episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe MarkEpisodeUnwatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 episodeId = 12345,
             )
         }
@@ -679,7 +676,7 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = true,
             )
@@ -712,7 +709,7 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = false,
             )
@@ -805,7 +802,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = false,
             )
@@ -818,7 +815,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
         )
 
         presenter.state.test {
@@ -828,7 +825,7 @@ class SeasonPresenterTest {
             loadedState.watchProgress shouldBe 0f
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 1, totalCount = 10),
+                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 1, totalCount = 10),
             )
 
             presenter.dispatch(
@@ -855,7 +852,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 5, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 5, totalCount = 10),
         )
 
         presenter.state.test {
@@ -874,7 +871,7 @@ class SeasonPresenterTest {
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 4, totalCount = 10),
+                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 4, totalCount = 10),
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -890,7 +887,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
         )
 
         presenter.state.test {
@@ -899,7 +896,7 @@ class SeasonPresenterTest {
             loadedState.isSeasonWatched shouldBe false
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
             )
 
             presenter.dispatch(
@@ -926,7 +923,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 3, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 3, totalCount = 10),
         )
         episodeRepository.setUnwatchedCountInPreviousSeasons(0L)
 
@@ -937,7 +934,7 @@ class SeasonPresenterTest {
             loadedState.isSeasonWatched shouldBe false
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
             )
 
             presenter.dispatch(MarkSeasonAsWatched(hasUnwatchedInPreviousSeasons = false))
@@ -958,7 +955,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
         )
 
         presenter.state.test {
@@ -977,7 +974,7 @@ class SeasonPresenterTest {
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
+                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 9, totalCount = 10),
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -994,7 +991,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
         )
 
         presenter.state.test {
@@ -1014,7 +1011,7 @@ class SeasonPresenterTest {
             dialogDismissedState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
             episodeRepository.setSeasonWatchProgress(
-                SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+                SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
             )
 
             val updatedState = awaitItem()
@@ -1096,7 +1093,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -1111,7 +1108,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 10, totalCount = 10),
         )
 
         presenter.state.test {
@@ -1132,7 +1129,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
         )
         episodeRepository.setUnwatchedCountInPreviousSeasons(0L)
 
@@ -1148,7 +1145,7 @@ class SeasonPresenterTest {
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showTraktId = 1,
+                showId = 1,
                 seasonNumber = 1,
                 markPreviousSeasons = false,
             )
@@ -1161,7 +1158,7 @@ class SeasonPresenterTest {
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
         episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(showTraktId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
         )
         episodeRepository.setUnwatchedCountInPreviousSeasons(5)
 
@@ -1180,43 +1177,15 @@ class SeasonPresenterTest {
         }
     }
 
-    private fun buildSeasonDetailsPresenter(
-        onBack: () -> Unit = {},
-    ): SeasonDetailsPresenter {
+    private fun buildSeasonDetailsPresenter(): SeasonDetailsPresenter {
         return SeasonDetailsPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             param = SeasonDetailsUiParam(
-                showTraktId = 1,
+                showId = 1,
                 seasonId = 1,
                 seasonNumber = 1,
             ),
-            navigator = object : Navigator {
-                override val activeRoot: com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.NavRoot> =
-                    com.arkivanov.decompose.value.MutableValue(com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot)
-                override fun bringToFront(route: NavRoute) {}
-                override fun navigateTo(route: NavRoute) {}
-                override fun pushToFront(route: NavRoute) {}
-                override fun navigateBack() {
-                    onBack()
-                }
-                override fun navigateBackTo(routeClass: kotlin.reflect.KClass<out NavRoute>, inclusive: Boolean) {}
-                override fun popTo(toIndex: Int) {}
-                override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun <T : Any> buildHostNavigation(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.MultiStackHostState<T>> =
-                    error("Not used in this test")
-                override fun <T : Any> buildOverlaySlot(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
-                    error("Not used in this test")
-                override fun dismissOverlay() {}
-            },
+            navigator = navigator,
             observableSeasonDetailsInteractor = ObservableSeasonDetailsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
                 castRepository = castRepository,

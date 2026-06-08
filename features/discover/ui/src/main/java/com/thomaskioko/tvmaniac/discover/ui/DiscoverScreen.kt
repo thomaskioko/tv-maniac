@@ -119,7 +119,7 @@ public fun DiscoverScreen(
     TvManiacSnackBarHost(
         message = discoverState.message?.message,
         style = SnackBarStyle.Error,
-        onDismiss = { discoverState.message?.let { MessageShown(it.id) } },
+        onDismiss = { discoverState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 
@@ -282,7 +282,7 @@ private fun LazyColumnContent(
                 title = label_discover_up_next.resolve(context),
                 nextEpisodes = dataLoadedState.nextEpisodes,
                 onEpisodeClick = { episode ->
-                    onAction(DiscoverEpisodeLongPressed(showTraktId = episode.showTraktId, episodeId = episode.episodeId))
+                    onAction(DiscoverEpisodeLongPressed(showId = episode.showId, episodeId = episode.episodeId))
                 },
             )
         }

@@ -1,0 +1,46 @@
+{
+    "air_date": "2009-03-08",
+    "episodes": [
+        {
+            "air_date": "2009-03-09",
+            "episode_number": 1,
+            "id": 73489,
+            "name": "Seven Thirty-Seven",
+            "overview": "Walt and Jesse face the consequences of their actions.",
+            "runtime": 47,
+            "season_number": 2,
+            "show_id": 1396,
+            "still_path": "/season2/episode1.jpg",
+            "vote_average": 8.2,
+            "vote_count": 70
+        },
+        {
+            "air_date": "2009-03-16",
+            "episode_number": 2,
+            "id": 73490,
+            "name": "Grilled",
+            "overview": "Walt and Jesse find themselves in a dangerous situation.",
+            "runtime": 48,
+            "season_number": 2,
+            "show_id": 1396,
+            "still_path": "/season2/episode2.jpg",
+            "vote_average": 8.7,
+            "vote_count": 75
+        }
+    ],
+    "name": "Season 2",
+    "overview": "Walt and Jesse expand their operation amid growing danger.",
+    "id": 3573,
+    "poster_path": "/season2/poster.jpg",
+    "season_number": 2,
+    "vote_average": 8.6,
+    "videos": {
+        "results": []
+    },
+    "images": {
+        "posters": []
+    },
+    "credits": {
+        "cast": []
+    }
+}

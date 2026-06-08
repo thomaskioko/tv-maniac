@@ -17,8 +17,8 @@ public class DefaultSimilarShowsRepository(
     private val dao: SimilarShowsDao,
 ) : SimilarShowsRepository {
 
-    override suspend fun fetchSimilarShows(traktId: Long, forceRefresh: Boolean) {
-        val param = SimilarParams(showTraktId = traktId)
+    override suspend fun fetchSimilarShows(showId: Long, forceRefresh: Boolean) {
+        val param = SimilarParams(showId = showId)
 
         when {
             forceRefresh -> store.fresh(param)

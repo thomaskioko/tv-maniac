@@ -52,7 +52,7 @@ internal fun ContinueWatchingUpNextListItem(
 ) {
     Card(
         shape = MaterialTheme.shapes.small,
-        onClick = { onItemClicked(item.showTraktId, item.episodeId) },
+        onClick = { onItemClicked(item.showId, item.episodeId) },
         modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -77,7 +77,7 @@ internal fun ContinueWatchingUpNextListItem(
             ) {
                 TextTitlePill(
                     showName = item.showName,
-                    onClick = { onShowTitleClicked(item.showTraktId) },
+                    onClick = { onShowTitleClicked(item.showId) },
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -162,7 +162,7 @@ internal fun ContinueWatchingUpNextListItem(
 private fun ContinueWatchingUpNextListItemPreview() {
     ContinueWatchingUpNextListItem(
         item = UpNextEpisodeItem(
-            showTraktId = 1L,
+            showId = 1L,
             showName = "The Walking Dead: Daryl Dixon",
             showPoster = "/poster.jpg",
             episodeId = 123L,

@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
@@ -32,7 +34,10 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setUp() {
-        dao = DefaultContinueWatchingDao(database, dispatchers)
+        dao = DefaultContinueWatchingDao(database, showIdResolver, dispatchers)
+        insertTvShow(showId = BREAKING_BAD_TRAKT_ID, tmdbId = BREAKING_BAD_TMDB_ID)
+        insertTvShow(showId = THE_WIRE_TRAKT_ID, tmdbId = THE_WIRE_TMDB_ID)
+        insertTvShow(showId = ORPHAN_TRAKT_ID, tmdbId = ORPHAN_TMDB_ID)
     }
 
     @AfterTest
@@ -79,12 +84,12 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve null tmdb id`() {
-        val orphan = breakingBadEntry.copy(traktId = 9999L, tmdbId = null)
+        val orphan = breakingBadEntry.copy(showId = ORPHAN_TRAKT_ID, tmdbId = null)
         dao.upsert(orphan)
 
         val stored = dao.entries().first()
         stored.tmdbId.shouldBeNull()
-        stored.traktId shouldBe 9999L
+        stored.showId shouldBe ORPHAN_TRAKT_ID
     }
 
     @Test
@@ -116,7 +121,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
         dao.upsert(breakingBadEntry)
         dao.upsert(theWireEntry)
 
-        dao.deleteByTraktId(breakingBadEntry.traktId)
+        dao.deleteByShowId(breakingBadEntry.showId)
 
         dao.entries() shouldContainExactlyInAnyOrder listOf(theWireEntry)
     }
@@ -130,10 +135,38 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 
         dao.entries().shouldBeEmpty()
     }
+
+    private fun insertTvShow(showId: Long, tmdbId: Long) {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id<TmdbId>(tmdbId),
+            name = "show-$showId",
+            overview = "overview",
+            language = "en",
+            year = "2020-01-01",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = emptyList(),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        showIdForTraktId(traktId = showId, tmdbId = tmdbId)
+    }
+
+    private companion object {
+        private const val BREAKING_BAD_TRAKT_ID = 1388L
+        private const val BREAKING_BAD_TMDB_ID = 1396L
+        private const val THE_WIRE_TRAKT_ID = 1429L
+        private const val THE_WIRE_TMDB_ID = 1438L
+        private const val ORPHAN_TRAKT_ID = 9999L
+        private const val ORPHAN_TMDB_ID = 9998L
+    }
 }
 
 private val breakingBadEntry = ContinueWatchingEntry(
-    traktId = 1388L,
+    showId = 1388L,
     tmdbId = 1396L,
     airedEpisodes = 62L,
     completedCount = 56L,
@@ -142,7 +175,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
 )
 
 private val theWireEntry = ContinueWatchingEntry(
-    traktId = 1429L,
+    showId = 1429L,
     tmdbId = 1438L,
     airedEpisodes = 60L,
     completedCount = 12L,

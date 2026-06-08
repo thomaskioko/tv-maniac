@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -14,7 +16,7 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.db.SelectByShowTraktId
+import com.thomaskioko.tvmaniac.db.SelectByShowId
 import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
@@ -54,8 +56,6 @@ import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
@@ -91,7 +91,7 @@ class ShowDetailsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val upNextRepository = FakeUpNextRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val accountManager = FakeAccountManager()
     private val fakeLocalizer = FakeLocalizer()
     private val fakeFormatterUtil = FakeFormatterUtil()
     private val fakeNotificationManager = FakeNotificationManager()
@@ -152,7 +152,7 @@ class ShowDetailsPresenterTest {
             ),
             similarShows = persistentListOf(
                 ShowModel(
-                    traktId = 18495,
+                    showId = 18495,
                     title = "Loki",
                     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                     backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -232,7 +232,7 @@ class ShowDetailsPresenterTest {
         presenter.dispatch(
             SeasonClicked(
                 ShowSeasonDetailsParam(
-                    showTraktId = 2,
+                    showId = 2,
                     selectedSeasonIndex = 2,
                     seasonNumber = 0,
                     seasonId = 0,
@@ -292,7 +292,7 @@ class ShowDetailsPresenterTest {
 
             presenter.dispatch(
                 MarkEpisodeWatched(
-                    showTraktId = 84958,
+                    showId = 84958,
                     episodeId = 1001,
                     seasonNumber = 1,
                     episodeNumber = 1,
@@ -302,7 +302,7 @@ class ShowDetailsPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showTraktId = 84958,
+                showId = 84958,
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -319,7 +319,7 @@ class ShowDetailsPresenterTest {
 
             presenter.dispatch(
                 MarkEpisodeUnwatched(
-                    showTraktId = 84958,
+                    showId = 84958,
                     episodeId = 1001,
                 ),
             )
@@ -327,7 +327,7 @@ class ShowDetailsPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe MarkEpisodeUnwatchedCall(
-                showTraktId = 84958,
+                showId = 84958,
                 episodeId = 1001,
             )
         }
@@ -497,7 +497,7 @@ class ShowDetailsPresenterTest {
 
         presenter.dispatch(
             MarkEpisodeWatched(
-                showTraktId = 84958,
+                showId = 84958,
                 episodeId = 1001,
                 seasonNumber = 1,
                 episodeNumber = 1,
@@ -640,7 +640,7 @@ class ShowDetailsPresenterTest {
 
         watchedEpisodeSyncRepository.reset()
 
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         testDispatcher.scheduler.advanceUntilIdle()
 
         watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
@@ -649,7 +649,7 @@ class ShowDetailsPresenterTest {
 
     @Test
     fun `should sync watch progress on initial load given user is logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         buildMockData(seasonResult = seasons)
 
         val _ = buildShowDetailsPresenter()
@@ -661,7 +661,7 @@ class ShowDetailsPresenterTest {
 
     @Test
     fun `should always attempt sync on initial load given user is logged out`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        accountManager.setActiveProvider(null)
         buildMockData(seasonResult = seasons)
 
         val _ = buildShowDetailsPresenter()
@@ -692,7 +692,7 @@ class ShowDetailsPresenterTest {
         seasonResult: List<ShowSeasons> = emptyList(),
         watchProviderResult: List<WatchProviders> = emptyList(),
         similarShowResult: List<SimilarShows> = emptyList(),
-        trailersResult: List<SelectByShowTraktId> = emptyList(),
+        trailersResult: List<SelectByShowId> = emptyList(),
     ) {
         showDetailsRepository.setShowDetailsResult(showDetailResult)
         trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)
@@ -704,7 +704,7 @@ class ShowDetailsPresenterTest {
     }
 
     private fun buildShowDetailsPresenter(
-        param: ShowDetailsParam = ShowDetailsParam(id = 84958),
+        param: ShowDetailsParam = ShowDetailsParam(showId = 84958),
         onShowFollowed: () -> Unit = {},
     ): ShowDetailsPresenter {
         val notificationRationale = object : NotificationRationale {
@@ -781,7 +781,7 @@ class ShowDetailsPresenterTest {
                 dispatchers = coroutineDispatcher,
             ),
             notificationManager = fakeNotificationManager,
-            traktAuthRepository = traktAuthRepository,
+            accountManager = accountManager,
             mapper = ShowDetailsMapper(localizer = fakeLocalizer),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,

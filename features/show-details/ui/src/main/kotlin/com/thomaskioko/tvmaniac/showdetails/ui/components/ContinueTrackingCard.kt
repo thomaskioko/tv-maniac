@@ -157,7 +157,7 @@ private fun ContinueTrackingCardPreview() {
         episode = ContinueTrackingEpisodeModel(
             episodeId = 123L,
             seasonId = 1L,
-            showTraktId = 1L,
+            showId = 1L,
             episodeNumber = 3,
             seasonNumber = 2,
             episodeNumberFormatted = "S02 | E03",
@@ -179,7 +179,7 @@ private fun ContinueTrackingCardWatchedPreview() {
         episode = ContinueTrackingEpisodeModel(
             episodeId = 123L,
             seasonId = 1L,
-            showTraktId = 1L,
+            showId = 1L,
             episodeNumber = 2,
             seasonNumber = 2,
             episodeNumberFormatted = "S02 | E02",
@@ -201,7 +201,7 @@ private fun ContinueTrackingCardFuturePreview() {
         episode = ContinueTrackingEpisodeModel(
             episodeId = 123L,
             seasonId = 1L,
-            showTraktId = 1L,
+            showId = 1L,
             episodeNumber = 5,
             seasonNumber = 2,
             episodeNumberFormatted = "S02 | E05",
@@ -223,7 +223,7 @@ private fun ContinueTrackingCardUnknownAirDatePreview() {
         episode = ContinueTrackingEpisodeModel(
             episodeId = 123L,
             seasonId = 1L,
-            showTraktId = 1L,
+            showId = 1L,
             episodeNumber = 6,
             seasonNumber = 2,
             episodeNumberFormatted = "S02 | E06",

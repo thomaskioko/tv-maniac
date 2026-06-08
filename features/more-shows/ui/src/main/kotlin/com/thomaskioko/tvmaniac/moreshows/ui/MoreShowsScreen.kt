@@ -50,6 +50,8 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.moreshows.presentation.DismissErrorMessage
 import com.thomaskioko.tvmaniac.moreshows.presentation.MoreBackClicked
@@ -165,14 +167,14 @@ internal fun GridContent(
         contentAlignment = Alignment.Center,
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            columns = GridCells.Fixed(Layout.posterColumns),
+            verticalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
+            horizontalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
             state = listState,
             modifier = modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(contentPadding)
-                .padding(horizontal = 4.dp)
+                .padding(horizontal = ImageDimens.GridItemSpacing)
                 .fillMaxHeight()
                 .testTag(MoreShowsTestTags.GRID_TEST_TAG),
         ) {
@@ -185,11 +187,11 @@ internal fun GridContent(
                 show?.let {
                     PosterCard(
                         imageUrl = show.posterImageUrl,
-                        onClick = { onAction(MoreShowClicked(show.traktId)) },
+                        onClick = { onAction(MoreShowClicked(show.showId)) },
                         modifier = Modifier
                             .animateItem()
                             .fillMaxWidth()
-                            .testTag(MoreShowsTestTags.showCard(show.traktId)),
+                            .testTag(MoreShowsTestTags.showCard(show.showId)),
                         title = show.title,
                     )
                 }

@@ -43,7 +43,7 @@ public class DefaultTraktSyncRemoteDataSource(
         }
 
     override suspend fun getShowWatchedProgress(
-        traktId: Long,
+        showId: Long,
         lastActivity: String?,
         hidden: Boolean,
         specials: Boolean,
@@ -51,7 +51,7 @@ public class DefaultTraktSyncRemoteDataSource(
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
-                path("shows/$traktId/progress/watched")
+                path("shows/$showId/progress/watched")
                 lastActivity?.let { parameters.append("last_activity", it) }
                 parameters.append("hidden", hidden.toString())
                 parameters.append("specials", specials.toString())

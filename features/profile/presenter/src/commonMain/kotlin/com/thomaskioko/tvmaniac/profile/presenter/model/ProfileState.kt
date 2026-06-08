@@ -7,9 +7,20 @@ public data class ProfileState(
     val userProfile: ProfileInfo?,
     val errorMessage: UiMessage? = null,
     val authenticated: Boolean,
+    val userLists: SectionState<ProfileListItem> = SectionState.Loading,
+    val inProgress: SectionState<ProfileShowItem> = SectionState.Loading,
+    val completed: SectionState<ProfileShowItem> = SectionState.Loading,
+    val recentlyWatched: SectionState<ProfileRecentItem> = SectionState.Loading,
+    val library: SectionState<ProfileShowItem> = SectionState.Loading,
+    val watchlist: SectionState<ProfileShowItem> = SectionState.Loading,
+    val favorites: SectionState<ProfileShowItem> = SectionState.Loading,
+    val labels: ProfileLabels = ProfileLabels(),
 ) {
     val showLoading: Boolean
-        get() = userProfile == null && errorMessage == null && isLoading
+        get() = errorMessage == null && isLoading && (userProfile == null || !userProfile.statsLoaded)
+
+    val listCount: Int
+        get() = (userLists as? SectionState.Content)?.items?.size ?: 0
 
     public companion object {
         public val DEFAULT_STATE: ProfileState = ProfileState(

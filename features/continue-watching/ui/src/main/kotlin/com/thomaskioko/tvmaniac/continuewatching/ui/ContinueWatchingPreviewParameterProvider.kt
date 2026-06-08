@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingLabels
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingState
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
@@ -10,7 +11,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 internal val continueWatchingItems = List(3) { index ->
     ContinueWatchingItem(
-        traktId = 84958L + index,
+        showId = 84958L + index,
         title = "Loki",
         posterImageUrl = null,
         year = "2021",
@@ -23,7 +24,7 @@ internal val continueWatchingItems = List(3) { index ->
 
 internal val staleContinueWatchingItems = List(2) { index ->
     ContinueWatchingItem(
-        traktId = 94958L + index,
+        showId = 94958L + index,
         title = "The Mandalorian",
         posterImageUrl = null,
         year = "2019",
@@ -37,7 +38,7 @@ internal val staleContinueWatchingItems = List(2) { index ->
 
 internal val watchNextEpisodes = listOf(
     UpNextEpisodeItem(
-        showTraktId = 84958L,
+        showId = 84958L,
         showName = "Loki",
         showPoster = null,
         episodeId = 1L,
@@ -53,7 +54,7 @@ internal val watchNextEpisodes = listOf(
         remainingEpisodes = 5,
     ),
     UpNextEpisodeItem(
-        showTraktId = 95557L,
+        showId = 95557L,
         showName = "The Walking Dead",
         showPoster = null,
         episodeId = 12L,
@@ -72,7 +73,7 @@ internal val watchNextEpisodes = listOf(
 
 internal val staleEpisodes = listOf(
     UpNextEpisodeItem(
-        showTraktId = 94958L,
+        showId = 94958L,
         showName = "The Mandalorian",
         showPoster = null,
         episodeId = 5L,
@@ -89,6 +90,15 @@ internal val staleEpisodes = listOf(
     ),
 ).toPersistentList()
 
+internal val previewLabels = ContinueWatchingLabels(
+    watchingTitle = "Watching",
+    staleTitle = "Haven't Watched For A While",
+    upToDate = "All caught up",
+    premiereBadge = "PREMIERE",
+    newBadge = "NEW",
+    emptyTitle = "Nothing in progress yet. Mark an episode as watched to see it here.",
+)
+
 internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvider<ContinueWatchingState> {
     override val values: Sequence<ContinueWatchingState>
         get() {
@@ -96,6 +106,7 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                 ContinueWatchingState(
                     isRefreshing = false,
                     isGridMode = false,
+                    labels = previewLabels,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,
                     watchNextEpisodes = watchNextEpisodes,
@@ -104,6 +115,7 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                 ContinueWatchingState(
                     isRefreshing = false,
                     isGridMode = true,
+                    labels = previewLabels,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,
                     watchNextEpisodes = watchNextEpisodes,
@@ -112,6 +124,7 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                 ContinueWatchingState(
                     isGridMode = false,
                     isRefreshing = false,
+                    labels = previewLabels,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,
                     watchNextEpisodes = watchNextEpisodes,
@@ -119,14 +132,16 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                 ),
                 ContinueWatchingState(
                     isRefreshing = false,
+                    labels = previewLabels,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,
                     watchNextEpisodes = watchNextEpisodes,
                     staleEpisodes = staleEpisodes,
                     message = UiMessage(message = "Something went Wrong"),
                 ),
-                ContinueWatchingState(),
+                ContinueWatchingState(labels = previewLabels),
                 ContinueWatchingState(
+                    labels = previewLabels,
                     message = UiMessage(message = "Something went Wrong"),
                 ),
             )

@@ -8,19 +8,18 @@ import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Season
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAILS
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -34,79 +33,71 @@ public class ShowDetailsStore(
     private val tvShowsDao: TvShowsDao,
     private val showDetailsDao: ShowDetailsDao,
     private val seasonDao: SeasonsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TvshowDetails> by storeBuilder(
-    fetcher = Fetcher.of { traktId: Long ->
-        coroutineScope {
+    fetcher = Fetcher.of { showId: Long ->
+        val showDetails = traktRemoteDataSource.getShowDetails(showId).getOrThrow()
 
-            // TODO:: Remove Get or throw and handle exception
-            val showDetailsDeferred = async {
-                traktRemoteDataSource.getShowDetails(traktId).getOrThrow()
-            }
-            val seasonsDeferred = async {
-                traktRemoteDataSource.getShowSeasons(traktId).getOrThrow()
-            }
+        val tmdbId = showDetails.ids.tmdb
+            ?: error("Show ${showDetails.title} (trakt: $showId) has no TMDB ID")
+        val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
 
-            val showDetails = showDetailsDeferred.await()
-            val seasons = seasonsDeferred.await()
+        requestManagerRepository.upsert(
+            entityId = showId,
+            requestType = SHOW_DETAILS.name,
+        )
 
-            val tmdbId = showDetails.ids.tmdb
-                ?: error("Show ${showDetails.title} (trakt: $traktId) has no TMDB ID")
-            val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
-
-            requestManagerRepository.upsert(
-                entityId = traktId,
-                requestType = SHOW_DETAILS.name,
-            )
-
-            ShowDetailsResponse(
-                traktShow = showDetails,
-                traktSeasons = seasons,
-                tmdbId = tmdbId,
-                tmdbPosterPath = tmdbDetails.posterPath,
-                tmdbBackdropPath = tmdbDetails.backdropPath,
-            )
-        }
+        ShowDetailsResponse(
+            traktShow = showDetails,
+            tmdbSeasons = tmdbDetails.seasons,
+            tmdbId = tmdbId,
+            tmdbPosterPath = tmdbDetails.posterPath,
+            tmdbBackdropPath = tmdbDetails.backdropPath,
+        )
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowDetailsResponse, TvshowDetails>(
-        reader = { traktId: Long -> showDetailsDao.observeTvShowByTraktId(traktId) },
-        writer = { traktId, response ->
+        reader = { showId: Long -> showDetailsDao.observeTvShowByShowId(showId) },
+        writer = { showId, response ->
             databaseTransactionRunner {
                 val show = response.traktShow
                 val tmdbId = response.tmdbId
 
                 tvShowsDao.upsert(
-                    Tvshow(
-                        trakt_id = Id(traktId),
-                        tmdb_id = Id(tmdbId),
+                    ShowToPersist(
+                        showId = Id(showId),
+                        tmdbId = Id(tmdbId),
                         name = show.title,
                         overview = show.overview ?: "",
                         language = show.language,
                         status = show.status,
                         year = show.firstAirDate?.let { dateTimeProvider.extractYear(it) },
-                        episode_numbers = show.airedEpisodes?.toString(),
-                        season_numbers = response.traktSeasons.size.toString(),
+                        episodeNumbers = show.airedEpisodes?.toString(),
+                        seasonNumbers = response.tmdbSeasons.size.toString(),
                         ratings = show.rating ?: 0.0,
-                        vote_count = show.votes ?: 0L,
+                        voteCount = show.votes ?: 0L,
                         genres = show.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-                        poster_path = response.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        backdrop_path = response.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        posterPath = response.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        backdropPath = response.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                     ),
                 )
 
-                response.traktSeasons.forEach { season ->
+                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                    ?: return@databaseTransactionRunner
+
+                response.tmdbSeasons.forEach { season ->
                     seasonDao.upsert(
                         Season(
-                            id = Id(season.ids.trakt.toLong()),
-                            show_trakt_id = Id(traktId),
-                            season_number = season.number.toLong(),
+                            id = Id(season.id.toLong()),
+                            show_id = internalShowId,
+                            season_number = season.seasonNumber.toLong(),
                             episode_count = season.episodeCount.toLong(),
-                            title = season.title,
-                            overview = season.overview,
+                            title = season.name,
+                            overview = season.overview ?: "",
                             image_url = null,
                         ),
                     )
@@ -122,7 +113,7 @@ public class ShowDetailsStore(
     Validator.by {
         withContext(dispatchers.io) {
             !requestManagerRepository.isRequestExpired(
-                entityId = it.trakt_id.id,
+                entityId = it.trakt_id,
                 requestType = SHOW_DETAILS.name,
                 threshold = SHOW_DETAILS.duration,
             )

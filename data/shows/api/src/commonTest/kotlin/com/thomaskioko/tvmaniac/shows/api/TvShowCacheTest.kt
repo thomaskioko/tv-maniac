@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.PageId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.shows.api.MockData.getShow
 import com.thomaskioko.tvmaniac.shows.api.MockData.showList
@@ -27,8 +26,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
         shows.forEachIndexed { index, show ->
             show.insertTvShowQuery()
+            val showId = showIdForTraktId(show.tmdb_id.id)
             trendingShowsQueries.insert(
-                traktId = show.trakt_id,
+                showId = showId,
                 tmdbId = show.tmdb_id,
                 page = Id<PageId>(1),
                 name = show.name,
@@ -47,8 +47,9 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     fun `should return show when data is available`() {
         val show = getShow()
         show.insertTvShowQuery()
+        showIdForTraktId(show.tmdb_id.id)
 
-        val entity = tvShowQueries.tvshowDetails(show.trakt_id).executeAsOne()
+        val entity = tvShowQueries.tvshowDetails(show.tmdb_id.id).executeAsOne()
 
         entity shouldNotBe null
         entity.name shouldBe show.name
@@ -168,32 +169,31 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
     private fun insertTestShows() {
         listOf(
             TestShow(
-                traktId = 1,
+                showId = 1,
                 tmdbId = 1,
                 name = "Breaking Bad",
                 overview = "A high school chemistry teacher turned meth dealer",
             ),
             TestShow(
-                traktId = 2,
+                showId = 2,
                 tmdbId = 2,
                 name = "The Walking Dead",
                 overview = "Zombie apocalypse drama",
             ),
             TestShow(
-                traktId = 3,
+                showId = 3,
                 tmdbId = 3,
                 name = "In the Dark",
                 overview = "Crime drama series",
             ),
             TestShow(
-                traktId = 4,
+                showId = 4,
                 tmdbId = 4,
                 name = "Theory of Everything",
                 overview = "Crime drama series",
             ),
         ).forEach { show ->
             tvShowQueries.upsert(
-                trakt_id = Id<TraktId>(show.traktId),
                 tmdb_id = Id<TmdbId>(show.tmdbId),
                 name = show.name,
                 overview = show.overview,
@@ -208,11 +208,12 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
                 episode_numbers = null,
                 season_numbers = null,
             )
+            showIdForTraktId(traktId = show.showId, tmdbId = show.tmdbId)
         }
     }
 
     private data class TestShow(
-        val traktId: Long,
+        val showId: Long,
         val tmdbId: Long,
         val name: String,
         val overview: String,
@@ -220,7 +221,6 @@ internal class TvShowCacheTest : BaseDatabaseTest() {
 
     private fun Tvshow.insertTvShowQuery() {
         tvShowQueries.upsert(
-            trakt_id = trakt_id,
             tmdb_id = tmdb_id,
             name = name,
             overview = overview,

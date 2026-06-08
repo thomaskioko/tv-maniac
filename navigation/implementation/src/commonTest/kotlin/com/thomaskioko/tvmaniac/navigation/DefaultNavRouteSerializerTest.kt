@@ -40,7 +40,7 @@ internal class DefaultNavRouteSerializerTest {
 
     @Test
     fun `should round trip route with nested serializable param`() {
-        val route = ShowDetailsRoute(ShowDetailsParam(id = 1L, forceRefresh = true))
+        val route = ShowDetailsRoute(ShowDetailsParam(showId = 1L, forceRefresh = true))
 
         roundTrip(route) shouldBe route
     }
@@ -49,7 +49,7 @@ internal class DefaultNavRouteSerializerTest {
     fun `should round trip route with multi field nested param`() {
         val route = SeasonDetailsRoute(
             param = SeasonDetailsUiParam(
-                showTraktId = 10,
+                showId = 10,
                 seasonId = 20,
                 seasonNumber = 3,
                 forceRefresh = true,
@@ -85,11 +85,11 @@ internal class DefaultNavRouteSerializerTest {
 
     @Test
     fun `should preserve data class field values given ShowDetailsRoute round trip`() {
-        val original = ShowDetailsRoute(ShowDetailsParam(id = 123L, forceRefresh = true))
+        val original = ShowDetailsRoute(ShowDetailsParam(showId = 123L, forceRefresh = true))
 
         val restored = roundTrip(original).shouldBeInstanceOf<ShowDetailsRoute>()
 
-        restored.param.id shouldBe 123L
+        restored.param.showId shouldBe 123L
         restored.param.forceRefresh shouldBe true
     }
 
@@ -97,7 +97,7 @@ internal class DefaultNavRouteSerializerTest {
     fun `should preserve data class field values given SeasonDetailsRoute round trip`() {
         val original = SeasonDetailsRoute(
             param = SeasonDetailsUiParam(
-                showTraktId = 10,
+                showId = 10,
                 seasonId = 20,
                 seasonNumber = 3,
                 forceRefresh = true,
@@ -106,7 +106,7 @@ internal class DefaultNavRouteSerializerTest {
 
         val restored = roundTrip(original).shouldBeInstanceOf<SeasonDetailsRoute>()
 
-        restored.param.showTraktId shouldBe 10
+        restored.param.showId shouldBe 10
         restored.param.seasonId shouldBe 20
         restored.param.seasonNumber shouldBe 3
         restored.param.forceRefresh shouldBe true
@@ -121,11 +121,11 @@ internal class DefaultNavRouteSerializerTest {
 
     @Test
     fun `should preserve default values given ShowDetailsParam round trip`() {
-        val original = ShowDetailsRoute(ShowDetailsParam(id = 5L))
+        val original = ShowDetailsRoute(ShowDetailsParam(showId = 5L))
 
         val restored = roundTrip(original).shouldBeInstanceOf<ShowDetailsRoute>()
 
-        restored.param.id shouldBe 5L
+        restored.param.showId shouldBe 5L
         restored.param.forceRefresh shouldBe false
     }
 

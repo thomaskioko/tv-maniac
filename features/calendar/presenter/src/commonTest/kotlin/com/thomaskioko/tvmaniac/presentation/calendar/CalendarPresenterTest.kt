@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
@@ -13,8 +15,6 @@ import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -39,7 +39,7 @@ internal class CalendarPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
     private val calendarRepository = FakeCalendarRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val accountManager = FakeAccountManager()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val formatterUtil = FakeFormatterUtil()
     private val logger = FakeLogger()
@@ -71,8 +71,8 @@ internal class CalendarPresenterTest {
         val airDate = todayEpochMillis()
         calendarRepository.setCalendarEntries(
             listOf(
-                createTestEntry(showTraktId = 1, episodeTraktId = 10, airDate = airDate),
-                createTestEntry(showTraktId = 2, episodeTraktId = 20, airDate = airDate),
+                createTestEntry(showId = 1, episodeId = 10, airDate = airDate),
+                createTestEntry(showId = 2, episodeId = 20, airDate = airDate),
             ),
         )
 
@@ -93,15 +93,15 @@ internal class CalendarPresenterTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     seasonNumber = 1,
                     episodeNumber = 1,
                     airDate = airDate,
                 ),
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 11,
+                    showId = 1,
+                    episodeId = 11,
                     seasonNumber = 1,
                     episodeNumber = 2,
                     airDate = airDate,
@@ -126,8 +126,8 @@ internal class CalendarPresenterTest {
         val tomorrowEpoch = tomorrowEpochMillis()
         calendarRepository.setCalendarEntries(
             listOf(
-                createTestEntry(showTraktId = 1, episodeTraktId = 10, airDate = todayEpoch),
-                createTestEntry(showTraktId = 2, episodeTraktId = 20, airDate = tomorrowEpoch),
+                createTestEntry(showId = 1, episodeId = 10, airDate = todayEpoch),
+                createTestEntry(showId = 2, episodeId = 20, airDate = tomorrowEpoch),
             ),
         )
 
@@ -148,8 +148,8 @@ internal class CalendarPresenterTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     seasonNumber = 2,
                     episodeNumber = 5,
                     episodeTitle = "The One",
@@ -173,8 +173,8 @@ internal class CalendarPresenterTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     seasonNumber = 1,
                     episodeNumber = 3,
                     episodeTitle = null,
@@ -194,7 +194,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigateNext to true given user is logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -209,7 +209,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigateNext to false given user is not logged in`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_OUT)
+        accountManager.setActiveProvider(null)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -232,7 +232,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigatePrevious to true given user navigated to next week`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -265,7 +265,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should decrement week offset given NavigateToPreviousWeek is dispatched after navigating forward`() = runTest {
-        traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -294,7 +294,7 @@ internal class CalendarPresenterTest {
 
         presenter.state.test { awaitItem() }
 
-        presenter.dispatch(EpisodeCardClicked(episodeTraktId = 42))
+        presenter.dispatch(EpisodeCardClicked(episodeId = 42))
 
         val activated = navigator.lastActivatedOverlay
         (activated as EpisodeSheetRoute).param.episodeId shouldBe 42
@@ -307,7 +307,7 @@ internal class CalendarPresenterTest {
 
         presenter.state.test { awaitItem() }
 
-        presenter.dispatch(EpisodeCardClicked(episodeTraktId = 999))
+        presenter.dispatch(EpisodeCardClicked(episodeId = 999))
 
         val activated = navigator.lastActivatedOverlay
         (activated as EpisodeSheetRoute).param.episodeId shouldBe 999
@@ -334,8 +334,8 @@ internal class CalendarPresenterTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     showTitle = "Breaking Bad",
                     showPosterPath = "/poster.jpg",
                     network = "AMC",
@@ -354,8 +354,8 @@ internal class CalendarPresenterTest {
             skipItems(1) // Skip initial loading state
             val state = awaitItem()
             val episode = state.dateGroups[0].episodes[0]
-            episode.showTraktId shouldBe 1
-            episode.episodeTraktId shouldBe 10
+            episode.showId shouldBe 1
+            episode.episodeId shouldBe 10
             episode.showTitle shouldBe "Breaking Bad"
             episode.posterUrl shouldBe "/poster.jpg"
             episode.network shouldBe "AMC"
@@ -370,7 +370,7 @@ internal class CalendarPresenterTest {
     fun `should show loading false given data is available`() = runTest {
         val airDate = todayEpochMillis()
         calendarRepository.setCalendarEntries(
-            listOf(createTestEntry(showTraktId = 1, episodeTraktId = 10, airDate = airDate)),
+            listOf(createTestEntry(showId = 1, episodeId = 10, airDate = airDate)),
         )
 
         val presenter = createPresenter()
@@ -423,7 +423,7 @@ internal class CalendarPresenterTest {
             navigator = navigator,
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
-            traktAuthRepository = traktAuthRepository,
+            accountManager = accountManager,
             calendarWeekCalculator = calendarWeekCalculator,
             calendarStateMapper = calendarStateMapper,
             errorToStringMapper = { it.message ?: "Test error" },
@@ -446,8 +446,8 @@ internal class CalendarPresenterTest {
 
     @Suppress("LongParameterList")
     private fun createTestEntry(
-        showTraktId: Long = 1,
-        episodeTraktId: Long = 10,
+        showId: Long = 1,
+        episodeId: Long = 10,
         seasonNumber: Int = 1,
         episodeNumber: Int = 1,
         episodeTitle: String? = "Test Episode",
@@ -460,8 +460,8 @@ internal class CalendarPresenterTest {
         rating: Double? = 8.0,
         votes: Int? = 100,
     ): CalendarEntry = CalendarEntry(
-        showTraktId = showTraktId,
-        episodeTraktId = episodeTraktId,
+        showId = showId,
+        episodeId = episodeId,
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
         episodeTitle = episodeTitle,

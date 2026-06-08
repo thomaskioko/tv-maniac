@@ -15,7 +15,7 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     private val seasonsResult = MutableStateFlow(
         SeasonDetailsWithEpisodes(
             seasonId = 0,
-            showTraktId = 0,
+            showId = 0,
             showTmdbId = 0,
             name = "",
             showTitle = "",
@@ -66,14 +66,14 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     }
 
     override suspend fun syncShowSeasonDetails(
-        showTraktId: Long,
+        showId: Long,
         forceRefresh: Boolean,
     ) {
-        syncedShowIds.add(showTraktId)
+        syncedShowIds.add(showId)
     }
 
     override suspend fun syncPreviousSeasonsEpisodes(
-        showTraktId: Long,
+        showId: Long,
         beforeSeasonNumber: Long,
         forceRefresh: Boolean,
     ) {
@@ -83,6 +83,6 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
     override fun observeSeasonImages(id: Long): Flow<List<SeasonImages>> = flowOf(emptyList())
 
-    override fun observeContinueTrackingEpisodes(showTraktId: Long): Flow<ContinueTrackingResult?> =
+    override fun observeContinueTrackingEpisodes(showId: Long): Flow<ContinueTrackingResult?> =
         continueTrackingResult.asStateFlow()
 }

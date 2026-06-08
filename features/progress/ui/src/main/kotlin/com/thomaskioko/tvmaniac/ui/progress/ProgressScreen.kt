@@ -102,7 +102,7 @@ internal fun ProgressScreen(
 ) {
     ProgressScreen(
         selectedPage = progressState.selectedPage,
-        isLoading = upNextState.isLoading || calendarState.isLoading,
+        isLoading = progressState.isLoading,
         tabs = tabs,
         modifier = modifier,
         onSelectPage = { progressAction(ProgressAction.SelectPage(it)) },
@@ -280,7 +280,7 @@ internal class ProgressPreviewParameterProvider : PreviewParameterProvider<Progr
 
 internal fun previewUpNextEpisodes() = persistentListOf(
     UpNextEpisodeUiModel(
-        showTraktId = 1,
+        showId = 1,
         showTmdbId = 1396,
         showName = "Breaking Bad",
         showStatus = "Ended",
@@ -309,8 +309,8 @@ internal fun previewCalendarEvents() = persistentListOf(
         dateLabel = "Today, Jan 31, 2026",
         episodes = persistentListOf(
             CalendarEpisodeItem(
-                showTraktId = 1,
-                episodeTraktId = 100,
+                showId = 1,
+                episodeId = 100,
                 showTitle = "Severance",
                 posterUrl = null,
                 episodeInfo = "S02E01 · Hello, Ms. Cobel",

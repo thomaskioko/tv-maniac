@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.db
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import com.thomaskioko.tvmaniac.db.util.columnNames
-import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
+import com.thomaskioko.tvmaniac.db.util.migrateToVersion
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.collections.shouldContain
@@ -15,7 +15,7 @@ class Migration32Test {
     @Test
     fun `should create activity_checkpoint table`() {
         openSnapshot(version = 31).use { driver ->
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 33)
 
             driver.tableNames() shouldContain "activity_checkpoint"
 
@@ -30,14 +30,14 @@ class Migration32Test {
     @Test
     fun `should backfill progress_continue_watching checkpoint from synced episodes_watched activity`() {
         openSnapshot(version = 31).use { driver ->
-            driver.seedActivity(
+            driver.insertActivity(
                 activityType = "episodes_watched",
                 remoteTimestamp = 1_700_000_000_000L,
                 syncedRemoteTimestamp = 1_699_000_000_000L,
                 fetchedAt = 1_700_500_000_000L,
             )
 
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 33)
 
             driver.activityCheckpointRows() shouldBe listOf(
                 CheckpointRow(
@@ -53,14 +53,14 @@ class Migration32Test {
     @Test
     fun `should backfill library_watchlist checkpoint from synced shows_watchlisted activity`() {
         openSnapshot(version = 31).use { driver ->
-            driver.seedActivity(
+            driver.insertActivity(
                 activityType = "shows_watchlisted",
                 remoteTimestamp = 1_700_000_000_000L,
                 syncedRemoteTimestamp = 1_699_500_000_000L,
                 fetchedAt = 1_700_700_000_000L,
             )
 
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 33)
 
             driver.activityCheckpointRows() shouldBe listOf(
                 CheckpointRow(
@@ -76,14 +76,14 @@ class Migration32Test {
     @Test
     fun `should skip backfill for activities with null synced_remote_timestamp`() {
         openSnapshot(version = 31).use { driver ->
-            driver.seedActivity(
+            driver.insertActivity(
                 activityType = "episodes_watched",
                 remoteTimestamp = 1_700_000_000_000L,
                 syncedRemoteTimestamp = null,
                 fetchedAt = 1_700_500_000_000L,
             )
 
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 33)
 
             driver.activityCheckpointRows() shouldBe emptyList()
         }
@@ -92,14 +92,14 @@ class Migration32Test {
     @Test
     fun `should skip backfill for activity types outside the known consumer set`() {
         openSnapshot(version = 31).use { driver ->
-            driver.seedActivity(
+            driver.insertActivity(
                 activityType = "shows_favorited",
                 remoteTimestamp = 1_700_000_000_000L,
                 syncedRemoteTimestamp = 1_699_000_000_000L,
                 fetchedAt = 1_700_500_000_000L,
             )
 
-            migrateToCurrent(driver, oldVersion = 31)
+            migrateToVersion(driver, oldVersion = 31, newVersion = 33)
 
             driver.activityCheckpointRows() shouldBe emptyList()
         }
@@ -113,7 +113,7 @@ private data class CheckpointRow(
     val updatedAt: Long,
 )
 
-private fun SqlDriver.seedActivity(
+private fun SqlDriver.insertActivity(
     activityType: String,
     remoteTimestamp: Long,
     syncedRemoteTimestamp: Long?,

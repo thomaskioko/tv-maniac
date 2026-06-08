@@ -6,11 +6,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.trakt.api.TimePeriod
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodesResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktGenreResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktSearchResult
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonEpisodesResponse
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktSeasonsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowPeopleResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowsResponse
@@ -114,57 +111,27 @@ public class DefaultTraktShowsRemoteDataSource(
         }
 
     override suspend fun getRelatedShows(
-        traktId: Long,
+        showId: Long,
         page: Int,
         limit: Int,
     ): ApiResponse<List<TraktShowResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
-                path("shows/$traktId/related")
+                path("shows/$showId/related")
             }
             parameter("page", page)
             parameter("limit", limit)
             parameter("extended", "full")
         }
 
-    override suspend fun getShowDetails(traktId: Long): ApiResponse<TraktShowResponse> =
+    override suspend fun getShowDetails(showId: Long): ApiResponse<TraktShowResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
-                path("shows/$traktId")
+                path("shows/$showId")
             }
             parameter("extended", "full")
-        }
-
-    override suspend fun getShowSeasons(traktId: Long): ApiResponse<List<TraktSeasonsResponse>> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("shows/$traktId/seasons")
-            }
-            parameter("extended", "full")
-        }
-
-    override suspend fun getShowSeasonEpisodes(
-        traktId: Long,
-        seasonNumber: Int,
-    ): ApiResponse<List<TraktEpisodesResponse>> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("shows/$traktId/seasons/$seasonNumber")
-            }
-            parameter("extended", "full")
-        }
-
-    override suspend fun getSeasonsWithEpisodes(traktId: Long): ApiResponse<List<TraktSeasonEpisodesResponse>> =
-        httpClient.safeRequest {
-            url {
-                method = HttpMethod.Get
-                path("shows/$traktId/seasons")
-            }
-            parameter("extended", "full,episodes")
         }
 
     override suspend fun getShowByTmdbId(tmdbId: Long): ApiResponse<List<TraktSearchResult>> =
@@ -192,28 +159,28 @@ public class DefaultTraktShowsRemoteDataSource(
             parameter("extended", "full")
         }
 
-    override suspend fun getShowPeople(traktId: Long): ApiResponse<TraktShowPeopleResponse> =
+    override suspend fun getShowPeople(showId: Long): ApiResponse<TraktShowPeopleResponse> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
-                path("shows/$traktId/people")
+                path("shows/$showId/people")
             }
             parameter("extended", "full")
         }
 
-    override suspend fun getShowVideos(traktId: Long): ApiResponse<List<TraktVideosResponse>> =
+    override suspend fun getShowVideos(showId: Long): ApiResponse<List<TraktVideosResponse>> =
         httpClient.safeRequest {
             url {
                 method = HttpMethod.Get
-                path("shows/$traktId/videos")
+                path("shows/$showId/videos")
             }
         }
 
-    override suspend fun getWatchedProgress(traktId: Long): ApiResponse<TraktWatchedProgressResponse> =
+    override suspend fun getWatchedProgress(showId: Long): ApiResponse<TraktWatchedProgressResponse> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
-                path("shows/$traktId/progress/watched")
+                path("shows/$showId/progress/watched")
             }
             parameter("extended", "full")
         }

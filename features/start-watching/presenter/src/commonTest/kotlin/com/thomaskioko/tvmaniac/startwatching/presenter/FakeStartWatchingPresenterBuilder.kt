@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.startwatching.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -18,6 +19,7 @@ class FakeStartWatchingPresenterBuilder {
     val startWatchingRepository = FakeStartWatchingRepository()
     val prefsRepository = FakeWatchlistPrefsRepository()
     val syncObserver = FakeSyncObserver()
+    val accountManager = FakeAccountManager()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
@@ -49,5 +51,6 @@ class FakeStartWatchingPresenterBuilder {
         syncStartWatchingInteractor = syncStartWatchingInteractor,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = fakeLogger,
+        accountManager = accountManager,
     )
 }

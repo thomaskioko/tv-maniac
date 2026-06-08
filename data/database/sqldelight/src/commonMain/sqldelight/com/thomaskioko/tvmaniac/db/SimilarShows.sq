@@ -1,23 +1,24 @@
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
--- The parent reference `similar_show_trakt_id` is intentionally not FK-constrained:
--- ShowDetailsStore inserts the parent show into tvshow on a parallel coroutine, and the
--- related-shows writer can finish first. Queries filter by the parent id directly without
--- joining tvshow on this column, so the constraint adds no protection.
+-- The parent reference `similar_show_trakt_id` is intentionally not FK-constrained and stays a plain
+-- trakt id: ShowDetailsStore inserts the parent show into tvshow on a parallel coroutine, and the
+-- related-shows writer can finish first, so the parent's tvshow row (and internal id) may not exist
+-- yet. Queries filter by the parent id directly without joining tvshow on this column.
 CREATE TABLE similar_shows (
-    trakt_id INTEGER AS Id<TraktId>,
+    show_id INTEGER AS Id<ShowId>,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     similar_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
     page_order INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (similar_show_trakt_id, trakt_id),
-    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
+    PRIMARY KEY (similar_show_trakt_id, show_id),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO similar_shows(
-    trakt_id,
+    show_id,
     tmdb_id,
     similar_show_trakt_id,
     page_order
@@ -26,7 +27,7 @@ VALUES(?,?,?,?);
 
 similarShows:
 SELECT
-   tvshow.trakt_id AS show_trakt_id,
+   show_trakt.trakt_id AS show_trakt_id,
    tvshow.tmdb_id AS show_tmdb_id,
    tvshow.name,
    tvshow.poster_path,
@@ -36,9 +37,11 @@ SELECT
 FROM
     tvshow
 JOIN
-    similar_shows ON tvshow.trakt_id = similar_shows.trakt_id
+    similar_shows ON tvshow.id = similar_shows.show_id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     similar_shows.similar_show_trakt_id = ?
 ORDER BY similar_shows.page_order ASC;

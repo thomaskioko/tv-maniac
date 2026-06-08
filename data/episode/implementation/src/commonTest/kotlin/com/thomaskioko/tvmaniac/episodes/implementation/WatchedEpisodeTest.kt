@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
@@ -13,7 +13,6 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -46,6 +45,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var dao: WatchedEpisodeDao
+    private var showId: Id<ShowId> = Id(0L)
 
     @BeforeTest
     fun setup() {
@@ -53,6 +53,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         fakeDateTimeProvider.setCurrentTimeMillis(now)
         dao = DefaultWatchedEpisodeDao(
             database = database,
+            showIdResolver = showIdResolver,
             dispatchers = dispatchers,
             dateTimeProvider = fakeDateTimeProvider,
         )
@@ -68,7 +69,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     @Test
     fun `should preserve UPLOAD-pending row when upsertBatchFromTrakt has same key`() = runTest {
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -76,7 +77,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         )
 
         dao.upsertBatchFromTrakt(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 999L)),
             includeSpecials = false,
         )
@@ -88,81 +89,71 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should preserve SYNCED_DELETE when upsertBatchFromTrakt has same key`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
-        val rowId = readRow(seasonNumber = 1L, episodeNumber = 1L)!!.watched_id
-
-        dao.markAsSyncedDelete(rowId)
+    fun `should remove a synced row absent from a fresh pull`() = runTest {
+        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 901L)
+        seedSyncedRow(seasonNumber = 1L, episodeNumber = 2L, traktId = 902L)
 
         dao.upsertBatchFromTrakt(
-            showTraktId = SHOW_ID,
-            entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)),
+            showId = SHOW_ID,
+            entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 901L)),
             includeSpecials = false,
         )
 
-        val row = readRow(seasonNumber = 1L, episodeNumber = 1L)
-        row.shouldNotBeNull()
-        row.pending_action shouldBe PendingAction.SYNCED_DELETE.value
-    }
-
-    @Test
-    fun `should write SYNCED_DELETE with current timestamp via markAsSyncedDelete`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
-        val rowId = readRow(seasonNumber = 1L, episodeNumber = 1L)!!.watched_id
-
-        dao.markAsSyncedDelete(rowId)
-
-        val row = readRow(seasonNumber = 1L, episodeNumber = 1L)
-        row.shouldNotBeNull()
-        row.pending_action shouldBe PendingAction.SYNCED_DELETE.value
-        row.synced_at shouldBe now
-    }
-
-    @Test
-    fun `should remove only synced deletes older than threshold`() = runTest {
-        val freshSyncedDelete = now - 1L.daysMillis()
-        val oldSyncedDelete = now - 14L.daysMillis()
-        seedSyncedDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, syncedAt = freshSyncedDelete)
-        seedSyncedDelete(seasonNumber = 1L, episodeNumber = 2L, traktId = 556L, syncedAt = oldSyncedDelete)
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 3L, traktId = 557L)
-
-        dao.purgeSyncedDeletesOlderThan(thresholdMillis = now - 7L.daysMillis())
-
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
         readRow(seasonNumber = 1L, episodeNumber = 2L).shouldBeNull()
-        readRow(seasonNumber = 1L, episodeNumber = 3L).shouldNotBeNull()
     }
 
     @Test
-    fun `shows_last_watched view should exclude SYNCED_DELETE rows`() = runTest {
-        seedSyncedRow(
-            seasonNumber = 1L,
-            episodeNumber = 1L,
-            traktId = 901L,
-            episodeId = EPISODE_1_ID,
-            watchedAt = now - 10_000L,
-        )
-        seedSyncedRow(
+    fun `should keep an UPLOAD-pending row absent from a fresh pull`() = runTest {
+        dao.markAsWatched(
+            showId = SHOW_ID,
+            episodeId = EPISODE_2_ID,
             seasonNumber = 1L,
             episodeNumber = 2L,
-            traktId = 902L,
-            episodeId = EPISODE_2_ID,
-            watchedAt = now - 5_000L,
+            includeSpecials = false,
         )
-        val newerId = readRow(seasonNumber = 1L, episodeNumber = 2L)!!.watched_id
 
-        dao.markAsSyncedDelete(newerId)
+        dao.upsertBatchFromTrakt(
+            showId = SHOW_ID,
+            entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 901L)),
+            includeSpecials = false,
+        )
 
-        val lastWatched = database.showsLastWatchedQueries.lastWatchedEpisodeForShow(Id(SHOW_ID))
-            .executeAsOneOrNull()
-        lastWatched.shouldNotBeNull()
-        lastWatched.last_watched_episode shouldBe 1L
+        val row = readRow(seasonNumber = 1L, episodeNumber = 2L)
+        row.shouldNotBeNull()
+        row.pending_action shouldBe PendingAction.UPLOAD.value
+    }
+
+    @Test
+    fun `should keep the later watched_at given a stale pull`() = runTest {
+        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now)
+
+        dao.upsertBatchFromTrakt(
+            showId = SHOW_ID,
+            entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now - 50_000L)),
+            includeSpecials = false,
+        )
+
+        readRow(seasonNumber = 1L, episodeNumber = 1L)!!.watched_at shouldBe now
+    }
+
+    @Test
+    fun `should adopt a newer watched_at given a re-watch pull`() = runTest {
+        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now - 50_000L)
+
+        dao.upsertBatchFromTrakt(
+            showId = SHOW_ID,
+            entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now)),
+            includeSpecials = false,
+        )
+
+        readRow(seasonNumber = 1L, episodeNumber = 1L)!!.watched_at shouldBe now
     }
 
     @Test
     fun `should hard-delete UPLOAD-pending unsynced row when marked unwatched`() = runTest {
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -171,7 +162,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
 
         dao.markAsUnwatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             includeSpecials = false,
         )
@@ -183,14 +174,14 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     fun `should flip DELETE to UPLOAD when re-marked watched`() = runTest {
         seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         dao.markAsUnwatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             includeSpecials = false,
         )
         readRow(seasonNumber = 1L, episodeNumber = 1L)!!.pending_action shouldBe PendingAction.DELETE.value
 
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -200,27 +191,6 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         val row = readRow(seasonNumber = 1L, episodeNumber = 1L)
         row.shouldNotBeNull()
         row.pending_action shouldBe PendingAction.UPLOAD.value
-    }
-
-    @Test
-    fun `should flip SYNCED_DELETE to UPLOAD when re-marked watched`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now - 100_000L)
-        val rowId = readRow(seasonNumber = 1L, episodeNumber = 1L)!!.watched_id
-        dao.markAsSyncedDelete(rowId)
-        readRow(seasonNumber = 1L, episodeNumber = 1L)!!.pending_action shouldBe PendingAction.SYNCED_DELETE.value
-
-        dao.markAsWatched(
-            showTraktId = SHOW_ID,
-            episodeId = EPISODE_1_ID,
-            seasonNumber = 1L,
-            episodeNumber = 1L,
-            includeSpecials = false,
-        )
-
-        val row = readRow(seasonNumber = 1L, episodeNumber = 1L)
-        row.shouldNotBeNull()
-        row.pending_action shouldBe PendingAction.UPLOAD.value
-        row.watched_at shouldNotBe now - 100_000L
     }
 
     @Test
@@ -229,7 +199,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         readRow(seasonNumber = 1L, episodeNumber = 1L)!!.trakt_id shouldBe 555L
 
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -247,7 +217,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
     fun `markSeasonAsUnwatched should flip synced rows to DELETE and hard-delete unsynced rows`() = runTest {
         seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         dao.markAsWatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             episodeId = EPISODE_2_ID,
             seasonNumber = 1L,
             episodeNumber = 2L,
@@ -255,7 +225,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         )
 
         dao.markSeasonAsUnwatched(
-            showTraktId = SHOW_ID,
+            showId = SHOW_ID,
             seasonNumber = 1L,
             includeSpecials = false,
         )
@@ -299,7 +269,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         syncedAt: Long = now,
     ) {
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             episode_id = episodeId?.let { Id(it) },
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -310,41 +280,23 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedSyncedDelete(
-        seasonNumber: Long,
-        episodeNumber: Long,
-        traktId: Long,
-        syncedAt: Long,
-    ) {
-        database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(SHOW_ID),
-            episode_id = null,
-            season_number = seasonNumber,
-            episode_number = episodeNumber,
-            watched_at = syncedAt,
-            trakt_id = traktId,
-            synced_at = syncedAt,
-            pending_action = PendingAction.SYNCED_DELETE.value,
-        )
-    }
-
     private fun traktEntry(
         seasonNumber: Long,
         episodeNumber: Long,
         traktId: Long,
+        watchedAt: Long = now,
     ): WatchedEpisodeEntry = WatchedEpisodeEntry(
-        showTraktId = SHOW_ID,
+        showId = SHOW_ID,
         episodeId = null,
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
-        watchedAt = Instant.fromEpochMilliseconds(now),
+        watchedAt = Instant.fromEpochMilliseconds(watchedAt),
         traktId = traktId,
         pendingAction = PendingAction.NOTHING,
     )
 
     private fun seedShow() {
         database.tvShowQueries.upsert(
-            trakt_id = Id(SHOW_ID),
             tmdb_id = Id(SHOW_ID),
             name = "Synced Delete Test",
             overview = "",
@@ -359,16 +311,16 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        showId = showIdForTraktId(SHOW_ID)
         database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id<TraktId>(SHOW_ID),
+            showId = showId,
             tmdbId = Id<TmdbId>(SHOW_ID),
             followedAt = now,
             pendingAction = PendingAction.NOTHING.value,
         )
         database.seasonsQueries.upsert(
             id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_number = 1L,
             title = "Season 1",
             overview = null,
@@ -378,7 +330,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(EPISODE_1_ID),
             season_id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Episode 1",
             overview = "",
             episode_number = 1L,
@@ -386,13 +338,12 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = now - 86_400_000L,
         )
         database.episodesQueries.upsert(
             id = Id(EPISODE_2_ID),
             season_id = Id(SEASON_ID),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Episode 2",
             overview = "",
             episode_number = 2L,
@@ -400,18 +351,15 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = now - 86_400_000L,
         )
         database.showMetadataQueries.upsert(
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_count = 1,
             episode_count = 5,
             status = "Returning Series",
         )
     }
-
-    private fun Long.daysMillis(): Long = this * 86_400_000L
 
     private companion object {
         private const val SHOW_ID = 1L

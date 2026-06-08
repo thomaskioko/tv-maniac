@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
@@ -7,9 +8,6 @@ import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
-import com.thomaskioko.tvmaniac.syncstate.api.SyncError
-import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
@@ -20,10 +18,9 @@ import kotlinx.coroutines.flow.first
 @ContributesIntoSet(AppScope::class)
 public class ContinueWatchingSyncWorker(
     private val syncContinueWatchingInteractor: Lazy<SyncContinueWatchingInteractor>,
-    private val traktAuthRepository: Lazy<TraktAuthRepository>,
+    private val accountManager: Lazy<AccountManager>,
     @ContinueWatchingNitroFlagQualifier
     private val nitroFlag: FeatureFlag<Boolean>,
-    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
 
@@ -32,7 +29,7 @@ public class ContinueWatchingSyncWorker(
     override suspend fun doWork(): WorkerResult {
         logger.debug(TAG, "Continue Watching sync worker starting")
 
-        if (!traktAuthRepository.value.isLoggedIn()) {
+        if (accountManager.value.getActiveProvider() == null) {
             logger.debug(TAG, "User not logged in, skipping sync")
             return WorkerResult.Success
         }
@@ -50,7 +47,6 @@ public class ContinueWatchingSyncWorker(
             WorkerResult.Retry("Cancelled, will retry")
         } catch (e: Exception) {
             logger.error(TAG, "Continue Watching sync failed: ${e.message}")
-            syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, e))
             WorkerResult.Failure(e.message)
         }
     }

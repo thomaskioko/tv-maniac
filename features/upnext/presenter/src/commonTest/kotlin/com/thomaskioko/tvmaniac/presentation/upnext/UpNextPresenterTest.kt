@@ -3,7 +3,8 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingDao
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -12,7 +13,6 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
-import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
@@ -23,16 +23,13 @@ import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
-import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.NavRoute
-import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -59,11 +56,11 @@ internal class UpNextPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
-    private val traktAuthRepository = FakeTraktAuthRepository()
+    private val accountManager = FakeAccountManager()
     private val dateTimeProvider = FakeDateTimeProvider()
-    private val datastoreRepository = FakeDatastoreRepository()
-    private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
+    private val syncObserver = FakeSyncObserver()
+    private val navigator = FakeNavigator()
 
     @BeforeTest
     fun setUp() {
@@ -90,8 +87,8 @@ internal class UpNextPresenterTest {
     @Test
     fun `should display episodes given episodes are available`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Show 1"),
-            createTestNextEpisode(showTraktId = 2, showName = "Show 2"),
+            createTestNextEpisode(showId = 1, showName = "Show 1"),
+            createTestNextEpisode(showId = 2, showName = "Show 2"),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -110,8 +107,8 @@ internal class UpNextPresenterTest {
     @Test
     fun `should sort episodes by last watched given sort option is LAST_WATCHED`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Old Show", lastWatchedAt = 1000L),
-            createTestNextEpisode(showTraktId = 2, showName = "New Show", lastWatchedAt = 2000L),
+            createTestNextEpisode(showId = 1, showName = "Old Show", lastWatchedAt = 1000L),
+            createTestNextEpisode(showId = 2, showName = "New Show", lastWatchedAt = 2000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
         upNextRepository.setUpNextSortOption(UpNextSortOption.LAST_WATCHED.name)
@@ -131,8 +128,8 @@ internal class UpNextPresenterTest {
     @Test
     fun `should sort episodes by air date given sort option is AIR_DATE`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Old Episode", firstAired = 1000L),
-            createTestNextEpisode(showTraktId = 2, showName = "New Episode", firstAired = 2000L),
+            createTestNextEpisode(showId = 1, showName = "Old Episode", firstAired = 1000L),
+            createTestNextEpisode(showId = 2, showName = "New Episode", firstAired = 2000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
         upNextRepository.setUpNextSortOption(UpNextSortOption.AIR_DATE.name)
@@ -154,8 +151,8 @@ internal class UpNextPresenterTest {
         dateTimeProvider.setCurrentTimeMillis(5000L)
 
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Aired Show", firstAired = 3000L),
-            createTestNextEpisode(showTraktId = 2, showName = "Future Show", firstAired = 10000L),
+            createTestNextEpisode(showId = 1, showName = "Aired Show", firstAired = 3000L),
+            createTestNextEpisode(showId = 2, showName = "Future Show", firstAired = 10000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -175,8 +172,8 @@ internal class UpNextPresenterTest {
         dateTimeProvider.setCurrentTimeMillis(5000L)
 
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "No Air Date", firstAired = null),
-            createTestNextEpisode(showTraktId = 2, showName = "Aired Show", firstAired = 3000L),
+            createTestNextEpisode(showId = 1, showName = "No Air Date", firstAired = null),
+            createTestNextEpisode(showId = 2, showName = "Aired Show", firstAired = 3000L),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -215,7 +212,7 @@ internal class UpNextPresenterTest {
 
             presenter.dispatch(
                 MarkWatched(
-                    showTraktId = 123L,
+                    showId = 123L,
                     episodeId = 456L,
                     seasonNumber = 1L,
                     episodeNumber = 5L,
@@ -224,7 +221,7 @@ internal class UpNextPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             val call = episodeRepository.lastMarkEpisodeWatchedCall
-            call?.showTraktId shouldBe 123L
+            call?.showId shouldBe 123L
             call?.episodeId shouldBe 456L
             call?.seasonNumber shouldBe 1L
             call?.episodeNumber shouldBe 5L
@@ -235,31 +232,32 @@ internal class UpNextPresenterTest {
 
     @Test
     fun `should navigate to season details given ShowClicked action is dispatched`() = runTest {
-        var navigatedParams: Triple<Long, Long, Long>? = null
-        val episode = createTestNextEpisode(showTraktId = 999, showName = "Test Show")
+        val episode = createTestNextEpisode(showId = 999, showName = "Test Show")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
 
-        val presenterWithNav = createPresenter(
-            navigateToSeasonDetails = { showTraktId, seasonId, seasonNumber ->
-                navigatedParams = Triple(showTraktId, seasonId, seasonNumber)
-            },
-        )
+        val presenter = createPresenter()
 
-        presenterWithNav.state.test {
+        presenter.state.test {
             skipItems(1)
             awaitItem()
 
-            presenterWithNav.dispatch(UpNextShowClicked(showTraktId = 999L))
+            presenter.dispatch(UpNextShowClicked(showId = 999L))
 
-            navigatedParams shouldBe Triple(999L, 9990L, 1L)
+            navigator.lastNavigatedRoute shouldBe SeasonDetailsRoute(
+                SeasonDetailsUiParam(
+                    showId = 999L,
+                    seasonId = 9990L,
+                    seasonNumber = 1L,
+                ),
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
     fun `should remove episode from list given episode is marked as watched`() = runTest {
-        val episode1 = createTestNextEpisode(showTraktId = 1, showName = "Show 1")
-        val episode2 = createTestNextEpisode(showTraktId = 2, showName = "Show 2")
+        val episode1 = createTestNextEpisode(showId = 1, showName = "Show 1")
+        val episode2 = createTestNextEpisode(showId = 2, showName = "Show 2")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode1, episode2))
 
         val presenter = createPresenter()
@@ -269,12 +267,12 @@ internal class UpNextPresenterTest {
 
             val initialState = awaitItem()
             initialState.episodes shouldHaveSize 2
-            initialState.episodes.any { it.showTraktId == 1L } shouldBe true
-            initialState.episodes.any { it.showTraktId == 2L } shouldBe true
+            initialState.episodes.any { it.showId == 1L } shouldBe true
+            initialState.episodes.any { it.showId == 2L } shouldBe true
 
             presenter.dispatch(
                 MarkWatched(
-                    showTraktId = episode1.showTraktId,
+                    showId = episode1.showId,
                     episodeId = 100L,
                     seasonNumber = 1L,
                     episodeNumber = 1L,
@@ -287,15 +285,15 @@ internal class UpNextPresenterTest {
 
             val updatedState = expectMostRecentItem()
             updatedState.episodes shouldHaveSize 1
-            updatedState.episodes.any { it.showTraktId == 1L } shouldBe false
-            updatedState.episodes.any { it.showTraktId == 2L } shouldBe true
+            updatedState.episodes.any { it.showId == 1L } shouldBe false
+            updatedState.episodes.any { it.showId == 2L } shouldBe true
             updatedState.updatingEpisodeIds.shouldBeEmpty()
         }
     }
 
     @Test
     fun `should populate updatingEpisodeIds while mark watched is in flight`() = runTest {
-        val episode = createTestNextEpisode(showTraktId = 1, showName = "Show 1")
+        val episode = createTestNextEpisode(showId = 1, showName = "Show 1")
         upNextRepository.setNextEpisodesForWatchlist(listOf(episode))
 
         val presenter = createPresenter()
@@ -307,7 +305,7 @@ internal class UpNextPresenterTest {
 
             presenter.dispatch(
                 MarkWatched(
-                    showTraktId = episode.showTraktId,
+                    showId = episode.showId,
                     episodeId = 100L,
                     seasonNumber = 1L,
                     episodeNumber = 1L,
@@ -326,7 +324,7 @@ internal class UpNextPresenterTest {
     @Test
     fun `should map all episode fields to ui model correctly`() = runTest {
         val episode = NextEpisodeWithShow(
-            showTraktId = 42L,
+            showId = 42L,
             showTmdbId = 84L,
             episodeId = 100L,
             episodeName = "Pilot",
@@ -357,7 +355,7 @@ internal class UpNextPresenterTest {
             state.episodes shouldHaveSize 1
 
             val uiModel = state.episodes[0]
-            uiModel.showTraktId shouldBe 42L
+            uiModel.showId shouldBe 42L
             uiModel.showTmdbId shouldBe 84L
             uiModel.episodeId shouldBe 100L
             uiModel.episodeName shouldBe "Pilot"
@@ -381,7 +379,7 @@ internal class UpNextPresenterTest {
     @Test
     fun `should refresh data given auth state changes to logged in`() = runTest {
         val episodes = listOf(
-            createTestNextEpisode(showTraktId = 1, showName = "Show 1"),
+            createTestNextEpisode(showId = 1, showName = "Show 1"),
         )
         upNextRepository.setNextEpisodesForWatchlist(episodes)
 
@@ -393,7 +391,7 @@ internal class UpNextPresenterTest {
             val state = awaitItem()
             state.episodes shouldHaveSize 1
 
-            traktAuthRepository.setState(TraktAuthState.LOGGED_IN)
+            accountManager.setActiveProvider(AccountProvider.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             cancelAndIgnoreRemainingEvents()
@@ -415,9 +413,43 @@ internal class UpNextPresenterTest {
         }
     }
 
-    private fun createPresenter(
-        navigateToSeasonDetails: (Long, Long, Long) -> Unit = { _, _, _ -> },
-    ): UpNextPresenter {
+    @Test
+    fun `should show loading given sync in progress and no episodes`() = runTest {
+        upNextRepository.setNextEpisodesForWatchlist(emptyList())
+        syncObserver.setSyncing(true)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isSyncing shouldBe true
+            state.isEmpty shouldBe true
+            state.showLoading shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not show loading given sync in progress and episodes present`() = runTest {
+        upNextRepository.setNextEpisodesForWatchlist(
+            listOf(createTestNextEpisode(showId = 1, showName = "Show 1")),
+        )
+        syncObserver.setSyncing(true)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isSyncing shouldBe true
+            state.isEmpty shouldBe false
+            state.showLoading shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private fun createPresenter(): UpNextPresenter {
         val observeUpNextInteractor = ObserveUpNextInteractor(
             repository = upNextRepository,
         )
@@ -436,7 +468,6 @@ internal class UpNextPresenterTest {
                 dispatchers = dispatchers,
             ),
             continueWatchingRepository = FakeContinueWatchingRepository(),
-            continueWatchingDao = FakeContinueWatchingDao(),
             syncShowMetadataInteractor = SyncShowMetadataInteractor(
                 showDetailsRepository = FakeShowDetailsRepository(),
                 seasonDetailsRepository = FakeSeasonDetailsRepository(),
@@ -445,7 +476,6 @@ internal class UpNextPresenterTest {
             ),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
-            syncObserver = FakeSyncObserver(),
             dispatchers = dispatchers,
             logger = logger,
         )
@@ -456,35 +486,7 @@ internal class UpNextPresenterTest {
 
         return UpNextPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            navigator = object : Navigator {
-                override val activeRoot: com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.NavRoot> =
-                    com.arkivanov.decompose.value.MutableValue(com.thomaskioko.tvmaniac.navigation.testing.UnspecifiedNavRoot)
-                override fun bringToFront(route: NavRoute) {}
-                override fun navigateTo(route: NavRoute) {
-                    if (route is SeasonDetailsRoute) {
-                        navigateToSeasonDetails(route.param.showTraktId, route.param.seasonId, route.param.seasonNumber)
-                    }
-                }
-                override fun pushToFront(route: NavRoute) {}
-                override fun navigateBack() {}
-                override fun navigateBackTo(routeClass: kotlin.reflect.KClass<out NavRoute>, inclusive: Boolean) {}
-                override fun popTo(toIndex: Int) {}
-                override fun switchBackStack(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun showRoot(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun replaceAllBackStacks(root: com.thomaskioko.tvmaniac.navigation.NavRoot) {}
-                override fun <T : Any> buildHostNavigation(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    initialRoot: com.thomaskioko.tvmaniac.navigation.NavRoot,
-                    childFactory: (com.thomaskioko.tvmaniac.navigation.BaseRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.thomaskioko.tvmaniac.navigation.MultiStackHostState<T>> =
-                    error("Not used in this test")
-                override fun <T : Any> buildOverlaySlot(
-                    componentContext: com.arkivanov.decompose.ComponentContext,
-                    childFactory: (NavRoute, com.arkivanov.decompose.ComponentContext) -> T,
-                ): com.arkivanov.decompose.value.Value<com.arkivanov.decompose.router.slot.ChildSlot<*, T>> =
-                    error("Not used in this test")
-                override fun dismissOverlay() {}
-            },
+            navigator = navigator,
             observeUpNextInteractor = observeUpNextInteractor,
             syncContinueWatchingInteractor = syncContinueWatchingInteractor,
             markEpisodeWatchedInteractor = markEpisodeWatchedInteractor,
@@ -494,22 +496,24 @@ internal class UpNextPresenterTest {
                 libraryRepository = FakeLibraryRepository(),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
+            accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
+            syncObserver = syncObserver,
         )
     }
 
     private fun createTestNextEpisode(
-        showTraktId: Long,
+        showId: Long,
         showName: String,
         lastWatchedAt: Long? = null,
         firstAired: Long? = null,
     ): NextEpisodeWithShow = NextEpisodeWithShow(
-        showTraktId = showTraktId,
-        showTmdbId = showTraktId,
-        episodeId = showTraktId * 100,
+        showId = showId,
+        showTmdbId = showId,
+        episodeId = showId * 100,
         episodeName = "Episode 1",
-        seasonId = showTraktId * 10,
+        seasonId = showId * 10,
         seasonNumber = 1L,
         episodeNumber = 1L,
         runtime = 45L,
