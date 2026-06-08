@@ -37,6 +37,14 @@ public class TraktAccountAuthRepository(
 
     override suspend fun refreshTokens(): TokenRefreshResult = traktAuthRepository.refreshTokens()
 
+    override suspend fun saveTokens(
+        accessToken: String,
+        refreshToken: String,
+        expiresAtSeconds: Long,
+    ) {
+        traktAuthRepository.saveTokens(accessToken, refreshToken, expiresAtSeconds)
+    }
+
     override suspend fun setAuthError(error: AuthError?) {
         traktAuthRepository.setAuthError(error)
     }

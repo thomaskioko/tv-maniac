@@ -22,6 +22,9 @@ public class FakeAccountAuthRepository(
     private val _loginEvents = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
     private var refreshOutcome: TokenRefreshResult = TokenRefreshResult.NotLoggedIn
 
+    public var lastSavedAccessToken: String? = null
+        private set
+
     public fun setState(state: AccountAuthState) {
         _state.value = state
     }
@@ -54,6 +57,14 @@ public class FakeAccountAuthRepository(
     }
 
     override suspend fun refreshTokens(): TokenRefreshResult = refreshOutcome
+
+    override suspend fun saveTokens(
+        accessToken: String,
+        refreshToken: String,
+        expiresAtSeconds: Long,
+    ) {
+        lastSavedAccessToken = accessToken
+    }
 
     override suspend fun setAuthError(error: AuthError?) {
         _authError.value = error

@@ -39,7 +39,7 @@ public class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        graph.traktAuthManager.registerResult()
+        graph.authManagers.forEach { it.registerResult() }
 
         enableEdgeToEdge()
 

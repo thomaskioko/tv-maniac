@@ -4,29 +4,19 @@ import TraktAuthKit
 import TvManiac
 import UIKit
 
-public class TraktAuthCoordinator: NSObject {
-    private let oauthClient: TraktOAuthClient
-    private let authRepository: TraktAuthRepository
+public class OAuthCoordinator: NSObject, AuthCoordinator {
+    private let oauthClient: OAuthClient
+    private let authRepository: AccountAuthRepository
     private let logger: Logger
 
     public init(
-        authRepository: TraktAuthRepository,
+        authRepository: AccountAuthRepository,
         logger: Logger,
-        clientId: String,
-        clientSecret: String,
-        redirectURL: URL
+        configuration: OAuthConfiguration
     ) {
         self.authRepository = authRepository
         self.logger = logger
-
-        let oauthConfig = TraktAuthConfiguration.trakt(
-            clientId: clientId,
-            clientSecret: clientSecret,
-            redirectURL: redirectURL
-        )
-
-        oauthClient = TraktOAuthClient(configuration: oauthConfig)
-
+        oauthClient = OAuthClient(configuration: configuration)
         super.init()
     }
 
@@ -47,7 +37,7 @@ public class TraktAuthCoordinator: NSObject {
                 )
 
                 guard let expiresAt = credential.expiresAt else {
-                    logger.error(tag: "TraktAuthCoordinator", message: "Token response missing expiration time")
+                    logger.error(tag: "OAuthCoordinator", message: "Token response missing expiration time")
                     await handleAuthError(AuthError.TokenExchangeFailed())
                     return
                 }
@@ -58,16 +48,16 @@ public class TraktAuthCoordinator: NSObject {
                     expiresAtSeconds: Int64(expiresAt.timeIntervalSince1970)
                 )
 
-            } catch let error as TraktAuthError {
+            } catch let error as OAuthError {
                 logger.error(
-                    tag: "TraktAuthCoordinator",
+                    tag: "OAuthCoordinator",
                     message: "OAuth authorization failed: \(String(describing: error))"
                 )
                 await handleAuthError(mapToKMPError(error))
 
             } catch {
                 logger.error(
-                    tag: "TraktAuthCoordinator",
+                    tag: "OAuthCoordinator",
                     message: "Authorization or token save failed: \(error.localizedDescription)"
                 )
                 await handleAuthError(AuthError.Unknown())
@@ -80,13 +70,13 @@ public class TraktAuthCoordinator: NSObject {
             try await authRepository.setAuthError(error: error)
         } catch {
             logger.error(
-                tag: "TraktAuthCoordinator",
+                tag: "OAuthCoordinator",
                 message: "Failed to persist auth error state: \(error.localizedDescription)"
             )
         }
     }
 
-    private func mapToKMPError(_ error: TraktAuthError) -> AuthError {
+    private func mapToKMPError(_ error: OAuthError) -> AuthError {
         switch error {
         case .authorizationFailed, .tokenExchangeFailed, .invalidTokenResponse:
             AuthError.TokenExchangeFailed()

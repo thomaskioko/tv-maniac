@@ -1,0 +1,23 @@
+package com.thomaskioko.tvmaniac.traktauth.implementation
+
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
+import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.SingleIn
+
+@SingleIn(AppScope::class)
+@ContributesIntoSet(AppScope::class)
+public class TraktAuthClientConfig(
+    traktConfig: TraktConfig,
+) : AuthClientConfig {
+
+    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val clientId: String = traktConfig.clientId
+    override val clientSecret: String = traktConfig.clientSecret
+    override val redirectUri: String = traktConfig.redirectUri
+    override val authorizationEndpoint: String = "https://trakt.tv/oauth/authorize"
+    override val tokenEndpoint: String = "https://api.trakt.tv/oauth/token"
+    override val scopes: List<String> = emptyList()
+}

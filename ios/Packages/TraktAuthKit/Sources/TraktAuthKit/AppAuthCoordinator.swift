@@ -3,16 +3,16 @@ import Foundation
 
 @MainActor
 final class AppAuthCoordinator {
-    private let configuration: TraktAuthConfiguration
+    private let configuration: OAuthConfiguration
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
 
-    init(configuration: TraktAuthConfiguration) {
+    init(configuration: OAuthConfiguration) {
         self.configuration = configuration
     }
 
     func performAuthorizationFlow(
         presentingViewController: UIViewController
-    ) async throws -> TraktCredential {
+    ) async throws -> OAuthCredential {
         let serviceConfig = OIDServiceConfiguration(
             authorizationEndpoint: configuration.authorizationEndpoint,
             tokenEndpoint: configuration.tokenEndpoint
@@ -38,14 +38,14 @@ final class AppAuthCoordinator {
             ) { authState, error in
                 if let error {
                     if (error as NSError).code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
-                        continuation.resume(throwing: TraktAuthError.userCancelled)
+                        continuation.resume(throwing: OAuthError.userCancelled)
                     } else {
-                        continuation.resume(throwing: TraktAuthError.authorizationFailed(error))
+                        continuation.resume(throwing: OAuthError.authorizationFailed(error))
                     }
                 } else if let authState {
                     continuation.resume(returning: authState)
                 } else {
-                    continuation.resume(throwing: TraktAuthError.invalidTokenResponse)
+                    continuation.resume(throwing: OAuthError.invalidTokenResponse)
                 }
             }
         }
@@ -53,10 +53,10 @@ final class AppAuthCoordinator {
         guard let accessToken = authState.lastTokenResponse?.accessToken,
               let refreshToken = authState.lastTokenResponse?.refreshToken
         else {
-            throw TraktAuthError.invalidTokenResponse
+            throw OAuthError.invalidTokenResponse
         }
 
-        return TraktCredential(
+        return OAuthCredential(
             accessToken: accessToken,
             refreshToken: refreshToken,
             tokenType: authState.lastTokenResponse?.tokenType ?? "Bearer",

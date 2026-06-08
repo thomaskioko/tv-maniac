@@ -18,4 +18,12 @@ public class TraktAccountAuthManager(
     override fun launchWebView() {
         traktAuthManager.launchWebView()
     }
+
+    override fun registerResult() {
+        traktAuthManager.registerResult()
+    }
+
+    override fun setAuthCallback(callback: () -> Unit) {
+        traktAuthManager.setAuthCallback(callback)
+    }
 }
