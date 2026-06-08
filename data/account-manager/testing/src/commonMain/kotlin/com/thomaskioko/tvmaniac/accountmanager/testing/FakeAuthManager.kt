@@ -16,4 +16,10 @@ public class FakeAuthManager(
     override fun launchWebView() {
         onLaunchWebView()
     }
+
+    override fun registerResult() {
+    }
+
+    override fun setAuthCallback(callback: () -> Unit) {
+    }
 }
