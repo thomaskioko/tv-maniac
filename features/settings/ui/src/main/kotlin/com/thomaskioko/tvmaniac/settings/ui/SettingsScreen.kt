@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -651,6 +652,7 @@ private fun TraktPage(
                     )
                     Button(
                         modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
+                        enabled = !state.isProcessingTraktAuth,
                         onClick = {
                             onAction(if (state.isAuthenticated) ShowTraktDialog else TraktLoginClicked)
                         },
@@ -659,7 +661,15 @@ private fun TraktPage(
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                         ),
                     ) {
-                        Text(text = if (state.isAuthenticated) state.labels.logout else state.labels.login)
+                        if (state.isProcessingTraktAuth) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onSecondary,
+                            )
+                        } else {
+                            Text(text = if (state.isAuthenticated) state.labels.logout else state.labels.login)
+                        }
                     }
                 }
             }

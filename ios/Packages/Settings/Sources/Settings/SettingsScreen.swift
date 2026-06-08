@@ -56,6 +56,7 @@ public struct SettingsTraktContent {
     public let connectedTitle: String
     public let connectedDescription: String
     public let isAuthenticated: Bool
+    public let isProcessingAuth: Bool
     public let logoutLabel: String
     public let loginLabel: String
     public let onLogout: () -> Void
@@ -68,6 +69,7 @@ public struct SettingsTraktContent {
         connectedTitle: String,
         connectedDescription: String,
         isAuthenticated: Bool,
+        isProcessingAuth: Bool,
         logoutLabel: String,
         loginLabel: String,
         onLogout: @escaping () -> Void,
@@ -79,6 +81,7 @@ public struct SettingsTraktContent {
         self.connectedTitle = connectedTitle
         self.connectedDescription = connectedDescription
         self.isAuthenticated = isAuthenticated
+        self.isProcessingAuth = isProcessingAuth
         self.logoutLabel = logoutLabel
         self.loginLabel = loginLabel
         self.onLogout = onLogout
@@ -308,15 +311,24 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
                             .textStyle(appTheme.typography.bodyMedium)
                             .foregroundColor(appTheme.colors.onSurfaceVariant)
                         Button(action: trakt.isAuthenticated ? trakt.onLogout : trakt.onLogin) {
-                            Text(trakt.isAuthenticated ? trakt.logoutLabel : trakt.loginLabel)
-                                .textStyle(appTheme.typography.labelLarge)
-                                .foregroundColor(appTheme.colors.onSecondary)
-                                .padding(.horizontal, appTheme.spacing.large)
-                                .padding(.vertical, appTheme.spacing.small)
-                                .background(appTheme.colors.secondary)
-                                .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
+                            Group {
+                                if trakt.isProcessingAuth {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .tint(appTheme.colors.onSecondary)
+                                } else {
+                                    Text(trakt.isAuthenticated ? trakt.logoutLabel : trakt.loginLabel)
+                                        .textStyle(appTheme.typography.labelLarge)
+                                        .foregroundColor(appTheme.colors.onSecondary)
+                                }
+                            }
+                            .padding(.horizontal, appTheme.spacing.large)
+                            .padding(.vertical, appTheme.spacing.small)
+                            .background(appTheme.colors.secondary)
+                            .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
                         }
                         .buttonStyle(.plain)
+                        .disabled(trakt.isProcessingAuth)
                     }
                     .padding(appTheme.spacing.medium)
                 }
