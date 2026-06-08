@@ -1,11 +1,12 @@
 package com.thomaskioko.tvmaniac.traktauth.testing
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.implementation.DefaultTraktAuthRepository
+import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
+import com.thomaskioko.tvmaniac.traktauth.implementation.TraktOAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -17,8 +18,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class, replaces = [DefaultTraktAuthRepository::class])
-public class FakeTraktAuthRepository : TraktAuthRepository {
+@ContributesBinding(AppScope::class, replaces = [TraktOAuthRepository::class])
+public class FakeTraktAuthRepository : OAuthRepository {
+
+    override val provider: AccountProvider = AccountProvider.TRAKT
 
     private val _state = MutableStateFlow(AccountAuthState.LOGGED_OUT)
     private val _authState = MutableStateFlow<AuthState?>(null)

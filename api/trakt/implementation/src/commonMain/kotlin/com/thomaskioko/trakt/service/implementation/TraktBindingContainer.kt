@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -33,7 +33,7 @@ public object TraktBindingContainer {
         debugConfig: DebugConfig,
         traktConfig: TraktConfig,
         logger: Logger,
-        traktAuthRepository: TraktAuthRepository,
+        oAuthRepository: OAuthRepository,
         internetConnectionChecker: InternetConnectionChecker,
     ): HttpClient = traktHttpClient(
         isDebug = debugConfig.isDebug,
@@ -41,7 +41,7 @@ public object TraktBindingContainer {
         json = json,
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
-        traktAuthRepository = traktAuthRepository,
+        oAuthRepository = oAuthRepository,
         internetConnectionChecker = internetConnectionChecker,
     )
 }

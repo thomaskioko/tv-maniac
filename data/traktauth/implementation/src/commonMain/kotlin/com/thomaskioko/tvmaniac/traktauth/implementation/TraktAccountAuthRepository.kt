@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.SharedFlow
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class TraktAccountAuthRepository(
-    private val traktAuthRepository: TraktAuthRepository,
+    private val traktAuthRepository: OAuthRepository,
 ) : AccountAuthRepository {
 
     override val provider: AccountProvider = AccountProvider.TRAKT

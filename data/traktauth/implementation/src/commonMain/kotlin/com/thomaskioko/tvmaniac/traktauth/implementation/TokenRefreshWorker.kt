@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
@@ -14,7 +14,7 @@ import dev.zacsweers.metro.SingleIn
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class TokenRefreshWorker(
-    private val traktAuthRepository: Lazy<TraktAuthRepository>,
+    private val traktAuthRepository: Lazy<OAuthRepository>,
     private val logger: Logger,
 ) : BackgroundWorker {
 
