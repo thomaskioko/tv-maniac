@@ -270,6 +270,7 @@ dependencies {
     androidTestImplementation(projects.core.integration.infra)
     androidTestImplementation(projects.core.integration.ui)
     androidTestImplementation(projects.core.testTags)
+    androidTestImplementation(projects.data.traktauth.api)
     androidTestImplementation(projects.data.traktauth.testing)
     androidTestImplementation(projects.core.locale.testing)
     androidTestImplementation(projects.core.util.testing)
