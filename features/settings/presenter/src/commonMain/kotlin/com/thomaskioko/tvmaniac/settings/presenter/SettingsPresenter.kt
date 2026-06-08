@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -62,7 +63,7 @@ public class SettingsPresenter(
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
-    private val logoutState = ObservableLoadingCounter()
+    private val traktAuthState = ObservableLoadingCounter()
     private val notificationToggleState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
@@ -73,25 +74,25 @@ public class SettingsPresenter(
         observeSettingsPreferencesInteractor(Unit)
     }
 
-    public val state: StateFlow<SettingsState> = com.thomaskioko.tvmaniac.core.base.extensions.combine(
+    public val state: StateFlow<SettingsState> = combine(
         _state,
-        logoutState.observable,
+        traktAuthState.observable,
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
         accountManager.isConnected,
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
-    ) { currentState, isLoggingOut, isTogglingNotifications, preferences, isLoggedIn, message, userProfile ->
-        val isAuthenticated = isLoggedIn
+    ) { currentState, isProcessingTraktAuth, isTogglingNotifications, preferences, isLoggedIn, message, userProfile ->
         val username = userProfile?.let { it.fullName ?: it.username }
         currentState.copy(
             isLoading = false,
-            isUpdating = isLoggingOut || isTogglingNotifications,
+            isUpdating = isProcessingTraktAuth || isTogglingNotifications,
+            isProcessingTraktAuth = isProcessingTraktAuth,
             imageQuality = preferences.imageQuality,
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
-            isAuthenticated = isAuthenticated,
+            isAuthenticated = isLoggedIn,
             backgroundSyncEnabled = preferences.backgroundSyncEnabled,
             lastSyncDate = preferences.lastSyncDate,
             showLastSyncDate = preferences.showLastSyncDate,
@@ -100,7 +101,7 @@ public class SettingsPresenter(
             crashReportingEnabled = preferences.crashReportingEnabled,
             message = message,
             currentPageTitle = resolvePageTitle(currentState.currentPage),
-            rootGroups = buildRootGroups(isAuthenticated),
+            rootGroups = buildRootGroups(isLoggedIn),
             username = username,
             labels = buildLabels(
                 imageQuality = preferences.imageQuality,
@@ -108,7 +109,7 @@ public class SettingsPresenter(
                 lastSyncDate = preferences.lastSyncDate,
                 versionName = appMetadata.versionName,
                 username = username,
-                isAuthenticated = isAuthenticated,
+                isAuthenticated = isLoggedIn,
             ),
         )
     }.stateIn(
@@ -128,14 +129,19 @@ public class SettingsPresenter(
             TraktLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
-                        .collectStatus(logoutState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                        .collectStatus(traktAuthState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
                 updateTrackDialogState()
             }
 
             TraktLoginClicked -> {
                 coroutineScope.launch {
-                    authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
+                    traktAuthState.addLoader()
+                    try {
+                        authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
+                    } finally {
+                        traktAuthState.removeLoader()
+                    }
                 }
             }
 
