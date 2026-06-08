@@ -1,6 +1,7 @@
 import Components
 import Foundation
 import Models
+import SwiftUI
 
 public struct SettingsToggleItem: Identifiable {
     public let id: String
@@ -179,5 +180,91 @@ public struct SettingsLinkItem: Identifiable {
         self.body = body
         self.link = link
         self.onOpen = onOpen
+    }
+}
+
+public struct SettingsInfoContent {
+    public let icon: Image
+    public let appName: String
+    public let versionText: String
+    public let description: String
+    public let sourceCodeLabel: String
+    public let sourceCodeValue: String
+    public let apiDisclaimer: String
+    public let onVersionTap: () -> Void
+    public let onSourceCodeTap: () -> Void
+
+    public init(
+        icon: Image,
+        appName: String,
+        versionText: String,
+        description: String,
+        sourceCodeLabel: String,
+        sourceCodeValue: String,
+        apiDisclaimer: String,
+        onVersionTap: @escaping () -> Void,
+        onSourceCodeTap: @escaping () -> Void
+    ) {
+        self.icon = icon
+        self.appName = appName
+        self.versionText = versionText
+        self.description = description
+        self.sourceCodeLabel = sourceCodeLabel
+        self.sourceCodeValue = sourceCodeValue
+        self.apiDisclaimer = apiDisclaimer
+        self.onVersionTap = onVersionTap
+        self.onSourceCodeTap = onSourceCodeTap
+    }
+}
+
+public struct SettingsLicenseSection: Identifiable {
+    public let id: String
+    public let label: String
+    public let items: [SettingsLinkItem]
+
+    public init(id: String, label: String, items: [SettingsLinkItem]) {
+        self.id = id
+        self.label = label
+        self.items = items
+    }
+}
+
+public struct SettingsTraktContent {
+    public let title: String
+    public let description: String
+    public let authenticationLabel: String
+    public let connectedTitle: String
+    public let connectedDescription: String
+    public let isAuthenticated: Bool
+    public let isProcessingAuth: Bool
+    public let logoutLabel: String
+    public let loginLabel: String
+    public let onLogout: () -> Void
+    public let onLogin: () -> Void
+
+    public init(
+        title: String,
+        description: String,
+        authenticationLabel: String,
+        connectedTitle: String,
+        connectedDescription: String,
+        isAuthenticated: Bool,
+        isProcessingAuth: Bool,
+        logoutLabel: String,
+        loginLabel: String,
+        onLogout: @escaping () -> Void,
+        onLogin: @escaping () -> Void
+    ) {
+        self.title = title
+        self.description = description
+        self.authenticationLabel = authenticationLabel
+        self.connectedTitle = connectedTitle
+        self.connectedDescription = connectedDescription
+        self.isAuthenticated = isAuthenticated
+        self.isProcessingAuth = isProcessingAuth
+        self.logoutLabel = logoutLabel
+        self.loginLabel = loginLabel
+        self.onLogout = onLogout
+        self.onLogin = onLogin
     }
 }
