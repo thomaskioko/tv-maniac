@@ -13,10 +13,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         remoteConfigBridge: Self.makeRemoteConfigBridge()
     )
 
-    public lazy var traktAuthRepository = appGraph.traktAuthRepository
-    public lazy var traktConfig = appGraph.traktConfig
     public lazy var logger = appGraph.logger
-    public lazy var traktAuthManager = appGraph.traktAuthManager
 
     public private(set) var notificationDelegate: NotificationDelegate?
 
@@ -59,10 +56,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         MemoryMonitor.shared.setDiagnosticLogger(DefaultDiagnosticLogger.shared)
         MemoryMonitor.shared.setDebugEnabled(appGraph.debugConfig.isDebug)
         MemoryMonitor.shared.logMemoryState(event: "AppDelegate.init")
-    }
-
-    public func setupAuthBridge(authCallback: @escaping () -> Void) {
-        traktAuthManager.setAuthCallback(callback: authCallback)
     }
 
     private func setupNotificationDelegate() {

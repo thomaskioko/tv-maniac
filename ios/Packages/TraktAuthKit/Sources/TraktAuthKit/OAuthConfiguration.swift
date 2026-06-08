@@ -1,6 +1,6 @@
 import Foundation
 
-public struct TraktAuthConfiguration {
+public struct OAuthConfiguration {
     public let authorizationEndpoint: URL
     public let tokenEndpoint: URL
     public let redirectURL: URL
@@ -22,20 +22,5 @@ public struct TraktAuthConfiguration {
         self.clientId = clientId
         self.clientSecret = clientSecret
         self.scopes = scopes
-    }
-
-    public static func trakt(
-        clientId: String,
-        clientSecret: String,
-        redirectURL: URL
-    ) -> Self {
-        Self(
-            authorizationEndpoint: URL(string: "https://trakt.tv/oauth/authorize")!,
-            tokenEndpoint: URL(string: "https://api.trakt.tv/oauth/token")!,
-            redirectURL: redirectURL,
-            clientId: clientId,
-            clientSecret: clientSecret,
-            scopes: []
-        )
     }
 }

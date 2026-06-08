@@ -1,27 +1,37 @@
 import Foundation
+import TraktAuthKit
 
 public enum AuthCoordinatorFactory {
     public static func create(
-        authRepository: TraktAuthRepository,
-        traktConfig: TraktConfig,
+        authRepository: AccountAuthRepository,
+        config: AuthClientConfig,
         logger: Logger
-    ) -> TraktAuthCoordinator {
-        let redirectURL = URL(string: traktConfig.redirectUri)
-            ?? URL(string: "about:blank")!
+    ) -> OAuthCoordinator {
+        let fallback = URL(string: "about:blank")!
+        let authorizationEndpoint = URL(string: config.authorizationEndpoint) ?? fallback
+        let tokenEndpoint = URL(string: config.tokenEndpoint) ?? fallback
+        let redirectURL = URL(string: config.redirectUri) ?? fallback
 
-        if redirectURL.absoluteString == "about:blank" {
+        if authorizationEndpoint == fallback || tokenEndpoint == fallback || redirectURL == fallback {
             logger.error(
-                tag: "TraktAuthCoordinator",
-                message: "Invalid Trakt redirect URI in TraktConfig"
+                tag: "OAuthCoordinator",
+                message: "Invalid OAuth endpoint or redirect URI for provider \(config.provider.name)"
             )
         }
 
-        return TraktAuthCoordinator(
+        let configuration = OAuthConfiguration(
+            authorizationEndpoint: authorizationEndpoint,
+            tokenEndpoint: tokenEndpoint,
+            redirectURL: redirectURL,
+            clientId: config.clientId,
+            clientSecret: config.clientSecret,
+            scopes: config.scopes
+        )
+
+        return OAuthCoordinator(
             authRepository: authRepository,
             logger: logger,
-            clientId: traktConfig.clientId,
-            clientSecret: traktConfig.clientSecret,
-            redirectURL: redirectURL
+            configuration: configuration
         )
     }
 }

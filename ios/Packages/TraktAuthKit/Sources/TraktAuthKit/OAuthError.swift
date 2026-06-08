@@ -1,6 +1,6 @@
 import Foundation
 
-public enum TraktAuthError: Error {
+public enum OAuthError: Error {
     case authorizationFailed(Error)
     case tokenExchangeFailed(Error)
     case userCancelled
@@ -9,7 +9,7 @@ public enum TraktAuthError: Error {
     case unknown(Error)
 }
 
-extension TraktAuthError: LocalizedError {
+extension OAuthError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .authorizationFailed(error):
