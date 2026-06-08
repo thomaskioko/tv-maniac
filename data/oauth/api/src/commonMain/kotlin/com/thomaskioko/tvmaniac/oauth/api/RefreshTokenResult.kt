@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.traktauth.api
+package com.thomaskioko.tvmaniac.oauth.api
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 

@@ -1,7 +1,7 @@
-package com.thomaskioko.tvmaniac.traktauth.api
+package com.thomaskioko.tvmaniac.oauth.api
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 
-public interface TraktRefreshTokenAction {
+public interface TokenRefreshAction {
     public suspend operator fun invoke(currentState: AuthState): RefreshTokenResult
 }
