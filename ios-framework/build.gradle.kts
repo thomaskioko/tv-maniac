@@ -227,6 +227,8 @@ kotlin {
                 implementation(projects.data.datastore.implementation)
                 implementation(projects.data.traktauth.api)
                 implementation(projects.data.traktauth.implementation)
+                implementation(projects.data.oauth.api)
+                implementation(projects.data.oauth.implementation)
                 implementation(projects.data.user.api)
                 implementation(projects.data.user.implementation)
                 implementation(projects.domain.user)
