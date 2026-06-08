@@ -1,9 +1,14 @@
 package com.thomaskioko.tvmaniac.accountmanager.api
 
 /**
- * Launches the sign-in web flow for a single [AccountProvider]. Each backend contributes one
- * implementation into a multibound set; consumers launch the entry for the provider being connected.
+ * Drives the sign-in web flow for a single [AccountProvider]: launching it, registering the platform
+ * result handler, and wiring the platform completion callback. Each backend contributes one
+ * implementation into a multibound set; the composition root iterates the set to wire every provider.
  */
 public interface AuthManager : ProviderScoped {
     public fun launchWebView()
+
+    public fun registerResult()
+
+    public fun setAuthCallback(callback: () -> Unit)
 }

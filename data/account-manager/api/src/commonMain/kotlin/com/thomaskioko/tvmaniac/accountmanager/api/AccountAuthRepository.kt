@@ -21,5 +21,11 @@ public interface AccountAuthRepository : ProviderScoped {
 
     public suspend fun refreshTokens(): TokenRefreshResult
 
+    public suspend fun saveTokens(
+        accessToken: String,
+        refreshToken: String,
+        expiresAtSeconds: Long,
+    )
+
     public suspend fun setAuthError(error: AuthError?)
 }
