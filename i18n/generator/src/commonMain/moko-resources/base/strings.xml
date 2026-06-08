@@ -279,7 +279,7 @@
     <string name="settings_about_website">Website</string>
     <string name="settings_about_section_title">About</string>
     <string name="trakt_description">Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.</string>
-    <string name="settings_trakt_detail_description">You are about to be redirected to your browser and outside of TvManiac app, where you will be taken to the Trakt website. From there, you will need to authorise TvManiac access to your Trakt account in order to make use of the Trakt functionality around the app. After you authorize, you will return to the app and you can continue with business as usual.</string>
+    <string name="settings_trakt_detail_description">Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.</string>
 
     <string name="settings_title_ui">User Interface</string>
     <string name="settings_title_trakt">Trakt Account</string>

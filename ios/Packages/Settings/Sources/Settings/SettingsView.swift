@@ -301,6 +301,7 @@ public struct SettingsView: View {
             connectedTitle: uiState.labels.traktConnected,
             connectedDescription: uiState.labels.traktConnectedDescription,
             isAuthenticated: uiState.isAuthenticated,
+            isProcessingAuth: uiState.isProcessingTraktAuth,
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
             onLogout: { showingLogoutAlert = true },

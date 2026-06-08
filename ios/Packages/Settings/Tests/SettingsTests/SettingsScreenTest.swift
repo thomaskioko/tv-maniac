@@ -220,6 +220,7 @@ class SettingsScreenTest: SnapshotTestCase {
             connectedTitle: "Connected",
             connectedDescription: "Your watch history, watchlist, and episode progress sync with Trakt.",
             isAuthenticated: true,
+            isProcessingAuth: false,
             logoutLabel: "Logout",
             loginLabel: "Login",
             onLogout: {},

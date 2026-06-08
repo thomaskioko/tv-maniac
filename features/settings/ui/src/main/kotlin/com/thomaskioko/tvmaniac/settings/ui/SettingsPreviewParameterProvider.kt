@@ -92,10 +92,8 @@ private val previewLabels = SettingsLabels(
 
 private val loggedOutTraktLabels = previewLabels.copy(
     traktConnected = "Connect to Trakt",
-    traktConnectedDescription = "You are about to be redirected to your browser and outside of TvManiac app, " +
-        "where you will be taken to the Trakt website. From there, you will need to authorise TvManiac access " +
-        "to your Trakt account in order to make use of the Trakt functionality around the app. After you " +
-        "authorize, you will return to the app and you can continue with business as usual.",
+    traktConnectedDescription = "Sign in with Trakt to sync your watch history, watchlist, and episode progress " +
+        "across your devices.",
 )
 
 internal val defaultState = SettingsState(
