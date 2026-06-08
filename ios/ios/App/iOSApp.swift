@@ -14,7 +14,7 @@ struct iOSApp: App {
     var scenePhase: ScenePhase
 
     @State private var componentHolder: ComponentHolder<IosViewPresenterGraph>?
-    @State private var authCoordinator: TraktAuthCoordinator?
+    @State private var authRegistry = AuthCoordinatorRegistry()
     @State private var toastManager = ToastManager()
     private let screenRegistry = ScreenRegistryBootstrap.makeRegistry()
 
@@ -85,7 +85,7 @@ struct iOSApp: App {
                 .animation(.spring(), value: toastManager.toast)
                 .provideWidthSizeClass()
                 .onAppear {
-                    setupAuthCoordinator()
+                    authRegistry.register(presenterGraph: holder.component, appGraph: appDelegate.appGraph)
                     appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)
                 }
                 .onChange(of: scenePhase) { _, newPhase in
@@ -100,19 +100,6 @@ struct iOSApp: App {
                     }
                 }
             }
-        }
-    }
-
-    private func setupAuthCoordinator() {
-        if authCoordinator == nil {
-            authCoordinator = AuthCoordinatorFactory.create(
-                authRepository: appDelegate.traktAuthRepository,
-                traktConfig: appDelegate.traktConfig,
-                logger: appDelegate.logger
-            )
-        }
-        appDelegate.setupAuthBridge { [weak authCoordinator] in
-            authCoordinator?.initiateAuthorization()
         }
     }
 
