@@ -11,11 +11,14 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
+                api(libs.androidx.activity)
                 api(libs.androidx.datastore.preference)
+                implementation(libs.appauth)
                 api(libs.coroutines.core)
                 api(projects.core.base)
                 api(projects.data.datastore.api)
                 api(projects.data.oauth.api)
+                implementation(libs.androidx.core.ktx)
             }
         }
 

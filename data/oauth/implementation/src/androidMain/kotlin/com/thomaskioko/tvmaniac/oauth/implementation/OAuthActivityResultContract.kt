@@ -1,22 +1,19 @@
-package com.thomaskioko.tvmaniac.traktauth.implementation
+package com.thomaskioko.tvmaniac.oauth.implementation
 
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import dev.zacsweers.metro.Inject
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 
-@Inject
-public class TraktActivityResultContract(
+internal class OAuthActivityResultContract(
     private val authService: AuthorizationService,
-    private val request: AuthorizationRequest,
-) : ActivityResultContract<Unit, TraktActivityResultContract.Result?>() {
-    override fun createIntent(context: Context, input: Unit): Intent {
-        return authService.getAuthorizationRequestIntent(request)
-    }
+) : ActivityResultContract<AuthorizationRequest, OAuthActivityResultContract.Result?>() {
+
+    override fun createIntent(context: Context, input: AuthorizationRequest): Intent =
+        authService.getAuthorizationRequestIntent(input)
 
     override fun parseResult(resultCode: Int, intent: Intent?): Result? =
         intent?.let {
@@ -26,7 +23,7 @@ public class TraktActivityResultContract(
             )
         }
 
-    public data class Result(
+    data class Result(
         val response: AuthorizationResponse?,
         val exception: AuthorizationException?,
     )
