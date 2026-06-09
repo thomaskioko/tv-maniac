@@ -11,6 +11,8 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
+import com.thomaskioko.tvmaniac.oauth.api.AuthStore
+import com.thomaskioko.tvmaniac.oauth.testing.FakeAuthStore
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -35,6 +37,10 @@ public object TestJvmPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideFeatureFlagsRemoteConfig(): FeatureFlagsRemoteConfig = FakeFeatureFlagsRemoteConfig()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideAuthStore(): AuthStore = FakeAuthStore()
 
     @Provides
     @SingleIn(AppScope::class)
