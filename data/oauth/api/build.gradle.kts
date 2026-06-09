@@ -9,12 +9,5 @@ kotlin {
                 runtimeOnly(libs.coroutines.android)
             }
         }
-
-        commonMain {
-            dependencies {
-                api(projects.data.accountManager.api)
-                api(libs.coroutines.core)
-            }
-        }
     }
 }
