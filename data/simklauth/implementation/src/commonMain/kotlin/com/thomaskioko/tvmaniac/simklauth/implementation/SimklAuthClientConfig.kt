@@ -12,7 +12,10 @@ import dev.zacsweers.metro.binding
 @SingleIn(AppScope::class)
 @ContributesIntoMap(
     scope = AppScope::class,
-    binding = binding<@AccountProviderKey(AccountProvider.SIMKL) AuthClientConfig>(),
+    binding = binding<
+        @AccountProviderKey(AccountProvider.SIMKL)
+        AuthClientConfig,
+        >(),
 )
 public class SimklAuthClientConfig(
     simklConfig: SimklConfig,

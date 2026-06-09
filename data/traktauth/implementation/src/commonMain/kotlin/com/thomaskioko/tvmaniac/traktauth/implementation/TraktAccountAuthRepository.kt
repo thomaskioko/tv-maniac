@@ -18,7 +18,10 @@ import kotlinx.coroutines.flow.SharedFlow
 @SingleIn(AppScope::class)
 @ContributesIntoMap(
     scope = AppScope::class,
-    binding = binding<@AccountProviderKey(AccountProvider.TRAKT) AccountAuthRepository>(),
+    binding = binding<
+        @AccountProviderKey(AccountProvider.TRAKT)
+        AccountAuthRepository,
+        >(),
 )
 public class TraktAccountAuthRepository(
     private val traktAuthRepository: OAuthRepository,

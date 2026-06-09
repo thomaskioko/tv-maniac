@@ -18,7 +18,10 @@ import kotlinx.coroutines.flow.SharedFlow
 @SingleIn(AppScope::class)
 @ContributesIntoMap(
     scope = AppScope::class,
-    binding = binding<@AccountProviderKey(AccountProvider.SIMKL) AccountAuthRepository>(),
+    binding = binding<
+        @AccountProviderKey(AccountProvider.SIMKL)
+        AccountAuthRepository,
+        >(),
 )
 public class SimklAccountAuthRepository(
     private val authStateHolder: AuthStateHolder,

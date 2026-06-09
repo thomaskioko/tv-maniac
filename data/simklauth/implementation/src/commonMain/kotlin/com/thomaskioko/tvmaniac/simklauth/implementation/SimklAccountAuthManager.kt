@@ -13,7 +13,10 @@ import dev.zacsweers.metro.binding
 @SingleIn(ActivityScope::class)
 @ContributesIntoMap(
     scope = ActivityScope::class,
-    binding = binding<@AccountProviderKey(AccountProvider.SIMKL) AuthManager>(),
+    binding = binding<
+        @AccountProviderKey(AccountProvider.SIMKL)
+        AuthManager,
+        >(),
 )
 public class SimklAccountAuthManager(
     private val launcher: OAuthLauncher,

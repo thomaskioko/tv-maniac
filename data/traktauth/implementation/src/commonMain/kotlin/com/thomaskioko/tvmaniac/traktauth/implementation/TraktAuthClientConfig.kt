@@ -12,7 +12,10 @@ import dev.zacsweers.metro.binding
 @SingleIn(AppScope::class)
 @ContributesIntoMap(
     scope = AppScope::class,
-    binding = binding<@AccountProviderKey(AccountProvider.TRAKT) AuthClientConfig>(),
+    binding = binding<
+        @AccountProviderKey(AccountProvider.TRAKT)
+        AuthClientConfig,
+        >(),
 )
 public class TraktAuthClientConfig(
     traktConfig: TraktConfig,

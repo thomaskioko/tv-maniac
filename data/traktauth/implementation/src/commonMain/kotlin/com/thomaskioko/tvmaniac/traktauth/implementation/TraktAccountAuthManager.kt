@@ -13,7 +13,10 @@ import dev.zacsweers.metro.binding
 @SingleIn(ActivityScope::class)
 @ContributesIntoMap(
     scope = ActivityScope::class,
-    binding = binding<@AccountProviderKey(AccountProvider.TRAKT) AuthManager>(),
+    binding = binding<
+        @AccountProviderKey(AccountProvider.TRAKT)
+        AuthManager,
+        >(),
 )
 public class TraktAccountAuthManager(
     private val launcher: OAuthLauncher,
