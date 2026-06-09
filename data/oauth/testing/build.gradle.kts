@@ -3,6 +3,7 @@ plugins {
 }
 
 scaffold {
+    addAndroidTarget()
     useMetro()
 }
 
