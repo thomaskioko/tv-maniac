@@ -41,7 +41,6 @@ dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.features.root.ui)
     implementation(projects.features.root.nav)
-    implementation(projects.features.root.presenter)
     implementation(projects.api.tmdb.implementation)
     implementation(projects.api.trakt.implementation)
     implementation(projects.core.appconfig.api)

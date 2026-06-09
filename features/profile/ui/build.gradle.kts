@@ -23,6 +23,7 @@ dependencies {
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.runtime)
+    implementation(projects.data.accountManager.api)
     implementation(projects.androidDesignsystem)
     implementation(projects.features.home.nav)
     implementation(projects.core.testTags)

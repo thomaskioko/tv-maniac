@@ -528,7 +528,7 @@ internal class ProfilePresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigator = navigator,
             localizer = FakeLocalizer(),
-            authManagers = setOf(authManager),
+            authManagers = mapOf(AccountProvider.TRAKT to authManager),
             accountManager = accountManager,
             updateUserProfileData = updateUserProfileData,
             errorToStringMapper = { it.message ?: "Test error" },

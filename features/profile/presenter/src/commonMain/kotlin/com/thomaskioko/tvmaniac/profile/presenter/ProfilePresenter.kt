@@ -81,7 +81,7 @@ public class ProfilePresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val localizer: Localizer,
-    private val authManagers: Set<AuthManager>,
+    private val authManagers: Map<AccountProvider, AuthManager>,
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -187,9 +187,9 @@ public class ProfilePresenter(
 
     public fun dispatch(action: ProfileAction) {
         when (action) {
-            LoginClicked -> {
+            is LoginClicked -> {
                 coroutineScope.launch {
-                    authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
+                    authManagers[action.provider]?.launchWebView()
                 }
             }
             SettingsClicked -> navigator.navigateTo(SettingsRoute)

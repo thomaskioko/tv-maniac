@@ -70,7 +70,7 @@ class SettingsPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = fakeLogger,
-            authManagers = setOf(authManager),
+            authManagers = mapOf(AccountProvider.TRAKT to authManager),
             logoutInteractor = LogoutInteractor(
                 accountManager = accountManager,
                 userRepository = userRepository,
@@ -227,7 +227,7 @@ class SettingsPresenterTest {
         var launched = false
         authManager.setOnLaunchWebView { launched = true }
 
-        presenter.dispatch(TraktLoginClicked)
+        presenter.dispatch(TraktLoginClicked(AccountProvider.TRAKT))
         testScheduler.advanceUntilIdle()
 
         launched shouldBe true

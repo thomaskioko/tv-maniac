@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.presentation.showlist
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+
 public sealed interface ShowListAction {
-    public data object Login : ShowListAction
+    public data class Login(val provider: AccountProvider) : ShowListAction
     public data object ShowCreateListField : ShowListAction
     public data object DismissCreateListField : ShowListAction
     public data class UpdateCreateListName(val name: String) : ShowListAction
