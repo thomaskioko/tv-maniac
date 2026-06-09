@@ -28,6 +28,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
+import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
@@ -56,6 +57,7 @@ class SettingsPresenterTest {
     private val fakeLogger = FakeLogger()
     private val localizer = FakeLocalizer()
     private val authManager = FakeAuthManager()
+    private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -70,7 +72,10 @@ class SettingsPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = fakeLogger,
-            authManagers = mapOf(AccountProvider.TRAKT to authManager),
+            authManagers = mapOf(
+                AccountProvider.TRAKT to authManager,
+                AccountProvider.SIMKL to simklAuthManager,
+            ),
             logoutInteractor = LogoutInteractor(
                 accountManager = accountManager,
                 userRepository = userRepository,
@@ -192,6 +197,7 @@ class SettingsPresenterTest {
             }
 
             state.isAuthenticated shouldBe false
+            state.activeProvider shouldBe null
             state.labels.traktConnected shouldBe localizer.getString(StringResourceKey.LabelSettingsTraktConnect)
             state.labels.traktConnectedDescription shouldBe
                 localizer.getString(StringResourceKey.SettingsTraktDetailDescription)
@@ -212,6 +218,7 @@ class SettingsPresenterTest {
                 state = awaitItem()
             }
 
+            state.activeProvider shouldBe AccountProvider.TRAKT
             state.labels.traktConnected shouldBe
                 localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, "Test User")
             state.labels.traktConnectedDescription shouldBe
@@ -231,5 +238,29 @@ class SettingsPresenterTest {
         testScheduler.advanceUntilIdle()
 
         launched shouldBe true
+    }
+
+    @Test
+    fun `should launch the chosen provider given a non default provider`() = runTest {
+        var traktLaunched = false
+        var simklLaunched = false
+        authManager.setOnLaunchWebView { traktLaunched = true }
+        simklAuthManager.setOnLaunchWebView { simklLaunched = true }
+
+        presenter.dispatch(TraktLoginClicked(AccountProvider.SIMKL))
+        testScheduler.advanceUntilIdle()
+
+        simklLaunched shouldBe true
+        traktLaunched shouldBe false
+    }
+
+    @Test
+    fun `should log out the active provider given logout is clicked`() = runTest {
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+
+        presenter.dispatch(TraktLogoutClicked)
+        testScheduler.advanceUntilIdle()
+
+        accountManager.lastLogoutProvider shouldBe AccountProvider.SIMKL
     }
 }

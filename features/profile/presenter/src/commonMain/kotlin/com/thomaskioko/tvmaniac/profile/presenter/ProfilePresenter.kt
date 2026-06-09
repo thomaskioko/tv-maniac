@@ -153,12 +153,12 @@ public class ProfilePresenter(
     public val state: StateFlow<ProfileState> = combine(
         observeUserProfileInteractor.flow,
         accountManager.isConnected,
+        accountManager.activeProvider,
         accountManager.authError,
         profileLoadingState.observable,
         uiMessageManager.message,
         sectionsFlow,
-    ) { userProfile, isConnected, authError, isLoading, uiMessage, sections ->
-        val authenticated = isConnected
+    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
         val profile = userProfile?.toPresentation()
         val displayName = profile?.fullName ?: profile?.username ?: ""
@@ -167,7 +167,8 @@ public class ProfilePresenter(
             userProfile = profile,
             isLoading = isLoading,
             errorMessage = errorMessage,
-            authenticated = authenticated,
+            authenticated = isConnected,
+            activeProvider = activeProvider,
             userLists = sections.userLists,
             inProgress = sections.inProgress,
             completed = sections.completed,
