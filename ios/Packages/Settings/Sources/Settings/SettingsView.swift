@@ -305,7 +305,7 @@ public struct SettingsView: View {
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
             onLogout: { showingLogoutAlert = true },
-            onLogin: { presenter.dispatch(action: TraktLoginClicked()) }
+            onLogin: { presenter.dispatch(action: TraktLoginClicked(provider: .trakt)) }
         )
     }
 

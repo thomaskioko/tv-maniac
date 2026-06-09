@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
@@ -273,7 +274,7 @@ private fun LoginRequiredContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         FilledTextButton(
-            onClick = { onAction(ShowListAction.Login) },
+            onClick = { onAction(ShowListAction.Login(AccountProvider.TRAKT)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG),

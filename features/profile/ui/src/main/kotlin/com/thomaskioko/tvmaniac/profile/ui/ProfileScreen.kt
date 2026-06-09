@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -119,7 +120,7 @@ internal fun ProfileScreen(
                     completed = state.completed,
                     recentlyWatched = state.recentlyWatched,
                     favorites = state.favorites,
-                    onLoginClicked = { onAction(LoginClicked) },
+                    onLoginClicked = { onAction(LoginClicked(AccountProvider.TRAKT)) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
                     onListClick = {},
                     onShowClick = { onAction(ProfileAction.ShowClicked(it)) },
