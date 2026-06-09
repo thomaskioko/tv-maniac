@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.favorites.api
 
 public data class FavoriteShow(
-    val traktId: Long,
+    val showId: Long,
     val tmdbId: Long,
     val title: String,
     val posterPath: String?,

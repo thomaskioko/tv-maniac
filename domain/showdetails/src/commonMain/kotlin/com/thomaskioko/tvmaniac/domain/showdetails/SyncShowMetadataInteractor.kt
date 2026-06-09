@@ -19,22 +19,22 @@ public class SyncShowMetadataInteractor(
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
             showDetailsRepository.fetchShowDetails(
-                id = params.traktId,
+                id = params.showId,
                 forceRefresh = params.forceRefresh,
             )
             seasonDetailsRepository.syncShowSeasonDetails(
-                showTraktId = params.traktId,
+                showId = params.showId,
                 forceRefresh = params.forceRefresh,
             )
             watchProviderRepository.fetchWatchProviders(
-                traktId = params.traktId,
+                showId = params.showId,
                 forceRefresh = params.forceRefresh,
             )
         }
     }
 
     public data class Param(
-        val traktId: Long,
+        val showId: Long,
         val forceRefresh: Boolean = false,
     )
 }

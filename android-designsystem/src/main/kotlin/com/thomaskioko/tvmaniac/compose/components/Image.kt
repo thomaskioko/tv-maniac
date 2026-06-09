@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -56,6 +57,7 @@ public fun AsyncImageComposable(
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
     border: BorderStroke? = null,
+    aspectRatio: Float? = null,
     transform: (AsyncImagePainter.State) -> AsyncImagePainter.State = AsyncImagePainter.DefaultTransform,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
     requestBuilder: (ImageRequest.Builder.() -> ImageRequest.Builder)? = null,
@@ -76,6 +78,7 @@ public fun AsyncImageComposable(
         } ?: model,
         contentDescription = contentDescription,
         modifier = modifier
+            .then(if (aspectRatio != null) Modifier.aspectRatio(aspectRatio) else Modifier)
             .clip(shape)
             .then(if (border != null) Modifier.border(border, shape) else Modifier),
         transform = transform,

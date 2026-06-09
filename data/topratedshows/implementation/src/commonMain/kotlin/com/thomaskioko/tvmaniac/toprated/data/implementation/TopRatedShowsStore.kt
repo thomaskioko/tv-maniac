@@ -7,10 +7,11 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Toprated_shows
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TOP_RATED_SHOWS
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
@@ -36,6 +37,7 @@ public class TopRatedShowsStore(
     private val requestManagerRepository: RequestManagerRepository,
     private val topRatedShowsDao: TopRatedShowsDao,
     private val tvShowsDao: TvShowsDao,
+    private val showIdResolver: ShowIdResolver,
     private val formatterUtil: FormatterUtil,
     private val dateTimeProvider: DateTimeProvider,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -87,7 +89,7 @@ public class TopRatedShowsStore(
 
                     response.forEach { showWithImages ->
                         val show = showWithImages.traktShow
-                        val traktId = show.ids.trakt
+                        val showId = show.ids.trakt
                         val tmdbId = showWithImages.tmdbId
                         val posterPath = showWithImages.tmdbPosterPath?.let {
                             formatterUtil.formatTmdbPosterPath(it)
@@ -96,11 +98,13 @@ public class TopRatedShowsStore(
                             formatterUtil.formatTmdbPosterPath(it)
                         }
 
-                        tvShowsDao.upsertMerging(show.toTvshow(traktId, tmdbId, posterPath, backdropPath, dateTimeProvider))
+                        tvShowsDao.upsertMerging(show.toTvshow(showId, tmdbId, posterPath, backdropPath, dateTimeProvider))
+
+                        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@forEach
 
                         topRatedShowsDao.upsert(
                             Toprated_shows(
-                                trakt_id = Id(traktId),
+                                show_id = internalShowId,
                                 tmdb_id = Id(tmdbId),
                                 page = Id(page),
                                 name = show.title,
@@ -131,24 +135,24 @@ public class TopRatedShowsStore(
 ).build()
 
 private fun TraktShowResponse.toTvshow(
-    traktId: Long,
+    showId: Long,
     tmdbId: Long,
     posterPath: String?,
     backdropPath: String?,
     dateTimeProvider: DateTimeProvider,
-): Tvshow = Tvshow(
-    trakt_id = Id(traktId),
-    tmdb_id = Id(tmdbId),
+): ShowToPersist = ShowToPersist(
+    showId = Id(showId),
+    tmdbId = Id(tmdbId),
     name = title,
     overview = overview ?: "",
     language = language,
     year = firstAirDate?.let { dateTimeProvider.extractYear(it) },
     ratings = rating ?: 0.0,
-    vote_count = votes ?: 0L,
-    poster_path = posterPath,
-    backdrop_path = backdropPath,
+    voteCount = votes ?: 0L,
+    posterPath = posterPath,
+    backdropPath = backdropPath,
     status = status,
     genres = genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-    episode_numbers = airedEpisodes?.toString(),
-    season_numbers = null,
+    episodeNumbers = airedEpisodes?.toString(),
+    seasonNumbers = null,
 )

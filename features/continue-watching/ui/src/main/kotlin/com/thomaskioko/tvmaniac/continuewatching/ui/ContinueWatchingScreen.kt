@@ -151,7 +151,7 @@ public fun ContinueWatchingScreen(
                                 onMarkWatched = { episode ->
                                     onAction(
                                         MarkUpNextEpisodeWatched(
-                                            showTraktId = episode.showTraktId,
+                                            showId = episode.showId,
                                             episodeId = episode.episodeId,
                                             seasonNumber = episode.seasonNumber,
                                             episodeNumber = episode.episodeNumber,
@@ -203,7 +203,7 @@ private fun SectionedContinueWatchingGridContent(
             }
             items(
                 items = chunkedWatchNext,
-                key = { "watchnext_row_${it.first().traktId}" },
+                key = { "watchnext_row_${it.first().showId}" },
                 contentType = { "WatchnextRow" },
             ) { rowItems ->
                 GridRow(
@@ -219,7 +219,7 @@ private fun SectionedContinueWatchingGridContent(
             }
             items(
                 items = chunkedStale,
-                key = { "stale_row_${it.first().traktId}" },
+                key = { "stale_row_${it.first().showId}" },
                 contentType = { "StaleRow" },
             ) { rowItems ->
                 GridRow(
@@ -270,11 +270,11 @@ private fun ContinueWatchingGridItem(
     ) {
         PosterCard(
             imageUrl = show.posterImageUrl,
-            onClick = { onItemClicked(show.traktId) },
+            onClick = { onItemClicked(show.showId) },
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2f / 3f)
-                .testTag(MyShowsTestTags.showCard(show.traktId)),
+                .testTag(MyShowsTestTags.showCard(show.showId)),
             title = show.title.orEmpty(),
             shape = RectangleShape,
         )
@@ -317,7 +317,7 @@ private fun SectionedUpNextListContent(
             }
             items(
                 items = watchNextEpisodes,
-                key = { "watchnext_${it.showTraktId}_${it.episodeId}" },
+                key = { "watchnext_${it.showId}_${it.episodeId}" },
                 contentType = { "WatchnextEpisode" },
             ) { episode ->
                 ContinueWatchingUpNextListItem(
@@ -325,7 +325,7 @@ private fun SectionedUpNextListContent(
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
                     onItemClicked = onEpisodeClicked,
-                    onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
+                    onShowTitleClicked = { onShowTitleClicked(episode.showId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
                     isUpdating = episode.episodeId in updatingEpisodeIds,
@@ -342,7 +342,7 @@ private fun SectionedUpNextListContent(
             }
             items(
                 items = staleEpisodes,
-                key = { "stale_${it.showTraktId}_${it.episodeId}" },
+                key = { "stale_${it.showId}_${it.episodeId}" },
                 contentType = { "StaleEpisode" },
             ) { episode ->
                 ContinueWatchingUpNextListItem(
@@ -350,7 +350,7 @@ private fun SectionedUpNextListContent(
                     premiereLabel = premiereLabel,
                     newLabel = newLabel,
                     onItemClicked = onEpisodeClicked,
-                    onShowTitleClicked = { onShowTitleClicked(episode.showTraktId) },
+                    onShowTitleClicked = { onShowTitleClicked(episode.showId) },
                     onMarkWatched = { onMarkWatched(episode) },
                     modifier = Modifier.animateItem(),
                     isUpdating = episode.episodeId in updatingEpisodeIds,

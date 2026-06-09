@@ -11,13 +11,13 @@ public class MarkEpisodeUnwatchedInteractor(
 
     override suspend fun doWork(params: MarkEpisodeUnwatchedParams) {
         episodeRepository.markEpisodeAsUnwatched(
-            showTraktId = params.showTraktId,
+            showId = params.showId,
             episodeId = params.episodeId,
         )
     }
 }
 
 public data class MarkEpisodeUnwatchedParams(
-    val showTraktId: Long,
+    val showId: Long,
     val episodeId: Long,
 )

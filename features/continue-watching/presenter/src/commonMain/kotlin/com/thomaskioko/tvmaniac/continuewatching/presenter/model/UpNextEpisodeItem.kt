@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.presenter.model
 
 public data class UpNextEpisodeItem(
-    val showTraktId: Long,
+    val showId: Long,
     val showName: String,
     val showPoster: String?,
     val episodeId: Long,

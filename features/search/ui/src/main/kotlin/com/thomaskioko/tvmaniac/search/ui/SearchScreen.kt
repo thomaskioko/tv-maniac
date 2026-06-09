@@ -331,21 +331,21 @@ private fun SearchResultsContent(
         ) {
             items(
                 items = results,
-                key = { it.traktId },
+                key = { it.showId },
                 contentType = { "SearchResult" },
             ) { item ->
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 SearchResultItem(
-                    modifier = Modifier.testTag(SearchTestTags.resultItem(item.traktId)),
+                    modifier = Modifier.testTag(SearchTestTags.resultItem(item.showId)),
                     title = item.title,
                     status = item.status,
                     voteAverage = item.voteAverage,
                     year = item.year,
                     overview = item.overview,
                     imageUrl = item.posterImageUrl,
-                    onClick = { onAction(SearchShowClicked(item.traktId)) },
+                    onClick = { onAction(SearchShowClicked(item.showId)) },
                 )
             }
         }

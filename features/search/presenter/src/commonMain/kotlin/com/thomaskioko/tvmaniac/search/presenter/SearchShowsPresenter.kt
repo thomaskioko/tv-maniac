@@ -143,7 +143,7 @@ public class SearchShowsPresenter(
                 }
 
                 is QueryChanged -> handleQueryChange(action.query)
-                is SearchShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
+                is SearchShowClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             }
         }
 

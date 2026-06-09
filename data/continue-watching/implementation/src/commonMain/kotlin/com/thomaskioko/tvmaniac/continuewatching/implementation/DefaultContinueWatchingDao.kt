@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingDao
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -17,13 +18,14 @@ import kotlinx.coroutines.flow.map
 @ContributesBinding(AppScope::class)
 public class DefaultContinueWatchingDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ContinueWatchingDao {
 
     override fun entries(): List<ContinueWatchingEntry> =
-        database.traktContinueWatchingQueries.entries().executeAsList().map { row ->
+        database.continueWatchingQueries.entries().executeAsList().map { row ->
             ContinueWatchingEntry(
-                traktId = row.trakt_id.id,
+                showId = row.trakt_id,
                 tmdbId = row.tmdb_id?.id,
                 airedEpisodes = row.aired_episodes,
                 completedCount = row.completed_count,
@@ -35,13 +37,13 @@ public class DefaultContinueWatchingDao(
         }
 
     override fun entriesObservable(): Flow<List<ContinueWatchingEntry>> =
-        database.traktContinueWatchingQueries.entriesObservable()
+        database.continueWatchingQueries.entriesObservable()
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows ->
                 rows.map { row ->
                     ContinueWatchingEntry(
-                        traktId = row.trakt_id.id,
+                        showId = row.trakt_id,
                         tmdbId = row.tmdb_id?.id,
                         airedEpisodes = row.aired_episodes,
                         completedCount = row.completed_count,
@@ -53,14 +55,14 @@ public class DefaultContinueWatchingDao(
                 }
             }
 
-    override fun traktIdsMissingShowDetails(): List<Long> =
-        database.traktContinueWatchingQueries.traktIdsMissingShowDetails()
+    override fun showIdsMissingShowDetails(): List<Long> =
+        database.continueWatchingQueries.traktIdsMissingShowDetails()
             .executeAsList()
-            .map { it.id }
 
     override fun upsert(entry: ContinueWatchingEntry) {
-        database.traktContinueWatchingQueries.upsert(
-            traktId = Id(entry.traktId),
+        val showId = showIdResolver.showIdForTraktId(entry.showId) ?: return
+        database.continueWatchingQueries.upsert(
+            showId = showId,
             tmdbId = entry.tmdbId?.let { Id(it) },
             airedEpisodes = entry.airedEpisodes,
             completedCount = entry.completedCount,
@@ -71,20 +73,22 @@ public class DefaultContinueWatchingDao(
         )
     }
 
-    override fun upsertPlaceholder(traktId: Long, tmdbId: Long?, title: String?, year: Long?) {
-        database.traktContinueWatchingQueries.upsertPlaceholder(
-            traktId = Id(traktId),
+    override fun upsertPlaceholder(showId: Long, tmdbId: Long?, title: String?, year: Long?) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        database.continueWatchingQueries.upsertPlaceholder(
+            showId = internalShowId,
             tmdbId = tmdbId?.let { Id(it) },
             title = title,
             year = year,
         )
     }
 
-    override fun deleteByTraktId(traktId: Long) {
-        database.traktContinueWatchingQueries.deleteByTraktId(Id(traktId))
+    override fun deleteByShowId(showId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        database.continueWatchingQueries.deleteByShowId(internalShowId)
     }
 
     override fun deleteAll() {
-        database.traktContinueWatchingQueries.deleteAll()
+        database.continueWatchingQueries.deleteAll()
     }
 }

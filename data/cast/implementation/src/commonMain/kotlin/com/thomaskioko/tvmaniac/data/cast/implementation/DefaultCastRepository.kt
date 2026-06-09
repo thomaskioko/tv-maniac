@@ -18,17 +18,17 @@ public class DefaultCastRepository(
     private val showCastStore: ShowCastStore,
 ) : CastRepository {
 
-    override suspend fun fetchShowCast(showTraktId: Long, forceRefresh: Boolean) {
-        val isEmpty = dao.getShowCast(showTraktId).isEmpty()
+    override suspend fun fetchShowCast(showId: Long, forceRefresh: Boolean) {
+        val isEmpty = dao.getShowCast(showId).isEmpty()
         when {
-            forceRefresh || isEmpty -> showCastStore.fresh(showTraktId)
-            else -> showCastStore.get(showTraktId)
+            forceRefresh || isEmpty -> showCastStore.fresh(showId)
+            else -> showCastStore.get(showId)
         }
     }
 
     override fun observeSeasonCast(seasonId: Long): Flow<List<SeasonCast>> =
         dao.observeSeasonCast(seasonId)
 
-    override fun observeShowCast(showTraktId: Long): Flow<List<ShowCast>> =
-        dao.observeShowCast(showTraktId)
+    override fun observeShowCast(showId: Long): Flow<List<ShowCast>> =
+        dao.observeShowCast(showId)
 }

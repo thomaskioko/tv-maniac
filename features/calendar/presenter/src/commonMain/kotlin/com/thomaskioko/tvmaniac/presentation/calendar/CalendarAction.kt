@@ -8,6 +8,6 @@ public data object NavigateToPreviousWeek : CalendarAction
 
 public data object NavigateToNextWeek : CalendarAction
 
-public data class EpisodeCardClicked(val episodeTraktId: Long) : CalendarAction
+public data class EpisodeCardClicked(val episodeId: Long) : CalendarAction
 
 public data class MessageShown(val id: Long) : CalendarAction

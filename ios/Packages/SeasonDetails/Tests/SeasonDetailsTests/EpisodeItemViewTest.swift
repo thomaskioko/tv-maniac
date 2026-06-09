@@ -1,0 +1,20 @@
+import Components
+import DesignSystem
+import Models
+import SeasonDetails
+import SnapshotTestingLib
+import SwiftUI
+import XCTest
+
+class EpisodeItemViewTest: SnapshotTestCase {
+    func test_EpisodeItemView() {
+        EpisodeItemView(
+            imageUrl: "",
+            episodeTitle: "E01 • Glorious Purpose",
+            episodeOverView: "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority."
+        )
+        .padding()
+        .appPreview()
+        .assertSnapshot(testName: "EpisodeItemView")
+    }
+}

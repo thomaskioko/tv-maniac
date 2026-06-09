@@ -30,7 +30,7 @@ internal class ObserveStartWatchingInteractorTest {
     private companion object {
         val shows = listOf(
             StartWatchingShow(
-                traktId = 1,
+                showId = 1,
                 tmdbId = 1,
                 title = "Breaking Bad",
                 posterPath = "/1.jpg",
@@ -38,7 +38,7 @@ internal class ObserveStartWatchingInteractorTest {
                 inLibrary = true,
             ),
             StartWatchingShow(
-                traktId = 2,
+                showId = 2,
                 tmdbId = 2,
                 title = "Severance",
                 posterPath = "/2.jpg",

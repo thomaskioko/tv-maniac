@@ -73,18 +73,18 @@ public class SyncLibraryInteractor(
                 val result = runCatching {
                     syncShowMetadataInteractor.executeSync(
                         SyncShowMetadataInteractor.Param(
-                            traktId = show.traktId,
+                            showId = show.showId,
                             forceRefresh = params.forceRefresh,
                         ),
                     )
                 }
                 val failure = result.exceptionOrNull() ?: continue
 
-                logger.warning(TAG, "syncShowMetadata failed for ${show.traktId}: ${failure.message}")
+                logger.warning(TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
                 syncObserver.log(SyncError.BackgroundSyncFailed(TAG, failure))
 
                 if (failure.toSyncError() is NetworkSyncError.Retryable) {
-                    logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.traktId}")
+                    logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.showId}")
                     break
                 }
             }

@@ -7,6 +7,9 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -40,10 +43,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.toTheme
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
-import com.thomaskioko.tvmaniac.traktauth.api.AuthError
-import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -74,7 +73,7 @@ public class DefaultRootPresenter(
     private val navDestinations: Set<NavDestination<*>>,
     homeGraphFactory: HomeScreenGraph.Factory,
     private val notificationRationale: NotificationRationale,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val logger: Logger,
@@ -93,29 +92,29 @@ public class DefaultRootPresenter(
 
     init {
         coroutineScope.launch {
-            traktAuthRepository.state
+            accountManager.isConnected
                 .debounce(200.milliseconds)
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .collect { refreshUserProfile() }
         }
 
         coroutineScope.launch {
-            traktAuthRepository.authError
+            accountManager.authError
                 .filterIsInstance<AuthError.TokenExpired>()
                 .collectLatest {
-                    when (traktAuthRepository.refreshTokens()) {
-                        is TokenRefreshResult.Success -> traktAuthRepository.setAuthError(null)
+                    when (accountManager.refreshActiveTokens()) {
+                        is TokenRefreshResult.Success -> accountManager.setAuthError(null)
                         else -> logoutInteractor.executeSync(Unit)
                     }
                 }
         }
 
         coroutineScope.launch {
-            traktAuthRepository.state
+            accountManager.isConnected
                 .debounce(500.milliseconds)
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .take(1)
                 .collect { notificationRationale.showIfNeeded() }
         }
@@ -261,7 +260,7 @@ public class DefaultRootPresenter(
                 navigator.navigateTo(
                     ShowDetailsRoute(
                         param = ShowDetailsParam(
-                            id = destination.showId,
+                            showId = destination.showId,
                             forceRefresh = destination.forceRefresh,
                         ),
                     ),
@@ -271,7 +270,7 @@ public class DefaultRootPresenter(
                 navigator.navigateTo(
                     SeasonDetailsRoute(
                         param = SeasonDetailsUiParam(
-                            showTraktId = destination.showId,
+                            showId = destination.showId,
                             seasonNumber = destination.seasonNumber,
                             seasonId = destination.seasonId,
                             forceRefresh = destination.forceRefresh,

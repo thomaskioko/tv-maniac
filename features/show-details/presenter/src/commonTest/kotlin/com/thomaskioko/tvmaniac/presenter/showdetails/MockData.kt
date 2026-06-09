@@ -44,7 +44,7 @@ val similarShowList = listOf(
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
-        show_trakt_id = Id(18495),
+        show_trakt_id = 18495L,
         similar_show_trakt_id = Id(18495),
     ),
 )
@@ -52,14 +52,14 @@ val similarShowList = listOf(
 val seasons = listOf(
     ShowSeasons(
         season_id = Id(84958),
-        show_trakt_id = Id(114355),
+        show_trakt_id = 114355L,
         season_title = "Season 1",
         season_number = 1,
     ),
 )
 
 val tvShowDetails = TvshowDetails(
-    trakt_id = Id(849583),
+    trakt_id = 849583L,
     tmdb_id = Id(849583),
     name = "Loki",
     overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
@@ -112,7 +112,7 @@ val testContinueTrackingResult = ContinueTrackingResult(
 )
 
 val testShowWatchProgress = ShowWatchProgress(
-    showTraktId = 84958L,
+    showId = 84958L,
     watchedCount = 5,
     totalCount = 10,
 )
@@ -120,13 +120,13 @@ val testShowWatchProgress = ShowWatchProgress(
 val testSeasonsWithProgress = listOf(
     ShowSeasons(
         season_id = Id(101),
-        show_trakt_id = Id(84958),
+        show_trakt_id = 84958L,
         season_title = "Season 1",
         season_number = 1,
     ),
     ShowSeasons(
         season_id = Id(102),
-        show_trakt_id = Id(84958),
+        show_trakt_id = 84958L,
         season_title = "Season 2",
         season_number = 2,
     ),
@@ -134,13 +134,13 @@ val testSeasonsWithProgress = listOf(
 
 val testSeasonWatchProgress = listOf(
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 1L,
         watchedCount = 8,
         totalCount = 10,
     ),
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 2L,
         watchedCount = 3,
         totalCount = 12,
@@ -149,7 +149,7 @@ val testSeasonWatchProgress = listOf(
 
 val testPartialSeasonProgress = listOf(
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 1L,
         watchedCount = 5,
         totalCount = 10,
@@ -158,7 +158,7 @@ val testPartialSeasonProgress = listOf(
 
 val testCompletedSeasonProgress = listOf(
     SeasonWatchProgress(
-        showTraktId = 84958L,
+        showId = 84958L,
         seasonNumber = 1L,
         watchedCount = 10,
         totalCount = 10,

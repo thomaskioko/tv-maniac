@@ -12,15 +12,15 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(libs.store5)
-                api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.logger.api)
+                api(projects.core.networkUtil.api)
                 api(projects.core.util.api)
+                api(projects.data.accountManager.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
 
-                implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)
             }
         }
@@ -29,6 +29,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.database.testing)
             }
         }

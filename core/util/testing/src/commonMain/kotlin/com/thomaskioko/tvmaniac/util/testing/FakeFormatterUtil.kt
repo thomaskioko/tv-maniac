@@ -17,5 +17,7 @@ public class FakeFormatterUtil : FormatterUtil {
 
     override fun formatDuration(number: Int): String = ""
 
+    override fun formatCompactNumber(number: Long): String = number.toString()
+
     override fun formatDateTime(epochMillis: Long, pattern: String): String = formattedDateTime
 }

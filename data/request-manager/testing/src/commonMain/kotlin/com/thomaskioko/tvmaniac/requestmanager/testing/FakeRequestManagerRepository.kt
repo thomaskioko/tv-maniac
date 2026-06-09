@@ -8,6 +8,7 @@ public class FakeRequestManagerRepository(
     initialRequestValid: Boolean = true,
 ) : RequestManagerRepository {
     public var requestValid: Boolean = initialRequestValid
+    public var requestExpired: Boolean = !initialRequestValid
     public var upsertCalled: Boolean = false
 
     override fun upsert(entityId: Long, requestType: String, timestamp: Instant) {
@@ -18,7 +19,7 @@ public class FakeRequestManagerRepository(
         entityId: Long,
         requestType: String,
         threshold: Duration,
-    ): Boolean = !requestValid
+    ): Boolean = requestExpired
 
     override fun isRequestValid(requestType: String, threshold: Duration): Boolean = requestValid
 

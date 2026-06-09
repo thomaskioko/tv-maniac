@@ -52,10 +52,10 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     }
 
     public fun setShowWatchedProgress(
-        traktId: Long,
+        showId: Long,
         response: ApiResponse<TraktWatchedProgressResponse>,
     ) {
-        showWatchedProgressResponses[traktId] = response
+        showWatchedProgressResponses[showId] = response
     }
 
     public fun setUpNextNitro(response: ApiResponse<List<TraktUpNextNitroResponse>>) {
@@ -78,11 +78,11 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
 
     public fun playbackEpisodesInvocations(): Int = playbackEpisodesInvocations
 
-    public fun showWatchedProgressInvocations(traktId: Long): Int =
-        showWatchedProgressInvocations[traktId] ?: 0
+    public fun showWatchedProgressInvocations(showId: Long): Int =
+        showWatchedProgressInvocations[showId] ?: 0
 
-    public fun showWatchedProgressLastActivity(traktId: Long): String? =
-        showWatchedProgressLastActivityArgs[traktId]
+    public fun showWatchedProgressLastActivity(showId: Long): String? =
+        showWatchedProgressLastActivityArgs[showId]
 
     public fun upNextNitroInvocations(): Int = upNextNitroInvocations
 
@@ -115,16 +115,16 @@ public class FakeTraktSyncRemoteDataSource : TraktSyncRemoteDataSource {
     }
 
     override suspend fun getShowWatchedProgress(
-        traktId: Long,
+        showId: Long,
         lastActivity: String?,
         hidden: Boolean,
         specials: Boolean,
     ): ApiResponse<TraktWatchedProgressResponse> {
-        showWatchedProgressInvocations[traktId] =
-            (showWatchedProgressInvocations[traktId] ?: 0) + 1
-        showWatchedProgressLastActivityArgs[traktId] = lastActivity
-        return showWatchedProgressResponses[traktId]
-            ?: error("FakeTraktSyncRemoteDataSource: no showWatchedProgress response configured for traktId=$traktId")
+        showWatchedProgressInvocations[showId] =
+            (showWatchedProgressInvocations[showId] ?: 0) + 1
+        showWatchedProgressLastActivityArgs[showId] = lastActivity
+        return showWatchedProgressResponses[showId]
+            ?: error("FakeTraktSyncRemoteDataSource: no showWatchedProgress response configured for showId=$showId")
     }
 
     override suspend fun getUpNextNitro(

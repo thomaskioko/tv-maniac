@@ -1,0 +1,24 @@
+-- Migration 36: rename activity_checkpoint -> activity_sync and key checkpoints on provider.
+--
+-- The table tracked per-consumer sync positions, but its name did not convey that. It is renamed to
+-- match the ActivitySync.sq file and the activitySyncQueries accessor. A provider column is added and
+-- promoted to the leading primary-key column so a future Simkl account keeps checkpoints separate from
+-- Trakt and the two never collide. Every existing row belongs to Trakt and backfills to 'TRAKT'.
+--
+-- activity_checkpoint has no foreign keys and no view references it, so the table is recreated under
+-- the new name and the old one dropped.
+
+CREATE TABLE activity_sync (
+    provider TEXT NOT NULL,
+    consumer_id TEXT NOT NULL,
+    activity_type TEXT NOT NULL,
+    synced_until INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    PRIMARY KEY (provider, consumer_id, activity_type)
+);
+
+INSERT INTO activity_sync (provider, consumer_id, activity_type, synced_until, updated_at)
+SELECT 'TRAKT', consumer_id, activity_type, synced_until, updated_at
+FROM activity_checkpoint;
+
+DROP TABLE activity_checkpoint;

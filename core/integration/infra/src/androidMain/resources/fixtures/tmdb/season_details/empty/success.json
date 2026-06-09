@@ -1,0 +1,19 @@
+{
+    "air_date": null,
+    "episodes": [],
+    "name": "",
+    "overview": "",
+    "id": 0,
+    "poster_path": null,
+    "season_number": 0,
+    "vote_average": 0.0,
+    "videos": {
+        "results": []
+    },
+    "images": {
+        "posters": []
+    },
+    "credits": {
+        "cast": []
+    }
+}

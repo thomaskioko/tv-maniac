@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
@@ -43,8 +44,8 @@ public fun PosterCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     title: String? = null,
-    imageWidth: Dp = 120.dp,
-    aspectRatio: Float = 2 / 3f,
+    imageWidth: Dp = ImageType.Poster.width,
+    aspectRatio: Float = ImageType.Poster.aspect,
     contentScale: ContentScale = ContentScale.Crop,
     shape: Shape = RectangleShape,
     isInLibrary: Boolean = false,
@@ -74,9 +75,8 @@ public fun PosterCard(
                             title,
                         )
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(aspectRatio),
+                    aspectRatio = aspectRatio,
+                    modifier = Modifier.fillMaxWidth(),
                 )
 
                 if (isInLibrary) {
@@ -115,8 +115,8 @@ public fun PosterBackdropCard(
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Start,
     contentScale: ContentScale = ContentScale.Crop,
-    imageWidth: Dp = 120.dp,
-    aspectRatio: Float = 2 / 3f,
+    imageWidth: Dp = ImageType.Backdrop.width,
+    aspectRatio: Float = ImageType.Backdrop.aspect,
     shape: Shape = RectangleShape,
 ) {
     val surface = MaterialTheme.colorScheme.surface
@@ -186,7 +186,7 @@ public fun PosterBackdropCard(
 internal fun PosterCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageWidth: Dp = 120.dp,
+    imageWidth: Dp = ImageType.Poster.width,
     shape: Shape = RectangleShape,
     content: @Composable () -> Unit,
 ) {
@@ -210,7 +210,8 @@ public fun CastCard(
     name: String,
     characterName: String,
     modifier: Modifier = Modifier,
-    height: Dp = 160.dp,
+    width: Dp = ImageType.Cast.width,
+    height: Dp = width / ImageType.Cast.aspect,
 ) {
     Card(
         modifier = modifier,
@@ -220,7 +221,7 @@ public fun CastCard(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .size(width = 120.dp, height = height),
+                .size(width = width, height = height),
             contentAlignment = Alignment.BottomStart,
         ) {
             CastPlaceholder(

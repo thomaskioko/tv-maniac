@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.api
 
 public data class ContinueWatchingEntry(
-    val traktId: Long,
+    val showId: Long,
     val tmdbId: Long?,
     val airedEpisodes: Long,
     val completedCount: Long,

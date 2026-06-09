@@ -1,12 +1,11 @@
 package com.thomaskioko.tvmaniac.domain.notifications
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
@@ -18,7 +17,7 @@ public class NotificationTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
     private val notificationManager: Lazy<NotificationManager>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
-    private val traktAuthRepository: Lazy<TraktAuthRepository>,
+    private val accountManager: Lazy<AccountManager>,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
 ) {
@@ -26,11 +25,11 @@ public class NotificationTasksInitializer(
     public fun init() {
         coroutineScope.launch {
             combine(
-                traktAuthRepository.value.state,
+                accountManager.value.isConnected,
                 datastoreRepository.value.observeEpisodeNotificationsEnabled(),
                 datastoreRepository.value.observeBackgroundSyncEnabled(),
-            ) { authState, notificationsEnabled, syncEnabled ->
-                authState == TraktAuthState.LOGGED_IN && notificationsEnabled && syncEnabled
+            ) { connected, notificationsEnabled, syncEnabled ->
+                connected && notificationsEnabled && syncEnabled
             }
                 .distinctUntilChanged()
                 .collect { shouldSchedule ->

@@ -6,7 +6,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
-import com.thomaskioko.tvmaniac.db.WatchProvidersByTraktId
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
+import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -23,19 +24,20 @@ import org.mobilenativefoundation.store.store5.Validator
 public class WatchProvidersStore(
     private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
     private val tvShowsDao: TvShowsDao,
+    private val showIdResolver: ShowIdResolver,
     private val dao: WatchProviderDao,
     private val mapper: WatchProvidersMapper,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
-) : Store<Long, List<WatchProvidersByTraktId>> by storeBuilder(
-    fetcher = Fetcher.of { traktId ->
-        val tmdbId = tvShowsDao.getTmdbIdByTraktId(traktId)
-            ?: throw Throwable("TMDB ID not found for Trakt ID: $traktId")
+) : Store<Long, List<WatchProvidersByShowId>> by storeBuilder(
+    fetcher = Fetcher.of { showId ->
+        val tmdbId = tvShowsDao.getTmdbIdByShowId(showId)
+            ?: throw Throwable("TMDB ID not found for Trakt ID: $showId")
         when (val response = remoteDataSource.getShowWatchProviders(tmdbId)) {
             is ApiResponse.Success -> {
                 requestManagerRepository.upsert(
-                    entityId = traktId,
+                    entityId = showId,
                     requestType = WATCH_PROVIDERS.name,
                 )
                 WatchProvidersFetchResult(tmdbId, response.body)
@@ -47,21 +49,24 @@ public class WatchProvidersStore(
             is ApiResponse.Error.OfflineError -> throw Throwable("No internet connection")
         }
     },
-    sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProvidersByTraktId>>(
-        reader = { traktId ->
-            dao.observeWatchProvidersByTraktId(traktId)
+    sourceOfTruth = SourceOfTruth.of<Long, WatchProvidersFetchResult, List<WatchProvidersByShowId>>(
+        reader = { showId ->
+            dao.observeWatchProvidersByShowId(showId)
         },
-        writer = { traktId, result ->
+        writer = { showId, result ->
             databaseTransactionRunner {
-                dao.deleteByTraktId(traktId)
-                result.response.results.US
-                    ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, traktId = traktId) }
-                    ?.forEach(dao::upsert)
+                dao.deleteByShowId(showId)
+                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                if (internalShowId != null) {
+                    result.response.results.US
+                        ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, showId = internalShowId) }
+                        ?.forEach(dao::upsert)
+                }
             }
         },
-        delete = { traktId ->
+        delete = { showId ->
             databaseTransactionRunner {
-                dao.deleteByTraktId(traktId)
+                dao.deleteByShowId(showId)
             }
         },
         deleteAll = { databaseTransactionRunner(dao::deleteAll) },
@@ -72,9 +77,9 @@ public class WatchProvidersStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val traktId = result.firstOrNull()?.trakt_id?.id ?: return@withContext false
+            val showId = result.firstOrNull()?.trakt_id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = traktId,
+                entityId = showId,
                 requestType = WATCH_PROVIDERS.name,
                 threshold = WATCH_PROVIDERS.duration,
             )

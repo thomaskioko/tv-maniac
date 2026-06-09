@@ -52,7 +52,7 @@ public class ObserveCalendarInteractor(
 
     private fun groupEntriesByShow(entries: List<CalendarEntry>): List<GroupedEpisodeEntry> {
         return entries
-            .groupBy { it.showTraktId }
+            .groupBy { it.showId }
             .map { (_, showEntries) ->
                 val sortedEntries = showEntries.sortedWith(
                     compareBy({ it.seasonNumber }, { it.episodeNumber }),
@@ -61,8 +61,8 @@ public class ObserveCalendarInteractor(
                 val additionalCount = sortedEntries.size - 1
 
                 GroupedEpisodeEntry(
-                    showTraktId = firstEntry.showTraktId,
-                    episodeTraktId = firstEntry.episodeTraktId,
+                    showId = firstEntry.showId,
+                    episodeId = firstEntry.episodeId,
                     showTitle = firstEntry.showTitle,
                     posterUrl = firstEntry.showPosterPath,
                     episodeInfo = calendarEpisodeFormatter.formatEpisodeInfo(

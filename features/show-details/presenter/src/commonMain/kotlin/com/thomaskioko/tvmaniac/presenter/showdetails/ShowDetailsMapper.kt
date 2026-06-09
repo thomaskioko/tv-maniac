@@ -69,9 +69,9 @@ public class ShowDetailsMapper(
 
     public fun mapContinueTrackingEpisodes(
         episodes: ImmutableList<EpisodeDetails>,
-        showTraktId: Long,
+        showId: Long,
     ): ImmutableList<ContinueTrackingEpisodeModel> =
-        episodes.map { it.toContinueTrackingModel(showTraktId) }.toImmutableList()
+        episodes.map { it.toContinueTrackingModel(showId) }.toImmutableList()
 
     private fun String.localizeStatus(): String {
         val key = when (lowercase()) {
@@ -98,7 +98,7 @@ public class ShowDetailsMapper(
     private fun List<DomainShow>.toShowList(): ImmutableList<ShowModel> =
         map {
             ShowModel(
-                traktId = it.traktId,
+                showId = it.showId,
                 title = it.title,
                 posterImageUrl = it.posterImageUrl,
                 backdropImageUrl = it.backdropImageUrl,
@@ -137,13 +137,13 @@ public class ShowDetailsMapper(
             )
         }.toImmutableList()
 
-    private fun EpisodeDetails.toContinueTrackingModel(showTraktId: Long): ContinueTrackingEpisodeModel {
+    private fun EpisodeDetails.toContinueTrackingModel(showId: Long): ContinueTrackingEpisodeModel {
         val seasonStr = "S${seasonNumber.toString().padStart(2, '0')}"
         val episodeStr = "E${episodeNumber.toString().padStart(2, '0')}"
         return ContinueTrackingEpisodeModel(
             episodeId = id,
             seasonId = seasonId,
-            showTraktId = showTraktId,
+            showId = showId,
             episodeNumber = episodeNumber,
             seasonNumber = seasonNumber,
             episodeNumberFormatted = "$seasonStr | $episodeStr",

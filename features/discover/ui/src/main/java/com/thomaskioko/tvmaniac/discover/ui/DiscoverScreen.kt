@@ -282,7 +282,7 @@ private fun LazyColumnContent(
                 title = label_discover_up_next.resolve(context),
                 nextEpisodes = dataLoadedState.nextEpisodes,
                 onEpisodeClick = { episode ->
-                    onAction(DiscoverEpisodeLongPressed(showTraktId = episode.showTraktId, episodeId = episode.episodeId))
+                    onAction(DiscoverEpisodeLongPressed(showId = episode.showId, episodeId = episode.episodeId))
                 },
             )
         }

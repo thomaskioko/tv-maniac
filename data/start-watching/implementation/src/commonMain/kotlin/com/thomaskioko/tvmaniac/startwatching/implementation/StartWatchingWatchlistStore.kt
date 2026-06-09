@@ -7,12 +7,12 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Tvshow
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.START_WATCHING_SYNC
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -73,13 +73,10 @@ public class StartWatchingWatchlistStore(
         writer = { _: Unit, response: List<FollowedShowWithImages> ->
             transactionRunner {
                 val currentEntries = followedShowsDao.entriesWithNoPendingAction()
-                val currentByTraktId = currentEntries.associateBy { it.traktId }
                 val networkTraktIds = response.map { it.response.show.ids.trakt }.toSet()
 
                 response.forEach { item ->
                     val entry = item.response.toFollowedShowEntry()
-                    val existingEntry = currentByTraktId[entry.traktId]
-                    val _ = followedShowsDao.upsert(entry.copy(id = existingEntry?.id ?: 0))
 
                     tvShowsDao.upsertMerging(
                         item.response.toTvshow(
@@ -87,10 +84,12 @@ public class StartWatchingWatchlistStore(
                             backdropPath = item.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                         ),
                     )
+
+                    val _ = followedShowsDao.upsert(entry)
                 }
 
                 currentEntries.forEach { localEntry ->
-                    if (localEntry.traktId !in networkTraktIds) {
+                    if (localEntry.showId !in networkTraktIds) {
                         followedShowsDao.deleteById(localEntry.id)
                     }
                 }
@@ -125,25 +124,25 @@ private data class FollowedShowWithImages(
 )
 
 private fun TraktFollowedShowResponse.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
-    traktId = show.ids.trakt,
+    showId = show.ids.trakt,
     tmdbId = show.ids.tmdb,
     followedAt = Instant.parse(listedAt),
     pendingAction = PendingAction.NOTHING,
 )
 
-private fun TraktFollowedShowResponse.toTvshow(posterPath: String?, backdropPath: String?): Tvshow = Tvshow(
-    trakt_id = Id(show.ids.trakt),
-    tmdb_id = Id(show.ids.tmdb),
+private fun TraktFollowedShowResponse.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
+    showId = Id(show.ids.trakt),
+    tmdbId = Id(show.ids.tmdb),
     name = show.title,
     overview = "",
     language = null,
     year = show.year?.toString(),
     status = null,
     ratings = 0.0,
-    vote_count = 0,
+    voteCount = 0,
     genres = null,
-    poster_path = posterPath,
-    backdrop_path = backdropPath,
-    episode_numbers = null,
-    season_numbers = null,
+    posterPath = posterPath,
+    backdropPath = backdropPath,
+    episodeNumbers = null,
+    seasonNumbers = null,
 )

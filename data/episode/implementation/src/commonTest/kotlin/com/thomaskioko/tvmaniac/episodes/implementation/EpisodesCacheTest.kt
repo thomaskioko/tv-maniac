@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Episode
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
@@ -12,6 +12,8 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
     private val episodeQueries
         get() = database.episodesQueries
+
+    private var showId: Id<ShowId> = Id(0L)
 
     @Test
     fun insertEpisodes_andEpisodeByEpisodeId_returnsExpectedData() {
@@ -38,7 +40,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
 
     private fun insertShow() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(123232),
             tmdb_id = Id<TmdbId>(123232),
             name = "Loki",
             overview = "After stealing the Tesseract, Loki is brought to the Time Variance Authority.",
@@ -53,12 +54,13 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             backdrop_path = "/kXkuE8WXlCD8zMX7MxzBEKmLJUZ.jpg",
         )
+        showId = showIdForTraktId(123232)
     }
 
     private fun insertSeason() {
         val _ = database.seasonsQueries.upsert(
             id = Id(114355),
-            show_trakt_id = Id<TraktId>(123232),
+            show_id = showId,
             season_number = 1,
             episode_count = 6,
             title = "Season 1",
@@ -76,10 +78,9 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             ratings = ratings,
             episode_number = episode_number,
             runtime = runtime,
-            show_trakt_id = show_trakt_id,
+            show_id = show_id,
             vote_count = vote_count,
             image_url = image_url,
-            trakt_id = trakt_id,
             first_aired = first_aired,
         )
     }
@@ -88,7 +89,7 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
         Episode(
             id = Id(2534997),
             season_id = Id(114355),
-            show_trakt_id = Id<TraktId>(123232),
+            show_id = showId,
             title = "Glorious Purpose",
             overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
             vote_count = 42,
@@ -96,13 +97,12 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-            trakt_id = null,
             first_aired = 1623196800000,
         ),
         Episode(
             id = Id(2927202),
             season_id = Id(114355),
-            show_trakt_id = Id<TraktId>(123232),
+            show_id = showId,
             title = "The Variant",
             overview = "Mobius puts Loki to work, but not everyone at TVA is thrilled about the God of Mischief's presence.",
             vote_count = 42,
@@ -110,7 +110,6 @@ internal class EpisodesCacheTest : BaseDatabaseTest() {
             runtime = 45,
             episode_number = 1,
             image_url = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
-            trakt_id = null,
             first_aired = 1623801600000,
         ),
     )

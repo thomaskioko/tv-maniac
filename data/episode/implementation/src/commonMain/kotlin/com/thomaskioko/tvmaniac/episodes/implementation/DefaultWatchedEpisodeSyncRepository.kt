@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
@@ -12,8 +14,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -21,7 +22,6 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant.Companion.fromEpochMilliseconds
 
 @SingleIn(AppScope::class)
@@ -29,28 +29,29 @@ import kotlin.time.Instant.Companion.fromEpochMilliseconds
 public class DefaultWatchedEpisodeSyncRepository(
     private val dao: WatchedEpisodeDao,
     private val episodesDao: EpisodesDao,
-    private val dataSource: EpisodeWatchesDataSource,
+    private val sources: Set<EpisodeWatchesDataSource>,
+    private val accountManager: AccountManager,
     private val datastoreRepository: DatastoreRepository,
     private val lastRequestStore: EpisodeWatchesLastRequestStore,
     private val syncRepository: ActivitySyncRepository,
-    private val traktAuthRepository: TraktAuthRepository,
-    private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
+    private val watchStatusRepository: ShowWatchStatusRepository,
 ) : WatchedEpisodeSyncRepository {
 
     private val syncMutex = Mutex()
 
+    private fun activeSource(): EpisodeWatchesDataSource? =
+        sources.getActiveProvider(accountManager)
+
     override suspend fun syncPendingEpisodes() {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+        if (accountManager.getActiveProvider() == null) return
 
         processPendingEpisodesToUploads()
         processPendingEpisodesDeletes()
     }
 
     override suspend fun syncAllWatchedEpisodes(forceRefresh: Boolean) {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+        if (accountManager.getActiveProvider() == null) return
 
         syncMutex.withLock {
             val pendingUploads = dao.entriesByPendingAction(PendingAction.UPLOAD)
@@ -62,9 +63,10 @@ public class DefaultWatchedEpisodeSyncRepository(
                 deletePending(pendingDeletes)
             }
 
-            dao.purgeSyncedDeletesOlderThan(
-                thresholdMillis = dateTimeProvider.nowMillis() - SYNCED_DELETE_TTL.inWholeMilliseconds,
-            )
+            if (pendingDeletes.isNotEmpty()) {
+                logger.debug(TAG, "Deferring bulk pull this cycle after pushing ${pendingDeletes.size} delete(s)")
+                return
+            }
 
             val activityAhead = syncRepository.isAheadOf(
                 consumerId = ActivitySyncTypes.BULK_WATCHED_EPISODES,
@@ -86,25 +88,17 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
     }
 
-    override suspend fun syncShowEpisodeWatches(showTraktId: Long, forceRefresh: Boolean) {
-        val authState = traktAuthRepository.getAuthState()
-        if (authState == null || !authState.isAuthorized) return
+    override suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean) {
+        if (accountManager.getActiveProvider() == null) return
 
-        // Fetch when per-show TTL has expired AND the bulk sync has not run
-        // recently enough to cover this show. If the bulk path is fresh, the
-        // local watched_episodes table already has this show's data, so the
-        // per-show round-trip is redundant.
-        val bulkRecentlyRan = lastRequestStore.isRequestValid()
-        val perShowExpired = lastRequestStore.isShowRequestExpired(showTraktId)
-        val shouldFetch = forceRefresh || (perShowExpired && !bulkRecentlyRan)
-
-        if (!shouldFetch) {
-            logger.debug(TAG, "Per-show sync skipped for $showTraktId — bulk current and per-show TTL fresh")
+        val perShowExpired = lastRequestStore.isShowRequestExpired(showId)
+        if (!forceRefresh && !perShowExpired) {
+            logger.debug(TAG, "Per-show sync skipped for $showId — per-show TTL fresh")
             return
         }
 
-        syncShowWatches(showTraktId)
-        lastRequestStore.updateShowLastRequest(showTraktId)
+        syncShowWatches(showId)
+        lastRequestStore.updateShowLastRequest(showId)
     }
 
     private suspend fun processPendingEpisodesToUploads() {
@@ -124,12 +118,13 @@ public class DefaultWatchedEpisodeSyncRepository(
     private suspend fun uploadPending(
         pending: List<com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction>,
     ) {
+        val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending uploads")
 
         val entries = pending.map { episode ->
             WatchedEpisodeEntry(
                 id = episode.watched_id,
-                showTraktId = episode.show_trakt_id.id,
+                showId = episode.show_trakt_id,
                 episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
@@ -139,7 +134,7 @@ public class DefaultWatchedEpisodeSyncRepository(
             )
         }
 
-        dataSource.addEpisodeWatches(entries)
+        source.addEpisodeEntries(entries)
 
         pending.forEach { episode ->
             dao.updatePendingAction(episode.watched_id, PendingAction.NOTHING)
@@ -151,38 +146,39 @@ public class DefaultWatchedEpisodeSyncRepository(
     private suspend fun deletePending(
         pending: List<com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction>,
     ) {
+        val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending deletes")
 
-        val episodeTraktIds = pending.mapNotNull { episode ->
-            episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                showTraktId = episode.show_trakt_id.id,
+        val entries = pending.map { episode ->
+            WatchedEpisodeEntry(
+                id = episode.watched_id,
+                showId = episode.show_trakt_id,
+                episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
-            )?.trakt_id
+                watchedAt = fromEpochMilliseconds(episode.watched_at),
+                traktId = episode.trakt_id,
+                pendingAction = PendingAction.DELETE,
+            )
         }
-        if (episodeTraktIds.isNotEmpty()) {
-            dataSource.removeEpisodeWatches(episodeTraktIds)
-        }
+        source.removeEpisodeEntries(entries)
 
         pending.forEach { episode ->
-            if (episode.trakt_id != null) {
-                dao.markAsSyncedDelete(episode.watched_id)
-            } else {
-                dao.deleteById(episode.watched_id)
-            }
+            dao.deleteById(episode.watched_id)
         }
 
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
     }
 
     private suspend fun fetchAllWatchedShows() {
+        val source = activeSource() ?: return
         val includeSpecials = datastoreRepository.getIncludeSpecials()
         var page = 1
         var totalShows = 0
 
         while (true) {
             currentCoroutineContext().ensureActive()
-            val batches = dataSource.getAllWatchedShows(page = page, limit = PAGE_LIMIT)
+            val batches = source.getAllWatchedShows(page = page, limit = PAGE_LIMIT)
             if (batches.isEmpty()) break
 
             batches.forEach { batch ->
@@ -201,62 +197,60 @@ public class DefaultWatchedEpisodeSyncRepository(
     private suspend fun upsertBatch(batch: WatchedShowBatch, includeSpecials: Boolean) {
         if (batch.episodes.isEmpty()) return
 
-        batch.episodes.chunked(BATCH_SIZE).forEach { chunk ->
-            currentCoroutineContext().ensureActive()
-            val resolved = chunk.map { entry ->
-                val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                    showTraktId = entry.showTraktId,
-                    seasonNumber = entry.seasonNumber,
-                    episodeNumber = entry.episodeNumber,
-                )
-                entry.copy(episodeId = episode?.episode_id?.id)
-            }
-            dao.upsertBatchFromTrakt(
-                showTraktId = batch.showTraktId,
-                entries = resolved,
-                includeSpecials = includeSpecials,
+        currentCoroutineContext().ensureActive()
+        val resolved = batch.episodes.map { entry ->
+            val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
+                showId = entry.showId,
+                seasonNumber = entry.seasonNumber,
+                episodeNumber = entry.episodeNumber,
             )
+            entry.copy(episodeId = episode?.episode_id?.id)
         }
+        dao.upsertBatchFromTrakt(
+            showId = batch.showId,
+            entries = resolved,
+            includeSpecials = includeSpecials,
+        )
+
+        watchStatusRepository.refresh(batch.showId)
     }
 
-    private suspend fun syncShowWatches(showTraktId: Long) {
-        val remoteWatches = dataSource.getShowEpisodeWatches(showTraktId)
+    private suspend fun syncShowWatches(showId: Long) {
+        val source = activeSource() ?: return
+        val remoteWatches = source.getShowEpisodeWatches(showId)
 
         if (remoteWatches.isEmpty()) {
-            logger.debug(TAG, "No remote watches for show $showTraktId")
+            logger.debug(TAG, "No remote watches for show $showId")
             return
         }
 
-        logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $showTraktId")
+        logger.debug(TAG, "Found ${remoteWatches.size} remote watches for show $showId")
 
         val includeSpecials = datastoreRepository.getIncludeSpecials()
 
-        remoteWatches.chunked(BATCH_SIZE).forEach { batch ->
-            currentCoroutineContext().ensureActive()
-
-            val entriesWithEpisodeIds = batch.map { remoteEntry ->
-                val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
-                    showTraktId = showTraktId,
-                    seasonNumber = remoteEntry.seasonNumber,
-                    episodeNumber = remoteEntry.episodeNumber,
-                )
-                remoteEntry.copy(episodeId = episode?.episode_id?.id)
-            }
-
-            dao.upsertBatchFromTrakt(
-                showTraktId = showTraktId,
-                entries = entriesWithEpisodeIds,
-                includeSpecials = includeSpecials,
+        currentCoroutineContext().ensureActive()
+        val entriesWithEpisodeIds = remoteWatches.map { remoteEntry ->
+            val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
+                showId = showId,
+                seasonNumber = remoteEntry.seasonNumber,
+                episodeNumber = remoteEntry.episodeNumber,
             )
+            remoteEntry.copy(episodeId = episode?.episode_id?.id)
         }
 
-        logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $showTraktId")
+        dao.upsertBatchFromTrakt(
+            showId = showId,
+            entries = entriesWithEpisodeIds,
+            includeSpecials = includeSpecials,
+        )
+
+        watchStatusRepository.refresh(showId)
+
+        logger.debug(TAG, "Synced ${remoteWatches.size} episode watches for show $showId")
     }
 
     private companion object {
         private const val TAG = "WatchedEpisodeSyncRepository"
-        private const val BATCH_SIZE = 50
         private const val PAGE_LIMIT = 100
-        private val SYNCED_DELETE_TTL = 7.days
     }
 }

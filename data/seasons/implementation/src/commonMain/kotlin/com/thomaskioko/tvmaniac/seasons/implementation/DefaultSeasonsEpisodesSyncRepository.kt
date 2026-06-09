@@ -13,10 +13,10 @@ public class DefaultSeasonsEpisodesSyncRepository(
     private val store: SeasonsWithEpisodesStore,
 ) : SeasonsEpisodesSyncRepository {
 
-    override suspend fun syncSeasonsWithEpisodes(showTraktId: Long, forceRefresh: Boolean) {
+    override suspend fun syncSeasonsWithEpisodes(showId: Long, forceRefresh: Boolean) {
         when {
-            forceRefresh -> store.fresh(showTraktId)
-            else -> store.get(showTraktId)
+            forceRefresh -> store.fresh(showId)
+            else -> store.get(showId)
         }
     }
 }

@@ -6,6 +6,8 @@ public interface TraktListDao {
 
     public fun observeAll(): Flow<List<TraktListEntity>>
 
+    public fun observeListsWithPosters(): Flow<List<TraktListEntity>>
+
     public fun upsert(entity: TraktListEntity)
 
     public fun deleteAll()

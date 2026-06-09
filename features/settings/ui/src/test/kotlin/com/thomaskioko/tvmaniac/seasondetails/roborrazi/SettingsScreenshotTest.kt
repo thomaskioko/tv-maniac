@@ -10,9 +10,11 @@ import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
 import com.thomaskioko.tvmaniac.settings.ui.infoState
 import com.thomaskioko.tvmaniac.settings.ui.licensesState
+import com.thomaskioko.tvmaniac.settings.ui.loadingState
 import com.thomaskioko.tvmaniac.settings.ui.loggedInState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
+import com.thomaskioko.tvmaniac.settings.ui.traktLoggedOutState
 import com.thomaskioko.tvmaniac.settings.ui.traktState
 import org.junit.Rule
 import org.junit.Test
@@ -30,6 +32,18 @@ class SettingsScreenshotTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    @Test
+    fun settingsScreenLoadingState() {
+        composeTestRule.captureMultiDevice("SettingsScreenLoadingState") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = loadingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
 
     @Test
     fun settingsScreenDefaultState() {
@@ -133,6 +147,18 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = traktState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenTraktPageLoggedOut() {
+        composeTestRule.captureMultiDevice("SettingsScreenTraktPageLoggedOut") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = traktLoggedOutState,
                     onAction = {},
                 )
             }

@@ -6,6 +6,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TopRatedShows
 import com.thomaskioko.tvmaniac.db.Toprated_shows
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
 @ContributesBinding(AppScope::class)
 public class DefaultTopRatedShowsDao(
     database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : TopRatedShowsDao {
     private val topRatedShowsQueries = database.topratedShowsQueries
@@ -27,7 +29,7 @@ public class DefaultTopRatedShowsDao(
     override fun upsert(show: Toprated_shows) {
         topRatedShowsQueries.transaction {
             topRatedShowsQueries.insert(
-                traktId = show.trakt_id,
+                showId = show.show_id,
                 tmdbId = show.tmdb_id,
                 page = show.page,
                 name = show.name,
@@ -43,9 +45,9 @@ public class DefaultTopRatedShowsDao(
 
     override fun observeTopRatedShows(page: Long): Flow<List<ShowEntity>> =
         topRatedShowsQueries
-            .entriesInPage(Id(page)) { traktId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
+            .entriesInPage(Id(page)) { showId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    traktId = traktId.id,
+                    showId = showId,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
@@ -66,9 +68,9 @@ public class DefaultTopRatedShowsDao(
                 topRatedShowsQueries.pagedTopRatedShows(
                     limit = limit,
                     offset = offset,
-                ) { traktId, tmdbId, page, title, imageUrl, inLib ->
+                ) { showId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        traktId = traktId.id,
+                        showId = showId,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,
@@ -84,7 +86,8 @@ public class DefaultTopRatedShowsDao(
     }
 
     override fun deleteTrendingShows(id: Long) {
-        topRatedShowsQueries.delete(Id(id))
+        val showId = showIdResolver.showIdForTraktId(id) ?: return
+        topRatedShowsQueries.delete(showId)
     }
 
     override fun deleteTrendingShows() {

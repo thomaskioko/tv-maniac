@@ -4,6 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
@@ -16,13 +17,15 @@ import kotlinx.coroutines.flow.Flow
 @ContributesBinding(AppScope::class)
 public class DefaultSimilarShowsDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsDao {
 
-    override fun upsert(showTraktId: Long, showTmdbId: Long, similarShowTraktId: Long, pageOrder: Int) {
+    override fun upsert(showId: Long, showTmdbId: Long, similarShowTraktId: Long, pageOrder: Int) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         database.similarShowsQueries.transaction {
             database.similarShowsQueries.insertOrReplace(
-                trakt_id = Id(showTraktId),
+                show_id = internalShowId,
                 tmdb_id = Id(showTmdbId),
                 similar_show_trakt_id = Id(similarShowTraktId),
                 page_order = pageOrder.toLong(),
@@ -30,9 +33,9 @@ public class DefaultSimilarShowsDao(
         }
     }
 
-    override fun observeSimilarShows(showTraktId: Long): Flow<List<SimilarShows>> {
+    override fun observeSimilarShows(showId: Long): Flow<List<SimilarShows>> {
         return database.similarShowsQueries
-            .similarShows(Id(showTraktId))
+            .similarShows(Id(showId))
             .asFlow()
             .mapToList(dispatchers.io)
     }

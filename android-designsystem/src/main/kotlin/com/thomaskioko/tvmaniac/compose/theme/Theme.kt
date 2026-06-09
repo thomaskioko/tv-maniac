@@ -6,6 +6,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.dp
@@ -149,6 +150,7 @@ internal fun Theme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = wh
 @Composable
 public fun TvManiacTheme(
     appTheme: Theme = Theme.SYSTEM_THEME,
+    windowWidthSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.Compact,
     content: @Composable () -> Unit,
 ) {
     val isSystemDark = isSystemInDarkTheme()
@@ -161,6 +163,7 @@ public fun TvManiacTheme(
 
     CompositionLocalProvider(
         LocalBackgroundTheme provides backgroundTheme,
+        LocalWindowWidthSizeClass provides windowWidthSizeClass,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

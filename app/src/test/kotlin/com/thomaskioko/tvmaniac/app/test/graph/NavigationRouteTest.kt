@@ -36,10 +36,10 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
             SettingsRoute,
             SearchRoute,
             DebugRoute,
-            TrailersRoute(traktShowId = 1L),
-            ShowDetailsRoute(param = ShowDetailsParam(id = 1L)),
+            TrailersRoute(showId = 1L),
+            ShowDetailsRoute(param = ShowDetailsParam(showId = 1L)),
             SeasonDetailsRoute(
-                param = SeasonDetailsUiParam(showTraktId = 1L, seasonId = 1L, seasonNumber = 1L),
+                param = SeasonDetailsUiParam(showId = 1L, seasonId = 1L, seasonNumber = 1L),
             ),
             GenreShowsRoute(id = 1L),
             MoreShowsRoute(categoryId = 1L),
@@ -116,7 +116,7 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
         val showDetailsGraph = activityGraph.showDetailsScreenGraphFactory
             .createShowDetailsGraph(componentContext)
         showDetailsGraph.showDetailsFactory
-            .create(ShowDetailsParam(id = 1L))
+            .create(ShowDetailsParam(showId = 1L))
             .shouldNotBeNull()
     }
 }

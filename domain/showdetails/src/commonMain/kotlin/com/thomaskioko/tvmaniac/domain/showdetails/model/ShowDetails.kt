@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.domain.showdetails.model
 
 public data class ShowDetails(
     val tmdbId: Long,
-    val traktId: Long,
+    val showId: Long,
     val title: String,
     val overview: String,
     val language: String?,
@@ -18,7 +18,7 @@ public data class ShowDetails(
     public companion object {
         public val Empty: ShowDetails = ShowDetails(
             tmdbId = 0,
-            traktId = 0,
+            showId = 0,
             title = "",
             overview = "",
             language = null,
@@ -60,7 +60,7 @@ public data class Season(
 }
 
 public data class Show(
-    val traktId: Long,
+    val showId: Long,
     val title: String,
     val posterImageUrl: String?,
     val backdropImageUrl: String?,

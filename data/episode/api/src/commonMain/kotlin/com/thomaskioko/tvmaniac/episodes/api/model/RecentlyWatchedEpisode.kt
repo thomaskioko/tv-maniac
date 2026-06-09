@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.episodes.api.model
 
 public data class RecentlyWatchedEpisode(
-    val showTraktId: Long,
+    val showId: Long,
     val showTmdbId: Long,
     val showTitle: String,
     val posterPath: String?,

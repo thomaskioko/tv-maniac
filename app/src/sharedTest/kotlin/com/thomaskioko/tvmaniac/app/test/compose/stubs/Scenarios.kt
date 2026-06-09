@@ -1,5 +1,8 @@
 package com.thomaskioko.tvmaniac.app.test.compose.stubs
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.app.test.TestAppComponent
 import com.thomaskioko.tvmaniac.app.test.compose.robot.RootRobot
 import com.thomaskioko.tvmaniac.testing.integration.EMPTY_ARRAY_FIXTURE
@@ -10,9 +13,6 @@ import com.thomaskioko.tvmaniac.testing.integration.stubEndpoint
 import com.thomaskioko.tvmaniac.testing.integration.stubSearchByQuery
 import com.thomaskioko.tvmaniac.testing.integration.stubShow
 import com.thomaskioko.tvmaniac.testing.integration.util.FixtureLoader
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
-import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
@@ -146,7 +146,7 @@ internal class Scenarios(
             )
             graph.traktAuthRepository.setAuthState(authState)
             graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(authState))
-            runBlocking { graph.traktAuthRepository.setState(TraktAuthState.LOGGED_IN) }
+            runBlocking { graph.traktAuthRepository.setState(AccountAuthState.LOGGED_IN) }
             // Mirror the production sign-in path: a successful OAuth handshake
             // calls `saveTokens` which emits `loginEvents`. The fake's
             // `setState(LOGGED_IN)` only flips state, so we also emit the
@@ -187,7 +187,12 @@ internal class Scenarios(
             // Per-show TMDB endpoints — single canonical fixture for any tmdb id.
             mockHandler.stubEndpoint(Endpoints.Tmdb.ShowDetails)
             mockHandler.stubEndpoint(Endpoints.Tmdb.Credits)
+            // Per-season episodes: catch-all returns empty so unstubbed seasons don't re-write
+            // episode rows. The per-season stubs registered after win under last-registered-first-match
+            // ordering.
             mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetails)
+            mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetailsS1)
+            mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetailsS2)
             mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
             mockHandler.stubPatternFixture(
                 pathRegex = "/users/me/history/shows/\\d+",

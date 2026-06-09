@@ -246,10 +246,7 @@
     <string name="settings_about_website">Webseite</string>
     <string name="settings_about_section_title">Über</string>
     <string name="trakt_description">Synchronisieren Sie Watchlist, Fortschritt, Weiterschauen und persönliche Listen mit Trakt.</string>
-    <string name="settings_trakt_detail_description">Sie werden zu Ihrem Browser und außerhalb der TvManiac-App
-        weitergeleitet, wo Sie zur Trakt-Website gelangen. Von dort aus müssen Sie TvManiac den Zugriff auf Ihr
-        Trakt-Konto autorisieren, um die Trakt-Funktionalität in der App nutzen zu können. Nachdem Sie die Autorisierung
-        erteilt haben, kehren Sie zur App zurück und können wie gewohnt fortfahren.
+    <string name="settings_trakt_detail_description">Melden Sie sich bei Trakt an, um Ihren Wiedergabeverlauf, Ihre Merkliste und Ihren Episodenfortschritt geräteübergreifend zu synchronisieren.
     </string>
 
     <string name="settings_title_ui">Benutzeroberfläche</string>
@@ -266,13 +263,24 @@
 
     <string name="profile_title">Profil</string>
     <string name="profile_shows_watched">Gesehene Sendungen</string>
+    <string name="profile_lists">Listen</string>
     <string name="profile_episodes_watched">Gesehene Episoden</string>
     <string name="profile_watch_time">Sehzeit</string>
     <string name="profile_stats_title">Statistiken</string>
-    <string name="profile_time_months">MONATE</string>
-    <string name="profile_time_days">TAGE</string>
-    <string name="profile_time_hours">STUNDEN</string>
+    <string name="profile_progress_title">Fortschritt</string>
+    <string name="profile_filter_completed">Abgeschlossen</string>
+    <string name="profile_filter_in_progress">Läuft</string>
+    <string name="profile_progress_empty">Noch nichts vorhanden</string>
+    <string name="profile_recently_watched_title">Kürzlich gesehen</string>
+    <string name="profile_favorites_title">Favoriten</string>
+    <string name="profile_time_months">Monate</string>
+    <string name="profile_time_days">Tage</string>
+    <string name="profile_time_hours">Stunden</string>
+    <string name="profile_time_months_short">Mo</string>
+    <string name="profile_time_days_short">T</string>
+    <string name="profile_time_hours_short">Std</string>
     <string name="profile_edit_button">Bearbeiten</string>
+    <string name="profile_view_button">Anzeigen</string>
 
     <string name="profile_unauthenticated_title">Entdecken.\nVerfolgen.\nMerkliste.\n&amp; Mehr ...</string>
     <string name="profile_feature_track_title">Verfolgen</string>

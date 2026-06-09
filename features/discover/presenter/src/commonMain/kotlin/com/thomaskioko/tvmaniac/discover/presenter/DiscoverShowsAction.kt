@@ -16,35 +16,35 @@ public data object StartWatchingMoreClicked : DiscoverShowAction
 
 public data object RefreshData : DiscoverShowAction
 
-public data class ShowClicked(val traktId: Long) : DiscoverShowAction
+public data class ShowClicked(val showId: Long) : DiscoverShowAction
 
 public data class MessageShown(val id: Long) : DiscoverShowAction
 
-public data class UpdateShowInLibrary(val traktId: Long, val inLibrary: Boolean) : DiscoverShowAction
+public data class UpdateShowInLibrary(val showId: Long, val inLibrary: Boolean) : DiscoverShowAction
 
 public data class NextEpisodeClicked(
-    val showTraktId: Long,
+    val showId: Long,
     val seasonId: Long,
     val seasonNumber: Long,
 ) : DiscoverShowAction
 
 public data class MarkNextEpisodeWatched(
-    val showTraktId: Long,
+    val showId: Long,
     val episodeId: Long,
     val seasonNumber: Long,
     val episodeNumber: Long,
 ) : DiscoverShowAction
 
-public data class UnfollowShowFromUpNext(val showTraktId: Long) : DiscoverShowAction
+public data class UnfollowShowFromUpNext(val showId: Long) : DiscoverShowAction
 
 public data class OpenSeasonFromUpNext(
-    val showTraktId: Long,
+    val showId: Long,
     val seasonId: Long,
     val seasonNumber: Long,
 ) : DiscoverShowAction
 
-public data class OpenShowFromUpNext(val showTraktId: Long) : DiscoverShowAction
+public data class OpenShowFromUpNext(val showId: Long) : DiscoverShowAction
 
 public data object SearchIconClicked : DiscoverShowAction
 
-public data class DiscoverEpisodeLongPressed(val showTraktId: Long, val episodeId: Long) : DiscoverShowAction
+public data class DiscoverEpisodeLongPressed(val showId: Long, val episodeId: Long) : DiscoverShowAction

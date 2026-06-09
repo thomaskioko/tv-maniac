@@ -65,7 +65,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
         syncObserver.errors.test {
             repository.markEpisodeAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -73,7 +73,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
             val event = awaitItem()
             event.shouldBeInstanceOf<SyncError.MarkWatchedFailed>()
-            event.showTraktId shouldBe SHOW_ID
+            event.showId shouldBe SHOW_ID
             event.cause.message shouldBe "network down"
         }
     }
@@ -85,11 +85,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
         syncObserver.errors.test {
-            repository.markEpisodeAsUnwatched(showTraktId = SHOW_ID, episodeId = EPISODE_ID)
+            repository.markEpisodeAsUnwatched(showId = SHOW_ID, episodeId = EPISODE_ID)
 
             val event = awaitItem()
             event.shouldBeInstanceOf<SyncError.MarkUnwatchedFailed>()
-            event.showTraktId shouldBe SHOW_ID
+            event.showId shouldBe SHOW_ID
         }
     }
 
@@ -100,11 +100,11 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
         syncObserver.errors.test {
-            repository.markSeasonWatched(showTraktId = SHOW_ID, seasonNumber = 1L)
+            repository.markSeasonWatched(showId = SHOW_ID, seasonNumber = 1L)
 
             val event = awaitItem()
             event.shouldBeInstanceOf<SyncError.BatchMarkFailed>()
-            event.showTraktId shouldBe SHOW_ID
+            event.showId shouldBe SHOW_ID
         }
     }
 
@@ -116,7 +116,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
         syncObserver.errors.test {
             repository.markEpisodeAsWatched(
-                showTraktId = SHOW_ID,
+                showId = SHOW_ID,
                 episodeId = EPISODE_ID,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -128,8 +128,8 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
     private fun TestScope.buildRepository(
         syncObserver: FakeSyncObserver,
     ): DefaultEpisodeRepository {
-        val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, dispatchers, fakeDateTimeProvider)
-        val episodesDao = DefaultEpisodesDao(database, dispatchers, fakeDateTimeProvider)
+        val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
+        val episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         val upcomingEpisodesStore = UpcomingEpisodesStore(
             calendarDataSource = NoOpCalendarDataSource,
             episodesDao = episodesDao,
@@ -150,7 +150,6 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
 
     private fun seedShow() {
         database.tvShowQueries.upsert(
-            trakt_id = Id(SHOW_ID),
             tmdb_id = Id(SHOW_ID),
             name = "Test Show",
             overview = "",
@@ -165,9 +164,10 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
+        val showId = showIdForTraktId(SHOW_ID)
         database.seasonsQueries.upsert(
             id = Id(11L),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             season_number = 1L,
             title = "Season 1",
             overview = null,
@@ -177,7 +177,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(EPISODE_ID),
             season_id = Id(11L),
-            show_trakt_id = Id(SHOW_ID),
+            show_id = showId,
             title = "Pilot",
             overview = "",
             episode_number = 1L,
@@ -185,7 +185,6 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = null,
         )
     }

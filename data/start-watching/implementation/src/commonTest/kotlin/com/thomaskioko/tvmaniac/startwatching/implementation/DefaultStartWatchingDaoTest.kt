@@ -4,8 +4,8 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingDao
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -31,6 +31,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     )
 
     private lateinit var dao: StartWatchingDao
+    private val showIdByTraktId = mutableMapOf<Long, Id<ShowId>>()
 
     @BeforeTest
     fun setUp() {
@@ -102,6 +103,21 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should exclude show once its followed entry is removed`() = runTest(testDispatcher) {
+        insertReleasedShow(id = 9, name = "Finished Show")
+        followShow(9)
+
+        dao.observeStartWatchingShows().test {
+            awaitItem() shouldContainExactly listOf(expectedShow(9, "Finished Show"))
+
+            database.followedShowsQueries.deleteByShowId(showIdByTraktId.getValue(9L))
+
+            awaitItem().shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should order by followed at descending`() = runTest(testDispatcher) {
         insertReleasedShow(id = 6, name = "Older Follow")
         insertReleasedShow(id = 7, name = "Newer Follow")
@@ -126,7 +142,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
         dao.observeStartWatchingShows().test {
             val item = awaitItem().single()
-            item.traktId shouldBe 8
+            item.showId shouldBe 8
             item.episodeId shouldBe 801
             item.episodeTitle shouldBe "Pilot"
             item.seasonNumber shouldBe 1
@@ -137,7 +153,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     private fun expectedShow(id: Long, title: String): StartWatchingShow =
-        StartWatchingShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01", inLibrary = true)
+        StartWatchingShow(showId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01", inLibrary = true)
 
     private fun insertReleasedShow(id: Long, name: String) {
         insertShow(id, name)
@@ -145,7 +161,6 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
     private fun insertShow(id: Long, name: String, year: String = "2020-01-01") {
         database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(id),
             tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = "Overview for $name",
@@ -160,12 +175,13 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = null,
         )
+        showIdByTraktId[id] = showIdForTraktId(id)
     }
 
     private fun insertSeason(seasonId: Long, showId: Long, seasonNumber: Long) {
         database.seasonsQueries.upsert(
             id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             season_number = seasonNumber,
             title = "Season $seasonNumber",
             overview = "Overview",
@@ -184,7 +200,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             title = title,
             overview = "Overview for $title",
             episode_number = episodeNumber,
@@ -192,15 +208,13 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
             image_url = null,
             ratings = 8.0,
             vote_count = 100L,
-            trakt_id = null,
             first_aired = 1_000L,
         )
     }
 
     private fun followShow(showId: Long, pendingAction: String = "NOTHING", followedAt: Long = 1_000L) {
         database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id(showId),
+            showId = showIdByTraktId.getValue(showId),
             tmdbId = Id(showId),
             followedAt = followedAt,
             pendingAction = pendingAction,
@@ -209,7 +223,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
     private fun markEpisodeWatched(showId: Long, episodeId: Long, seasonNumber: Long, episodeNumber: Long) {
         database.watchedEpisodesQueries.upsert(
-            show_trakt_id = Id<TraktId>(showId),
+            show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
             episode_number = episodeNumber,
@@ -219,8 +233,8 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
     }
 
     private fun addToContinueWatching(showId: Long) {
-        database.traktContinueWatchingQueries.upsert(
-            traktId = Id(showId),
+        database.continueWatchingQueries.upsert(
+            showId = showIdByTraktId.getValue(showId),
             tmdbId = Id(showId),
             airedEpisodes = 10L,
             completedCount = 0L,

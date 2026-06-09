@@ -241,14 +241,14 @@ internal fun LazyColumnContent(
                         if (episode.isWatched) {
                             onAction(
                                 MarkEpisodeUnwatched(
-                                    showTraktId = episode.showTraktId,
+                                    showId = episode.showId,
                                     episodeId = episode.episodeId,
                                 ),
                             )
                         } else {
                             onAction(
                                 MarkEpisodeWatched(
-                                    showTraktId = episode.showTraktId,
+                                    showId = episode.showId,
                                     episodeId = episode.episodeId,
                                     seasonNumber = episode.seasonNumber,
                                     episodeNumber = episode.episodeNumber,
@@ -830,14 +830,13 @@ private fun HorizontalRowContent(
         ) {
             items(
                 items = items,
-                key = { it.traktId },
+                key = { it.showId },
                 contentType = { "ShowModel" },
             ) { tvShow ->
                 PosterCard(
                     imageUrl = tvShow.posterImageUrl,
-                    onClick = { onShowClicked(tvShow.traktId) },
+                    onClick = { onShowClicked(tvShow.showId) },
                     title = tvShow.title,
-                    imageWidth = 84.dp,
                 )
             }
         }

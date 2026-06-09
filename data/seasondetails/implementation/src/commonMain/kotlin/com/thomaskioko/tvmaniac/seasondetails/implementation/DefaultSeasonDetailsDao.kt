@@ -9,17 +9,20 @@ import com.thomaskioko.tvmaniac.db.GetSeasonWithShowInfo
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonDetails
 import com.thomaskioko.tvmaniac.db.SeasonImages
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultSeasonDetailsDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatcher: AppCoroutineDispatchers,
 ) : SeasonDetailsDao {
 
@@ -30,28 +33,33 @@ public class DefaultSeasonDetailsDao(
         get() = database.episodesQueries
 
     override fun observeSeasonDetails(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
-    ): Flow<List<SeasonDetails>> =
-        seasonQueries.seasonDetails(showTraktId = Id(showTraktId), seasonNumber = seasonNumber)
+    ): Flow<List<SeasonDetails>> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        return seasonQueries.seasonDetails(showId = internalShowId, seasonNumber = seasonNumber)
             .asFlow()
             .mapToList(dispatcher.io)
+    }
 
     override fun observeSeasonWithShowInfo(
-        showTraktId: Long,
+        showId: Long,
         seasonNumber: Long,
-    ): Flow<GetSeasonWithShowInfo?> =
-        seasonQueries.getSeasonWithShowInfo(showTraktId = Id(showTraktId), seasonNumber = seasonNumber)
+    ): Flow<GetSeasonWithShowInfo?> {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(null)
+        return seasonQueries.getSeasonWithShowInfo(showId = internalShowId, seasonNumber = seasonNumber)
             .asFlow()
             .mapToOneOrNull(dispatcher.io)
+    }
 
     override fun observeEpisodesBySeasonId(seasonId: Long): Flow<List<EpisodesBySeasonId>> =
         episodesQueries.episodesBySeasonId(seasonId = Id(seasonId))
             .asFlow()
             .mapToList(dispatcher.io)
 
-    override fun delete(showTraktId: Long) {
-        seasonQueries.delete(Id(showTraktId))
+    override fun delete(showId: Long) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        seasonQueries.delete(internalShowId)
     }
 
     override fun deleteAll() {

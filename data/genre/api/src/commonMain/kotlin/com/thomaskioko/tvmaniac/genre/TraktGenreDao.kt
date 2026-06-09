@@ -10,7 +10,7 @@ public interface TraktGenreDao {
     public fun observeGenres(): Flow<List<TraktGenreEntity>>
     public fun getGenreSlugs(): List<String>
     public fun deleteAllGenres()
-    public fun upsertGenreShow(genreSlug: String, traktId: Long, pageOrder: Long, category: String)
+    public fun upsertGenreShow(genreSlug: String, showId: Long, pageOrder: Long, category: String)
     public fun observeShowsByGenreSlug(slug: String): Flow<List<ShowEntity>>
     public fun observeShowsByGenreSlugAndCategory(slug: String, category: String): Flow<List<ShowEntity>>
     public fun observeGenresWithShowsByCategory(category: String): Flow<List<GenreWithShowsEntity>>

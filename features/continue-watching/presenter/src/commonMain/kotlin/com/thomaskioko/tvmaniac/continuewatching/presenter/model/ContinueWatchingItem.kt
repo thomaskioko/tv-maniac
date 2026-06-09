@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.presenter.model
 
 public data class ContinueWatchingItem(
-    val traktId: Long,
+    val showId: Long,
     val title: String,
     val posterImageUrl: String? = null,
     val status: String? = null,

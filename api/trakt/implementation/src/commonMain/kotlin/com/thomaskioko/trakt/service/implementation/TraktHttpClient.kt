@@ -1,11 +1,11 @@
 package com.thomaskioko.trakt.service.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
-import com.thomaskioko.tvmaniac.traktauth.api.TokenRefreshResult
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
+import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
@@ -42,7 +42,7 @@ internal fun traktHttpClient(
     json: Json,
     httpClientEngine: HttpClientEngine,
     kermitLogger: KermitLogger,
-    traktAuthRepository: TraktAuthRepository,
+    oAuthRepository: OAuthRepository,
     internetConnectionChecker: InternetConnectionChecker,
 ): HttpClient {
     val client = HttpClient(httpClientEngine) {
@@ -83,7 +83,7 @@ internal fun traktHttpClient(
         install(Auth) {
             bearer {
                 loadTokens {
-                    val state = traktAuthRepository.getAuthState()
+                    val state = oAuthRepository.getAuthState()
                         ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
                         ?: return@loadTokens null
 
@@ -91,14 +91,14 @@ internal fun traktHttpClient(
                 }
 
                 refreshTokens {
-                    val currentState = traktAuthRepository.getAuthState()
+                    val currentState = oAuthRepository.getAuthState()
                         ?: return@refreshTokens null
 
                     if (oldTokens?.refreshToken != null && oldTokens?.refreshToken != currentState.refreshToken) {
                         return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
                     }
 
-                    val result = traktAuthRepository.refreshTokens()
+                    val result = oAuthRepository.refreshTokens()
                     if (result is TokenRefreshResult.Success) {
                         BearerTokens(result.authState.accessToken, result.authState.refreshToken)
                     } else {
@@ -138,7 +138,7 @@ internal fun traktHttpClient(
         }
 
         install(TraktAuthGuard) {
-            isAuthenticated = { traktAuthRepository.isLoggedIn() }
+            isAuthenticated = { oAuthRepository.isLoggedIn() }
         }
 
         install(HttpTimeout) {
@@ -160,6 +160,6 @@ internal fun traktHttpClient(
             }
         }
     }
-    client.attributes.put(IsAuthenticated) { traktAuthRepository.isLoggedIn() }
+    client.attributes.put(IsAuthenticated) { oAuthRepository.isLoggedIn() }
     return client
 }

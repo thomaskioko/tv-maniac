@@ -48,8 +48,8 @@ public class CalendarStateMapper(
     ): ImmutableList<CalendarEpisodeItem> {
         return entries.map { entry ->
             CalendarEpisodeItem(
-                showTraktId = entry.showTraktId,
-                episodeTraktId = entry.episodeTraktId,
+                showId = entry.showId,
+                episodeId = entry.episodeId,
                 showTitle = entry.showTitle,
                 posterUrl = entry.posterUrl,
                 episodeInfo = entry.episodeInfo,

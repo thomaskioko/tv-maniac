@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
@@ -190,7 +189,7 @@ internal class EpisodeSheetPresenterTest {
 
             val call = episodeRepository.lastMarkEpisodeWatchedCall
             call shouldBe com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall(
-                showTraktId = 100L,
+                showId = 100L,
                 episodeId = 1L,
                 seasonNumber = 1L,
                 episodeNumber = 1L,
@@ -216,7 +215,7 @@ internal class EpisodeSheetPresenterTest {
 
             val call = episodeRepository.lastMarkEpisodeUnwatchedCall
             call shouldBe com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall(
-                showTraktId = 100L,
+                showId = 100L,
                 episodeId = 1L,
             )
             navigator.overlayDismissCount shouldBe 1
@@ -243,7 +242,7 @@ internal class EpisodeSheetPresenterTest {
 
             episodeRepository.lastMarkEpisodeWatchedCall shouldBe
                 com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall(
-                    showTraktId = 100L,
+                    showId = 100L,
                     episodeId = 1L,
                     seasonNumber = 1L,
                     episodeNumber = 1L,
@@ -264,7 +263,7 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.OpenShow)
 
-            (navigator.lastNavigatedRoute as ShowDetailsRoute).param.id shouldBe 100L
+            (navigator.lastNavigatedRoute as ShowDetailsRoute).param.showId shouldBe 100L
             navigator.overlayDismissCount shouldBe 1
         }
     }
@@ -283,7 +282,7 @@ internal class EpisodeSheetPresenterTest {
             presenter.dispatch(EpisodeSheetAction.OpenSeason)
 
             val seasonRoute = navigator.lastNavigatedRoute as SeasonDetailsRoute
-            seasonRoute.param.showTraktId shouldBe 100L
+            seasonRoute.param.showId shouldBe 100L
             seasonRoute.param.seasonId shouldBe 10L
             seasonRoute.param.seasonNumber shouldBe 1L
             navigator.overlayDismissCount shouldBe 1
@@ -396,7 +395,7 @@ internal class EpisodeSheetPresenterTest {
     ) = EpisodeById(
         episode_id = Id<EpisodeId>(1L),
         season_id = Id<SeasonId>(10L),
-        show_trakt_id = Id<TraktId>(100L),
+        show_trakt_id = 100L,
         episode_number = 1L,
         title = "The Pilot",
         overview = overview,

@@ -5,8 +5,8 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
@@ -54,6 +54,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var watchedEpisodeDao: WatchedEpisodeDao
+    private var testShowId: Id<ShowId> = Id(0L)
 
     @BeforeTest
     fun setup() {
@@ -61,6 +62,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         watchedEpisodeDao = DefaultWatchedEpisodeDao(
             database = database,
+            showIdResolver = showIdResolver,
             dispatchers = coroutineDispatcher,
             dateTimeProvider = fakeDateTimeProvider,
         )
@@ -77,7 +79,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should count all unwatched episodes in previous seasons`() = runTest {
         val count = watchedEpisodeDao.getUnwatchedEpisodeCountInPreviousSeasons(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             seasonNumber = SEASON_2_NUMBER,
             includeSpecials = false,
         )
@@ -89,7 +91,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     fun `should return recently watched episodes newest first with show and episode metadata`() = runTest {
         fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
         watchedEpisodeDao.markAsWatched(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             episodeId = 101L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 1L,
@@ -97,7 +99,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         )
         fakeDateTimeProvider.setCurrentTimeMillis(2_000L)
         watchedEpisodeDao.markAsWatched(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             episodeId = 102L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 2L,
@@ -139,7 +141,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
         watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, includeSpecials = false)
         database.watchedEpisodesQueries.markAsWatched(
-            show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+            show_id = testShowId,
             episode_id = Id<EpisodeId>(102L),
             season_number = SEASON_1_NUMBER,
             episode_number = 2L,
@@ -166,28 +168,28 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should return all seasons watch progress with correct counts`() = runTest {
         watchedEpisodeDao.markAsWatched(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             episodeId = 101L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 1L,
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             episodeId = 102L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 2L,
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             episodeId = 103L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 3L,
             includeSpecials = false,
         )
         watchedEpisodeDao.markAsWatched(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             episodeId = 201L,
             seasonNumber = SEASON_2_NUMBER,
             episodeNumber = 1L,
@@ -233,6 +235,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         watchedEpisodeDao.observeAllSeasonsWatchProgress(999L).test {
             val progress = awaitItem()
             progress.shouldBeEmpty()
+            awaitComplete()
         }
     }
 
@@ -242,7 +245,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
             watchedEpisodeDao.markAsWatched(
-                showTraktId = TEST_SHOW_ID,
+                showId = TEST_SHOW_ID,
                 episodeId = episodeId,
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = episodeNumber.toLong(),
@@ -266,7 +269,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             initialProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 0
 
             watchedEpisodeDao.markAsWatched(
-                showTraktId = TEST_SHOW_ID,
+                showId = TEST_SHOW_ID,
                 episodeId = 101L,
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = 1L,
@@ -284,7 +287,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         val entries = (1..5).map { episodeNumber ->
             WatchedEpisodeEntry(
                 id = 0,
-                showTraktId = TEST_SHOW_ID,
+                showId = TEST_SHOW_ID,
                 episodeId = (100L + episodeNumber),
                 seasonNumber = SEASON_1_NUMBER,
                 episodeNumber = episodeNumber.toLong(),
@@ -294,7 +297,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         }
 
         watchedEpisodeDao.upsertBatchFromTrakt(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             entries = entries,
             includeSpecials = false,
         )
@@ -314,7 +317,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should handle empty batch upsert gracefully`() = runTest {
         watchedEpisodeDao.upsertBatchFromTrakt(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             entries = emptyList(),
             includeSpecials = false,
         )
@@ -326,47 +329,10 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should resurrect SYNCED_DELETE row when Trakt re-reports the episode as watched`() = runTest {
-        val priorSyncedAt = LocalDate(2024, 1, 1).toEpochMillis()
-        database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(TEST_SHOW_ID),
-            episode_id = Id(101L),
-            season_number = SEASON_1_NUMBER,
-            episode_number = 1L,
-            watched_at = priorSyncedAt,
-            trakt_id = 9001L,
-            synced_at = priorSyncedAt,
-            pending_action = "SYNCED_DELETE",
-        )
-
-        val laterWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(priorSyncedAt + 86_400_000L)
-        watchedEpisodeDao.upsertBatchFromTrakt(
-            showTraktId = TEST_SHOW_ID,
-            entries = listOf(
-                WatchedEpisodeEntry(
-                    id = 0,
-                    showTraktId = TEST_SHOW_ID,
-                    episodeId = 101L,
-                    seasonNumber = SEASON_1_NUMBER,
-                    episodeNumber = 1L,
-                    watchedAt = laterWatchedAt,
-                    traktId = 9001L,
-                ),
-            ),
-            includeSpecials = false,
-        )
-
-        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
-            val progress = awaitItem()
-            progress.watchedCount shouldBe 1
-        }
-    }
-
-    @Test
-    fun `should keep SYNCED_DELETE tombstone given stale Trakt response with older watched_at`() = runTest {
+    fun `should keep a legacy SYNCED_DELETE row hidden when the provider re-reports the episode`() = runTest {
         val syncedAt = LocalDate(2024, 6, 1).toEpochMillis()
         database.watchedEpisodesQueries.upsertFromTrakt(
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = testShowId,
             episode_id = Id(101L),
             season_number = SEASON_1_NUMBER,
             episode_number = 1L,
@@ -376,17 +342,17 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             pending_action = "SYNCED_DELETE",
         )
 
-        val stalerWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(syncedAt - 86_400_000L)
+        val newerWatchedAt = kotlin.time.Instant.fromEpochMilliseconds(syncedAt + 86_400_000L)
         watchedEpisodeDao.upsertBatchFromTrakt(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             entries = listOf(
                 WatchedEpisodeEntry(
                     id = 0,
-                    showTraktId = TEST_SHOW_ID,
+                    showId = TEST_SHOW_ID,
                     episodeId = 101L,
                     seasonNumber = SEASON_1_NUMBER,
                     episodeNumber = 1L,
-                    watchedAt = stalerWatchedAt,
+                    watchedAt = newerWatchedAt,
                     traktId = 9001L,
                 ),
             ),
@@ -403,7 +369,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     fun `should preserve pending UPLOAD action when Trakt sync upserts the same episode`() = runTest {
         val now = LocalDate(2024, 6, 1).toEpochMillis()
         database.watchedEpisodesQueries.markAsWatched(
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = testShowId,
             episode_id = Id(101L),
             season_number = SEASON_1_NUMBER,
             episode_number = 1L,
@@ -412,11 +378,11 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         watchedEpisodeDao.upsertBatchFromTrakt(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             entries = listOf(
                 WatchedEpisodeEntry(
                     id = 0,
-                    showTraktId = TEST_SHOW_ID,
+                    showId = TEST_SHOW_ID,
                     episodeId = 101L,
                     seasonNumber = SEASON_1_NUMBER,
                     episodeNumber = 1L,
@@ -428,7 +394,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         val row = database.watchedEpisodesQueries
-            .getWatchedEpisodes(Id(TEST_SHOW_ID))
+            .getWatchedEpisodes(testShowId)
             .executeAsList()
             .first { it.season_number == SEASON_1_NUMBER && it.episode_number == 1L }
         row.pending_action shouldBe "UPLOAD"
@@ -439,7 +405,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         val unknownShowId = 7777L
         val entry = WatchedEpisodeEntry(
             id = 0,
-            showTraktId = unknownShowId,
+            showId = unknownShowId,
             episodeId = null,
             seasonNumber = 1L,
             episodeNumber = 1L,
@@ -448,7 +414,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         watchedEpisodeDao.upsertBatchFromTrakt(
-            showTraktId = unknownShowId,
+            showId = unknownShowId,
             entries = listOf(entry),
             includeSpecials = false,
         )
@@ -467,7 +433,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         val episodeNumber = 5L
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(showId),
             tmdb_id = Id(showId),
             name = "UpNext Test Show",
             overview = "A show where episode details haven't been synced",
@@ -483,9 +448,10 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop.jpg",
         )
 
+        val resolvedShowId = showIdForTraktId(showId)
         val _ = database.seasonsQueries.upsert(
             id = Id(9001L),
-            show_trakt_id = Id(showId),
+            show_id = resolvedShowId,
             season_number = seasonNumber,
             title = "Season 1",
             overview = "First season",
@@ -494,7 +460,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         watchedEpisodeDao.markAsWatched(
-            showTraktId = showId,
+            showId = showId,
             episodeId = nonExistentEpisodeId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
@@ -510,9 +476,77 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should keep the watched count given it exceeds the season episode count`() = runTest {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id<TmdbId>(900L),
+            name = "Understated Show",
+            overview = "overview",
+            language = "en",
+            year = "2023-01-01",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val show900Id = showIdForTraktId(900L)
+        database.seasonsQueries.upsert(
+            id = Id(990L),
+            show_id = show900Id,
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 0L,
+            image_url = null,
+        )
+        database.watchedEpisodesQueries.markAsWatched(
+            show_id = show900Id,
+            episode_id = null,
+            season_number = 1L,
+            episode_number = 1L,
+            watched_at = 1L,
+            pending_action = "UPLOAD",
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(900L).test {
+            val progress = awaitItem()
+            progress.watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should exclude specials given a special episode is watched`() = runTest {
+        database.watchedEpisodesQueries.markAsWatched(
+            show_id = testShowId,
+            episode_id = null,
+            season_number = SEASON_1_NUMBER,
+            episode_number = 1L,
+            watched_at = 1L,
+            pending_action = "UPLOAD",
+        )
+        database.watchedEpisodesQueries.markAsWatched(
+            show_id = testShowId,
+            episode_id = null,
+            season_number = 0L,
+            episode_number = 1L,
+            watched_at = 1L,
+            pending_action = "UPLOAD",
+        )
+
+        watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
+            val progress = awaitItem()
+            progress.watchedCount shouldBe 1
+            progress.totalCount shouldBe (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT)
+        }
+    }
+
+    @Test
     fun `should keep watched episodes given an episode row is re-upserted during metadata sync`() = runTest {
         watchedEpisodeDao.markAsWatched(
-            showTraktId = TEST_SHOW_ID,
+            showId = TEST_SHOW_ID,
             episodeId = 101L,
             seasonNumber = SEASON_1_NUMBER,
             episodeNumber = 1L,
@@ -522,7 +556,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         database.episodesQueries.upsert(
             id = Id(101L),
             season_id = Id(SEASON_1_ID),
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = testShowId,
             title = "Episode 1 (refreshed)",
             overview = "Refreshed overview",
             episode_number = 1L,
@@ -530,7 +564,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/episode1.jpg",
             ratings = 8.5,
             vote_count = 50L,
-            trakt_id = null,
             first_aired = LocalDate(2023, 1, 1).toEpochMillis(),
         )
 
@@ -541,7 +574,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id(TEST_SHOW_ID),
             tmdb_id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,
@@ -557,9 +589,11 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
+        testShowId = showIdForTraktId(TEST_SHOW_ID)
+
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = testShowId,
             season_number = SEASON_1_NUMBER,
             title = "Season 1",
             overview = "First season",
@@ -569,7 +603,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         val _ = database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
-            show_trakt_id = Id(TEST_SHOW_ID),
+            show_id = testShowId,
             season_number = SEASON_2_NUMBER,
             title = "Season 2",
             overview = "Second season",
@@ -583,7 +617,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
-                show_trakt_id = Id(TEST_SHOW_ID),
+                show_id = testShowId,
                 title = "Episode $episodeNumber",
                 overview = "Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
@@ -591,7 +625,6 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
                 image_url = "/episode$episodeNumber.jpg",
                 ratings = 8.5,
                 vote_count = 50L,
-                trakt_id = null,
                 first_aired = LocalDate(2023, 1, episodeNumber).toEpochMillis(),
             )
         }
@@ -602,7 +635,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val _ = database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_2_ID),
-                show_trakt_id = Id<TraktId>(TEST_SHOW_ID),
+                show_id = testShowId,
                 title = "Episode $episodeNumber",
                 overview = "Season 2 Episode $episodeNumber overview",
                 episode_number = episodeNumber.toLong(),
@@ -610,14 +643,12 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
                 image_url = "/s2e$episodeNumber.jpg",
                 ratings = 9.0,
                 vote_count = 75L,
-                trakt_id = null,
                 first_aired = LocalDate(2023, 2, 20).toEpochMillis(),
             )
         }
 
         val _ = database.followedShowsQueries.upsert(
-            id = null,
-            traktId = Id<TraktId>(TEST_SHOW_ID),
+            showId = testShowId,
             tmdbId = Id<TmdbId>(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",

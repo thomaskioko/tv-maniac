@@ -69,6 +69,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
@@ -359,24 +361,24 @@ private fun LibraryGridContent(
     onItemClicked: (Long) -> Unit,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        columns = GridCells.Fixed(Layout.posterColumns),
+        verticalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
+        horizontalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
         modifier = Modifier
             .testTag(LibraryTestTags.LIBRARY_LIST_TEST_TAG)
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = ImageDimens.GridItemSpacing),
     ) {
         items(
             items = items,
-            key = { it.traktId },
+            key = { it.showId },
             contentType = { "LibraryGridItem" },
         ) { item ->
             LibraryGridItem(
                 item = item,
                 onItemClicked = onItemClicked,
-                modifier = Modifier.testTag(LibraryTestTags.showRow(item.traktId)),
+                modifier = Modifier.testTag(LibraryTestTags.showRow(item.showId)),
             )
         }
 
@@ -394,7 +396,7 @@ private fun LibraryGridItem(
 ) {
     PosterCard(
         imageUrl = item.posterImageUrl,
-        onClick = { onItemClicked(item.traktId) },
+        onClick = { onItemClicked(item.showId) },
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(2f / 3f),
@@ -420,13 +422,13 @@ private fun LibraryListContent(
     ) {
         items(
             count = items.size,
-            key = { items[it].traktId },
+            key = { items[it].showId },
             contentType = { "LibraryListItem" },
         ) { index ->
             LibraryListItem(
                 item = items[index],
                 onItemClicked = onItemClicked,
-                modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].traktId)),
+                modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].showId)),
             )
         }
 

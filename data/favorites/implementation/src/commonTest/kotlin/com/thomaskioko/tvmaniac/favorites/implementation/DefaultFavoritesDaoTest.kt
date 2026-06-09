@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
 import com.thomaskioko.tvmaniac.favorites.api.FavoritesDao
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -33,7 +32,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setUp() {
-        dao = DefaultFavoritesDao(database, dispatchers)
+        dao = DefaultFavoritesDao(database, showIdResolver, dispatchers)
     }
 
     @AfterTest
@@ -44,7 +43,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     @Test
     fun `should emit favorite show joined with show metadata`() = runTest(testDispatcher) {
         insertShow(id = 1, name = "Breaking Bad")
-        dao.upsert(traktId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
+        dao.upsert(showId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
 
         dao.observeFavoriteShows().test {
             awaitItem() shouldContainExactly listOf(expectedShow(1, "Breaking Bad"))
@@ -56,8 +55,8 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     fun `should order favorites by rank ascending`() = runTest(testDispatcher) {
         insertShow(id = 1, name = "First Rank")
         insertShow(id = 2, name = "Second Rank")
-        dao.upsert(traktId = 2, rank = 1, listedAt = "2020-01-02T00:00:00Z")
-        dao.upsert(traktId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
+        dao.upsert(showId = 2, rank = 1, listedAt = "2020-01-02T00:00:00Z")
+        dao.upsert(showId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
 
         dao.observeFavoriteShows().test {
             awaitItem() shouldContainExactly listOf(
@@ -71,7 +70,7 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     @Test
     fun `should emit empty list after deleteAll`() = runTest(testDispatcher) {
         insertShow(id = 1, name = "Breaking Bad")
-        dao.upsert(traktId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
+        dao.upsert(showId = 1, rank = 0, listedAt = "2020-01-01T00:00:00Z")
 
         dao.observeFavoriteShows().test {
             awaitItem() shouldContainExactly listOf(expectedShow(1, "Breaking Bad"))
@@ -84,11 +83,10 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
     }
 
     private fun expectedShow(id: Long, title: String): FavoriteShow =
-        FavoriteShow(traktId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01")
+        FavoriteShow(showId = id, tmdbId = id, title = title, posterPath = "/$id.jpg", year = "2020-01-01")
 
     private fun insertShow(id: Long, name: String) {
         database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(id),
             tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = "Overview for $name",
@@ -103,5 +101,6 @@ internal class DefaultFavoritesDaoTest : BaseDatabaseTest() {
             poster_path = "/$id.jpg",
             backdrop_path = null,
         )
+        showIdForTraktId(id)
     }
 }

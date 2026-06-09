@@ -4,8 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.FavoriteShows
-import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.TraktId
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
 import com.thomaskioko.tvmaniac.favorites.api.FavoritesDao
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.map
 @ContributesBinding(AppScope::class)
 public class DefaultFavoritesDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : FavoritesDao {
 
@@ -30,9 +30,10 @@ public class DefaultFavoritesDao(
             .map { rows -> rows.map { it.toFavoriteShow() } }
             .catch { emit(emptyList()) }
 
-    override fun upsert(traktId: Long, rank: Long, listedAt: String) {
+    override fun upsert(showId: Long, rank: Long, listedAt: String) {
+        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
         database.favoritesQueries.upsert(
-            show_trakt_id = Id<TraktId>(traktId),
+            show_id = internalShowId,
             rank = rank,
             listed_at = listedAt,
         )
@@ -45,7 +46,7 @@ public class DefaultFavoritesDao(
 
 private fun FavoriteShows.toFavoriteShow(): FavoriteShow =
     FavoriteShow(
-        traktId = show_trakt_id.id,
+        showId = show_trakt_id,
         tmdbId = show_tmdb_id.id,
         title = title,
         posterPath = poster_path,

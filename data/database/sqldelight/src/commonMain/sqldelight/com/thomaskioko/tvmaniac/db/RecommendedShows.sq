@@ -1,22 +1,23 @@
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
--- The parent reference `recommended_show_trakt_id` is intentionally not FK-constrained, for
--- the same reason as similar_shows: the parent show's tvshow row may not exist yet when this
--- writer commits (parallel fetch race with ShowDetailsStore). Queries filter by parent id
--- without joining tvshow on this column.
+-- The parent reference `recommended_show_trakt_id` is intentionally not FK-constrained and stays a
+-- plain trakt id, for the same reason as similar_shows: the parent show's tvshow row (and internal
+-- id) may not exist yet when this writer commits (parallel fetch race with ShowDetailsStore).
+-- Queries filter by parent id without joining tvshow on this column.
 CREATE TABLE recommended_shows (
-    trakt_id INTEGER AS Id<TraktId>,
+    show_id INTEGER AS Id<ShowId>,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
     recommended_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
-    PRIMARY KEY (recommended_show_trakt_id, trakt_id),
-    FOREIGN KEY(trakt_id) REFERENCES tvshow(trakt_id)
+    PRIMARY KEY (recommended_show_trakt_id, show_id),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id)
 );
 
 upsert:
 INSERT OR REPLACE INTO recommended_shows(
-    trakt_id,
+    show_id,
     tmdb_id,
     recommended_show_trakt_id
 )
@@ -24,7 +25,7 @@ VALUES(?,?,?);
 
 recommendedShows:
 SELECT
-   tvshow.trakt_id AS show_trakt_id,
+   show_trakt.trakt_id AS show_trakt_id,
    tvshow.tmdb_id AS show_tmdb_id,
    tvshow.name,
    tvshow.poster_path,
@@ -34,9 +35,11 @@ SELECT
 FROM
     tvshow
 JOIN
-    recommended_shows ON recommended_shows.trakt_id = tvshow.trakt_id
+    recommended_shows ON recommended_shows.show_id = tvshow.id
+INNER JOIN
+    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
-    followed_shows ON tvshow.trakt_id = followed_shows.trakt_id AND followed_shows.pending_action != 'DELETE'
+    followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
     recommended_shows.recommended_show_trakt_id = ?;
 

@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 internal fun NextEpisodeWithShow.toWatchlistShowInfo(): WatchlistShowInfo {
     val progress = if (totalCount > 0) watchedCount.toFloat() / totalCount else 0f
     return WatchlistShowInfo(
-        traktId = showTraktId,
+        showId = showId,
         tmdbId = showTmdbId,
         title = showName,
         posterImageUrl = showPoster,

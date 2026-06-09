@@ -39,8 +39,8 @@ internal class ObserveCalendarInteractorTest {
         val airDate = todayEpochMillis()
         calendarRepository.setCalendarEntries(
             listOf(
-                createTestEntry(showTraktId = 1, episodeTraktId = 10, airDate = airDate),
-                createTestEntry(showTraktId = 2, episodeTraktId = 20, airDate = airDate),
+                createTestEntry(showId = 1, episodeId = 10, airDate = airDate),
+                createTestEntry(showId = 2, episodeId = 20, airDate = airDate),
             ),
         )
         val interactor = createInteractor()
@@ -61,8 +61,8 @@ internal class ObserveCalendarInteractorTest {
         val tomorrowEpoch = tomorrowEpochMillis()
         calendarRepository.setCalendarEntries(
             listOf(
-                createTestEntry(showTraktId = 1, episodeTraktId = 10, airDate = todayEpoch),
-                createTestEntry(showTraktId = 2, episodeTraktId = 20, airDate = tomorrowEpoch),
+                createTestEntry(showId = 1, episodeId = 10, airDate = todayEpoch),
+                createTestEntry(showId = 2, episodeId = 20, airDate = tomorrowEpoch),
             ),
         )
         val interactor = createInteractor()
@@ -83,8 +83,8 @@ internal class ObserveCalendarInteractorTest {
         val airDate = todayEpochMillis()
         calendarRepository.setCalendarEntries(
             listOf(
-                createTestEntry(showTraktId = 1, episodeTraktId = 10, seasonNumber = 1, episodeNumber = 1, airDate = airDate),
-                createTestEntry(showTraktId = 1, episodeTraktId = 11, seasonNumber = 1, episodeNumber = 2, airDate = airDate),
+                createTestEntry(showId = 1, episodeId = 10, seasonNumber = 1, episodeNumber = 1, airDate = airDate),
+                createTestEntry(showId = 1, episodeId = 11, seasonNumber = 1, episodeNumber = 2, airDate = airDate),
             ),
         )
         val interactor = createInteractor()
@@ -106,8 +106,8 @@ internal class ObserveCalendarInteractorTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     seasonNumber = 2,
                     episodeNumber = 5,
                     episodeTitle = "The One",
@@ -132,8 +132,8 @@ internal class ObserveCalendarInteractorTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     seasonNumber = 1,
                     episodeNumber = 3,
                     episodeTitle = null,
@@ -158,8 +158,8 @@ internal class ObserveCalendarInteractorTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     showTitle = "Breaking Bad",
                     showPosterPath = "/poster.jpg",
                     network = "AMC",
@@ -178,8 +178,8 @@ internal class ObserveCalendarInteractorTest {
 
         interactor.flow.test {
             val episode = awaitItem()[0].episodes[0]
-            episode.showTraktId shouldBe 1
-            episode.episodeTraktId shouldBe 10
+            episode.showId shouldBe 1
+            episode.episodeId shouldBe 10
             episode.showTitle shouldBe "Breaking Bad"
             episode.posterUrl shouldBe "/poster.jpg"
             episode.network shouldBe "AMC"
@@ -196,8 +196,8 @@ internal class ObserveCalendarInteractorTest {
         val tomorrowEpoch = tomorrowEpochMillis()
         calendarRepository.setCalendarEntries(
             listOf(
-                createTestEntry(showTraktId = 2, episodeTraktId = 20, airDate = tomorrowEpoch),
-                createTestEntry(showTraktId = 1, episodeTraktId = 10, airDate = todayEpoch),
+                createTestEntry(showId = 2, episodeId = 20, airDate = tomorrowEpoch),
+                createTestEntry(showId = 1, episodeId = 10, airDate = todayEpoch),
             ),
         )
         val interactor = createInteractor()
@@ -208,8 +208,8 @@ internal class ObserveCalendarInteractorTest {
         interactor.flow.test {
             val groups = awaitItem()
             groups shouldHaveSize 2
-            groups[0].episodes[0].showTraktId shouldBe 1
-            groups[1].episodes[0].showTraktId shouldBe 2
+            groups[0].episodes[0].showId shouldBe 1
+            groups[1].episodes[0].showId shouldBe 2
         }
     }
 
@@ -219,16 +219,16 @@ internal class ObserveCalendarInteractorTest {
         calendarRepository.setCalendarEntries(
             listOf(
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 11,
+                    showId = 1,
+                    episodeId = 11,
                     seasonNumber = 1,
                     episodeNumber = 2,
                     episodeTitle = "Second",
                     airDate = airDate,
                 ),
                 createTestEntry(
-                    showTraktId = 1,
-                    episodeTraktId = 10,
+                    showId = 1,
+                    episodeId = 10,
                     seasonNumber = 1,
                     episodeNumber = 1,
                     episodeTitle = "First",
@@ -243,7 +243,7 @@ internal class ObserveCalendarInteractorTest {
 
         interactor.flow.test {
             val episode = awaitItem()[0].episodes[0]
-            episode.episodeTraktId shouldBe 10
+            episode.episodeId shouldBe 10
             episode.episodeInfo shouldBe "S01E01 · First"
             episode.additionalEpisodesCount shouldBe 1
         }
@@ -287,8 +287,8 @@ internal class ObserveCalendarInteractorTest {
 
     @Suppress("LongParameterList")
     private fun createTestEntry(
-        showTraktId: Long = 1,
-        episodeTraktId: Long = 10,
+        showId: Long = 1,
+        episodeId: Long = 10,
         seasonNumber: Int = 1,
         episodeNumber: Int = 1,
         episodeTitle: String? = "Test Episode",
@@ -301,8 +301,8 @@ internal class ObserveCalendarInteractorTest {
         rating: Double? = 8.0,
         votes: Int? = 100,
     ): CalendarEntry = CalendarEntry(
-        showTraktId = showTraktId,
-        episodeTraktId = episodeTraktId,
+        showId = showId,
+        episodeId = episodeId,
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
         episodeTitle = episodeTitle,

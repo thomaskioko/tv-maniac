@@ -4,12 +4,12 @@ import android.content.ActivityNotFoundException
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.lifecycleScope
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.traktauth.api.AuthError
+import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +27,7 @@ private const val TYPE_USER_CANCELED = 2
 public class AndroidTraktAuthManager(
     private val activity: ComponentActivity,
     private val traktActivityResultContract: TraktActivityResultContract,
-    private val loginAction: TraktAuthRepository,
+    private val loginAction: OAuthRepository,
     private val clientAuth: Lazy<ClientAuthentication>,
     private val authService: Lazy<AuthorizationService>,
     private val logger: Logger,

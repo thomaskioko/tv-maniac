@@ -2,14 +2,14 @@ package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.QueryResult
 import com.thomaskioko.tvmaniac.db.util.WatchProgress
+import com.thomaskioko.tvmaniac.db.util.insertContinueWatching
+import com.thomaskioko.tvmaniac.db.util.insertEpisode
+import com.thomaskioko.tvmaniac.db.util.insertSeason
+import com.thomaskioko.tvmaniac.db.util.insertTvshow
+import com.thomaskioko.tvmaniac.db.util.insertWatchedEpisode
 import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import com.thomaskioko.tvmaniac.db.util.queryWatchProgress
-import com.thomaskioko.tvmaniac.db.util.seedEpisode
-import com.thomaskioko.tvmaniac.db.util.seedSeason
-import com.thomaskioko.tvmaniac.db.util.seedTraktContinueWatching
-import com.thomaskioko.tvmaniac.db.util.seedTvshow
-import com.thomaskioko.tvmaniac.db.util.seedWatchedEpisode
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
@@ -26,20 +26,21 @@ class Migration30Test {
     }
 
     @Test
-    fun `should create trakt_continue_watching on migration`() {
+    fun `should create continue_watching on migration`() {
         openSnapshot(version = 29).use { driver ->
             migrateToCurrent(driver, oldVersion = 29)
 
-            driver.tableNames().contains("trakt_continue_watching") shouldBe true
+            driver.tableNames().contains("continue_watching") shouldBe true
         }
     }
 
     @Test
-    fun `should accept upsert into trakt_continue_watching`() {
+    fun `should accept upsert into continue_watching`() {
         openSnapshot(version = 29).use { driver ->
             migrateToCurrent(driver, oldVersion = 29)
 
-            driver.seedTraktContinueWatching(traktId = 1L, tmdbId = 100L)
+            driver.insertTvshow(traktId = 1L, tmdbId = 100L)
+            driver.insertContinueWatching(traktId = 1L, tmdbId = 100L)
         }
     }
 
@@ -83,28 +84,28 @@ class Migration30Test {
     }
 
     @Test
-    fun `should compute show watch progress alongside trakt_continue_watching row`() {
+    fun `should compute show watch progress alongside continue_watching row`() {
         openSnapshot(version = 29).use { driver ->
             migrateToCurrent(driver, oldVersion = 29)
 
-            driver.seedTvshow(traktId = 1L, tmdbId = 100L)
-            driver.seedSeason(id = 11L, showTraktId = 1L, seasonNumber = 1L, episodeCount = 2L)
-            driver.seedEpisode(
+            driver.insertTvshow(traktId = 1L, tmdbId = 100L)
+            driver.insertSeason(id = 11L, showTraktId = 1L, seasonNumber = 1L, episodeCount = 2L)
+            driver.insertEpisode(
                 id = 111L,
                 seasonId = 11L,
                 showTraktId = 1L,
                 episodeNumber = 1L,
                 firstAired = OLD_EPOCH_MS,
             )
-            driver.seedEpisode(
+            driver.insertEpisode(
                 id = 112L,
                 seasonId = 11L,
                 showTraktId = 1L,
                 episodeNumber = 2L,
                 firstAired = OLD_EPOCH_MS,
             )
-            driver.seedTraktContinueWatching(traktId = 1L, tmdbId = 100L)
-            driver.seedWatchedEpisode(
+            driver.insertContinueWatching(traktId = 1L, tmdbId = 100L)
+            driver.insertWatchedEpisode(
                 showTraktId = 1L,
                 episodeId = 111L,
                 seasonNumber = 1L,

@@ -5,7 +5,6 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
-import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -38,7 +37,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        dao = DefaultFollowedShowsDao(database, coroutineDispatcher)
+        dao = DefaultFollowedShowsDao(database, showIdResolver, coroutineDispatcher)
         insertTestShows()
     }
 
@@ -50,7 +49,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `should upsert followed show entry`() {
         val entry = FollowedShowEntry(
-            traktId = 1L,
+            showId = 1L,
             followedAt = Clock.System.now(),
             pendingAction = PendingAction.UPLOAD,
         )
@@ -60,14 +59,14 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         resultId shouldBe 1L
         val entries = dao.entries()
         entries.size shouldBe 1
-        entries.first().traktId shouldBe 1L
+        entries.first().showId shouldBe 1L
         entries.first().pendingAction shouldBe PendingAction.UPLOAD
     }
 
     @Test
     fun `should update existing entry on upsert`() {
         val entry = FollowedShowEntry(
-            traktId = 1L,
+            showId = 1L,
             followedAt = Clock.System.now(),
             pendingAction = PendingAction.UPLOAD,
         )
@@ -88,14 +87,14 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should get all entries`() {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             ),
@@ -104,14 +103,14 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         val entries = dao.entries()
 
         entries.size shouldBe 2
-        entries.map { it.traktId }.toSet() shouldBe setOf(1L, 2L)
+        entries.map { it.showId }.toSet() shouldBe setOf(1L, 2L)
     }
 
     @Test
     fun `should observe entries`() = runTest {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -120,11 +119,11 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         dao.entriesObservable().test {
             val entries = awaitItem()
             entries.size shouldBe 1
-            entries.first().traktId shouldBe 1L
+            entries.first().showId shouldBe 1L
 
             val _ = dao.upsert(
                 FollowedShowEntry(
-                    traktId = 2L,
+                    showId = 2L,
                     followedAt = Clock.System.now(),
                     pendingAction = PendingAction.UPLOAD,
                 ),
@@ -141,14 +140,14 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should get entry by show id`() {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -157,7 +156,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         val entry = dao.entryWithTraktId(1L)
 
         entry.shouldNotBeNull()
-        entry.traktId shouldBe 1L
+        entry.showId shouldBe 1L
         entry.pendingAction shouldBe PendingAction.UPLOAD
     }
 
@@ -172,21 +171,21 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should get entries with no pending action`() {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 3L,
+                showId = 3L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -195,7 +194,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         val entries = dao.entriesWithNoPendingAction()
 
         entries.size shouldBe 2
-        entries.map { it.traktId }.toSet() shouldBe setOf(1L, 3L)
+        entries.map { it.showId }.toSet() shouldBe setOf(1L, 3L)
         entries.all { it.pendingAction == PendingAction.NOTHING } shouldBe true
     }
 
@@ -203,21 +202,21 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should get entries with upload pending action`() {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 3L,
+                showId = 3L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             ),
@@ -226,7 +225,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         val entries = dao.entriesWithUploadPendingAction()
 
         entries.size shouldBe 2
-        entries.map { it.traktId }.toSet() shouldBe setOf(1L, 3L)
+        entries.map { it.showId }.toSet() shouldBe setOf(1L, 3L)
         entries.all { it.pendingAction == PendingAction.UPLOAD } shouldBe true
     }
 
@@ -234,21 +233,21 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should get entries with delete pending action`() {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.DELETE,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 3L,
+                showId = 3L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.DELETE,
             ),
@@ -257,7 +256,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         val entries = dao.entriesWithDeletePendingAction()
 
         entries.size shouldBe 2
-        entries.map { it.traktId }.toSet() shouldBe setOf(1L, 3L)
+        entries.map { it.showId }.toSet() shouldBe setOf(1L, 3L)
         entries.all { it.pendingAction == PendingAction.DELETE } shouldBe true
     }
 
@@ -265,7 +264,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should update pending action`() {
         val id = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.UPLOAD,
             ),
@@ -282,14 +281,14 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should delete by id`() {
         val id = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -299,31 +298,31 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
         val entries = dao.entries()
         entries.size shouldBe 1
-        entries.first().traktId shouldBe 2L
+        entries.first().showId shouldBe 2L
     }
 
     @Test
     fun `should delete by show id`() {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
         )
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 2L,
+                showId = 2L,
                 followedAt = Clock.System.now(),
                 pendingAction = PendingAction.NOTHING,
             ),
         )
 
-        dao.deleteByTraktId(1L)
+        dao.deleteByShowId(1L)
 
         val entries = dao.entries()
         entries.size shouldBe 1
-        entries.first().traktId shouldBe 2L
+        entries.first().showId shouldBe 2L
     }
 
     @Test
@@ -331,7 +330,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         val now = dateTimeProvider.now()
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = now,
                 pendingAction = PendingAction.NOTHING,
             ),
@@ -347,7 +346,7 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     fun `should preserve tmdb id`() {
         val _ = dao.upsert(
             FollowedShowEntry(
-                traktId = 1L,
+                showId = 1L,
                 followedAt = Clock.System.now(),
                 tmdbId = 98765L,
                 pendingAction = PendingAction.NOTHING,
@@ -362,7 +361,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShows() {
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(1),
             tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -377,9 +375,9 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test1.jpg",
             backdrop_path = "/backdrop1.jpg",
         )
+        showIdForTraktId(1L)
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(2),
             tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -394,9 +392,9 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test2.jpg",
             backdrop_path = "/backdrop2.jpg",
         )
+        showIdForTraktId(2L)
 
         val _ = database.tvShowQueries.upsert(
-            trakt_id = Id<TraktId>(3),
             tmdb_id = Id<TmdbId>(3),
             name = "Test Show 3",
             overview = "Test overview 3",
@@ -411,5 +409,6 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
             poster_path = "/test3.jpg",
             backdrop_path = "/backdrop3.jpg",
         )
+        showIdForTraktId(3L)
     }
 }

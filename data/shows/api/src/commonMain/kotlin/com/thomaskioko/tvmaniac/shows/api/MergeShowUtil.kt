@@ -4,24 +4,24 @@ import com.thomaskioko.tvmaniac.db.Tvshow
 
 public fun mergeShows(
     local: Tvshow?,
-    network: Tvshow,
-): Tvshow {
+    network: ShowToPersist,
+): ShowToPersist {
     if (local == null) return network
 
-    return Tvshow(
-        trakt_id = network.trakt_id,
-        tmdb_id = network.tmdb_id,
+    return ShowToPersist(
+        showId = network.showId,
+        tmdbId = network.tmdbId,
         name = network.name,
         overview = network.overview.ifEmpty { local.overview },
         language = network.language ?: local.language,
         year = network.year ?: local.year,
         status = network.status ?: local.status,
         ratings = if (network.ratings > 0) network.ratings else local.ratings,
-        vote_count = if (network.vote_count > 0) network.vote_count else local.vote_count,
+        voteCount = if (network.voteCount > 0) network.voteCount else local.vote_count,
         genres = network.genres ?: local.genres,
-        poster_path = network.poster_path ?: local.poster_path,
-        backdrop_path = network.backdrop_path ?: local.backdrop_path,
-        episode_numbers = network.episode_numbers ?: local.episode_numbers,
-        season_numbers = network.season_numbers ?: local.season_numbers,
+        posterPath = network.posterPath ?: local.poster_path,
+        backdropPath = network.backdropPath ?: local.backdrop_path,
+        episodeNumbers = network.episodeNumbers ?: local.episode_numbers,
+        seasonNumbers = network.seasonNumbers ?: local.season_numbers,
     )
 }

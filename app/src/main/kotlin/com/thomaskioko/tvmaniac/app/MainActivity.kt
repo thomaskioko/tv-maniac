@@ -11,6 +11,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +31,7 @@ import com.thomaskioko.tvmaniac.domain.theme.Theme
 public class MainActivity : ComponentActivity() {
     private lateinit var graph: ActivityGraph
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -36,7 +39,7 @@ public class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        graph.traktAuthManager.registerResult()
+        graph.authManagers.forEach { it.registerResult() }
 
         enableEdgeToEdge()
 
@@ -82,7 +85,12 @@ public class MainActivity : ComponentActivity() {
                 onDispose {}
             }
 
-            TvManiacTheme(appTheme = appTheme) {
+            val windowSizeClass = calculateWindowSizeClass(this)
+
+            TvManiacTheme(
+                appTheme = appTheme,
+                windowWidthSizeClass = windowSizeClass.widthSizeClass,
+            ) {
                 graph.AppRootContent()
             }
         }

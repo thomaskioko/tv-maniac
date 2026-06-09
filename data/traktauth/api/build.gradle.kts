@@ -9,11 +9,5 @@ kotlin {
                 runtimeOnly(libs.coroutines.android)
             }
         }
-
-        commonMain {
-            dependencies {
-                api(libs.coroutines.core)
-            }
-        }
     }
 }

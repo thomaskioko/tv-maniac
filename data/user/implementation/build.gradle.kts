@@ -17,6 +17,7 @@ kotlin {
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.user.api)
+                api(projects.core.util.api)
 
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)
@@ -26,6 +27,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
             }
         }

@@ -1,21 +1,21 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 
 CREATE TABLE trailers (
     id TEXT NOT NULL PRIMARY KEY,
-    show_tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
     youtube_url TEXT NOT NULL,
     name TEXT NOT NULL,
     site TEXT NOT NULL,
     size INTEGER NOT NULL,
     type TEXT NOT NULL,
-    FOREIGN KEY(show_tmdb_id) REFERENCES tvshow(tmdb_id)
+    FOREIGN KEY(show_id) REFERENCES tvshow(id)
 );
 
 insertOrReplace:
 INSERT OR REPLACE INTO trailers(
     id,
-    show_tmdb_id,
+    show_id,
     youtube_url,
     name,
     site,
@@ -24,22 +24,23 @@ INSERT OR REPLACE INTO trailers(
 )
 VALUES(?,?,?,?,?,?,?);
 
-selectByShowTraktId:
+selectByShowId:
 SELECT
     trailers.id AS trailer_id,
-    trailers.show_tmdb_id,
-    tvshow.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_tmdb_id,
+    show_trakt.trakt_id AS show_trakt_id,
     trailers.youtube_url,
     trailers.name,
     trailers.site,
     trailers.size,
     trailers.type
 FROM trailers
-INNER JOIN tvshow ON trailers.show_tmdb_id = tvshow.tmdb_id
-WHERE tvshow.trakt_id = ?;
+INNER JOIN tvshow ON trailers.show_id = tvshow.id
+INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+WHERE tvshow.id = :showId;
 
 delete:
-DELETE FROM trailers WHERE show_tmdb_id = ?;
+DELETE FROM trailers WHERE show_id = ?;
 
 deleteAll:
 DELETE FROM trailers;

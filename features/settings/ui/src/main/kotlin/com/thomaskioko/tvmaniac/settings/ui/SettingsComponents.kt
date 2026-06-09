@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.ui
 
+import android.content.Context
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,6 +35,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
 
 @Composable
@@ -226,6 +229,11 @@ internal fun SettingsLinkRow(
             modifier = Modifier.size(20.dp),
         )
     }
+}
+
+internal fun openInCustomTab(context: Context, url: String) {
+    val customTabsIntent = CustomTabsIntent.Builder().build()
+    customTabsIntent.launchUrl(context, url.toUri())
 }
 
 @Composable

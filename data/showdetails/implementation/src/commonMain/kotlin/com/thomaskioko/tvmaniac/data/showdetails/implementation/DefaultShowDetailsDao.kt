@@ -4,7 +4,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsDao
-import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import dev.zacsweers.metro.AppScope
@@ -20,16 +19,16 @@ public class DefaultShowDetailsDao(
 ) : ShowDetailsDao {
     private val tvShowQueries = database.tvShowQueries
 
-    override fun observeTvShowByTraktId(traktId: Long): Flow<TvshowDetails?> =
-        tvShowQueries.tvshowDetails(Id(traktId)).asFlow().mapToOneOrNull(dispatchers.io)
+    override fun observeTvShowByShowId(showId: Long): Flow<TvshowDetails?> =
+        tvShowQueries.tvshowDetails(showId).asFlow().mapToOneOrNull(dispatchers.io)
 
-    override fun getTvShow(traktId: Long): TvshowDetails =
-        tvShowQueries.tvshowDetails(Id(traktId)).executeAsOne()
+    override fun getTvShow(showId: Long): TvshowDetails =
+        tvShowQueries.tvshowDetails(showId).executeAsOne()
 
-    override fun getTvShowOrNull(traktId: Long): TvshowDetails? =
-        tvShowQueries.tvshowDetails(Id(traktId)).executeAsOneOrNull()
+    override fun getTvShowOrNull(showId: Long): TvshowDetails? =
+        tvShowQueries.tvshowDetails(showId).executeAsOneOrNull()
 
-    override fun deleteTvShow(traktId: Long) {
-        tvShowQueries.delete(Id(traktId))
+    override fun deleteTvShow(showId: Long) {
+        tvShowQueries.delete(showId)
     }
 }

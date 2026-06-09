@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 
 public sealed interface LibraryAction
 
-public data class LibraryShowClicked(val traktId: Long) : LibraryAction
+public data class LibraryShowClicked(val showId: Long) : LibraryAction
 
 public data class LibraryQueryChanged(val query: String) : LibraryAction
 

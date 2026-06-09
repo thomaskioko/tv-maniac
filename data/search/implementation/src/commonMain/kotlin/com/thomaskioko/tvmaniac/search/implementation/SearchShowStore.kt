@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Tvshow
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
@@ -68,22 +68,22 @@ public class SearchShowStore(
     ),
 ).build()
 
-private fun SearchShowResult.toTvshow(formatterUtil: FormatterUtil, dateTimeProvider: DateTimeProvider): Tvshow {
+private fun SearchShowResult.toTvshow(formatterUtil: FormatterUtil, dateTimeProvider: DateTimeProvider): ShowToPersist {
     val tmdb = tmdbDetails
-    return Tvshow(
-        trakt_id = Id(traktShow.ids.trakt),
-        tmdb_id = Id(tmdbId),
+    return ShowToPersist(
+        showId = Id(traktShow.ids.trakt),
+        tmdbId = Id(tmdbId),
         name = traktShow.title,
         overview = traktShow.overview ?: "",
         language = traktShow.language,
         status = traktShow.status,
         year = traktShow.firstAirDate?.let { dateTimeProvider.extractYear(it) },
-        episode_numbers = traktShow.airedEpisodes?.toString(),
+        episodeNumbers = traktShow.airedEpisodes?.toString(),
         ratings = tmdb?.voteAverage ?: 0.0,
-        vote_count = traktShow.votes ?: 0L,
-        poster_path = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-        backdrop_path = tmdb?.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+        voteCount = traktShow.votes ?: 0L,
+        posterPath = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+        backdropPath = tmdb?.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         genres = traktShow.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-        season_numbers = null,
+        seasonNumbers = null,
     )
 }

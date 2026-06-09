@@ -27,6 +27,9 @@ public value class RecommendedShowId(public val id: Long)
 public value class SeasonId(public val id: Long)
 
 @JvmInline
+public value class ShowId(public val id: Long)
+
+@JvmInline
 public value class SimilarShowId(public val id: Long)
 
 @JvmInline

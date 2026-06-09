@@ -53,6 +53,7 @@ public class DefaultUserDao(
                         avatarUrl = it.profile_picture,
                         backgroundUrl = it.background_url ?: libraryBackdrop,
                         stats = stats ?: UserProfileStats.Empty,
+                        statsLoaded = stats != null,
                     )
                 }
             } ?: flowOf(null)
@@ -75,6 +76,7 @@ public class DefaultUserDao(
                         avatarUrl = it.profile_picture,
                         backgroundUrl = it.background_url ?: libraryBackdrop,
                         stats = stats ?: UserProfileStats.Empty,
+                        statsLoaded = stats != null,
                     )
                 }
             } ?: flowOf(null)

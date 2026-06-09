@@ -50,3 +50,21 @@ public fun <T> ApiResponse<T>.getOrNull(): T? = when (this) {
     is ApiResponse.Unauthenticated -> null
     is ApiResponse.Error -> null
 }
+
+/**
+ * Transforms [ApiResponse.Success] body with [transform], leaving every non-success variant
+ * unchanged. Lets adapters map a remote model onto a provider-neutral one without re-handling the
+ * error and unauthenticated cases.
+ */
+public inline fun <T, R> ApiResponse<T>.map(transform: (T) -> R): ApiResponse<R> = when (this) {
+    is ApiResponse.Success -> ApiResponse.Success(transform(body))
+    is ApiResponse.Unauthenticated -> this
+    is ApiResponse.Error.HttpError -> ApiResponse.Error.HttpError(
+        code = code,
+        errorBody = errorBody,
+        errorMessage = errorMessage,
+    )
+    is ApiResponse.Error.SerializationError -> this
+    is ApiResponse.Error.NetworkFailure -> this
+    is ApiResponse.Error.OfflineError -> this
+}

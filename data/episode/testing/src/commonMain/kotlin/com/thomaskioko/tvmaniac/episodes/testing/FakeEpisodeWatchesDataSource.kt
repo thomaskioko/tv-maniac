@@ -1,18 +1,20 @@
 package com.thomaskioko.tvmaniac.episodes.testing
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 
 public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
+    override var provider: AccountProvider = AccountProvider.TRAKT
     private val watchesMap = mutableMapOf<Long, List<WatchedEpisodeEntry>>()
     private val allWatchedShowsPages = mutableMapOf<Int, List<WatchedShowBatch>>()
     private val addEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
-    private val removeEpisodeWatchesInvocations = mutableListOf<List<Long>>()
+    private val removeEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
     private var allWatchedShowsError: Throwable? = null
 
-    public fun setShowEpisodeWatches(showTraktId: Long, watches: List<WatchedEpisodeEntry>) {
-        watchesMap[showTraktId] = watches
+    public fun setShowEpisodeWatches(showId: Long, watches: List<WatchedEpisodeEntry>) {
+        watchesMap[showId] = watches
     }
 
     public fun setAllWatchedShowsPage(page: Int, batches: List<WatchedShowBatch>) {
@@ -26,11 +28,11 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     public fun addEpisodeWatchesInvocations(): List<List<WatchedEpisodeEntry>> =
         addEpisodeWatchesInvocations.toList()
 
-    public fun removeEpisodeWatchesInvocations(): List<List<Long>> =
+    public fun removeEpisodeWatchesInvocations(): List<List<WatchedEpisodeEntry>> =
         removeEpisodeWatchesInvocations.toList()
 
-    override suspend fun getShowEpisodeWatches(showTraktId: Long): List<WatchedEpisodeEntry> {
-        return watchesMap[showTraktId] ?: emptyList()
+    override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
+        return watchesMap[showId] ?: emptyList()
     }
 
     override suspend fun getAllWatchedShows(page: Int, limit: Int): List<WatchedShowBatch> {
@@ -38,11 +40,11 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
         return allWatchedShowsPages[page] ?: emptyList()
     }
 
-    override suspend fun addEpisodeWatches(watches: List<WatchedEpisodeEntry>) {
-        addEpisodeWatchesInvocations.add(watches)
+    override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        addEpisodeWatchesInvocations.add(entries)
     }
 
-    override suspend fun removeEpisodeWatches(episodeTraktIds: List<Long>) {
-        removeEpisodeWatchesInvocations.add(episodeTraktIds)
+    override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        removeEpisodeWatchesInvocations.add(entries)
     }
 }

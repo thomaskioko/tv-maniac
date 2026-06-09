@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.syncactivity.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
@@ -33,16 +35,19 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
 
     private val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
     private val dateTimeProvider = FakeDateTimeProvider(currentTime = now)
+    private val accountManager = FakeAccountManager()
 
     private lateinit var activityDao: TraktActivityDao
     private lateinit var repository: ActivitySyncRepository
 
     @BeforeTest
     fun setup() {
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
         activityDao = DefaultTraktActivityDao(database, dispatchers)
         repository = DefaultActivitySyncRepository(
             database = database,
             activityDao = activityDao,
+            accountManager = accountManager,
             dateTimeProvider = dateTimeProvider,
             dispatchers = dispatchers,
         )
@@ -55,6 +60,17 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should return false given no remote timestamp recorded`() = runTest {
+        repository.isAheadOf(
+            ActivitySyncTypes.BULK_WATCHED_EPISODES,
+            ActivityType.EPISODES_WATCHED,
+        ) shouldBe false
+    }
+
+    @Test
+    fun `should return false given no active provider`() = runTest {
+        accountManager.setActiveProvider(null)
+        activityDao.upsert(ActivityType.EPISODES_WATCHED, remoteTimestamp = now, fetchedAt = now)
+
         repository.isAheadOf(
             ActivitySyncTypes.BULK_WATCHED_EPISODES,
             ActivityType.EPISODES_WATCHED,
@@ -114,6 +130,26 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
             ActivitySyncTypes.PROGRESS_CONTINUE_WATCHING,
             ActivityType.EPISODES_WATCHED,
         ) shouldBe false
+        repository.isAheadOf(
+            ActivitySyncTypes.BULK_WATCHED_EPISODES,
+            ActivityType.EPISODES_WATCHED,
+        ) shouldBe true
+    }
+
+    @Test
+    fun `should keep checkpoints isolated across providers for same consumer and activity`() = runTest {
+        activityDao.upsert(ActivityType.EPISODES_WATCHED, remoteTimestamp = now, fetchedAt = now)
+        repository.markSyncedTo(
+            ActivitySyncTypes.BULK_WATCHED_EPISODES,
+            ActivityType.EPISODES_WATCHED,
+        )
+
+        repository.isAheadOf(
+            ActivitySyncTypes.BULK_WATCHED_EPISODES,
+            ActivityType.EPISODES_WATCHED,
+        ) shouldBe false
+
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
         repository.isAheadOf(
             ActivitySyncTypes.BULK_WATCHED_EPISODES,
             ActivityType.EPISODES_WATCHED,

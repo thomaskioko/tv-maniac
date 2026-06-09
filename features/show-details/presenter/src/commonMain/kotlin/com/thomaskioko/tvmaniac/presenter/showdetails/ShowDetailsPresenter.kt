@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.nav.NotificationRationale
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -34,8 +35,6 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthState
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -80,14 +79,14 @@ public class ShowDetailsPresenter(
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observableShowMetadataInteractor: ObservableShowMetadataInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
-    private val traktAuthRepository: TraktAuthRepository,
+    private val accountManager: AccountManager,
     private val mapper: ShowDetailsMapper,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     @Suppress("UNUSED_PARAMETER") dispatchers: AppCoroutineDispatchers,
 ) : ComponentContext by componentContext {
 
-    private val showTraktId: Long = param.id
+    private val showId: Long = param.showId
     private val showDetailsLoadingState = ObservableLoadingCounter()
     private val similarShowsLoadingState = ObservableLoadingCounter()
     private val episodeActionLoadingState = ObservableLoadingCounter()
@@ -100,9 +99,9 @@ public class ShowDetailsPresenter(
     public val stateValue: Value<ShowDetailsContent> = state.asValue(coroutineScope)
 
     init {
-        observableShowDetailsInteractor(showTraktId)
-        observableShowMetadataInteractor(showTraktId)
-        observeShowWatchProgressInteractor(showTraktId)
+        observableShowDetailsInteractor(showId)
+        observableShowMetadataInteractor(showId)
+        observeShowWatchProgressInteractor(showId)
 
         observableShowDetailsInteractor.flow
             .onEach { details ->
@@ -115,7 +114,7 @@ public class ShowDetailsPresenter(
                 _state.update {
                     it.copy(
                         showDetails = mapper.applyMetadata(it.showDetails, metadata),
-                        continueTrackingEpisodes = mapper.mapContinueTrackingEpisodes(metadata.continueTrackingEpisodes, showTraktId),
+                        continueTrackingEpisodes = mapper.mapContinueTrackingEpisodes(metadata.continueTrackingEpisodes, showId),
                         continueTrackingScrollIndex = metadata.continueTrackingScrollIndex,
                     )
                 }
@@ -153,7 +152,7 @@ public class ShowDetailsPresenter(
                 navigator.navigateTo(
                     SeasonDetailsRoute(
                         SeasonDetailsUiParam(
-                            showTraktId = action.params.showTraktId,
+                            showId = action.params.showId,
                             seasonId = action.params.seasonId,
                             seasonNumber = action.params.seasonNumber,
                         ),
@@ -161,15 +160,15 @@ public class ShowDetailsPresenter(
                 )
             }
 
-            is DetailShowClicked -> navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(id = action.id)))
+            is DetailShowClicked -> navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is WatchTrailerClicked -> navigator.navigateTo(TrailersRoute(action.id))
             is FollowShowClicked -> {
                 coroutineScope.launch {
                     if (action.isInLibrary) {
-                        followedShowsRepository.removeFollowedShow(showTraktId)
-                        notificationManager.cancelNotificationsForShow(showTraktId)
+                        followedShowsRepository.removeFollowedShow(showId)
+                        notificationManager.cancelNotificationsForShow(showId)
                     } else {
-                        followShowInteractor(FollowShowInteractor.Param(traktId = showTraktId))
+                        followShowInteractor(FollowShowInteractor.Param(showId = showId))
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
                         syncTraktCalendarInteractor(SyncTraktCalendarInteractor.Params(forceRefresh = true))
@@ -186,12 +185,12 @@ public class ShowDetailsPresenter(
             DetailBackClicked -> navigator.navigateBack()
             ReloadShowDetails -> refreshShowContent()
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
-            OpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showTraktId)))
+            OpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showId)))
 
             is MarkEpisodeWatched -> launchEpisodeMark(action.episodeId) {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         episodeId = action.episodeId,
                         seasonNumber = action.seasonNumber,
                         episodeNumber = action.episodeNumber,
@@ -203,7 +202,7 @@ public class ShowDetailsPresenter(
             is MarkEpisodeUnwatched -> launchEpisodeMark(action.episodeId) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
-                        showTraktId = action.showTraktId,
+                        showId = action.showId,
                         episodeId = action.episodeId,
                     ),
                 ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
@@ -213,12 +212,12 @@ public class ShowDetailsPresenter(
 
     private fun observeShowDetails(forceReload: Boolean = false) {
         coroutineScope.launch {
-            showDetailsInteractor(ShowDetailsInteractor.Param(showTraktId, forceReload))
+            showDetailsInteractor(ShowDetailsInteractor.Param(showId, forceReload))
                 .collectStatus(showDetailsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
 
         coroutineScope.launch {
-            similarShowsInteractor(SimilarShowsInteractor.Param(showTraktId, forceReload))
+            similarShowsInteractor(SimilarShowsInteractor.Param(showId, forceReload))
                 .collectStatus(similarShowsLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
@@ -235,10 +234,10 @@ public class ShowDetailsPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            traktAuthRepository.state
+            accountManager.isConnected
                 .drop(1)
                 .distinctUntilChanged()
-                .filter { it == TraktAuthState.LOGGED_IN }
+                .filter { it }
                 .collect { refreshShowContent() }
         }
     }

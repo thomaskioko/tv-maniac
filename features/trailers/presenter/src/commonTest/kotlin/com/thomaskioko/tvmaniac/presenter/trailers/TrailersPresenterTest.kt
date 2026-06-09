@@ -33,7 +33,7 @@ internal class TrailersPresenterTest {
 
         presenter = TrailersPresenter(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            traktShowId = 84958,
+            showId = 84958,
             repository = repository,
         )
     }

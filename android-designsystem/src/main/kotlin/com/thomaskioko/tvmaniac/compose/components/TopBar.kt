@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -123,6 +124,7 @@ public fun RefreshCollapsableTopAppBar(
     title: @Composable () -> Unit = {},
     navigationIcon: @Composable (() -> Unit)? = null,
     actions: @Composable RowScope.(Boolean) -> Unit = {},
+    centeredTitle: Boolean = false,
 ) {
     var appBarHeight by remember { mutableIntStateOf(0) }
     val showAppBarBackground by remember {
@@ -151,6 +153,7 @@ public fun RefreshCollapsableTopAppBar(
         navigationIcon = navigationIcon,
         showAppBarBackground = showAppBarBackground,
         actions = { actions(showAppBarBackground) },
+        centeredTitle = centeredTitle,
     )
 }
 
@@ -162,6 +165,7 @@ internal fun RefreshCollapsableTopAppBar(
     navigationIcon: @Composable (() -> Unit)?,
     actions: @Composable RowScope.(Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    centeredTitle: Boolean = false,
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = when {
@@ -181,23 +185,36 @@ internal fun RefreshCollapsableTopAppBar(
         label = "elevationAnimation",
     )
 
-    TopAppBar(
-        title = {
-            Crossfade(
-                targetState = showAppBarBackground,
-                label = "titleAnimation",
-            ) { show ->
-                if (show) title()
-            }
-        },
-        navigationIcon = navigationIcon ?: {},
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = backgroundColor,
-        ),
-        actions = { actions(showAppBarBackground) },
-        modifier = modifier.shadow(elevation = elevation),
-        scrollBehavior = scrollBehavior,
-    )
+    val titleContent: @Composable () -> Unit = {
+        Crossfade(
+            targetState = showAppBarBackground,
+            label = "titleAnimation",
+        ) { show ->
+            if (show) title()
+        }
+    }
+    val colors = TopAppBarDefaults.topAppBarColors(containerColor = backgroundColor)
+    val barModifier = modifier.shadow(elevation = elevation)
+
+    if (centeredTitle) {
+        CenterAlignedTopAppBar(
+            title = titleContent,
+            navigationIcon = navigationIcon ?: {},
+            colors = colors,
+            actions = { actions(showAppBarBackground) },
+            modifier = barModifier,
+            scrollBehavior = scrollBehavior,
+        )
+    } else {
+        TopAppBar(
+            title = titleContent,
+            navigationIcon = navigationIcon ?: {},
+            colors = colors,
+            actions = { actions(showAppBarBackground) },
+            modifier = barModifier,
+            scrollBehavior = scrollBehavior,
+        )
+    }
 }
 
 @Composable

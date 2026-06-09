@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.iosframework
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
@@ -7,9 +9,6 @@ import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
-import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthManager
-import com.thomaskioko.tvmaniac.traktauth.api.TraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
@@ -18,9 +17,8 @@ import dev.zacsweers.metro.Provides
 public interface IosApplicationGraph {
     public val initializers: AppInitializers
     public val viewPresenterGraphFactory: IosViewPresenterGraph.Factory
-    public val traktAuthRepository: TraktAuthRepository
-    public val traktAuthManager: TraktAuthManager
-    public val traktConfig: TraktConfig
+    public val accountAuthRepositories: Set<AccountAuthRepository>
+    public val authClientConfigs: Set<AuthClientConfig>
     public val backgroundTaskScheduler: BackgroundTaskScheduler
     public val appMetadata: AppMetadata
     public val debugConfig: DebugConfig

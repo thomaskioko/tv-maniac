@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.user.api.model.UserWatchTime
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
+import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +34,11 @@ internal class DefaultUserStatsDaoTest : BaseDatabaseTest() {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        dao = DefaultUserStatsDao(database, coroutineDispatcher)
+        dao = DefaultUserStatsDao(
+            database = database,
+            formatterUtil = FakeFormatterUtil(),
+            dispatchers = coroutineDispatcher,
+        )
     }
 
     @AfterTest

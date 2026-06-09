@@ -87,6 +87,13 @@ private val previewLabels = SettingsLabels(
     traktConnected = "Connected as John Doe",
     traktConnectedDescription = "Your watch history, watchlist, and episode progress sync with Trakt.",
     logout = "Logout",
+    login = "Login",
+)
+
+private val loggedOutTraktLabels = previewLabels.copy(
+    traktConnected = "Connect to Trakt",
+    traktConnectedDescription = "Sign in with Trakt to sync your watch history, watchlist, and episode progress " +
+        "across your devices.",
 )
 
 internal val defaultState = SettingsState(
@@ -98,6 +105,7 @@ internal val defaultState = SettingsState(
     showTraktDialog = false,
     showLogoutDialog = false,
     isAuthenticated = false,
+    isLoading = false,
     openTrailersInYoutube = false,
     includeSpecials = false,
     versionName = "1.0.0",
@@ -113,6 +121,7 @@ internal val loggedInState = SettingsState(
     showTraktDialog = false,
     showLogoutDialog = false,
     isAuthenticated = true,
+    isLoading = false,
     openTrailersInYoutube = true,
     includeSpecials = true,
     versionName = "1.0.0",
@@ -125,11 +134,19 @@ internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVAC
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")
 internal val traktState = loggedInState.copy(currentPage = SettingsPage.TRAKT, currentPageTitle = "Trakt Account")
+internal val traktLoggedOutState = defaultState.copy(
+    currentPage = SettingsPage.TRAKT,
+    currentPageTitle = "Trakt Account",
+    labels = loggedOutTraktLabels,
+)
+
+internal val loadingState = defaultState.copy(isLoading = true)
 
 internal class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
     override val values: Sequence<SettingsState>
         get() {
             return sequenceOf(
+                loadingState,
                 defaultState,
                 loggedInState,
                 appearanceState,

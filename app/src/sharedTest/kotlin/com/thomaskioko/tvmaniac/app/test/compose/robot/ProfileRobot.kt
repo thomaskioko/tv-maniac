@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
+import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
 @OptIn(ExperimentalTestApi::class)
@@ -16,16 +17,39 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         assertDisplayed(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
 
-    fun scrollToSignInButton() = apply {
-        scrollTo(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
-    }
-
     fun assertUserCardDisplayed(slug: String) = apply {
         assertDisplayed(ProfileTestTags.userCard(slug))
     }
 
     fun assertUserNameDisplayed() = apply {
         assertDisplayed(ProfileTestTags.USERNAME_TEST_TAG)
+    }
+
+    fun scrollToUserLists(slug: String) = apply {
+        scrollToListTag(
+            listTag = ProfileTestTags.userCard(slug),
+            itemTag = ProfileTestTags.USER_LISTS_ROW_TEST_TAG,
+        )
+    }
+
+    fun assertUserListsRowDisplayed() = apply {
+        assertDisplayed(ProfileTestTags.USER_LISTS_ROW_TEST_TAG)
+    }
+
+    fun assertListCardDisplayed(id: Long) = apply {
+        assertDisplayed(ProfileTestTags.listCard(id))
+    }
+
+    fun assertListCardExists(id: Long) = apply {
+        assertExists(ProfileTestTags.listCard(id))
+    }
+
+    fun clickUserListsToggle() = apply {
+        click(CollapsibleSectionTestTags.toggle(ProfileTestTags.USER_LISTS_SECTION_KEY))
+    }
+
+    fun assertUserListsRowDoesNotExist() = apply {
+        assertDoesNotExist(ProfileTestTags.USER_LISTS_ROW_TEST_TAG)
     }
 
     fun clickSignInButton() = apply {

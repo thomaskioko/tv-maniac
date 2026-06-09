@@ -1,0 +1,11 @@
+package com.thomaskioko.tvmaniac.accountmanager.api
+
+public sealed class AuthError {
+    public data class OAuthFailed(val message: String) : AuthError()
+    public data object NetworkError : AuthError()
+    public data object NoBrowserAvailable : AuthError()
+    public data object OAuthCancelled : AuthError()
+    public data object TokenExchangeFailed : AuthError()
+    public data object TokenExpired : AuthError()
+    public data object Unknown : AuthError()
+}

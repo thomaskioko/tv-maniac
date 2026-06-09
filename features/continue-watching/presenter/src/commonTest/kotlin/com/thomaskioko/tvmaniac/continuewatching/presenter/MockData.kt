@@ -7,7 +7,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 val cachedNextEpisodes = mutableListOf(
     NextEpisodeWithShow(
-        showTraktId = 84958,
+        showId = 84958,
         showTmdbId = 84958,
         showName = "Loki",
         showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -32,7 +32,7 @@ val cachedNextEpisodes = mutableListOf(
 
 val updatedNextEpisodes = listOf(
     NextEpisodeWithShow(
-        showTraktId = 84958,
+        showId = 84958,
         showTmdbId = 84958,
         showName = "Loki",
         showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -54,7 +54,7 @@ val updatedNextEpisodes = listOf(
         totalCount = 0,
     ),
     NextEpisodeWithShow(
-        showTraktId = 1232,
+        showId = 1232,
         showTmdbId = 1232,
         showName = "The Lazarus Project",
         showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -83,7 +83,7 @@ internal fun expectedUiResult(
     .map {
         val progress = if (it.totalCount > 0) it.watchedCount.toFloat() / it.totalCount else 0f
         ContinueWatchingItem(
-            traktId = it.showTraktId,
+            showId = it.showId,
             title = it.showName ?: "",
             posterImageUrl = it.showPoster,
             status = it.showStatus,

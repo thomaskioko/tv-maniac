@@ -1,23 +1,23 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.oauth.api.RefreshTokenResult
+import com.thomaskioko.tvmaniac.oauth.api.TokenRefreshAction
 import com.thomaskioko.tvmaniac.trakt.api.TraktTokenRemoteDataSource
-import com.thomaskioko.tvmaniac.traktauth.api.AuthState
-import com.thomaskioko.tvmaniac.traktauth.api.RefreshTokenResult
-import com.thomaskioko.tvmaniac.traktauth.api.TraktRefreshTokenAction
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
+@Inject
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class)
 public class DefaultTraktRefreshTokenAction(
     private val traktTokenDataSource: TraktTokenRemoteDataSource,
     private val logger: Logger,
-) : TraktRefreshTokenAction {
+) : TokenRefreshAction {
     override suspend fun invoke(currentState: AuthState): RefreshTokenResult {
         logger.debug("TraktRefreshTokenAction", "Requesting token refresh")
 

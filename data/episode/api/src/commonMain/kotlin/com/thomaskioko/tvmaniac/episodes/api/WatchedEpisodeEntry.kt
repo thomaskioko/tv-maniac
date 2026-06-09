@@ -5,7 +5,7 @@ import kotlin.time.Instant
 
 public data class WatchedEpisodeEntry(
     val id: Long = 0,
-    val showTraktId: Long,
+    val showId: Long,
     val episodeId: Long?,
     val seasonNumber: Long,
     val episodeNumber: Long,

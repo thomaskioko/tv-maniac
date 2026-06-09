@@ -301,8 +301,20 @@ public object Endpoints {
 
         public object SeasonDetails : Endpoint.Pattern {
             override val pathRegex: String = "/3/tv/\\d+/season/\\d+"
-            override val successFixture: String = "tmdb/details/success.json"
-            override val errorFixture: String = "tmdb/details/error.json"
+            override val successFixture: String = "tmdb/season_details/empty/success.json"
+            override val errorFixture: String = "tmdb/season_details/empty/error.json"
+        }
+
+        public object SeasonDetailsS1 : Endpoint.Pattern {
+            override val pathRegex: String = "/3/tv/\\d+/season/1"
+            override val successFixture: String = "tmdb/season_details/season1/success.json"
+            override val errorFixture: String = "tmdb/season_details/season1/error.json"
+        }
+
+        public object SeasonDetailsS2 : Endpoint.Pattern {
+            override val pathRegex: String = "/3/tv/\\d+/season/2"
+            override val successFixture: String = "tmdb/season_details/season2/success.json"
+            override val errorFixture: String = "tmdb/season_details/season2/error.json"
         }
 
         public object WatchProviders : Endpoint.Pattern {

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.upnext.implementation
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.NextEpisodeDao
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
+import com.thomaskioko.tvmaniac.upnext.api.model.CompletedShow
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -24,6 +25,9 @@ public class DefaultUpNextRepository(
             .flatMapLatest { includeSpecials ->
                 nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials)
             }
+
+    override fun observeCompletedShows(): Flow<List<CompletedShow>> =
+        nextEpisodeDao.observeCompletedShows()
 
     override suspend fun saveUpNextSortOption(sortOption: String) {
         datastoreRepository.saveUpNextSortOption(sortOption)

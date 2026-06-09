@@ -1,9 +1,9 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.EpisodeId;
 
 CREATE TABLE show_metadata (
-    show_trakt_id INTEGER AS Id<TraktId> PRIMARY KEY NOT NULL,
+    show_id INTEGER AS Id<ShowId> PRIMARY KEY NOT NULL,
     season_count INTEGER NOT NULL DEFAULT 0,
     episode_count INTEGER NOT NULL DEFAULT 0,
     status TEXT DEFAULT NULL,
@@ -11,13 +11,13 @@ CREATE TABLE show_metadata (
     last_watched_season_number INTEGER DEFAULT NULL,
     last_watched_episode_number INTEGER DEFAULT NULL,
     last_watched_at INTEGER DEFAULT NULL,
-    FOREIGN KEY(show_trakt_id) REFERENCES tvshow(trakt_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- queries
 upsert:
 INSERT OR REPLACE INTO show_metadata(
-    show_trakt_id,
+    show_id,
     season_count,
     episode_count,
     status
@@ -27,7 +27,7 @@ recalculateLastWatched:
 WITH last_watched_cte AS (
     SELECT we.episode_id, we.season_number, we.episode_number, we.watched_at
     FROM watched_episodes we
-    WHERE we.show_trakt_id = :show_trakt_id
+    WHERE we.show_id = :showId
       AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
       AND (:include_specials = 1 OR we.season_number > 0)
     ORDER BY we.watched_at DESC, (1000 * we.season_number) + we.episode_number DESC
@@ -38,26 +38,26 @@ UPDATE show_metadata SET
     last_watched_season_number = (SELECT season_number FROM last_watched_cte),
     last_watched_episode_number = (SELECT episode_number FROM last_watched_cte),
     last_watched_at = (SELECT watched_at FROM last_watched_cte)
-WHERE show_trakt_id = :show_trakt_id;
+WHERE show_id = :showId;
 
 CREATE VIEW show_watch_progress AS
 SELECT
-    tvshow.trakt_id AS show_trakt_id,
+    tvshow.id AS show_id,
     COALESCE(watched.count, 0) AS watched_count,
     COALESCE(total.count, 0) AS total_count
 FROM tvshow
 LEFT JOIN (
-    SELECT show_trakt_id, COUNT(*) AS count
+    SELECT show_id, COUNT(*) AS count
     FROM watched_episodes
     WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
-    GROUP BY show_trakt_id
-) AS watched ON watched.show_trakt_id = tvshow.trakt_id
+    GROUP BY show_id
+) AS watched ON watched.show_id = tvshow.id
 LEFT JOIN (
-    SELECT episode.show_trakt_id, COUNT(*) AS count
+    SELECT episode.show_id, COUNT(*) AS count
     FROM episode
     INNER JOIN season ON episode.season_id = season.id
     WHERE season.season_number > 0
     AND episode.first_aired IS NOT NULL
     AND episode.first_aired <= strftime('%s', 'now') * 1000
-    GROUP BY episode.show_trakt_id
-) AS total ON total.show_trakt_id = tvshow.trakt_id;
+    GROUP BY episode.show_id
+) AS total ON total.show_id = tvshow.id;

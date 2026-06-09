@@ -383,7 +383,7 @@ internal class SearchShowsPresenterTest {
 
     private fun createDiscoverShowList(size: Int = LIST_SIZE) = List(size) {
         ShowEntity(
-            traktId = 84958,
+            showId = 84958,
             tmdbId = 84958,
             title = "Loki",
             posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -399,7 +399,7 @@ internal class SearchShowsPresenterTest {
         .map {
             ShowItem(
                 tmdbId = it.tmdbId,
-                traktId = it.traktId,
+                showId = it.showId,
                 title = it.title,
                 posterImageUrl = it.posterPath,
                 inLibrary = it.inLibrary,
@@ -416,7 +416,7 @@ internal class SearchShowsPresenterTest {
             genre = TraktGenreEntity(slug = "horror", name = "Horror"),
             shows = List(LIST_SIZE) {
                 ShowEntity(
-                    traktId = 84958,
+                    showId = 84958,
                     tmdbId = 84958,
                     title = "Loki",
                     posterPath = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
@@ -434,7 +434,7 @@ internal class SearchShowsPresenterTest {
             shows = List(LIST_SIZE) {
                 ShowItem(
                     tmdbId = 84958,
-                    traktId = 84958,
+                    showId = 84958,
                     title = "Loki",
                     posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
                     inLibrary = false,
@@ -461,7 +461,7 @@ internal class SearchShowsPresenterTest {
             genre = TraktGenreEntity(slug = "horror", name = "Horror"),
             shows = List(LIST_SIZE) {
                 ShowEntity(
-                    traktId = id,
+                    showId = id,
                     tmdbId = id,
                     title = title,
                     posterPath = "/poster.jpg",
@@ -479,7 +479,7 @@ internal class SearchShowsPresenterTest {
             shows = List(LIST_SIZE) {
                 ShowItem(
                     tmdbId = id,
-                    traktId = id,
+                    showId = id,
                     title = title,
                     posterImageUrl = "/poster.jpg",
                     inLibrary = false,

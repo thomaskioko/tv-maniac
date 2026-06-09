@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.continuewatching.presenter
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -28,7 +29,6 @@ import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerReposit
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchlistprefs.testing.FakeWatchlistPrefsRepository
@@ -57,7 +57,7 @@ class FakeContinueWatchingPresenterBuilder {
     private val fakeFollowedShowsRepository = FakeFollowedShowsRepository()
     private val fakeLogger = FakeLogger()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
-    private val fakeTraktAuthRepository = FakeTraktAuthRepository()
+    private val fakeAccountManager = FakeAccountManager()
 
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -125,7 +125,7 @@ class FakeContinueWatchingPresenterBuilder {
         syncContinueWatchingInteractor = syncContinueWatchingInteractor,
         nitroFlag = nitroFlag,
         syncObserver = syncObserver,
-        traktAuthRepository = fakeTraktAuthRepository,
+        accountManager = fakeAccountManager,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         mapper = ContinueWatchingMapper(localizer),
         logger = fakeLogger,
