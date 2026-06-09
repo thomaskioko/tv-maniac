@@ -201,7 +201,6 @@ include(
     ":data:trailers:api",
     ":data:trailers:implementation",
     ":data:trailers:testing",
-    ":data:traktauth:api",
     ":data:traktauth:implementation",
     ":data:traktauth:testing",
     ":data:traktlists:api",
