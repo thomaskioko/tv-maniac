@@ -18,7 +18,7 @@ private fun previewRootGroups(authenticated: Boolean): ImmutableList<SettingsCat
             SettingsCategoryGroup(
                 label = "Account",
                 items = persistentListOf(
-                    SettingsCategoryItem(SettingsPage.TRAKT, "Trakt Account", "Manage your Trakt connection"),
+                    SettingsCategoryItem(SettingsPage.ACCOUNT, "Trakt Account", "Manage your Trakt connection"),
                 ),
             ),
         )
@@ -90,7 +90,7 @@ private val previewLabels = SettingsLabels(
     login = "Login",
 )
 
-private val loggedOutTraktLabels = previewLabels.copy(
+private val loggedOutAccountLabels = previewLabels.copy(
     traktConnected = "Connect to Trakt",
     traktConnectedDescription = "Sign in with Trakt to sync your watch history, watchlist, and episode progress " +
         "across your devices.",
@@ -102,8 +102,7 @@ internal val defaultState = SettingsState(
     currentPageTitle = "Settings",
     rootGroups = previewRootGroups(authenticated = false),
     labels = previewLabels,
-    showTraktDialog = false,
-    showLogoutDialog = false,
+    showLogoutConfirmation = false,
     isAuthenticated = false,
     isLoading = false,
     openTrailersInYoutube = false,
@@ -118,8 +117,7 @@ internal val loggedInState = SettingsState(
     rootGroups = previewRootGroups(authenticated = true),
     labels = previewLabels,
     username = "John Doe",
-    showTraktDialog = false,
-    showLogoutDialog = false,
+    showLogoutConfirmation = false,
     isAuthenticated = true,
     isLoading = false,
     openTrailersInYoutube = true,
@@ -133,11 +131,11 @@ internal val notificationsState = loggedInState.copy(currentPage = SettingsPage.
 internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVACY, currentPageTitle = "Privacy")
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")
-internal val traktState = loggedInState.copy(currentPage = SettingsPage.TRAKT, currentPageTitle = "Trakt Account")
-internal val traktLoggedOutState = defaultState.copy(
-    currentPage = SettingsPage.TRAKT,
+internal val accountState = loggedInState.copy(currentPage = SettingsPage.ACCOUNT, currentPageTitle = "Trakt Account")
+internal val accountLoggedOutState = defaultState.copy(
+    currentPage = SettingsPage.ACCOUNT,
     currentPageTitle = "Trakt Account",
-    labels = loggedOutTraktLabels,
+    labels = loggedOutAccountLabels,
 )
 
 internal val loadingState = defaultState.copy(isLoading = true)

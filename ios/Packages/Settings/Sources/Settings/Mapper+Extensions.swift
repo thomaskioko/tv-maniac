@@ -10,7 +10,7 @@ public extension SettingsPage {
         if self == SettingsPage.privacy { return .privacy }
         if self == SettingsPage.info { return .info }
         if self == SettingsPage.licenses { return .licenses }
-        if self == SettingsPage.trakt { return .trakt }
+        if self == SettingsPage.account { return .account }
         return .root
     }
 }

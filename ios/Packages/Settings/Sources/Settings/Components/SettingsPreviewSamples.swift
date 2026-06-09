@@ -174,8 +174,8 @@
             ]
         }
 
-        static func traktContent(authenticated: Bool) -> SettingsTraktContent {
-            SettingsTraktContent(
+        static func accountContent(authenticated: Bool) -> SettingsAccountContent {
+            SettingsAccountContent(
                 title: "Trakt",
                 description: "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
                 authenticationLabel: "Authentication",
@@ -196,7 +196,7 @@
             var sections: [SettingsRootSection] = []
             if authenticated {
                 sections.append(SettingsRootSection(id: "account", label: "Account", items: [
-                    navItem(.trakt, "Trakt Account", "Manage your Trakt connection"),
+                    navItem(.account, "Trakt Account", "Manage your Trakt connection"),
                 ]))
             }
             sections.append(SettingsRootSection(id: "general", label: "General", items: [

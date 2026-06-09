@@ -18,7 +18,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let privacyLinks: [SettingsNavigationItem]
         public let infoContent: SettingsInfoContent
         public let licenseSections: [SettingsLicenseSection]
-        public let traktContent: SettingsTraktContent
+        public let accountContent: SettingsAccountContent
 
         public init(
             isLoading: Bool,
@@ -34,7 +34,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             privacyLinks: [SettingsNavigationItem],
             infoContent: SettingsInfoContent,
             licenseSections: [SettingsLicenseSection],
-            traktContent: SettingsTraktContent
+            accountContent: SettingsAccountContent
         ) {
             self.isLoading = isLoading
             self.rootTitle = rootTitle
@@ -49,7 +49,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             self.privacyLinks = privacyLinks
             self.infoContent = infoContent
             self.licenseSections = licenseSections
-            self.traktContent = traktContent
+            self.accountContent = accountContent
         }
     }
 
@@ -115,8 +115,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             InfoPageView(content: state.infoContent)
         case .licenses:
             LicensesPageView(sections: state.licenseSections)
-        case .trakt:
-            TraktPageView(content: state.traktContent)
+        case .account:
+            AccountPageView(content: state.accountContent)
         }
     }
 

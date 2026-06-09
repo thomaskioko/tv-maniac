@@ -229,7 +229,7 @@ public struct SettingsLicenseSection: Identifiable {
     }
 }
 
-public struct SettingsTraktContent {
+public struct SettingsAccountContent {
     public let title: String
     public let description: String
     public let authenticationLabel: String

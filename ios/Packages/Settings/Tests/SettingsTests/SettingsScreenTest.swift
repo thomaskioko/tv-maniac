@@ -212,8 +212,8 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
     }
 
-    private var traktContent: SettingsTraktContent {
-        SettingsTraktContent(
+    private var accountContent: SettingsAccountContent {
+        SettingsAccountContent(
             title: "Trakt",
             description: "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
             authenticationLabel: "Authentication",
@@ -232,7 +232,7 @@ class SettingsScreenTest: SnapshotTestCase {
         var sections: [SettingsRootSection] = []
         if authenticated {
             sections.append(SettingsRootSection(id: "account", label: "Account", items: [
-                navItem(.trakt, "Trakt Account", "Manage your Trakt connection"),
+                navItem(.account, "Trakt Account", "Manage your Trakt connection"),
             ]))
         }
         sections.append(SettingsRootSection(id: "general", label: "General", items: [
@@ -271,7 +271,7 @@ class SettingsScreenTest: SnapshotTestCase {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            traktContent: traktContent
+            accountContent: accountContent
         )
     }
 
@@ -330,7 +330,7 @@ class SettingsScreenTest: SnapshotTestCase {
     }
 
     func test_SettingsScreen_Trakt() {
-        SettingsScreen(state: makeState(page: .trakt, authenticated: true), onBack: {})
+        SettingsScreen(state: makeState(page: .account, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Trakt")
     }

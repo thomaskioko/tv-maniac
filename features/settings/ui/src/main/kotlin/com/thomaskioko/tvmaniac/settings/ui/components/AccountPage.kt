@@ -39,20 +39,20 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
+import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
+import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
-import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
-import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
-import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
+import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsSectionLabel
-import com.thomaskioko.tvmaniac.settings.ui.traktLoggedOutState
-import com.thomaskioko.tvmaniac.settings.ui.traktState
+import com.thomaskioko.tvmaniac.settings.ui.accountLoggedOutState
+import com.thomaskioko.tvmaniac.settings.ui.accountState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 @Composable
-internal fun TraktPage(
+internal fun AccountPage(
     state: SettingsState,
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
@@ -117,16 +117,16 @@ internal fun TraktPage(
                     )
                     Button(
                         modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
-                        enabled = !state.isProcessingTraktAuth,
+                        enabled = !state.isProcessingAuth,
                         onClick = {
-                            onAction(if (state.isAuthenticated) ShowTraktDialog else TraktLoginClicked(AccountProvider.TRAKT))
+                            onAction(if (state.isAuthenticated) ShowLogoutDialog else AccountLoginClicked(AccountProvider.TRAKT))
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                         ),
                     ) {
-                        if (state.isProcessingTraktAuth) {
+                        if (state.isProcessingAuth) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(18.dp),
                                 strokeWidth = 2.dp,
@@ -144,9 +144,9 @@ internal fun TraktPage(
     }
 
     LogoutDialog(
-        isVisible = state.showTraktDialog,
-        onLogoutClicked = { onAction(TraktLogoutClicked) },
-        onDismissDialog = { onAction(DismissTraktDialog) },
+        isVisible = state.showLogoutConfirmation,
+        onLogoutClicked = { onAction(AccountLogoutClicked) },
+        onDismissDialog = { onAction(DismissLogoutDialog) },
     )
 }
 
@@ -179,9 +179,9 @@ private fun LogoutDialog(
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun TraktPageConnectedPreview() {
-    TraktPage(
-        state = traktState,
+private fun AccountPageConnectedPreview() {
+    AccountPage(
+        state = accountState,
         onAction = {},
     )
 }
@@ -189,9 +189,9 @@ private fun TraktPageConnectedPreview() {
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun TraktPageLoggedOutPreview() {
-    TraktPage(
-        state = traktLoggedOutState,
+private fun AccountPageLoggedOutPreview() {
+    AccountPage(
+        state = accountLoggedOutState,
         onAction = {},
     )
 }

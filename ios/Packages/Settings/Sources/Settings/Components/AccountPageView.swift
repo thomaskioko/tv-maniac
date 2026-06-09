@@ -1,11 +1,11 @@
 import DesignSystem
 import SwiftUI
 
-struct TraktPageView: View {
+struct AccountPageView: View {
     @Environment(\.appTheme) private var appTheme
-    private let content: SettingsTraktContent
+    private let content: SettingsAccountContent
 
-    init(content: SettingsTraktContent) {
+    init(content: SettingsAccountContent) {
         self.content = content
     }
 
@@ -69,13 +69,13 @@ struct TraktPageView: View {
 
 #if DEBUG
     #Preview("Connected") {
-        TraktPageView(content: SettingsPreviewSamples.traktContent(authenticated: true))
+        AccountPageView(content: SettingsPreviewSamples.accountContent(authenticated: true))
             .padding()
             .appPreview()
     }
 
     #Preview("Logged Out") {
-        TraktPageView(content: SettingsPreviewSamples.traktContent(authenticated: false))
+        AccountPageView(content: SettingsPreviewSamples.accountContent(authenticated: false))
             .padding()
             .appPreview()
     }

@@ -63,7 +63,7 @@ public class SettingsPresenter(
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
-    private val traktAuthState = ObservableLoadingCounter()
+    private val authProcessingState = ObservableLoadingCounter()
     private val notificationToggleState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
@@ -76,19 +76,19 @@ public class SettingsPresenter(
 
     public val state: StateFlow<SettingsState> = combine(
         _state,
-        traktAuthState.observable,
+        authProcessingState.observable,
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
         accountManager.isConnected,
         accountManager.activeProvider,
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
-    ) { currentState, isProcessingTraktAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile ->
+    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile ->
         val username = userProfile?.let { it.fullName ?: it.username }
         currentState.copy(
             isLoading = false,
-            isUpdating = isProcessingTraktAuth || isTogglingNotifications,
-            isProcessingTraktAuth = isProcessingTraktAuth,
+            isUpdating = isProcessingAuth || isTogglingNotifications,
+            isProcessingAuth = isProcessingAuth,
             imageQuality = preferences.imageQuality,
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
@@ -124,25 +124,25 @@ public class SettingsPresenter(
 
     public fun dispatch(action: SettingsActions) {
         when (action) {
-            DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
+            DismissLogoutDialog, ShowLogoutDialog -> toggleLogoutConfirmation()
             VersionClicked -> handleVersionTap()
             BackClicked -> handleBackClicked()
             is OpenSettingsPage -> _state.update { state -> state.copy(currentPage = action.page) }
-            TraktLogoutClicked -> {
+            AccountLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
-                        .collectStatus(traktAuthState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                        .collectStatus(authProcessingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
-                updateTrackDialogState()
+                toggleLogoutConfirmation()
             }
 
-            is TraktLoginClicked -> {
+            is AccountLoginClicked -> {
                 coroutineScope.launch {
-                    traktAuthState.addLoader()
+                    authProcessingState.addLoader()
                     try {
                         authManagers[action.provider]?.launchWebView()
                     } finally {
-                        traktAuthState.removeLoader()
+                        authProcessingState.removeLoader()
                     }
                 }
             }
@@ -206,8 +206,8 @@ public class SettingsPresenter(
         }
     }
 
-    private fun updateTrackDialogState() {
-        _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
+    private fun toggleLogoutConfirmation() {
+        _state.update { state -> state.copy(showLogoutConfirmation = !state.showLogoutConfirmation) }
     }
 
     private fun handleVersionTap() {
@@ -231,7 +231,7 @@ public class SettingsPresenter(
             SettingsPage.PRIVACY -> StringResourceKey.LabelSettingsSectionPrivacy
             SettingsPage.INFO -> StringResourceKey.SettingsTitleInfo
             SettingsPage.LICENSES -> StringResourceKey.LabelSettingsSectionLicenses
-            SettingsPage.TRAKT -> StringResourceKey.SettingsTitleTrakt
+            SettingsPage.ACCOUNT -> StringResourceKey.SettingsTitleTrakt
         },
     )
 
@@ -243,7 +243,7 @@ public class SettingsPresenter(
                         label = localizer.getString(StringResourceKey.LabelSettingsGroupAccount),
                         items = persistentListOf(
                             SettingsCategoryItem(
-                                page = SettingsPage.TRAKT,
+                                page = SettingsPage.ACCOUNT,
                                 title = localizer.getString(StringResourceKey.SettingsTitleTrakt),
                                 summary = localizer.getString(StringResourceKey.LabelSettingsTraktDescription),
                             ),

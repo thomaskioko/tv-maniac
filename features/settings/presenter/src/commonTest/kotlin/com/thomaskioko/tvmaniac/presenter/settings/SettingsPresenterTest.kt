@@ -18,17 +18,17 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
+import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
-import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
-import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
-import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
@@ -126,11 +126,11 @@ class SettingsPresenterTest {
         presenter.state.test {
             awaitItem()
 
-            presenter.dispatch(ShowTraktDialog)
-            awaitItem().showTraktDialog shouldBe true
+            presenter.dispatch(ShowLogoutDialog)
+            awaitItem().showLogoutConfirmation shouldBe true
 
-            presenter.dispatch(DismissTraktDialog)
-            awaitItem().showTraktDialog shouldBe false
+            presenter.dispatch(DismissLogoutDialog)
+            awaitItem().showLogoutConfirmation shouldBe false
         }
     }
 
@@ -234,7 +234,7 @@ class SettingsPresenterTest {
         var launched = false
         authManager.setOnLaunchWebView { launched = true }
 
-        presenter.dispatch(TraktLoginClicked(AccountProvider.TRAKT))
+        presenter.dispatch(AccountLoginClicked(AccountProvider.TRAKT))
         testScheduler.advanceUntilIdle()
 
         launched shouldBe true
@@ -247,7 +247,7 @@ class SettingsPresenterTest {
         authManager.setOnLaunchWebView { traktLaunched = true }
         simklAuthManager.setOnLaunchWebView { simklLaunched = true }
 
-        presenter.dispatch(TraktLoginClicked(AccountProvider.SIMKL))
+        presenter.dispatch(AccountLoginClicked(AccountProvider.SIMKL))
         testScheduler.advanceUntilIdle()
 
         simklLaunched shouldBe true
@@ -258,7 +258,7 @@ class SettingsPresenterTest {
     fun `should log out the active provider given logout is clicked`() = runTest {
         accountManager.setActiveProvider(AccountProvider.SIMKL)
 
-        presenter.dispatch(TraktLogoutClicked)
+        presenter.dispatch(AccountLogoutClicked)
         testScheduler.advanceUntilIdle()
 
         accountManager.lastLogoutProvider shouldBe AccountProvider.SIMKL

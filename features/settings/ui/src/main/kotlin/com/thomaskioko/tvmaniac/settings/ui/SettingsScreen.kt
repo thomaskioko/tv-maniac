@@ -40,6 +40,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsMessageShown
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
+import com.thomaskioko.tvmaniac.settings.ui.components.AccountPage
 import com.thomaskioko.tvmaniac.settings.ui.components.AppearancePage
 import com.thomaskioko.tvmaniac.settings.ui.components.BehaviorPage
 import com.thomaskioko.tvmaniac.settings.ui.components.InfoPage
@@ -47,7 +48,6 @@ import com.thomaskioko.tvmaniac.settings.ui.components.LicensesPage
 import com.thomaskioko.tvmaniac.settings.ui.components.NotificationsPage
 import com.thomaskioko.tvmaniac.settings.ui.components.PrivacyPage
 import com.thomaskioko.tvmaniac.settings.ui.components.SettingsRootContent
-import com.thomaskioko.tvmaniac.settings.ui.components.TraktPage
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
@@ -155,7 +155,7 @@ internal fun SettingsScreen(
                         SettingsPage.PRIVACY -> PrivacyPage(state = state, onAction = onAction)
                         SettingsPage.INFO -> InfoPage(state = state, onAction = onAction)
                         SettingsPage.LICENSES -> LicensesPage(state = state)
-                        SettingsPage.TRAKT -> TraktPage(state = state, onAction = onAction)
+                        SettingsPage.ACCOUNT -> AccountPage(state = state, onAction = onAction)
                     }
                 }
             }
