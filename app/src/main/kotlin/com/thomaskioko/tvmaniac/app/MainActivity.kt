@@ -39,7 +39,7 @@ public class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        graph.authManagers.forEach { it.registerResult() }
+        graph.authManagers.values.forEach { it.registerResult() }
 
         enableEdgeToEdge()
 
