@@ -50,7 +50,7 @@ public class ShowListPresenter(
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val navigator: Navigator,
     private val accountManager: AccountManager,
-    private val authManagers: Set<AuthManager>,
+    private val authManagers: Map<AccountProvider, AuthManager>,
     private val syncTraktListsInteractor: SyncTraktListsInteractor,
     private val createTraktListInteractor: CreateTraktListInteractor,
     private val toggleShowInListInteractor: ToggleShowInListInteractor,
@@ -103,7 +103,7 @@ public class ShowListPresenter(
 
     public fun dispatch(action: ShowListAction) {
         when (action) {
-            ShowListAction.Login -> authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
+            is ShowListAction.Login -> authManagers[action.provider]?.launchWebView()
             ShowListAction.ShowCreateListField -> createListState.update {
                 it.copy(showField = true, error = null)
             }

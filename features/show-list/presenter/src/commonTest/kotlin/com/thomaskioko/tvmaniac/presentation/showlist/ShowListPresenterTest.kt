@@ -42,6 +42,7 @@ internal class ShowListPresenterTest {
     private val traktListRepository = FakeTraktListRepository()
     private val accountManager = FakeAccountManager()
     private val authManager = FakeAuthManager()
+    private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
     private val userRepository = FakeUserRepository()
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
@@ -199,9 +200,29 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem()
 
-            presenter.dispatch(ShowListAction.Login)
+            presenter.dispatch(ShowListAction.Login(AccountProvider.TRAKT))
 
             launchCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should launch the chosen provider given a non default provider`() = runTest {
+        var traktLaunches = 0
+        var simklLaunches = 0
+        authManager.setOnLaunchWebView { traktLaunches += 1 }
+        simklAuthManager.setOnLaunchWebView { simklLaunches += 1 }
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem()
+
+            presenter.dispatch(ShowListAction.Login(AccountProvider.SIMKL))
+
+            simklLaunches shouldBe 1
+            traktLaunches shouldBe 0
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -465,7 +486,7 @@ internal class ShowListPresenterTest {
         observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
         navigator = navigator,
         accountManager = accountManager,
-        authManagers = setOf(authManager),
+        authManagers = mapOf(AccountProvider.TRAKT to authManager, AccountProvider.SIMKL to simklAuthManager),
         syncTraktListsInteractor = SyncTraktListsInteractor(traktListRepository, userRepository),
         createTraktListInteractor = CreateTraktListInteractor(traktListRepository, userRepository),
         toggleShowInListInteractor = ToggleShowInListInteractor(traktListRepository, userRepository),

@@ -81,7 +81,7 @@ public class ProfilePresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val localizer: Localizer,
-    private val authManagers: Set<AuthManager>,
+    private val authManagers: Map<AccountProvider, AuthManager>,
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -153,12 +153,12 @@ public class ProfilePresenter(
     public val state: StateFlow<ProfileState> = combine(
         observeUserProfileInteractor.flow,
         accountManager.isConnected,
+        accountManager.activeProvider,
         accountManager.authError,
         profileLoadingState.observable,
         uiMessageManager.message,
         sectionsFlow,
-    ) { userProfile, isConnected, authError, isLoading, uiMessage, sections ->
-        val authenticated = isConnected
+    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
         val profile = userProfile?.toPresentation()
         val displayName = profile?.fullName ?: profile?.username ?: ""
@@ -167,7 +167,8 @@ public class ProfilePresenter(
             userProfile = profile,
             isLoading = isLoading,
             errorMessage = errorMessage,
-            authenticated = authenticated,
+            authenticated = isConnected,
+            activeProvider = activeProvider,
             userLists = sections.userLists,
             inProgress = sections.inProgress,
             completed = sections.completed,
@@ -187,9 +188,9 @@ public class ProfilePresenter(
 
     public fun dispatch(action: ProfileAction) {
         when (action) {
-            LoginClicked -> {
+            is LoginClicked -> {
                 coroutineScope.launch {
-                    authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
+                    authManagers[action.provider]?.launchWebView()
                 }
             }
             SettingsClicked -> navigator.navigateTo(SettingsRoute)

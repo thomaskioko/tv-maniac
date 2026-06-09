@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 
 public sealed interface SettingsActions
@@ -20,7 +21,7 @@ public data object DismissTraktDialog : SettingsActions
 
 public data object TraktLogoutClicked : SettingsActions
 
-public data object TraktLoginClicked : SettingsActions
+public data class TraktLoginClicked(val provider: AccountProvider) : SettingsActions
 
 public data class ImageQualitySelected(
     val quality: ImageQuality,

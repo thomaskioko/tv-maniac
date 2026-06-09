@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.android.feature.settings.R
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
@@ -118,7 +119,7 @@ internal fun TraktPage(
                         modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
                         enabled = !state.isProcessingTraktAuth,
                         onClick = {
-                            onAction(if (state.isAuthenticated) ShowTraktDialog else TraktLoginClicked)
+                            onAction(if (state.isAuthenticated) ShowTraktDialog else TraktLoginClicked(AccountProvider.TRAKT))
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,

@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import kotlinx.collections.immutable.ImmutableList
@@ -7,6 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 public data class SettingsState(
     val isAuthenticated: Boolean,
+    val activeProvider: AccountProvider? = null,
     val theme: ThemeModel,
     val imageQuality: ImageQuality,
     val currentPage: SettingsPage = SettingsPage.ROOT,

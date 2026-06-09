@@ -34,7 +34,7 @@ public object FakeAppConfigBindingContainer {
     public fun provideTraktConfig(): TraktConfig = object : TraktConfig {
         override val clientId: String = "fake-trakt-client-id"
         override val clientSecret: String = "fake-trakt-client-secret"
-        override val redirectUri: String = "tvmaniac://auth"
+        override val redirectUri: String = "tvmaniac://auth/trakt"
     }
 
     @Provides
@@ -42,6 +42,6 @@ public object FakeAppConfigBindingContainer {
     public fun provideSimklConfig(): SimklConfig = object : SimklConfig {
         override val clientId: String = "fake-simkl-client-id"
         override val clientSecret: String = "fake-simkl-client-secret"
-        override val redirectUri: String = "tvmaniac://auth"
+        override val redirectUri: String = "tvmaniac://auth/simkl"
     }
 }

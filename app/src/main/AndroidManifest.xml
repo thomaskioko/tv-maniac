@@ -52,8 +52,13 @@
         <category android:name="android.intent.category.BROWSABLE" />
 
         <data
-          android:host="callback"
-          android:scheme="tvmaniac" />
+          android:scheme="tvmaniac"
+          android:host="auth"
+          android:path="/trakt" />
+        <data
+          android:scheme="tvmaniac"
+          android:host="auth"
+          android:path="/simkl" />
 
       </intent-filter>
     </activity>

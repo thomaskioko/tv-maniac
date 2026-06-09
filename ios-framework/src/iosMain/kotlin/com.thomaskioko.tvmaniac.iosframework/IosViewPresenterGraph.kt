@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.iosframework
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -16,7 +17,7 @@ import dev.zacsweers.metro.SingleIn
 public interface IosViewPresenterGraph {
     public val rootPresenter: RootPresenter
     public val navigator: Navigator
-    public val authManagers: Set<AuthManager>
+    public val authManagers: Map<AccountProvider, AuthManager>
 
     @ContributesTo(AppScope::class)
     @GraphExtension.Factory

@@ -12,13 +12,13 @@ public final class AuthCoordinatorRegistry {
 
     public func register(presenterGraph: IosViewPresenterGraph, appGraph: IosApplicationGraph) {
         guard coordinators.isEmpty else { return }
-        let configs = appGraph.authClientConfigs.compactMap { $0 as? AuthClientConfig }
-        let repositories = appGraph.accountAuthRepositories.compactMap { $0 as? AccountAuthRepository }
+        let configs = appGraph.authClientConfigs
+        let repositories = appGraph.accountAuthRepositories
 
-        coordinators = presenterGraph.authManagers.compactMap { element in
-            guard let manager = element as? AuthManager,
-                  let config = configs.first(where: { $0.provider == manager.provider }),
-                  let repository = repositories.first(where: { $0.provider == manager.provider })
+        coordinators = presenterGraph.authManagers.compactMap { key, value in
+            guard let manager = value as? AuthManager,
+                  let config = configs[key] as? AuthClientConfig,
+                  let repository = repositories[key] as? AccountAuthRepository
             else {
                 return nil
             }

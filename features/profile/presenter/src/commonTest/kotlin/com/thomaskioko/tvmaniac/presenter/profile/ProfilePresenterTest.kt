@@ -73,6 +73,7 @@ internal class ProfilePresenterTest {
     private val userRepository = FakeUserRepository()
     private val accountManager = FakeAccountManager()
     private val authManager = FakeAuthManager()
+    private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
     private val traktListRepository = FakeTraktListRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val episodeRepository = FakeEpisodeRepository()
@@ -144,6 +145,7 @@ internal class ProfilePresenterTest {
             val loadedState = awaitItem()
             loadedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
             loadedState.authenticated shouldBe true
+            loadedState.activeProvider shouldBe AccountProvider.TRAKT
             loadedState.isLoading shouldBe false
         }
     }
@@ -230,6 +232,7 @@ internal class ProfilePresenterTest {
 
             loggedOutState.userProfile shouldBe null
             loggedOutState.authenticated shouldBe false
+            loggedOutState.activeProvider shouldBe null
             loggedOutState.showLoading shouldBe false
         }
     }
@@ -434,6 +437,20 @@ internal class ProfilePresenterTest {
             listOf(FakeFavoritesRepository.SyncInvocation(forceRefresh = true))
     }
 
+    @Test
+    fun `should launch the chosen provider given a non default provider`() = runTest {
+        var traktLaunches = 0
+        var simklLaunches = 0
+        authManager.setOnLaunchWebView { traktLaunches += 1 }
+        simklAuthManager.setOnLaunchWebView { simklLaunches += 1 }
+
+        presenter.dispatch(ProfileAction.LoginClicked(AccountProvider.SIMKL))
+        advanceUntilIdle()
+
+        simklLaunches shouldBe 1
+        traktLaunches shouldBe 0
+    }
+
     private fun createExpectedProfileInfo(profile: UserProfile): ProfileInfo {
         return ProfileInfo(
             slug = profile.slug,
@@ -528,7 +545,10 @@ internal class ProfilePresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigator = navigator,
             localizer = FakeLocalizer(),
-            authManagers = setOf(authManager),
+            authManagers = mapOf(
+                AccountProvider.TRAKT to authManager,
+                AccountProvider.SIMKL to simklAuthManager,
+            ),
             accountManager = accountManager,
             updateUserProfileData = updateUserProfileData,
             errorToStringMapper = { it.message ?: "Test error" },

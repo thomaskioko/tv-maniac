@@ -30,6 +30,7 @@ import kotlin.coroutines.suspendCoroutine
 public class AndroidOAuthLauncher(
     private val activity: ComponentActivity,
     private val authStateHolder: AuthStateHolder,
+    private val authClientConfigs: Map<AccountProvider, AuthClientConfig>,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
 ) : OAuthLauncher {
@@ -38,7 +39,7 @@ public class AndroidOAuthLauncher(
     private lateinit var launcher: ActivityResultLauncher<AuthorizationRequest>
 
     @Volatile
-    private var pendingConfig: AuthClientConfig? = null
+    private var pendingProvider: AccountProvider? = null
 
     override fun register() {
         if (::launcher.isInitialized) return
@@ -53,7 +54,7 @@ public class AndroidOAuthLauncher(
         check(::launcher.isInitialized) {
             "register() must be called before launch(). Call it in the Activity's onCreate()/onStart()."
         }
-        pendingConfig = config
+        pendingProvider = config.provider
         try {
             launcher.launch(buildRequest(config))
         } catch (e: ActivityNotFoundException) {
@@ -85,17 +86,27 @@ public class AndroidOAuthLauncher(
     }
 
     private suspend fun onResult(result: OAuthActivityResultContract.Result) {
-        val config = pendingConfig ?: return
         val (response, error) = result
         when {
-            response != null -> exchangeAuthorizationCode(response.createTokenExchangeRequest(), config)
+            response != null -> {
+                val config = requireNotNull(
+                    authClientConfigs.values.firstOrNull { it.clientId == response.request.clientId }
+                        ?: pendingProvider?.let { authClientConfigs[it] },
+                ) { "No AuthClientConfig matched the OAuth response (clientId=${response.request.clientId})." }
+                exchangeAuthorizationCode(response.createTokenExchangeRequest(), config)
+            }
             error != null -> {
                 logger.error(LOG_TAG, error)
+                val provider = pendingProvider
+                if (provider == null) {
+                    logger.warning(LOG_TAG, "OAuth error after process recreation; no pending provider to route it to.")
+                    return
+                }
                 val authError = when (error.type) {
                     TYPE_USER_CANCELED -> AuthError.OAuthCancelled
                     else -> AuthError.OAuthFailed(error.error ?: "Unknown OAuth error")
                 }
-                authStateHolder.setAuthError(config.provider, authError)
+                authStateHolder.setAuthError(provider, authError)
             }
         }
     }

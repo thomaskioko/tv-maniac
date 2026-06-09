@@ -19,7 +19,7 @@ public struct ProfileTab: View {
         ProfileScreen(
             state: uiState.toState(),
             onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
-            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked()) },
+            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked(provider: .trakt)) },
             onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) },
             onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) },
             onShowClicked: { showId in presenter.dispatch(action: ProfileActionShowClicked(showId: showId)) },

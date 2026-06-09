@@ -57,7 +57,7 @@ public class SettingsPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
-    private val authManagers: Set<AuthManager>,
+    private val authManagers: Map<AccountProvider, AuthManager>,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     accountManager: AccountManager,
 ) : ComponentContext by componentContext {
@@ -80,9 +80,10 @@ public class SettingsPresenter(
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
         accountManager.isConnected,
+        accountManager.activeProvider,
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
-    ) { currentState, isProcessingTraktAuth, isTogglingNotifications, preferences, isLoggedIn, message, userProfile ->
+    ) { currentState, isProcessingTraktAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile ->
         val username = userProfile?.let { it.fullName ?: it.username }
         currentState.copy(
             isLoading = false,
@@ -93,6 +94,7 @@ public class SettingsPresenter(
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
             isAuthenticated = isLoggedIn,
+            activeProvider = activeProvider,
             backgroundSyncEnabled = preferences.backgroundSyncEnabled,
             lastSyncDate = preferences.lastSyncDate,
             showLastSyncDate = preferences.showLastSyncDate,
@@ -134,11 +136,11 @@ public class SettingsPresenter(
                 updateTrackDialogState()
             }
 
-            TraktLoginClicked -> {
+            is TraktLoginClicked -> {
                 coroutineScope.launch {
                     traktAuthState.addLoader()
                     try {
-                        authManagers.firstOrNull { it.provider == AccountProvider.TRAKT }?.launchWebView()
+                        authManagers[action.provider]?.launchWebView()
                     } finally {
                         traktAuthState.removeLoader()
                     }

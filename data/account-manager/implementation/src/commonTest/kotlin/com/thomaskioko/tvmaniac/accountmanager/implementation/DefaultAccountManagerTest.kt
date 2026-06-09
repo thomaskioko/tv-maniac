@@ -14,7 +14,7 @@ import kotlin.test.Test
 class DefaultAccountManagerTest {
 
     private val traktRepository = FakeAccountAuthRepository(AccountProvider.TRAKT)
-    private val accountManager = DefaultAccountManager(authRepositories = setOf(traktRepository))
+    private val accountManager = DefaultAccountManager(repositories = mapOf(AccountProvider.TRAKT to traktRepository))
 
     @Test
     fun `should expose TRAKT as the active provider when logged in`() = runTest {

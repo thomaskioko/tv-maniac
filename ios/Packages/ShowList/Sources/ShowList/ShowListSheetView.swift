@@ -200,7 +200,12 @@ public struct ShowListSheetView: View {
                 .textStyle(theme.typography.bodyMedium)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.appOnSurfaceVariant)
-            Button(action: { presenter.dispatch(action: ShowListActionLogin()) }) {
+
+            Button(
+                action: {
+                    presenter.dispatch(action: ShowListActionLogin(provider: .trakt))
+                }
+            ) {
                 Text(state.labels.loginRequiredConfirmText)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)

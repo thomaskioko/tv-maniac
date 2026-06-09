@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.profile.presenter.model
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 
 public data class ProfileState(
@@ -7,6 +8,7 @@ public data class ProfileState(
     val userProfile: ProfileInfo?,
     val errorMessage: UiMessage? = null,
     val authenticated: Boolean,
+    val activeProvider: AccountProvider? = null,
     val userLists: SectionState<ProfileListItem> = SectionState.Loading,
     val inProgress: SectionState<ProfileShowItem> = SectionState.Loading,
     val completed: SectionState<ProfileShowItem> = SectionState.Loading,
