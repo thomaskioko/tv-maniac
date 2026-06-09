@@ -3,18 +3,23 @@ package com.thomaskioko.tvmaniac.simklauth.implementation
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProviderKey
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 @SingleIn(AppScope::class)
-@ContributesIntoSet(AppScope::class)
+@ContributesIntoMap(
+    scope = AppScope::class,
+    binding = binding<@AccountProviderKey(AccountProvider.SIMKL) AccountAuthRepository>(),
+)
 public class SimklAccountAuthRepository(
     private val authStateHolder: AuthStateHolder,
 ) : AccountAuthRepository {

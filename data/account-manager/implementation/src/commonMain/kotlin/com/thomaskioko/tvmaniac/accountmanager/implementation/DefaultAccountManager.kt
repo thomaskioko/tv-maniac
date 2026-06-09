@@ -24,17 +24,16 @@ import kotlinx.coroutines.flow.merge
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultAccountManager(
-    authRepositories: Set<AccountAuthRepository>,
+    private val repositories: Map<AccountProvider, AccountAuthRepository>,
 ) : AccountManager {
 
-    private val repositories: List<AccountAuthRepository> = authRepositories.toList()
     private val selectedProvider = MutableStateFlow<AccountProvider?>(null)
 
     private val providerStates: Flow<List<Pair<AccountProvider, AccountAuthState>>> =
         if (repositories.isEmpty()) {
             flowOf(emptyList())
         } else {
-            combine(repositories.map { repo -> repo.state.map { repo.provider to it } }) { it.toList() }
+            combine(repositories.values.map { repo -> repo.state.map { repo.provider to it } }) { it.toList() }
         }
 
     override val activeProvider: Flow<AccountProvider?> =
@@ -44,7 +43,7 @@ public class DefaultAccountManager(
     override val isConnected: Flow<Boolean> = activeProvider.map { it != null }
 
     override val connectionEvents: Flow<AccountProvider> =
-        repositories.map { repo -> repo.loginEvents.map { repo.provider } }.merge()
+        repositories.values.map { repo -> repo.loginEvents.map { repo.provider } }.merge()
 
     override val accounts: Flow<List<ConnectedAccount>> =
         combine(providerStates, selectedProvider) { states, selected ->
@@ -62,7 +61,7 @@ public class DefaultAccountManager(
         accounts.map { list -> list.firstOrNull { it.isActive } }.distinctUntilChanged()
 
     override val authError: Flow<AuthError?> =
-        if (repositories.isEmpty()) flowOf(null) else repositories.map { it.authError }.merge()
+        if (repositories.isEmpty()) flowOf(null) else repositories.values.map { it.authError }.merge()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val activeAuthState: Flow<AuthState?> =
@@ -70,20 +69,20 @@ public class DefaultAccountManager(
             flowOf(null)
         } else {
             activeProvider.flatMapLatest { provider ->
-                repositories.firstOrNull { it.provider == provider }?.authState ?: flowOf(null)
+                provider?.let { repositories[it]?.authState } ?: flowOf(null)
             }
         }
 
     override fun getActiveProvider(): AccountProvider? {
         val selected = selectedProvider.value
-        if (selected != null && repositories.any { it.provider == selected && it.isLoggedIn() }) {
+        if (selected != null && repositories[selected]?.isLoggedIn() == true) {
             return selected
         }
-        return repositories.firstOrNull { it.isLoggedIn() }?.provider
+        return repositories.values.firstOrNull { it.isLoggedIn() }?.provider
     }
 
     override suspend fun logout(provider: AccountProvider) {
-        repositories.firstOrNull { it.provider == provider }?.logout()
+        repositories[provider]?.logout()
         if (selectedProvider.value == provider) {
             selectedProvider.value = null
         }
@@ -94,14 +93,14 @@ public class DefaultAccountManager(
     }
 
     override suspend fun setAuthError(error: AuthError?) {
-        repositories.forEach { it.setAuthError(error) }
+        repositories.values.forEach { it.setAuthError(error) }
     }
 
     override suspend fun refreshActiveTokens(): TokenRefreshResult =
         activeRepository()?.refreshTokens() ?: TokenRefreshResult.NotLoggedIn
 
     private fun activeRepository(): AccountAuthRepository? =
-        getActiveProvider()?.let { provider -> repositories.firstOrNull { it.provider == provider } }
+        getActiveProvider()?.let { provider -> repositories[provider] }
 
     private fun resolveActive(
         states: List<Pair<AccountProvider, AccountAuthState>>,

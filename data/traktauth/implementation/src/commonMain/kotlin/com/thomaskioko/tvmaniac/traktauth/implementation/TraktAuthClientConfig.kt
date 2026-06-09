@@ -1,14 +1,19 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProviderKey
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
 import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 
 @SingleIn(AppScope::class)
-@ContributesIntoSet(AppScope::class)
+@ContributesIntoMap(
+    scope = AppScope::class,
+    binding = binding<@AccountProviderKey(AccountProvider.TRAKT) AuthClientConfig>(),
+)
 public class TraktAuthClientConfig(
     traktConfig: TraktConfig,
 ) : AuthClientConfig {
