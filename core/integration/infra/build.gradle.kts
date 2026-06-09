@@ -92,6 +92,7 @@ kotlin {
             api(projects.data.traktauth.testing)
             api(projects.data.oauth.implementation)
             api(projects.data.oauth.testing)
+            api(projects.data.simklauth.implementation)
             api(projects.data.traktlists.implementation)
             api(projects.data.trendingshows.implementation)
             api(projects.data.upcomingshows.implementation)

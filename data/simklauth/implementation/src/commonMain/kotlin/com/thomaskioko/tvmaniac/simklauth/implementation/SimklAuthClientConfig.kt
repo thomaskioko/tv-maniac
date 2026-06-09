@@ -1,0 +1,23 @@
+package com.thomaskioko.tvmaniac.simklauth.implementation
+
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
+import com.thomaskioko.tvmaniac.appconfig.SimklConfig
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.SingleIn
+
+@SingleIn(AppScope::class)
+@ContributesIntoSet(AppScope::class)
+public class SimklAuthClientConfig(
+    simklConfig: SimklConfig,
+) : AuthClientConfig {
+
+    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val clientId: String = simklConfig.clientId
+    override val clientSecret: String = simklConfig.clientSecret
+    override val redirectUri: String = simklConfig.redirectUri
+    override val authorizationEndpoint: String = "https://simkl.com/oauth/authorize"
+    override val tokenEndpoint: String = "https://api.simkl.com/oauth/token"
+    override val scopes: List<String> = emptyList()
+}

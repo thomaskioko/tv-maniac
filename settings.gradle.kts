@@ -192,6 +192,7 @@ include(
     ":data:similar:api",
     ":data:similar:implementation",
     ":data:similar:testing",
+    ":data:simklauth:implementation",
     ":data:sync-activity:api",
     ":data:sync-activity:implementation",
     ":data:sync-activity:testing",

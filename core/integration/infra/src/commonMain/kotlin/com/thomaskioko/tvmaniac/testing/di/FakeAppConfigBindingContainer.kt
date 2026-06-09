@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.testing.di
 
+import com.thomaskioko.tvmaniac.appconfig.DefaultSimklConfig
 import com.thomaskioko.tvmaniac.appconfig.DefaultTmdbConfig
 import com.thomaskioko.tvmaniac.appconfig.DefaultTraktConfig
+import com.thomaskioko.tvmaniac.appconfig.SimklConfig
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbConfig
 import com.thomaskioko.tvmaniac.trakt.api.TraktConfig
 import dev.zacsweers.metro.AppScope
@@ -16,6 +18,7 @@ import dev.zacsweers.metro.SingleIn
     replaces = [
         DefaultTmdbConfig::class,
         DefaultTraktConfig::class,
+        DefaultSimklConfig::class,
     ],
 )
 public object FakeAppConfigBindingContainer {
@@ -31,6 +34,14 @@ public object FakeAppConfigBindingContainer {
     public fun provideTraktConfig(): TraktConfig = object : TraktConfig {
         override val clientId: String = "fake-trakt-client-id"
         override val clientSecret: String = "fake-trakt-client-secret"
+        override val redirectUri: String = "tvmaniac://auth"
+    }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideSimklConfig(): SimklConfig = object : SimklConfig {
+        override val clientId: String = "fake-simkl-client-id"
+        override val clientSecret: String = "fake-simkl-client-secret"
         override val redirectUri: String = "tvmaniac://auth"
     }
 }

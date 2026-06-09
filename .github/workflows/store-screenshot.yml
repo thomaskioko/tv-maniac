@@ -12,6 +12,9 @@ env:
   TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
   TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
   TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+  SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
+  SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+  SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
 
 jobs:
   store-screenshot-test:

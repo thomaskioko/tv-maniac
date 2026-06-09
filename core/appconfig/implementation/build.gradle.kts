@@ -31,4 +31,7 @@ buildConfig {
     buildConfigField("TRAKT_CLIENT_ID")
     buildConfigField("TRAKT_CLIENT_SECRET")
     buildConfigField("TRAKT_REDIRECT_URI")
+    buildConfigField("SIMKL_CLIENT_ID")
+    buildConfigField("SIMKL_CLIENT_SECRET")
+    buildConfigField("SIMKL_REDIRECT_URI")
 }
