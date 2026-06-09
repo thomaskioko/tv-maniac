@@ -88,10 +88,10 @@ kotlin {
             api(projects.data.syncActivity.implementation)
             api(projects.data.topratedshows.implementation)
             api(projects.data.trailers.implementation)
-            api(projects.data.traktauth.api)
             api(projects.data.traktauth.implementation)
             api(projects.data.traktauth.testing)
             api(projects.data.oauth.implementation)
+            api(projects.data.oauth.testing)
             api(projects.data.traktlists.implementation)
             api(projects.data.trendingshows.implementation)
             api(projects.data.upcomingshows.implementation)
@@ -154,6 +154,7 @@ kotlin {
             api(projects.core.imageloading.implementation)
             api(projects.core.notifications.api)
             api(projects.core.tasks.api)
+            api(projects.data.oauth.api)
 
             implementation(libs.kotlinx.serialization.json)
         }
