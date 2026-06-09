@@ -85,7 +85,6 @@ dependencies {
     implementation(projects.data.featuredshows.api)
     implementation(projects.data.featuredshows.implementation)
     implementation(projects.data.genre.implementation)
-    implementation(projects.data.traktauth.api)
     implementation(projects.data.traktauth.implementation)
     implementation(projects.data.oauth.implementation)
     implementation(projects.data.popularshows.api)
@@ -216,7 +215,7 @@ dependencies {
     implementation(libs.androidx.datastore.preference)
     implementation(libs.androidx.work.runtime)
     //noinspection LoginCredentials
-    implementation(libs.appauth)
+    runtimeOnly(libs.appauth)
 
     implementation(libs.decompose.decompose)
 
@@ -242,6 +241,8 @@ dependencies {
     testImplementation(projects.core.integration.infra)
     testImplementation(projects.core.integration.ui)
     testImplementation(projects.core.testTags)
+    testImplementation(projects.data.oauth.api)
+    testImplementation(projects.data.oauth.testing)
     testImplementation(projects.data.traktauth.testing)
     testImplementation(projects.features.genreShows.nav)
     testImplementation(projects.core.locale.testing)
@@ -271,7 +272,8 @@ dependencies {
     androidTestImplementation(projects.core.integration.infra)
     androidTestImplementation(projects.core.integration.ui)
     androidTestImplementation(projects.core.testTags)
-    androidTestImplementation(projects.data.traktauth.api)
+    androidTestImplementation(projects.data.oauth.api)
+    androidTestImplementation(projects.data.oauth.testing)
     androidTestImplementation(projects.data.traktauth.testing)
     androidTestImplementation(projects.core.locale.testing)
     androidTestImplementation(projects.core.util.testing)

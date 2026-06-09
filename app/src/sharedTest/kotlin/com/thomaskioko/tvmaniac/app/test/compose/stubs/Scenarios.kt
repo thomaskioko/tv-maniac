@@ -73,7 +73,7 @@ internal class Scenarios(
      * auth-state collector still observes real LOGGED_OUT to LOGGED_IN transition.
      */
     fun stubAuthenticatedSyncOnSignIn() {
-        graph.traktAuthManager.setOnLaunchWebView {
+        graph.oAuthLauncher.setOnLaunch {
             profile.stubProfileSyncEndpoints()
             library.stubLibrarySyncEndpoints()
             watchlist.stubWatchlistSyncEndpoints()
@@ -88,7 +88,7 @@ internal class Scenarios(
      * surface and does not exercise library or UpNext sync.
      */
     fun stubProfileOnSignIn() {
-        graph.traktAuthManager.setOnLaunchWebView {
+        graph.oAuthLauncher.setOnLaunch {
             profile.stubProfileSyncEndpoints()
             library.stubLibrarySyncEndpoints()
             auth.stubLoggedInUser()

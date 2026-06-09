@@ -11,12 +11,6 @@ kotlin {
     sourceSets {
         androidMain {
             dependencies {
-                api(libs.androidx.activity)
-                api(libs.appauth)
-                api(libs.coroutines.core)
-                api(projects.data.traktauth.api)
-                implementation(libs.androidx.core.ktx)
-                implementation(libs.androidx.lifecycle.common)
                 implementation(projects.core.networkUtil.api)
             }
         }
@@ -29,7 +23,6 @@ kotlin {
                 api(projects.core.tasks.api)
                 api(projects.data.accountManager.api)
                 api(projects.data.oauth.api)
-                api(projects.data.traktauth.api)
             }
         }
 

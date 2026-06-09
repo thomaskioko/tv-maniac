@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.core.logger.IosCrashReporter
 import com.thomaskioko.tvmaniac.core.logger.IosCrashReporterBindingContainer
 import com.thomaskioko.tvmaniac.core.notifications.implementation.IosNotificationManager
 import com.thomaskioko.tvmaniac.core.tasks.implementation.IosTaskScheduler
+import com.thomaskioko.tvmaniac.oauth.implementation.IosOAuthLauncher
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformBindingContainer
-import com.thomaskioko.tvmaniac.traktauth.implementation.DefaultIOSTraktAuthManager
 import com.thomaskioko.tvmaniac.util.IosAppUtils
 import com.thomaskioko.tvmaniac.util.IosFormatterUtil
 import dev.zacsweers.metro.AppScope
@@ -23,7 +23,7 @@ import dev.zacsweers.metro.ContributesTo
         TraktPlatformBindingContainer::class,
         IosFormatterUtil::class,
         IosAppUtils::class,
-        DefaultIOSTraktAuthManager::class,
+        IosOAuthLauncher::class,
         IosNotificationManager::class,
         IosCrashReporter::class,
         IosCrashReporterBindingContainer::class,

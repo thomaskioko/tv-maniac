@@ -4,8 +4,8 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.destroy
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.oauth.testing.FakeOAuthLauncher
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlin.test.Test
@@ -13,8 +13,8 @@ import kotlin.test.Test
 internal class TestJvmGraphTest {
 
     @Test
-    fun `should provide fake TraktAuthManager`() = runTestWithGraph { graph ->
-        graph.traktAuthManager.shouldBeInstanceOf<FakeTraktAuthManager>()
+    fun `should provide fake OAuthLauncher`() = runTestWithGraph { graph ->
+        graph.oAuthLauncher.shouldBeInstanceOf<FakeOAuthLauncher>()
     }
 
     @Test

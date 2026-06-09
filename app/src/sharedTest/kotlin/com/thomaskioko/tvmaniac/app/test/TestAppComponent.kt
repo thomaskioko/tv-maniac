@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
-import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthManager
+import com.thomaskioko.tvmaniac.oauth.testing.FakeOAuthLauncher
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
@@ -15,7 +15,7 @@ import dev.zacsweers.metro.Provides
 interface TestAppComponent {
 
     val traktAuthRepository: FakeTraktAuthRepository
-    val traktAuthManager: FakeTraktAuthManager
+    val oAuthLauncher: FakeOAuthLauncher
 
     @AppPreferencesDataStore
     val dataStore: DataStore<Preferences>
