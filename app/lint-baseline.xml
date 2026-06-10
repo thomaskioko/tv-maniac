@@ -1510,17 +1510,6 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.settings_title_trakt` appears to be unused"
-        errorLine1=" &lt;string name=&quot;settings_title_trakt&quot;>Trakt Account&lt;/string>"
-        errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="../i18n/generator/build/generated/moko-resources/androidMain/res/values/multiplatform_strings.xml"
-            line="132"
-            column="10"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
         message="The resource `R.string.settings_title_connect_trakt` appears to be unused"
         errorLine1=" &lt;string name=&quot;settings_title_connect_trakt&quot;>Connect to Trakt&lt;/string>"
         errorLine2="         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
