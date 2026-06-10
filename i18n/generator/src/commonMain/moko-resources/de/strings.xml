@@ -67,7 +67,6 @@
     <string name="label_settings_privacy_description">Absturzberichte und Datenschutz</string>
     <string name="label_settings_info_description">App-Version und Quellcode</string>
     <string name="label_settings_licenses_description">Datenquellen und Danksagungen</string>
-    <string name="label_settings_trakt_description">Trakt-Verbindung verwalten</string>
     <string name="label_settings_account_description">Verbundenes Konto verwalten</string>
     <string name="label_settings_trakt_authentication">Verbinden &amp; Inhalte synchronisieren</string>
     <string name="label_settings_connect_title">Verbinden</string>
@@ -254,7 +253,6 @@
     </string>
 
     <string name="settings_title_ui">Benutzeroberfläche</string>
-    <string name="settings_title_trakt">Trakt-Konto</string>
     <string name="settings_title_account">Konto</string>
     <string name="settings_title_connect_trakt">Mit Trakt verbinden</string>
     <string name="settings_title_disconnect_trakt">Von Trakt %s abmelden</string>
@@ -300,7 +298,6 @@
     <string name="profile_feature_share_title">Teilen</string>
     <string name="profile_feature_share_description">Kommentieren, antworten und bewerten Sie TV-Sendungen, Filme, Staffeln und Episoden</string>
     <string name="profile_footer_description">Melde dich bei deinem Konto an, um zu verfolgen, zu entdecken und mit der Community zu teilen.</string>
-    <string name="profile_sign_in_button">Bei Trakt anmelden</string>
 
     <string name="label_settings_include_specials">Spezialstaffeln</string>
     <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>

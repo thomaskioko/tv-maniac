@@ -29,7 +29,6 @@ public data class ProfileLabels(
     val retry: String = "",
     val unauthenticatedTitle: String = "",
     val footerDescription: String = "",
-    val signInButton: String = "",
     val featureDiscoverTitle: String = "",
     val featureDiscoverDescription: String = "",
     val featureTrackTitle: String = "",

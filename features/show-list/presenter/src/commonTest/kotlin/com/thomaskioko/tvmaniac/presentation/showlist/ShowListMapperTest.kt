@@ -69,6 +69,5 @@ internal class ShowListMapperTest {
         copy.listsHeaderText.shouldNotBeEmpty()
         copy.loginRequiredTitle.shouldNotBeEmpty()
         copy.loginRequiredMessage.shouldNotBeEmpty()
-        copy.loginRequiredConfirmText.shouldNotBeEmpty()
     }
 }

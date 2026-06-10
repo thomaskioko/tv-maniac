@@ -42,7 +42,6 @@ public class ShowListMapper(
         listsHeaderText = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
         loginRequiredTitle = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredTitle),
         loginRequiredMessage = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredMessage),
-        loginRequiredConfirmText = localizer.getString(StringResourceKey.LabelOk),
     )
 
     public fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =

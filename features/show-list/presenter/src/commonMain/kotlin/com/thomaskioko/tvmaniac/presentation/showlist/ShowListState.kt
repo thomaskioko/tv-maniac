@@ -28,5 +28,4 @@ public data class ShowListCopy(
     val listsHeaderText: String = "",
     val loginRequiredTitle: String = "",
     val loginRequiredMessage: String = "",
-    val loginRequiredConfirmText: String = "",
 )

@@ -66,7 +66,6 @@
     <string name="label_settings_privacy_description">Rapports de plantage et confidentialité</string>
     <string name="label_settings_info_description">Version de l\'app et code source</string>
     <string name="label_settings_licenses_description">Sources de données et remerciements</string>
-    <string name="label_settings_trakt_description">Gérer votre connexion Trakt</string>
     <string name="label_settings_account_description">Gérer votre compte connecté</string>
     <string name="label_settings_trakt_authentication">Connectez et synchronisez votre contenu</string>
     <string name="label_settings_connect_title">Connexion</string>
@@ -251,7 +250,6 @@
     <string name="settings_trakt_detail_description">Connectez-vous à Trakt pour synchroniser votre historique de visionnage, votre liste de suivi et votre progression des épisodes sur tous vos appareils.</string>
 
     <string name="settings_title_ui">Interface utilisateur</string>
-    <string name="settings_title_trakt">Compte Trakt</string>
     <string name="settings_title_account">Compte</string>
     <string name="settings_title_connect_trakt">Se connecter à Trakt</string>
     <string name="settings_title_disconnect_trakt">Se déconnecter de Trakt %s</string>
@@ -297,7 +295,6 @@
     <string name="profile_feature_share_title">Partager</string>
     <string name="profile_feature_share_description">Commentez, répondez et évaluez les émissions de télévision, les films, les saisons et les épisodes</string>
     <string name="profile_footer_description">Connectez-vous à votre compte pour suivre, découvrir et partager avec la communauté.</string>
-    <string name="profile_sign_in_button">Se connecter à Trakt</string>
 
     <string name="label_settings_include_specials">Saisons Spéciales</string>
     <string name="label_settings_include_specials_description">Afficher les Specials et saisons bonus</string>

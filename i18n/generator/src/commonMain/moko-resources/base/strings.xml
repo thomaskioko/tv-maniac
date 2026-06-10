@@ -70,7 +70,6 @@
     <string name="label_settings_privacy_description">Crash reporting and privacy policy</string>
     <string name="label_settings_info_description">App version and source code</string>
     <string name="label_settings_licenses_description">Data sources and acknowledgements</string>
-    <string name="label_settings_trakt_description">Manage your Trakt connection</string>
     <string name="label_settings_account_description">Manage your connected account</string>
     <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
     <string name="label_settings_connect_title">Connect</string>
@@ -286,7 +285,6 @@
     <string name="settings_trakt_detail_description">Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.</string>
 
     <string name="settings_title_ui">User Interface</string>
-    <string name="settings_title_trakt">Trakt Account</string>
     <string name="settings_title_account">Account</string>
     <string name="settings_title_connect_trakt">Connect to Trakt</string>
     <string name="settings_title_disconnect_trakt">Logout of Trakt %s</string>
@@ -332,7 +330,6 @@
     <string name="profile_feature_share_title">Share</string>
     <string name="profile_feature_share_description">Comment, reply and rate TV shows, movies, seasons and episodes.</string>
     <string name="profile_footer_description">Sign in to your account to track, discover, and share with the community.</string>
-    <string name="profile_sign_in_button">Sign In to Trakt</string>
 
     <string name="label_up_to_date">All caught up</string>
 

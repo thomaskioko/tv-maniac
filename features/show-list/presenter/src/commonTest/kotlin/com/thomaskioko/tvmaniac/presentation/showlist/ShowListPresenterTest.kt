@@ -71,7 +71,6 @@ internal class ShowListPresenterTest {
         initial.labels.sheetTitle.isNotEmpty() shouldBe true
         initial.labels.loginRequiredTitle.isNotEmpty() shouldBe true
         initial.labels.loginRequiredMessage.isNotEmpty() shouldBe true
-        initial.labels.loginRequiredConfirmText.isNotEmpty() shouldBe true
         initial.labels.emptyListText.isNotEmpty() shouldBe true
         initial.labels.listsHeaderText.isNotEmpty() shouldBe true
         initial.labels.createListButtonText.isNotEmpty() shouldBe true

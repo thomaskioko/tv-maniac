@@ -273,7 +273,6 @@ public class ProfilePresenter(
         retry = localizer.getString(StringResourceKey.GenericRetry),
         unauthenticatedTitle = localizer.getString(StringResourceKey.ProfileUnauthenticatedTitle),
         footerDescription = localizer.getString(StringResourceKey.ProfileFooterDescription),
-        signInButton = localizer.getString(StringResourceKey.ProfileSignInButton),
         featureDiscoverTitle = localizer.getString(StringResourceKey.ProfileFeatureDiscoverTitle),
         featureDiscoverDescription = localizer.getString(StringResourceKey.ProfileFeatureDiscoverDescription),
         featureTrackTitle = localizer.getString(StringResourceKey.ProfileFeatureTrackTitle),
