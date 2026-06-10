@@ -31,6 +31,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.android.designsystem.R
 import com.thomaskioko.tvmaniac.compose.components.ProviderButton
+import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
@@ -93,9 +94,10 @@ internal fun UnauthenticatedContent(
             )
         }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxWidth(),
+        ProviderSignInCard(
+            title = labels.authTitle,
+            description = labels.authDescription,
+            showBackground = false,
         ) {
             authProviders.forEach { option ->
                 ProviderButton(
@@ -110,13 +112,6 @@ internal fun UnauthenticatedContent(
                 )
             }
         }
-
-        Text(
-            text = labels.footerDescription,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            lineHeight = MaterialTheme.typography.bodySmall.fontSize.times(1.5f),
-        )
     }
 }
 

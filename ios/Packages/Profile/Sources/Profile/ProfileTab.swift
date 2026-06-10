@@ -86,7 +86,8 @@ private extension ProfileState {
             favoritesTitle: labels.favoritesTitle,
             favorites: favorites.toSwiftShowSectionState(),
             unauthenticatedTitle: labels.unauthenticatedTitle,
-            footerDescription: labels.footerDescription,
+            authTitle: labels.authTitle,
+            authDescription: labels.authDescription,
             isAuthenticated: authenticated,
             featureItems: [
                 SwiftFeatureItem(

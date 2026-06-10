@@ -33,7 +33,8 @@ public struct ProfileScreen: View {
         public let favoritesTitle: String
         public let favorites: SwiftSectionState<SwiftProfileShow>
         public let unauthenticatedTitle: String
-        public let footerDescription: String
+        public let authTitle: String
+        public let authDescription: String
         public let isAuthenticated: Bool
         public let featureItems: [SwiftFeatureItem]
         public let authProviders: [SwiftAuthProvider]
@@ -67,7 +68,8 @@ public struct ProfileScreen: View {
             favoritesTitle: String = "",
             favorites: SwiftSectionState<SwiftProfileShow> = .empty,
             unauthenticatedTitle: String,
-            footerDescription: String,
+            authTitle: String,
+            authDescription: String,
             isAuthenticated: Bool,
             featureItems: [SwiftFeatureItem],
             authProviders: [SwiftAuthProvider] = []
@@ -100,7 +102,8 @@ public struct ProfileScreen: View {
             self.favoritesTitle = favoritesTitle
             self.favorites = favorites
             self.unauthenticatedTitle = unauthenticatedTitle
-            self.footerDescription = footerDescription
+            self.authTitle = authTitle
+            self.authDescription = authDescription
             self.isAuthenticated = isAuthenticated
             self.featureItems = featureItems
             self.authProviders = authProviders
@@ -547,20 +550,14 @@ public struct ProfileScreen: View {
                     }
                     .padding(.horizontal, appTheme.spacing.large)
 
-                    VStack(spacing: appTheme.spacing.medium) {
-                        ForEach(state.authProviders) { provider in
-                            ProviderButton(title: provider.label, logo: provider.logoName) {
-                                onProviderSelected(provider.id)
-                            }
-                            .padding(.horizontal, appTheme.spacing.large)
-                        }
-
-                        Text(state.footerDescription)
-                            .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundStyle(.appOnSurface)
-                            .lineSpacing(appTheme.spacing.xxSmall)
-                            .padding(.horizontal, appTheme.spacing.large)
-                    }
+                    ProviderSignInCard(
+                        title: state.authTitle,
+                        description: state.authDescription,
+                        providers: state.authProviders,
+                        showBackground: false,
+                        onProviderSelected: onProviderSelected
+                    )
+                    .padding(.horizontal, appTheme.spacing.large)
                     .padding(.bottom, appTheme.spacing.medium)
                 }
                 .frame(minHeight: proxy.size.height, alignment: .top)

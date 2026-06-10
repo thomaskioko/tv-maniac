@@ -26,10 +26,10 @@ public struct ProviderButton: View {
                     .textStyle(theme.typography.labelLarge)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, theme.spacing.medium)
+            .padding(.vertical, theme.spacing.xSmall)
             .foregroundStyle(.appOnSurface)
             .overlay(
-                Capsule().stroke(theme.colors.onSurface.opacity(0.4), lineWidth: 2)
+                Capsule().strokeBorder(theme.colors.onSurface.opacity(0.4), lineWidth: 2)
             )
             .contentShape(Capsule())
         }

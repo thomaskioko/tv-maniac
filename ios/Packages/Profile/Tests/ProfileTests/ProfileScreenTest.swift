@@ -51,7 +51,8 @@ class ProfileScreenTest: SnapshotTestCase {
                 listsLabel: "Lists",
                 listsViewLabel: "View",
                 unauthenticatedTitle: "Track your shows",
-                footerDescription: "Sign in to sync your data.",
+                authTitle: "Connect & Sync Your Content",
+                authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
                 isAuthenticated: false,
                 featureItems: sampleFeatureItems
             ),
@@ -79,7 +80,8 @@ class ProfileScreenTest: SnapshotTestCase {
                 listsLabel: "Lists",
                 listsViewLabel: "View",
                 unauthenticatedTitle: "Track your shows",
-                footerDescription: "Sign in to sync your data across devices.",
+                authTitle: "Connect & Sync Your Content",
+                authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
                 isAuthenticated: false,
                 featureItems: sampleFeatureItems,
                 authProviders: [
@@ -168,7 +170,8 @@ class ProfileScreenTest: SnapshotTestCase {
             favoritesTitle: "Favorites",
             favorites: .content(sampleShows),
             unauthenticatedTitle: "Track your shows",
-            footerDescription: "Sign in to sync your data.",
+            authTitle: "Connect & Sync Your Content",
+            authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
             isAuthenticated: true,
             featureItems: sampleFeatureItems
         )
