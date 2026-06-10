@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
@@ -31,6 +33,8 @@ import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -82,6 +86,7 @@ public class ProfilePresenter(
     private val navigator: Navigator,
     private val localizer: Localizer,
     private val authManagers: Map<AccountProvider, AuthManager>,
+    @SimklLoginFlagQualifier private val simklLoginFlag: FeatureFlag<Boolean>,
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -158,7 +163,8 @@ public class ProfilePresenter(
         profileLoadingState.observable,
         uiMessageManager.message,
         sectionsFlow,
-    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections ->
+        simklLoginFlag.observe(),
+    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
         val profile = userProfile?.toPresentation()
         val displayName = profile?.fullName ?: profile?.username ?: ""
@@ -169,6 +175,7 @@ public class ProfilePresenter(
             errorMessage = errorMessage,
             authenticated = isConnected,
             activeProvider = activeProvider,
+            authProviders = authProviderOptions(simklEnabled),
             userLists = sections.userLists,
             inProgress = sections.inProgress,
             completed = sections.completed,
@@ -283,6 +290,17 @@ public class ProfilePresenter(
         val mapped = transform(items)
         if (mapped.isEmpty()) SectionState.Empty else SectionState.Content(mapped)
     }.catch { emit(SectionState.Error(UiMessage(errorToStringMapper.mapError(it)))) }
+
+    private fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
+        buildList {
+            add(providerOption(AccountProvider.TRAKT))
+            if (simklEnabled) add(providerOption(AccountProvider.SIMKL))
+        }.toImmutableList()
+
+    private fun providerOption(provider: AccountProvider): AuthProviderOption = AuthProviderOption(
+        provider = provider,
+        label = localizer.getString(StringResourceKey.LabelAuthContinueWith, provider.displayName),
+    )
 
     private companion object {
         private const val PREVIEW_LIMIT = 20

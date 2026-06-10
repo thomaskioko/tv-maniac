@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.showlist
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.presentation.showlist.model.TraktListModel
 import kotlinx.collections.immutable.ImmutableList
@@ -14,6 +15,7 @@ public data class ShowListState(
     val createListName: String = "",
     val createListError: String? = null,
     val labels: ShowListCopy = ShowListCopy(),
+    val authProviders: ImmutableList<AuthProviderOption> = persistentListOf(),
     val message: UiMessage? = null,
 )
 

@@ -30,6 +30,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
 import com.thomaskioko.tvmaniac.favorites.testing.FakeFavoritesRepository
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -74,6 +75,7 @@ internal class ProfilePresenterTest {
     private val accountManager = FakeAccountManager()
     private val authManager = FakeAuthManager()
     private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
+    private val simklFlag = FakeFeatureFlag(initial = false)
     private val traktListRepository = FakeTraktListRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val episodeRepository = FakeEpisodeRepository()
@@ -451,6 +453,25 @@ internal class ProfilePresenterTest {
         traktLaunches shouldBe 0
     }
 
+    @Test
+    fun `should expose only the trakt option given the simkl flag is off`() = runTest {
+        presenter.state.test {
+            runCurrent()
+            expectMostRecentItem().authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT)
+        }
+    }
+
+    @Test
+    fun `should expose both provider options given the simkl flag is on`() = runTest {
+        simklFlag.value = true
+
+        presenter.state.test {
+            runCurrent()
+            expectMostRecentItem().authProviders.map { it.provider } shouldBe
+                listOf(AccountProvider.TRAKT, AccountProvider.SIMKL)
+        }
+    }
+
     private fun createExpectedProfileInfo(profile: UserProfile): ProfileInfo {
         return ProfileInfo(
             slug = profile.slug,
@@ -549,6 +570,7 @@ internal class ProfilePresenterTest {
                 AccountProvider.TRAKT to authManager,
                 AccountProvider.SIMKL to simklAuthManager,
             ),
+            simklLoginFlag = simklFlag,
             accountManager = accountManager,
             updateUserProfileData = updateUserProfileData,
             errorToStringMapper = { it.message ?: "Test error" },
