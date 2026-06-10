@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.profile.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
@@ -58,6 +60,10 @@ internal val unauthenticatedState = ProfileState(
     errorMessage = null,
     authenticated = false,
     labels = sampleProfileLabels,
+    authProviders = persistentListOf(
+        AuthProviderOption(provider = AccountProvider.TRAKT, label = "Continue with Trakt"),
+        AuthProviderOption(provider = AccountProvider.SIMKL, label = "Continue with Simkl"),
+    ),
 )
 
 internal val authenticatedState = ProfileState(
@@ -87,7 +93,12 @@ internal val authenticatedState = ProfileState(
                 name = "Watchlist",
                 itemCount = 24,
                 itemCountLabel = "24 shows",
-                posterUrls = persistentListOf("/poster1.jpg", "/poster2.jpg", "/poster3.jpg", "/poster4.jpg"),
+                posterUrls = persistentListOf(
+                    "/poster1.jpg",
+                    "/poster2.jpg",
+                    "/poster3.jpg",
+                    "/poster4.jpg",
+                ),
             ),
             ProfileListItem(
                 id = 2,
@@ -102,9 +113,27 @@ internal val authenticatedState = ProfileState(
     completed = SectionState.Content(sampleShows),
     recentlyWatched = SectionState.Content(
         persistentListOf(
-            ProfileRecentItem(showId = 1, tmdbId = 1396, title = "Breaking Bad", posterUrl = null, episodeLabel = "S5E14"),
-            ProfileRecentItem(showId = 2, tmdbId = 1399, title = "Game of Thrones", posterUrl = null, episodeLabel = "S8E3"),
-            ProfileRecentItem(showId = 3, tmdbId = 1394, title = "Stranger Things", posterUrl = null, episodeLabel = "S1E3"),
+            ProfileRecentItem(
+                showId = 1,
+                tmdbId = 1396,
+                title = "Breaking Bad",
+                posterUrl = null,
+                episodeLabel = "S5E14",
+            ),
+            ProfileRecentItem(
+                showId = 2,
+                tmdbId = 1399,
+                title = "Game of Thrones",
+                posterUrl = null,
+                episodeLabel = "S8E3",
+            ),
+            ProfileRecentItem(
+                showId = 3,
+                tmdbId = 1394,
+                title = "Stranger Things",
+                posterUrl = null,
+                episodeLabel = "S1E3",
+            ),
         ),
     ),
     library = SectionState.Content(sampleShows),

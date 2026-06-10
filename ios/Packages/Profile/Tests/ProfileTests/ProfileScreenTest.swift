@@ -81,7 +81,11 @@ class ProfileScreenTest: SnapshotTestCase {
                 unauthenticatedTitle: "Track your shows",
                 footerDescription: "Sign in to sync your data across devices.",
                 isAuthenticated: false,
-                featureItems: sampleFeatureItems
+                featureItems: sampleFeatureItems,
+                authProviders: [
+                    SwiftAuthProvider(id: "TRAKT", label: "Continue with Trakt", logoName: "TraktMono"),
+                    SwiftAuthProvider(id: "SIMKL", label: "Continue with Simkl", logoName: "SimklMono"),
+                ]
             ),
             onSettingsClicked: {},
             onProviderSelected: { _ in }

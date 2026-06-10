@@ -212,19 +212,28 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
     }
 
-    private var accountContent: SettingsAccountContent {
+    private func accountContent(authenticated: Bool) -> SettingsAccountContent {
         SettingsAccountContent(
             title: "Trakt",
             description: "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
             authenticationLabel: "Connect & Sync Your Content",
-            connectedTitle: "Connected",
-            connectedDescription: "Your watch history, watchlist, and episode progress sync with Trakt.",
-            isAuthenticated: true,
+            connectTitle: "Connect",
+            syncDescription: "Save your progress, discover new titles, and sync your content across all devices.",
+            connectedTitle: authenticated ? "Connected" : "Connect to Trakt",
+            connectedDescription: authenticated
+                ? "Your watch history, watchlist, and episode progress sync with Trakt."
+                : "Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.",
+            isAuthenticated: authenticated,
             isProcessingAuth: false,
             logoutLabel: "Logout",
             loginLabel: "Login",
+            providerName: "Trakt",
+            authProviders: [
+                SwiftAuthProvider(id: "TRAKT", label: "Continue with Trakt", logoName: "TraktMono"),
+                SwiftAuthProvider(id: "SIMKL", label: "Continue with Simkl", logoName: "SimklMono"),
+            ],
             onLogout: {},
-            onLogin: {}
+            onProviderSelected: { _ in }
         )
     }
 
@@ -271,7 +280,7 @@ class SettingsScreenTest: SnapshotTestCase {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            accountContent: accountContent
+            accountContent: accountContent(authenticated: authenticated)
         )
     }
 
@@ -333,5 +342,11 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .account, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Trakt")
+    }
+
+    func test_SettingsScreen_TraktLoggedOut() {
+        SettingsScreen(state: makeState(page: .account, authenticated: false), onBack: {})
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_TraktLoggedOut")
     }
 }
