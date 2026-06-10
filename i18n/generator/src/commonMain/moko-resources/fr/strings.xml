@@ -294,7 +294,6 @@
     <string name="profile_feature_manage_description">Créez des listes personnalisées, personnalisez-les comme vous le souhaitez.</string>
     <string name="profile_feature_share_title">Partager</string>
     <string name="profile_feature_share_description">Commentez, répondez et évaluez les émissions de télévision, les films, les saisons et les épisodes</string>
-    <string name="profile_footer_description">Connectez-vous à votre compte pour suivre, découvrir et partager avec la communauté.</string>
 
     <string name="label_settings_include_specials">Saisons Spéciales</string>
     <string name="label_settings_include_specials_description">Afficher les Specials et saisons bonus</string>

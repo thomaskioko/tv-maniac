@@ -297,7 +297,6 @@
     <string name="profile_feature_manage_description">Erstellen Sie benutzerdefinierte Listen, personalisieren Sie sie ganz nach Ihren Wünschen.</string>
     <string name="profile_feature_share_title">Teilen</string>
     <string name="profile_feature_share_description">Kommentieren, antworten und bewerten Sie TV-Sendungen, Filme, Staffeln und Episoden</string>
-    <string name="profile_footer_description">Melde dich bei deinem Konto an, um zu verfolgen, zu entdecken und mit der Community zu teilen.</string>
 
     <string name="label_settings_include_specials">Spezialstaffeln</string>
     <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>
