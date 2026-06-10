@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -78,6 +79,7 @@ import com.thomaskioko.tvmaniac.profile.ui.components.UnauthenticatedContent
 import com.thomaskioko.tvmaniac.profile.ui.components.UserListsSection
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 import io.github.thomaskioko.codegen.annotations.TabUi
+import kotlinx.collections.immutable.ImmutableList
 
 @TabUi(presenter = ProfilePresenter::class, parentScope = ActivityScope::class)
 @Composable
@@ -113,6 +115,7 @@ internal fun ProfileScreen(
                 ProfileContent(
                     showLoading = state.showLoading,
                     userProfile = state.userProfile,
+                    authenticated = state.authenticated,
                     labels = state.labels,
                     listCount = listCount,
                     userLists = state.userLists,
@@ -120,7 +123,8 @@ internal fun ProfileScreen(
                     completed = state.completed,
                     recentlyWatched = state.recentlyWatched,
                     favorites = state.favorites,
-                    onLoginClicked = { onAction(LoginClicked(AccountProvider.TRAKT)) },
+                    authProviders = state.authProviders,
+                    onProviderClick = { onAction(LoginClicked(it)) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
                     onListClick = {},
                     onShowClick = { onAction(ProfileAction.ShowClicked(it)) },
@@ -187,6 +191,7 @@ internal fun ProfileScreen(
 private fun ProfileContent(
     showLoading: Boolean,
     userProfile: ProfileInfo?,
+    authenticated: Boolean,
     labels: ProfileLabels,
     listCount: Int,
     userLists: SectionState<ProfileListItem>,
@@ -194,7 +199,8 @@ private fun ProfileContent(
     completed: SectionState<ProfileShowItem>,
     recentlyWatched: SectionState<ProfileRecentItem>,
     favorites: SectionState<ProfileShowItem>,
-    onLoginClicked: () -> Unit,
+    authProviders: ImmutableList<AuthProviderOption>,
+    onProviderClick: (AccountProvider) -> Unit,
     onViewLists: () -> Unit,
     onListClick: (Long) -> Unit,
     onShowClick: (Long) -> Unit,
@@ -208,6 +214,16 @@ private fun ProfileContent(
     when {
         showLoading -> {
             ProfileLoadingSkeleton(
+                contentPadding = contentPadding,
+                modifier = modifier,
+            )
+        }
+
+        !authenticated -> {
+            UnauthenticatedContent(
+                labels = labels,
+                authProviders = authProviders,
+                onProviderClick = onProviderClick,
                 contentPadding = contentPadding,
                 modifier = modifier,
             )
@@ -322,11 +338,9 @@ private fun ProfileContent(
         }
 
         else -> {
-            UnauthenticatedContent(
-                labels = labels,
-                onLoginClicked = onLoginClicked,
-                modifier = modifier,
+            ProfileLoadingSkeleton(
                 contentPadding = contentPadding,
+                modifier = modifier,
             )
         }
     }

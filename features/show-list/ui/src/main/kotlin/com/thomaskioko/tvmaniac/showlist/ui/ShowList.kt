@@ -43,7 +43,7 @@ public fun ShowList(
     ModalBottomSheet(
         onDismissRequest = { presenter.dispatch(ShowListAction.Dismiss) },
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.background,
         dragHandle = {
             ShowListSheetTopBar(
                 state = state,

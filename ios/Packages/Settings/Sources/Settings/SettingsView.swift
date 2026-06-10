@@ -1,5 +1,6 @@
 import Components
 import DesignSystem
+import Models
 import SwiftUI
 import TvManiac
 import TvManiacKit
@@ -298,15 +299,32 @@ public struct SettingsView: View {
             title: uiState.labels.traktTitle,
             description: uiState.labels.traktDescription,
             authenticationLabel: uiState.labels.traktAuthentication,
+            connectTitle: uiState.labels.connectTitle,
+            syncDescription: uiState.labels.accountSyncDescription,
             connectedTitle: uiState.labels.traktConnected,
-            connectedDescription: uiState.labels.traktConnectedDescription,
+            connectedDescription: uiState.accountConnectedDescription ?? uiState.labels.traktConnectedDescription,
             isAuthenticated: uiState.isAuthenticated,
             isProcessingAuth: uiState.isProcessingAuth,
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
+            providerName: providerDisplayName(uiState.activeProvider),
+            providerLogoName: uiState.activeProvider?.name == "SIMKL" ? "SimklMono" : "TraktMono",
+            authProviders: uiState.authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
+                SwiftAuthProvider(
+                    id: option.provider.name,
+                    label: option.label,
+                    logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+                )
+            },
             onLogout: { showingLogoutAlert = true },
-            onLogin: { presenter.dispatch(action: AccountLoginClicked(provider: .trakt)) }
+            onProviderSelected: { id in
+                presenter.dispatch(action: AccountLoginClicked(provider: id == "SIMKL" ? .simkl : .trakt))
+            }
         )
+    }
+
+    private func providerDisplayName(_ provider: AccountProvider?) -> String {
+        provider?.name == "SIMKL" ? "Simkl" : "Trakt"
     }
 
     // MARK: - Notification Handling

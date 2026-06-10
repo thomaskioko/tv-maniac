@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.showlist.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListCopy
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListState
 import com.thomaskioko.tvmaniac.presentation.showlist.model.TraktListModel
@@ -14,13 +16,16 @@ private val previewCopy = ShowListCopy(
     emptyListText = "You don't have any lists yet.",
     listsHeaderText = "Your Lists",
     loginRequiredTitle = "Login Required",
-    loginRequiredMessage = "Please log in with Trakt to manage your lists.",
-    loginRequiredConfirmText = "OK",
+    loginRequiredMessage = "Please log in to manage your lists.",
 )
 
 internal val loggedOutState = ShowListState(
     isLoggedIn = false,
     labels = previewCopy,
+    authProviders = persistentListOf(
+        AuthProviderOption(AccountProvider.TRAKT, "Continue with Trakt"),
+        AuthProviderOption(AccountProvider.SIMKL, "Continue with Simkl"),
+    ),
 )
 
 internal val loggedInLoading = ShowListState(

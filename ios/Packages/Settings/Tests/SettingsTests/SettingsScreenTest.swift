@@ -216,7 +216,7 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsAccountContent(
             title: "Trakt",
             description: "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
-            authenticationLabel: "Authentication",
+            authenticationLabel: "Connect & Sync Your Content",
             connectedTitle: "Connected",
             connectedDescription: "Your watch history, watchlist, and episode progress sync with Trakt.",
             isAuthenticated: true,

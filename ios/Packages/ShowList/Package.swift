@@ -17,6 +17,7 @@ let package = Package(
     dependencies: [
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(name: "Components", path: "../Components"),
+        .package(name: "Models", path: "../Models"),
         .package(name: "TvManiacKit", path: "../TvManiacKit"),
     ],
     targets: [
@@ -25,6 +26,7 @@ let package = Package(
             dependencies: [
                 "DesignSystem",
                 "Components",
+                "Models",
                 "TvManiacKit",
             ]
         ),

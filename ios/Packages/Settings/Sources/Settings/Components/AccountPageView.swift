@@ -1,4 +1,6 @@
+import Components
 import DesignSystem
+import Models
 import SwiftUI
 
 struct AccountPageView: View {
@@ -10,60 +12,72 @@ struct AccountPageView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-            SettingsCard {
+        VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
+            SettingsSectionLabel(content.isAuthenticated ? content.authenticationLabel : content.connectTitle)
+
+            if content.isAuthenticated {
+                connectedCard
+            } else {
+                providerList
+            }
+        }
+    }
+
+    private var connectedCard: some View {
+        SettingsCard {
+            VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
                 HStack(spacing: appTheme.spacing.medium) {
-                    Image("TraktLogo", bundle: .module)
+                    Image(content.providerLogoName, bundle: .designSystem)
+                        .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 48, height: 48)
+                        .frame(width: 28, height: 28)
+                        .foregroundColor(appTheme.colors.onSurface)
                     VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
-                        Text(content.title)
+                        Text(content.providerName)
                             .textStyle(appTheme.typography.titleMedium)
                             .foregroundColor(appTheme.colors.onSurface)
-                        Text(content.description)
+                        Text(content.connectedTitle)
+                            .textStyle(appTheme.typography.bodyMedium)
+                            .foregroundColor(appTheme.colors.onSurfaceVariant)
+                        Text(content.connectedDescription)
                             .textStyle(appTheme.typography.bodyMedium)
                             .foregroundColor(appTheme.colors.onSurfaceVariant)
                     }
                     Spacer(minLength: 0)
                 }
-                .padding(appTheme.spacing.medium)
-            }
 
-            VStack(alignment: .leading, spacing: appTheme.spacing.small) {
-                SettingsSectionLabel(content.authenticationLabel)
-                SettingsCard {
-                    VStack(alignment: .leading, spacing: appTheme.spacing.small) {
-                        Text(content.connectedTitle)
-                            .textStyle(appTheme.typography.bodyLarge)
-                            .foregroundColor(appTheme.colors.onSurface)
-                        Text(content.connectedDescription)
-                            .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundColor(appTheme.colors.onSurfaceVariant)
-                        Button(action: content.isAuthenticated ? content.onLogout : content.onLogin) {
-                            Group {
-                                if content.isProcessingAuth {
-                                    ProgressView()
-                                        .progressViewStyle(.circular)
-                                        .tint(appTheme.colors.onSecondary)
-                                } else {
-                                    Text(content.isAuthenticated ? content.logoutLabel : content.loginLabel)
-                                        .textStyle(appTheme.typography.labelLarge)
-                                        .foregroundColor(appTheme.colors.onSecondary)
-                                }
-                            }
-                            .padding(.horizontal, appTheme.spacing.large)
-                            .padding(.vertical, appTheme.spacing.small)
-                            .background(appTheme.colors.secondary)
-                            .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
+                Button(action: content.onLogout) {
+                    Group {
+                        if content.isProcessingAuth {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .tint(appTheme.colors.onSecondary)
+                        } else {
+                            Text(content.logoutLabel)
+                                .textStyle(appTheme.typography.labelLarge)
+                                .foregroundColor(appTheme.colors.onSecondary)
                         }
-                        .buttonStyle(.plain)
-                        .disabled(content.isProcessingAuth)
                     }
-                    .padding(appTheme.spacing.medium)
+                    .padding(.horizontal, appTheme.spacing.large)
+                    .padding(.vertical, appTheme.spacing.small)
+                    .background(appTheme.colors.secondary)
+                    .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
                 }
+                .buttonStyle(.plain)
+                .disabled(content.isProcessingAuth)
             }
+            .padding(appTheme.spacing.medium)
         }
+    }
+
+    private var providerList: some View {
+        ProviderSignInCard(
+            title: content.authenticationLabel,
+            description: content.syncDescription,
+            providers: content.authProviders,
+            onProviderSelected: content.onProviderSelected
+        )
     }
 }
 

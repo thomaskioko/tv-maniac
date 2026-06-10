@@ -1,6 +1,7 @@
 #if DEBUG
     import Components
     import DesignSystem
+    import Models
     import SwiftUI
 
     enum SettingsPreviewSamples {
@@ -178,7 +179,9 @@
             SettingsAccountContent(
                 title: "Trakt",
                 description: "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
-                authenticationLabel: "Authentication",
+                authenticationLabel: "Connect & Sync Your Content",
+                connectTitle: "Connect",
+                syncDescription: "Save your progress, discover new titles, and sync your content across all devices.",
                 connectedTitle: authenticated ? "Connected" : "Connect to Trakt",
                 connectedDescription: authenticated
                     ? "Your watch history, watchlist, and episode progress sync with Trakt."
@@ -187,8 +190,13 @@
                 isProcessingAuth: false,
                 logoutLabel: "Logout",
                 loginLabel: "Login",
+                providerName: "Trakt",
+                authProviders: [
+                    SwiftAuthProvider(id: "TRAKT", label: "Continue with Trakt", logoName: "TraktMono"),
+                    SwiftAuthProvider(id: "SIMKL", label: "Continue with Simkl", logoName: "SimklMono"),
+                ],
                 onLogout: {},
-                onLogin: {}
+                onProviderSelected: { _ in }
             )
         }
 

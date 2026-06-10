@@ -52,11 +52,11 @@ class ProfileScreenTest: SnapshotTestCase {
                 listsViewLabel: "View",
                 unauthenticatedTitle: "Track your shows",
                 footerDescription: "Sign in to sync your data.",
-                signInLabel: "Sign In with Trakt",
+                isAuthenticated: false,
                 featureItems: sampleFeatureItems
             ),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Loading")
@@ -80,11 +80,11 @@ class ProfileScreenTest: SnapshotTestCase {
                 listsViewLabel: "View",
                 unauthenticatedTitle: "Track your shows",
                 footerDescription: "Sign in to sync your data across devices.",
-                signInLabel: "Sign In with Trakt",
+                isAuthenticated: false,
                 featureItems: sampleFeatureItems
             ),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Unauthenticated")
@@ -165,7 +165,7 @@ class ProfileScreenTest: SnapshotTestCase {
             favorites: .content(sampleShows),
             unauthenticatedTitle: "Track your shows",
             footerDescription: "Sign in to sync your data.",
-            signInLabel: "Sign In with Trakt",
+            isAuthenticated: true,
             featureItems: sampleFeatureItems
         )
     }
@@ -174,7 +174,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .content(sampleLists)),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated")
@@ -184,7 +184,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .content(manyLists)),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsWithMore")
@@ -194,7 +194,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .empty),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsEmpty")
@@ -225,7 +225,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .error("Failed to load lists")),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsError")

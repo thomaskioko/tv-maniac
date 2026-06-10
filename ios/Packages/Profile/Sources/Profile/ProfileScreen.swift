@@ -34,8 +34,9 @@ public struct ProfileScreen: View {
         public let favorites: SwiftSectionState<SwiftProfileShow>
         public let unauthenticatedTitle: String
         public let footerDescription: String
-        public let signInLabel: String
+        public let isAuthenticated: Bool
         public let featureItems: [SwiftFeatureItem]
+        public let authProviders: [SwiftAuthProvider]
 
         public init(
             title: String,
@@ -67,8 +68,9 @@ public struct ProfileScreen: View {
             favorites: SwiftSectionState<SwiftProfileShow> = .empty,
             unauthenticatedTitle: String,
             footerDescription: String,
-            signInLabel: String,
-            featureItems: [SwiftFeatureItem]
+            isAuthenticated: Bool,
+            featureItems: [SwiftFeatureItem],
+            authProviders: [SwiftAuthProvider] = []
         ) {
             self.title = title
             self.isLoading = isLoading
@@ -99,8 +101,9 @@ public struct ProfileScreen: View {
             self.favorites = favorites
             self.unauthenticatedTitle = unauthenticatedTitle
             self.footerDescription = footerDescription
-            self.signInLabel = signInLabel
+            self.isAuthenticated = isAuthenticated
             self.featureItems = featureItems
+            self.authProviders = authProviders
         }
     }
 
@@ -108,7 +111,7 @@ public struct ProfileScreen: View {
 
     private let state: State
     private let onSettingsClicked: () -> Void
-    private let onLoginClicked: () -> Void
+    private let onProviderSelected: (String) -> Void
     private let onViewListsClicked: () -> Void
     private let onRetryLists: () -> Void
     private let onShowClicked: (Int64) -> Void
@@ -117,7 +120,7 @@ public struct ProfileScreen: View {
     public init(
         state: State,
         onSettingsClicked: @escaping () -> Void,
-        onLoginClicked: @escaping () -> Void,
+        onProviderSelected: @escaping (String) -> Void,
         onViewListsClicked: @escaping () -> Void = {},
         onRetryLists: @escaping () -> Void = {},
         onShowClicked: @escaping (Int64) -> Void = { _ in },
@@ -125,7 +128,7 @@ public struct ProfileScreen: View {
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
-        self.onLoginClicked = onLoginClicked
+        self.onProviderSelected = onProviderSelected
         self.onViewListsClicked = onViewListsClicked
         self.onRetryLists = onRetryLists
         self.onShowClicked = onShowClicked
@@ -138,10 +141,12 @@ public struct ProfileScreen: View {
         ZStack(alignment: .top) {
             if state.isLoading {
                 profileSkeleton
+            } else if !state.isAuthenticated {
+                unauthenticatedScrollView
             } else if let userProfile = state.userProfile {
                 profileScrollView(userProfile: userProfile)
             } else {
-                unauthenticatedScrollView
+                profileSkeleton
             }
 
             GlassToolbar(
@@ -542,19 +547,13 @@ public struct ProfileScreen: View {
                     }
                     .padding(.horizontal, appTheme.spacing.large)
 
-                    Spacer(minLength: appTheme.spacing.large)
-
                     VStack(spacing: appTheme.spacing.medium) {
-                        Button(action: onLoginClicked) {
-                            Text(state.signInLabel)
-                                .textStyle(appTheme.typography.bodyMedium)
-                                .foregroundStyle(.appOnButtonBackground)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, appTheme.spacing.medium)
-                                .background(.appButtonBackground)
-                                .cornerRadius(appTheme.shapes.extraLarge)
+                        ForEach(state.authProviders) { provider in
+                            ProviderButton(title: provider.label, logo: provider.logoName) {
+                                onProviderSelected(provider.id)
+                            }
+                            .padding(.horizontal, appTheme.spacing.large)
                         }
-                        .padding(.horizontal, appTheme.spacing.large)
 
                         Text(state.footerDescription)
                             .textStyle(appTheme.typography.bodyMedium)
@@ -562,7 +561,7 @@ public struct ProfileScreen: View {
                             .lineSpacing(appTheme.spacing.xxSmall)
                             .padding(.horizontal, appTheme.spacing.large)
                     }
-                    .padding(.bottom, appTheme.spacing.xLarge)
+                    .padding(.bottom, appTheme.spacing.medium)
                 }
                 .frame(minHeight: proxy.size.height, alignment: .top)
                 .background(

@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.settings.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +17,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -30,7 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.android.feature.settings.R
+import com.thomaskioko.tvmaniac.accountmanager.api.displayName
+import com.thomaskioko.tvmaniac.android.designsystem.R
+import com.thomaskioko.tvmaniac.compose.components.ProviderButton
+import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
@@ -61,83 +64,17 @@ internal fun AccountPage(
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            SettingsGroup {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.trakt_logo),
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                        contentScale = ContentScale.Fit,
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = state.labels.traktTitle,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Text(
-                            text = state.labels.traktDescription,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
+            SettingsSectionLabel(
+                text = if (state.isAuthenticated) state.labels.traktAuthentication else state.labels.connectTitle,
+            )
         }
 
-        item { Spacer(modifier = Modifier.height(20.dp)) }
+        item { Spacer(modifier = Modifier.height(4.dp)) }
 
-        item { SettingsSectionLabel(text = state.labels.traktAuthentication) }
-
-        item {
-            SettingsGroup {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        text = state.labels.traktConnected,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Medium,
-                    )
-                    Text(
-                        text = state.labels.traktConnectedDescription,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Button(
-                        modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
-                        enabled = !state.isProcessingAuth,
-                        onClick = {
-                            onAction(if (state.isAuthenticated) ShowLogoutDialog else AccountLoginClicked(AccountProvider.TRAKT))
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                        ),
-                    ) {
-                        if (state.isProcessingAuth) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(18.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.onSecondary,
-                            )
-                        } else {
-                            Text(text = if (state.isAuthenticated) state.labels.logout else state.labels.login)
-                        }
-                    }
-                }
-            }
+        if (state.isAuthenticated) {
+            item { ConnectedAccountCard(state = state, onAction = onAction) }
+        } else {
+            item { ProviderSignIn(state = state, onAction = onAction) }
         }
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
@@ -148,6 +85,107 @@ internal fun AccountPage(
         onLogoutClicked = { onAction(AccountLogoutClicked) },
         onDismissDialog = { onAction(DismissLogoutDialog) },
     )
+}
+
+@Composable
+private fun ConnectedAccountCard(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
+) {
+    SettingsGroup {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                state.activeProvider?.let { provider ->
+                    Icon(
+                        painter = painterResource(id = providerLogo(provider)),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(40.dp),
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = state.activeProvider?.displayName.orEmpty(),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        text = state.labels.traktConnected,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    state.accountConnectedDescription?.let { description ->
+                        Text(
+                            text = description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            Button(
+                modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
+                enabled = !state.isProcessingAuth,
+                onClick = { onAction(ShowLogoutDialog) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                ),
+            ) {
+                if (state.isProcessingAuth) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                    )
+                } else {
+                    Text(text = state.labels.logout)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProviderSignIn(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
+) {
+    ProviderSignInCard(
+        title = state.labels.traktAuthentication,
+        description = state.labels.accountSyncDescription,
+        modifier = Modifier.padding(horizontal = 16.dp),
+    ) {
+        state.authProviders.forEach { option ->
+            ProviderButton(
+                text = option.label,
+                logo = providerLogo(option.provider),
+                onClick = { onAction(AccountLoginClicked(option.provider)) },
+                enabled = !state.isProcessingAuth,
+                modifier = if (option.provider == AccountProvider.TRAKT) {
+                    Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
+                } else {
+                    Modifier
+                },
+            )
+        }
+    }
+}
+
+@DrawableRes
+private fun providerLogo(provider: AccountProvider): Int = when (provider) {
+    AccountProvider.TRAKT -> R.drawable.ic_trakt_mono
+    AccountProvider.SIMKL -> R.drawable.ic_simkl_mono
 }
 
 @Composable
