@@ -25,6 +25,7 @@ kotlin {
                 api(projects.core.networkUtil.api)
                 api(projects.data.accountManager.api)
                 api(projects.data.oauth.api)
+                api(projects.data.user.api)
                 implementation(projects.core.base)
                 implementation(libs.ktor.auth)
                 implementation(libs.ktor.logging)
