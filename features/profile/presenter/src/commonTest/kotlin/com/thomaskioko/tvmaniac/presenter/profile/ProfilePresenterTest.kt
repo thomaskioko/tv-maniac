@@ -112,6 +112,7 @@ internal class ProfilePresenterTest {
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
         traktListRepository = traktListRepository,
+        accountManager = accountManager,
         dispatchers = testDispatchers,
     )
 

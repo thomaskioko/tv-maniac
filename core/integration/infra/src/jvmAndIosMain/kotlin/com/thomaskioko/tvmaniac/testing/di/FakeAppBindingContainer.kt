@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.SimklApi
 import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.base.di.BaseBindingContainer
@@ -111,6 +112,12 @@ public object FakeAppBindingContainer {
     @Provides
     @IsDebugBuild
     public fun provideIsDebugBuild(): Boolean = true
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @SimklApi
+    public fun provideSimklHttpClientEngine(): io.ktor.client.engine.HttpClientEngine =
+        MockEngine { respond("{}", HttpStatusCode.OK) }
 
     @Provides
     @SingleIn(AppScope::class)

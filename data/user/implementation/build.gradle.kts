@@ -12,8 +12,8 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(libs.store5)
-                api(projects.api.trakt.api)
                 api(projects.core.base)
+                api(projects.data.accountManager.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.user.api)
@@ -28,7 +28,9 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.database.testing)
+                implementation(projects.data.requestManager.testing)
             }
         }
     }

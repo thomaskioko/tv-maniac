@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.logger.IosCrashReporterBindingContainer
 import com.thomaskioko.tvmaniac.core.notifications.implementation.IosNotificationManager
 import com.thomaskioko.tvmaniac.core.tasks.implementation.IosTaskScheduler
 import com.thomaskioko.tvmaniac.oauth.implementation.IosOAuthLauncher
+import com.thomaskioko.tvmaniac.simkl.implementation.SimklPlatformBindingContainer
 import com.thomaskioko.tvmaniac.tmdb.implementation.TmdbPlatformBindingContainer
 import com.thomaskioko.tvmaniac.util.IosAppUtils
 import com.thomaskioko.tvmaniac.util.IosFormatterUtil
@@ -19,6 +20,7 @@ import dev.zacsweers.metro.ContributesTo
     AppScope::class,
     replaces = [
         IosAppConfigBindingContainer::class,
+        SimklPlatformBindingContainer::class,
         TmdbPlatformBindingContainer::class,
         TraktPlatformBindingContainer::class,
         IosFormatterUtil::class,

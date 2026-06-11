@@ -30,7 +30,10 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.database.testing)
+                implementation(projects.data.requestManager.testing)
             }
         }
     }

@@ -10,6 +10,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.networkUtil.api)
+                api(projects.data.accountManager.api)
                 api(projects.data.user.api)
                 api(projects.data.user.implementation)
             }
