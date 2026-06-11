@@ -41,6 +41,8 @@ kotlin {
         getByName("iosMain").dependsOn(jvmAndIosMain)
 
         commonMain.dependencies {
+            api(projects.api.simkl.api)
+            api(projects.api.simkl.implementation)
             api(projects.api.tmdb.api)
             api(projects.api.tmdb.implementation)
             api(projects.api.trakt.api)
