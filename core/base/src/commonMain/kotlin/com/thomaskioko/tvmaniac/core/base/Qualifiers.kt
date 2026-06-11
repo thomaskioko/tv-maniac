@@ -37,6 +37,10 @@ public annotation class TraktApi
 
 @Qualifier
 @Retention(BINARY)
+public annotation class SimklApi
+
+@Qualifier
+@Retention(BINARY)
 public annotation class IsDebugBuild
 
 @Qualifier
