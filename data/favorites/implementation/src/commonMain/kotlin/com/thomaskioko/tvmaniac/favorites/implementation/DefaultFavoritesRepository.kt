@@ -23,6 +23,7 @@ public class DefaultFavoritesRepository(
     override fun observeFavorites(): Flow<List<FavoriteShow>> = dao.observeFavoriteShows()
 
     override suspend fun syncFavorites(forceRefresh: Boolean) {
+        // TODO:: Remove hardcoded provider
         if (accountManager.getActiveProvider() != AccountProvider.TRAKT) return
 
         when {
