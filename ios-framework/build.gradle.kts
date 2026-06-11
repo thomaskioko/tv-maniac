@@ -165,6 +165,7 @@ kotlin {
                 implementation(projects.data.traktlists.implementation)
                 implementation(projects.domain.traktlists)
 
+                implementation(projects.api.simkl.implementation)
                 implementation(projects.api.tmdb.api)
                 implementation(projects.api.tmdb.implementation)
                 implementation(projects.api.trakt.implementation)
