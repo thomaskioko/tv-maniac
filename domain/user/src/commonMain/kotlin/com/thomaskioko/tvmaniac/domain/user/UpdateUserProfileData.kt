@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.user
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
@@ -11,6 +13,7 @@ import kotlinx.coroutines.withContext
 public class UpdateUserProfileData(
     private val userRepository: UserRepository,
     private val traktListRepository: TraktListRepository,
+    private val accountManager: AccountManager,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateUserProfileData.Params>() {
 
@@ -28,7 +31,9 @@ public class UpdateUserProfileData(
                 forceRefresh = params.forceRefresh,
             )
 
-            traktListRepository.fetchUserLists(slug = slug, forceRefresh = params.forceRefresh)
+            if (accountManager.getActiveProvider() == AccountProvider.TRAKT) {
+                traktListRepository.fetchUserLists(slug = slug, forceRefresh = params.forceRefresh)
+            }
         }
     }
 
