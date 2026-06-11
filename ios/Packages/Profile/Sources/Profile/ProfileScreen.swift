@@ -535,15 +535,15 @@ public struct ProfileScreen: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: appTheme.spacing.large) {
                     Spacer()
-                        .frame(height: 84)
+                        .frame(height: 48)
 
                     Text(state.unauthenticatedTitle)
-                        .textStyle(appTheme.typography.headlineLarge)
+                        .textStyle(appTheme.typography.displaySmall)
                         .foregroundStyle(.appOnSurface)
                         .lineSpacing(appTheme.spacing.xSmall)
                         .padding(.horizontal, appTheme.spacing.large)
 
-                    VStack(alignment: .leading, spacing: appTheme.spacing.large) {
+                    VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
                         ForEach(state.featureItems) { item in
                             featureItemView(iconName: item.iconName, title: item.title, description: item.description)
                         }
@@ -593,7 +593,7 @@ public struct ProfileScreen: View {
 
                 Text(description)
                     .textStyle(appTheme.typography.bodyMedium)
-                    .foregroundStyle(.appOnSurface)
+                    .foregroundStyle(.appOnSurfaceVariant)
                     .lineSpacing(2)
             }
 

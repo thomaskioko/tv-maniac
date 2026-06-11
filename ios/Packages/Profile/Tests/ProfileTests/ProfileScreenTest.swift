@@ -11,26 +11,26 @@ class ProfileScreenTest: SnapshotTestCase {
         SwiftFeatureItem(
             id: "discover",
             iconName: "magnifyingglass",
-            title: "Discover Shows",
-            description: "Find new shows to watch"
+            title: "Discover",
+            description: "Browse over one million movies and TV shows and see \"Where to Watch\" them."
         ),
         SwiftFeatureItem(
             id: "track",
             iconName: "tv",
-            title: "Track Progress",
-            description: "Keep track of what you've watched"
+            title: "Track",
+            description: "Check-in, mark watch and manage your all-time watch history."
         ),
         SwiftFeatureItem(
             id: "manage",
             iconName: "rectangle.stack",
-            title: "Manage Library",
-            description: "Organize your shows"
+            title: "Watchlist",
+            description: "Create custom list, personalize it just the way you like it."
         ),
         SwiftFeatureItem(
             id: "more",
             iconName: "sparkles",
-            title: "And More",
-            description: "Get personalized recommendations"
+            title: "More",
+            description: "More features coming soon."
         ),
     ]
 
@@ -50,7 +50,7 @@ class ProfileScreenTest: SnapshotTestCase {
                 showsWatchedLabel: "Shows Watched",
                 listsLabel: "Lists",
                 listsViewLabel: "View",
-                unauthenticatedTitle: "Track your shows",
+                unauthenticatedTitle: "Discover.\nTrack.\nWatchlist.\n& More ...",
                 authTitle: "Connect & Sync Your Content",
                 authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
                 isAuthenticated: false,
@@ -79,7 +79,7 @@ class ProfileScreenTest: SnapshotTestCase {
                 showsWatchedLabel: "Shows Watched",
                 listsLabel: "Lists",
                 listsViewLabel: "View",
-                unauthenticatedTitle: "Track your shows",
+                unauthenticatedTitle: "Discover.\nTrack.\nWatchlist.\n& More ...",
                 authTitle: "Connect & Sync Your Content",
                 authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
                 isAuthenticated: false,
@@ -169,7 +169,7 @@ class ProfileScreenTest: SnapshotTestCase {
             recentlyWatched: .content(sampleRecentShows),
             favoritesTitle: "Favorites",
             favorites: .content(sampleShows),
-            unauthenticatedTitle: "Track your shows",
+            unauthenticatedTitle: "Discover.\nTrack.\nWatchlist.\n& More ...",
             authTitle: "Connect & Sync Your Content",
             authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
             isAuthenticated: true,

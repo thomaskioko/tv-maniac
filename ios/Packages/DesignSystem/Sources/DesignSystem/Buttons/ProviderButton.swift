@@ -26,7 +26,7 @@ public struct ProviderButton: View {
                     .textStyle(theme.typography.labelLarge)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, theme.spacing.xSmall)
+            .padding(.vertical, theme.spacing.small)
             .foregroundStyle(.appOnSurface)
             .overlay(
                 Capsule().strokeBorder(theme.colors.onSurface.opacity(0.4), lineWidth: 2)

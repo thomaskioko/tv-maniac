@@ -61,6 +61,7 @@ internal fun UnauthenticatedContent(
         Text(
             text = labels.unauthenticatedTitle,
             style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             lineHeight = MaterialTheme.typography.displaySmall.fontSize.times(1.2f),
         )
@@ -145,6 +146,7 @@ private fun FeatureItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
