@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.favorites.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
@@ -22,7 +23,7 @@ public class DefaultFavoritesRepository(
     override fun observeFavorites(): Flow<List<FavoriteShow>> = dao.observeFavoriteShows()
 
     override suspend fun syncFavorites(forceRefresh: Boolean) {
-        if (accountManager.getActiveProvider() == null) return
+        if (accountManager.getActiveProvider() != AccountProvider.TRAKT) return
 
         when {
             forceRefresh -> favoritesStore.fresh(Unit)
