@@ -62,22 +62,22 @@ public struct TvManiacTypographyScheme {
     static let workSans = TvManiacTypographyScheme(
         displayLarge: workSansStyle(.medium, size: 57, relativeTo: .largeTitle, tracking: -0.25, lineHeight: 64),
         displayMedium: workSansStyle(.medium, size: 45, relativeTo: .largeTitle, tracking: 0, lineHeight: 52),
-        displaySmall: workSansStyle(.medium, size: 36, relativeTo: .largeTitle, tracking: 0, lineHeight: 44),
+        displaySmall: workSansStyle(.extrabold, size: 36, relativeTo: .largeTitle, tracking: 0, lineHeight: 44),
         headlineLarge: workSansStyle(.bold, size: 32, relativeTo: .title, tracking: 0, lineHeight: 40),
         headlineLargeEmphasized: workSansStyle(.extrabold, size: 32, relativeTo: .title, tracking: 0, lineHeight: 40),
         headlineMedium: workSansStyle(.bold, size: 28, relativeTo: .title, tracking: 0, lineHeight: 36),
         headlineSmall: workSansStyle(.bold, size: 24, relativeTo: .title2, tracking: 0, lineHeight: 32),
         titleLarge: workSansStyle(.bold, size: 22, relativeTo: .title2, tracking: 0, lineHeight: 28),
         titleLargeEmphasized: workSansStyle(.extrabold, size: 22, relativeTo: .title2, tracking: 0, lineHeight: 28),
-        titleMedium: workSansStyle(.bold, size: 16, relativeTo: .callout, tracking: 0.15, lineHeight: 24),
+        titleMedium: workSansStyle(.bold, size: 16, relativeTo: .subheadline, tracking: 0.15, lineHeight: 24),
         titleSmall: workSansStyle(.extrabold, size: 14, relativeTo: .subheadline, tracking: 0.1, lineHeight: 20),
         bodyLarge: workSansStyle(.medium, size: 16, relativeTo: .body, tracking: 0.15, lineHeight: 24),
         bodyLargeEmphasized: workSansStyle(.extrabold, size: 16, relativeTo: .body, tracking: 0.15, lineHeight: 24),
-        bodyMedium: workSansStyle(.semibold, size: 14, relativeTo: .subheadline, tracking: 0.25, lineHeight: 20),
+        bodyMedium: workSansStyle(.medium, size: 14, relativeTo: .subheadline, tracking: 0.25, lineHeight: 20),
         bodySmall: workSansStyle(.medium, size: 12, relativeTo: .caption, tracking: 0.4, lineHeight: 16),
-        labelLarge: workSansStyle(.bold, size: 14, relativeTo: .footnote, tracking: 0.1, lineHeight: 20),
-        labelMedium: workSansStyle(.bold, size: 12, relativeTo: .caption, tracking: 0.5, lineHeight: 16),
-        labelSmall: workSansStyle(.medium, size: 11, relativeTo: .caption2, tracking: 0.5, lineHeight: 16)
+        labelLarge: workSansStyle(.semibold, size: 14, relativeTo: .footnote, tracking: 0.1, lineHeight: 20),
+        labelMedium: workSansStyle(.semibold, size: 12, relativeTo: .caption, tracking: 0.5, lineHeight: 16),
+        labelSmall: workSansStyle(.semibold, size: 11, relativeTo: .caption2, tracking: 0.5, lineHeight: 16)
     )
 
     public let displayLarge: TvManiacTextStyle
