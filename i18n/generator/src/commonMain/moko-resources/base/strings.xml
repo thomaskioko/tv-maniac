@@ -70,11 +70,14 @@
     <string name="label_settings_privacy_description">Crash reporting and privacy policy</string>
     <string name="label_settings_info_description">App version and source code</string>
     <string name="label_settings_licenses_description">Data sources and acknowledgements</string>
-    <string name="label_settings_trakt_description">Manage your Trakt connection</string>
-    <string name="label_settings_trakt_authentication">Authentication</string>
+    <string name="label_settings_account_description">Manage your connected account</string>
+    <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
+    <string name="label_settings_connect_title">Connect</string>
+    <string name="label_settings_account_sync_description">Save your progress, discover new titles, and sync your content across all devices.</string>
     <string name="label_settings_trakt_connected">Connected</string>
     <string name="label_settings_trakt_connected_as">Connected as %s</string>
     <string name="label_settings_trakt_connected_description">Your watch history, watchlist, and episode progress sync with Trakt.</string>
+    <string name="label_settings_simkl_connected_description">Your watch history, watchlist, and episode progress sync with Simkl.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailers</string>
     <string name="label_settings_youtube_description">Open Trailers in Youtube App</string>
@@ -282,7 +285,7 @@
     <string name="settings_trakt_detail_description">Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.</string>
 
     <string name="settings_title_ui">User Interface</string>
-    <string name="settings_title_trakt">Trakt Account</string>
+    <string name="settings_title_account">Account</string>
     <string name="settings_title_connect_trakt">Connect to Trakt</string>
     <string name="settings_title_disconnect_trakt">Logout of Trakt %s</string>
     <string name="settings_title_info">Info</string>
@@ -291,6 +294,7 @@
     <string name="refresh_credentials">Refresh credentials</string>
     <string name="logout">Logout</string>
     <string name="login">Login</string>
+    <string name="label_auth_continue_with">Continue with %s</string>
     <string name="unexpected_error_retry">An unexpected Error has occurred.</string>
 
     <string name="profile_title">Profile</string>
@@ -325,8 +329,6 @@
     <string name="profile_feature_manage_description">Create custom list, personalize it just the way you like it.</string>
     <string name="profile_feature_share_title">Share</string>
     <string name="profile_feature_share_description">Comment, reply and rate TV shows, movies, seasons and episodes.</string>
-    <string name="profile_footer_description">* TvManiac is a Trakt client. Sign in to your Trakt account to track, discover and share with the community.</string>
-    <string name="profile_sign_in_button">Sign In to Trakt</string>
 
     <string name="label_up_to_date">All caught up</string>
 

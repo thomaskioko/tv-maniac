@@ -40,6 +40,8 @@ public data class SettingsLabels(
     val traktTitle: String = "",
     val traktDescription: String = "",
     val traktAuthentication: String = "",
+    val connectTitle: String = "",
+    val accountSyncDescription: String = "",
     val traktConnected: String = "",
     val traktConnectedDescription: String = "",
     val logout: String = "",

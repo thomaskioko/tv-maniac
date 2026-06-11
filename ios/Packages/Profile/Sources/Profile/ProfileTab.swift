@@ -19,7 +19,9 @@ public struct ProfileTab: View {
         ProfileScreen(
             state: uiState.toState(),
             onSettingsClicked: { presenter.dispatch(action: ProfileActionSettingsClicked()) },
-            onLoginClicked: { presenter.dispatch(action: ProfileActionLoginClicked(provider: .trakt)) },
+            onProviderSelected: { id in
+                presenter.dispatch(action: ProfileActionLoginClicked(provider: id == "SIMKL" ? .simkl : .trakt))
+            },
             onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) },
             onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) },
             onShowClicked: { showId in presenter.dispatch(action: ProfileActionShowClicked(showId: showId)) },
@@ -84,8 +86,9 @@ private extension ProfileState {
             favoritesTitle: labels.favoritesTitle,
             favorites: favorites.toSwiftShowSectionState(),
             unauthenticatedTitle: labels.unauthenticatedTitle,
-            footerDescription: labels.footerDescription,
-            signInLabel: labels.signInButton,
+            authTitle: labels.authTitle,
+            authDescription: labels.authDescription,
+            isAuthenticated: authenticated,
             featureItems: [
                 SwiftFeatureItem(
                     id: "discover",
@@ -111,7 +114,14 @@ private extension ProfileState {
                     title: labels.featureMoreTitle,
                     description: labels.featureMoreDescription
                 ),
-            ]
+            ],
+            authProviders: authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
+                SwiftAuthProvider(
+                    id: option.provider.name,
+                    label: option.label,
+                    logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+                )
+            }
         )
     }
 }

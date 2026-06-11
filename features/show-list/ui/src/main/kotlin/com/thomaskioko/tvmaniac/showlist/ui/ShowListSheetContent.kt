@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.showlist.ui
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,7 +29,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.android.designsystem.R
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
+import com.thomaskioko.tvmaniac.compose.components.ProviderButton
+import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
@@ -88,9 +94,13 @@ private fun TraktListItems(
                 .fillMaxWidth()
                 .testTag(ShowListTestTags.traktListItem(list.id))
                 .padding(vertical = 4.dp),
-            shape = MaterialTheme.shapes.medium,
+            shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(
+                width = 0.5.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
             ),
         ) {
             Row(
@@ -250,43 +260,30 @@ private fun LoginRequiredContent(
     state: ShowListState,
     onAction: (ShowListAction) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp, horizontal = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    ProviderSignInCard(
+        title = state.labels.loginRequiredTitle,
+        description = state.labels.loginRequiredMessage,
+        modifier = Modifier.padding(vertical = 24.dp),
     ) {
-        Text(
-            text = state.labels.loginRequiredTitle,
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-            ),
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = state.labels.loginRequiredMessage,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        FilledTextButton(
-            onClick = { onAction(ShowListAction.Login(AccountProvider.TRAKT)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG),
-            buttonColors = ButtonDefaults.textButtonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary,
-            ),
-            shape = MaterialTheme.shapes.medium,
-        ) {
-            Text(state.labels.loginRequiredConfirmText)
+        state.authProviders.forEach { option ->
+            ProviderButton(
+                text = option.label,
+                logo = providerLogo(option.provider),
+                onClick = { onAction(ShowListAction.Login(option.provider)) },
+                modifier = if (option.provider == AccountProvider.TRAKT) {
+                    Modifier.testTag(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG)
+                } else {
+                    Modifier
+                },
+            )
         }
     }
+}
+
+@DrawableRes
+private fun providerLogo(provider: AccountProvider): Int = when (provider) {
+    AccountProvider.TRAKT -> R.drawable.ic_trakt_mono
+    AccountProvider.SIMKL -> R.drawable.ic_simkl_mono
 }
 
 private const val MAX_LIST_NAME_LENGTH = 50

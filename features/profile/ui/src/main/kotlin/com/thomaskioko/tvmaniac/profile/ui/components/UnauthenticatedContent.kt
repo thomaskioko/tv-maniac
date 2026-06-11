@@ -1,13 +1,12 @@
 package com.thomaskioko.tvmaniac.profile.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Tv
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,102 +27,99 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.android.designsystem.R
+import com.thomaskioko.tvmaniac.compose.components.ProviderButton
+import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.ui.sampleProfileLabels
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun UnauthenticatedContent(
     labels: ProfileLabels,
-    onLoginClicked: () -> Unit,
-    modifier: Modifier = Modifier,
+    authProviders: ImmutableList<AuthProviderOption>,
+    onProviderClick: (AccountProvider) -> Unit,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(contentPadding.calculateTopPadding())
             .statusBarsPadding()
-            .padding(horizontal = 24.dp, vertical = 54.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
+            .padding(top = 54.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(32.dp),
-        ) {
-            Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = labels.unauthenticatedTitle,
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Bold,
+            lineHeight = MaterialTheme.typography.displaySmall.fontSize.times(1.2f),
+        )
 
-            Text(
-                text = labels.unauthenticatedTitle,
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                lineHeight = MaterialTheme.typography.displaySmall.fontSize.times(1.2f),
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            FeatureItem(
+                icon = Icons.Outlined.Search,
+                title = labels.featureDiscoverTitle,
+                description = labels.featureDiscoverDescription,
             )
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                FeatureItem(
-                    icon = Icons.Outlined.Search,
-                    title = labels.featureDiscoverTitle,
-                    description = labels.featureDiscoverDescription,
-                )
+            FeatureItem(
+                icon = Icons.Outlined.Tv,
+                title = labels.featureTrackTitle,
+                description = labels.featureTrackDescription,
+            )
 
-                FeatureItem(
-                    icon = Icons.Outlined.Tv,
-                    title = labels.featureTrackTitle,
-                    description = labels.featureTrackDescription,
-                )
+            FeatureItem(
+                icon = Icons.AutoMirrored.Outlined.LibraryBooks,
+                title = labels.featureManageTitle,
+                description = labels.featureManageDescription,
+            )
 
-                FeatureItem(
-                    icon = Icons.AutoMirrored.Outlined.LibraryBooks,
-                    title = labels.featureManageTitle,
-                    description = labels.featureManageDescription,
-                )
+            FeatureItem(
+                icon = Icons.Outlined.AutoAwesome,
+                title = labels.featureMoreTitle,
+                description = labels.featureMoreDescription,
+            )
+        }
 
-                FeatureItem(
-                    icon = Icons.Outlined.AutoAwesome,
-                    title = labels.featureMoreTitle,
-                    description = labels.featureMoreDescription,
+        ProviderSignInCard(
+            title = labels.authTitle,
+            description = labels.authDescription,
+            showBackground = false,
+        ) {
+            authProviders.forEach { option ->
+                ProviderButton(
+                    text = option.label,
+                    logo = providerLogo(option.provider),
+                    onClick = { onProviderClick(option.provider) },
+                    modifier = if (option.provider == AccountProvider.TRAKT) {
+                        Modifier.testTag(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
+                    } else {
+                        Modifier
+                    },
                 )
             }
         }
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-        ) {
-            FilledTextButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG),
-                onClick = onLoginClicked,
-                shape = ButtonDefaults.shape,
-                buttonColors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                ),
-                content = {
-                    Text(text = labels.signInButton)
-                },
-            )
-
-            Text(
-                text = labels.footerDescription,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = MaterialTheme.typography.bodySmall.fontSize.times(1.5f),
-            )
-        }
     }
+}
+
+@DrawableRes
+private fun providerLogo(provider: AccountProvider): Int = when (provider) {
+    AccountProvider.TRAKT -> R.drawable.ic_trakt_mono
+    AccountProvider.SIMKL -> R.drawable.ic_simkl_mono
 }
 
 @Composable
@@ -151,6 +146,7 @@ private fun FeatureItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
@@ -169,7 +165,11 @@ private fun FeatureItem(
 private fun UnauthenticatedContentPreview() {
     UnauthenticatedContent(
         labels = sampleProfileLabels,
-        onLoginClicked = {},
+        authProviders = persistentListOf(
+            AuthProviderOption(AccountProvider.TRAKT, "Continue with Trakt"),
+            AuthProviderOption(AccountProvider.SIMKL, "Continue with Simkl"),
+        ),
+        onProviderClick = {},
         contentPadding = PaddingValues(),
     )
 }

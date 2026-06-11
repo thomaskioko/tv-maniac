@@ -50,15 +50,13 @@ final class AppAuthCoordinator {
             }
         }
 
-        guard let accessToken = authState.lastTokenResponse?.accessToken,
-              let refreshToken = authState.lastTokenResponse?.refreshToken
-        else {
+        guard let accessToken = authState.lastTokenResponse?.accessToken else {
             throw OAuthError.invalidTokenResponse
         }
 
         return OAuthCredential(
             accessToken: accessToken,
-            refreshToken: refreshToken,
+            refreshToken: authState.lastTokenResponse?.refreshToken ?? "",
             tokenType: authState.lastTokenResponse?.tokenType ?? "Bearer",
             expiresAt: authState.lastTokenResponse?.accessTokenExpirationDate
         )

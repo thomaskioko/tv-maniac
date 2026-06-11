@@ -8,5 +8,5 @@ public enum class SettingsPage {
     PRIVACY,
     INFO,
     LICENSES,
-    TRAKT,
+    ACCOUNT,
 }

@@ -5,6 +5,8 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
+import com.thomaskioko.tvmaniac.settings.ui.accountLoggedOutState
+import com.thomaskioko.tvmaniac.settings.ui.accountState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
@@ -14,8 +16,6 @@ import com.thomaskioko.tvmaniac.settings.ui.loadingState
 import com.thomaskioko.tvmaniac.settings.ui.loggedInState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
-import com.thomaskioko.tvmaniac.settings.ui.traktLoggedOutState
-import com.thomaskioko.tvmaniac.settings.ui.traktState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -146,7 +146,7 @@ class SettingsScreenshotTest {
         composeTestRule.captureMultiDevice("SettingsScreenTraktPage") {
             TvManiacBackground {
                 SettingsScreen(
-                    state = traktState,
+                    state = accountState,
                     onAction = {},
                 )
             }
@@ -158,7 +158,7 @@ class SettingsScreenshotTest {
         composeTestRule.captureMultiDevice("SettingsScreenTraktPageLoggedOut") {
             TvManiacBackground {
                 SettingsScreen(
-                    state = traktLoggedOutState,
+                    state = accountLoggedOutState,
                     onAction = {},
                 )
             }

@@ -33,9 +33,11 @@ public struct ProfileScreen: View {
         public let favoritesTitle: String
         public let favorites: SwiftSectionState<SwiftProfileShow>
         public let unauthenticatedTitle: String
-        public let footerDescription: String
-        public let signInLabel: String
+        public let authTitle: String
+        public let authDescription: String
+        public let isAuthenticated: Bool
         public let featureItems: [SwiftFeatureItem]
+        public let authProviders: [SwiftAuthProvider]
 
         public init(
             title: String,
@@ -66,9 +68,11 @@ public struct ProfileScreen: View {
             favoritesTitle: String = "",
             favorites: SwiftSectionState<SwiftProfileShow> = .empty,
             unauthenticatedTitle: String,
-            footerDescription: String,
-            signInLabel: String,
-            featureItems: [SwiftFeatureItem]
+            authTitle: String,
+            authDescription: String,
+            isAuthenticated: Bool,
+            featureItems: [SwiftFeatureItem],
+            authProviders: [SwiftAuthProvider] = []
         ) {
             self.title = title
             self.isLoading = isLoading
@@ -98,9 +102,11 @@ public struct ProfileScreen: View {
             self.favoritesTitle = favoritesTitle
             self.favorites = favorites
             self.unauthenticatedTitle = unauthenticatedTitle
-            self.footerDescription = footerDescription
-            self.signInLabel = signInLabel
+            self.authTitle = authTitle
+            self.authDescription = authDescription
+            self.isAuthenticated = isAuthenticated
             self.featureItems = featureItems
+            self.authProviders = authProviders
         }
     }
 
@@ -108,7 +114,7 @@ public struct ProfileScreen: View {
 
     private let state: State
     private let onSettingsClicked: () -> Void
-    private let onLoginClicked: () -> Void
+    private let onProviderSelected: (String) -> Void
     private let onViewListsClicked: () -> Void
     private let onRetryLists: () -> Void
     private let onShowClicked: (Int64) -> Void
@@ -117,7 +123,7 @@ public struct ProfileScreen: View {
     public init(
         state: State,
         onSettingsClicked: @escaping () -> Void,
-        onLoginClicked: @escaping () -> Void,
+        onProviderSelected: @escaping (String) -> Void,
         onViewListsClicked: @escaping () -> Void = {},
         onRetryLists: @escaping () -> Void = {},
         onShowClicked: @escaping (Int64) -> Void = { _ in },
@@ -125,7 +131,7 @@ public struct ProfileScreen: View {
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
-        self.onLoginClicked = onLoginClicked
+        self.onProviderSelected = onProviderSelected
         self.onViewListsClicked = onViewListsClicked
         self.onRetryLists = onRetryLists
         self.onShowClicked = onShowClicked
@@ -138,10 +144,12 @@ public struct ProfileScreen: View {
         ZStack(alignment: .top) {
             if state.isLoading {
                 profileSkeleton
+            } else if !state.isAuthenticated {
+                unauthenticatedScrollView
             } else if let userProfile = state.userProfile {
                 profileScrollView(userProfile: userProfile)
             } else {
-                unauthenticatedScrollView
+                profileSkeleton
             }
 
             GlassToolbar(
@@ -527,42 +535,30 @@ public struct ProfileScreen: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: appTheme.spacing.large) {
                     Spacer()
-                        .frame(height: 84)
+                        .frame(height: 48)
 
                     Text(state.unauthenticatedTitle)
-                        .textStyle(appTheme.typography.headlineLarge)
+                        .textStyle(appTheme.typography.displaySmall)
                         .foregroundStyle(.appOnSurface)
                         .lineSpacing(appTheme.spacing.xSmall)
                         .padding(.horizontal, appTheme.spacing.large)
 
-                    VStack(alignment: .leading, spacing: appTheme.spacing.large) {
+                    VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
                         ForEach(state.featureItems) { item in
                             featureItemView(iconName: item.iconName, title: item.title, description: item.description)
                         }
                     }
                     .padding(.horizontal, appTheme.spacing.large)
 
-                    Spacer(minLength: appTheme.spacing.large)
-
-                    VStack(spacing: appTheme.spacing.medium) {
-                        Button(action: onLoginClicked) {
-                            Text(state.signInLabel)
-                                .textStyle(appTheme.typography.bodyMedium)
-                                .foregroundStyle(.appOnButtonBackground)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, appTheme.spacing.medium)
-                                .background(.appButtonBackground)
-                                .cornerRadius(appTheme.shapes.extraLarge)
-                        }
-                        .padding(.horizontal, appTheme.spacing.large)
-
-                        Text(state.footerDescription)
-                            .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundStyle(.appOnSurface)
-                            .lineSpacing(appTheme.spacing.xxSmall)
-                            .padding(.horizontal, appTheme.spacing.large)
-                    }
-                    .padding(.bottom, appTheme.spacing.xLarge)
+                    ProviderSignInCard(
+                        title: state.authTitle,
+                        description: state.authDescription,
+                        providers: state.authProviders,
+                        showBackground: false,
+                        onProviderSelected: onProviderSelected
+                    )
+                    .padding(.horizontal, appTheme.spacing.large)
+                    .padding(.bottom, appTheme.spacing.medium)
                 }
                 .frame(minHeight: proxy.size.height, alignment: .top)
                 .background(
@@ -597,7 +593,7 @@ public struct ProfileScreen: View {
 
                 Text(description)
                     .textStyle(appTheme.typography.bodyMedium)
-                    .foregroundStyle(.appOnSurface)
+                    .foregroundStyle(.appOnSurfaceVariant)
                     .lineSpacing(2)
             }
 

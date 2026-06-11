@@ -9,6 +9,10 @@ public class OAuthCoordinator: NSObject, AuthCoordinator {
     private let authRepository: AccountAuthRepository
     private let logger: Logger
 
+    /// Sentinel for providers whose tokens never expire (e.g. Simkl) and report no expiry; mirrors the Android
+    /// NEVER_EXPIRES_SECONDS so the refresh path is never taken. Revocation is handled by the 401 -> logout path.
+    private static let neverExpiresSeconds: Int64 = 4_102_444_800
+
     public init(
         authRepository: AccountAuthRepository,
         logger: Logger,
@@ -36,16 +40,13 @@ public class OAuthCoordinator: NSObject, AuthCoordinator {
                     presentingViewController: rootViewController
                 )
 
-                guard let expiresAt = credential.expiresAt else {
-                    logger.error(tag: "OAuthCoordinator", message: "Token response missing expiration time")
-                    await handleAuthError(AuthError.TokenExchangeFailed())
-                    return
-                }
+                let expiresAtSeconds = credential.expiresAt
+                    .map { Int64($0.timeIntervalSince1970) } ?? Self.neverExpiresSeconds
 
                 try await authRepository.saveTokens(
                     accessToken: credential.accessToken,
                     refreshToken: credential.refreshToken,
-                    expiresAtSeconds: Int64(expiresAt.timeIntervalSince1970)
+                    expiresAtSeconds: expiresAtSeconds
                 )
 
             } catch let error as OAuthError {

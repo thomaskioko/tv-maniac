@@ -1,5 +1,6 @@
 import Components
 import DesignSystem
+import Models
 import SwiftUI
 import TvManiacKit
 
@@ -192,27 +193,21 @@ public struct ShowListSheetView: View {
     }
 
     private var loginRequiredContent: some View {
-        VStack(alignment: .center, spacing: 16) {
+        VStack {
             Spacer()
-            Text(state.labels.loginRequiredTitle)
-                .textStyle(theme.typography.titleLarge)
-            Text(state.labels.loginRequiredMessage)
-                .textStyle(theme.typography.bodyMedium)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.appOnSurfaceVariant)
-
-            Button(
-                action: {
-                    presenter.dispatch(action: ShowListActionLogin(provider: .trakt))
+            ProviderSignInCard(
+                title: state.labels.loginRequiredTitle,
+                description: state.labels.loginRequiredMessage,
+                providers: state.authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
+                    SwiftAuthProvider(
+                        id: option.provider.name,
+                        label: option.label,
+                        logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+                    )
                 }
-            ) {
-                Text(state.labels.loginRequiredConfirmText)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+            ) { id in
+                presenter.dispatch(action: ShowListActionLogin(provider: id == "SIMKL" ? .simkl : .trakt))
             }
-            .buttonStyle(.borderedProminent)
-            .tint(theme.colors.accent)
-            .padding(.horizontal, 24)
             Spacer()
         }
         .padding()

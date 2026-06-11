@@ -67,11 +67,14 @@
     <string name="label_settings_privacy_description">Absturzberichte und Datenschutz</string>
     <string name="label_settings_info_description">App-Version und Quellcode</string>
     <string name="label_settings_licenses_description">Datenquellen und Danksagungen</string>
-    <string name="label_settings_trakt_description">Trakt-Verbindung verwalten</string>
-    <string name="label_settings_trakt_authentication">Authentifizierung</string>
+    <string name="label_settings_account_description">Verbundenes Konto verwalten</string>
+    <string name="label_settings_trakt_authentication">Verbinden &amp; Inhalte synchronisieren</string>
+    <string name="label_settings_connect_title">Verbinden</string>
+    <string name="label_settings_account_sync_description">Speichere deinen Fortschritt, entdecke neue Titel und synchronisiere deine Inhalte auf allen Geräten.</string>
     <string name="label_settings_trakt_connected">Verbunden</string>
     <string name="label_settings_trakt_connected_as">Verbunden als %s</string>
     <string name="label_settings_trakt_connected_description">Dein Wiedergabeverlauf, deine Merkliste und dein Episodenfortschritt werden mit Trakt synchronisiert.</string>
+    <string name="label_settings_simkl_connected_description">Dein Wiedergabeverlauf, deine Merkliste und dein Episodenfortschritt werden mit Simkl synchronisiert.</string>
     <string name="label_settings_section_info">Info</string>
     <string name="label_settings_youtube">Trailer</string>
     <string name="label_settings_youtube_description">Trailer in der Youtube-App öffnen</string>
@@ -250,7 +253,7 @@
     </string>
 
     <string name="settings_title_ui">Benutzeroberfläche</string>
-    <string name="settings_title_trakt">Trakt-Konto</string>
+    <string name="settings_title_account">Konto</string>
     <string name="settings_title_connect_trakt">Mit Trakt verbinden</string>
     <string name="settings_title_disconnect_trakt">Von Trakt %s abmelden</string>
     <string name="settings_title_info">Info</string>
@@ -259,6 +262,7 @@
     <string name="refresh_credentials">Anmeldedaten aktualisieren</string>
     <string name="logout">Abmelden</string>
     <string name="login">Anmelden</string>
+    <string name="label_auth_continue_with">Mit %s fortfahren</string>
     <string name="unexpected_error_retry">Ein unerwarteter Fehler ist aufgetreten.</string>
 
     <string name="profile_title">Profil</string>
@@ -293,8 +297,6 @@
     <string name="profile_feature_manage_description">Erstellen Sie benutzerdefinierte Listen, personalisieren Sie sie ganz nach Ihren Wünschen.</string>
     <string name="profile_feature_share_title">Teilen</string>
     <string name="profile_feature_share_description">Kommentieren, antworten und bewerten Sie TV-Sendungen, Filme, Staffeln und Episoden</string>
-    <string name="profile_footer_description">* TvManiac ist ein Trakt-Client. Melden Sie sich bei Ihrem Trakt-Konto an, um mit der Community zu verfolgen, zu entdecken und zu teilen.</string>
-    <string name="profile_sign_in_button">Bei Trakt anmelden</string>
 
     <string name="label_settings_include_specials">Spezialstaffeln</string>
     <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>

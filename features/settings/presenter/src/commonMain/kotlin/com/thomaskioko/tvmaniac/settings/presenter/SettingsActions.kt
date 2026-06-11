@@ -15,13 +15,13 @@ public data class OpenSettingsPage(
     val page: SettingsPage,
 ) : SettingsActions
 
-public data object ShowTraktDialog : SettingsActions
+public data object ShowLogoutDialog : SettingsActions
 
-public data object DismissTraktDialog : SettingsActions
+public data object DismissLogoutDialog : SettingsActions
 
-public data object TraktLogoutClicked : SettingsActions
+public data object AccountLogoutClicked : SettingsActions
 
-public data class TraktLoginClicked(val provider: AccountProvider) : SettingsActions
+public data class AccountLoginClicked(val provider: AccountProvider) : SettingsActions
 
 public data class ImageQualitySelected(
     val quality: ImageQuality,

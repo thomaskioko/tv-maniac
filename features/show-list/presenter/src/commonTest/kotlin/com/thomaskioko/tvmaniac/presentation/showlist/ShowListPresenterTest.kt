@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
@@ -43,6 +44,7 @@ internal class ShowListPresenterTest {
     private val accountManager = FakeAccountManager()
     private val authManager = FakeAuthManager()
     private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
+    private val simklFlag = FakeFeatureFlag(initial = false)
     private val userRepository = FakeUserRepository()
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
@@ -69,7 +71,6 @@ internal class ShowListPresenterTest {
         initial.labels.sheetTitle.isNotEmpty() shouldBe true
         initial.labels.loginRequiredTitle.isNotEmpty() shouldBe true
         initial.labels.loginRequiredMessage.isNotEmpty() shouldBe true
-        initial.labels.loginRequiredConfirmText.isNotEmpty() shouldBe true
         initial.labels.emptyListText.isNotEmpty() shouldBe true
         initial.labels.listsHeaderText.isNotEmpty() shouldBe true
         initial.labels.createListButtonText.isNotEmpty() shouldBe true
@@ -477,6 +478,28 @@ internal class ShowListPresenterTest {
         }
     }
 
+    @Test
+    fun `should expose only the trakt option given the simkl flag is off`() = runTest {
+        val presenter = createPresenter()
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should expose both provider options given the simkl flag is on`() = runTest {
+        simklFlag.value = true
+        val presenter = createPresenter()
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().authProviders.map { it.provider } shouldBe
+                listOf(AccountProvider.TRAKT, AccountProvider.SIMKL)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun createPresenter(
         showId: Long = 100L,
         appScopeLauncher: FakeAppScopeLauncher = FakeAppScopeLauncher(appCoroutineScope),
@@ -487,6 +510,7 @@ internal class ShowListPresenterTest {
         navigator = navigator,
         accountManager = accountManager,
         authManagers = mapOf(AccountProvider.TRAKT to authManager, AccountProvider.SIMKL to simklAuthManager),
+        simklLoginFlag = simklFlag,
         syncTraktListsInteractor = SyncTraktListsInteractor(traktListRepository, userRepository),
         createTraktListInteractor = CreateTraktListInteractor(traktListRepository, userRepository),
         toggleShowInListInteractor = ToggleShowInListInteractor(traktListRepository, userRepository),

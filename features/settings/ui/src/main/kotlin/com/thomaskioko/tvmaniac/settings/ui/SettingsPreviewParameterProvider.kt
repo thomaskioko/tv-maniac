@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.settings.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryGroup
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryItem
@@ -12,17 +14,15 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-private fun previewRootGroups(authenticated: Boolean): ImmutableList<SettingsCategoryGroup> = buildList {
-    if (authenticated) {
-        add(
-            SettingsCategoryGroup(
-                label = "Account",
-                items = persistentListOf(
-                    SettingsCategoryItem(SettingsPage.TRAKT, "Trakt Account", "Manage your Trakt connection"),
-                ),
+private fun previewRootGroups(): ImmutableList<SettingsCategoryGroup> = buildList {
+    add(
+        SettingsCategoryGroup(
+            label = "Account",
+            items = persistentListOf(
+                SettingsCategoryItem(SettingsPage.ACCOUNT, "Account", "Manage your connected account"),
             ),
-        )
-    }
+        ),
+    )
     add(
         SettingsCategoryGroup(
             label = "General",
@@ -83,14 +83,16 @@ private val previewLabels = SettingsLabels(
     traktBody = "TvManiac uses Trakt to sync your watch history, watchlist, and episode progress across devices.",
     traktTitle = "Trakt",
     traktDescription = "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
-    traktAuthentication = "Authentication",
+    traktAuthentication = "Connect & Sync Your Content",
+    connectTitle = "Connect",
+    accountSyncDescription = "Save your progress, discover new titles, and sync your content across all devices.",
     traktConnected = "Connected as John Doe",
     traktConnectedDescription = "Your watch history, watchlist, and episode progress sync with Trakt.",
     logout = "Logout",
     login = "Login",
 )
 
-private val loggedOutTraktLabels = previewLabels.copy(
+private val loggedOutAccountLabels = previewLabels.copy(
     traktConnected = "Connect to Trakt",
     traktConnectedDescription = "Sign in with Trakt to sync your watch history, watchlist, and episode progress " +
         "across your devices.",
@@ -100,10 +102,9 @@ internal val defaultState = SettingsState(
     theme = ThemeModel.DARK,
     imageQuality = ImageQuality.HIGH,
     currentPageTitle = "Settings",
-    rootGroups = previewRootGroups(authenticated = false),
+    rootGroups = previewRootGroups(),
     labels = previewLabels,
-    showTraktDialog = false,
-    showLogoutDialog = false,
+    showLogoutConfirmation = false,
     isAuthenticated = false,
     isLoading = false,
     openTrailersInYoutube = false,
@@ -115,11 +116,10 @@ internal val loggedInState = SettingsState(
     theme = ThemeModel.DARK,
     imageQuality = ImageQuality.MEDIUM,
     currentPageTitle = "Settings",
-    rootGroups = previewRootGroups(authenticated = true),
+    rootGroups = previewRootGroups(),
     labels = previewLabels,
     username = "John Doe",
-    showTraktDialog = false,
-    showLogoutDialog = false,
+    showLogoutConfirmation = false,
     isAuthenticated = true,
     isLoading = false,
     openTrailersInYoutube = true,
@@ -133,11 +133,20 @@ internal val notificationsState = loggedInState.copy(currentPage = SettingsPage.
 internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVACY, currentPageTitle = "Privacy")
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")
-internal val traktState = loggedInState.copy(currentPage = SettingsPage.TRAKT, currentPageTitle = "Trakt Account")
-internal val traktLoggedOutState = defaultState.copy(
-    currentPage = SettingsPage.TRAKT,
-    currentPageTitle = "Trakt Account",
-    labels = loggedOutTraktLabels,
+internal val accountState = loggedInState.copy(
+    currentPage = SettingsPage.ACCOUNT,
+    currentPageTitle = "Account",
+    activeProvider = AccountProvider.TRAKT,
+    accountConnectedDescription = "Your watch history, watchlist, and episode progress sync with Trakt.",
+)
+internal val accountLoggedOutState = defaultState.copy(
+    currentPage = SettingsPage.ACCOUNT,
+    currentPageTitle = "Account",
+    labels = loggedOutAccountLabels,
+    authProviders = persistentListOf(
+        AuthProviderOption(AccountProvider.TRAKT, "Continue with Trakt"),
+        AuthProviderOption(AccountProvider.SIMKL, "Continue with Simkl"),
+    ),
 )
 
 internal val loadingState = defaultState.copy(isLoading = true)

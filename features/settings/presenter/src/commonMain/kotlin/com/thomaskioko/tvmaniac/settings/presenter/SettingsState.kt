@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import kotlinx.collections.immutable.ImmutableList
@@ -9,6 +10,8 @@ import kotlinx.collections.immutable.persistentListOf
 public data class SettingsState(
     val isAuthenticated: Boolean,
     val activeProvider: AccountProvider? = null,
+    val authProviders: ImmutableList<AuthProviderOption> = persistentListOf(),
+    val accountConnectedDescription: String? = null,
     val theme: ThemeModel,
     val imageQuality: ImageQuality,
     val currentPage: SettingsPage = SettingsPage.ROOT,
@@ -16,9 +19,8 @@ public data class SettingsState(
     val rootGroups: ImmutableList<SettingsCategoryGroup> = persistentListOf(),
     val labels: SettingsLabels = SettingsLabels(),
     val username: String? = null,
-    val showTraktDialog: Boolean,
+    val showLogoutConfirmation: Boolean,
     val message: UiMessage? = null,
-    val showLogoutDialog: Boolean,
     val openTrailersInYoutube: Boolean = false,
     val includeSpecials: Boolean = false,
     val backgroundSyncEnabled: Boolean = true,
@@ -29,7 +31,7 @@ public data class SettingsState(
     val crashReportingEnabled: Boolean = true,
     val isLoading: Boolean = true,
     val isUpdating: Boolean = false,
-    val isProcessingTraktAuth: Boolean = false,
+    val isProcessingAuth: Boolean = false,
     val hiddenTapCount: Int = 0,
     val githubUrl: String = GITHUB_URL,
     val privacyPolicyUrl: String = PRIVACY_POLICY_URL,
@@ -42,9 +44,8 @@ public data class SettingsState(
             isAuthenticated = false,
             theme = ThemeModel.SYSTEM,
             imageQuality = ImageQuality.AUTO,
-            showTraktDialog = false,
+            showLogoutConfirmation = false,
             message = null,
-            showLogoutDialog = false,
             includeSpecials = false,
             backgroundSyncEnabled = true,
             lastSyncDate = null,

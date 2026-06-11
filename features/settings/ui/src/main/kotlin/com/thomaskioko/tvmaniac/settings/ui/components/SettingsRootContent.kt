@@ -90,7 +90,7 @@ private fun rootRowTestTag(page: SettingsPage): String = when (page) {
     SettingsPage.PRIVACY -> SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG
     SettingsPage.INFO -> SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG
     SettingsPage.LICENSES -> SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG
-    SettingsPage.TRAKT -> SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG
+    SettingsPage.ACCOUNT -> SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG
     SettingsPage.ROOT -> ""
 }
 
@@ -101,7 +101,7 @@ private fun rootRowIcon(page: SettingsPage): ImageVector = when (page) {
     SettingsPage.PRIVACY -> Icons.Filled.Security
     SettingsPage.INFO -> Icons.Filled.Info
     SettingsPage.LICENSES -> Icons.Filled.Description
-    SettingsPage.TRAKT -> Icons.Filled.Person
+    SettingsPage.ACCOUNT -> Icons.Filled.Person
     SettingsPage.ROOT -> Icons.Filled.Info
 }
 

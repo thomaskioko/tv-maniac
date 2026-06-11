@@ -11,26 +11,26 @@ class ProfileScreenTest: SnapshotTestCase {
         SwiftFeatureItem(
             id: "discover",
             iconName: "magnifyingglass",
-            title: "Discover Shows",
-            description: "Find new shows to watch"
+            title: "Discover",
+            description: "Browse over one million movies and TV shows and see \"Where to Watch\" them."
         ),
         SwiftFeatureItem(
             id: "track",
             iconName: "tv",
-            title: "Track Progress",
-            description: "Keep track of what you've watched"
+            title: "Track",
+            description: "Check-in, mark watch and manage your all-time watch history."
         ),
         SwiftFeatureItem(
             id: "manage",
             iconName: "rectangle.stack",
-            title: "Manage Library",
-            description: "Organize your shows"
+            title: "Watchlist",
+            description: "Create custom list, personalize it just the way you like it."
         ),
         SwiftFeatureItem(
             id: "more",
             iconName: "sparkles",
-            title: "And More",
-            description: "Get personalized recommendations"
+            title: "More",
+            description: "More features coming soon."
         ),
     ]
 
@@ -50,13 +50,14 @@ class ProfileScreenTest: SnapshotTestCase {
                 showsWatchedLabel: "Shows Watched",
                 listsLabel: "Lists",
                 listsViewLabel: "View",
-                unauthenticatedTitle: "Track your shows",
-                footerDescription: "Sign in to sync your data.",
-                signInLabel: "Sign In with Trakt",
+                unauthenticatedTitle: "Discover.\nTrack.\nWatchlist.\n& More ...",
+                authTitle: "Connect & Sync Your Content",
+                authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
+                isAuthenticated: false,
                 featureItems: sampleFeatureItems
             ),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Loading")
@@ -78,13 +79,18 @@ class ProfileScreenTest: SnapshotTestCase {
                 showsWatchedLabel: "Shows Watched",
                 listsLabel: "Lists",
                 listsViewLabel: "View",
-                unauthenticatedTitle: "Track your shows",
-                footerDescription: "Sign in to sync your data across devices.",
-                signInLabel: "Sign In with Trakt",
-                featureItems: sampleFeatureItems
+                unauthenticatedTitle: "Discover.\nTrack.\nWatchlist.\n& More ...",
+                authTitle: "Connect & Sync Your Content",
+                authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
+                isAuthenticated: false,
+                featureItems: sampleFeatureItems,
+                authProviders: [
+                    SwiftAuthProvider(id: "TRAKT", label: "Continue with Trakt", logoName: "TraktMono"),
+                    SwiftAuthProvider(id: "SIMKL", label: "Continue with Simkl", logoName: "SimklMono"),
+                ]
             ),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Unauthenticated")
@@ -163,9 +169,10 @@ class ProfileScreenTest: SnapshotTestCase {
             recentlyWatched: .content(sampleRecentShows),
             favoritesTitle: "Favorites",
             favorites: .content(sampleShows),
-            unauthenticatedTitle: "Track your shows",
-            footerDescription: "Sign in to sync your data.",
-            signInLabel: "Sign In with Trakt",
+            unauthenticatedTitle: "Discover.\nTrack.\nWatchlist.\n& More ...",
+            authTitle: "Connect & Sync Your Content",
+            authDescription: "Save your progress, discover new titles, and sync your content across all devices.",
+            isAuthenticated: true,
             featureItems: sampleFeatureItems
         )
     }
@@ -174,7 +181,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .content(sampleLists)),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated")
@@ -184,7 +191,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .content(manyLists)),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsWithMore")
@@ -194,7 +201,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .empty),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsEmpty")
@@ -225,7 +232,7 @@ class ProfileScreenTest: SnapshotTestCase {
         ProfileScreen(
             state: authenticatedState(userLists: .error("Failed to load lists")),
             onSettingsClicked: {},
-            onLoginClicked: {}
+            onProviderSelected: { _ in }
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsError")

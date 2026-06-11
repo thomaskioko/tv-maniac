@@ -13,7 +13,7 @@ public enum SettingsPageRoute: String, Hashable, Identifiable, CaseIterable {
     case privacy
     case info
     case licenses
-    case trakt
+    case account
 
     public var id: String {
         rawValue
@@ -29,7 +29,7 @@ public enum SettingsPageRoute: String, Hashable, Identifiable, CaseIterable {
         case .privacy: "lock.shield"
         case .info: "info.circle"
         case .licenses: "doc.text"
-        case .trakt: "person.fill"
+        case .account: "person.fill"
         }
     }
 }

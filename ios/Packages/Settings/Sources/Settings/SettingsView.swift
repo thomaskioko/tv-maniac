@@ -1,5 +1,6 @@
 import Components
 import DesignSystem
+import Models
 import SwiftUI
 import TvManiac
 import TvManiacKit
@@ -39,7 +40,7 @@ public struct SettingsView: View {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            traktContent: traktContent
+            accountContent: accountContent
         )
     }
 
@@ -57,7 +58,7 @@ public struct SettingsView: View {
             uiState: uiState,
             showingErrorAlert: $showingErrorAlert,
             showingLogoutAlert: $showingLogoutAlert,
-            onLogout: { presenter.dispatch(action: TraktLogoutClicked()) },
+            onLogout: { presenter.dispatch(action: AccountLogoutClicked()) },
             onDismissError: { id in presenter.dispatch(action: SettingsMessageShown(id: id)) }
         )
         .alert(
@@ -293,20 +294,37 @@ public struct SettingsView: View {
 
     // MARK: - Trakt
 
-    private var traktContent: SettingsTraktContent {
-        SettingsTraktContent(
+    private var accountContent: SettingsAccountContent {
+        SettingsAccountContent(
             title: uiState.labels.traktTitle,
             description: uiState.labels.traktDescription,
             authenticationLabel: uiState.labels.traktAuthentication,
+            connectTitle: uiState.labels.connectTitle,
+            syncDescription: uiState.labels.accountSyncDescription,
             connectedTitle: uiState.labels.traktConnected,
-            connectedDescription: uiState.labels.traktConnectedDescription,
+            connectedDescription: uiState.accountConnectedDescription ?? uiState.labels.traktConnectedDescription,
             isAuthenticated: uiState.isAuthenticated,
-            isProcessingAuth: uiState.isProcessingTraktAuth,
+            isProcessingAuth: uiState.isProcessingAuth,
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
+            providerName: providerDisplayName(uiState.activeProvider),
+            providerLogoName: uiState.activeProvider?.name == "SIMKL" ? "SimklMono" : "TraktMono",
+            authProviders: uiState.authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
+                SwiftAuthProvider(
+                    id: option.provider.name,
+                    label: option.label,
+                    logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+                )
+            },
             onLogout: { showingLogoutAlert = true },
-            onLogin: { presenter.dispatch(action: TraktLoginClicked(provider: .trakt)) }
+            onProviderSelected: { id in
+                presenter.dispatch(action: AccountLoginClicked(provider: id == "SIMKL" ? .simkl : .trakt))
+            }
         )
+    }
+
+    private func providerDisplayName(_ provider: AccountProvider?) -> String {
+        provider?.name == "SIMKL" ? "Simkl" : "Trakt"
     }
 
     // MARK: - Notification Handling

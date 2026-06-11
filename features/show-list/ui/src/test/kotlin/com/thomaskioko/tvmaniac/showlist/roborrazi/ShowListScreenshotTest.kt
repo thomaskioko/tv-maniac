@@ -1,8 +1,11 @@
 package com.thomaskioko.tvmaniac.showlist.roborrazi
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.showlist.ui.ShowListContent
 import com.thomaskioko.tvmaniac.showlist.ui.loggedInEmpty
@@ -30,7 +33,7 @@ class ShowListScreenshotTest {
     @Test
     fun showListLoggedOut() {
         composeTestRule.captureMultiDevice("ShowListLoggedOut") {
-            TvManiacBackground {
+            Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
                     state = loggedOutState,
                     onAction = {},
@@ -42,7 +45,7 @@ class ShowListScreenshotTest {
     @Test
     fun showListEmpty() {
         composeTestRule.captureMultiDevice("ShowListEmpty") {
-            TvManiacBackground {
+            Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
                     state = loggedInEmpty,
                     onAction = {},
@@ -54,7 +57,7 @@ class ShowListScreenshotTest {
     @Test
     fun showListWithLists() {
         composeTestRule.captureMultiDevice("ShowListWithLists") {
-            TvManiacBackground {
+            Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
                     state = loggedInWithLists,
                     onAction = {},
@@ -66,7 +69,7 @@ class ShowListScreenshotTest {
     @Test
     fun showListWithCreateField() {
         composeTestRule.captureMultiDevice("ShowListWithCreateField") {
-            TvManiacBackground {
+            Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
                     state = loggedInWithCreateField,
                     onAction = {},
@@ -78,7 +81,7 @@ class ShowListScreenshotTest {
     @Test
     fun showListCreatingList() {
         composeTestRule.captureMultiDevice("ShowListCreatingList") {
-            TvManiacBackground {
+            Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
                     state = loggedInWithCreateLoading,
                     onAction = {},

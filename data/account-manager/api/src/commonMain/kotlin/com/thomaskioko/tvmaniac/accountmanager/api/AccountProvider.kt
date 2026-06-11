@@ -4,3 +4,9 @@ public enum class AccountProvider {
     TRAKT,
     SIMKL,
 }
+
+public val AccountProvider.displayName: String
+    get() = when (this) {
+        AccountProvider.TRAKT -> "Trakt"
+        AccountProvider.SIMKL -> "Simkl"
+    }

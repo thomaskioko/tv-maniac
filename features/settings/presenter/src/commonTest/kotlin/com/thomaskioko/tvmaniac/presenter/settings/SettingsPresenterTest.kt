@@ -14,21 +14,22 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
+import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
-import com.thomaskioko.tvmaniac.settings.presenter.DismissTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
-import com.thomaskioko.tvmaniac.settings.presenter.ShowTraktDialog
+import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
-import com.thomaskioko.tvmaniac.settings.presenter.TraktLoginClicked
-import com.thomaskioko.tvmaniac.settings.presenter.TraktLogoutClicked
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
@@ -58,6 +59,7 @@ class SettingsPresenterTest {
     private val localizer = FakeLocalizer()
     private val authManager = FakeAuthManager()
     private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
+    private val simklFlag = FakeFeatureFlag(initial = false)
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -76,6 +78,7 @@ class SettingsPresenterTest {
                 AccountProvider.TRAKT to authManager,
                 AccountProvider.SIMKL to simklAuthManager,
             ),
+            simklLoginFlag = simklFlag,
             logoutInteractor = LogoutInteractor(
                 accountManager = accountManager,
                 userRepository = userRepository,
@@ -126,11 +129,11 @@ class SettingsPresenterTest {
         presenter.state.test {
             awaitItem()
 
-            presenter.dispatch(ShowTraktDialog)
-            awaitItem().showTraktDialog shouldBe true
+            presenter.dispatch(ShowLogoutDialog)
+            awaitItem().showLogoutConfirmation shouldBe true
 
-            presenter.dispatch(DismissTraktDialog)
-            awaitItem().showTraktDialog shouldBe false
+            presenter.dispatch(DismissLogoutDialog)
+            awaitItem().showLogoutConfirmation shouldBe false
         }
     }
 
@@ -234,7 +237,7 @@ class SettingsPresenterTest {
         var launched = false
         authManager.setOnLaunchWebView { launched = true }
 
-        presenter.dispatch(TraktLoginClicked(AccountProvider.TRAKT))
+        presenter.dispatch(AccountLoginClicked(AccountProvider.TRAKT))
         testScheduler.advanceUntilIdle()
 
         launched shouldBe true
@@ -247,7 +250,7 @@ class SettingsPresenterTest {
         authManager.setOnLaunchWebView { traktLaunched = true }
         simklAuthManager.setOnLaunchWebView { simklLaunched = true }
 
-        presenter.dispatch(TraktLoginClicked(AccountProvider.SIMKL))
+        presenter.dispatch(AccountLoginClicked(AccountProvider.SIMKL))
         testScheduler.advanceUntilIdle()
 
         simklLaunched shouldBe true
@@ -258,9 +261,61 @@ class SettingsPresenterTest {
     fun `should log out the active provider given logout is clicked`() = runTest {
         accountManager.setActiveProvider(AccountProvider.SIMKL)
 
-        presenter.dispatch(TraktLogoutClicked)
+        presenter.dispatch(AccountLogoutClicked)
         testScheduler.advanceUntilIdle()
 
         accountManager.lastLogoutProvider shouldBe AccountProvider.SIMKL
+    }
+
+    @Test
+    fun `should expose only the trakt option given the simkl flag is off`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.authProviders.isEmpty()) {
+                state = awaitItem()
+            }
+            state.authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should expose both provider options given the simkl flag is on`() = runTest {
+        simklFlag.value = true
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.authProviders.size < 2) {
+                state = awaitItem()
+            }
+            state.authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT, AccountProvider.SIMKL)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should show the account row when logged out`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.rootGroups.isEmpty()) {
+                state = awaitItem()
+            }
+            state.isAuthenticated shouldBe false
+            state.rootGroups.flatMap { it.items }.any { it.page == SettingsPage.ACCOUNT } shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should resolve the connected description for the active provider`() = runTest {
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.accountConnectedDescription == null) {
+                state = awaitItem()
+            }
+            state.accountConnectedDescription shouldBe
+                localizer.getString(StringResourceKey.LabelSettingsSimklConnectedDescription)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

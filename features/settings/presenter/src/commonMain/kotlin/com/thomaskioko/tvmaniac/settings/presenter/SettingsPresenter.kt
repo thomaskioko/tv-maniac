@@ -5,6 +5,8 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -22,6 +24,8 @@ import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -58,12 +62,13 @@ public class SettingsPresenter(
     private val localizer: Localizer,
     private val logger: Logger,
     private val authManagers: Map<AccountProvider, AuthManager>,
+    @SimklLoginFlagQualifier private val simklLoginFlag: FeatureFlag<Boolean>,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     accountManager: AccountManager,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
-    private val traktAuthState = ObservableLoadingCounter()
+    private val authProcessingState = ObservableLoadingCounter()
     private val notificationToggleState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
@@ -76,25 +81,28 @@ public class SettingsPresenter(
 
     public val state: StateFlow<SettingsState> = combine(
         _state,
-        traktAuthState.observable,
+        authProcessingState.observable,
         notificationToggleState.observable,
         observeSettingsPreferencesInteractor.flow,
         accountManager.isConnected,
         accountManager.activeProvider,
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
-    ) { currentState, isProcessingTraktAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile ->
+        simklLoginFlag.observe(),
+    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled ->
         val username = userProfile?.let { it.fullName ?: it.username }
         currentState.copy(
             isLoading = false,
-            isUpdating = isProcessingTraktAuth || isTogglingNotifications,
-            isProcessingTraktAuth = isProcessingTraktAuth,
+            isUpdating = isProcessingAuth || isTogglingNotifications,
+            isProcessingAuth = isProcessingAuth,
             imageQuality = preferences.imageQuality,
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
+            authProviders = authProviderOptions(simklEnabled),
+            accountConnectedDescription = activeProvider?.let { connectedDescription(it) },
             backgroundSyncEnabled = preferences.backgroundSyncEnabled,
             lastSyncDate = preferences.lastSyncDate,
             showLastSyncDate = preferences.showLastSyncDate,
@@ -103,7 +111,7 @@ public class SettingsPresenter(
             crashReportingEnabled = preferences.crashReportingEnabled,
             message = message,
             currentPageTitle = resolvePageTitle(currentState.currentPage),
-            rootGroups = buildRootGroups(isLoggedIn),
+            rootGroups = buildRootGroups(),
             username = username,
             labels = buildLabels(
                 imageQuality = preferences.imageQuality,
@@ -124,25 +132,25 @@ public class SettingsPresenter(
 
     public fun dispatch(action: SettingsActions) {
         when (action) {
-            DismissTraktDialog, ShowTraktDialog -> updateTrackDialogState()
+            DismissLogoutDialog, ShowLogoutDialog -> toggleLogoutConfirmation()
             VersionClicked -> handleVersionTap()
             BackClicked -> handleBackClicked()
             is OpenSettingsPage -> _state.update { state -> state.copy(currentPage = action.page) }
-            TraktLogoutClicked -> {
+            AccountLogoutClicked -> {
                 coroutineScope.launch {
                     logoutInteractor(Unit)
-                        .collectStatus(traktAuthState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                        .collectStatus(authProcessingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
                 }
-                updateTrackDialogState()
+                toggleLogoutConfirmation()
             }
 
-            is TraktLoginClicked -> {
+            is AccountLoginClicked -> {
                 coroutineScope.launch {
-                    traktAuthState.addLoader()
+                    authProcessingState.addLoader()
                     try {
                         authManagers[action.provider]?.launchWebView()
                     } finally {
-                        traktAuthState.removeLoader()
+                        authProcessingState.removeLoader()
                     }
                 }
             }
@@ -206,8 +214,8 @@ public class SettingsPresenter(
         }
     }
 
-    private fun updateTrackDialogState() {
-        _state.update { state -> state.copy(showTraktDialog = !state.showTraktDialog) }
+    private fun toggleLogoutConfirmation() {
+        _state.update { state -> state.copy(showLogoutConfirmation = !state.showLogoutConfirmation) }
     }
 
     private fun handleVersionTap() {
@@ -231,26 +239,42 @@ public class SettingsPresenter(
             SettingsPage.PRIVACY -> StringResourceKey.LabelSettingsSectionPrivacy
             SettingsPage.INFO -> StringResourceKey.SettingsTitleInfo
             SettingsPage.LICENSES -> StringResourceKey.LabelSettingsSectionLicenses
-            SettingsPage.TRAKT -> StringResourceKey.SettingsTitleTrakt
+            SettingsPage.ACCOUNT -> StringResourceKey.SettingsTitleAccount
         },
     )
 
-    private fun buildRootGroups(isAuthenticated: Boolean): ImmutableList<SettingsCategoryGroup> =
+    private fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
         buildList {
-            if (isAuthenticated) {
-                add(
-                    SettingsCategoryGroup(
-                        label = localizer.getString(StringResourceKey.LabelSettingsGroupAccount),
-                        items = persistentListOf(
-                            SettingsCategoryItem(
-                                page = SettingsPage.TRAKT,
-                                title = localizer.getString(StringResourceKey.SettingsTitleTrakt),
-                                summary = localizer.getString(StringResourceKey.LabelSettingsTraktDescription),
-                            ),
+            add(providerOption(AccountProvider.TRAKT))
+            if (simklEnabled) add(providerOption(AccountProvider.SIMKL))
+        }.toImmutableList()
+
+    private fun providerOption(provider: AccountProvider): AuthProviderOption = AuthProviderOption(
+        provider = provider,
+        label = localizer.getString(StringResourceKey.LabelAuthContinueWith, provider.displayName),
+    )
+
+    private fun connectedDescription(provider: AccountProvider): String = localizer.getString(
+        when (provider) {
+            AccountProvider.TRAKT -> StringResourceKey.LabelSettingsTraktConnectedDescription
+            AccountProvider.SIMKL -> StringResourceKey.LabelSettingsSimklConnectedDescription
+        },
+    )
+
+    private fun buildRootGroups(): ImmutableList<SettingsCategoryGroup> =
+        buildList {
+            add(
+                SettingsCategoryGroup(
+                    label = localizer.getString(StringResourceKey.LabelSettingsGroupAccount),
+                    items = persistentListOf(
+                        SettingsCategoryItem(
+                            page = SettingsPage.ACCOUNT,
+                            title = localizer.getString(StringResourceKey.SettingsTitleAccount),
+                            summary = localizer.getString(StringResourceKey.LabelSettingsAccountDescription),
                         ),
                     ),
-                )
-            }
+                ),
+            )
             add(
                 SettingsCategoryGroup(
                     label = localizer.getString(StringResourceKey.LabelSettingsGroupGeneral),
@@ -351,6 +375,8 @@ public class SettingsPresenter(
         traktTitle = localizer.getString(StringResourceKey.SettingsTitleTraktApp),
         traktDescription = localizer.getString(StringResourceKey.TraktDescription),
         traktAuthentication = localizer.getString(StringResourceKey.LabelSettingsTraktAuthentication),
+        connectTitle = localizer.getString(StringResourceKey.LabelSettingsConnectTitle),
+        accountSyncDescription = localizer.getString(StringResourceKey.LabelSettingsAccountSyncDescription),
         traktConnected = when {
             !isAuthenticated -> localizer.getString(StringResourceKey.LabelSettingsTraktConnect)
             username != null -> localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, username)

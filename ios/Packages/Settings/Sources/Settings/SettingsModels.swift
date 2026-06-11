@@ -229,42 +229,60 @@ public struct SettingsLicenseSection: Identifiable {
     }
 }
 
-public struct SettingsTraktContent {
+public struct SettingsAccountContent {
     public let title: String
     public let description: String
     public let authenticationLabel: String
+    public let connectTitle: String
+    public let syncDescription: String
     public let connectedTitle: String
     public let connectedDescription: String
     public let isAuthenticated: Bool
     public let isProcessingAuth: Bool
     public let logoutLabel: String
     public let loginLabel: String
+    public let providerName: String
+    public let providerLogoName: String
+    public let authProviders: [SwiftAuthProvider]
     public let onLogout: () -> Void
     public let onLogin: () -> Void
+    public let onProviderSelected: (String) -> Void
 
     public init(
         title: String,
         description: String,
         authenticationLabel: String,
+        connectTitle: String = "",
+        syncDescription: String = "",
         connectedTitle: String,
         connectedDescription: String,
         isAuthenticated: Bool,
         isProcessingAuth: Bool,
         logoutLabel: String,
         loginLabel: String,
+        providerName: String = "",
+        providerLogoName: String = "TraktMono",
+        authProviders: [SwiftAuthProvider] = [],
         onLogout: @escaping () -> Void,
-        onLogin: @escaping () -> Void
+        onLogin: @escaping () -> Void = {},
+        onProviderSelected: @escaping (String) -> Void = { _ in }
     ) {
         self.title = title
         self.description = description
         self.authenticationLabel = authenticationLabel
+        self.connectTitle = connectTitle
+        self.syncDescription = syncDescription
         self.connectedTitle = connectedTitle
         self.connectedDescription = connectedDescription
         self.isAuthenticated = isAuthenticated
         self.isProcessingAuth = isProcessingAuth
         self.logoutLabel = logoutLabel
         self.loginLabel = loginLabel
+        self.providerName = providerName
+        self.providerLogoName = providerLogoName
+        self.authProviders = authProviders
         self.onLogout = onLogout
         self.onLogin = onLogin
+        self.onProviderSelected = onProviderSelected
     }
 }
