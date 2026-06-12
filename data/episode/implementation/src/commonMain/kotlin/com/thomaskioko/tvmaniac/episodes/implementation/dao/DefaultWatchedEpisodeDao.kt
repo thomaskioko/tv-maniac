@@ -528,11 +528,6 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
-                val showExists = database.tvShowQueries
-                    .existsByShowId(showId)
-                    .executeAsOne()
-                if (!showExists) return@transaction
-
                 val _ = database.followedShowsQueries.upsertIfNotExists(
                     showId = internalShowId,
                     tmdbId = null,

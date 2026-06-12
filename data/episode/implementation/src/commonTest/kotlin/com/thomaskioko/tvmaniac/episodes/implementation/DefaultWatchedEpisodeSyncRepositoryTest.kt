@@ -302,11 +302,12 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        showId = showIdForTraktId(SHOW_ID)
+        showId = showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_ID)
     }
 
     private companion object {
         private const val SHOW_ID = 1L
+        private const val SHOW_TRAKT_ID = 500L
         private const val PAST_MILLIS = 1_600_000_000_000L
     }
 }
