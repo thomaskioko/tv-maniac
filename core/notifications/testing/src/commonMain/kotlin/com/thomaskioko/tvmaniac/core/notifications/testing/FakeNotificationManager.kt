@@ -28,6 +28,10 @@ public class FakeNotificationManager : NotificationManager {
     override suspend fun getPendingNotifications(): List<EpisodeNotification> =
         scheduledNotifications.values.toList()
 
+    override suspend fun clearStaleNotifications() {
+        scheduledNotifications.clear()
+    }
+
     public fun getScheduledNotifications(): Map<Long, EpisodeNotification> =
         scheduledNotifications.toMap()
 

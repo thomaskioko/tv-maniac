@@ -150,6 +150,10 @@ public class AndroidNotificationManager(
         logger.debug(TAG, "Cancelled all notifications")
     }
 
+    override suspend fun clearStaleNotifications() {
+        pendingNotificationsStore.clearStaleNotificationsOnce()
+    }
+
     override suspend fun getPendingNotifications(): List<EpisodeNotification> {
         val staleIds = pendingNotificationsStore.cleanupStaleNotifications()
         staleIds.forEach { notificationId ->
