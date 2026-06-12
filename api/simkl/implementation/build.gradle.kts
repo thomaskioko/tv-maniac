@@ -37,9 +37,11 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(libs.ktor.mock)
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(projects.api.simkl.api)
+                implementation(projects.api.simkl.testing)
                 implementation(projects.core.networkUtil.api)
             }
         }
