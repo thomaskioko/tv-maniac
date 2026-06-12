@@ -167,7 +167,8 @@ public class ProfilePresenter(
     ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
         // TODO:: Remove hardcoded provider
-        val profile = userProfile?.toPresentation(statsExpected = activeProvider == AccountProvider.TRAKT)
+        val statsExpected = activeProvider == AccountProvider.TRAKT || activeProvider == AccountProvider.SIMKL
+        val profile = userProfile?.toPresentation(statsExpected = statsExpected)
         val displayName = profile?.fullName ?: profile?.username ?: ""
 
         ProfileState(

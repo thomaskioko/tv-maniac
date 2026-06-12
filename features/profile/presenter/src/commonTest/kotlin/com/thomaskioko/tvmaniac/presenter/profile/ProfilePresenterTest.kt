@@ -283,7 +283,7 @@ internal class ProfilePresenterTest {
     }
 
     @Test
-    fun `should not show loading or stats given simkl active and stats absent`() = runTest {
+    fun `should expect and surface stats given simkl active`() = runTest {
         userRepository.holdStatsFetch()
         accountManager.setActiveProvider(AccountProvider.SIMKL)
         userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
@@ -292,11 +292,17 @@ internal class ProfilePresenterTest {
 
         testPresenter.state.test {
             runCurrent()
-            val state = expectMostRecentItem()
-            state.userProfile shouldNotBe null
-            state.userProfile?.stats shouldBe null
-            state.userProfile?.awaitingStats shouldBe false
-            state.showLoading shouldBe false
+            val loadingState = expectMostRecentItem()
+            loadingState.userProfile shouldNotBe null
+            loadingState.userProfile?.awaitingStats shouldBe true
+            loadingState.showLoading shouldBe true
+
+            userRepository.setUserProfile(testProfile.copy(statsLoaded = true))
+            runCurrent()
+            val loadedState = expectMostRecentItem()
+            loadedState.userProfile?.stats shouldNotBe null
+            loadedState.userProfile?.awaitingStats shouldBe false
+            loadedState.showLoading shouldBe false
 
             userRepository.releaseStatsFetch()
         }
