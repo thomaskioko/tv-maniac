@@ -17,6 +17,6 @@ public object DiscoverTestTags {
 
     public fun moreButton(rowKey: String): String = "discover_more_button_$rowKey"
     public fun showCard(rowKey: String, traktId: Long): String = "discover_show_card_${rowKey}_$traktId"
-    public fun upNextCard(showTraktId: Long): String = "discover_up_next_card_$showTraktId"
+    public fun upNextCard(showId: Long): String = "discover_up_next_card_$showId"
     public fun featuredShowItem(traktId: Long): String = "discover_featured_show_$traktId"
 }

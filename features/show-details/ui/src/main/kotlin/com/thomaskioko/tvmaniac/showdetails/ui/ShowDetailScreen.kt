@@ -730,7 +730,7 @@ private fun TrailersContent(
             ) { trailer ->
                 Column {
                     Card(
-                        onClick = { onAction(WatchTrailerClicked(trailer.showTmdbId)) },
+                        onClick = { onAction(WatchTrailerClicked(trailer.showId)) },
                         shape = RoundedCornerShape(4.dp),
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 4.dp,

@@ -39,7 +39,7 @@ public class DefaultWatchedEpisodeDao(
 ) : WatchedEpisodeDao {
 
     override fun observeWatchedEpisodes(showId: Long): Flow<List<GetWatchedEpisodes>> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
         return database.watchedEpisodesQueries
             .getWatchedEpisodes(internalShowId)
             .asFlow()
@@ -55,8 +55,7 @@ public class DefaultWatchedEpisodeDao(
             .map { rows ->
                 rows.map { row ->
                     RecentlyWatchedEpisode(
-                        showId = row.show_trakt_id,
-                        showTmdbId = row.show_tmdb_id.id,
+                        showId = row.show_id.id,
                         showTitle = row.show_title,
                         posterPath = row.poster_path,
                         seasonNumber = row.season_number,
@@ -78,7 +77,7 @@ public class DefaultWatchedEpisodeDao(
     ) {
         val timestamp = dateTimeProvider.nowMillis()
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
                 val _ = database.followedShowsQueries.upsertIfNotExists(
                     showId = internalShowId,
@@ -113,7 +112,7 @@ public class DefaultWatchedEpisodeDao(
         includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
                 val entry = database.watchedEpisodesQueries
                     .getEntryByShowAndEpisode(internalShowId, Id(episodeId))
@@ -146,7 +145,7 @@ public class DefaultWatchedEpisodeDao(
         showId: Long,
         seasonNumber: Long,
     ): Flow<SeasonWatchProgress> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId)
+        val internalShowId = showIdResolver.showIdForTmdbId(showId)
             ?: return flowOf(SeasonWatchProgress(showId, seasonNumber, 0, 0))
         return combine(
             database.watchedEpisodesQueries
@@ -170,7 +169,7 @@ public class DefaultWatchedEpisodeDao(
     }
 
     override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId)
+        val internalShowId = showIdResolver.showIdForTmdbId(showId)
             ?: return flowOf(ShowWatchProgress(showId, 0, 0))
         return combine(
             database.watchedEpisodesQueries
@@ -191,7 +190,7 @@ public class DefaultWatchedEpisodeDao(
     }
 
     override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
         return database.watchedEpisodesQueries
             .getAllSeasonsWatchProgress(internalShowId)
             .asFlow()
@@ -217,7 +216,7 @@ public class DefaultWatchedEpisodeDao(
     ) {
         val timestamp = dateTimeProvider.nowMillis()
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
                 val _ = database.followedShowsQueries.upsertIfNotExists(
                     showId = internalShowId,
@@ -257,7 +256,7 @@ public class DefaultWatchedEpisodeDao(
         includeSpecials: Boolean,
     ) {
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
                 val seasonRows = database.watchedEpisodesQueries
                     .getWatchedEpisodesForSeason(internalShowId, seasonNumber)
@@ -289,7 +288,7 @@ public class DefaultWatchedEpisodeDao(
     ) {
         val timestamp = dateTimeProvider.nowMillis()
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
                 val unwatchedEpisodesInPreviousSeasons = database.watchedEpisodesQueries
                     .getUnwatchedEpisodesInPreviousSeasons(
@@ -353,7 +352,7 @@ public class DefaultWatchedEpisodeDao(
     ) {
         val timestamp = dateTimeProvider.nowMillis()
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
                 val unwatchedEpisodes = getPreviousUnwatchedEpisodes(
                     showId = internalShowId,
@@ -449,7 +448,7 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
     ): List<EpisodeWatchParams> {
         return withContext(dispatchers.databaseRead) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext emptyList()
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext emptyList()
             database.watchedEpisodesQueries
                 .getEpisodesForSeason(internalShowId, seasonNumber)
                 .executeAsList()
@@ -469,7 +468,7 @@ public class DefaultWatchedEpisodeDao(
         includeSpecials: Boolean,
     ): Long {
         return withContext(dispatchers.databaseRead) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext 0L
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext 0L
             database.watchedEpisodesQueries
                 .getUnwatchedEpisodeCountInPreviousSeasons(
                     showId = internalShowId,
@@ -485,7 +484,7 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         includeSpecials: Boolean,
     ): Flow<Long> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(0L)
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(0L)
         return database.watchedEpisodesQueries
             .getUnwatchedEpisodeCountInPreviousSeasons(
                 showId = internalShowId,
@@ -527,13 +526,8 @@ public class DefaultWatchedEpisodeDao(
         val syncedAt = Clock.System.now().toEpochMilliseconds()
 
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
-                val showExists = database.tvShowQueries
-                    .existsByShowId(showId)
-                    .executeAsOne()
-                if (!showExists) return@transaction
-
                 val _ = database.followedShowsQueries.upsertIfNotExists(
                     showId = internalShowId,
                     tmdbId = null,

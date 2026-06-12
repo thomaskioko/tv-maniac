@@ -268,12 +268,12 @@ public object Endpoints {
         )
 
         /**
-         * Variant of `/shows/{showTraktId}/progress/watched` returning the progress state after
+         * Variant of `/shows/{traktId}/progress/watched` returning the progress state after
          * the pilot has been marked as watched (pilot becomes `last_episode`, episode 2 becomes
          * `next_episode`). Used to verify UpNext refresh after `markEpisodeAsWatched`.
          */
-        public fun showProgressAfterPilotWatched(showTraktId: Long): Endpoint.Exact = ExactEndpoint(
-            path = "/shows/$showTraktId/progress/watched",
+        public fun showProgressAfterPilotWatched(traktId: Long): Endpoint.Exact = ExactEndpoint(
+            path = "/shows/$traktId/progress/watched",
             successFixture = "trakt/shows/progress/refreshed/success.json",
             errorFixture = "trakt/shows/progress/refreshed/error.json",
         )

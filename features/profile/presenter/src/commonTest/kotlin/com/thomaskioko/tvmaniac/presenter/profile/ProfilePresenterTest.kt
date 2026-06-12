@@ -283,6 +283,26 @@ internal class ProfilePresenterTest {
     }
 
     @Test
+    fun `should not show loading or stats given simkl active and stats absent`() = runTest {
+        userRepository.holdStatsFetch()
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
+
+        val testPresenter = createPresenter()
+
+        testPresenter.state.test {
+            runCurrent()
+            val state = expectMostRecentItem()
+            state.userProfile shouldNotBe null
+            state.userProfile?.stats shouldBe null
+            state.userProfile?.awaitingStats shouldBe false
+            state.showLoading shouldBe false
+
+            userRepository.releaseStatsFetch()
+        }
+    }
+
+    @Test
     fun `should not show loading after auth error is dismissed`() = runTest {
         userRepository.setUserProfile(null)
         accountManager.setActiveProvider(null)
@@ -361,7 +381,7 @@ internal class ProfilePresenterTest {
             recent.items shouldBe listOf(
                 ProfileRecentItem(
                     showId = 1L,
-                    tmdbId = 2L,
+                    tmdbId = 1L,
                     title = "Breaking Bad",
                     posterUrl = "/poster.jpg",
                     episodeLabel = "S1E5",
@@ -504,7 +524,6 @@ internal class ProfilePresenterTest {
 
     private fun createNextEpisode(): NextEpisodeWithShow = NextEpisodeWithShow(
         showId = 1L,
-        showTmdbId = 2L,
         showName = "Breaking Bad",
         showPoster = "/poster.jpg",
         showStatus = "Ended",
@@ -527,7 +546,6 @@ internal class ProfilePresenterTest {
 
     private fun createRecentlyWatched(): RecentlyWatchedEpisode = RecentlyWatchedEpisode(
         showId = 1L,
-        showTmdbId = 2L,
         showTitle = "Breaking Bad",
         posterPath = "/poster.jpg",
         seasonNumber = 1L,

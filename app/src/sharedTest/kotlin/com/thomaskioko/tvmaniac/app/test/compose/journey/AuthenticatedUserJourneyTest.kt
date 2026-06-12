@@ -10,10 +10,10 @@ import org.junit.Test
 
 internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
-    private val betterCallSaulTraktId = 59660L
+    private val betterCallSaulTmdbId = 60059L
     private val favoritesListId = 34223248L
     private val animeListId = 34223402L
 
@@ -27,14 +27,14 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         discoverRobot
             .assertDiscoverScreenDisplayed()
             .assertExists(HomeTestTags.NAVIGATION_BAR)
-            .assertFeaturedShowDisplayed(breakingBadTraktId)
-            .assertUpNextCardDoesNotExist(breakingBadTraktId)
+            .assertFeaturedShowDisplayed(breakingBadTmdbId)
+            .assertUpNextCardDoesNotExist(breakingBadTmdbId)
             .assertFeaturedPagerDisplayed()
-            .assertFeaturedShowDisplayed(breakingBadTraktId)
+            .assertFeaturedShowDisplayed(breakingBadTmdbId)
             .swipeFeaturedPagerLeft()
-            .assertFeaturedShowDisplayed(betterCallSaulTraktId)
+            .assertFeaturedShowDisplayed(betterCallSaulTmdbId)
             .swipeFeaturedPagerRight()
-            .assertFeaturedShowDisplayed(breakingBadTraktId)
+            .assertFeaturedShowDisplayed(breakingBadTmdbId)
 
         // Navigate to Profile and verify Sign In CTA
         homeRobot
@@ -54,8 +54,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .scrollToShowCard(breakingBadTraktId)
-            .assertShowCardDisplayed(breakingBadTraktId)
+            .scrollToShowCard(breakingBadTmdbId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
 
         homeRobot
             .clickProgressTab()
@@ -64,7 +64,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
         progressRobot
             .assertUpNextTabSelected()
             .assertUpNextPageDisplayed()
-            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
+            .assertUpNextEpisodeDisplayed(breakingBadTmdbId)
 
         homeRobot
             .clickDiscoverTab()
@@ -72,7 +72,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .assertUpNextCardDisplayed(breakingBadTraktId)
+            .assertUpNextCardDisplayed(breakingBadTmdbId)
 
         // Continue tracking and mark season watched
         homeRobot
@@ -80,7 +80,7 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
 
         showDetailsRobot
             .assertShowDetailsDisplayed()
@@ -112,8 +112,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .assertUpNextCardDisplayed(breakingBadTraktId)
-            .clickUpNextCard(breakingBadTraktId)
+            .assertUpNextCardDisplayed(breakingBadTmdbId)
+            .clickUpNextCard(breakingBadTmdbId)
 
         episodeSheetRobot
             .assertEpisodeSheetDisplayed()
@@ -134,9 +134,9 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertUpNextTabSelected()
             .assertLoadingIndicatorDoesNotExist()
             .assertUpNextPageDisplayed()
-            .scrollToUpNextEpisode(breakingBadTraktId)
-            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
-            .clickUpNextEpisodeRow(breakingBadTraktId)
+            .scrollToUpNextEpisode(breakingBadTmdbId)
+            .assertUpNextEpisodeDisplayed(breakingBadTmdbId)
+            .clickUpNextEpisodeRow(breakingBadTmdbId)
 
         seasonDetailsRobot
             .assertSeasonDetailsDisplayed()
@@ -169,8 +169,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertUpNextTabSelected()
             .assertLoadingIndicatorDoesNotExist()
             .assertUpNextPageDisplayed()
-            .scrollToUpNextEpisode(breakingBadTraktId)
-            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
+            .scrollToUpNextEpisode(breakingBadTmdbId)
+            .assertUpNextEpisodeDisplayed(breakingBadTmdbId)
 
         // Trigger token refresh round-trip
         scenarios.stubTokenRefresh()

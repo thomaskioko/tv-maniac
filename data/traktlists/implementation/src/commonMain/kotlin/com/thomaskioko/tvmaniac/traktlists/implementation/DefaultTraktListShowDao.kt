@@ -26,14 +26,14 @@ public class DefaultTraktListShowDao(
             .map { rows -> rows.associate { it.list_id to it.show_count } }
 
     override fun observeByShowId(showId: Long): Flow<List<TraktListShowEntry>> =
-        database.traktListShowsQueries.selectByShowTraktId(showId)
+        database.traktListShowsQueries.selectByTraktId(trakt_id = showId)
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows ->
                 rows.map { row ->
                     TraktListShowEntry(
                         listId = row.list_id,
-                        showId = row.show_trakt_id,
+                        showId = row.trakt_id,
                         listedAt = row.listed_at,
                         pendingAction = row.pending_action,
                     )
@@ -43,7 +43,7 @@ public class DefaultTraktListShowDao(
     override fun upsert(listId: Long, showId: Long, listedAt: String, pendingAction: String) {
         database.traktListShowsQueries.upsert(
             list_id = listId,
-            show_trakt_id = showId,
+            trakt_id = showId,
             listed_at = listedAt,
             pending_action = pendingAction,
         )
@@ -52,7 +52,7 @@ public class DefaultTraktListShowDao(
     override fun upsertSynced(listId: Long, showId: Long, listedAt: String) {
         database.traktListShowsQueries.upsertSynced(
             list_id = listId,
-            show_trakt_id = showId,
+            trakt_id = showId,
             listed_at = listedAt,
         )
     }
@@ -65,14 +65,14 @@ public class DefaultTraktListShowDao(
         database.traktListShowsQueries.updatePendingAction(
             pending_action = pendingAction,
             list_id = listId,
-            show_trakt_id = showId,
+            trakt_id = showId,
         )
     }
 
     override fun deleteByListIdAndShowId(listId: Long, showId: Long) {
         database.traktListShowsQueries.deleteByListIdAndShowId(
             list_id = listId,
-            show_trakt_id = showId,
+            trakt_id = showId,
         )
     }
 }

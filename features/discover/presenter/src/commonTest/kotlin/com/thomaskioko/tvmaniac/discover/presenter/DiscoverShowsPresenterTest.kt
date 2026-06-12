@@ -437,7 +437,6 @@ class DiscoverShowsPresenterTest {
     private fun createNextEpisodesList(size: Int = LIST_SIZE) = List(size) { index ->
         NextEpisodeWithShow(
             showId = 84958L + index,
-            showTmdbId = 84958L + index,
             showName = "Test Show $index",
             showPoster = "/test-poster-$index.jpg",
             showStatus = "Ended",

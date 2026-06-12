@@ -51,14 +51,16 @@ private extension ProfileState {
                     fullName: profile.fullName,
                     avatarUrl: profile.avatarUrl,
                     backgroundUrl: profile.backgroundUrl,
-                    stats: SwiftProfileStats(
-                        showsWatched: profile.stats.showsWatched,
-                        episodesWatched: profile.stats.episodesWatched,
-                        months: profile.stats.months,
-                        days: profile.stats.days,
-                        hours: profile.stats.hours,
-                        listCount: listCount
-                    )
+                    stats: profile.stats.map { s in
+                        SwiftProfileStats(
+                            showsWatched: s.showsWatched,
+                            episodesWatched: s.episodesWatched,
+                            months: s.months,
+                            days: s.days,
+                            hours: s.hours,
+                            listCount: listCount
+                        )
+                    }
                 )
             },
             editButtonLabel: labels.editButton,

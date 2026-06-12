@@ -39,12 +39,12 @@ public class DefaultCastDao(
 
     override suspend fun getShowCast(showId: Long): List<ShowCast> =
         withContext(dispatcher.io) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext emptyList()
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext emptyList()
             database.castQueries.showCast(internalShowId).executeAsList()
         }
 
     override fun observeShowCast(showId: Long): Flow<List<ShowCast>> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
         return database.castQueries.showCast(internalShowId).asFlow().mapToList(dispatcher.io)
     }
 

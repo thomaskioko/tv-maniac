@@ -7,14 +7,14 @@ public struct SwiftProfileInfo: Equatable {
     public let fullName: String?
     public let avatarUrl: String?
     public let backgroundUrl: String?
-    public let stats: SwiftProfileStats
+    public let stats: SwiftProfileStats?
 
     public init(
         username: String,
         fullName: String?,
         avatarUrl: String?,
         backgroundUrl: String?,
-        stats: SwiftProfileStats
+        stats: SwiftProfileStats?
     ) {
         self.username = username
         self.fullName = fullName

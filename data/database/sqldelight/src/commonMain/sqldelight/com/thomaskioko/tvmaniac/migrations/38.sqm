@@ -1,0 +1,24 @@
+-- Phase 3b rename: eliminate provider-specific column names on the live schema.
+-- Uses ALTER TABLE ... RENAME COLUMN (SQLite 3.25+). No table rebuild needed.
+
+ALTER TABLE similar_shows RENAME COLUMN similar_show_trakt_id TO trakt_id;
+
+ALTER TABLE recommended_shows RENAME COLUMN recommended_show_trakt_id TO trakt_id;
+
+ALTER TABLE trakt_list_shows RENAME COLUMN show_trakt_id TO trakt_id;
+
+ALTER TABLE calendar_entry RENAME COLUMN show_trakt_id TO show_id;
+
+ALTER TABLE calendar_entry RENAME COLUMN episode_trakt_id TO trakt_id;
+
+UPDATE calendar_entry
+SET show_id = (
+    SELECT e.show_id FROM tvshow_external_id e
+    WHERE e.provider = 'TRAKT' AND e.external_id = CAST(calendar_entry.show_id AS TEXT)
+)
+WHERE EXISTS (
+    SELECT 1 FROM tvshow_external_id e
+    WHERE e.provider = 'TRAKT' AND e.external_id = CAST(calendar_entry.show_id AS TEXT)
+);
+
+DELETE FROM calendar_entry WHERE show_id NOT IN (SELECT id FROM tvshow);

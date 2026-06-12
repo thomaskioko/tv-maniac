@@ -34,7 +34,7 @@ public class UserStatsStore(
     fetcher = Fetcher.ofResult { slug: String ->
         when (val response = sources.getActiveProvider(accountManager)?.getUserStats(slug) ?: ApiResponse.Unauthenticated) {
             is ApiResponse.Success -> when (val body = response.body) {
-                null -> FetcherResult.Error.Exception(AuthenticationException("Active provider has no user stats"))
+                null -> FetcherResult.Error.Exception(AuthenticationException("Provider does not support user stats"))
                 else -> FetcherResult.Data(body)
             }
             is ApiResponse.Unauthenticated -> FetcherResult.Error.Exception(AuthenticationException("Not authenticated"))

@@ -19,7 +19,6 @@ kotlin {
                 api(projects.data.episode.api)
                 api(projects.data.requestManager.api)
                 api(projects.data.seasons.api)
-                api(projects.data.shows.api)
 
                 implementation(projects.core.networkUtil.api)
                 implementation(libs.sqldelight.extensions)

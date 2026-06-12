@@ -11,6 +11,7 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSDate
+import platform.Foundation.NSUserDefaults
 import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.UserNotifications.UNAuthorizationStatusAuthorized
 import platform.UserNotifications.UNAuthorizationStatusEphemeral
@@ -133,6 +134,14 @@ public class IosNotificationManager(
         logger.debug(TAG, "Cancelled all notifications")
     }
 
+    override suspend fun clearStaleNotifications() {
+        val prefs = NSUserDefaults.standardUserDefaults
+        if (prefs.boolForKey(KEY_STALE_MIGRATION_CLEARED)) return
+        notificationCenter.removeAllPendingNotificationRequests()
+        notificationCenter.removeAllDeliveredNotifications()
+        prefs.setBool(true, forKey = KEY_STALE_MIGRATION_CLEARED)
+    }
+
     override suspend fun getPendingNotifications(): List<EpisodeNotification> =
         suspendCancellableCoroutine { continuation ->
             notificationCenter.getPendingNotificationRequestsWithCompletionHandler { requests ->
@@ -204,6 +213,7 @@ public class IosNotificationManager(
 
     private companion object {
         private const val TAG = "IosNotificationManager"
+        private const val KEY_STALE_MIGRATION_CLEARED = "stale_show_id_migration_cleared_v39"
         private const val NOTIFICATION_GROUP_KEY = "tvmaniac_episodes"
         private const val CATEGORY_EPISODE_AIRING = "tvmaniac_episode_airing"
         private const val IMMEDIATE_THRESHOLD_MS = 10 * 60 * 1000L

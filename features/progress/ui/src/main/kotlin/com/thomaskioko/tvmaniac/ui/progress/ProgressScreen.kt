@@ -281,7 +281,6 @@ internal class ProgressPreviewParameterProvider : PreviewParameterProvider<Progr
 internal fun previewUpNextEpisodes() = persistentListOf(
     UpNextEpisodeUiModel(
         showId = 1,
-        showTmdbId = 1396,
         showName = "Breaking Bad",
         showStatus = "Ended",
         showYear = "2008",

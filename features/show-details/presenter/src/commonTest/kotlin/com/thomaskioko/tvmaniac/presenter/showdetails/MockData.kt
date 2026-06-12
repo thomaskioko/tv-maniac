@@ -39,20 +39,20 @@ val showDetailsContent = ShowDetailsContent(
 
 val similarShowList = listOf(
     SimilarShows(
-        show_tmdb_id = Id(184958),
+        tmdb_id = Id(184958),
         name = "Loki",
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
-        show_trakt_id = 18495L,
-        similar_show_trakt_id = Id(18495),
+        show_id = Id(18495),
+        trakt_id = Id(18495),
     ),
 )
 
 val seasons = listOf(
     ShowSeasons(
         season_id = Id(84958),
-        show_trakt_id = 114355L,
+        show_id = Id(114355),
         season_title = "Season 1",
         season_number = 1,
     ),
@@ -120,13 +120,13 @@ val testShowWatchProgress = ShowWatchProgress(
 val testSeasonsWithProgress = listOf(
     ShowSeasons(
         season_id = Id(101),
-        show_trakt_id = 84958L,
+        show_id = Id(84958),
         season_title = "Season 1",
         season_number = 1,
     ),
     ShowSeasons(
         season_id = Id(102),
-        show_trakt_id = 84958L,
+        show_id = Id(84958),
         season_title = "Season 2",
         season_number = 2,
     ),

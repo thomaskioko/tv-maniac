@@ -25,7 +25,7 @@ public class DefaultContinueWatchingDao(
     override fun entries(): List<ContinueWatchingEntry> =
         database.continueWatchingQueries.entries().executeAsList().map { row ->
             ContinueWatchingEntry(
-                showId = row.trakt_id,
+                showId = row.show_id.id,
                 tmdbId = row.tmdb_id?.id,
                 airedEpisodes = row.aired_episodes,
                 completedCount = row.completed_count,
@@ -43,7 +43,7 @@ public class DefaultContinueWatchingDao(
             .map { rows ->
                 rows.map { row ->
                     ContinueWatchingEntry(
-                        showId = row.trakt_id,
+                        showId = row.show_id.id,
                         tmdbId = row.tmdb_id?.id,
                         airedEpisodes = row.aired_episodes,
                         completedCount = row.completed_count,
@@ -60,7 +60,7 @@ public class DefaultContinueWatchingDao(
             .executeAsList()
 
     override fun upsert(entry: ContinueWatchingEntry) {
-        val showId = showIdResolver.showIdForTraktId(entry.showId) ?: return
+        val showId = showIdResolver.showIdForTmdbId(entry.showId) ?: return
         database.continueWatchingQueries.upsert(
             showId = showId,
             tmdbId = entry.tmdbId?.let { Id(it) },
@@ -74,7 +74,7 @@ public class DefaultContinueWatchingDao(
     }
 
     override fun upsertPlaceholder(showId: Long, tmdbId: Long?, title: String?, year: Long?) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         database.continueWatchingQueries.upsertPlaceholder(
             showId = internalShowId,
             tmdbId = tmdbId?.let { Id(it) },
@@ -84,7 +84,7 @@ public class DefaultContinueWatchingDao(
     }
 
     override fun deleteByShowId(showId: Long) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         database.continueWatchingQueries.deleteByShowId(internalShowId)
     }
 

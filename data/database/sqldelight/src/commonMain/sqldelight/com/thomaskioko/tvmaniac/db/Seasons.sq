@@ -37,14 +37,13 @@ ON CONFLICT(id) DO UPDATE SET
 
 showSeasons:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     season.id AS season_id,
     season.title AS season_title,
     season.season_number
 FROM
     season
 INNER JOIN tvshow ON tvshow.id = season.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 WHERE
     season.show_id = :showId
     AND (
@@ -57,7 +56,7 @@ ORDER BY
 seasonDetails:
 SELECT
     season.show_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS show_title,
     season.id AS season_id,
     season.title AS season_title,
@@ -106,8 +105,8 @@ UPDATE season SET image_url = ? WHERE id = ?;
 
 getSeasonWithShowInfo:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS show_title,
     season.id AS season_id,
     season.title AS season_title,
@@ -116,18 +115,16 @@ SELECT
     season.episode_count,
     season.image_url AS season_image_url
 FROM tvshow
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 INNER JOIN season ON season.show_id = tvshow.id
 WHERE tvshow.id = :showId AND season.season_number = :seasonNumber;
 
 latestSeasonPerFollowedShow:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     season.id AS season_id,
     season.season_number
 FROM season
 INNER JOIN tvshow ON tvshow.id = season.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 INNER JOIN followed_shows ON followed_shows.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
   AND season.season_number > 0

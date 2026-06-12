@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
-import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
+import com.thomaskioko.tvmaniac.db.util.migrateToVersion
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
@@ -23,7 +23,7 @@ class Migration23Test {
             }
 
             driver.execute(null, "PRAGMA foreign_keys=OFF", 0)
-            migrateToCurrent(driver, oldVersion = 23)
+            migrateToVersion(driver, oldVersion = 23, newVersion = 38)
             driver.execute(null, "PRAGMA foreign_keys=ON", 0)
 
             val showId = driver.showId(traktId = 1L)!!
@@ -48,7 +48,7 @@ class Migration23Test {
             }
 
             driver.execute(null, "PRAGMA foreign_keys=OFF", 0)
-            migrateToCurrent(driver, oldVersion = 23)
+            migrateToVersion(driver, oldVersion = 23, newVersion = 38)
             driver.execute(null, "PRAGMA foreign_keys=ON", 0)
 
             val showId = driver.showId(traktId = 2L)!!
@@ -70,7 +70,7 @@ class Migration23Test {
             driver.insertSimilarShowV23(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L, pageOrder = 5L)
             driver.insertRecommendedShowV23(traktId = 20L, tmdbId = 2020L, parentTraktId = 10L)
 
-            migrateToCurrent(driver, oldVersion = 23)
+            migrateToVersion(driver, oldVersion = 23, newVersion = 38)
 
             driver.querySimilarShow(parentTraktId = 10L) shouldBe Triple(20L, 2020L, 5L)
             driver.queryRecommendedShow(parentTraktId = 10L) shouldBe (20L to 2020L)

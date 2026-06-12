@@ -118,7 +118,7 @@ public extension TvManiac.ShowModel {
 public extension TvManiac.TrailerModel {
     func toSwift() -> SwiftTrailer {
         .init(
-            showTmdbId: showTmdbId,
+            showId: showId,
             key: key,
             name: name,
             youtubeThumbnailUrl: youtubeThumbnailUrl

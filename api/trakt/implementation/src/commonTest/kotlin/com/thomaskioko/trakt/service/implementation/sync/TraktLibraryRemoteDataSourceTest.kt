@@ -47,7 +47,7 @@ class TraktLibraryRemoteDataSourceTest {
         val success = result.shouldBeInstanceOf<ApiResponse.Success<List<RemoteFollowedShow>>>()
         success.body shouldBe listOf(
             RemoteFollowedShow(
-                showId = 1,
+                traktId = 1,
                 tmdbId = 10,
                 title = "Severance",
                 year = 2022,

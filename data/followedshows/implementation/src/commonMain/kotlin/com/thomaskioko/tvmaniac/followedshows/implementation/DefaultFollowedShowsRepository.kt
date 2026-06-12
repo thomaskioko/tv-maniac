@@ -29,7 +29,7 @@ public class DefaultFollowedShowsRepository(
     override suspend fun addFollowedShow(showId: Long) {
         withContext(dispatchers.io) {
             transactionRunner {
-                val existingEntry = followedShowsDao.entryWithTraktId(showId)
+                val existingEntry = followedShowsDao.entryWithTmdbId(showId)
                 if (existingEntry == null || existingEntry.pendingAction == PendingAction.DELETE) {
                     val _ = followedShowsDao.upsert(
                         FollowedShowEntry(
@@ -48,7 +48,7 @@ public class DefaultFollowedShowsRepository(
     override suspend fun removeFollowedShow(showId: Long) {
         withContext(dispatchers.io) {
             transactionRunner {
-                followedShowsDao.entryWithTraktId(showId)?.also { entry ->
+                followedShowsDao.entryWithTmdbId(showId)?.also { entry ->
                     if (entry.pendingAction == PendingAction.UPLOAD) {
                         followedShowsDao.deleteById(entry.id)
                         logger.debug(TAG, "Deleted local-only show $showId")

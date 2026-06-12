@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.upnext.api.model
 
 public data class UpNextEpisode(
     val showId: Long,
-    val showTmdbId: Long,
     val showName: String,
     val showPoster: String?,
     val showStatus: String?,
@@ -26,7 +25,6 @@ public data class UpNextEpisode(
 )
 
 public fun NextEpisodeWithShow.toUpNextEpisode(): UpNextEpisode? {
-    val tmdbId = showTmdbId ?: return null
     val name = showName ?: return null
     val resolvedEpisodeId = episodeId ?: return null
     val resolvedSeasonId = seasonId ?: return null
@@ -34,7 +32,6 @@ public fun NextEpisodeWithShow.toUpNextEpisode(): UpNextEpisode? {
     val resolvedEpisodeNumber = episodeNumber ?: return null
     return UpNextEpisode(
         showId = showId,
-        showTmdbId = tmdbId,
         showName = name,
         showPoster = showPoster,
         showStatus = showStatus,

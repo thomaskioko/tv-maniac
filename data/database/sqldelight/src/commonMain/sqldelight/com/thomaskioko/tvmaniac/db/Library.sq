@@ -5,8 +5,8 @@ import kotlin.collections.List;
 
 libraryShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS title,
     tvshow.poster_path,
     tvshow.status,
@@ -21,7 +21,6 @@ SELECT
     followed_shows.followed_at,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS is_followed
 FROM tvshow
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT JOIN followed_shows ON tvshow.id = followed_shows.show_id
     AND followed_shows.pending_action != 'DELETE'
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id

@@ -63,7 +63,6 @@ class ObserveUpNextInteractorTest {
         firstAired: Long? = null,
     ) = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         showName = "Show $showId",
         showPoster = null,
         showStatus = null,

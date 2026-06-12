@@ -43,8 +43,8 @@ SELECT count(*) FROM popular_shows INNER JOIN tvshow ON tvshow.id = popular_show
 
 entriesInPage:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    popular_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    popular_shows.tmdb_id AS tmdb_id,
     popular_shows.page,
     COALESCE(popular_shows.name, '') AS name,
     popular_shows.poster_path,
@@ -52,7 +52,6 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM popular_shows
 INNER JOIN tvshow ON tvshow.id = popular_shows.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE popular_shows.page = :page
   AND popular_shows.name IS NOT NULL
@@ -60,8 +59,8 @@ ORDER BY popular_shows.page_order ASC;
 
 popularShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    popular_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    popular_shows.tmdb_id AS tmdb_id,
     popular_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -70,16 +69,14 @@ FROM
     popular_shows
 INNER JOIN
     tvshow ON tvshow.id = popular_shows.show_id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY popular_shows.page ASC, popular_shows.page_order ASC;
 
 pagedPopularShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    popular_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    popular_shows.tmdb_id AS tmdb_id,
     popular_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -88,8 +85,6 @@ FROM
     popular_shows
 INNER JOIN
     tvshow ON tvshow.id = popular_shows.show_id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY

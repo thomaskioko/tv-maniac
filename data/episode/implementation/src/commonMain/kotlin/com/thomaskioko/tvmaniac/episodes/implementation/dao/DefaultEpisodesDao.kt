@@ -76,7 +76,7 @@ public class DefaultEpisodesDao(
         seasonNumber: Long,
         episodeNumber: Long,
     ): GetEpisodeByShowSeasonEpisodeNumber? = withContext(dispatchers.databaseRead) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext null
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext null
         episodeQueries.getEpisodeByShowSeasonEpisodeNumber(
             showId = internalShowId,
             seasonNumber = seasonNumber,
@@ -90,7 +90,7 @@ public class DefaultEpisodesDao(
         episodeNumber: Long,
         firstAired: Long,
     ): Unit = withContext(dispatchers.databaseWrite) {
-        val resolvedShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+        val resolvedShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
         episodeQueries.updateFirstAired(
             showId = resolvedShowId,
             seasonNumber = seasonNumber,
@@ -127,7 +127,7 @@ public class DefaultEpisodesDao(
         showId: Long,
         includeSpecials: Boolean,
     ): Flow<NextEpisodeForShow?> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(null)
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(null)
         return database.showsNextToWatchQueries.nextEpisodeForShow(
             showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
@@ -138,7 +138,7 @@ public class DefaultEpisodesDao(
         showId: Long,
         includeSpecials: Boolean,
     ): NextEpisodeForShow? = withContext(dispatchers.databaseRead) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext null
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext null
         database.showsNextToWatchQueries.nextEpisodeForShow(
             showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,

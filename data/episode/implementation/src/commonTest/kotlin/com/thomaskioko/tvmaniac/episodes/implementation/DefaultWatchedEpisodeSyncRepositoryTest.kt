@@ -10,10 +10,12 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.testing.FakeShowWatchStatusRepository
@@ -21,6 +23,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -100,6 +103,72 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         recordingDataSource.removed shouldContainExactlyInAnyOrder listOf(1L to 1L, 1L to 2L)
         readRow(seasonNumber = 1L, episodeNumber = 1L).shouldBeNull()
         readRow(seasonNumber = 1L, episodeNumber = 2L).shouldBeNull()
+    }
+
+    @Test
+    fun `should persist watched episodes in db given bulk sync batch carries tmdb boundary id`() = runTest {
+        recordingDataSource.batchesToReturn = listOf(
+            WatchedShowBatch(
+                showId = SHOW_ID,
+                episodes = listOf(
+                    WatchedEpisodeEntry(
+                        showId = SHOW_ID,
+                        episodeId = null,
+                        seasonNumber = 1L,
+                        episodeNumber = 1L,
+                        watchedAt = Instant.fromEpochMilliseconds(fakeDateTimeProvider.nowMillis()),
+                        pendingAction = PendingAction.NOTHING,
+                    ),
+                    WatchedEpisodeEntry(
+                        showId = SHOW_ID,
+                        episodeId = null,
+                        seasonNumber = 1L,
+                        episodeNumber = 2L,
+                        watchedAt = Instant.fromEpochMilliseconds(fakeDateTimeProvider.nowMillis()),
+                        pendingAction = PendingAction.NOTHING,
+                    ),
+                ),
+            ),
+        )
+        requestManagerRepository.requestValid = false
+        syncRepository.setRemoteTimestamp(
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = kotlin.time.Clock.System.now(),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+
+        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull()
+        readRow(seasonNumber = 1L, episodeNumber = 2L).shouldNotBeNull()
+    }
+
+    @Test
+    fun `should drop bulk sync batch given show has no tmdb id in the boundary`() = runTest {
+        val unknownTmdbId = 9999L
+        recordingDataSource.batchesToReturn = listOf(
+            WatchedShowBatch(
+                showId = unknownTmdbId,
+                episodes = listOf(
+                    WatchedEpisodeEntry(
+                        showId = unknownTmdbId,
+                        episodeId = null,
+                        seasonNumber = 1L,
+                        episodeNumber = 1L,
+                        watchedAt = Instant.fromEpochMilliseconds(fakeDateTimeProvider.nowMillis()),
+                        pendingAction = PendingAction.NOTHING,
+                    ),
+                ),
+            ),
+        )
+        requestManagerRepository.requestValid = false
+        syncRepository.setRemoteTimestamp(
+            activityType = ActivityType.EPISODES_WATCHED,
+            instant = kotlin.time.Clock.System.now(),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+
+        database.watchedEpisodesQueries.getWatchedEpisodes(showId).executeAsList().size shouldBe 0
     }
 
     @Test
@@ -233,11 +302,12 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             poster_path = null,
             backdrop_path = null,
         )
-        showId = showIdForTraktId(SHOW_ID)
+        showId = showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_ID)
     }
 
     private companion object {
         private const val SHOW_ID = 1L
+        private const val SHOW_TRAKT_ID = 500L
         private const val PAST_MILLIS = 1_600_000_000_000L
     }
 }
@@ -250,15 +320,18 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     private val _getShowEpisodeWatchesCalls = mutableListOf<Long>()
     val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
+    var batchesToReturn: List<WatchedShowBatch> = emptyList()
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
         _getShowEpisodeWatchesCalls += showId
         return showWatchesToReturn
     }
-    override suspend fun getAllWatchedShows(
-        page: Int,
-        limit: Int,
-    ): List<com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch> = emptyList()
+
+    override suspend fun getAllWatchedShows(page: Int, limit: Int): List<WatchedShowBatch> {
+        val offset = (page - 1) * limit
+        return batchesToReturn.drop(offset).take(limit)
+    }
+
     override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {}
     override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
         _removed += entries.map { it.seasonNumber to it.episodeNumber }

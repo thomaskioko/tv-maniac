@@ -31,8 +31,8 @@ public class DefaultStartWatchingDao(
 
 private fun StartWatchingShows.toStartWatchingShow(): StartWatchingShow =
     StartWatchingShow(
-        showId = show_trakt_id,
-        tmdbId = show_tmdb_id.id,
+        showId = show_id.id,
+        tmdbId = tmdb_id.id,
         title = title,
         posterPath = poster_path,
         year = year,

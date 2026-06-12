@@ -205,7 +205,6 @@ class ContinueWatchingPresenterTest {
         firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
     ) = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

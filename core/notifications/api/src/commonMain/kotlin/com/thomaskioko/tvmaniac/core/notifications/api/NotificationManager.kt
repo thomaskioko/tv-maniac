@@ -6,6 +6,7 @@ public interface NotificationManager {
     public suspend fun cancelNotificationsForShow(showId: Long)
     public suspend fun cancelAllNotifications()
     public suspend fun getPendingNotifications(): List<EpisodeNotification>
+    public suspend fun clearStaleNotifications()
 
     public companion object {
         public const val EXTRA_FROM_NOTIFICATION: String = "extra_from_notification"

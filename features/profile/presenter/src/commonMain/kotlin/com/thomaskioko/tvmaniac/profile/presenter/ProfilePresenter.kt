@@ -166,7 +166,8 @@ public class ProfilePresenter(
         simklLoginFlag.observe(),
     ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
-        val profile = userProfile?.toPresentation()
+        // TODO:: Remove hardcoded provider
+        val profile = userProfile?.toPresentation(statsExpected = activeProvider == AccountProvider.TRAKT)
         val displayName = profile?.fullName ?: profile?.username ?: ""
 
         ProfileState(
@@ -331,14 +332,14 @@ private fun TraktListEntity.toListItem(localizer: Localizer): ProfileListItem = 
 
 private fun UpNextEpisode.toShowItem(): ProfileShowItem = ProfileShowItem(
     showId = showId,
-    tmdbId = showTmdbId,
+    tmdbId = showId,
     title = showName,
     posterUrl = showPoster,
 )
 
 private fun CompletedShow.toShowItem(): ProfileShowItem = ProfileShowItem(
     showId = showId,
-    tmdbId = showTmdbId,
+    tmdbId = showId,
     title = showName.orEmpty(),
     posterUrl = showPoster,
 )
@@ -366,33 +367,35 @@ private fun FavoriteShow.toShowItem(): ProfileShowItem = ProfileShowItem(
 
 private fun RecentlyWatchedEpisode.toRecentItem(): ProfileRecentItem = ProfileRecentItem(
     showId = showId,
-    tmdbId = showTmdbId,
+    tmdbId = showId,
     title = showTitle,
     posterUrl = posterPath,
     episodeLabel = "S${seasonNumber}E$episodeNumber",
 )
 
-private fun UserProfile.toPresentation(): ProfileInfo {
-    val breakdown = stats.userWatchTime
-
-    return ProfileInfo(
+private fun UserProfile.toPresentation(statsExpected: Boolean): ProfileInfo =
+    ProfileInfo(
         slug = slug,
         username = username,
         fullName = fullName,
         avatarUrl = avatarUrl,
-        stats = ProfileStats(
-            showsWatched = stats.showsWatchedLabel,
-            episodesWatched = stats.episodesWatchedLabel,
-            years = breakdown.years,
-            months = breakdown.months,
-            days = breakdown.remainingDays,
-            hours = breakdown.hours,
-            minutes = breakdown.minutes,
-        ),
+        stats = if (statsLoaded) {
+            val breakdown = stats.userWatchTime
+            ProfileStats(
+                showsWatched = stats.showsWatchedLabel,
+                episodesWatched = stats.episodesWatchedLabel,
+                years = breakdown.years,
+                months = breakdown.months,
+                days = breakdown.remainingDays,
+                hours = breakdown.hours,
+                minutes = breakdown.minutes,
+            )
+        } else {
+            null
+        },
         backgroundUrl = backgroundUrl,
-        statsLoaded = statsLoaded,
+        awaitingStats = statsExpected && !statsLoaded,
     )
-}
 
 private fun AuthError.toUiMessage(localizer: Localizer): UiMessage = when (this) {
     is AuthError.OAuthFailed -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginFailed, message))

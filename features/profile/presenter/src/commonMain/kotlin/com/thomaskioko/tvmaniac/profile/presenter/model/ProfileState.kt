@@ -23,7 +23,7 @@ public data class ProfileState(
     val labels: ProfileLabels = ProfileLabels(),
 ) {
     val showLoading: Boolean
-        get() = errorMessage == null && isLoading && (userProfile == null || !userProfile.statsLoaded)
+        get() = errorMessage == null && isLoading && (userProfile == null || userProfile.awaitingStats)
 
     val listCount: Int
         get() = (userLists as? SectionState.Content)?.items?.size ?: 0

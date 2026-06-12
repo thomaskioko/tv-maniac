@@ -84,12 +84,12 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve null tmdb id`() {
-        val orphan = breakingBadEntry.copy(showId = ORPHAN_TRAKT_ID, tmdbId = null)
+        val orphan = breakingBadEntry.copy(showId = ORPHAN_TMDB_ID, tmdbId = null)
         dao.upsert(orphan)
 
         val stored = dao.entries().first()
         stored.tmdbId.shouldBeNull()
-        stored.showId shouldBe ORPHAN_TRAKT_ID
+        stored.showId shouldBe ORPHAN_TMDB_ID
     }
 
     @Test
@@ -166,7 +166,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 }
 
 private val breakingBadEntry = ContinueWatchingEntry(
-    showId = 1388L,
+    showId = 1396L,
     tmdbId = 1396L,
     airedEpisodes = 62L,
     completedCount = 56L,
@@ -175,7 +175,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
 )
 
 private val theWireEntry = ContinueWatchingEntry(
-    showId = 1429L,
+    showId = 1438L,
     tmdbId = 1438L,
     airedEpisodes = 60L,
     completedCount = 12L,

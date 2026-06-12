@@ -9,9 +9,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
-import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.SeasonId
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
@@ -393,9 +391,9 @@ internal class EpisodeSheetPresenterTest {
         voteCount: Long = 1000L,
         overview: String = "A chemistry teacher begins cooking meth.",
     ) = EpisodeById(
-        episode_id = Id<EpisodeId>(1L),
-        season_id = Id<SeasonId>(10L),
-        show_trakt_id = 100L,
+        episode_id = Id(1L),
+        season_id = Id(10L),
+        show_id = Id(100),
         episode_number = 1L,
         title = "The Pilot",
         overview = overview,

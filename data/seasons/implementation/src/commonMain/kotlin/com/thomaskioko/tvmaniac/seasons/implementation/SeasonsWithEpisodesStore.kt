@@ -11,7 +11,6 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SEASONS_EPISODES_SYNC
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
-import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbSeasonDetailsResponse
@@ -26,7 +25,6 @@ import org.mobilenativefoundation.store.store5.Validator
 public class SeasonsWithEpisodesStore(
     private val showDetailsDataSource: TmdbShowDetailsNetworkDataSource,
     private val seasonDetailsDataSource: TmdbSeasonDetailsNetworkDataSource,
-    private val tvShowsDao: TvShowsDao,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val showIdResolver: ShowIdResolver,
@@ -35,13 +33,11 @@ public class SeasonsWithEpisodesStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowSeasons>> by storeBuilder(
-    fetcher = Fetcher.of { showId: Long ->
-        val showTmdbId = tvShowsDao.getTmdbIdByShowId(showId)
-            ?: error("No tmdb id for show $showId")
-        showDetailsDataSource.getShowDetails(showTmdbId).getOrThrow()
+    fetcher = Fetcher.of { tmdbShowId: Long ->
+        showDetailsDataSource.getShowDetails(tmdbShowId).getOrThrow()
             .seasons
             .map { season ->
-                seasonDetailsDataSource.getSeasonDetails(showTmdbId, season.seasonNumber.toLong()).getOrThrow()
+                seasonDetailsDataSource.getSeasonDetails(tmdbShowId, season.seasonNumber.toLong()).getOrThrow()
             }
     },
     sourceOfTruth = SourceOfTruth.of<Long, List<TmdbSeasonDetailsResponse>, List<ShowSeasons>>(
@@ -49,7 +45,7 @@ public class SeasonsWithEpisodesStore(
             seasonsDao.observeSeasonsByShowId(showId)
         },
         writer = { showId, responses ->
-            val internalShowId = showIdResolver.showIdForTraktId(showId)
+            val internalShowId = showIdResolver.showIdForTmdbId(showId)
             if (internalShowId != null) {
                 databaseTransactionRunner {
                     responses.forEach { response ->
@@ -74,7 +70,7 @@ public class SeasonsWithEpisodesStore(
         seasonsList.firstOrNull()?.let { firstSeason ->
             withContext(dispatchers.io) {
                 !requestManagerRepository.isRequestExpired(
-                    entityId = firstSeason.show_trakt_id,
+                    entityId = firstSeason.show_id.id,
                     requestType = SEASONS_EPISODES_SYNC.name,
                     threshold = SEASONS_EPISODES_SYNC.duration,
                 )

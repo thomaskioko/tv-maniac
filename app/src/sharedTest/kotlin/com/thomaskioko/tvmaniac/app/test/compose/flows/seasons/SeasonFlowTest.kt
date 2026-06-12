@@ -6,7 +6,7 @@ import org.junit.Test
 
 internal class SeasonFlowTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
     private val thirdEpisodeTraktId = 73484L
@@ -18,7 +18,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
         trackShow()
 
         // 1. Mark episode as watched & check continue tracking

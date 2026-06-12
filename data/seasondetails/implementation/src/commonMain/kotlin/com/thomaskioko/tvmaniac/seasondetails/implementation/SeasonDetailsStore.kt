@@ -16,7 +16,6 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SEASON_DET
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsDao
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
-import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbSeasonDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbSeasonDetailsResponse
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
@@ -30,7 +29,6 @@ import org.mobilenativefoundation.store.store5.Validator
 @Inject
 public class SeasonDetailsStore(
     private val tmdbRemoteDataSource: TmdbSeasonDetailsNetworkDataSource,
-    private val tvShowsDao: TvShowsDao,
     private val castDao: CastDao,
     private val episodesDao: EpisodesDao,
     private val seasonsDao: SeasonsDao,
@@ -43,9 +41,7 @@ public class SeasonDetailsStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<SeasonDetailsParam, List<SeasonDetails>> by storeBuilder(
     fetcher = Fetcher.of { params: SeasonDetailsParam ->
-        val showTmdbId = tvShowsDao.getTmdbIdByShowId(params.showId)
-            ?: error("No tmdb id for show ${params.showId}")
-        tmdbRemoteDataSource.getSeasonDetails(showTmdbId, params.seasonNumber).getOrThrow()
+        tmdbRemoteDataSource.getSeasonDetails(params.showId, params.seasonNumber).getOrThrow()
     },
     sourceOfTruth = SourceOfTruth.of<SeasonDetailsParam, TmdbSeasonDetailsResponse, List<SeasonDetails>>(
         reader = { params: SeasonDetailsParam ->
@@ -56,7 +52,7 @@ public class SeasonDetailsStore(
         },
         writer = { params: SeasonDetailsParam, response ->
             databaseTransactionRunner {
-                val showId = showIdResolver.showIdForTraktId(params.showId)
+                val showId = showIdResolver.showIdForTmdbId(params.showId)
                     ?: return@databaseTransactionRunner
 
                 episodesDao.insert(tmdbSeasonMapper.mapToEpisodes(response, showId))

@@ -76,8 +76,8 @@ class ShowInfoViewTest: SnapshotTestCase {
 
     private var trailerList: [SwiftTrailer] {
         [
-            .init(showTmdbId: 123, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
-            .init(showTmdbId: 1234, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
+            .init(showId: 123, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
+            .init(showId: 1234, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
         ]
     }
 

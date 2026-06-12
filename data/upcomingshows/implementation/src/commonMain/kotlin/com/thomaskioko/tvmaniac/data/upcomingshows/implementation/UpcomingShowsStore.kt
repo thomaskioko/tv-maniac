@@ -97,7 +97,7 @@ public class UpcomingShowsStore(
 
                         tvShowsDao.upsertMerging(result.toTvshow(showId, tmdbId, formatterUtil, dateTimeProvider))
 
-                        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@forEachIndexed
+                        val internalShowId = showIdResolver.showIdForTmdbId(tmdbId) ?: return@forEachIndexed
 
                         upcomingShowsDao.upsert(
                             Upcoming_shows(

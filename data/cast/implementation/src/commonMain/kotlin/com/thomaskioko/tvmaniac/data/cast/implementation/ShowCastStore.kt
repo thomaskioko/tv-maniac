@@ -38,25 +38,26 @@ public class ShowCastStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<ShowCast>> by storeBuilder(
-    fetcher = Fetcher.of { showId: Long ->
+    fetcher = Fetcher.of { tmdbShowId: Long ->
         coroutineScope {
-            val tmdbId = tvShowsDao.getTmdbIdByShowId(showId)
+            val traktId = tvShowsDao.getTraktIdByTmdbId(tmdbShowId)
+                ?: error("No trakt id for tmdb show $tmdbShowId")
 
             val traktDeferred = async {
-                traktRemoteDataSource.getShowPeople(showId).getOrThrow()
+                traktRemoteDataSource.getShowPeople(traktId).getOrThrow()
             }
-            val tmdbCreditsDeferred = tmdbId?.let { id ->
-                async { tmdbNetworkDataSource.getShowCredits(id).getOrNull() }
+            val tmdbCreditsDeferred = async {
+                tmdbNetworkDataSource.getShowCredits(tmdbShowId).getOrNull()
             }
 
             val result = ShowCastResult(
-                showId = showId,
+                showId = tmdbShowId,
                 traktPeople = traktDeferred.await(),
-                tmdbCredits = tmdbCreditsDeferred?.await(),
+                tmdbCredits = tmdbCreditsDeferred.await(),
             )
 
             requestManagerRepository.upsert(
-                entityId = showId,
+                entityId = tmdbShowId,
                 requestType = SHOW_CAST.name,
             )
 
@@ -69,7 +70,7 @@ public class ShowCastStore(
         },
         writer = { showId, result ->
             databaseTransactionRunner {
-                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                val internalShowId = showIdResolver.showIdForTmdbId(showId)
                     ?: return@databaseTransactionRunner
 
                 val tmdbCastMap = result.tmdbCredits?.cast
@@ -109,7 +110,7 @@ public class ShowCastStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val showId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showId,
                 requestType = SHOW_CAST.name,
