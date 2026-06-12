@@ -24,6 +24,8 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
                 api(projects.data.accountManager.api)
+                api(projects.data.episode.api)
+                api(projects.data.followedshows.api)
                 api(projects.data.oauth.api)
                 api(projects.data.user.api)
                 implementation(projects.core.base)
@@ -43,6 +45,7 @@ kotlin {
                 implementation(projects.api.simkl.api)
                 implementation(projects.api.simkl.testing)
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.data.episode.api)
             }
         }
 
