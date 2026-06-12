@@ -20,6 +20,8 @@ public object ProfileTestTags {
     public const val FAVORITES_ROW_TEST_TAG: String = "profile_favorites_row"
     public const val FAVORITES_RETRY_TEST_TAG: String = "profile_favorites_retry"
 
+    public const val STATS_SECTION_TITLE: String = "Stats"
+
     public fun userCard(slug: String): String = "profile_user_card_$slug"
     public fun listCard(id: Long): String = "profile_list_card_$id"
     public fun showCard(id: Long): String = "profile_show_card_$id"
