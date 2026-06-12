@@ -98,7 +98,7 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+LEFT JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
@@ -106,7 +106,7 @@ WHERE
 
 searchShows:
 SELECT
-    show_trakt.trakt_id,
+    tvshow.tmdb_id AS trakt_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -117,24 +117,19 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    -- First try exact match on name start (most efficient, can use index)
     name LIKE ? || '%'
-    -- Then try case-insensitive match on name start
     OR LOWER(name) LIKE LOWER(?) || '%'
-    -- Then try contains match (less efficient)
     OR name LIKE '%' || ? || '%'
-    -- Finally try case-insensitive contains match (least efficient)
     OR LOWER(name) LIKE '%' || LOWER(?) || '%'
 ORDER BY
     CASE
-        WHEN name LIKE ? || '%' THEN 1  -- Exact start match
-        WHEN LOWER(name) LIKE LOWER(?) || '%' THEN 2  -- Case-insensitive start match
-        WHEN name LIKE '% ' || ? || '%' THEN 3  -- Word start match
-        ELSE 4  -- Contains match
+        WHEN name LIKE ? || '%' THEN 1
+        WHEN LOWER(name) LIKE LOWER(?) || '%' THEN 2
+        WHEN name LIKE '% ' || ? || '%' THEN 3
+        ELSE 4
     END,
     year DESC,
     ratings DESC;
@@ -187,7 +182,7 @@ WHERE show_trakt.trakt_id IN ?;
 
 showsByTmdbIds:
 SELECT
-    show_trakt.trakt_id,
+    tvshow.tmdb_id AS trakt_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -195,7 +190,6 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE tvshow.tmdb_id IN ?;

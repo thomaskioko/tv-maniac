@@ -1,4 +1,5 @@
 import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import kotlin.String;
 
@@ -42,23 +43,25 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 observeEntriesBetweenDates:
 SELECT
-    id AS entry_id,
-    show_trakt_id,
-    episode_trakt_id,
-    season_number,
-    episode_number,
-    episode_title,
-    air_date,
-    show_title,
-    show_poster_path,
-    network,
-    runtime,
-    overview,
-    rating,
-    votes
-FROM calendar_entry
-WHERE air_date >= :startDate AND air_date < :endDate
-ORDER BY air_date ASC, show_title ASC;
+    ce.id AS entry_id,
+    tvshow.tmdb_id AS show_trakt_id,
+    ce.episode_trakt_id,
+    ce.season_number,
+    ce.episode_number,
+    ce.episode_title,
+    ce.air_date,
+    ce.show_title,
+    ce.show_poster_path,
+    ce.network,
+    ce.runtime,
+    ce.overview,
+    ce.rating,
+    ce.votes
+FROM calendar_entry ce
+INNER JOIN show_trakt ON show_trakt.trakt_id = ce.show_trakt_id
+INNER JOIN tvshow ON tvshow.id = show_trakt.show_id
+WHERE ce.air_date >= :startDate AND ce.air_date < :endDate
+ORDER BY ce.air_date ASC, ce.show_title ASC;
 
 hasEntriesInRange:
 SELECT COUNT(*) > 0

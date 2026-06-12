@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId;
 
 startWatchingShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name AS title,
     tvshow.poster_path,
@@ -21,7 +21,6 @@ SELECT
     next_episode.first_aired
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 LEFT JOIN continue_watching ON continue_watching.show_id = tvshow.id
 LEFT JOIN (

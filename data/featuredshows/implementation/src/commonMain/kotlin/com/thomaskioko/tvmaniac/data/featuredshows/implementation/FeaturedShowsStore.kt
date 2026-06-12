@@ -100,7 +100,7 @@ public class FeaturedShowsStore(
 
                         tvShowsDao.upsertMerging(show.toTvshow(showId, tmdbId, posterPath, backdropPath, dateTimeProvider))
 
-                        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@forEach
+                        val internalShowId = showIdResolver.showIdForTmdbId(tmdbId) ?: return@forEach
 
                         featuredShowsDao.upsert(
                             Featured_shows(

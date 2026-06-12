@@ -45,8 +45,10 @@ public class RecommendedShowsStore(
 ) : Store<RecommendedShowsParams, List<RecommendedShows>> by storeBuilder(
     fetcher = Fetcher.of { param: RecommendedShowsParams ->
         coroutineScope {
+            val traktId = tvShowsDao.getTraktIdByTmdbId(param.showId)
+                ?: error("No trakt id for tmdb show ${param.showId}")
             traktRemoteDataSource.getRelatedShows(
-                showId = param.showId,
+                showId = traktId,
                 page = param.page.toInt(),
             ).getOrThrow()
                 .mapNotNull { show ->
@@ -68,9 +70,13 @@ public class RecommendedShowsStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<RecommendedShowsParams, List<RecommendedShowResult>, List<RecommendedShows>>(
-        reader = { param: RecommendedShowsParams -> recommendedShowsDao.observeRecommendedShows(param.showId) },
+        reader = { param: RecommendedShowsParams ->
+            val traktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
+            recommendedShowsDao.observeRecommendedShows(traktId)
+        },
         writer = { param: RecommendedShowsParams, response ->
             withContext(dispatchers.databaseWrite) {
+                val parentTraktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
                 databaseTransactionRunner {
                     response.forEachIndexed { _, result ->
                         val showId = result.traktShow.ids.trakt
@@ -79,9 +85,9 @@ public class RecommendedShowsStore(
                         tvShowsDao.upsertMerging(result.toTvshow(showId, tmdbId, formatterUtil, dateTimeProvider))
 
                         recommendedShowsDao.upsert(
-                            showId = showId,
+                            showId = tmdbId,
                             showTmdbId = tmdbId,
-                            recommendedShowTraktId = param.showId,
+                            recommendedShowTraktId = parentTraktId,
                         )
                     }
                 }
@@ -92,7 +98,10 @@ public class RecommendedShowsStore(
                 )
             }
         },
-        delete = { param -> recommendedShowsDao.delete(param.showId) },
+        delete = { param ->
+            val traktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
+            recommendedShowsDao.delete(traktId)
+        },
         deleteAll = recommendedShowsDao::deleteAll,
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,
@@ -101,7 +110,7 @@ public class RecommendedShowsStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val showId = cachedData.firstOrNull()?.show_trakt_id ?: return@withContext false
+            val showId = cachedData.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showId,
                 requestType = RECOMMENDED_SHOWS.name,

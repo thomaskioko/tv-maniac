@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.data.user.api.model.RemoteUserProfile
 import com.thomaskioko.tvmaniac.data.user.api.model.RemoteUserStats
 
 public class FakeUserRemoteDataSource(
-    override var provider: AccountProvider = AccountProvider.TRAKT,
+    override val provider: AccountProvider = AccountProvider.TRAKT,
 ) : UserRemoteDataSource {
 
     private var profileResponse: ApiResponse<RemoteUserProfile> = ApiResponse.Success(

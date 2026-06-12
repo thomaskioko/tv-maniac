@@ -124,7 +124,7 @@ private data class FollowedShowWithImages(
 )
 
 private fun TraktFollowedShowResponse.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
-    showId = show.ids.trakt,
+    showId = show.ids.tmdb,
     tmdbId = show.ids.tmdb,
     followedAt = Instant.parse(listedAt),
     pendingAction = PendingAction.NOTHING,

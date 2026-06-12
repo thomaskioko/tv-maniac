@@ -83,7 +83,7 @@ public class LibraryStore(
         writer = { _: LibrarySortOption, response: List<FollowedShowWithImages> ->
             transactionRunner {
                 val currentEntries = followedShowsDao.entriesWithNoPendingAction()
-                val networkShowIds = response.map { it.show.showId }.toSet()
+                val networkShowIds = response.map { it.show.tmdbId }.toSet()
 
                 response.forEach { item ->
                     val entry = item.show.toFollowedShowEntry()
@@ -139,7 +139,7 @@ private data class FollowedShowWithImages(
 )
 
 private fun RemoteFollowedShow.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
-    showId = showId,
+    showId = tmdbId,
     tmdbId = tmdbId,
     followedAt = followedAt,
     pendingAction = PendingAction.NOTHING,

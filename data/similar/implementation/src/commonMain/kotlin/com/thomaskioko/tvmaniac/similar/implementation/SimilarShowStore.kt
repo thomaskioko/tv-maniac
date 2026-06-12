@@ -41,8 +41,9 @@ public class SimilarShowStore(
 ) : Store<SimilarParams, List<SimilarShows>> by storeBuilder(
     fetcher = Fetcher.of { param: SimilarParams ->
         coroutineScope {
+            val traktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
             val results = traktRemoteDataSource.getRelatedShows(
-                showId = param.showId,
+                showId = traktId,
                 page = param.page.toInt(),
             ).getOrThrow()
                 .mapNotNull { show ->
@@ -71,8 +72,12 @@ public class SimilarShowStore(
         }
     },
     sourceOfTruth = SourceOfTruth.of<SimilarParams, List<SimilarShowResult>, List<SimilarShows>>(
-        reader = { param: SimilarParams -> similarShowsDao.observeSimilarShows(param.showId) },
+        reader = { param: SimilarParams ->
+            val traktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
+            similarShowsDao.observeSimilarShows(traktId)
+        },
         writer = { param: SimilarParams, response ->
+            val parentTraktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
                     response.forEachIndexed { index, result ->
@@ -82,16 +87,19 @@ public class SimilarShowStore(
                         tvShowsDao.upsertMerging(result.toTvshow(showId, tmdbId, formatterUtil, dateTimeProvider))
 
                         similarShowsDao.upsert(
-                            showId = showId,
+                            showId = tmdbId,
                             showTmdbId = tmdbId,
-                            similarShowTraktId = param.showId,
+                            similarShowTraktId = parentTraktId,
                             pageOrder = index,
                         )
                     }
                 }
             }
         },
-        delete = { param -> similarShowsDao.delete(param.showId) },
+        delete = { param ->
+            val traktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
+            similarShowsDao.delete(traktId)
+        },
         deleteAll = { databaseTransactionRunner(similarShowsDao::deleteAll) },
     ).usingDispatchers(
         readDispatcher = dispatchers.databaseRead,
@@ -101,8 +109,9 @@ public class SimilarShowStore(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
             val parentShowTraktId = cachedData.firstOrNull()?.similar_show_trakt_id?.id ?: return@withContext false
+            val parentTmdbId = tvShowsDao.getTmdbIdByShowId(parentShowTraktId) ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
-                entityId = parentShowTraktId,
+                entityId = parentTmdbId,
                 requestType = SIMILAR_SHOWS.name,
                 threshold = SIMILAR_SHOWS.duration,
             )

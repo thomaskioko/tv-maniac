@@ -10,10 +10,10 @@ import org.junit.Test
 
 internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
-    private val betterCallSaulTraktId = 59660L
+    private val betterCallSaulTmdbId = 60059L
 
     @Test
     fun givenUnauthenticatedUser_whenNavigatesAllScreens_thenChangesAppearanceAndNotifications() = runAppFlowTest {
@@ -22,15 +22,15 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         // Verify public content on Discover
         discoverRobot
             .assertDiscoverScreenDisplayed()
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .assertUpNextCardDoesNotExist(breakingBadTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .assertUpNextCardDoesNotExist(breakingBadTmdbId)
             // Verify featured pager
             .assertFeaturedPagerDisplayed()
-            .assertFeaturedShowDisplayed(breakingBadTraktId)
+            .assertFeaturedShowDisplayed(breakingBadTmdbId)
             .swipeFeaturedPagerLeft()
-            .assertFeaturedShowDisplayed(betterCallSaulTraktId)
+            .assertFeaturedShowDisplayed(betterCallSaulTmdbId)
             .swipeFeaturedPagerRight()
-            .assertFeaturedShowDisplayed(breakingBadTraktId)
+            .assertFeaturedShowDisplayed(breakingBadTmdbId)
 
         // Search for show and navigate back
         val query = "Breaking Bad"
@@ -39,8 +39,8 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .navigateToSearchTab()
             .assertSearchScreenDisplayed()
             .enterSearchQuery(query)
-            .assertResultItemDisplayed(breakingBadTraktId)
-            .clickResultItem(breakingBadTraktId)
+            .assertResultItemDisplayed(breakingBadTmdbId)
+            .clickResultItem(breakingBadTmdbId)
             .assertTrackButtonDisplayed()
             .pressBack()
 
@@ -51,7 +51,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
         // Visit show details from Discover
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .assertTrackButtonDisplayed()
             .pressBack()
@@ -69,7 +69,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertExists(HomeTestTags.NAVIGATION_BAR)
             .assertUpNextTabSelected()
             .assertUpNextEmptyStateDisplayed()
-            .assertUpNextEpisodeDoesNotExist(breakingBadTraktId)
+            .assertUpNextEpisodeDoesNotExist(breakingBadTmdbId)
             .clickCalendarTab()
             .assertCalendarTabSelected()
 
@@ -85,7 +85,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         watchlistRobot
             .assertEmptyStateDisplayed()
-            .assertShowCardDoesNotExist(breakingBadTraktId)
+            .assertShowCardDoesNotExist(breakingBadTmdbId)
 
         // Navigate to Profile and open Settings
         homeRobot.clickProfileTab()
@@ -141,7 +141,7 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .assertTrackButtonDisplayed()
             .clickTrackButton()
@@ -161,8 +161,8 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertDiscoverScreenDisplayed()
-            .assertUpNextCardDisplayed(breakingBadTraktId)
-            .clickUpNextCard(breakingBadTraktId)
+            .assertUpNextCardDisplayed(breakingBadTmdbId)
+            .clickUpNextCard(breakingBadTmdbId)
             .assertEpisodeSheetDisplayed()
             .clickActionItem(EpisodeSheetActionItem.OPEN_SHOW)
 
@@ -180,9 +180,9 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .scrollToShowCard(breakingBadTraktId)
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .clickShowCard(breakingBadTraktId)
+            .scrollToShowCard(breakingBadTmdbId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .clickShowCard(breakingBadTmdbId)
             .assertStopTrackingButtonDisplayed()
             // Raise login-required content inside the sheet and confirm login
             .also { scenarios.stubProfileOnSignIn() }

@@ -6,9 +6,9 @@ import org.junit.Test
 
 internal class MyShowsFlowTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
-    private val forAllMankindTraktId = 140481L
-    private val theBoysTraktId = 139960L
+    private val breakingBadTmdbId = 1396L
+    private val forAllMankindTmdbId = 87917L
+    private val theBoysTmdbId = 76479L
 
     @Test
     fun givenAuthenticatedUser_whenWatchlistOpened_thenShowsAllWatchedShows() = runAppFlowTest {
@@ -26,12 +26,12 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
 
         watchlistRobot
             .assertMyShowsScreenDisplayed()
-            .scrollToShowCard(breakingBadTraktId)
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .scrollToShowCard(forAllMankindTraktId)
-            .assertShowCardDisplayed(forAllMankindTraktId)
-            .scrollToShowCard(theBoysTraktId)
-            .assertShowCardDisplayed(theBoysTraktId)
+            .scrollToShowCard(breakingBadTmdbId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .scrollToShowCard(forAllMankindTmdbId)
+            .assertShowCardDisplayed(forAllMankindTmdbId)
+            .scrollToShowCard(theBoysTmdbId)
+            .assertShowCardDisplayed(theBoysTmdbId)
 
         rootRobot
             .assertNoSnackbarDisplayed()
@@ -52,7 +52,7 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
             .assertShowDetailsDisplayed()
     }
 
@@ -70,7 +70,7 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
         watchlistRobot
             .assertMyShowsScreenDisplayed()
             .assertEmptyStateDisplayed()
-            .assertShowCardDoesNotExist(breakingBadTraktId)
+            .assertShowCardDoesNotExist(breakingBadTmdbId)
     }
 
     @Test
@@ -88,14 +88,14 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .assertShowCardDisplayed(forAllMankindTraktId)
-            .assertShowCardDisplayed(theBoysTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .assertShowCardDisplayed(forAllMankindTmdbId)
+            .assertShowCardDisplayed(theBoysTmdbId)
             .clickSearchButton()
             .enterSearchQuery("Breaking")
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .assertShowCardDoesNotExist(forAllMankindTraktId)
-            .assertShowCardDoesNotExist(theBoysTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .assertShowCardDoesNotExist(forAllMankindTmdbId)
+            .assertShowCardDoesNotExist(theBoysTmdbId)
     }
 
     @Test
@@ -110,12 +110,12 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .assertShowCardDisplayed(breakingBadTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
             .clickSearchButton()
             .enterSearchQuery("breaking")
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .assertShowCardDoesNotExist(forAllMankindTraktId)
-            .assertShowCardDoesNotExist(theBoysTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .assertShowCardDoesNotExist(forAllMankindTmdbId)
+            .assertShowCardDoesNotExist(theBoysTmdbId)
     }
 
     @Test
@@ -130,13 +130,13 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .assertShowCardDisplayed(breakingBadTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
             .clickSearchButton()
             .enterSearchQuery("Zzzzz")
             .assertEmptyStateDisplayed()
-            .assertShowCardDoesNotExist(breakingBadTraktId)
-            .assertShowCardDoesNotExist(forAllMankindTraktId)
-            .assertShowCardDoesNotExist(theBoysTraktId)
+            .assertShowCardDoesNotExist(breakingBadTmdbId)
+            .assertShowCardDoesNotExist(forAllMankindTmdbId)
+            .assertShowCardDoesNotExist(theBoysTmdbId)
     }
 
     @Test
@@ -153,12 +153,12 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
         watchlistRobot
             .clickSearchButton()
             .enterSearchQuery("Breaking")
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .assertShowCardDoesNotExist(forAllMankindTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .assertShowCardDoesNotExist(forAllMankindTmdbId)
             .enterSearchQuery("")
-            .assertShowCardDisplayed(breakingBadTraktId)
-            .assertShowCardDisplayed(forAllMankindTraktId)
-            .assertShowCardDisplayed(theBoysTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .assertShowCardDisplayed(forAllMankindTmdbId)
+            .assertShowCardDisplayed(theBoysTmdbId)
     }
 
     @Test

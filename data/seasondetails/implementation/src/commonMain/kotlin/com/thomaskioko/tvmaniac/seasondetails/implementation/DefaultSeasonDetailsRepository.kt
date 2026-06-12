@@ -164,7 +164,7 @@ public class DefaultSeasonDetailsRepository(
             name = season.season_title,
             seasonNumber = season.season_number,
             seasonOverview = season.season_overview,
-            showId = season.show_trakt_id,
+            showId = season.show_trakt_id.id,
             showTmdbId = season.show_tmdb_id.id,
             showTitle = season.show_title,
             imageUrl = season.season_image_url,

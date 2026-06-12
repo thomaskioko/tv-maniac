@@ -6,7 +6,7 @@ import org.junit.Test
 
 internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
     private val seasonTwoFirstEpisodeTraktId = 73489L
@@ -17,7 +17,7 @@ internal class DiscoverToSeasonDetailsFlowTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
 
         // 2. Open Season Details
         showDetailsRobot

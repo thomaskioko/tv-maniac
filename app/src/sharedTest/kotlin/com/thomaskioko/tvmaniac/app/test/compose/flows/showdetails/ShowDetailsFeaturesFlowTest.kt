@@ -6,7 +6,7 @@ import org.junit.Test
 
 internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val favoritesListTraktId = 34223248L
 
@@ -16,7 +16,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
 
         showDetailsRobot
             .assertShowDetailsDisplayed()
@@ -59,8 +59,8 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .assertUpNextCardDisplayed(breakingBadTraktId)
-            .clickShowCard(breakingBadTraktId)
+            .assertUpNextCardDisplayed(breakingBadTmdbId)
+            .clickShowCard(breakingBadTmdbId)
 
         showDetailsRobot
             .assertShowDetailsDisplayed()

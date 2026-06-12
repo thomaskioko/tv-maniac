@@ -40,15 +40,17 @@ public class ShowDetailsStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TvshowDetails> by storeBuilder(
-    fetcher = Fetcher.of { showId: Long ->
-        val showDetails = traktRemoteDataSource.getShowDetails(showId).getOrThrow()
+    fetcher = Fetcher.of { tmdbShowId: Long ->
+        val traktId = tvShowsDao.getTraktIdByTmdbId(tmdbShowId)
+            ?: error("No trakt id for tmdb show $tmdbShowId")
+        val showDetails = traktRemoteDataSource.getShowDetails(traktId).getOrThrow()
 
         val tmdbId = showDetails.ids.tmdb
-            ?: error("Show ${showDetails.title} (trakt: $showId) has no TMDB ID")
+            ?: error("Show ${showDetails.title} (trakt: $traktId) has no TMDB ID")
         val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
 
         requestManagerRepository.upsert(
-            entityId = showId,
+            entityId = tmdbShowId,
             requestType = SHOW_DETAILS.name,
         )
 
@@ -61,15 +63,16 @@ public class ShowDetailsStore(
         )
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowDetailsResponse, TvshowDetails>(
-        reader = { showId: Long -> showDetailsDao.observeTvShowByShowId(showId) },
-        writer = { showId, response ->
+        reader = { tmdbShowId: Long -> showDetailsDao.observeTvShowByShowId(tmdbShowId) },
+        writer = { tmdbShowId, response ->
             databaseTransactionRunner {
                 val show = response.traktShow
+                val traktId = show.ids.trakt
                 val tmdbId = response.tmdbId
 
                 tvShowsDao.upsert(
                     ShowToPersist(
-                        showId = Id(showId),
+                        showId = Id(traktId),
                         tmdbId = Id(tmdbId),
                         name = show.title,
                         overview = show.overview ?: "",
@@ -86,7 +89,7 @@ public class ShowDetailsStore(
                     ),
                 )
 
-                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                val internalShowId = showIdResolver.showIdForTmdbId(tmdbShowId)
                     ?: return@databaseTransactionRunner
 
                 response.tmdbSeasons.forEach { season ->
@@ -110,10 +113,10 @@ public class ShowDetailsStore(
             writeDispatcher = dispatchers.databaseWrite,
         ),
 ).validator(
-    Validator.by {
+    Validator.by { show ->
         withContext(dispatchers.io) {
             !requestManagerRepository.isRequestExpired(
-                entityId = it.trakt_id,
+                entityId = show.tmdb_id.id,
                 requestType = SHOW_DETAILS.name,
                 threshold = SHOW_DETAILS.duration,
             )

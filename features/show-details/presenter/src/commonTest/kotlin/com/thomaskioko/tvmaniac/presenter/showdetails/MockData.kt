@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
@@ -44,7 +45,7 @@ val similarShowList = listOf(
         poster_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         backdrop_path = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         in_library = 0,
-        show_trakt_id = 18495L,
+        show_trakt_id = Id(18495),
         similar_show_trakt_id = Id(18495),
     ),
 )
@@ -52,7 +53,7 @@ val similarShowList = listOf(
 val seasons = listOf(
     ShowSeasons(
         season_id = Id(84958),
-        show_trakt_id = 114355L,
+        show_trakt_id = Id(114355),
         season_title = "Season 1",
         season_number = 1,
     ),
@@ -120,13 +121,13 @@ val testShowWatchProgress = ShowWatchProgress(
 val testSeasonsWithProgress = listOf(
     ShowSeasons(
         season_id = Id(101),
-        show_trakt_id = 84958L,
+        show_trakt_id = Id(84958),
         season_title = "Season 1",
         season_number = 1,
     ),
     ShowSeasons(
         season_id = Id(102),
-        show_trakt_id = 84958L,
+        show_trakt_id = Id(84958),
         season_title = "Season 2",
         season_number = 2,
     ),

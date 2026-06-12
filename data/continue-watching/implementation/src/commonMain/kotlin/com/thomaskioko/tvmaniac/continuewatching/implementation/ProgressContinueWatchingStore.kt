@@ -60,7 +60,7 @@ public class ProgressContinueWatchingStore(
         when (batch) {
             is ProgressBatch.Entry -> withContext(dispatchers.databaseWrite) {
                 transactionRunner {
-                    batch.entry.toMinimalTvshow()?.let(tvShowsDao::upsertMerging)
+                    batch.entry.toMinimalTvshow(batch.traktId)?.let(tvShowsDao::upsertMerging)
                     continueWatchingDao.upsert(batch.entry)
                 }
             }
@@ -89,11 +89,11 @@ public class ProgressContinueWatchingStore(
     }
 }
 
-private fun ContinueWatchingEntry.toMinimalTvshow(): ShowToPersist? {
+private fun ContinueWatchingEntry.toMinimalTvshow(traktId: Long? = null): ShowToPersist? {
     val tmdb = tmdbId ?: return null
     val name = title ?: return null
     return ShowToPersist(
-        showId = Id(showId),
+        showId = Id(traktId ?: showId),
         tmdbId = Id(tmdb),
         name = name,
         overview = "",

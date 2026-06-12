@@ -40,13 +40,12 @@ showCast:
 SELECT
     casts.id AS cast_id,
     casts.trakt_id,
-    show_trakt.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_trakt_id,
     casts.name,
     casts.profile_path,
     casts.character_name
 FROM casts
 INNER JOIN tvshow ON tvshow.id = casts.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 WHERE casts.show_id = :showId AND casts.season_id IS NULL;
 
 seasonCast:

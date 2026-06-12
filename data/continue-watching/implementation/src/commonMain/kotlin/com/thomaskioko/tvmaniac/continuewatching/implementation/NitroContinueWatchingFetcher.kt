@@ -64,15 +64,13 @@ public class NitroContinueWatchingFetcher(
                 .mapNotNull { it.show?.ids?.trakt }
                 .toSet()
 
-            val entries = nitro
+            val entriesWithTraktId = nitro
                 .filter { it.show.ids.trakt !in hiddenIds }
-                // Load-bearing filter. Nitro can return null next_episode for reset shows
-                // and other edge cases where the row should not surface in the watchlist.
                 .filter { it.progress.nextEpisode != null }
-                .map { it.toEntry() }
+                .map { it.show.ids.trakt to it.toEntry() }
 
-            entries.forEach { emit(ProgressBatch.Entry(it)) }
-            emit(ProgressBatch.Complete(entries.map { it.showId }.toSet()))
+            entriesWithTraktId.forEach { (traktId, entry) -> emit(ProgressBatch.Entry(entry, traktId = traktId)) }
+            emit(ProgressBatch.Complete(entriesWithTraktId.map { (_, entry) -> entry.showId }.toSet()))
         }
     }
 
@@ -92,7 +90,7 @@ private fun TraktUpNextNitroResponse.toEntry(): ContinueWatchingEntry {
         ?.let { Instant.parse(it).toEpochMilliseconds() }
         ?: 0L
     return ContinueWatchingEntry(
-        showId = show.ids.trakt,
+        showId = show.ids.tmdb ?: show.ids.trakt,
         tmdbId = show.ids.tmdb,
         airedEpisodes = progress.aired.toLong(),
         completedCount = progress.completed.toLong(),

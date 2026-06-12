@@ -25,7 +25,7 @@ VALUES(?,?,?);
 
 recommendedShows:
 SELECT
-   show_trakt.trakt_id AS show_trakt_id,
+   tvshow.tmdb_id AS show_trakt_id,
    tvshow.tmdb_id AS show_tmdb_id,
    tvshow.name,
    tvshow.poster_path,
@@ -36,8 +36,6 @@ FROM
     tvshow
 JOIN
     recommended_shows ON recommended_shows.show_id = tvshow.id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE

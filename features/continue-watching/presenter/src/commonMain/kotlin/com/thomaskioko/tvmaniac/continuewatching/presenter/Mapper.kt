@@ -27,7 +27,7 @@ public fun List<FollowedShows>.entityToWatchlistShowList(
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         ContinueWatchingItem(
-            showId = it.show_trakt_id,
+            showId = it.show_trakt_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,
@@ -37,7 +37,7 @@ public fun List<FollowedShows>.entityToWatchlistShowList(
             episodesWatched = watched,
             totalEpisodesTracked = total,
             watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_trakt_id],
+            lastWatchedAt = lastWatchedMap[it.show_trakt_id.id],
         )
     }
         .toPersistentList()
@@ -51,7 +51,7 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
         val total = it.total_episode_count
         val progress = if (total > 0) watched.toFloat() / total else 0f
         ContinueWatchingItem(
-            showId = it.show_trakt_id,
+            showId = it.show_trakt_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             status = it.status,
@@ -61,7 +61,7 @@ public fun List<SearchFollowedShows>.entityToWatchlistShowList(
             episodesWatched = watched,
             totalEpisodesTracked = total,
             watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_trakt_id],
+            lastWatchedAt = lastWatchedMap[it.show_trakt_id.id],
         )
     }
         .toPersistentList()

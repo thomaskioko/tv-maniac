@@ -119,7 +119,7 @@ SELECT COUNT(*) > 0 FROM followed_shows WHERE show_id = ? AND pending_action != 
 
 followedShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -132,7 +132,6 @@ SELECT
     COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
@@ -140,7 +139,7 @@ ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DES
 
 searchFollowedShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -154,7 +153,6 @@ SELECT
     COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'

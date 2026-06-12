@@ -22,7 +22,7 @@ public class DefaultSimilarShowsDao(
 ) : SimilarShowsDao {
 
     override fun upsert(showId: Long, showTmdbId: Long, similarShowTraktId: Long, pageOrder: Int) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         database.similarShowsQueries.transaction {
             database.similarShowsQueries.insertOrReplace(
                 show_id = internalShowId,

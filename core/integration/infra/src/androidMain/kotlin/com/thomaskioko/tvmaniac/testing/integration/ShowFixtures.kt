@@ -47,6 +47,8 @@ public fun showFixtures(json: String): List<ShowFixture> {
  */
 public const val CANONICAL_SHOW_TRAKT_ID: Long = 1388L
 
+public const val CANONICAL_SHOW_TMDB_ID: Long = 1396L
+
 private const val MAX_STUBBED_SEASON_NUMBER = 5
 
 /**

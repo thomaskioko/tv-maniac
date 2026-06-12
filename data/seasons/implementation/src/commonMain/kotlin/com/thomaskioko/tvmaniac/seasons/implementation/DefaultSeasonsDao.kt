@@ -48,7 +48,7 @@ public class DefaultSeasonsDao(
     }
 
     override fun observeSeasonsByShowId(showId: Long, includeSpecials: Boolean): Flow<List<ShowSeasons>> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
         return seasonQueries.showSeasons(
             showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
@@ -56,7 +56,7 @@ public class DefaultSeasonsDao(
     }
 
     override fun fetchShowSeasons(showId: Long, includeSpecials: Boolean): List<ShowSeasons> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return emptyList()
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return emptyList()
         return seasonQueries.showSeasons(
             showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
@@ -65,7 +65,7 @@ public class DefaultSeasonsDao(
 
     override suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber? =
         withContext(dispatcher.databaseRead) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext null
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext null
             seasonQueries.getSeasonByShowAndNumber(
                 showId = internalShowId,
                 seasonNumber = seasonNumber,
@@ -82,7 +82,7 @@ public class DefaultSeasonsDao(
     }
 
     override fun delete(showId: Long) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         seasonQueries.delete(internalShowId)
     }
 

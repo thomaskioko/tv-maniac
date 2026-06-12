@@ -7,7 +7,7 @@ import org.junit.Test
 
 internal class UpNextFlowTests : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
 
     @Test
@@ -20,24 +20,24 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
         progressRobot
             .assertUpNextTabSelected()
             .assertUpNextPageDisplayed()
-            .scrollToUpNextEpisode(breakingBadTraktId)
-            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
-            .assertUpNextEpisodeMetaDisplayed(breakingBadTraktId, "S01E01")
-            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "0/9")
-            .clickUpNextEpisodeRow(breakingBadTraktId)
+            .scrollToUpNextEpisode(breakingBadTmdbId)
+            .assertUpNextEpisodeDisplayed(breakingBadTmdbId)
+            .assertUpNextEpisodeMetaDisplayed(breakingBadTmdbId, "S01E01")
+            .assertUpNextProgressCountDisplayed(breakingBadTmdbId, "0/9")
+            .clickUpNextEpisodeRow(breakingBadTmdbId)
             .assertSeasonDetailsDisplayed()
             .clickBackButton()
 
         // 3. Mark Watched & Verify advancement
-        scenarios.upNext.stubProgressAfterPilotWatched(breakingBadTraktId)
+        scenarios.upNext.stubProgressAfterPilotWatched(breakingBadTmdbId)
 
         progressRobot
-            .scrollToUpNextEpisode(breakingBadTraktId)
-            .clickUpNextWatchedButton(breakingBadTraktId)
-            .assertUpNextEpisodeMetaDisplayed(breakingBadTraktId, "S01E02")
-            .assertUpNextProgressCountDisplayed(breakingBadTraktId, "1/9")
+            .scrollToUpNextEpisode(breakingBadTmdbId)
+            .clickUpNextWatchedButton(breakingBadTmdbId)
+            .assertUpNextEpisodeMetaDisplayed(breakingBadTmdbId, "S01E02")
+            .assertUpNextProgressCountDisplayed(breakingBadTmdbId, "1/9")
             // 4. Verify in Season Details
-            .clickUpNextEpisodeRow(breakingBadTraktId)
+            .clickUpNextEpisodeRow(breakingBadTmdbId)
             .assertSeasonDetailsDisplayed()
             .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
     }
@@ -54,8 +54,8 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .scrollToShowCard(breakingBadTraktId)
-            .assertShowCardDisplayed(breakingBadTraktId)
+            .scrollToShowCard(breakingBadTmdbId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
 
         homeRobot
             .clickProgressTab()

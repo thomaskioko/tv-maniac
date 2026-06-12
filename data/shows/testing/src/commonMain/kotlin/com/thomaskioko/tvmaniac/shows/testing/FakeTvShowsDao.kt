@@ -47,6 +47,8 @@ public class FakeTvShowsDao : TvShowsDao {
 
     override fun getTmdbIdByShowId(showId: Long): Long? = state.value[showId]?.tmdb_id?.id
 
+    override fun getTraktIdByTmdbId(tmdbId: Long): Long? = null
+
     override suspend fun existsByShowId(showId: Long): Boolean = showId in state.value
 }
 

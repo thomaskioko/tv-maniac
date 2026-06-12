@@ -79,7 +79,7 @@ public class FavoritesStore(
                         ),
                     )
                     favoritesDao.upsert(
-                        showId = item.response.show.ids.trakt,
+                        showId = item.response.show.ids.tmdb,
                         rank = item.response.rank.toLong(),
                         listedAt = item.response.listedAt,
                     )

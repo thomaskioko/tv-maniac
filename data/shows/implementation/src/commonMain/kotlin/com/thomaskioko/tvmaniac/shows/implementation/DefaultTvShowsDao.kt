@@ -4,7 +4,9 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Provider
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
@@ -80,7 +82,7 @@ public class DefaultTvShowsDao(
                 query,
             ) { showId, tmdbId, title, imageUrl, overview, status, voteAverage, year, inLibrary ->
                 ShowEntity(
-                    showId = showId,
+                    showId = showId.id,
                     tmdbId = tmdbId.id,
                     title = title,
                     posterPath = imageUrl,
@@ -120,9 +122,9 @@ public class DefaultTvShowsDao(
     override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> {
         if (showIds.isEmpty()) return emptyList()
 
-        return tvShowQueries.showsByIds(showIds) { showId, tmdbId, name, posterPath, overview, inLibrary ->
+        return tvShowQueries.showsByTmdbIds(showIds.map { Id(it) }) { traktId, tmdbId, name, posterPath, overview, inLibrary ->
             ShowEntity(
-                showId = showId,
+                showId = traktId.id,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -135,6 +137,9 @@ public class DefaultTvShowsDao(
     override fun getTmdbIdByShowId(showId: Long): Long? {
         return tvShowQueries.getTmdbIdByShowId(showId).executeAsOneOrNull()?.id
     }
+
+    override fun getTraktIdByTmdbId(tmdbId: Long): Long? =
+        tvShowQueries.getTraktIdByTmdbId(Id(tmdbId)).executeAsOneOrNull()
 
     override suspend fun existsByShowId(showId: Long): Boolean =
         withContext(dispatchers.io) {

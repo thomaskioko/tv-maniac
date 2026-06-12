@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.Trailers
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAILERS
+import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktVideosResponse
 import dev.zacsweers.metro.Inject
@@ -22,27 +23,30 @@ import org.mobilenativefoundation.store.store5.Validator
 @Inject
 public class TrailerStore(
     private val traktRemoteDataSource: TraktShowsRemoteDataSource,
+    private val tvShowsDao: TvShowsDao,
     private val showIdResolver: ShowIdResolver,
     private val trailerDao: TrailerDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<SelectByShowId>> by storeBuilder(
-    fetcher = Fetcher.of { showId: Long ->
-        val videos = traktRemoteDataSource.getShowVideos(showId).getOrThrow()
+    fetcher = Fetcher.of { tmdbShowId: Long ->
+        val traktId = tvShowsDao.getTraktIdByTmdbId(tmdbShowId)
+            ?: error("No trakt id for tmdb show $tmdbShowId")
+        val videos = traktRemoteDataSource.getShowVideos(traktId).getOrThrow()
         requestManagerRepository.upsert(
-            entityId = showId,
+            entityId = tmdbShowId,
             requestType = TRAILERS.name,
         )
         videos
     },
     sourceOfTruth = SourceOfTruth.of<Long, List<TraktVideosResponse>, List<SelectByShowId>>(
-        reader = { showId: Long ->
-            trailerDao.observeTrailersByShowId(showId)
+        reader = { tmdbShowId: Long ->
+            trailerDao.observeTrailersByShowId(tmdbShowId)
         },
-        writer = { showId, videos ->
+        writer = { tmdbShowId, videos ->
             databaseTransactionRunner {
-                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                val internalShowId = showIdResolver.showIdForTmdbId(tmdbShowId)
                     ?: return@databaseTransactionRunner
 
                 videos
@@ -71,7 +75,7 @@ public class TrailerStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val showId = result.firstOrNull()?.show_trakt_id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showId,
                 requestType = TRAILERS.name,

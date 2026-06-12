@@ -25,7 +25,7 @@ internal fun List<ShowCast>.toCastList(): List<Casts> =
 internal fun List<SimilarShows>.toSimilarShowList(): List<Show> =
     map {
         Show(
-            showId = it.show_trakt_id,
+            showId = it.show_trakt_id.id,
             title = it.name,
             posterImageUrl = it.poster_path,
             backdropImageUrl = it.backdrop_path,
@@ -49,7 +49,7 @@ internal fun List<ShowSeasons>.toSeasonsList(
         val progress = progressMap[season.season_number]
         Season(
             seasonId = season.season_id.id,
-            tvShowId = season.show_trakt_id,
+            tvShowId = season.show_trakt_id.id,
             name = season.season_title,
             seasonNumber = season.season_number,
             watchedCount = progress?.watchedCount ?: 0,

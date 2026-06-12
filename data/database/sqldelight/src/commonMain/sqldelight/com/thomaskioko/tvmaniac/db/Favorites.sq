@@ -9,14 +9,13 @@ CREATE TABLE IF NOT EXISTS favorite_shows(
 
 favoriteShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_trakt_id,
     tvshow.tmdb_id AS show_tmdb_id,
     tvshow.name AS title,
     tvshow.poster_path,
     tvshow.year
 FROM favorite_shows
 INNER JOIN tvshow ON favorite_shows.show_id = tvshow.id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 ORDER BY favorite_shows.rank ASC;
 
 upsert:
