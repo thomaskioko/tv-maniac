@@ -70,7 +70,7 @@ public class NitroContinueWatchingFetcher(
                 .map { it.show.ids.trakt to it.toEntry() }
 
             entriesWithTraktId.forEach { (traktId, entry) -> emit(ProgressBatch.Entry(entry, traktId = traktId)) }
-            emit(ProgressBatch.Complete(entriesWithTraktId.map { (_, entry) -> entry.showId }.toSet()))
+            emit(ProgressBatch.Complete(finalShowIds = entriesWithTraktId.map { (_, entry) -> entry.showId }.toSet()))
         }
     }
 

@@ -114,7 +114,7 @@ public class ProgressContinueWatchingFetcher(
         )
 
         if (responses.all { (_, response) -> response is ApiResponse.Success }) {
-            val finalShowIds = responses
+            val completedShowIds = responses
                 .mapNotNull { (traktId, response) ->
                     val progress = (response as ApiResponse.Success).body
                     if (progress.nextEpisode != null) {
@@ -124,7 +124,7 @@ public class ProgressContinueWatchingFetcher(
                     }
                 }
                 .toSet()
-            send(ProgressBatch.Complete(finalShowIds))
+            send(ProgressBatch.Complete(completedShowIds))
         }
     }
 
@@ -165,10 +165,10 @@ internal sealed interface ProgressBatch {
     data class Entry(val entry: ContinueWatchingEntry, val traktId: Long? = null) : ProgressBatch
 
     /**
-     * Terminal event. [finalTraktIds] is the authoritative trakt-id set for the synced
+     * Terminal event. [finalShowIds] is the authoritative tmdb-boundary id set for the synced
      * watchlist; subscribers delete rows not in this set, then stamp freshness markers.
      */
-    data class Complete(val finalTraktIds: Set<Long>) : ProgressBatch
+    data class Complete(val finalShowIds: Set<Long>) : ProgressBatch
 }
 
 private fun toEntry(

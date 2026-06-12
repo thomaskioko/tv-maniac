@@ -70,7 +70,7 @@ public class NitroContinueWatchingStore(
                 withContext(dispatchers.databaseWrite) {
                     transactionRunner {
                         continueWatchingDao.entries()
-                            .filter { it.showId !in batch.finalTraktIds }
+                            .filter { it.showId !in batch.finalShowIds }
                             .forEach { continueWatchingDao.deleteByShowId(it.showId) }
                     }
                 }

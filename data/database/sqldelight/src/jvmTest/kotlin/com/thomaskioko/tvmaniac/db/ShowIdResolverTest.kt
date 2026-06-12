@@ -42,6 +42,20 @@ class ShowIdResolverTest {
         resolver.showIdForTmdbId(300) shouldBe showId
     }
 
+    @Test
+    fun `should resolve a traktId to the internal showId`() {
+        val showId = database.insertShowWithTrakt(traktId = 500, tmdbId = 600)
+
+        resolver.showIdForTraktId(500) shouldBe showId
+    }
+
+    @Test
+    fun `should return null for an unknown traktId`() {
+        database.insertShowWithTrakt(traktId = 500, tmdbId = 600)
+
+        resolver.showIdForTraktId(999).shouldBeNull()
+    }
+
     private fun TvManiacDatabase.insertShow(traktId: Long, tmdbId: Long): Id<ShowId> {
         tvShowQueries.upsert(
             tmdb_id = Id(tmdbId),
@@ -59,5 +73,15 @@ class ShowIdResolverTest {
             backdrop_path = null,
         )
         return tvShowQueries.getShowIdByTmdbId(Id(tmdbId)).executeAsOne()
+    }
+
+    private fun TvManiacDatabase.insertShowWithTrakt(traktId: Long, tmdbId: Long): Id<ShowId> {
+        val showId = insertShow(traktId = traktId, tmdbId = tmdbId)
+        tvshowExternalIdQueries.insert(
+            showId = showId,
+            provider = Provider.TRAKT,
+            externalId = traktId.toString(),
+        )
+        return showId
     }
 }

@@ -41,11 +41,25 @@ public class DefaultFollowedShowsDao(
             .map { list -> list.map { toEntry(it.followed_id, it.tmdb_id?.id ?: it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) } }
     }
 
-    override fun entryWithTraktId(showId: Long): FollowedShowEntry? {
-        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return null
+    override fun entryWithTraktId(traktId: Long): FollowedShowEntry? {
+        val internalShowId = showIdResolver.showIdForTraktId(traktId) ?: return null
         return queries.entryWithShowId(internalShowId)
             .executeAsOneOrNull()
             ?.let { toEntry(it.followed_id, it.tmdb_id?.id ?: it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+    }
+
+    override fun entryWithTmdbId(tmdbId: Long): FollowedShowEntry? {
+        val internalShowId = showIdResolver.showIdForTmdbId(tmdbId) ?: return null
+        return queries.entryWithShowId(internalShowId)
+            .executeAsOneOrNull()
+            ?.let { toEntry(it.followed_id, it.tmdb_id?.id ?: it.trakt_id, it.tmdb_id?.id, it.followed_at, it.pending_action) }
+    }
+
+    override fun traktIdForTmdbId(tmdbId: Long): Long? {
+        val internalShowId = showIdResolver.showIdForTmdbId(tmdbId) ?: return null
+        return queries.entryWithShowId(internalShowId)
+            .executeAsOneOrNull()
+            ?.trakt_id
     }
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> {
