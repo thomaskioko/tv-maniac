@@ -264,80 +264,80 @@ private fun ProfileContent(
                             )
                         }
                     }
+                }
 
-                    if (recentlyWatched !is SectionState.Empty) {
-                        item {
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-
-                        item {
-                            RecentlyWatchedSection(
-                                recentlyWatched = recentlyWatched,
-                                title = labels.recentlyWatchedTitle,
-                                retryLabel = labels.retry,
-                                onShowClick = onShowClick,
-                                onRetry = onRetry,
-                            )
-                        }
-                    }
-
-                    if (inProgress !is SectionState.Empty || completed !is SectionState.Empty) {
-                        item {
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-
-                        item {
-                            ProgressSection(
-                                inProgress = inProgress,
-                                completed = completed,
-                                title = labels.progressTitle,
-                                inProgressLabel = labels.inProgressFilter,
-                                completedLabel = labels.completedFilter,
-                                emptyLabel = labels.progressEmpty,
-                                retryLabel = labels.retry,
-                                onShowClick = onShowClick,
-                                onRetry = onRetry,
-                            )
-                        }
-                    }
-
-                    if (userLists !is SectionState.Empty) {
-                        item {
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-
-                        item {
-                            UserListsSection(
-                                userLists = userLists,
-                                title = labels.userListsTitle,
-                                viewAllLabel = labels.viewAllButton,
-                                retryLabel = labels.retry,
-                                onViewAll = onViewLists,
-                                onListClick = onListClick,
-                                onRetry = onRetry,
-                            )
-                        }
-                    }
-
-                    if (favorites !is SectionState.Empty) {
-                        item {
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-
-                        item {
-                            FavoritesSection(
-                                favorites = favorites,
-                                title = labels.favoritesTitle,
-                                retryLabel = labels.retry,
-                                onShowClick = onShowClick,
-                                onRetry = onRetry,
-                            )
-                        }
+                if (recentlyWatched !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
 
                     item {
-                        Spacer(modifier = Modifier.height(32.dp))
+                        RecentlyWatchedSection(
+                            recentlyWatched = recentlyWatched,
+                            title = labels.recentlyWatchedTitle,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
                     }
+                }
+
+                if (inProgress !is SectionState.Empty || completed !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        ProgressSection(
+                            inProgress = inProgress,
+                            completed = completed,
+                            title = labels.progressTitle,
+                            inProgressLabel = labels.inProgressFilter,
+                            completedLabel = labels.completedFilter,
+                            emptyLabel = labels.progressEmpty,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                if (userLists !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        UserListsSection(
+                            userLists = userLists,
+                            title = labels.userListsTitle,
+                            viewAllLabel = labels.viewAllButton,
+                            retryLabel = labels.retry,
+                            onViewAll = onViewLists,
+                            onListClick = onListClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                if (favorites !is SectionState.Empty) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    item {
+                        FavoritesSection(
+                            favorites = favorites,
+                            title = labels.favoritesTitle,
+                            retryLabel = labels.retry,
+                            onShowClick = onShowClick,
+                            onRetry = onRetry,
+                        )
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
         }
