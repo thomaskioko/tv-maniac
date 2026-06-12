@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.shows.api.ShowResolveOutcome
 import com.thomaskioko.tvmaniac.tmdb.testing.FakeTmdbShowsNetworkDataSource
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -17,10 +18,9 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
 
     private val fakeTmdbSource = FakeTmdbShowsNetworkDataSource()
 
-    private val reconciler = ShowReconciler(
+    private val reconciler = DefaultShowReconciler(
         tmdbDataSource = fakeTmdbSource,
         database = database,
-        showIdResolver = showIdResolver,
         logger = FakeLogger(),
     )
 
@@ -34,7 +34,8 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
             provider = AccountProvider.SIMKL,
         )
 
-        outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
+        val resolved = outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
+        resolved.tmdbId shouldBe TMDB_ID
 
         val tvshow = database.tvShowQueries.tvshowByTmdbId(Id<TmdbId>(TMDB_ID)).executeAsOneOrNull()
         tvshow?.name shouldBe SHOW_TITLE
@@ -61,7 +62,8 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
             provider = AccountProvider.SIMKL,
         )
 
-        outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
+        val resolved = outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
+        resolved.tmdbId shouldBe TMDB_ID
 
         val tvshow = database.tvShowQueries.tvshowByTmdbId(Id<TmdbId>(TMDB_ID)).executeAsOneOrNull()
         tvshow?.name shouldBe SHOW_TITLE
@@ -117,7 +119,8 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
             provider = AccountProvider.SIMKL,
         )
 
-        outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
+        val resolved = outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
+        resolved.tmdbId shouldBe TMDB_ID
 
         val tvshow = database.tvShowQueries.tvshowByTmdbId(Id<TmdbId>(TMDB_ID)).executeAsOneOrNull()
         tvshow?.name shouldBe "Real Name"
