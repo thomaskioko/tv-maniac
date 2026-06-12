@@ -109,7 +109,9 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     fun `should persist watched episodes in db given bulk sync batch carries tmdb boundary id`() = runTest {
         recordingDataSource.batchesToReturn = listOf(
             WatchedShowBatch(
-                showId = SHOW_ID,
+                tmdbId = SHOW_ID,
+                imdbId = null,
+                title = null,
                 episodes = listOf(
                     WatchedEpisodeEntry(
                         showId = SHOW_ID,
@@ -144,13 +146,14 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should drop bulk sync batch given show has no tmdb id in the boundary`() = runTest {
-        val unknownTmdbId = 9999L
         recordingDataSource.batchesToReturn = listOf(
             WatchedShowBatch(
-                showId = unknownTmdbId,
+                tmdbId = null,
+                imdbId = null,
+                title = null,
                 episodes = listOf(
                     WatchedEpisodeEntry(
-                        showId = unknownTmdbId,
+                        showId = 0L,
                         episodeId = null,
                         seasonNumber = 1L,
                         episodeNumber = 1L,

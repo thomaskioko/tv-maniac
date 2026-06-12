@@ -196,6 +196,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
     private suspend fun upsertBatch(batch: WatchedShowBatch, includeSpecials: Boolean) {
         if (batch.episodes.isEmpty()) return
+        val tmdbId = batch.tmdbId ?: return
 
         currentCoroutineContext().ensureActive()
         val resolved = batch.episodes.map { entry ->
@@ -207,12 +208,12 @@ public class DefaultWatchedEpisodeSyncRepository(
             entry.copy(episodeId = episode?.episode_id?.id)
         }
         dao.upsertBatchFromTrakt(
-            showId = batch.showId,
+            showId = tmdbId,
             entries = resolved,
             includeSpecials = includeSpecials,
         )
 
-        watchStatusRepository.refresh(batch.showId)
+        watchStatusRepository.refresh(tmdbId)
     }
 
     private suspend fun syncShowWatches(showId: Long) {
