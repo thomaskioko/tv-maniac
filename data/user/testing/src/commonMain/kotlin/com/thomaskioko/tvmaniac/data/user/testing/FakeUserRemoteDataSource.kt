@@ -7,7 +7,6 @@ import com.thomaskioko.tvmaniac.data.user.api.model.RemoteUserProfile
 import com.thomaskioko.tvmaniac.data.user.api.model.RemoteUserStats
 
 public class FakeUserRemoteDataSource(
-    override val provider: AccountProvider = AccountProvider.TRAKT,
     private val profileResponse: ApiResponse<RemoteUserProfile> = ApiResponse.Success(
         RemoteUserProfile(
             slug = "test-user",
@@ -19,6 +18,8 @@ public class FakeUserRemoteDataSource(
     ),
     private val statsResponse: ApiResponse<RemoteUserStats?> = ApiResponse.Success(null),
 ) : UserRemoteDataSource {
+
+    override val provider: AccountProvider = AccountProvider.TRAKT
 
     override suspend fun getUserProfile(userId: String): ApiResponse<RemoteUserProfile> = profileResponse
 
