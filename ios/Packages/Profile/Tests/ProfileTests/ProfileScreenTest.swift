@@ -111,20 +111,20 @@ class ProfileScreenTest: SnapshotTestCase {
         )
     }
 
-    private func authenticatedProfile() -> SwiftProfileInfo {
+    private func authenticatedProfile(stats: SwiftProfileStats? = SwiftProfileStats(
+        showsWatched: "87",
+        episodesWatched: "1,250",
+        months: 2,
+        days: 15,
+        hours: 8,
+        listCount: 12
+    )) -> SwiftProfileInfo {
         SwiftProfileInfo(
             username: "tvmaniac_user",
             fullName: "John Doe",
             avatarUrl: nil,
             backgroundUrl: nil,
-            stats: SwiftProfileStats(
-                showsWatched: "87",
-                episodesWatched: "1,250",
-                months: 2,
-                days: 15,
-                hours: 8,
-                listCount: 12
-            )
+            stats: stats
         )
     }
 
@@ -140,11 +140,14 @@ class ProfileScreenTest: SnapshotTestCase {
         SwiftProfileRecentShow(showId: 3, title: "Stranger Things", posterUrl: nil, episodeLabel: "S4E9"),
     ]
 
-    private func authenticatedState(userLists: SwiftSectionState<SwiftProfileList>) -> ProfileScreen.State {
+    private func authenticatedState(
+        userLists: SwiftSectionState<SwiftProfileList>,
+        profile: SwiftProfileInfo? = nil
+    ) -> ProfileScreen.State {
         ProfileScreen.State(
             title: "Profile",
             isLoading: false,
-            userProfile: authenticatedProfile(),
+            userProfile: profile ?? authenticatedProfile(),
             editButtonLabel: "Edit Profile",
             statsTitle: "Stats",
             watchTimeLabel: "Watch Time",
@@ -185,6 +188,19 @@ class ProfileScreenTest: SnapshotTestCase {
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated")
+    }
+
+    func test_ProfileScreen_Authenticated_StatsHidden() {
+        ProfileScreen(
+            state: authenticatedState(
+                userLists: .content(sampleLists),
+                profile: authenticatedProfile(stats: nil)
+            ),
+            onSettingsClicked: {},
+            onProviderSelected: { _ in }
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated_StatsHidden")
     }
 
     func test_ProfileScreen_UserListsWithMore() {

@@ -143,12 +143,17 @@ internal val authenticatedState = ProfileState(
     labels = sampleProfileLabels,
 )
 
+internal val statsHiddenState: ProfileState = authenticatedState.copy(
+    userProfile = authenticatedState.userProfile?.copy(stats = null),
+)
+
 internal class ProfilePreviewParameterProvider : PreviewParameterProvider<ProfileState> {
     override val values: Sequence<ProfileState>
         get() {
             return sequenceOf(
                 unauthenticatedState,
                 authenticatedState,
+                statsHiddenState,
             )
         }
 }

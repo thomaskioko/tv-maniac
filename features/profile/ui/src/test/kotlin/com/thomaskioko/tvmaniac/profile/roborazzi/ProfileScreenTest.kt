@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.profile.ui.ProfileScreen
 import com.thomaskioko.tvmaniac.profile.ui.authenticatedState
 import com.thomaskioko.tvmaniac.profile.ui.sampleProfileLabels
+import com.thomaskioko.tvmaniac.profile.ui.statsHiddenState
 import com.thomaskioko.tvmaniac.profile.ui.unauthenticatedState
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import kotlinx.collections.immutable.persistentListOf
@@ -66,6 +67,18 @@ internal class ProfileScreenTest {
             TvManiacBackground {
                 ProfileScreen(
                     state = authenticatedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun profileScreenStatsHiddenState() {
+        composeTestRule.captureMultiDevice("ProfileScreenStatsHiddenState") {
+            TvManiacBackground {
+                ProfileScreen(
+                    state = statsHiddenState,
                     onAction = {},
                 )
             }

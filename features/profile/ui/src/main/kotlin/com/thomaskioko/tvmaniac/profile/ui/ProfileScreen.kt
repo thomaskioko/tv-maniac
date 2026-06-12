@@ -248,100 +248,99 @@ private fun ProfileContent(
                     )
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                item {
-                    StatsCard(
-                        stats = userProfile.stats,
-                        labels = labels,
-                        listCount = listCount,
-                        onViewLists = onViewLists,
-                    )
-                }
-
-                if (recentlyWatched !is SectionState.Empty) {
+                val stats = userProfile.stats
+                if (stats != null) {
                     item {
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    userProfile.stats?.let { stats ->
+                        item {
+                            StatsCard(
+                                stats = stats,
+                                labels = labels,
+                                listCount = listCount,
+                                onViewLists = onViewLists,
+                            )
+                        }
+                    }
+
+                    if (recentlyWatched !is SectionState.Empty) {
+                        item {
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
+
+                        item {
+                            RecentlyWatchedSection(
+                                recentlyWatched = recentlyWatched,
+                                title = labels.recentlyWatchedTitle,
+                                retryLabel = labels.retry,
+                                onShowClick = onShowClick,
+                                onRetry = onRetry,
+                            )
+                        }
+                    }
+
+                    if (inProgress !is SectionState.Empty || completed !is SectionState.Empty) {
+                        item {
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
+
+                        item {
+                            ProgressSection(
+                                inProgress = inProgress,
+                                completed = completed,
+                                title = labels.progressTitle,
+                                inProgressLabel = labels.inProgressFilter,
+                                completedLabel = labels.completedFilter,
+                                emptyLabel = labels.progressEmpty,
+                                retryLabel = labels.retry,
+                                onShowClick = onShowClick,
+                                onRetry = onRetry,
+                            )
+                        }
+                    }
+
+                    if (userLists !is SectionState.Empty) {
+                        item {
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
+
+                        item {
+                            UserListsSection(
+                                userLists = userLists,
+                                title = labels.userListsTitle,
+                                viewAllLabel = labels.viewAllButton,
+                                retryLabel = labels.retry,
+                                onViewAll = onViewLists,
+                                onListClick = onListClick,
+                                onRetry = onRetry,
+                            )
+                        }
+                    }
+
+                    if (favorites !is SectionState.Empty) {
+                        item {
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
+
+                        item {
+                            FavoritesSection(
+                                favorites = favorites,
+                                title = labels.favoritesTitle,
+                                retryLabel = labels.retry,
+                                onShowClick = onShowClick,
+                                onRetry = onRetry,
+                            )
+                        }
                     }
 
                     item {
-                        RecentlyWatchedSection(
-                            recentlyWatched = recentlyWatched,
-                            title = labels.recentlyWatchedTitle,
-                            retryLabel = labels.retry,
-                            onShowClick = onShowClick,
-                            onRetry = onRetry,
-                        )
+                        Spacer(modifier = Modifier.height(32.dp))
                     }
-                }
-
-                if (inProgress !is SectionState.Empty || completed !is SectionState.Empty) {
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    item {
-                        ProgressSection(
-                            inProgress = inProgress,
-                            completed = completed,
-                            title = labels.progressTitle,
-                            inProgressLabel = labels.inProgressFilter,
-                            completedLabel = labels.completedFilter,
-                            emptyLabel = labels.progressEmpty,
-                            retryLabel = labels.retry,
-                            onShowClick = onShowClick,
-                            onRetry = onRetry,
-                        )
-                    }
-                }
-
-                if (userLists !is SectionState.Empty) {
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    item {
-                        UserListsSection(
-                            userLists = userLists,
-                            title = labels.userListsTitle,
-                            viewAllLabel = labels.viewAllButton,
-                            retryLabel = labels.retry,
-                            onViewAll = onViewLists,
-                            onListClick = onListClick,
-                            onRetry = onRetry,
-                        )
-                    }
-                }
-
-                if (favorites !is SectionState.Empty) {
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    item {
-                        FavoritesSection(
-                            favorites = favorites,
-                            title = labels.favoritesTitle,
-                            retryLabel = labels.retry,
-                            onShowClick = onShowClick,
-                            onRetry = onRetry,
-                        )
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
-        }
 
-        else -> {
-            ProfileLoadingSkeleton(
-                contentPadding = contentPadding,
-                modifier = modifier,
-            )
         }
     }
 }
