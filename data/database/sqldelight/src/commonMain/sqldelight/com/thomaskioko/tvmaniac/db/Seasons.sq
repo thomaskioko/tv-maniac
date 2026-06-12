@@ -37,7 +37,7 @@ ON CONFLICT(id) DO UPDATE SET
 
 showSeasons:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     season.id AS season_id,
     season.title AS season_title,
     season.season_number
@@ -56,7 +56,7 @@ ORDER BY
 seasonDetails:
 SELECT
     season.show_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS show_title,
     season.id AS season_id,
     season.title AS season_title,
@@ -105,8 +105,8 @@ UPDATE season SET image_url = ? WHERE id = ?;
 
 getSeasonWithShowInfo:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS show_title,
     season.id AS season_id,
     season.title AS season_title,
@@ -120,7 +120,7 @@ WHERE tvshow.id = :showId AND season.season_number = :seasonNumber;
 
 latestSeasonPerFollowedShow:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     season.id AS season_id,
     season.season_number
 FROM season

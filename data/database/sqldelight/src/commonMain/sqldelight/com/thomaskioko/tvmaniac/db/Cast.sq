@@ -40,7 +40,7 @@ showCast:
 SELECT
     casts.id AS cast_id,
     casts.trakt_id,
-    tvshow.tmdb_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     casts.name,
     casts.profile_path,
     casts.character_name

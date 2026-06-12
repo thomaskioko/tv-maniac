@@ -110,7 +110,7 @@ public class ShowCastStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val showId = result.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showId,
                 requestType = SHOW_CAST.name,

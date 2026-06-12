@@ -19,8 +19,8 @@ CREATE INDEX IF NOT EXISTS `index_featured_shows_tmdb_id` ON `featured_shows` (`
 
 entriesInPage:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    featured_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    featured_shows.tmdb_id AS tmdb_id,
     COALESCE(featured_shows.name, '') AS name,
     featured_shows.poster_path,
     featured_shows.overview,
@@ -50,8 +50,8 @@ INSERT OR IGNORE INTO featured_shows(
 
 featuredShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    featured_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    featured_shows.tmdb_id AS tmdb_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.overview,

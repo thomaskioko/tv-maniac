@@ -393,7 +393,7 @@ internal class EpisodeSheetPresenterTest {
     ) = EpisodeById(
         episode_id = Id(1L),
         season_id = Id(10L),
-        show_trakt_id = Id(100),
+        show_id = Id(100),
         episode_number = 1L,
         title = "The Pilot",
         overview = overview,

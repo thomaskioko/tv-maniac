@@ -106,7 +106,7 @@ WHERE
 
 searchShows:
 SELECT
-    tvshow.tmdb_id AS trakt_id,
+    tvshow.tmdb_id AS show_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,
@@ -182,7 +182,7 @@ WHERE show_trakt.trakt_id IN ?;
 
 showsByTmdbIds:
 SELECT
-    tvshow.tmdb_id AS trakt_id,
+    tvshow.tmdb_id AS show_id,
     tvshow.tmdb_id,
     tvshow.name,
     tvshow.poster_path,

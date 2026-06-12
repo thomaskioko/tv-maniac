@@ -25,7 +25,7 @@ public class DefaultContinueWatchingDao(
     override fun entries(): List<ContinueWatchingEntry> =
         database.continueWatchingQueries.entries().executeAsList().map { row ->
             ContinueWatchingEntry(
-                showId = row.trakt_id.id,
+                showId = row.show_id.id,
                 tmdbId = row.tmdb_id?.id,
                 airedEpisodes = row.aired_episodes,
                 completedCount = row.completed_count,
@@ -43,7 +43,7 @@ public class DefaultContinueWatchingDao(
             .map { rows ->
                 rows.map { row ->
                     ContinueWatchingEntry(
-                        showId = row.trakt_id.id,
+                        showId = row.show_id.id,
                         tmdbId = row.tmdb_id?.id,
                         airedEpisodes = row.aired_episodes,
                         completedCount = row.completed_count,

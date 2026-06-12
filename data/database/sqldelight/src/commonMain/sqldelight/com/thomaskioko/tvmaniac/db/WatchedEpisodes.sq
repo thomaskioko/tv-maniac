@@ -166,8 +166,8 @@ WHERE e.show_id = :showId
 -- metadata for the profile "Recently Watched" rail. Excludes soft-deleted rows.
 getRecentlyWatched:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS show_title,
     tvshow.poster_path,
     watched_episodes.season_number,
@@ -186,7 +186,7 @@ LIMIT ?;
 getEntriesByPendingAction:
 SELECT
     watched_episodes.id AS watched_id,
-    show_trakt.trakt_id AS show_trakt_id,
+    show_trakt.trakt_id AS trakt_id,
     watched_episodes.episode_id,
     watched_episodes.season_number,
     watched_episodes.episode_number,

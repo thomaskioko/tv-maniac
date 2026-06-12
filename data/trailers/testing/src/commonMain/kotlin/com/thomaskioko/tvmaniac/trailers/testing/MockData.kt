@@ -7,8 +7,8 @@ import com.thomaskioko.tvmaniac.db.TmdbId
 public val trailers: List<SelectByShowId> = listOf(
     SelectByShowId(
         trailer_id = "Fd43V",
-        show_tmdb_id = Id(84958),
-        show_trakt_id = Id<TmdbId>(84958),
+        tmdb_id = Id(84958),
+        show_id = Id<TmdbId>(84958),
         youtube_url = "https://www.youtube.com/watch?v=Fd43V",
         name = "Some title",
         site = "Youtube",

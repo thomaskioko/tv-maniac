@@ -6,6 +6,6 @@ public object UpNextTestTags {
     public const val PAGE_LIST_TEST_TAG: String = "upnext_page_list"
     public const val SCREEN_TEST_TAG: String = "upnext_screen_list"
     public const val PROGRESS_INDICATOR: String = "upnext_progress_indicator"
-    public fun episodeRow(showTraktId: Long): String = "upnext_episode_row_$showTraktId"
-    public fun watchedButton(showTraktId: Long): String = "upnext_watched_button_$showTraktId"
+    public fun episodeRow(showId: Long): String = "upnext_episode_row_$showId"
+    public fun watchedButton(showId: Long): String = "upnext_watched_button_$showId"
 }

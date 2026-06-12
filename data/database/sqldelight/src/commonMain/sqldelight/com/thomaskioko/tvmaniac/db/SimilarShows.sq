@@ -3,16 +3,16 @@ import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
--- The parent reference `similar_show_trakt_id` is intentionally not FK-constrained and stays a plain
+-- The parent reference `trakt_id` is intentionally not FK-constrained and stays a plain
 -- trakt id: ShowDetailsStore inserts the parent show into tvshow on a parallel coroutine, and the
 -- related-shows writer can finish first, so the parent's tvshow row (and internal id) may not exist
 -- yet. Queries filter by the parent id directly without joining tvshow on this column.
 CREATE TABLE similar_shows (
     show_id INTEGER AS Id<ShowId>,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
-    similar_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
+    trakt_id INTEGER AS Id<TraktId> NOT NULL,
     page_order INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (similar_show_trakt_id, show_id),
+    PRIMARY KEY (trakt_id, show_id),
     FOREIGN KEY(show_id) REFERENCES tvshow(id)
 );
 
@@ -20,19 +20,19 @@ insertOrReplace:
 INSERT OR REPLACE INTO similar_shows(
     show_id,
     tmdb_id,
-    similar_show_trakt_id,
+    trakt_id,
     page_order
 )
 VALUES(?,?,?,?);
 
 similarShows:
 SELECT
-   tvshow.tmdb_id AS show_trakt_id,
-   tvshow.tmdb_id AS show_tmdb_id,
+   tvshow.tmdb_id AS show_id,
+   tvshow.tmdb_id AS tmdb_id,
    tvshow.name,
    tvshow.poster_path,
    tvshow.backdrop_path,
-   similar_shows.similar_show_trakt_id,
+   similar_shows.trakt_id,
    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
@@ -41,11 +41,11 @@ JOIN
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    similar_shows.similar_show_trakt_id = ?
+    similar_shows.trakt_id = ?
 ORDER BY similar_shows.page_order ASC;
 
 delete:
-DELETE FROM similar_shows WHERE similar_show_trakt_id = ?;
+DELETE FROM similar_shows WHERE trakt_id = ?;
 
 deleteAll:
 DELETE FROM similar_shows;

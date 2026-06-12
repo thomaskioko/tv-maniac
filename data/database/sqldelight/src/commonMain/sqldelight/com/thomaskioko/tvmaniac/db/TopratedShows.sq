@@ -43,8 +43,8 @@ SELECT count(*) FROM toprated_shows INNER JOIN tvshow ON tvshow.id = toprated_sh
 
 entriesInPage:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     COALESCE(toprated_shows.name, '') AS name,
     toprated_shows.poster_path,
@@ -59,8 +59,8 @@ ORDER BY toprated_shows.page_order ASC;
 
 topRatedShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -76,8 +76,8 @@ ORDER BY
 
 topRatedShowByPage:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -93,8 +93,8 @@ WHERE
 
 pagedTopRatedShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,

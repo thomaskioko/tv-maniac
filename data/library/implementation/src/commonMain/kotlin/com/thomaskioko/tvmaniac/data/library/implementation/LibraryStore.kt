@@ -146,7 +146,7 @@ private fun RemoteFollowedShow.toFollowedShowEntry(): FollowedShowEntry = Follow
 )
 
 private fun RemoteFollowedShow.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
-    showId = Id(showId),
+    showId = Id(traktId),
     tmdbId = Id(tmdbId),
     name = title,
     overview = "",

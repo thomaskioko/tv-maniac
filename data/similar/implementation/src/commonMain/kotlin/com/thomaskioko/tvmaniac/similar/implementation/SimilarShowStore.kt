@@ -88,8 +88,8 @@ public class SimilarShowStore(
 
                         similarShowsDao.upsert(
                             showId = tmdbId,
-                            showTmdbId = tmdbId,
-                            similarShowTraktId = parentTraktId,
+                            tmdbId = tmdbId,
+                            traktId = parentTraktId,
                             pageOrder = index,
                         )
                     }
@@ -108,8 +108,8 @@ public class SimilarShowStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val parentShowTraktId = cachedData.firstOrNull()?.similar_show_trakt_id?.id ?: return@withContext false
-            val parentTmdbId = tvShowsDao.getTmdbIdByShowId(parentShowTraktId) ?: return@withContext false
+            val parentTraktId = cachedData.firstOrNull()?.trakt_id?.id ?: return@withContext false
+            val parentTmdbId = tvShowsDao.getTmdbIdByShowId(parentTraktId) ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = parentTmdbId,
                 requestType = SIMILAR_SHOWS.name,

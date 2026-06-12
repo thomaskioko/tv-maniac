@@ -43,8 +43,8 @@ SELECT count(*) FROM popular_shows INNER JOIN tvshow ON tvshow.id = popular_show
 
 entriesInPage:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    popular_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    popular_shows.tmdb_id AS tmdb_id,
     popular_shows.page,
     COALESCE(popular_shows.name, '') AS name,
     popular_shows.poster_path,
@@ -59,8 +59,8 @@ ORDER BY popular_shows.page_order ASC;
 
 popularShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    popular_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    popular_shows.tmdb_id AS tmdb_id,
     popular_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -75,8 +75,8 @@ ORDER BY popular_shows.page ASC, popular_shows.page_order ASC;
 
 pagedPopularShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    popular_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    popular_shows.tmdb_id AS tmdb_id,
     popular_shows.page,
     tvshow.name,
     tvshow.poster_path,

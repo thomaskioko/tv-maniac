@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.db.RecommendedShows
 import kotlinx.coroutines.flow.Flow
 
 public interface RecommendedShowsDao {
-    public fun upsert(showId: Long, showTmdbId: Long, recommendedShowTraktId: Long)
+    public fun upsert(showId: Long, tmdbId: Long, traktId: Long)
 
     public fun observeRecommendedShows(showId: Long): Flow<List<RecommendedShows>>
 

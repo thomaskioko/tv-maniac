@@ -18,7 +18,7 @@ CREATE INDEX IF NOT EXISTS idx_continue_watching_tmdb_id ON continue_watching(tm
 
 entries:
 SELECT
-    tvshow.tmdb_id AS trakt_id,
+    tvshow.tmdb_id AS show_id,
     continue_watching.tmdb_id,
     continue_watching.aired_episodes,
     continue_watching.completed_count,
@@ -38,7 +38,7 @@ WHERE tvshow.overview = '';
 
 entriesObservable:
 SELECT
-    tvshow.tmdb_id AS trakt_id,
+    tvshow.tmdb_id AS show_id,
     continue_watching.tmdb_id,
     continue_watching.aired_episodes,
     continue_watching.completed_count,

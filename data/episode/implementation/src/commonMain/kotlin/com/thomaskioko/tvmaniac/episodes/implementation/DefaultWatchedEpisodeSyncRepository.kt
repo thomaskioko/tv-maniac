@@ -124,7 +124,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         val entries = pending.map { episode ->
             WatchedEpisodeEntry(
                 id = episode.watched_id,
-                showId = episode.show_trakt_id,
+                showId = episode.trakt_id,
                 episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,
@@ -152,7 +152,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         val entries = pending.map { episode ->
             WatchedEpisodeEntry(
                 id = episode.watched_id,
-                showId = episode.show_trakt_id,
+                showId = episode.trakt_id,
                 episodeId = episode.episode_id?.id,
                 seasonNumber = episode.season_number,
                 episodeNumber = episode.episode_number,

@@ -1,7 +1,7 @@
 CREATE VIEW shows_next_to_watch AS
 SELECT
     tvshow.id AS show_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS tmdb_id,
     episode.id AS episode_id,
     episode.title AS episode_name,
     season.id AS season_id,
@@ -41,8 +41,8 @@ ORDER BY tvshow.id, season.season_number, episode.episode_number;
 
 nextEpisodeForShow:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     episode.id AS episode_id,
     episode.title AS episode_name,
     season.id AS season_id,
@@ -80,8 +80,8 @@ LIMIT 1;
 
 nextEpisodesForWatchlist:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS tmdb_id,
     next_episode.episode_id,
     next_episode.episode_name,
     next_episode.season_id,
@@ -123,8 +123,8 @@ ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at) DE
 
 completedShowsForWatchlist:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS tmdb_id,
     COALESCE(tvshow.name, watched_show.title) AS show_name,
     tvshow.poster_path AS show_poster,
     watched_show.last_watched_at AS last_watched_at,

@@ -1,12 +1,11 @@
 import com.thomaskioko.tvmaniac.db.Id;
-import com.thomaskioko.tvmaniac.db.TmdbId;
-import com.thomaskioko.tvmaniac.db.TraktId;
+import com.thomaskioko.tvmaniac.db.ShowId;
 import kotlin.String;
 
 CREATE TABLE IF NOT EXISTS calendar_entry (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
-    episode_trakt_id INTEGER NOT NULL,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    trakt_id INTEGER NOT NULL,
     season_number INTEGER NOT NULL,
     episode_number INTEGER NOT NULL,
     episode_title TEXT,
@@ -18,15 +17,15 @@ CREATE TABLE IF NOT EXISTS calendar_entry (
     overview TEXT,
     rating REAL,
     votes INTEGER,
-    UNIQUE(show_trakt_id, season_number, episode_number)
+    UNIQUE(show_id, season_number, episode_number)
 );
 
 CREATE INDEX IF NOT EXISTS idx_calendar_air_date ON calendar_entry(air_date);
 
 upsert:
 INSERT OR REPLACE INTO calendar_entry(
-    show_trakt_id,
-    episode_trakt_id,
+    show_id,
+    trakt_id,
     season_number,
     episode_number,
     episode_title,
@@ -44,8 +43,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 observeEntriesBetweenDates:
 SELECT
     ce.id AS entry_id,
-    tvshow.tmdb_id AS show_trakt_id,
-    ce.episode_trakt_id,
+    tvshow.tmdb_id AS show_id,
+    ce.trakt_id,
     ce.season_number,
     ce.episode_number,
     ce.episode_title,
@@ -58,8 +57,7 @@ SELECT
     ce.rating,
     ce.votes
 FROM calendar_entry ce
-INNER JOIN show_trakt ON show_trakt.trakt_id = ce.show_trakt_id
-INNER JOIN tvshow ON tvshow.id = show_trakt.show_id
+INNER JOIN tvshow ON tvshow.id = ce.show_id
 WHERE ce.air_date >= :startDate AND ce.air_date < :endDate
 ORDER BY ce.air_date ASC, ce.show_title ASC;
 

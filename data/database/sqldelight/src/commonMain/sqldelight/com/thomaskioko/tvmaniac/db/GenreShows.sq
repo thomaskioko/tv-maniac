@@ -19,7 +19,7 @@ VALUES (?, ?, ?, ?);
 
 showsByGenreSlug:
 SELECT
-    s.tmdb_id AS trakt_id,
+    s.tmdb_id AS show_id,
     s.tmdb_id,
     s.name,
     s.poster_path,
@@ -35,7 +35,7 @@ ORDER BY gs.page_order ASC;
 
 showsByGenreSlugAndCategory:
 SELECT
-    s.tmdb_id AS trakt_id,
+    s.tmdb_id AS show_id,
     s.tmdb_id,
     s.name,
     s.poster_path,
@@ -53,7 +53,7 @@ genresWithShowsByCategory:
 SELECT
     g.slug AS genre_slug,
     g.name AS genre_name,
-    s.tmdb_id AS trakt_id,
+    s.tmdb_id AS show_id,
     s.tmdb_id,
     s.name,
     s.poster_path,

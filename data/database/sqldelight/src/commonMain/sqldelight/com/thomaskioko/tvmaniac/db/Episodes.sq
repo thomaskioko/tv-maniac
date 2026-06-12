@@ -117,7 +117,7 @@ upcomingEpisodesFromFollowedShows:
 SELECT
     episode.id AS episode_id,
     episode.season_id,
-    tvshow.tmdb_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     episode.episode_number,
     episode.title,
     episode.overview,
@@ -147,7 +147,7 @@ episodeById:
 SELECT
     episode.id AS episode_id,
     episode.season_id,
-    tvshow.tmdb_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     episode.episode_number,
     episode.title,
     episode.overview,

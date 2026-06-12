@@ -5,8 +5,8 @@ import kotlin.collections.List;
 
 libraryShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS title,
     tvshow.poster_path,
     tvshow.status,

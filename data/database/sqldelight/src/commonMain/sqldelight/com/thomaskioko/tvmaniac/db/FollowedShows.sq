@@ -119,8 +119,8 @@ SELECT COUNT(*) > 0 FROM followed_shows WHERE show_id = ? AND pending_action != 
 
 followedShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.year,
@@ -139,8 +139,8 @@ ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DES
 
 searchFollowedShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    tvshow.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    tvshow.tmdb_id AS tmdb_id,
     tvshow.name,
     tvshow.poster_path,
     tvshow.status,

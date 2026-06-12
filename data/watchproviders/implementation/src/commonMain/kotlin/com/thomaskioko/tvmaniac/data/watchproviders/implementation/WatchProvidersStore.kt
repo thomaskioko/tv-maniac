@@ -73,7 +73,7 @@ public class WatchProvidersStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val showId = result.firstOrNull()?.trakt_id?.id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showId,
                 requestType = WATCH_PROVIDERS.name,

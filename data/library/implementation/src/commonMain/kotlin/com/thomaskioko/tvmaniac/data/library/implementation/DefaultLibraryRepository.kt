@@ -80,7 +80,7 @@ public class DefaultLibraryRepository(
         if (shows.isEmpty()) return flowOf(emptyList())
 
         val providerFlows = shows.map { show ->
-            watchProviderDao.observeWatchProviders(show.show_tmdb_id.id)
+            watchProviderDao.observeWatchProviders(show.tmdb_id.id)
         }
 
         return combine(providerFlows) { providerArrays ->
@@ -128,8 +128,8 @@ public class DefaultLibraryRepository(
 
     private fun LibraryShows.toLibraryItem(watchProviders: List<WatchProvider>): LibraryItem =
         LibraryItem(
-            showId = show_trakt_id.id,
-            tmdbId = show_tmdb_id.id,
+            showId = show_id.id,
+            tmdbId = tmdb_id.id,
             title = title,
             posterPath = poster_path,
             status = status,

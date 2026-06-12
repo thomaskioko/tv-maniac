@@ -43,8 +43,8 @@ SELECT count(*) FROM trending_shows INNER JOIN tvshow ON tvshow.id = trending_sh
 
 entriesInPage:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    trending_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    trending_shows.tmdb_id AS tmdb_id,
     trending_shows.page,
     COALESCE(trending_shows.name, '') AS name,
     trending_shows.poster_path,
@@ -59,8 +59,8 @@ ORDER BY trending_shows.position ASC;
 
 trendingShowsByPage:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    trending_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    trending_shows.tmdb_id AS tmdb_id,
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -80,8 +80,8 @@ ORDER BY
 
 pagedTrendingShows:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
-    trending_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    trending_shows.tmdb_id AS tmdb_id,
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,

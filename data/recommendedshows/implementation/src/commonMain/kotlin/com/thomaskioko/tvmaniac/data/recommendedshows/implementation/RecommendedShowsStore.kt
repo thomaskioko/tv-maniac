@@ -86,8 +86,8 @@ public class RecommendedShowsStore(
 
                         recommendedShowsDao.upsert(
                             showId = tmdbId,
-                            showTmdbId = tmdbId,
-                            recommendedShowTraktId = parentTraktId,
+                            tmdbId = tmdbId,
+                            traktId = parentTraktId,
                         )
                     }
                 }
@@ -110,7 +110,7 @@ public class RecommendedShowsStore(
 ).validator(
     Validator.by { cachedData ->
         withContext(dispatchers.io) {
-            val showId = cachedData.firstOrNull()?.show_trakt_id?.id ?: return@withContext false
+            val showId = cachedData.firstOrNull()?.show_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showId,
                 requestType = RECOMMENDED_SHOWS.name,

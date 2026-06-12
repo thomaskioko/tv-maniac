@@ -1,29 +1,29 @@
 CREATE TABLE IF NOT EXISTS trakt_list_shows(
     list_id INTEGER NOT NULL,
-    show_trakt_id INTEGER NOT NULL,
+    trakt_id INTEGER NOT NULL,
     listed_at TEXT NOT NULL,
     pending_action TEXT NOT NULL DEFAULT 'NOTHING'
         CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
-    PRIMARY KEY (list_id, show_trakt_id)
+    PRIMARY KEY (list_id, trakt_id)
 );
 
-selectByShowTraktId:
-SELECT list_id, show_trakt_id, listed_at, pending_action
+selectByTraktId:
+SELECT list_id, trakt_id, listed_at, pending_action
 FROM trakt_list_shows
-WHERE show_trakt_id = ?;
+WHERE trakt_id = :trakt_id;
 
 upsert:
-INSERT OR REPLACE INTO trakt_list_shows(list_id, show_trakt_id, listed_at, pending_action)
+INSERT OR REPLACE INTO trakt_list_shows(list_id, trakt_id, listed_at, pending_action)
 VALUES(?, ?, ?, ?);
 
 updatePendingAction:
 UPDATE trakt_list_shows
 SET pending_action = ?
-WHERE list_id = ? AND show_trakt_id = ?;
+WHERE list_id = ? AND trakt_id = ?;
 
 deleteByListIdAndShowId:
 DELETE FROM trakt_list_shows
-WHERE list_id = ? AND show_trakt_id = ?;
+WHERE list_id = ? AND trakt_id = ?;
 
 countActiveByListId:
 SELECT list_id, COUNT(*) AS show_count
@@ -36,7 +36,7 @@ DELETE FROM trakt_list_shows
 WHERE list_id = ? AND pending_action = 'NOTHING';
 
 upsertSynced:
-INSERT OR IGNORE INTO trakt_list_shows(list_id, show_trakt_id, listed_at, pending_action)
+INSERT OR IGNORE INTO trakt_list_shows(list_id, trakt_id, listed_at, pending_action)
 VALUES(?, ?, ?, 'NOTHING');
 
 deleteAll:

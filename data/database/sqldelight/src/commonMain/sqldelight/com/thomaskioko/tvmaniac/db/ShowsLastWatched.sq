@@ -12,7 +12,7 @@ GROUP BY tvshow.id;
 
 lastWatchedEpisodeForShow:
 SELECT
-    tvshow.tmdb_id AS show_trakt_id,
+    tvshow.tmdb_id AS show_id,
     episode.id AS episode_id,
     season.season_number AS last_watched_season,
     episode.episode_number AS last_watched_episode,
