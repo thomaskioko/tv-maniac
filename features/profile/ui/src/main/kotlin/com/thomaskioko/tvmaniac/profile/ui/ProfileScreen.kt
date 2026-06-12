@@ -340,7 +340,6 @@ private fun ProfileContent(
                     }
                 }
             }
-
         }
     }
 }
