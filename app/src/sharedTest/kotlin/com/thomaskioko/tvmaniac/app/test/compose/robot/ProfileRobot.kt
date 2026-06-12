@@ -58,6 +58,10 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         click(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
     }
 
+    fun assertStatsCardDisplayed() = apply {
+        assertTextDisplayed(ProfileTestTags.STATS_SECTION_TITLE)
+    }
+
     fun clickSettingsButton() = apply {
         click(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
     }
