@@ -27,6 +27,7 @@ kotlin {
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.upnext.api)
+                api(projects.data.shows.api)
                 api(projects.data.watchStatus.api)
 
                 implementation(projects.core.networkUtil.api)
@@ -47,6 +48,7 @@ kotlin {
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.api)
+                implementation(projects.data.shows.api)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.watchStatus.testing)
             }

@@ -133,6 +133,7 @@ private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
         tmdbId = tmdbId,
         imdbId = show.ids.imdb,
         title = show.title,
+        providerShowId = show.ids.trakt.toString(),
         episodes = episodes,
     )
 }
