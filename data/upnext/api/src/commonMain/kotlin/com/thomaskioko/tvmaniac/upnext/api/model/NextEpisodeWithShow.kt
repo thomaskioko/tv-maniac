@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.upnext.api.model
 
 public data class NextEpisodeWithShow(
     val showId: Long,
-    val showTmdbId: Long?,
     val showName: String?,
     val showPoster: String?,
     val showStatus: String?,

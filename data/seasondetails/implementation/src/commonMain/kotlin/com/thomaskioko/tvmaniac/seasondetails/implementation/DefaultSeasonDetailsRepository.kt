@@ -165,7 +165,6 @@ public class DefaultSeasonDetailsRepository(
             seasonNumber = season.season_number,
             seasonOverview = season.season_overview,
             showId = season.show_id.id,
-            showTmdbId = season.tmdb_id.id,
             showTitle = season.show_title,
             imageUrl = season.season_image_url,
             episodes = mappedEpisodes,

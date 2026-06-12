@@ -16,7 +16,6 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         SeasonDetailsWithEpisodes(
             seasonId = 0,
             showId = 0,
-            showTmdbId = 0,
             name = "",
             showTitle = "",
             seasonOverview = "",

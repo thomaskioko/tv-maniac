@@ -83,7 +83,6 @@ internal object MockData {
     val season1Details = SeasonDetailsWithEpisodes(
         seasonId = SEASON_1_ID,
         showId = TEST_SHOW_ID,
-        showTmdbId = TEST_SHOW_ID,
         name = "Season 1",
         showTitle = TEST_SHOW_NAME,
         seasonOverview = "First season",
@@ -96,7 +95,6 @@ internal object MockData {
     val season2Details = SeasonDetailsWithEpisodes(
         seasonId = SEASON_2_ID,
         showId = TEST_SHOW_ID,
-        showTmdbId = TEST_SHOW_ID,
         name = "Season 2",
         showTitle = TEST_SHOW_NAME,
         seasonOverview = "Second season",
@@ -169,7 +167,6 @@ internal object MockData {
     ) = SeasonDetailsWithEpisodes(
         seasonId = seasonId,
         showId = TEST_SHOW_ID,
-        showTmdbId = TEST_SHOW_ID,
         name = "Season $seasonNumber",
         showTitle = "Test Show",
         seasonOverview = "Season $seasonNumber overview",

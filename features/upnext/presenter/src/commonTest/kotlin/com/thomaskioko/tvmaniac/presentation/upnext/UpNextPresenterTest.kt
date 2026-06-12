@@ -324,8 +324,7 @@ internal class UpNextPresenterTest {
     @Test
     fun `should map all episode fields to ui model correctly`() = runTest {
         val episode = NextEpisodeWithShow(
-            showId = 42L,
-            showTmdbId = 84L,
+            showId = 84L,
             episodeId = 100L,
             episodeName = "Pilot",
             seasonId = 10L,
@@ -355,8 +354,7 @@ internal class UpNextPresenterTest {
             state.episodes shouldHaveSize 1
 
             val uiModel = state.episodes[0]
-            uiModel.showId shouldBe 42L
-            uiModel.showTmdbId shouldBe 84L
+            uiModel.showId shouldBe 84L
             uiModel.episodeId shouldBe 100L
             uiModel.episodeName shouldBe "Pilot"
             uiModel.seasonId shouldBe 10L
@@ -510,7 +508,6 @@ internal class UpNextPresenterTest {
         firstAired: Long? = null,
     ): NextEpisodeWithShow = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         episodeId = showId * 100,
         episodeName = "Episode 1",
         seasonId = showId * 10,

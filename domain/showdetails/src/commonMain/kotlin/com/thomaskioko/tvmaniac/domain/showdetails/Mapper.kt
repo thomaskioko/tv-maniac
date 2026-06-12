@@ -60,7 +60,7 @@ internal fun List<ShowSeasons>.toSeasonsList(
 internal fun List<SelectByShowId>.toTrailerList(): List<Trailer> =
     map { trailer ->
         Trailer(
-            showTmdbId = trailer.tmdb_id.id,
+            showId = trailer.tmdb_id.id,
             key = trailer.trailer_id,
             name = trailer.name,
             youtubeThumbnailUrl = "https://i.ytimg.com/vi/${trailer.trailer_id}/hqdefault.jpg",

@@ -364,7 +364,6 @@ class UpNextSectionsMapperTest {
         showYear: String? = "2024",
     ) = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

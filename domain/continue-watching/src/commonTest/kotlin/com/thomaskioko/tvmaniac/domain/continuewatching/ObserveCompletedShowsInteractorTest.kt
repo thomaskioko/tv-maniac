@@ -82,7 +82,6 @@ internal class ObserveCompletedShowsInteractorTest {
         showName: String,
     ) = CompletedShow(
         showId = showId,
-        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         lastWatchedAt = 0L,

@@ -56,7 +56,6 @@ public class DefaultWatchedEpisodeDao(
                 rows.map { row ->
                     RecentlyWatchedEpisode(
                         showId = row.show_id.id,
-                        showTmdbId = row.tmdb_id.id,
                         showTitle = row.show_title,
                         posterPath = row.poster_path,
                         seasonNumber = row.season_number,

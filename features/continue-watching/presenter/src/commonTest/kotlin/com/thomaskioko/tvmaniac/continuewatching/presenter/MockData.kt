@@ -8,7 +8,6 @@ import kotlinx.collections.immutable.toPersistentList
 val cachedNextEpisodes = mutableListOf(
     NextEpisodeWithShow(
         showId = 84958,
-        showTmdbId = 84958,
         showName = "Loki",
         showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         showStatus = "Ended",
@@ -33,7 +32,6 @@ val cachedNextEpisodes = mutableListOf(
 val updatedNextEpisodes = listOf(
     NextEpisodeWithShow(
         showId = 84958,
-        showTmdbId = 84958,
         showName = "Loki",
         showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         showStatus = "Ended",
@@ -55,7 +53,6 @@ val updatedNextEpisodes = listOf(
     ),
     NextEpisodeWithShow(
         showId = 1232,
-        showTmdbId = 1232,
         showName = "The Lazarus Project",
         showPoster = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
         showStatus = "Ended",

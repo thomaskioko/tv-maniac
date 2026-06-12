@@ -39,7 +39,6 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
     override val values: Sequence<UpNextEpisodeUiModel> = sequenceOf(
         UpNextEpisodeUiModel(
             showId = 1,
-            showTmdbId = 1396,
             showName = "Breaking Bad",
             imageUrl = null,
             showStatus = "Ended",
@@ -62,7 +61,6 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
         ),
         UpNextEpisodeUiModel(
             showId = 2,
-            showTmdbId = 1399,
             showName = "Game of Thrones: A Very Long Title That Wraps",
             imageUrl = null,
             showStatus = "Ended",
@@ -85,7 +83,6 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
         ),
         UpNextEpisodeUiModel(
             showId = 3,
-            showTmdbId = 66732,
             showName = "Stranger Things",
             imageUrl = null,
             showStatus = "Returning Series",
@@ -112,7 +109,6 @@ internal class UpNextEpisodePreviewParameterProvider : PreviewParameterProvider<
 private fun previewEpisodes() = listOf(
     UpNextEpisodeUiModel(
         showId = 1,
-        showTmdbId = 1396,
         showName = "Breaking Bad",
         showStatus = "Ended",
         showYear = "2008",
@@ -135,7 +131,6 @@ private fun previewEpisodes() = listOf(
     ),
     UpNextEpisodeUiModel(
         showId = 2,
-        showTmdbId = 1399,
         showName = "Game of Thrones",
         showStatus = "Ended",
         showYear = "2011",
@@ -158,7 +153,6 @@ private fun previewEpisodes() = listOf(
     ),
     UpNextEpisodeUiModel(
         showId = 3,
-        showTmdbId = 66732,
         showName = "Stranger Things",
         showStatus = "Returning Series",
         showYear = "2016",
@@ -181,7 +175,6 @@ private fun previewEpisodes() = listOf(
     ),
     UpNextEpisodeUiModel(
         showId = 4,
-        showTmdbId = 94997,
         showName = "House of the Dragon",
         imageUrl = null,
         showStatus = "Returning Series",
