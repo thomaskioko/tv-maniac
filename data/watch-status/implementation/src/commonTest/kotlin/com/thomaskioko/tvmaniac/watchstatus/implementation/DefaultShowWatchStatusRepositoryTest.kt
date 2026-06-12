@@ -19,6 +19,7 @@ class DefaultShowWatchStatusRepositoryTest {
     private val dao = FakeShowWatchStatusDao()
     private val resolver = object : ShowIdResolver {
         override fun showIdForTmdbId(tmdbId: Long): Id<ShowId> = Id(tmdbId)
+        override fun showIdForTraktId(traktId: Long): Id<ShowId> = Id(traktId)
     }
     private val testDispatcher = StandardTestDispatcher()
     private val dispatchers = AppCoroutineDispatchers(
