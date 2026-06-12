@@ -24,6 +24,9 @@ public class NotificationTasksInitializer(
 
     public fun init() {
         coroutineScope.launch {
+            notificationManager.value.clearStaleNotifications()
+        }
+        coroutineScope.launch {
             combine(
                 accountManager.value.isConnected,
                 datastoreRepository.value.observeEpisodeNotificationsEnabled(),
