@@ -23,4 +23,6 @@ public interface FollowedShowsDao {
     public fun updatePendingAction(id: Long, action: PendingAction)
     public fun deleteById(id: Long)
     public fun deleteByShowId(showId: Long)
+    public fun deleteAll()
+    public fun countPendingActions(): Long
 }

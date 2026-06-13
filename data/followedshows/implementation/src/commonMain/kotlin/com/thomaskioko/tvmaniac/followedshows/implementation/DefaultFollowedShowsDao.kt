@@ -176,6 +176,12 @@ public class DefaultFollowedShowsDao(
         val _ = queries.deleteByShowId(internalShowId)
     }
 
+    override fun deleteAll() {
+        queries.deleteAll()
+    }
+
+    override fun countPendingActions(): Long = queries.countEntriesWithPendingAction().executeAsOne()
+
     private fun toEntry(
         followedId: Long,
         showId: Long,

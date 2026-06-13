@@ -115,6 +115,9 @@ VALUES(:showId, :tmdbId, :followedAt, 'UPLOAD');
 isShowFollowed:
 SELECT COUNT(*) > 0 FROM followed_shows WHERE show_id = ? AND pending_action != 'DELETE';
 
+deleteAll:
+DELETE FROM followed_shows;
+
 followedShows:
 SELECT
     tvshow.tmdb_id AS show_id,

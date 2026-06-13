@@ -226,6 +226,12 @@ WHERE show_id = ? AND episode_id = ?;
 deleteById:
 DELETE FROM watched_episodes WHERE id = ?;
 
+deleteAll:
+DELETE FROM watched_episodes;
+
+countPendingActions:
+SELECT COUNT(*) FROM watched_episodes WHERE pending_action != 'NOTHING';
+
 deleteStaleWatchedEpisodes:
 DELETE FROM watched_episodes
 WHERE show_id = :showId

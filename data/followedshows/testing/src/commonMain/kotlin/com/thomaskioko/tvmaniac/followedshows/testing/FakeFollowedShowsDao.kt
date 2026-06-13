@@ -63,6 +63,13 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
         entriesFlow.value = entriesFlow.value.filter { it.showId != showId }
     }
 
+    override fun deleteAll() {
+        entriesFlow.value = emptyList()
+    }
+
+    override fun countPendingActions(): Long =
+        entriesFlow.value.count { it.pendingAction != PendingAction.NOTHING }.toLong()
+
     public fun clear() {
         entriesFlow.value = emptyList()
         nextId = 1L

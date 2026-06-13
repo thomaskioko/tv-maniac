@@ -75,4 +75,11 @@ public class DefaultTraktListShowDao(
             trakt_id = showId,
         )
     }
+
+    override fun deleteAll() {
+        database.traktListShowsQueries.deleteAll()
+    }
+
+    override fun countPendingActions(): Long =
+        database.traktListShowsQueries.countPendingActions().executeAsOne()
 }
