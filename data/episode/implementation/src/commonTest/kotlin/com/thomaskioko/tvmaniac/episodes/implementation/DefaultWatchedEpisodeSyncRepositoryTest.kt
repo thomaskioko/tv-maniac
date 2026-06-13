@@ -71,7 +71,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         defaultWatchedEpisodeSyncRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
             episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
-            sources = setOf(recordingDataSource),
+            activeSource = { recordingDataSource.takeIf { it.provider == accountManager.getActiveProvider() } },
             accountManager = accountManager,
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
@@ -323,7 +323,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         val simklRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
             episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
-            sources = setOf(simklSource),
+            activeSource = { simklSource.takeIf { it.provider == accountManager.getActiveProvider() } },
             accountManager = accountManager,
             datastoreRepository = datastoreRepository,
             lastRequestStore = EpisodeWatchesLastRequestStore(requestManagerRepository),
