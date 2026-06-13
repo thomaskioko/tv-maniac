@@ -17,12 +17,10 @@ public interface EpisodeWatchesMultibindings {
 
 @BindingContainer
 @ContributesTo(AppScope::class)
-public interface ActiveEpisodeWatchesDataSourceBindingContainer {
-    public companion object {
-        @Provides
-        public fun activeEpisodeWatchesDataSource(
-            sources: Set<EpisodeWatchesDataSource>,
-            accountManager: AccountManager,
-        ): EpisodeWatchesDataSource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
-    }
+public object ActiveEpisodeWatchesDataSourceBindingContainer {
+    @Provides
+    public fun activeEpisodeWatchesDataSource(
+        sources: Set<EpisodeWatchesDataSource>,
+        accountManager: AccountManager,
+    ): EpisodeWatchesDataSource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
 }

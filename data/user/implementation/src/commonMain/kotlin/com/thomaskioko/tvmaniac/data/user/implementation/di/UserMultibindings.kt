@@ -17,12 +17,10 @@ public interface UserMultibindings {
 
 @BindingContainer
 @ContributesTo(AppScope::class)
-public interface ActiveUserRemoteDataSourceBindingContainer {
-    public companion object {
-        @Provides
-        public fun activeUserRemoteDataSource(
-            sources: Set<UserRemoteDataSource>,
-            accountManager: AccountManager,
-        ): UserRemoteDataSource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
-    }
+public object ActiveUserRemoteDataSourceBindingContainer {
+    @Provides
+    public fun activeUserRemoteDataSource(
+        sources: Set<UserRemoteDataSource>,
+        accountManager: AccountManager,
+    ): UserRemoteDataSource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
 }

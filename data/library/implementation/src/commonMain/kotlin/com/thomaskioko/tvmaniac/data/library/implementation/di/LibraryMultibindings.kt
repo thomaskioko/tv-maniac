@@ -17,12 +17,10 @@ public interface LibraryMultibindings {
 
 @BindingContainer
 @ContributesTo(AppScope::class)
-public interface ActiveLibraryRemoteDataSourceBindingContainer {
-    public companion object {
-        @Provides
-        public fun activeLibraryRemoteDataSource(
-            sources: Set<LibraryRemoteDataSource>,
-            accountManager: AccountManager,
-        ): LibraryRemoteDataSource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
-    }
+public object ActiveLibraryRemoteDataSourceBindingContainer {
+    @Provides
+    public fun activeLibraryRemoteDataSource(
+        sources: Set<LibraryRemoteDataSource>,
+        accountManager: AccountManager,
+    ): LibraryRemoteDataSource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
 }

@@ -17,12 +17,10 @@ public interface SyncActivityMultibindings {
 
 @BindingContainer
 @ContributesTo(AppScope::class)
-public interface ActiveRemoteActivitySourceBindingContainer {
-    public companion object {
-        @Provides
-        public fun activeRemoteActivitySource(
-            sources: Set<RemoteActivitySource>,
-            accountManager: AccountManager,
-        ): RemoteActivitySource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
-    }
+public object ActiveRemoteActivitySourceBindingContainer {
+    @Provides
+    public fun activeRemoteActivitySource(
+        sources: Set<RemoteActivitySource>,
+        accountManager: AccountManager,
+    ): RemoteActivitySource? = sources.firstOrNull { it.provider == accountManager.getActiveProvider() }
 }

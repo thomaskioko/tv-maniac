@@ -19,12 +19,10 @@ public interface ProviderFeaturesMultibindings {
 
 @BindingContainer
 @ContributesTo(AppScope::class)
-public interface ActiveProviderFeaturesBindingContainer {
-    public companion object {
-        @Provides
-        public fun activeProviderFeatures(
-            features: Map<AccountProvider, ProviderFeatures>,
-            accountManager: AccountManager,
-        ): ProviderFeatures = accountManager.getActiveProvider()?.let { features[it] } ?: NoProviderFeatures
-    }
+public object ActiveProviderFeaturesBindingContainer {
+    @Provides
+    public fun activeProviderFeatures(
+        features: Map<AccountProvider, ProviderFeatures>,
+        accountManager: AccountManager,
+    ): ProviderFeatures = accountManager.getActiveProvider()?.let { features[it] } ?: NoProviderFeatures
 }
