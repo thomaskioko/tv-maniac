@@ -62,6 +62,17 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         assertTextDisplayed(ProfileTestTags.STATS_SECTION_TITLE)
     }
 
+    fun scrollToRecentlyWatched(slug: String) = apply {
+        scrollToListTag(
+            listTag = ProfileTestTags.userCard(slug),
+            itemTag = ProfileTestTags.RECENTLY_WATCHED_ROW_TEST_TAG,
+        )
+    }
+
+    fun assertRecentlyWatchedSectionDisplayed() = apply {
+        assertTextDisplayed(text = "Recently Watched", timeoutMillis = 10_000L)
+    }
+
     fun clickSettingsButton() = apply {
         click(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
     }

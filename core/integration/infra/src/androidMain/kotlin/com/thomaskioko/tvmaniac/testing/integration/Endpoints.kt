@@ -291,6 +291,12 @@ public object Endpoints {
             override val successFixture: String = "simkl/users/stats/success.json"
             override val errorFixture: String = "simkl/users/stats/error.json"
         }
+
+        public object SyncAllItems : Endpoint.Exact {
+            override val path: String = "/sync/all-items/shows"
+            override val successFixture: String = "simkl/sync/all-items/success.json"
+            override val errorFixture: String = "simkl/sync/all-items/error.json"
+        }
     }
 
     /** TMDB API endpoints (paths begin with `/3/`). */
@@ -370,5 +376,6 @@ public object Endpoints {
         Tmdb.WatchProviders,
         Simkl.UsersSettings,
         Simkl.UsersStats,
+        Simkl.SyncAllItems,
     )
 }
