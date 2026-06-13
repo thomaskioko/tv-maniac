@@ -61,7 +61,6 @@ internal class Scenarios(
         simkl.stubProfileEndpoints()
         simkl.stubWatchedHistoryEndpoints()
         simkl.stubActivities()
-        stubBackgroundSyncChainEmpty()
     }
 
     fun stubAuthenticatedSimklStartWatching() {
@@ -69,19 +68,6 @@ internal class Scenarios(
         simkl.stubProfileEndpoints()
         simkl.stubPlanToWatchWatchlist()
         simkl.stubActivities()
-        stubBackgroundSyncChainEmpty()
-    }
-
-    /**
-     * Stubs the Trakt endpoints the login-driven Continue Watching sync chain hits (activity +
-     * progress) with empty responses so it runs to completion instead of aborting on the
-     * MockEngine's "no stub" throw before the Simkl watched-history step fills `watched_episodes`.
-     */
-    private fun stubBackgroundSyncChainEmpty() {
-        mockHandler.stubEndpoint(Endpoints.Trakt.SyncLastActivities)
-        mockHandler.stubFixture(path = Endpoints.Trakt.SyncWatchedShows.path, fixturePath = EMPTY_ARRAY_FIXTURE)
-        mockHandler.stubFixture(path = Endpoints.Trakt.SyncPlaybackEpisodes.path, fixturePath = EMPTY_ARRAY_FIXTURE)
-        mockHandler.stubFixture(path = Endpoints.Trakt.UsersHiddenProgressWatched.path, fixturePath = EMPTY_ARRAY_FIXTURE)
     }
 
     fun stubAuthenticatedSync() {
