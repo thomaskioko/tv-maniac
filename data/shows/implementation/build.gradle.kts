@@ -22,6 +22,12 @@ kotlin {
             }
         }
 
+        androidMain {
+            dependencies {
+                implementation(projects.core.networkUtil.api)
+            }
+        }
+
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)

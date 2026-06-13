@@ -36,7 +36,6 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.api.tmdb.testing)
-                implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.accountManager.testing)
