@@ -34,8 +34,8 @@ public class DefaultFollowedShowsDao(
             .map {
                 toEntry(
                     followedId = it.followed_id,
-                    showId = it.tmdb_id?.id ?: it.trakt_id,
-                    tmdbId = it.tmdb_id?.id,
+                    showId = it.tmdb_id.id,
+                    tmdbId = it.tmdb_id.id,
                     followedAt = it.followed_at,
                     pendingAction = it.pending_action,
                 )
@@ -50,8 +50,8 @@ public class DefaultFollowedShowsDao(
                 list.map {
                     toEntry(
                         followedId = it.followed_id,
-                        showId = it.tmdb_id?.id ?: it.trakt_id,
-                        tmdbId = it.tmdb_id?.id,
+                        showId = it.tmdb_id.id,
+                        tmdbId = it.tmdb_id.id,
                         followedAt = it.followed_at,
                         pendingAction = it.pending_action,
                     )

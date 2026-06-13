@@ -18,12 +18,11 @@ CREATE INDEX IF NOT EXISTS idx_followed_show_pending ON followed_shows(show_id, 
 entries:
 SELECT
     followed_shows.id AS followed_id,
-    show_trakt.trakt_id,
-    followed_shows.tmdb_id,
+    tvshow.tmdb_id AS tmdb_id,
     followed_shows.followed_at,
     followed_shows.pending_action
 FROM followed_shows
-JOIN show_trakt ON show_trakt.show_id = followed_shows.show_id;
+INNER JOIN tvshow ON tvshow.id = followed_shows.show_id;
 
 entryWithShowId:
 SELECT

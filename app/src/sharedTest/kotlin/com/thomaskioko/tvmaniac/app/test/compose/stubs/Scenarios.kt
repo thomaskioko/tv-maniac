@@ -63,6 +63,13 @@ internal class Scenarios(
         stubBackgroundSyncChainEmpty()
     }
 
+    fun stubAuthenticatedSimklStartWatching() {
+        simkl.stubLoggedInUser()
+        simkl.stubProfileEndpoints()
+        simkl.stubPlanToWatchWatchlist()
+        stubBackgroundSyncChainEmpty()
+    }
+
     /**
      * Stubs the Trakt endpoints the login-driven Continue Watching sync chain hits (activity +
      * progress) with empty responses so it runs to completion instead of aborting on the
@@ -207,6 +214,13 @@ internal class Scenarios(
 
         fun stubWatchedHistoryEndpoints() {
             mockHandler.stubEndpoint(Endpoints.Simkl.SyncAllItems)
+        }
+
+        fun stubPlanToWatchWatchlist() {
+            mockHandler.stubFixture(
+                path = Endpoints.Simkl.SyncAllItems.path,
+                fixturePath = "simkl/sync/all-items/start_watching.json",
+            )
         }
     }
 

@@ -73,14 +73,13 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
 
         val id = dao.upsert(entry)
 
-        val updatedEntry =
-            entry.copy(id = id, pendingAction = PendingAction.NOTHING, tmdbId = 12345L)
+        val updatedEntry = entry.copy(id = id, pendingAction = PendingAction.NOTHING)
         val _ = dao.upsert(updatedEntry)
 
         val entries = dao.entries()
         entries.size shouldBe 1
         entries.first().pendingAction shouldBe PendingAction.NOTHING
-        entries.first().tmdbId shouldBe 12345L
+        entries.first().tmdbId shouldBe 1L
     }
 
     @Test
@@ -224,6 +223,37 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
         )
 
         val entries = dao.entriesWithNoPendingAction()
+
+        entries.size shouldBe 1
+        entries.first().showId shouldBe 4L
+    }
+
+    @Test
+    fun `should include followed show in entries given no trakt external id`() {
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(4),
+            name = "The Walking Dead",
+            overview = "",
+            language = null,
+            year = null,
+            ratings = 0.0,
+            vote_count = 0,
+            genres = null,
+            status = null,
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        val _ = dao.upsert(
+            FollowedShowEntry(
+                showId = 4L,
+                followedAt = Clock.System.now(),
+                pendingAction = PendingAction.UPLOAD,
+            ),
+        )
+
+        val entries = dao.entries()
 
         entries.size shouldBe 1
         entries.first().showId shouldBe 4L
