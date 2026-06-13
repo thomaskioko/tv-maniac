@@ -26,6 +26,7 @@ kotlin {
                 api(projects.data.accountManager.api)
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
+                api(projects.data.library.api)
                 api(projects.data.oauth.api)
                 api(projects.data.user.api)
                 implementation(projects.core.base)
