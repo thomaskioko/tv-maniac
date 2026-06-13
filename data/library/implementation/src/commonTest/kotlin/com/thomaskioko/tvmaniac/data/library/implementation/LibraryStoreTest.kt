@@ -86,8 +86,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
             logger = FakeLogger(),
         )
         store = LibraryStore(
-            sources = setOf(traktSource, simklSource),
-            accountManager = accountManager,
+            activeSource = { setOf(traktSource, simklSource).firstOrNull { it.provider == accountManager.getActiveProvider() } },
             tmdbDataSource = fakeTmdbDetailsSource,
             followedShowsDao = followedShowsDao,
             tvShowsDao = tvShowsDao,
