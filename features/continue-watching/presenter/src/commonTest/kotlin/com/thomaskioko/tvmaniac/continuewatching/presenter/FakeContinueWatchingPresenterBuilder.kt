@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.continuewatching.presenter
 
 import com.arkivanov.decompose.ComponentContext
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -102,7 +103,7 @@ class FakeContinueWatchingPresenterBuilder {
         continueWatchingRepository = continueWatchingRepository,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-        accountManager = fakeAccountManager,
+        activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
         requestManagerRepository = requestManagerRepository,
         dispatchers = coroutineDispatcher,
         logger = fakeLogger,

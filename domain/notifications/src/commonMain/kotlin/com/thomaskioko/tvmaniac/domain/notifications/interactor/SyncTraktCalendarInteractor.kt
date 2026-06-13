@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.notifications.interactor
 
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -15,11 +16,14 @@ import kotlinx.coroutines.withContext
 public class SyncTraktCalendarInteractor(
     private val episodeRepository: EpisodeRepository,
     private val dateTimeProvider: DateTimeProvider,
+    private val activeProviderFeatures: () -> ProviderFeatures,
     private val logger: Logger,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<SyncTraktCalendarInteractor.Params>() {
 
     override suspend fun doWork(params: Params) {
+        if (!activeProviderFeatures().supportsCalendar) return
+
         logger.debug(TAG, "Starting Trakt calendar sync")
         withContext(dispatchers.io) {
             episodeRepository.syncUpcomingEpisodesFromTrakt(

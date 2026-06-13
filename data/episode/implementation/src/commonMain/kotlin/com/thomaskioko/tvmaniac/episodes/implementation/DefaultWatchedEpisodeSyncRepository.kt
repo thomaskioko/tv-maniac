@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
@@ -31,7 +30,7 @@ import kotlin.time.Instant.Companion.fromEpochMilliseconds
 public class DefaultWatchedEpisodeSyncRepository(
     private val dao: WatchedEpisodeDao,
     private val episodesDao: EpisodesDao,
-    private val sources: Set<EpisodeWatchesDataSource>,
+    private val activeSource: () -> EpisodeWatchesDataSource?,
     private val accountManager: AccountManager,
     private val datastoreRepository: DatastoreRepository,
     private val lastRequestStore: EpisodeWatchesLastRequestStore,
@@ -42,9 +41,6 @@ public class DefaultWatchedEpisodeSyncRepository(
 ) : WatchedEpisodeSyncRepository {
 
     private val syncMutex = Mutex()
-
-    private fun activeSource(): EpisodeWatchesDataSource? =
-        sources.getActiveProvider(accountManager)
 
     override suspend fun syncPendingEpisodes() {
         if (accountManager.getActiveProvider() == null) return

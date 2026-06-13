@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
@@ -42,8 +40,7 @@ import org.mobilenativefoundation.store.store5.Validator
 @Inject
 @SingleIn(AppScope::class)
 public class LibraryStore(
-    private val sources: Set<LibraryRemoteDataSource>,
-    private val accountManager: AccountManager,
+    private val activeSource: () -> LibraryRemoteDataSource?,
     private val tmdbDataSource: TmdbShowDetailsNetworkDataSource,
     private val followedShowsDao: FollowedShowsDao,
     private val tvShowsDao: TvShowsDao,
@@ -56,7 +53,7 @@ public class LibraryStore(
 ) : Store<LibrarySortOption, List<FollowedShowEntry>> by storeBuilder(
     fetcher = Fetcher.of { _: LibrarySortOption ->
         coroutineScope {
-            val source = sources.getActiveProvider(accountManager)
+            val source = activeSource()
                 ?: throw AuthenticationException("No active sync provider")
             source.getWatchlist()
                 .getOrThrow()

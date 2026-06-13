@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
-import com.thomaskioko.tvmaniac.data.user.api.UserRemoteDataSource
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.navigation.NavDestination
@@ -24,7 +23,6 @@ public interface TestGraph {
     public val syncObserver: SyncObserver
     public val workerFactory: WorkerFactory
     public val featureFlags: Set<FeatureFlag<Boolean>>
-    public val userRemoteDataSources: Set<UserRemoteDataSource>
 
     @DependencyGraph.Factory
     public fun interface Factory {

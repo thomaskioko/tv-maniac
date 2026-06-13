@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -473,7 +474,7 @@ internal class UpNextPresenterTest {
                 dispatchers = dispatchers,
             ),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
-            accountManager = FakeAccountManager(),
+            activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
             dispatchers = dispatchers,
             logger = logger,

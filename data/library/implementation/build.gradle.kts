@@ -38,7 +38,6 @@ kotlin {
                 implementation(projects.api.tmdb.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
-                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.followedshows.implementation)
                 implementation(projects.data.requestManager.testing)
