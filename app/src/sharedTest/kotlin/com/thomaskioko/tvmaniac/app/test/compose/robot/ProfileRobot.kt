@@ -73,6 +73,21 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         assertTextDisplayed(text = "Recently Watched", timeoutMillis = 10_000L)
     }
 
+    fun scrollToProgressSection(slug: String) = apply {
+        scrollToListTag(
+            listTag = ProfileTestTags.userCard(slug),
+            itemTag = ProfileTestTags.PROGRESS_IN_PROGRESS_CHIP_TEST_TAG,
+        )
+    }
+
+    fun selectInProgressFilter() = apply {
+        click(ProfileTestTags.PROGRESS_IN_PROGRESS_CHIP_TEST_TAG)
+    }
+
+    fun assertInProgressShowDisplayed() = apply {
+        assertDisplayed(ProfileTestTags.PROGRESS_ROW_TEST_TAG)
+    }
+
     fun clickSettingsButton() = apply {
         click(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
     }

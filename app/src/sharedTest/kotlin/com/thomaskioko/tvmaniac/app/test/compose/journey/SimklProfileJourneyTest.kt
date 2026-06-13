@@ -8,7 +8,7 @@ import org.junit.Test
 internal class SimklProfileJourneyTest : BaseAppFlowTest() {
 
     @Test
-    fun givenSimklSession_whenNavigatesToProfile_thenStatsAndRecentlyWatchedDisplayed() = runAppFlowTest {
+    fun givenSimklSession_whenNavigatesToProfile_thenSyncedSectionsDisplayed() = runAppFlowTest {
         scenarios.stubUnauthenticatedState()
         scenarios.stubAuthenticatedSimklProfile()
 
@@ -22,5 +22,8 @@ internal class SimklProfileJourneyTest : BaseAppFlowTest() {
             .assertStatsCardDisplayed()
             .scrollToRecentlyWatched(slug = TEST_SIMKL_ACCOUNT_ID.toString())
             .assertRecentlyWatchedSectionDisplayed()
+            .scrollToProgressSection(slug = TEST_SIMKL_ACCOUNT_ID.toString())
+            .selectInProgressFilter()
+            .assertInProgressShowDisplayed()
     }
 }
