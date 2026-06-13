@@ -60,11 +60,13 @@ public class DefaultTvShowsDao(
             backdrop_path = show.backdropPath,
         )
         val showId = tvShowQueries.getShowIdByTmdbId(show.tmdbId).executeAsOne()
-        externalIdQueries.insert(
-            showId = showId,
-            provider = Provider.TRAKT,
-            externalId = show.showId.id.toString(),
-        )
+        show.showId?.let { traktId ->
+            externalIdQueries.insert(
+                showId = showId,
+                provider = Provider.TRAKT,
+                externalId = traktId.id.toString(),
+            )
+        }
     }
 
     override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> {
