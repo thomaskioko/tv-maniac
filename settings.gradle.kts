@@ -91,6 +91,7 @@ include(
     ":api:simkl:testing",
     ":api:tmdb:api",
     ":api:tmdb:implementation",
+    ":api:tmdb:testing",
     ":api:trakt:api",
     ":api:trakt:implementation",
     ":api:trakt:testing",
