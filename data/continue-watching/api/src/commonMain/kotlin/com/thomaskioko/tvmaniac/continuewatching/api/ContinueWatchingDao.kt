@@ -17,4 +17,6 @@ public interface ContinueWatchingDao {
     public fun deleteByShowId(showId: Long)
 
     public fun deleteAll()
+
+    public fun insertMembershipFromWatchedEpisodes()
 }

@@ -42,6 +42,7 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.continueWatching.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.requestManager.testing)
