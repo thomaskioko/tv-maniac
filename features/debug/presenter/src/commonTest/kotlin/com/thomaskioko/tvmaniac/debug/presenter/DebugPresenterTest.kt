@@ -311,7 +311,6 @@ class DebugPresenterTest {
                     dispatchers = dispatchers,
                 ),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
-                accountManager = FakeAccountManager(),
                 activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
                 requestManagerRepository = FakeRequestManagerRepository(),
                 dispatchers = dispatchers,

@@ -474,7 +474,6 @@ internal class UpNextPresenterTest {
                 dispatchers = dispatchers,
             ),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
-            accountManager = FakeAccountManager(),
             activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
             dispatchers = dispatchers,

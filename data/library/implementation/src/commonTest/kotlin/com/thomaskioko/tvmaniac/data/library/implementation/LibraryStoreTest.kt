@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.data.library.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -54,7 +54,6 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
         databaseRead = testDispatcher,
     )
 
-    private val accountManager = FakeAccountManager()
     private val fakeRequestManager = FakeRequestManagerRepository(initialRequestValid = false)
     private val fakeActivitySync = FakeActivitySyncRepository()
     private val fakeTmdbDetailsSource = FakeTmdbShowDetailsNetworkDataSource()
@@ -68,8 +67,6 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
     private val traktSource = FakeLibrarySource(provider = AccountProvider.TRAKT)
     private val simklSource = FakeLibrarySource(provider = AccountProvider.SIMKL)
     private val transactionRunner = ImmediateTransactionRunner()
-
-    private lateinit var store: LibraryStore
 
     @BeforeTest
     fun setUp() {
@@ -85,19 +82,20 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
             database = database,
             logger = FakeLogger(),
         )
-        store = LibraryStore(
-            activeSource = { setOf(traktSource, simklSource).firstOrNull { it.provider == accountManager.getActiveProvider() } },
-            tmdbDataSource = fakeTmdbDetailsSource,
-            followedShowsDao = followedShowsDao,
-            tvShowsDao = tvShowsDao,
-            requestManagerRepository = fakeRequestManager,
-            syncRepository = fakeActivitySync,
-            transactionRunner = transactionRunner,
-            showReconciler = showReconciler,
-            formatterUtil = fakeFormatterUtil,
-            dispatchers = dispatchers,
-        )
     }
+
+    private fun buildStore(activeSource: () -> LibraryRemoteDataSource?): LibraryStore = LibraryStore(
+        activeSource = activeSource,
+        tmdbDataSource = fakeTmdbDetailsSource,
+        followedShowsDao = followedShowsDao,
+        tvShowsDao = tvShowsDao,
+        requestManagerRepository = fakeRequestManager,
+        syncRepository = fakeActivitySync,
+        transactionRunner = transactionRunner,
+        showReconciler = showReconciler,
+        formatterUtil = fakeFormatterUtil,
+        dispatchers = dispatchers,
+    )
 
     @AfterTest
     fun tearDown() {
@@ -107,7 +105,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should write followed shows and trakt external id given trakt watchlist show with tmdb id`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        val store = buildStore { traktSource }
         traktSource.setWatchlist(
             listOf(
                 RemoteFollowedShow(
@@ -156,7 +154,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should write followed shows and simkl external id given simkl show resolved via imdb id`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        val store = buildStore { simklSource }
         fakeTmdbShowsSource.setFindShowByExternalId(ApiResponse.Success(TMDB_ID))
         simklSource.setWatchlist(
             listOf(
@@ -211,7 +209,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should skip show given no tmdb id and imdb lookup returns null`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        val store = buildStore { simklSource }
         fakeTmdbShowsSource.setFindShowByExternalId(ApiResponse.Success(null))
         simklSource.setWatchlist(
             listOf(
@@ -242,7 +240,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should not attach trakt external id given simkl show resolved via tmdb id`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        val store = buildStore { simklSource }
         simklSource.setWatchlist(
             listOf(
                 RemoteFollowedShow(
@@ -305,7 +303,7 @@ private class ImmediateTransactionRunner : DatabaseTransactionRunner {
 
 private class FakeLibrarySource(
     override val provider: AccountProvider,
-) : com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource {
+) : LibraryRemoteDataSource {
 
     private var watchlistShows: List<RemoteFollowedShow> = emptyList()
 

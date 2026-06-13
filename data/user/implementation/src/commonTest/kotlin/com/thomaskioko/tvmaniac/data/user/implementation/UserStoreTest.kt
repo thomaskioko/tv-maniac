@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.data.user.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.user.api.UserRemoteDataSource
@@ -39,15 +38,12 @@ internal class UserStoreTest : BaseDatabaseTest() {
 
     private lateinit var userDao: DefaultUserDao
     private lateinit var userStatsDao: DefaultUserStatsDao
-    private lateinit var accountManager: FakeAccountManager
     private lateinit var requestManager: FakeRequestManagerRepository
     private lateinit var traktSource: FakeUserSource
-    private lateinit var store: UserStore
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        accountManager = FakeAccountManager()
         requestManager = FakeRequestManagerRepository(initialRequestValid = false)
         userStatsDao = DefaultUserStatsDao(
             database = database,
@@ -60,10 +56,6 @@ internal class UserStoreTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
         )
         traktSource = FakeUserSource(provider = AccountProvider.TRAKT)
-        store = buildStore(
-            sources = setOf(traktSource),
-            accountManager = accountManager,
-        )
     }
 
     @AfterTest
@@ -74,7 +66,7 @@ internal class UserStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist profile given active provider returns success`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        val store = buildStore { traktSource }
         traktSource.profileResponse = ApiResponse.Success(
             RemoteUserProfile(
                 slug = "john-doe",
@@ -104,7 +96,7 @@ internal class UserStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should not write to dao given no active provider`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(null)
+        val store = buildStore { null }
 
         store.stream(StoreReadRequest.fresh("me")).test {
             awaitItem()
@@ -129,11 +121,7 @@ internal class UserStoreTest : BaseDatabaseTest() {
                 backgroundUrl = null,
             ),
         )
-        val multiStore = buildStore(
-            sources = setOf(traktSource, simklSource),
-            accountManager = accountManager,
-        )
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        val multiStore = buildStore { simklSource }
 
         multiStore.stream(StoreReadRequest.fresh("me")).test {
             awaitItem()
@@ -170,11 +158,7 @@ internal class UserStoreTest : BaseDatabaseTest() {
                 backgroundUrl = null,
             ),
         )
-        val multiStore = buildStore(
-            sources = setOf(traktSource, simklSource),
-            accountManager = accountManager,
-        )
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        val multiStore = buildStore { simklSource }
 
         multiStore.stream(StoreReadRequest.fresh("me")).test {
             awaitItem()
@@ -190,11 +174,8 @@ internal class UserStoreTest : BaseDatabaseTest() {
         }
     }
 
-    private fun buildStore(
-        sources: Set<UserRemoteDataSource>,
-        accountManager: FakeAccountManager,
-    ): UserStore = UserStore(
-        activeSource = { sources.firstOrNull { it.provider == accountManager.getActiveProvider() } },
+    private fun buildStore(activeSource: () -> UserRemoteDataSource?): UserStore = UserStore(
+        activeSource = activeSource,
         userDao = userDao,
         requestManagerRepository = requestManager,
         dispatchers = dispatchers,

@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.data.user.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.user.api.UserRemoteDataSource
@@ -38,15 +37,12 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
     )
 
     private lateinit var userStatsDao: DefaultUserStatsDao
-    private lateinit var accountManager: FakeAccountManager
     private lateinit var requestManager: FakeRequestManagerRepository
     private lateinit var traktSource: FakeStatsSource
-    private lateinit var store: UserStatsStore
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        accountManager = FakeAccountManager()
         requestManager = FakeRequestManagerRepository(initialRequestValid = false)
         userStatsDao = DefaultUserStatsDao(
             database = database,
@@ -54,10 +50,6 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
         )
         traktSource = FakeStatsSource(provider = AccountProvider.TRAKT)
-        store = buildStore(
-            sources = setOf(traktSource),
-            accountManager = accountManager,
-        )
     }
 
     @AfterTest
@@ -68,7 +60,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist stats given active provider returns non-null stats`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        val store = buildStore { traktSource }
         traktSource.statsResponse = ApiResponse.Success(
             RemoteUserStats(
                 showsWatched = 42L,
@@ -94,7 +86,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should not write to dao given provider returns null stats`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        val store = buildStore { traktSource }
         traktSource.statsResponse = ApiResponse.Success(null)
 
         store.stream(StoreReadRequest.fresh("test-user")).test {
@@ -110,7 +102,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should not write to dao given no active provider`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(null)
+        val store = buildStore { null }
 
         store.stream(StoreReadRequest.fresh("test-user")).test {
             awaitItem()
@@ -133,11 +125,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
                 minutesWatched = 3000L,
             ),
         )
-        val multiStore = buildStore(
-            sources = setOf(traktSource, simklSource),
-            accountManager = accountManager,
-        )
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        val multiStore = buildStore { simklSource }
 
         multiStore.stream(StoreReadRequest.fresh("test-user")).test {
             awaitItem()
@@ -157,11 +145,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
     fun `should not write stats given simkl source returns null stats`() = runTest(testDispatcher) {
         val simklSource = FakeStatsSource(provider = AccountProvider.SIMKL)
         simklSource.statsResponse = ApiResponse.Success(null)
-        val multiStore = buildStore(
-            sources = setOf(traktSource, simklSource),
-            accountManager = accountManager,
-        )
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        val multiStore = buildStore { simklSource }
 
         multiStore.stream(StoreReadRequest.fresh("test-user")).test {
             awaitItem()
@@ -174,11 +158,8 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
         }
     }
 
-    private fun buildStore(
-        sources: Set<UserRemoteDataSource>,
-        accountManager: FakeAccountManager,
-    ): UserStatsStore = UserStatsStore(
-        activeSource = { sources.firstOrNull { it.provider == accountManager.getActiveProvider() } },
+    private fun buildStore(activeSource: () -> UserRemoteDataSource?): UserStatsStore = UserStatsStore(
+        activeSource = activeSource,
         userStatsDao = userStatsDao,
         requestManagerRepository = requestManager,
         dispatchers = dispatchers,
