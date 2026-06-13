@@ -199,6 +199,37 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should include followed show given no trakt external id`() {
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(4),
+            name = "The Walking Dead",
+            overview = "",
+            language = null,
+            year = null,
+            ratings = 0.0,
+            vote_count = 0,
+            genres = null,
+            status = null,
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        val _ = dao.upsert(
+            FollowedShowEntry(
+                showId = 4L,
+                followedAt = Clock.System.now(),
+                pendingAction = PendingAction.NOTHING,
+            ),
+        )
+
+        val entries = dao.entriesWithNoPendingAction()
+
+        entries.size shouldBe 1
+        entries.first().showId shouldBe 4L
+    }
+
+    @Test
     fun `should get entries with upload pending action`() {
         val _ = dao.upsert(
             FollowedShowEntry(
