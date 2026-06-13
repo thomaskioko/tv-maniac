@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.simkl.api.SimklSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddHistoryResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAllItemsResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklLastActivitiesResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveHistoryResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklSyncHistoryRequest
 import dev.zacsweers.metro.AppScope
@@ -24,6 +25,14 @@ import io.ktor.http.path
 public class DefaultSimklSyncRemoteDataSource(
     @SimklApi private val httpClient: HttpClient,
 ) : SimklSyncRemoteDataSource {
+
+    override suspend fun getLastActivities(): ApiResponse<SimklLastActivitiesResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Get
+                path("sync/activities")
+            }
+        }
 
     override suspend fun getAllWatchedShows(dateFrom: String?): ApiResponse<SimklAllItemsResponse> =
         httpClient.authSafeRequest {

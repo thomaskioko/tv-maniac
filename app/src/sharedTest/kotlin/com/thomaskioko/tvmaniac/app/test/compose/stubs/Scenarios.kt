@@ -60,6 +60,7 @@ internal class Scenarios(
         simkl.stubLoggedInUser()
         simkl.stubProfileEndpoints()
         simkl.stubWatchedHistoryEndpoints()
+        simkl.stubActivities()
         stubBackgroundSyncChainEmpty()
     }
 
@@ -67,6 +68,7 @@ internal class Scenarios(
         simkl.stubLoggedInUser()
         simkl.stubProfileEndpoints()
         simkl.stubPlanToWatchWatchlist()
+        simkl.stubActivities()
         stubBackgroundSyncChainEmpty()
     }
 
@@ -221,6 +223,10 @@ internal class Scenarios(
                 path = Endpoints.Simkl.SyncAllItems.path,
                 fixturePath = "simkl/sync/all-items/start_watching.json",
             )
+        }
+
+        fun stubActivities() {
+            mockHandler.stubEndpoint(Endpoints.Simkl.SyncActivities)
         }
     }
 
