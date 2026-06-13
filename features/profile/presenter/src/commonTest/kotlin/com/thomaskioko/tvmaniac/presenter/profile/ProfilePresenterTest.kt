@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
@@ -112,7 +113,7 @@ internal class ProfilePresenterTest {
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
         traktListRepository = traktListRepository,
-        accountManager = accountManager,
+        activeProviderFeatures = { FakeProviderFeatures(supportsLists = true) },
         dispatchers = testDispatchers,
     )
 

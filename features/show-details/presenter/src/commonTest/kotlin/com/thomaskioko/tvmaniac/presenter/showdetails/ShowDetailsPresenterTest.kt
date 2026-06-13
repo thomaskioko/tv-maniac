@@ -5,6 +5,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -768,6 +769,7 @@ class ShowDetailsPresenterTest {
             syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = fakeDateTimeProvider,
+                activeProviderFeatures = { FakeProviderFeatures(supportsCalendar = true) },
                 logger = FakeLogger(),
                 dispatchers = coroutineDispatcher,
             ),
