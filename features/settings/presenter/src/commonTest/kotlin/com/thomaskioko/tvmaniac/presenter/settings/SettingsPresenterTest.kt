@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
@@ -18,7 +19,6 @@ import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
-import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
@@ -30,8 +30,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
-import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
-import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
@@ -52,9 +50,6 @@ class SettingsPresenterTest {
     private val dateTimeProvider = FakeDateTimeProvider()
     private val accountManager = FakeAccountManager()
     private val userRepository = FakeUserRepository()
-    private val fakeTraktActivityRepository = FakeTraktActivityRepository()
-    private val fakeActivitySyncRepository = FakeActivitySyncRepository()
-    private val fakeRequestManagerRepository = FakeRequestManagerRepository()
     private val fakeLogger = FakeLogger()
     private val localizer = FakeLocalizer()
     private val authManager = FakeAuthManager()
@@ -83,9 +78,7 @@ class SettingsPresenterTest {
                 accountManager = accountManager,
                 userRepository = userRepository,
                 datastoreRepository = datastoreRepository,
-                traktActivityRepository = fakeTraktActivityRepository,
-                syncRepository = fakeActivitySyncRepository,
-                requestManagerRepository = fakeRequestManagerRepository,
+                logoutHandler = FakeLogoutHandler(),
             ),
             observeSettingsPreferencesInteractor = ObserveSettingsPreferencesInteractor(
                 datastoreRepository = datastoreRepository,
