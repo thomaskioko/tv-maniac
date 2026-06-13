@@ -473,6 +473,7 @@ internal class UpNextPresenterTest {
                 dispatchers = dispatchers,
             ),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+            accountManager = FakeAccountManager(),
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
             dispatchers = dispatchers,
             logger = logger,

@@ -310,6 +310,7 @@ class DebugPresenterTest {
                     dispatchers = dispatchers,
                 ),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                accountManager = FakeAccountManager(),
                 requestManagerRepository = FakeRequestManagerRepository(),
                 dispatchers = dispatchers,
                 logger = logger,
