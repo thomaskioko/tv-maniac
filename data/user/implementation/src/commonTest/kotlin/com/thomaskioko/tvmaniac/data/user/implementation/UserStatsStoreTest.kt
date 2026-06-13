@@ -54,7 +54,10 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
         )
         traktSource = FakeStatsSource(provider = AccountProvider.TRAKT)
-        store = buildStore(setOf(traktSource))
+        store = buildStore(
+            sources = setOf(traktSource),
+            accountManager = accountManager,
+        )
     }
 
     @AfterTest
@@ -130,7 +133,10 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
                 minutesWatched = 3000L,
             ),
         )
-        val multiStore = buildStore(setOf(traktSource, simklSource))
+        val multiStore = buildStore(
+            sources = setOf(traktSource, simklSource),
+            accountManager = accountManager,
+        )
         accountManager.setActiveProvider(AccountProvider.SIMKL)
 
         multiStore.stream(StoreReadRequest.fresh("test-user")).test {
@@ -151,7 +157,10 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
     fun `should not write stats given simkl source returns null stats`() = runTest(testDispatcher) {
         val simklSource = FakeStatsSource(provider = AccountProvider.SIMKL)
         simklSource.statsResponse = ApiResponse.Success(null)
-        val multiStore = buildStore(setOf(traktSource, simklSource))
+        val multiStore = buildStore(
+            sources = setOf(traktSource, simklSource),
+            accountManager = accountManager,
+        )
         accountManager.setActiveProvider(AccountProvider.SIMKL)
 
         multiStore.stream(StoreReadRequest.fresh("test-user")).test {
@@ -165,9 +174,11 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
         }
     }
 
-    private fun buildStore(sources: Set<UserRemoteDataSource>): UserStatsStore = UserStatsStore(
-        sources = sources,
-        accountManager = accountManager,
+    private fun buildStore(
+        sources: Set<UserRemoteDataSource>,
+        accountManager: FakeAccountManager,
+    ): UserStatsStore = UserStatsStore(
+        activeSource = { sources.firstOrNull { it.provider == accountManager.getActiveProvider() } },
         userStatsDao = userStatsDao,
         requestManagerRepository = requestManager,
         dispatchers = dispatchers,

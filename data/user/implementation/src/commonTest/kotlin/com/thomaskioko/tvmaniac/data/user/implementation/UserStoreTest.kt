@@ -60,7 +60,10 @@ internal class UserStoreTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
         )
         traktSource = FakeUserSource(provider = AccountProvider.TRAKT)
-        store = buildStore(setOf(traktSource))
+        store = buildStore(
+            sources = setOf(traktSource),
+            accountManager = accountManager,
+        )
     }
 
     @AfterTest
@@ -126,7 +129,10 @@ internal class UserStoreTest : BaseDatabaseTest() {
                 backgroundUrl = null,
             ),
         )
-        val multiStore = buildStore(setOf(traktSource, simklSource))
+        val multiStore = buildStore(
+            sources = setOf(traktSource, simklSource),
+            accountManager = accountManager,
+        )
         accountManager.setActiveProvider(AccountProvider.SIMKL)
 
         multiStore.stream(StoreReadRequest.fresh("me")).test {
@@ -164,7 +170,10 @@ internal class UserStoreTest : BaseDatabaseTest() {
                 backgroundUrl = null,
             ),
         )
-        val multiStore = buildStore(setOf(traktSource, simklSource))
+        val multiStore = buildStore(
+            sources = setOf(traktSource, simklSource),
+            accountManager = accountManager,
+        )
         accountManager.setActiveProvider(AccountProvider.SIMKL)
 
         multiStore.stream(StoreReadRequest.fresh("me")).test {
@@ -181,9 +190,11 @@ internal class UserStoreTest : BaseDatabaseTest() {
         }
     }
 
-    private fun buildStore(sources: Set<UserRemoteDataSource>): UserStore = UserStore(
-        sources = sources,
-        accountManager = accountManager,
+    private fun buildStore(
+        sources: Set<UserRemoteDataSource>,
+        accountManager: FakeAccountManager,
+    ): UserStore = UserStore(
+        activeSource = { sources.firstOrNull { it.provider == accountManager.getActiveProvider() } },
         userDao = userDao,
         requestManagerRepository = requestManager,
         dispatchers = dispatchers,

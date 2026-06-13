@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.data.user.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
@@ -25,14 +23,13 @@ import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 public class UserStatsStore(
-    private val sources: Set<UserRemoteDataSource>,
-    private val accountManager: AccountManager,
+    private val activeSource: () -> UserRemoteDataSource?,
     private val userStatsDao: UserStatsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<String, UserProfileStats> by storeBuilder(
     fetcher = Fetcher.ofResult { slug: String ->
-        when (val response = sources.getActiveProvider(accountManager)?.getUserStats(slug) ?: ApiResponse.Unauthenticated) {
+        when (val response = activeSource()?.getUserStats(slug) ?: ApiResponse.Unauthenticated) {
             is ApiResponse.Success -> when (val body = response.body) {
                 null -> FetcherResult.Error.Exception(AuthenticationException("Provider does not support user stats"))
                 else -> FetcherResult.Data(body)

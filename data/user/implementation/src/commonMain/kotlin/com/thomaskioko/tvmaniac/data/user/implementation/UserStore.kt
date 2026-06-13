@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.data.user.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
@@ -21,14 +19,13 @@ import org.mobilenativefoundation.store.store5.Validator
 
 @Inject
 public class UserStore(
-    private val sources: Set<UserRemoteDataSource>,
-    private val accountManager: AccountManager,
+    private val activeSource: () -> UserRemoteDataSource?,
     private val userDao: UserDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<String, User> by storeBuilder(
     fetcher = apiFetcher { slug ->
-        sources.getActiveProvider(accountManager)?.getUserProfile(slug)
+        activeSource()?.getUserProfile(slug)
             ?: ApiResponse.Unauthenticated
     },
     sourceOfTruth = SourceOfTruth.of<String, RemoteUserProfile, User>(
