@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.syncactivity.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
@@ -26,16 +24,14 @@ import kotlin.time.Instant
 @Inject
 @SingleIn(AppScope::class)
 public class TraktActivityStore(
-    private val sources: Set<RemoteActivitySource>,
-    private val accountManager: AccountManager,
+    private val activeSource: () -> RemoteActivitySource?,
     private val activityDao: TraktActivityDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeProvider: DateTimeProvider,
 ) : Store<Unit, List<TraktLastActivity>> by storeBuilder(
     fetcher = apiFetcher {
-        val source = sources.getActiveProvider(accountManager)
-        source?.getLastActivities() ?: ApiResponse.Unauthenticated
+        activeSource()?.getLastActivities() ?: ApiResponse.Unauthenticated
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { _: Unit -> activityDao.observeAll() },

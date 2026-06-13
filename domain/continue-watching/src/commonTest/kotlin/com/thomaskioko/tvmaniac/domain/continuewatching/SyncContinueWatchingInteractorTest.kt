@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.domain.continuewatching
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository.SyncInvocation
@@ -41,7 +42,7 @@ class SyncContinueWatchingInteractorTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val watchProviderRepository = FakeWatchProviderRepository()
     private val requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false)
-    private val accountManager = FakeAccountManager()
+    private val accountManager = FakeAccountManager().also { it.setActiveProvider(AccountProvider.TRAKT) }
 
     private val syncActivityInteractor = SyncActivityInteractor(
         traktActivityRepository = activityRepository,
@@ -61,6 +62,12 @@ class SyncContinueWatchingInteractorTest {
         syncShowMetadataInteractor = syncShowMetadataInteractor,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
         accountManager = accountManager,
+        activeProviderFeatures = {
+            when (accountManager.getActiveProvider()) {
+                AccountProvider.TRAKT -> FakeProviderFeatures(supportsContinueWatchingFetch = true)
+                else -> FakeProviderFeatures(supportsContinueWatchingFetch = false)
+            }
+        },
         requestManagerRepository = requestManagerRepository,
         dispatchers = dispatchers,
         logger = FakeLogger(),
@@ -163,6 +170,30 @@ class SyncContinueWatchingInteractorTest {
 
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
 
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 0
+    }
+
+    @Test
+    fun `should skip continue watching sync given simkl is the active provider`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.syncInvocations().shouldBeEmpty()
+        watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(false)
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 1
+    }
+
+    @Test
+    fun `should invoke continue watching sync given trakt is the active provider`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.syncInvocations() shouldBe listOf(
+            SyncInvocation(forceRefresh = false, useNitro = false),
+        )
+        watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(false)
         continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 0
     }
 

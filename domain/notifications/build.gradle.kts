@@ -45,6 +45,7 @@ kotlin {
                 implementation(projects.core.notifications.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.core.view)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.i18n.generator)
