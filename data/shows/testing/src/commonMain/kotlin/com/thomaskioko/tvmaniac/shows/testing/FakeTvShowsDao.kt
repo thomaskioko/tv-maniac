@@ -18,17 +18,23 @@ public class FakeTvShowsDao : TvShowsDao {
     public fun entries(): List<Tvshow> = state.value.values.toList()
 
     override fun upsert(show: ShowToPersist) {
-        state.value += (show.showId.id to show.toTvshow())
+        val key = show.showId?.id ?: show.tmdbId.id
+        state.value += (key to show.toTvshow())
     }
 
     override fun upsert(list: List<ShowToPersist>) {
-        state.value += list.associate { it.showId.id to it.toTvshow() }
+        state.value += list.associate { show ->
+            val key = show.showId?.id ?: show.tmdbId.id
+            key to show.toTvshow()
+        }
     }
 
     override fun upsertMerging(show: ShowToPersist) {
-        val existing = state.value[show.showId.id]
+        val key = show.showId?.id ?: show.tmdbId.id
+        val existing = state.value[key]
         val merged = mergeShows(local = existing, network = show)
-        state.value = state.value + (merged.showId.id to merged.toTvshow())
+        val mergedKey = merged.showId?.id ?: merged.tmdbId.id
+        state.value = state.value + (mergedKey to merged.toTvshow())
     }
 
     override fun observeShowsByQuery(query: String): Flow<List<ShowEntity>> =

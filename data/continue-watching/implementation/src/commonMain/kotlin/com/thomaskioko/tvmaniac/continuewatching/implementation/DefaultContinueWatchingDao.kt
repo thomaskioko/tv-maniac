@@ -91,4 +91,8 @@ public class DefaultContinueWatchingDao(
     override fun deleteAll() {
         database.continueWatchingQueries.deleteAll()
     }
+
+    override fun insertMembershipFromWatchedEpisodes() {
+        database.continueWatchingQueries.insertMembershipFromWatchedEpisodes()
+    }
 }

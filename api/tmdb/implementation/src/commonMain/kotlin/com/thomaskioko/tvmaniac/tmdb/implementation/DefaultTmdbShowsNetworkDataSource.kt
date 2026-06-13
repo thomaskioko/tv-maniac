@@ -3,8 +3,10 @@ package com.thomaskioko.tvmaniac.tmdb.implementation
 import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.CreditsResponse
+import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbFindResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbGenreResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import dev.zacsweers.metro.AppScope
@@ -151,5 +153,19 @@ public class DefaultTmdbShowsNetworkDataSource(
                 path("3/tv/$tmdbId/credits")
             }
         }
+    }
+
+    override suspend fun findShowByExternalId(
+        externalId: String,
+        source: String,
+    ): ApiResponse<Long?> {
+        val response: ApiResponse<TmdbFindResponse> = httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("3/find/$externalId")
+                parameter("external_source", source)
+            }
+        }
+        return response.map { it.tvResults.firstOrNull()?.id }
     }
 }

@@ -49,4 +49,7 @@ public class FakeContinueWatchingDao : ContinueWatchingDao {
     override fun deleteAll() {
         state.value = emptyMap()
     }
+
+    override fun insertMembershipFromWatchedEpisodes() {
+    }
 }

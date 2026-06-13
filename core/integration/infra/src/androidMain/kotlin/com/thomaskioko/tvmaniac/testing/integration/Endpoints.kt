@@ -279,6 +279,32 @@ public object Endpoints {
         )
     }
 
+    public object Simkl {
+        public object UsersSettings : Endpoint.Exact {
+            override val path: String = "/users/settings"
+            override val successFixture: String = "simkl/users/settings/success.json"
+            override val errorFixture: String = "simkl/users/settings/error.json"
+        }
+
+        public object UsersStats : Endpoint.Pattern {
+            override val pathRegex: String = "/users/[^/]+/stats"
+            override val successFixture: String = "simkl/users/stats/success.json"
+            override val errorFixture: String = "simkl/users/stats/error.json"
+        }
+
+        public object SyncAllItems : Endpoint.Exact {
+            override val path: String = "/sync/all-items/shows"
+            override val successFixture: String = "simkl/sync/all-items/success.json"
+            override val errorFixture: String = "simkl/sync/all-items/error.json"
+        }
+
+        public object SyncActivities : Endpoint.Exact {
+            override val path: String = "/sync/activities"
+            override val successFixture: String = "simkl/sync/activities/success.json"
+            override val errorFixture: String = "simkl/sync/activities/error.json"
+        }
+    }
+
     /** TMDB API endpoints (paths begin with `/3/`). */
     public object Tmdb {
         public object DiscoverTv : Endpoint.Exact {
@@ -354,5 +380,9 @@ public object Endpoints {
         Tmdb.Credits,
         Tmdb.SeasonDetails,
         Tmdb.WatchProviders,
+        Simkl.UsersSettings,
+        Simkl.UsersStats,
+        Simkl.SyncAllItems,
+        Simkl.SyncActivities,
     )
 }

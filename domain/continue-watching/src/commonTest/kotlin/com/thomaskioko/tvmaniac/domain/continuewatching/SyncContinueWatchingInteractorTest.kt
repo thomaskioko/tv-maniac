@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository.SyncInvocation
@@ -39,6 +41,7 @@ class SyncContinueWatchingInteractorTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val watchProviderRepository = FakeWatchProviderRepository()
     private val requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false)
+    private val accountManager = FakeAccountManager()
 
     private val syncActivityInteractor = SyncActivityInteractor(
         traktActivityRepository = activityRepository,
@@ -57,6 +60,7 @@ class SyncContinueWatchingInteractorTest {
         continueWatchingRepository = continueWatchingRepository,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        accountManager = accountManager,
         requestManagerRepository = requestManagerRepository,
         dispatchers = dispatchers,
         logger = FakeLogger(),
@@ -142,6 +146,24 @@ class SyncContinueWatchingInteractorTest {
         showDetailsRepository.fetchInvocations().shouldBeEmpty()
         seasonDetailsRepository.getSyncedShowIds().shouldBeEmpty()
         watchProviderRepository.fetchInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should derive continue watching membership when active provider is simkl`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 1
+    }
+
+    @Test
+    fun `should not derive continue watching membership when active provider is trakt`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 0
     }
 
     private fun watchedShow(showId: Long): ContinueWatchingEntry = ContinueWatchingEntry(

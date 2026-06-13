@@ -1,14 +1,9 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-/**
- * One show's worth of remote watched-episode state from Trakt's bulk
- * `/sync/watched/shows` endpoint. Each entry already carries its own
- * [WatchedEpisodeEntry.showId], so the wrapping `showId` here
- * is redundant for individual rows; it stays at the show level so callers
- * can detect end-of-pagination by checking `result.size` against the
- * requested page limit without flattening first.
- */
 public data class WatchedShowBatch(
-    public val showId: Long,
+    public val tmdbId: Long?,
+    public val imdbId: String?,
+    public val title: String?,
+    public val providerShowId: String?,
     public val episodes: List<WatchedEpisodeEntry>,
 )

@@ -162,9 +162,19 @@ WHERE e.show_id = :showId
   AND we.id IS NULL
   AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
 
--- Most-recently watched episodes across all shows, newest first, joined with show + episode
--- metadata for the profile "Recently Watched" rail. Excludes soft-deleted rows.
+-- One row per show for the profile "Recently Watched" rail: the show's furthest watched episode,
+-- ordered by the show's most-recent watch. Collapsing per show matches the Simkl/Trakt website
+-- widgets — Simkl's per-episode watched_at is the mark-watched time, which clusters on bulk marks.
 getRecentlyWatched:
+WITH show_progress AS (
+    SELECT
+        show_id,
+        MAX(watched_at) AS last_watched_at,
+        MAX(season_number * 10000 + episode_number) AS furthest_key
+    FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY show_id
+)
 SELECT
     tvshow.tmdb_id AS show_id,
     tvshow.tmdb_id AS tmdb_id,
@@ -174,11 +184,14 @@ SELECT
     watched_episodes.episode_number,
     episode.title AS episode_title,
     watched_episodes.watched_at
-FROM watched_episodes
-INNER JOIN tvshow ON watched_episodes.show_id = tvshow.id
+FROM show_progress
+INNER JOIN tvshow ON show_progress.show_id = tvshow.id
+INNER JOIN watched_episodes
+    ON watched_episodes.show_id = show_progress.show_id
+    AND (watched_episodes.season_number * 10000 + watched_episodes.episode_number) = show_progress.furthest_key
+    AND watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
 LEFT JOIN episode ON episode.id = watched_episodes.episode_id
-WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
-ORDER BY watched_episodes.watched_at DESC
+ORDER BY show_progress.last_watched_at DESC
 LIMIT ?;
 
 -- Trakt Sync Queries

@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -31,6 +33,7 @@ public class SyncContinueWatchingInteractor(
     private val continueWatchingRepository: ContinueWatchingRepository,
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
+    private val accountManager: AccountManager,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
@@ -61,6 +64,10 @@ public class SyncContinueWatchingInteractor(
                 )
 
                 watchedEpisodeSyncRepository.syncAllWatchedEpisodes(params.forceRefresh)
+
+                if (accountManager.getActiveProvider() == AccountProvider.SIMKL) {
+                    continueWatchingRepository.deriveMembershipFromWatchedEpisodes()
+                }
 
                 syncShowMetadata(forceRefresh = params.forceRefresh)
 

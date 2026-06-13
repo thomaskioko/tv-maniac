@@ -88,7 +88,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return recently watched episodes newest first with show and episode metadata`() = runTest {
+    fun `should return one row per show with the furthest watched episode and show metadata`() = runTest {
         fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
         watchedEpisodeDao.markAsWatched(
             showId = TEST_SHOW_ID,
@@ -108,15 +108,27 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
             val items = awaitItem()
-            items shouldHaveSize 2
+            items shouldHaveSize 1
 
             items[0].showTitle shouldBe TEST_SHOW_NAME
             items[0].episodeNumber shouldBe 2L
             items[0].episodeTitle shouldBe "Episode 2"
             items[0].watchedAt shouldBe 2_000L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 
-            items[1].episodeNumber shouldBe 1L
-            items[1].watchedAt shouldBe 1_000L
+    @Test
+    fun `should keep the latest episode per show even when an earlier episode is watched more recently`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L, includeSpecials = false)
+        fakeDateTimeProvider.setCurrentTimeMillis(2_000L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, includeSpecials = false)
+
+        watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
+            val items = awaitItem()
+            items shouldHaveSize 1
+            items[0].episodeNumber shouldBe 2L
             cancelAndIgnoreRemainingEvents()
         }
     }

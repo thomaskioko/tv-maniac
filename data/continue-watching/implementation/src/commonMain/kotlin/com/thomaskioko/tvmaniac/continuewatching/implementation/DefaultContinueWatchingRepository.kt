@@ -35,4 +35,10 @@ public class DefaultContinueWatchingRepository(
         withContext(dispatchers.databaseRead) {
             continueWatchingDao.entries()
         }
+
+    override suspend fun deriveMembershipFromWatchedEpisodes() {
+        withContext(dispatchers.databaseWrite) {
+            continueWatchingDao.insertMembershipFromWatchedEpisodes()
+        }
+    }
 }

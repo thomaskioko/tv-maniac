@@ -1,0 +1,29 @@
+{
+  "shows": [
+    {
+      "status": "watching",
+      "last_watched_at": "2026-04-19T12:00:00.000Z",
+      "show": {
+        "title": "Breaking Bad",
+        "year": 2008,
+        "ids": {
+          "simkl": 107006,
+          "tmdb": "1396",
+          "imdb": "tt0903747",
+          "tvdb": "81189"
+        }
+      },
+      "seasons": [
+        {
+          "number": 1,
+          "episodes": [
+            {
+              "number": 1,
+              "watched_at": "2026-04-19T12:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

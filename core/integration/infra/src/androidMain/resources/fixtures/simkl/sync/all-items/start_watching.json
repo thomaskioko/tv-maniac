@@ -1,0 +1,16 @@
+{
+  "shows": [
+    {
+      "status": "plantowatch",
+      "show": {
+        "title": "Simkl Plan To Watch",
+        "year": 2020,
+        "ids": {
+          "simkl": 9001,
+          "tmdb": "778899",
+          "imdb": "tt7788990"
+        }
+      }
+    }
+  ]
+}

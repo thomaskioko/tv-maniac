@@ -86,6 +86,29 @@ upsertPlaceholder:
 INSERT OR IGNORE INTO continue_watching(show_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
 VALUES(:showId, :tmdbId, 0, 0, 0, 0, :title, :year);
 
+-- Seeds a membership row per show that has live watched episodes but no continue_watching row yet.
+-- Used by providers without a native continue-watching sync (Simkl): the watched-history sync fills
+-- watched_episodes, this derives membership, and the metadata fan-out + show_watch_progress view then
+-- compute counts. Count columns stay zero (non-load-bearing for reads). INSERT OR IGNORE never
+-- regresses an existing row (e.g. a Trakt Nitro-curated one).
+insertMembershipFromWatchedEpisodes:
+INSERT OR IGNORE INTO continue_watching(
+    show_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year
+)
+SELECT
+    tvshow.id,
+    tvshow.tmdb_id,
+    0,
+    0,
+    MAX(watched_episodes.watched_at),
+    MAX(watched_episodes.watched_at),
+    tvshow.name,
+    CAST(tvshow.year AS INTEGER)
+FROM watched_episodes
+INNER JOIN tvshow ON tvshow.id = watched_episodes.show_id
+WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+GROUP BY tvshow.id;
+
 deleteByShowId:
 DELETE FROM continue_watching WHERE show_id = ?;
 

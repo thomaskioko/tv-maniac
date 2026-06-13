@@ -40,8 +40,10 @@ public class TraktLibraryRemoteDataSource(
 }
 
 private fun TraktFollowedShowResponse.toRemoteFollowedShow(): RemoteFollowedShow = RemoteFollowedShow(
-    traktId = show.ids.trakt,
     tmdbId = show.ids.tmdb,
+    imdbId = show.ids.imdb,
+    providerShowId = show.ids.trakt.toString(),
+    provider = AccountProvider.TRAKT,
     title = show.title,
     year = show.year,
     followedAt = Instant.parse(listedAt),

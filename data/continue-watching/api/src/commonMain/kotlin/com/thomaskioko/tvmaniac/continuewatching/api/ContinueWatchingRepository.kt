@@ -19,4 +19,10 @@ public interface ContinueWatchingRepository {
      * Snapshot of the locally cached continue-watching entries.
      */
     public suspend fun getEntries(): List<ContinueWatchingEntry>
+
+    /**
+     * Seeds continue-watching membership from locally watched episodes for providers without a
+     * native continue-watching feed (Simkl). Existing rows are never regressed.
+     */
+    public suspend fun deriveMembershipFromWatchedEpisodes()
 }

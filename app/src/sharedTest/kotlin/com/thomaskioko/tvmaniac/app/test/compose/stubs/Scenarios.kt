@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.stubs
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.app.test.TestAppComponent
@@ -23,6 +24,8 @@ internal const val TEST_ACCESS_TOKEN: String = "test-access"
 internal const val TEST_REFRESH_TOKEN: String = "test-refresh"
 internal const val TEST_PROFILE_SLUG: String = "integration-test-user"
 internal const val TEST_TODAY: String = "2026-04-19"
+internal const val TEST_SIMKL_USER_NAME: String = "simkl-test-user"
+internal const val TEST_SIMKL_ACCOUNT_ID: Long = 12345678L
 
 /** Trakt id of the list returned by `trakt/users/lists/create/success.json`. */
 internal const val TEST_CREATED_LIST_TRAKT_ID: Long = 99887766L
@@ -39,6 +42,7 @@ internal class Scenarios(
     val auth: Auth = Auth()
     val discover: Discover = Discover()
     val profile: Profile = Profile()
+    val simkl: Simkl = Simkl()
     val library: Library = Library()
     val watchlist: Watchlist = Watchlist()
     val search: Search = Search()
@@ -50,6 +54,34 @@ internal class Scenarios(
         auth.stubLoggedInUser()
         profile.stubProfileSyncEndpoints()
         rootRobot.dismissNotificationRationale()
+    }
+
+    fun stubAuthenticatedSimklProfile() {
+        simkl.stubLoggedInUser()
+        simkl.stubProfileEndpoints()
+        simkl.stubWatchedHistoryEndpoints()
+        simkl.stubActivities()
+        stubBackgroundSyncChainEmpty()
+    }
+
+    fun stubAuthenticatedSimklStartWatching() {
+        simkl.stubLoggedInUser()
+        simkl.stubProfileEndpoints()
+        simkl.stubPlanToWatchWatchlist()
+        simkl.stubActivities()
+        stubBackgroundSyncChainEmpty()
+    }
+
+    /**
+     * Stubs the Trakt endpoints the login-driven Continue Watching sync chain hits (activity +
+     * progress) with empty responses so it runs to completion instead of aborting on the
+     * MockEngine's "no stub" throw before the Simkl watched-history step fills `watched_episodes`.
+     */
+    private fun stubBackgroundSyncChainEmpty() {
+        mockHandler.stubEndpoint(Endpoints.Trakt.SyncLastActivities)
+        mockHandler.stubFixture(path = Endpoints.Trakt.SyncWatchedShows.path, fixturePath = EMPTY_ARRAY_FIXTURE)
+        mockHandler.stubFixture(path = Endpoints.Trakt.SyncPlaybackEpisodes.path, fixturePath = EMPTY_ARRAY_FIXTURE)
+        mockHandler.stubFixture(path = Endpoints.Trakt.UsersHiddenProgressWatched.path, fixturePath = EMPTY_ARRAY_FIXTURE)
     }
 
     fun stubAuthenticatedSync() {
@@ -152,6 +184,49 @@ internal class Scenarios(
             // `setState(LOGGED_IN)` only flips state, so we also emit the
             // login event here to drive ContinueWatchingTasksInitializer's collector.
             graph.traktAuthRepository.triggerLogin()
+        }
+    }
+
+    inner class Simkl {
+        fun stubLoggedInUser(
+            accessToken: String = "simkl-test-access",
+            refreshToken: String = "simkl-test-refresh",
+            tokenLifetimeSeconds: Long = 3600,
+        ) {
+            runBlocking {
+                graph.authStateHolder.saveTokens(
+                    provider = AccountProvider.SIMKL,
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    expiresAtSeconds = (Clock.System.now() + tokenLifetimeSeconds.seconds).epochSeconds,
+                )
+            }
+        }
+
+        fun stubProfileEndpoints() {
+            mockHandler.stubEndpoint(
+                endpoint = Endpoints.Simkl.UsersSettings,
+                method = HttpMethod.Post,
+            )
+            mockHandler.stubEndpoint(
+                endpoint = Endpoints.Simkl.UsersStats,
+                method = HttpMethod.Post,
+            )
+        }
+
+        fun stubWatchedHistoryEndpoints() {
+            mockHandler.stubEndpoint(Endpoints.Simkl.SyncAllItems)
+        }
+
+        fun stubPlanToWatchWatchlist() {
+            mockHandler.stubFixture(
+                path = Endpoints.Simkl.SyncAllItems.path,
+                fixturePath = "simkl/sync/all-items/start_watching.json",
+            )
+        }
+
+        fun stubActivities() {
+            mockHandler.stubEndpoint(Endpoints.Simkl.SyncActivities)
         }
     }
 

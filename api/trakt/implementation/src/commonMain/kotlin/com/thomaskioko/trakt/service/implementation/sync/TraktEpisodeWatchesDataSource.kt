@@ -112,14 +112,14 @@ public class TraktEpisodeWatchesDataSource(
 internal class BulkWatchedShowsFetchException(message: String) : Exception(message)
 
 private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
-    val tmdbId = show.ids.tmdb ?: return null
+    val tmdbId = show.ids.tmdb
     val seasons = seasons ?: return null
     val episodes = seasons.flatMap { season ->
         season.episodes.mapNotNull { episode ->
             val watchedAt = episode.lastWatchedAt?.let { runCatching { Instant.parse(it) }.getOrNull() }
                 ?: return@mapNotNull null
             WatchedEpisodeEntry(
-                showId = tmdbId,
+                showId = tmdbId ?: 0L,
                 episodeId = null,
                 seasonNumber = season.number,
                 episodeNumber = episode.number,
@@ -129,5 +129,11 @@ private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
             )
         }
     }
-    return WatchedShowBatch(showId = tmdbId, episodes = episodes)
+    return WatchedShowBatch(
+        tmdbId = tmdbId,
+        imdbId = show.ids.imdb,
+        title = show.title,
+        providerShowId = show.ids.trakt.toString(),
+        episodes = episodes,
+    )
 }

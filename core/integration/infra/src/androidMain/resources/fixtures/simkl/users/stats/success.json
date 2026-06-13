@@ -1,0 +1,55 @@
+{
+  "total_mins": 45600,
+  "tv": {
+    "total_mins": 32400,
+    "watching": {
+      "count": 3,
+      "watched_episodes_count": 48,
+      "total_episodes_count": 120
+    },
+    "completed": {
+      "count": 21,
+      "watched_episodes_count": 512
+    },
+    "hold": {
+      "count": 2,
+      "watched_episodes_count": 15
+    },
+    "plantowatch": {
+      "count": 8
+    }
+  },
+  "anime": {
+    "total_mins": 9600,
+    "watching": {
+      "count": 1,
+      "watched_episodes_count": 24,
+      "total_episodes_count": 48
+    },
+    "completed": {
+      "count": 6,
+      "watched_episodes_count": 156
+    },
+    "hold": {
+      "count": 1,
+      "watched_episodes_count": 12
+    },
+    "plantowatch": {
+      "count": 3
+    }
+  },
+  "movies": {
+    "total_mins": 3600,
+    "completed": {
+      "count": 18,
+      "mins": 2700
+    },
+    "plantowatch": {
+      "count": 5
+    },
+    "dropped": {
+      "count": 1,
+      "mins": 60
+    }
+  }
+}

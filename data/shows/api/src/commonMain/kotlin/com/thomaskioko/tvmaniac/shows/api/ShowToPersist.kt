@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TraktId
 
 public data class ShowToPersist(
-    val showId: Id<TraktId>,
+    val showId: Id<TraktId>?,
     val tmdbId: Id<TmdbId>,
     val name: String,
     val overview: String,

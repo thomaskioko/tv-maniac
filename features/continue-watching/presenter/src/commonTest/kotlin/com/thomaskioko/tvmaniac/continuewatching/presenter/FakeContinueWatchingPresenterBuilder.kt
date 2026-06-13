@@ -102,6 +102,7 @@ class FakeContinueWatchingPresenterBuilder {
         continueWatchingRepository = continueWatchingRepository,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        accountManager = fakeAccountManager,
         requestManagerRepository = requestManagerRepository,
         dispatchers = coroutineDispatcher,
         logger = fakeLogger,
