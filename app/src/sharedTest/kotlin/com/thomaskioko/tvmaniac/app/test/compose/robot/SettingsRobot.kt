@@ -134,4 +134,40 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
     fun clickEpisodeNotificationsToggle() = apply {
         click(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
+
+    fun scrollToSwitchProviderButton() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.SWITCH_PROVIDER_BUTTON_TEST_TAG)
+    }
+
+    fun assertSwitchProviderButtonDisplayed() = apply {
+        assertDisplayed(SettingsTestTags.SWITCH_PROVIDER_BUTTON_TEST_TAG)
+    }
+
+    fun assertSwitchProviderButtonDoesNotExist() = apply {
+        assertDoesNotExist(SettingsTestTags.SWITCH_PROVIDER_BUTTON_TEST_TAG)
+    }
+
+    fun clickSwitchProviderButton() = apply {
+        click(SettingsTestTags.SWITCH_PROVIDER_BUTTON_TEST_TAG)
+    }
+
+    fun assertSwitchDialogDisplayed() = apply {
+        assertExists(SettingsTestTags.SWITCH_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    }
+
+    fun assertSwitchDialogDoesNotExist() = apply {
+        assertDoesNotExist(SettingsTestTags.SWITCH_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    }
+
+    fun clickSwitchDialogConfirm() = apply {
+        click(SettingsTestTags.SWITCH_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    }
+
+    fun clickSwitchDialogDismiss() = apply {
+        click(SettingsTestTags.SWITCH_DIALOG_DISMISS_BUTTON_TEST_TAG)
+    }
+
+    fun assertSwitchingIndicatorDisplayed() = apply {
+        assertExists(SettingsTestTags.SWITCHING_INDICATOR_TEST_TAG)
+    }
 }

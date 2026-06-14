@@ -33,6 +33,8 @@ internal const val TEST_CREATED_LIST_TRAKT_ID: Long = 99887766L
 /** Name of the list returned by `trakt/users/lists/create/success.json`. */
 internal const val TEST_CREATED_LIST_NAME: String = "Watch Later"
 internal const val TEST_NEXT_WEEK: String = "2026-04-26"
+internal const val SIMKL_LOGIN_FLAG_KEY: String = "simkl_login_enabled"
+internal const val ACCOUNT_SWITCH_FLAG_KEY: String = "enable_account_switch"
 
 internal class Scenarios(
     private val mockHandler: MockEngineHandler,
@@ -49,6 +51,7 @@ internal class Scenarios(
     val calendar: Calendar = Calendar()
     val upNext: UpNext = UpNext()
     val traktLists: TraktLists = TraktLists()
+    val flags: Flags = Flags()
 
     fun signInAndDismissRationale() {
         auth.stubLoggedInUser()
@@ -372,6 +375,16 @@ internal class Scenarios(
 
         fun stubCreateList(slug: String = TEST_PROFILE_SLUG) {
             mockHandler.stubEndpoint(Endpoints.Trakt.createList(slug), method = HttpMethod.Post)
+        }
+    }
+
+    inner class Flags {
+        fun enableSimklLogin() {
+            graph.featureFlagsRemoteConfig.setBoolean(SIMKL_LOGIN_FLAG_KEY, true)
+        }
+
+        fun enableAccountSwitch() {
+            graph.featureFlagsRemoteConfig.setBoolean(ACCOUNT_SWITCH_FLAG_KEY, true)
         }
     }
 }
