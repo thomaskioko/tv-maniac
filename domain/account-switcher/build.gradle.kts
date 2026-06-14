@@ -18,6 +18,7 @@ kotlin {
                 api(projects.data.traktlists.api)
                 api(projects.domain.continueWatching)
                 api(projects.domain.library)
+                api(projects.domain.user)
             }
         }
 

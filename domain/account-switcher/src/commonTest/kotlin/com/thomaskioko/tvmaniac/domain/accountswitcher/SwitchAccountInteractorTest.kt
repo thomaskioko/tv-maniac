@@ -17,12 +17,14 @@ internal class SwitchAccountInteractorTest {
     private val accountManager = FakeAccountManager()
     private val logoutHandler = FakeLogoutHandler()
 
+    private var resyncProfileRan = false
     private var resyncLibraryRan = false
     private var resyncContinueWatchingRan = false
 
     private fun buildInteractor(scope: CoroutineScope): SwitchAccountInteractor = SwitchAccountInteractor(
         logoutHandler = logoutHandler,
         accountManager = accountManager,
+        resyncProfile = ResyncProfile { resyncProfileRan = true },
         resyncLibrary = ResyncLibrary { resyncLibraryRan = true },
         resyncContinueWatching = ResyncContinueWatching { resyncContinueWatchingRan = true },
         appScopeLauncher = FakeAppScopeLauncher(scope),
@@ -39,12 +41,13 @@ internal class SwitchAccountInteractorTest {
     }
 
     @Test
-    fun `should run both resync interactors given switch`() = runTest {
+    fun `should run all resync interactors given switch`() = runTest {
         accountManager.setActiveProvider(AccountProvider.TRAKT)
 
         buildInteractor(backgroundScope).executeSync(AccountProvider.SIMKL)
         testScheduler.runCurrent()
 
+        resyncProfileRan shouldBe true
         resyncLibraryRan shouldBe true
         resyncContinueWatchingRan shouldBe true
     }
@@ -90,6 +93,7 @@ internal class SwitchAccountInteractorTest {
                     accountManager.setActive(provider)
                 }
             },
+            resyncProfile = ResyncProfile { events.add("resyncProfile") },
             resyncLibrary = ResyncLibrary { events.add("resyncLibrary") },
             resyncContinueWatching = ResyncContinueWatching { events.add("resyncContinueWatching") },
             appScopeLauncher = FakeAppScopeLauncher(backgroundScope),
@@ -98,6 +102,13 @@ internal class SwitchAccountInteractorTest {
         interactor.executeSync(AccountProvider.SIMKL)
         testScheduler.runCurrent()
 
-        events shouldBe listOf("logout:TRAKT", "clear", "setActive:SIMKL", "resyncLibrary", "resyncContinueWatching")
+        events shouldBe listOf(
+            "logout:TRAKT",
+            "clear",
+            "setActive:SIMKL",
+            "resyncProfile",
+            "resyncLibrary",
+            "resyncContinueWatching",
+        )
     }
 }

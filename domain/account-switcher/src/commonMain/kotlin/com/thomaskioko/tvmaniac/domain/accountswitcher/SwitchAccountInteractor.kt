@@ -11,6 +11,7 @@ import dev.zacsweers.metro.Inject
 public class SwitchAccountInteractor(
     private val logoutHandler: LogoutHandler,
     private val accountManager: AccountManager,
+    private val resyncProfile: ResyncProfile,
     private val resyncLibrary: ResyncLibrary,
     private val resyncContinueWatching: ResyncContinueWatching,
     private val appScopeLauncher: AppScopeLauncher,
@@ -22,6 +23,7 @@ public class SwitchAccountInteractor(
         logoutHandler.clear()
         accountManager.setActive(params)
         appScopeLauncher.launch(RESYNC_TAG) {
+            resyncProfile()
             resyncLibrary()
             resyncContinueWatching()
         }
