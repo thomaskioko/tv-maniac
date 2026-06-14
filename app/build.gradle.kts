@@ -202,6 +202,7 @@ dependencies {
     implementation(projects.features.trailers.nav)
     implementation(projects.data.watchlistPrefs.api)
     implementation(projects.domain.continueWatching)
+    implementation(projects.domain.accountSwitcher)
     implementation(projects.domain.startWatching)
     implementation(projects.features.myShows.nav)
     implementation(projects.features.myShows.presenter)
@@ -249,6 +250,7 @@ dependencies {
     testImplementation(projects.features.genreShows.nav)
     testImplementation(projects.core.locale.testing)
     testImplementation(projects.core.util.testing)
+    testImplementation(projects.core.featureFlags.testing)
 
     testImplementation(libs.firebase.config)
     testImplementation(libs.androidx.monitor)
@@ -272,6 +274,7 @@ dependencies {
     androidTestImplementation(projects.api.trakt.api)
     androidTestImplementation(projects.core.connectivity.api)
     androidTestImplementation(projects.core.integration.infra)
+    androidTestImplementation(projects.core.featureFlags.testing)
     androidTestImplementation(projects.core.integration.ui)
     androidTestImplementation(projects.core.testTags)
     androidTestImplementation(projects.data.oauth.api)
