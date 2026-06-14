@@ -230,8 +230,10 @@ kotlin {
                 implementation(projects.data.simklauth.implementation)
                 implementation(projects.data.user.api)
                 implementation(projects.data.user.implementation)
+                implementation(projects.data.logout.implementation)
                 implementation(projects.domain.user)
                 implementation(projects.domain.followedshows)
+                implementation(projects.domain.logout)
                 implementation(projects.i18n.implementation)
 
                 implementation(projects.navigation.implementation)
