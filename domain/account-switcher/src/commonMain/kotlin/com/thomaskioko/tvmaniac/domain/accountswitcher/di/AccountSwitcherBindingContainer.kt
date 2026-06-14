@@ -15,7 +15,6 @@ import dev.zacsweers.metro.Provides
 @ContributesTo(AppScope::class)
 public object AccountSwitcherBindingContainer {
 
-    // TODO: Review these calls
     @Provides
     public fun provideResyncLibrary(
         syncLibraryInteractor: SyncLibraryInteractor,
