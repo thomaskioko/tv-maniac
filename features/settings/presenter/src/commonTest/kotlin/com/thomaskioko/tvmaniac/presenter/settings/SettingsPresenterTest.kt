@@ -16,9 +16,6 @@ import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
-import com.thomaskioko.tvmaniac.domain.accountswitcher.ResyncContinueWatching
-import com.thomaskioko.tvmaniac.domain.accountswitcher.ResyncLibrary
-import com.thomaskioko.tvmaniac.domain.accountswitcher.ResyncProfile
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor

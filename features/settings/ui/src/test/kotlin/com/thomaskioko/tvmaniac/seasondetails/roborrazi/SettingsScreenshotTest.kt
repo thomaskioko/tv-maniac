@@ -7,6 +7,9 @@ import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
 import com.thomaskioko.tvmaniac.settings.ui.accountLoggedOutState
 import com.thomaskioko.tvmaniac.settings.ui.accountState
+import com.thomaskioko.tvmaniac.settings.ui.accountSwitchDialogState
+import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
+import com.thomaskioko.tvmaniac.settings.ui.accountSwitchingState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
@@ -159,6 +162,42 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = accountLoggedOutState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenAccountSwitchAffordance() {
+        composeTestRule.captureMultiDevice("SettingsScreenAccountSwitchAffordance") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = accountSwitchState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenAccountSwitchDialog() {
+        composeTestRule.captureMultiDevice("SettingsScreenAccountSwitchDialog") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = accountSwitchDialogState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenAccountSwitching() {
+        composeTestRule.captureMultiDevice("SettingsScreenAccountSwitching") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = accountSwitchingState,
                     onAction = {},
                 )
             }
