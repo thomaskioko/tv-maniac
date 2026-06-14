@@ -42,6 +42,7 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -262,7 +263,10 @@ public class SettingsPresenter(
         coroutineScope.launch {
             _state.update { it.copy(isSwitching = true) }
             runCatching { pushPendingChangesInteractor.executeSync() }
-            val count = runCatching { countUnsavedChanges() }.getOrDefault(0)
+                .onFailure { logger.warning(TAG, "Pushing pending changes before switch failed: ${it.message}") }
+            val count = runCatching { countUnsavedChanges() }
+                .onFailure { logger.warning(TAG, "Counting unsaved changes before switch failed: ${it.message}") }
+                .getOrDefault(0)
             if (count > 0) {
                 _state.update {
                     it.copy(
@@ -288,7 +292,15 @@ public class SettingsPresenter(
 
     private fun handleConfirmSwitch() {
         val target = _state.value.pendingSwitchProvider ?: return
-        _state.update { it.copy(showSwitchConfirmation = false, pendingSwitchProvider = null) }
+        _state.update {
+            it.copy(
+                showSwitchConfirmation = false,
+                pendingSwitchProvider = null,
+                switchUnsavedCount = 0,
+                switchDialogTitle = null,
+                switchDialogMessage = null,
+            )
+        }
         coroutineScope.launch { executeSwitch(target) }
     }
 
@@ -299,13 +311,15 @@ public class SettingsPresenter(
                 pendingSwitchProvider = null,
                 isSwitching = false,
                 switchUnsavedCount = 0,
+                switchDialogTitle = null,
+                switchDialogMessage = null,
             )
         }
     }
 
     private suspend fun executeSwitch(target: AccountProvider) {
         _state.update { it.copy(isSwitching = true) }
-        runCatching {
+        try {
             authManagers[target]?.launchWebView()
             withTimeoutOrNull(OAUTH_TIMEOUT) {
                 accountManager.accounts.first { accounts ->
@@ -313,7 +327,9 @@ public class SettingsPresenter(
                 }
             } ?: error("Timed out waiting for $target sign-in")
             switchAccountInteractor.executeSync(target)
-        }.onFailure { cause ->
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (cause: Throwable) {
             logger.error(TAG, "Account switch to $target failed: ${cause.message}")
             uiMessageManager.emitMessage(
                 UiMessage(
@@ -321,8 +337,9 @@ public class SettingsPresenter(
                     sourceId = "AccountSwitch",
                 ),
             )
+        } finally {
+            _state.update { it.copy(isSwitching = false) }
         }
-        _state.update { it.copy(isSwitching = false) }
     }
 
     private fun handleVersionTap() {
@@ -502,8 +519,8 @@ public class SettingsPresenter(
     )
 
     private companion object {
-        const val HIDDEN_TAP_THRESHOLD = 6
-        const val TAG = "SettingsPresenter"
-        val OAUTH_TIMEOUT = 2.minutes
+        private const val HIDDEN_TAP_THRESHOLD = 6
+        private const val TAG = "SettingsPresenter"
+        private val OAUTH_TIMEOUT = 2.minutes
     }
 }
