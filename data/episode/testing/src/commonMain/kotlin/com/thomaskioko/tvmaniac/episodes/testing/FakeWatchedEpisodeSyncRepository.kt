@@ -51,4 +51,12 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
         syncPendingCallCount++
         pendingError?.let { throw it }
     }
+
+    private var pendingEpisodesCount = 0L
+
+    public fun setPendingEpisodesCount(count: Long) {
+        pendingEpisodesCount = count
+    }
+
+    override suspend fun countPendingEpisodes(): Long = pendingEpisodesCount
 }

@@ -13,4 +13,6 @@ public interface TraktListRepository {
     public suspend fun createList(slug: String, name: String)
 
     public suspend fun toggleShowInList(slug: String, listId: Long, showId: Long, isCurrentlyInList: Boolean)
+
+    public suspend fun countPendingListShows(): Long
 }
