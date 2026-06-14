@@ -447,4 +447,11 @@
     <string name="account_limit_banner_message">Vous avez atteint la limite de votre liste Trakt. Passez à VIP pour continuer à ajouter des séries.</string>
     <string name="account_limit_upgrade_cta">Mettre à niveau</string>
     <string name="account_limit_dismiss_cta">Ignorer</string>
+
+    <string name="label_account_switch_action">Passer à %s</string>
+    <string name="label_account_switch_dialog_title">Passer à %s ?</string>
+    <string name="label_account_switch_dialog_message">Vous avez %d modifications non enregistrées qui seront ignorées.</string>
+    <string name="label_account_switch_dialog_confirm">Ignorer et changer</string>
+    <string name="label_account_switching">Changement…</string>
+    <string name="label_account_switch_failed">Impossible de changer de compte. Veuillez réessayer.</string>
 </resources>
