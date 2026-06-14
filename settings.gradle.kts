@@ -256,6 +256,7 @@ include(
     ":domain:recently-watched",
     ":domain:library",
     ":domain:logout",
+    ":domain:account-switcher",
     ":domain:notifications",
     ":domain:recommendedshows",
     ":domain:settings",
