@@ -20,5 +20,5 @@ public class SimklProviderFeatures : ProviderFeatures {
     override val supportsContinueWatchingFetch: Boolean = false
     override val supportsFavorites: Boolean = false
     override val supportsLists: Boolean = false
-    override val supportsCalendar: Boolean = false
+    override val supportsCalendar: Boolean = true
 }
