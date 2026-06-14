@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.RefreshUpcomingSeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
-import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.hours
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class EpisodeNotificationWorker(
-    private val syncTraktCalendarInteractor: Lazy<SyncTraktCalendarInteractor>,
+    private val syncTraktCalendarInteractor: Lazy<SyncCalendarInteractor>,
     private val refreshInteractor: Lazy<RefreshUpcomingSeasonDetailsInteractor>,
     private val scheduleInteractor: Lazy<ScheduleEpisodeNotificationsInteractor>,
     private val syncObserver: SyncObserver,
@@ -38,7 +38,7 @@ public class EpisodeNotificationWorker(
 
         runCatching {
             syncTraktCalendarInteractor.value.executeSync(
-                SyncTraktCalendarInteractor.Params(forceRefresh = true),
+                SyncCalendarInteractor.Params(forceRefresh = true),
             )
         }.onFailure { logger.error(TAG, "Calendar sync failed: ${it.message}") }
 
