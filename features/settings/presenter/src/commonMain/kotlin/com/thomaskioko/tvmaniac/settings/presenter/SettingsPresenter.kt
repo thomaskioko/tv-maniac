@@ -30,6 +30,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNot
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.AccountSwitchFlagQualifier
 import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -60,18 +61,21 @@ import kotlin.time.Duration.Companion.minutes
 @Inject
 public class SettingsPresenter(
     componentContext: ComponentContext,
+    observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
+    userRepository: UserRepository,
     private val navigator: Navigator,
     private val appMetadata: AppMetadata,
     private val datastoreRepository: DatastoreRepository,
-    private val userRepository: UserRepository,
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
     private val authManagers: Map<AccountProvider, AuthManager>,
-    @SimklLoginFlagQualifier private val simklLoginFlag: FeatureFlag<Boolean>,
-    observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
+    @SimklLoginFlagQualifier
+    private val simklLoginFlag: FeatureFlag<Boolean>,
+    @AccountSwitchFlagQualifier
+    private val accountSwitchFlag: FeatureFlag<Boolean>,
     private val accountManager: AccountManager,
     private val pushPendingChangesInteractor: PushPendingChangesInteractor,
     private val countUnsavedChanges: CountUnsavedChanges,
@@ -100,9 +104,10 @@ public class SettingsPresenter(
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
         simklLoginFlag.observe(),
-    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled ->
+        accountSwitchFlag.observe(),
+    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled ->
         val username = userProfile?.let { it.fullName ?: it.username }
-        val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled)
+        val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
             isLoading = false,
             isUpdating = isProcessingAuth || isTogglingNotifications,
@@ -244,7 +249,9 @@ public class SettingsPresenter(
         isLoggedIn: Boolean,
         activeProvider: AccountProvider?,
         simklEnabled: Boolean,
+        accountSwitchEnabled: Boolean,
     ): AccountProvider? = when {
+        !accountSwitchEnabled -> null
         !isLoggedIn -> null
         activeProvider == AccountProvider.TRAKT && simklEnabled -> AccountProvider.SIMKL
         activeProvider == AccountProvider.SIMKL -> AccountProvider.TRAKT

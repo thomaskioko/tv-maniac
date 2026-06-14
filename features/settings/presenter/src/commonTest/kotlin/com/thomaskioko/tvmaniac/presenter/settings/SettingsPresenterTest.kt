@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.ResyncContinueWatching
 import com.thomaskioko.tvmaniac.domain.accountswitcher.ResyncLibrary
+import com.thomaskioko.tvmaniac.domain.accountswitcher.ResyncProfile
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
@@ -69,6 +70,7 @@ class SettingsPresenterTest {
     private val authManager = FakeAuthManager()
     private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
     private val simklFlag = FakeFeatureFlag(initial = false)
+    private val accountSwitchFlag = FakeFeatureFlag(initial = false)
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val libraryRepository = FakeLibraryRepository()
     private val traktListRepository = FakeTraktListRepository()
@@ -91,6 +93,7 @@ class SettingsPresenterTest {
                 AccountProvider.SIMKL to simklAuthManager,
             ),
             simklLoginFlag = simklFlag,
+            accountSwitchFlag = accountSwitchFlag,
             logoutInteractor = LogoutInteractor(
                 accountManager = accountManager,
                 userRepository = userRepository,
@@ -117,8 +120,9 @@ class SettingsPresenterTest {
             switchAccountInteractor = SwitchAccountInteractor(
                 logoutHandler = FakeLogoutHandler(),
                 accountManager = accountManager,
-                resyncLibrary = ResyncLibrary {},
-                resyncContinueWatching = ResyncContinueWatching {},
+                resyncProfile = {},
+                resyncLibrary = {},
+                resyncContinueWatching = {},
                 appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
             ),
         )
@@ -423,5 +427,36 @@ class SettingsPresenterTest {
 
         accountManager.lastLogoutProvider shouldBe AccountProvider.TRAKT
         accountManager.getActiveProvider() shouldBe AccountProvider.SIMKL
+    }
+
+    @Test
+    fun `should expose the switch target given the account switch flag is on`() = runTest {
+        simklFlag.value = true
+        accountSwitchFlag.value = true
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.switchTargetProvider == null) {
+                state = awaitItem()
+            }
+            state.switchTargetProvider shouldBe AccountProvider.SIMKL
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should hide the switch target given the account switch flag is off`() = runTest {
+        simklFlag.value = true
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        presenter.state.test {
+            var state = awaitItem()
+            while (!state.isAuthenticated) {
+                state = awaitItem()
+            }
+            state.switchTargetProvider shouldBe null
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }
