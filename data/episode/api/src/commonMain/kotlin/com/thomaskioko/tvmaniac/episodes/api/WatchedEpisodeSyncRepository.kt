@@ -25,4 +25,6 @@ public interface WatchedEpisodeSyncRepository {
      * consumer is already caught up or the per-show TTL has not expired.
      */
     public suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean = false)
+
+    public suspend fun countPendingEpisodes(): Long
 }

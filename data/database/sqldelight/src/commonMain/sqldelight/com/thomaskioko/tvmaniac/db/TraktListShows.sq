@@ -41,3 +41,6 @@ VALUES(?, ?, ?, 'NOTHING');
 
 deleteAll:
 DELETE FROM trakt_list_shows;
+
+countPendingActions:
+SELECT COUNT(*) FROM trakt_list_shows WHERE pending_action != 'NOTHING';

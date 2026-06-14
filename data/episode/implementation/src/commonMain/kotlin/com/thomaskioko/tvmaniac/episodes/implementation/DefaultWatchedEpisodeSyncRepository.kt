@@ -100,6 +100,8 @@ public class DefaultWatchedEpisodeSyncRepository(
         lastRequestStore.updateShowLastRequest(showId)
     }
 
+    override suspend fun countPendingEpisodes(): Long = dao.countPendingActions()
+
     private suspend fun processPendingEpisodesToUploads() {
         val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
         if (pending.isEmpty()) return

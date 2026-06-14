@@ -110,6 +110,7 @@ kotlin {
             api(projects.data.watchproviders.implementation)
             api(projects.domain.episode)
             api(projects.domain.library)
+            api(projects.data.logout.implementation)
             api(projects.domain.logout)
             api(projects.domain.notifications)
             api(projects.domain.continueWatching)

@@ -510,6 +510,16 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
+    override fun deleteAll() {
+        database.watchedEpisodesQueries.deleteAll()
+    }
+
+    override suspend fun countPendingActions(): Long {
+        return withContext(dispatchers.databaseRead) {
+            database.watchedEpisodesQueries.countPendingActions().executeAsOne()
+        }
+    }
+
     override suspend fun deleteById(id: Long) {
         withContext(dispatchers.databaseWrite) {
             database.watchedEpisodesQueries.deleteById(id)

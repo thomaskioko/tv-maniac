@@ -60,4 +60,12 @@ public class FakeTraktListRepository : TraktListRepository {
         toggleShowInListInvocations += 1
         toggleGate?.await()
     }
+
+    private var pendingListShowsCount = 0L
+
+    public fun setPendingListShowsCount(count: Long) {
+        pendingListShowsCount = count
+    }
+
+    override suspend fun countPendingListShows(): Long = pendingListShowsCount
 }

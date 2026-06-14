@@ -183,6 +183,8 @@ public class DefaultLibraryRepository(
             threshold = expiry,
         )
 
+    override suspend fun countPendingFollowedShows(): Long = followedShowsDao.countPendingActions()
+
     private suspend fun processPendingUploadActions(): PendingActionOutcome {
         val pendingUploads = followedShowsDao.entriesWithUploadPendingAction()
         if (pendingUploads.isEmpty()) return PendingActionOutcome.CONTINUE
