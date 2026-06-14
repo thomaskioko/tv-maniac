@@ -66,11 +66,13 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -107,6 +109,7 @@ public class ProfilePresenter(
     private val profileLoadingState = ObservableLoadingCounter()
     private val favoritesSyncState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
+    private val _isAuthenticating = MutableStateFlow(false)
 
     init {
         observeUserProfileInteractor(Unit)
@@ -119,6 +122,7 @@ public class ProfilePresenter(
         fetchUserData()
         syncFavorites()
         observeAuthState()
+        observeAuthError()
     }
 
     private val sectionsFlow: Flow<ProfileSections> = combine(
@@ -164,7 +168,8 @@ public class ProfilePresenter(
         uiMessageManager.message,
         sectionsFlow,
         simklLoginFlag.observe(),
-    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled ->
+        _isAuthenticating,
+    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled, isAuthenticating ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
         // TODO:: Remove hardcoded provider
         val statsExpected = activeProvider == AccountProvider.TRAKT || activeProvider == AccountProvider.SIMKL
@@ -174,6 +179,7 @@ public class ProfilePresenter(
         ProfileState(
             userProfile = profile,
             isLoading = isLoading,
+            isAuthenticating = isAuthenticating,
             errorMessage = errorMessage,
             authenticated = isConnected,
             activeProvider = activeProvider,
@@ -198,6 +204,7 @@ public class ProfilePresenter(
     public fun dispatch(action: ProfileAction) {
         when (action) {
             is LoginClicked -> {
+                _isAuthenticating.value = true
                 coroutineScope.launch {
                     authManagers[action.provider]?.launchWebView()
                 }
@@ -238,9 +245,18 @@ public class ProfilePresenter(
                 .drop(1)
                 .filter { it }
                 .collect {
+                    _isAuthenticating.value = false
                     fetchUserData(forceRefresh = true)
                     syncFavorites(forceRefresh = true)
                 }
+        }
+    }
+
+    private fun observeAuthError() {
+        coroutineScope.launch {
+            accountManager.authError
+                .filterNotNull()
+                .collect { _isAuthenticating.value = false }
         }
     }
 
