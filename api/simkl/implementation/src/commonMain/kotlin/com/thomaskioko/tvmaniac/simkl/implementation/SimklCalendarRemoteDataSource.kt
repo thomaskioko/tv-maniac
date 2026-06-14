@@ -80,6 +80,7 @@ private fun SimklCalendarEntry.toRemoteCalendarEntry(): RemoteCalendarEntry? {
     val episodeNumber = episode?.episode ?: return null
     return RemoteCalendarEntry(
         tmdbId = tmdbId,
+        episodeTraktId = null,
         showTitle = title ?: "",
         episodeTitle = null,
         seasonNumber = episode?.season ?: 1,

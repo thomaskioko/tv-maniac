@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.calendar
 
 public data class RemoteCalendarEntry(
     val tmdbId: Long,
+    val episodeTraktId: Long?,
     val showTitle: String,
     val episodeTitle: String?,
     val seasonNumber: Int,

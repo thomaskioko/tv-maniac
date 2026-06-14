@@ -29,6 +29,7 @@ public class TraktCalendarRemoteDataSourceAdapter(
 private fun com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse.toRemoteCalendarEntry(): RemoteCalendarEntry =
     RemoteCalendarEntry(
         tmdbId = show.ids.tmdb ?: 0L,
+        episodeTraktId = episode.ids.trakt.toLong(),
         showTitle = show.title,
         episodeTitle = episode.title,
         seasonNumber = episode.seasonNumber,

@@ -50,6 +50,7 @@ internal class TraktCalendarRemoteDataSourceAdapterTest {
                         overview = "Walt cooks meth.",
                         rating = 8.5,
                         votes = 120,
+                        episodeTraktId = 73640,
                     ),
                 ),
             ),
@@ -69,6 +70,7 @@ internal class TraktCalendarRemoteDataSourceAdapterTest {
         entry.overview shouldBe "Walt cooks meth."
         entry.rating shouldBe 8.5
         entry.votes shouldBe 120
+        entry.episodeTraktId shouldBe 73640L
     }
 
     @Test
@@ -121,13 +123,14 @@ private fun traktCalendarResponse(
     overview: String?,
     rating: Double?,
     votes: Int?,
+    episodeTraktId: Int = 1,
 ): TraktCalendarResponse = TraktCalendarResponse(
     firstAired = firstAired,
     episode = TraktCalendarEpisode(
         seasonNumber = seasonNumber,
         episodeNumber = episodeNumber,
         title = episodeTitle,
-        ids = EpisodeIds(trakt = 1, tmdb = null),
+        ids = EpisodeIds(trakt = episodeTraktId, tmdb = null),
         runtime = runtime,
         overview = overview,
         rating = rating,
