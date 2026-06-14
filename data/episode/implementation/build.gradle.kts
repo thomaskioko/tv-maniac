@@ -14,8 +14,8 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(libs.store5)
-                api(projects.api.trakt.api)
                 api(projects.core.base)
+                api(projects.data.calendar.api)
                 api(projects.core.logger.api)
                 api(projects.core.syncstate.api)
                 api(projects.core.util.api)
@@ -43,6 +43,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.data.accountManager.testing)
+                implementation(projects.data.calendar.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)

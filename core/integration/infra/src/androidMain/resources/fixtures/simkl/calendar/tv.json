@@ -1,0 +1,41 @@
+[
+  {
+    "date": "2026-04-19T03:00:00.000Z",
+    "title": "Breaking Bad",
+    "ids": {
+      "simkl_id": 583436,
+      "tmdb": "1396",
+      "imdb": "tt0903747"
+    },
+    "episode": {
+      "season": 1,
+      "episode": 1
+    }
+  },
+  {
+    "date": "2026-04-19T03:00:00.000Z",
+    "title": "Breaking Bad",
+    "ids": {
+      "simkl_id": 583436,
+      "tmdb": "1396",
+      "imdb": "tt0903747"
+    },
+    "episode": {
+      "season": 1,
+      "episode": 2
+    }
+  },
+  {
+    "date": "2026-04-26T03:00:00.000Z",
+    "title": "Game of Thrones",
+    "ids": {
+      "simkl_id": 1399,
+      "tmdb": "1399",
+      "imdb": "tt0944947"
+    },
+    "episode": {
+      "season": 1,
+      "episode": 1
+    }
+  }
+]

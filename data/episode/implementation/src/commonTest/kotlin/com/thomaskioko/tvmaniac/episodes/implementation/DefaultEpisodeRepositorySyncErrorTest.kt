@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.data.calendar.testing.FakeCalendarRemoteDataSource
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
@@ -13,8 +13,6 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
-import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -131,7 +129,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         val episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         val upcomingEpisodesStore = UpcomingEpisodesStore(
-            calendarDataSource = NoOpCalendarDataSource,
+            activeSource = { FakeCalendarRemoteDataSource() },
             episodesDao = episodesDao,
             requestManagerRepository = requestManagerRepository,
             dispatchers = dispatchers,
@@ -193,11 +191,4 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
         private const val SHOW_ID = 1L
         private const val EPISODE_ID = 101L
     }
-}
-
-private object NoOpCalendarDataSource : TraktCalendarRemoteDataSource {
-    override suspend fun getMyShowsCalendar(
-        startDate: String,
-        days: Int,
-    ): ApiResponse<List<TraktCalendarResponse>> = ApiResponse.Success(emptyList())
 }

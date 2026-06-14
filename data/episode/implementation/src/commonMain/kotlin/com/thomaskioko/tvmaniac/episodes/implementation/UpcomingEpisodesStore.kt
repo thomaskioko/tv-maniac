@@ -1,15 +1,18 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
+import com.thomaskioko.tvmaniac.data.calendar.CalendarRemoteDataSource
+import com.thomaskioko.tvmaniac.data.calendar.RemoteCalendarEntry
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_EPISODES
-import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
+import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
@@ -22,24 +25,24 @@ public data class UpcomingEpisodesParams(
 
 @Inject
 public class UpcomingEpisodesStore(
-    private val calendarDataSource: TraktCalendarRemoteDataSource,
+    private val activeSource: () -> CalendarRemoteDataSource?,
     private val episodesDao: EpisodesDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<UpcomingEpisodesParams, Unit> by storeBuilder(
-    fetcher = apiFetcher { params: UpcomingEpisodesParams ->
-        calendarDataSource.getMyShowsCalendar(params.startDate, params.days)
+    fetcher = Fetcher.of { params: UpcomingEpisodesParams ->
+        val source = activeSource() ?: throw AuthenticationException("No active calendar provider")
+        source.getCalendarEntries(startDate = params.startDate, days = params.days).getOrThrow()
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { flowOf(Unit) },
-        writer = { _, response ->
-            response.forEach { calendarEntry ->
-                val traktId = calendarEntry.show.ids.trakt
-                val firstAiredEpoch = Instant.parse(calendarEntry.firstAired).toEpochMilliseconds()
+        writer = { _, response: List<RemoteCalendarEntry> ->
+            response.forEach { entry ->
+                val firstAiredEpoch = Instant.parse(entry.firstAiredIso).toEpochMilliseconds()
                 episodesDao.updateFirstAired(
-                    showId = traktId,
-                    seasonNumber = calendarEntry.episode.seasonNumber.toLong(),
-                    episodeNumber = calendarEntry.episode.episodeNumber.toLong(),
+                    showId = entry.tmdbId,
+                    seasonNumber = entry.seasonNumber.toLong(),
+                    episodeNumber = entry.episodeNumber.toLong(),
                     firstAired = firstAiredEpoch,
                 )
             }
