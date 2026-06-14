@@ -18,12 +18,14 @@ kotlin {
                 api(projects.data.traktlists.api)
                 api(projects.domain.continueWatching)
                 api(projects.domain.library)
+                api(projects.domain.user)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.base.testing)
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.library.testing)

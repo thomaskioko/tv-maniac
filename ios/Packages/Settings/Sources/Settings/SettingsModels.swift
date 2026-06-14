@@ -244,9 +244,21 @@ public struct SettingsAccountContent {
     public let providerName: String
     public let providerLogoName: String
     public let authProviders: [SwiftAuthProvider]
+    public let switchTargetLogoName: String?
+    public let switchActionLabel: String?
+    public let isSwitching: Bool
+    public let showSwitchConfirmation: Bool
+    public let switchDialogTitle: String?
+    public let switchDialogMessage: String?
+    public let switchConfirmLabel: String
+    public let switchCancelLabel: String
+    public let switchingLabel: String
     public let onLogout: () -> Void
     public let onLogin: () -> Void
     public let onProviderSelected: (String) -> Void
+    public let onSwitchProvider: () -> Void
+    public let onConfirmSwitch: () -> Void
+    public let onDismissSwitchDialog: () -> Void
 
     public init(
         title: String,
@@ -263,9 +275,21 @@ public struct SettingsAccountContent {
         providerName: String = "",
         providerLogoName: String = "TraktMono",
         authProviders: [SwiftAuthProvider] = [],
+        switchTargetLogoName: String? = nil,
+        switchActionLabel: String? = nil,
+        isSwitching: Bool = false,
+        showSwitchConfirmation: Bool = false,
+        switchDialogTitle: String? = nil,
+        switchDialogMessage: String? = nil,
+        switchConfirmLabel: String = "",
+        switchCancelLabel: String = "",
+        switchingLabel: String = "",
         onLogout: @escaping () -> Void,
         onLogin: @escaping () -> Void = {},
-        onProviderSelected: @escaping (String) -> Void = { _ in }
+        onProviderSelected: @escaping (String) -> Void = { _ in },
+        onSwitchProvider: @escaping () -> Void = {},
+        onConfirmSwitch: @escaping () -> Void = {},
+        onDismissSwitchDialog: @escaping () -> Void = {}
     ) {
         self.title = title
         self.description = description
@@ -281,8 +305,20 @@ public struct SettingsAccountContent {
         self.providerName = providerName
         self.providerLogoName = providerLogoName
         self.authProviders = authProviders
+        self.switchTargetLogoName = switchTargetLogoName
+        self.switchActionLabel = switchActionLabel
+        self.isSwitching = isSwitching
+        self.showSwitchConfirmation = showSwitchConfirmation
+        self.switchDialogTitle = switchDialogTitle
+        self.switchDialogMessage = switchDialogMessage
+        self.switchConfirmLabel = switchConfirmLabel
+        self.switchCancelLabel = switchCancelLabel
+        self.switchingLabel = switchingLabel
         self.onLogout = onLogout
         self.onLogin = onLogin
         self.onProviderSelected = onProviderSelected
+        self.onSwitchProvider = onSwitchProvider
+        self.onConfirmSwitch = onConfirmSwitch
+        self.onDismissSwitchDialog = onDismissSwitchDialog
     }
 }

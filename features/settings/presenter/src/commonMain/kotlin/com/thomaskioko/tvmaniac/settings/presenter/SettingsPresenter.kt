@@ -12,19 +12,25 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
+import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
+import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
+import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.flags.AccountSwitchFlagQualifier
 import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -36,13 +42,17 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.minutes
 
 @NavDestination(
     route = SettingsRoute::class,
@@ -52,19 +62,25 @@ import kotlinx.coroutines.launch
 @Inject
 public class SettingsPresenter(
     componentContext: ComponentContext,
+    observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
+    userRepository: UserRepository,
     private val navigator: Navigator,
     private val appMetadata: AppMetadata,
     private val datastoreRepository: DatastoreRepository,
-    private val userRepository: UserRepository,
     private val logoutInteractor: LogoutInteractor,
     private val toggleEpisodeNotificationsInteractor: ToggleEpisodeNotificationsInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
     private val authManagers: Map<AccountProvider, AuthManager>,
-    @SimklLoginFlagQualifier private val simklLoginFlag: FeatureFlag<Boolean>,
-    observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
-    accountManager: AccountManager,
+    @SimklLoginFlagQualifier
+    private val simklLoginFlag: FeatureFlag<Boolean>,
+    @AccountSwitchFlagQualifier
+    private val accountSwitchFlag: FeatureFlag<Boolean>,
+    private val accountManager: AccountManager,
+    private val pushPendingChangesInteractor: PushPendingChangesInteractor,
+    private val countUnsavedChanges: CountUnsavedChanges,
+    private val switchAccountInteractor: SwitchAccountInteractor,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -89,8 +105,10 @@ public class SettingsPresenter(
         uiMessageManager.message,
         userRepository.observeCurrentUser().onStart { emit(null) },
         simklLoginFlag.observe(),
-    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled ->
+        accountSwitchFlag.observe(),
+    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled ->
         val username = userProfile?.let { it.fullName ?: it.username }
+        val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
             isLoading = false,
             isUpdating = isProcessingAuth || isTogglingNotifications,
@@ -103,6 +121,10 @@ public class SettingsPresenter(
             activeProvider = activeProvider,
             authProviders = authProviderOptions(simklEnabled),
             accountConnectedDescription = activeProvider?.let { connectedDescription(it) },
+            switchTargetProvider = switchTarget,
+            switchActionLabel = switchTarget?.let {
+                localizer.getString(StringResourceKey.LabelAccountSwitchAction, it.displayName)
+            },
             backgroundSyncEnabled = preferences.backgroundSyncEnabled,
             lastSyncDate = preferences.lastSyncDate,
             showLastSyncDate = preferences.showLastSyncDate,
@@ -154,6 +176,12 @@ public class SettingsPresenter(
                     }
                 }
             }
+
+            is SwitchProviderClicked -> handleSwitchClicked(action.provider)
+
+            ConfirmSwitchDiscard -> handleConfirmSwitch()
+
+            DismissSwitchDialog -> dismissSwitchDialog()
 
             is ThemeSelected -> {
                 datastoreRepository.saveTheme(action.theme.toTheme().toAppTheme())
@@ -216,6 +244,102 @@ public class SettingsPresenter(
 
     private fun toggleLogoutConfirmation() {
         _state.update { state -> state.copy(showLogoutConfirmation = !state.showLogoutConfirmation) }
+    }
+
+    private fun resolveSwitchTarget(
+        isLoggedIn: Boolean,
+        activeProvider: AccountProvider?,
+        simklEnabled: Boolean,
+        accountSwitchEnabled: Boolean,
+    ): AccountProvider? = when {
+        !accountSwitchEnabled -> null
+        !isLoggedIn -> null
+        activeProvider == AccountProvider.TRAKT && simklEnabled -> AccountProvider.SIMKL
+        activeProvider == AccountProvider.SIMKL -> AccountProvider.TRAKT
+        else -> null
+    }
+
+    private fun handleSwitchClicked(target: AccountProvider) {
+        coroutineScope.launch {
+            _state.update { it.copy(isSwitching = true) }
+            runCatching { pushPendingChangesInteractor.executeSync() }
+                .onFailure { logger.warning(TAG, "Pushing pending changes before switch failed: ${it.message}") }
+            val count = runCatching { countUnsavedChanges() }
+                .onFailure { logger.warning(TAG, "Counting unsaved changes before switch failed: ${it.message}") }
+                .getOrDefault(0)
+            if (count > 0) {
+                _state.update {
+                    it.copy(
+                        isSwitching = false,
+                        showSwitchConfirmation = true,
+                        switchUnsavedCount = count,
+                        pendingSwitchProvider = target,
+                        switchDialogTitle = localizer.getString(
+                            StringResourceKey.LabelAccountSwitchDialogTitle,
+                            target.displayName,
+                        ),
+                        switchDialogMessage = localizer.getString(
+                            StringResourceKey.LabelAccountSwitchDialogMessage,
+                            count,
+                        ),
+                    )
+                }
+            } else {
+                executeSwitch(target)
+            }
+        }
+    }
+
+    private fun handleConfirmSwitch() {
+        val target = _state.value.pendingSwitchProvider ?: return
+        _state.update {
+            it.copy(
+                showSwitchConfirmation = false,
+                pendingSwitchProvider = null,
+                switchUnsavedCount = 0,
+                switchDialogTitle = null,
+                switchDialogMessage = null,
+            )
+        }
+        coroutineScope.launch { executeSwitch(target) }
+    }
+
+    private fun dismissSwitchDialog() {
+        _state.update {
+            it.copy(
+                showSwitchConfirmation = false,
+                pendingSwitchProvider = null,
+                isSwitching = false,
+                switchUnsavedCount = 0,
+                switchDialogTitle = null,
+                switchDialogMessage = null,
+            )
+        }
+    }
+
+    private suspend fun executeSwitch(target: AccountProvider) {
+        _state.update { it.copy(isSwitching = true) }
+        try {
+            authManagers[target]?.launchWebView()
+            withTimeoutOrNull(OAUTH_TIMEOUT) {
+                accountManager.accounts.first { accounts ->
+                    accounts.any { it.provider == target && it.isConnected }
+                }
+            } ?: error("Timed out waiting for $target sign-in")
+            switchAccountInteractor.executeSync(target)
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (cause: Throwable) {
+            logger.error(TAG, "Account switch to $target failed: ${cause.message}")
+            uiMessageManager.emitMessage(
+                UiMessage(
+                    message = localizer.getString(StringResourceKey.LabelAccountSwitchFailed),
+                    sourceId = "AccountSwitch",
+                ),
+            )
+        } finally {
+            _state.update { it.copy(isSwitching = false) }
+        }
     }
 
     private fun handleVersionTap() {
@@ -389,9 +513,14 @@ public class SettingsPresenter(
         },
         logout = localizer.getString(StringResourceKey.Logout),
         login = localizer.getString(StringResourceKey.Login),
+        switchConfirm = localizer.getString(StringResourceKey.LabelAccountSwitchDialogConfirm),
+        switchCancel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary),
+        switching = localizer.getString(StringResourceKey.LabelAccountSwitching),
     )
 
     private companion object {
-        const val HIDDEN_TAP_THRESHOLD = 6
+        private const val HIDDEN_TAP_THRESHOLD = 6
+        private const val TAG = "SettingsPresenter"
+        private val OAUTH_TIMEOUT = 2.minutes
     }
 }

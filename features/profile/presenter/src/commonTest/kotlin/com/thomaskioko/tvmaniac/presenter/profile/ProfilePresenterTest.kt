@@ -155,6 +155,28 @@ internal class ProfilePresenterTest {
     }
 
     @Test
+    fun `should show loading and not the sign in screen when login starts`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.showLoading || state.authenticated) {
+                state = awaitItem()
+            }
+            state.authenticated shouldBe false
+            state.showLoading shouldBe false
+
+            presenter.dispatch(ProfileAction.LoginClicked(AccountProvider.TRAKT))
+
+            var loading = awaitItem()
+            while (!loading.showLoading) {
+                loading = awaitItem()
+            }
+            loading.showLoading shouldBe true
+            loading.authenticated shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should update state when auth state changes to logged in`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe ProfileState.DEFAULT_STATE

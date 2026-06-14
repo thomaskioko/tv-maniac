@@ -11,6 +11,7 @@ public data class ProfileState(
     val userProfile: ProfileInfo?,
     val errorMessage: UiMessage? = null,
     val authenticated: Boolean,
+    val isAuthenticating: Boolean = false,
     val activeProvider: AccountProvider? = null,
     val authProviders: ImmutableList<AuthProviderOption> = persistentListOf(),
     val userLists: SectionState<ProfileListItem> = SectionState.Loading,
@@ -23,7 +24,8 @@ public data class ProfileState(
     val labels: ProfileLabels = ProfileLabels(),
 ) {
     val showLoading: Boolean
-        get() = errorMessage == null && isLoading && (userProfile == null || userProfile.awaitingStats)
+        get() = errorMessage == null &&
+            (isAuthenticating || (isLoading && (userProfile == null || userProfile.awaitingStats)))
 
     val listCount: Int
         get() = (userLists as? SectionState.Content)?.items?.size ?: 0

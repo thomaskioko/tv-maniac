@@ -23,6 +23,12 @@ public data object AccountLogoutClicked : SettingsActions
 
 public data class AccountLoginClicked(val provider: AccountProvider) : SettingsActions
 
+public data class SwitchProviderClicked(val provider: AccountProvider) : SettingsActions
+
+public data object ConfirmSwitchDiscard : SettingsActions
+
+public data object DismissSwitchDialog : SettingsActions
+
 public data class ImageQualitySelected(
     val quality: ImageQuality,
 ) : SettingsActions

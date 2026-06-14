@@ -458,4 +458,11 @@
     <string name="account_limit_banner_message">You\'ve reached your Trakt list limit. Upgrade to VIP to keep adding shows.</string>
     <string name="account_limit_upgrade_cta">Upgrade</string>
     <string name="account_limit_dismiss_cta">Dismiss</string>
+
+    <string name="label_account_switch_action">Switch to %s</string>
+    <string name="label_account_switch_dialog_title">Switch to %s?</string>
+    <string name="label_account_switch_dialog_message">You have %d unsaved changes that will be discarded.</string>
+    <string name="label_account_switch_dialog_confirm">Discard &amp; switch</string>
+    <string name="label_account_switching">Switching…</string>
+    <string name="label_account_switch_failed">Couldn\'t switch accounts. Please try again.</string>
 </resources>

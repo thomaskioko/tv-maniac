@@ -20,6 +20,7 @@ kotlin {
                 api(projects.data.accountManager.api)
                 api(projects.data.datastore.api)
                 api(projects.data.user.api)
+                api(projects.domain.accountSwitcher)
                 api(projects.domain.logout)
                 api(projects.domain.notifications)
                 api(projects.domain.settings)
@@ -41,11 +42,15 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.base.testing)
                 implementation(projects.core.featureFlags.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.datastore.testing)
+                implementation(projects.data.episode.testing)
+                implementation(projects.data.library.testing)
+                implementation(projects.data.traktlists.testing)
                 implementation(projects.data.logout.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.i18n.testing)

@@ -4,17 +4,24 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
+import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
+import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
+import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
@@ -22,19 +29,24 @@ import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
+import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
+import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
+import com.thomaskioko.tvmaniac.settings.presenter.SwitchProviderClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -55,6 +67,10 @@ class SettingsPresenterTest {
     private val authManager = FakeAuthManager()
     private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
     private val simklFlag = FakeFeatureFlag(initial = false)
+    private val accountSwitchFlag = FakeFeatureFlag(initial = false)
+    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val libraryRepository = FakeLibraryRepository()
+    private val traktListRepository = FakeTraktListRepository()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -74,6 +90,7 @@ class SettingsPresenterTest {
                 AccountProvider.SIMKL to simklAuthManager,
             ),
             simklLoginFlag = simklFlag,
+            accountSwitchFlag = accountSwitchFlag,
             logoutInteractor = LogoutInteractor(
                 accountManager = accountManager,
                 userRepository = userRepository,
@@ -88,6 +105,23 @@ class SettingsPresenterTest {
                 datastoreRepository = datastoreRepository,
             ),
             navigator = NoOpNavigator(),
+            pushPendingChangesInteractor = PushPendingChangesInteractor(
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                libraryRepository = libraryRepository,
+            ),
+            countUnsavedChanges = CountUnsavedChanges(
+                libraryRepository = libraryRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                traktListRepository = traktListRepository,
+            ),
+            switchAccountInteractor = SwitchAccountInteractor(
+                logoutHandler = FakeLogoutHandler(),
+                accountManager = accountManager,
+                resyncProfile = {},
+                resyncLibrary = {},
+                resyncContinueWatching = {},
+                appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
+            ),
         )
     }
 
@@ -308,6 +342,117 @@ class SettingsPresenterTest {
             }
             state.accountConnectedDescription shouldBe
                 localizer.getString(StringResourceKey.LabelSettingsSimklConnectedDescription)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should switch to the new provider given no unsaved changes`() = runTest {
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+        testScheduler.runCurrent()
+
+        accountManager.setAccounts(
+            listOf(ConnectedAccount(provider = AccountProvider.SIMKL, isConnected = true)),
+        )
+        testScheduler.runCurrent()
+
+        accountManager.lastLogoutProvider shouldBe AccountProvider.TRAKT
+        accountManager.getActiveProvider() shouldBe AccountProvider.SIMKL
+    }
+
+    @Test
+    fun `should park at confirmation given unsaved changes remain`() = runTest {
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        libraryRepository.setPendingFollowedShowsCount(3L)
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+
+            var state = awaitItem()
+            while (!state.showSwitchConfirmation) {
+                state = awaitItem()
+            }
+            state.switchUnsavedCount shouldBe 3
+            state.pendingSwitchProvider shouldBe AccountProvider.SIMKL
+            cancelAndIgnoreRemainingEvents()
+        }
+        accountManager.lastLogoutProvider shouldBe null
+    }
+
+    @Test
+    fun `should abort the switch given the confirmation is dismissed`() = runTest {
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        libraryRepository.setPendingFollowedShowsCount(2L)
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+            var state = awaitItem()
+            while (!state.showSwitchConfirmation) {
+                state = awaitItem()
+            }
+
+            presenter.dispatch(DismissSwitchDialog)
+            var dismissed = awaitItem()
+            while (dismissed.showSwitchConfirmation) {
+                dismissed = awaitItem()
+            }
+            cancelAndIgnoreRemainingEvents()
+        }
+        accountManager.lastLogoutProvider shouldBe null
+        accountManager.getActiveProvider() shouldBe AccountProvider.TRAKT
+    }
+
+    @Test
+    fun `should proceed with the switch given the user confirms discard`() = runTest {
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        libraryRepository.setPendingFollowedShowsCount(1L)
+
+        presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+        testScheduler.runCurrent()
+
+        presenter.dispatch(ConfirmSwitchDiscard)
+        testScheduler.runCurrent()
+
+        accountManager.setAccounts(
+            listOf(ConnectedAccount(provider = AccountProvider.SIMKL, isConnected = true)),
+        )
+        testScheduler.runCurrent()
+
+        accountManager.lastLogoutProvider shouldBe AccountProvider.TRAKT
+        accountManager.getActiveProvider() shouldBe AccountProvider.SIMKL
+    }
+
+    @Test
+    fun `should expose the switch target given the account switch flag is on`() = runTest {
+        simklFlag.value = true
+        accountSwitchFlag.value = true
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.switchTargetProvider == null) {
+                state = awaitItem()
+            }
+            state.switchTargetProvider shouldBe AccountProvider.SIMKL
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should hide the switch target given the account switch flag is off`() = runTest {
+        simklFlag.value = true
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        presenter.state.test {
+            var state = awaitItem()
+            while (!state.isAuthenticated) {
+                state = awaitItem()
+            }
+            state.switchTargetProvider shouldBe null
             cancelAndIgnoreRemainingEvents()
         }
     }
