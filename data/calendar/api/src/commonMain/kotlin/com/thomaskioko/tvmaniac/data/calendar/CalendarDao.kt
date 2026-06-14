@@ -6,6 +6,7 @@ public interface CalendarDao {
     public fun observeEntriesBetweenDates(startDate: Long, endDate: Long): Flow<List<CalendarEntry>>
     public fun hasEntriesInRange(startDate: Long, endDate: Long): Boolean
     public fun upsert(entry: CalendarEntry)
+    public fun upsertFromRemote(entry: RemoteCalendarEntry, posterPath: String?)
     public fun deleteEntriesInRange(startDate: Long, endDate: Long)
     public fun deleteOldEntries(cutoffDate: Long)
     public fun deleteAll()
