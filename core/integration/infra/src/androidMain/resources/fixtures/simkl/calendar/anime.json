@@ -2,14 +2,13 @@
   {
     "date": "2026-04-20T14:00:00.000Z",
     "title": "Attack on Titan",
-    "ep_title": "To You, in 2000 Years",
-    "season": 1,
-    "episode": 1,
-    "runtime": 24,
     "ids": {
-      "simkl": 60625,
+      "simkl_id": 60625,
       "tmdb": "60625",
-      "imdb": "tt2560140"
+      "mal": "16498"
+    },
+    "episode": {
+      "episode": 1
     }
   }
 ]

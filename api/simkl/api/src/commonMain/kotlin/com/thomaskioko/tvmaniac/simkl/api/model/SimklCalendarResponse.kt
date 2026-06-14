@@ -7,16 +7,19 @@ import kotlinx.serialization.Serializable
 public data class SimklCalendarEntry(
     @SerialName("date") val date: String,
     @SerialName("title") val title: String? = null,
-    @SerialName("ep_title") val episodeTitle: String? = null,
+    @SerialName("ids") val ids: SimklCalendarIds? = null,
+    @SerialName("episode") val episode: SimklCalendarEpisode? = null,
+)
+
+@Serializable
+public data class SimklCalendarEpisode(
     @SerialName("season") val season: Int? = null,
     @SerialName("episode") val episode: Int? = null,
-    @SerialName("runtime") val runtime: Int? = null,
-    @SerialName("ids") val ids: SimklCalendarIds? = null,
 )
 
 @Serializable
 public data class SimklCalendarIds(
-    @SerialName("simkl") val simkl: Long? = null,
+    @SerialName("simkl_id") val simklId: Long? = null,
     @SerialName("tmdb") val tmdb: String? = null,
     @SerialName("imdb") val imdb: String? = null,
 )

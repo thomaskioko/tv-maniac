@@ -77,16 +77,15 @@ public class SimklCalendarRemoteDataSource(
 
 private fun SimklCalendarEntry.toRemoteCalendarEntry(): RemoteCalendarEntry? {
     val tmdbId = ids?.tmdb?.toLongOrNull() ?: return null
-    val season = season ?: return null
-    val episodeNumber = episode ?: return null
+    val episodeNumber = episode?.episode ?: return null
     return RemoteCalendarEntry(
         tmdbId = tmdbId,
         showTitle = title ?: "",
-        episodeTitle = episodeTitle,
-        seasonNumber = season,
+        episodeTitle = null,
+        seasonNumber = episode?.season ?: 1,
         episodeNumber = episodeNumber,
         firstAiredIso = date,
-        runtime = runtime,
+        runtime = null,
         overview = null,
         rating = null,
         votes = null,

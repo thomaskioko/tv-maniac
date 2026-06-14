@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.data.calendar.RemoteCalendarEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.HttpClient
@@ -146,11 +147,35 @@ internal class SimklCalendarRemoteDataSourceTest {
         val entry = success.body.single()
         entry.tmdbId shouldBe trackedTmdbId
         entry.showTitle shouldBe "Breaking Bad"
-        entry.episodeTitle shouldBe "Pilot"
+        entry.episodeTitle.shouldBeNull()
         entry.seasonNumber shouldBe 1
         entry.episodeNumber shouldBe 1
         entry.firstAiredIso shouldBe "2026-04-19T03:00:00.000Z"
-        entry.runtime shouldBe 50
+        entry.runtime.shouldBeNull()
+    }
+
+    @Test
+    fun `should default season to 1 given anime entry without a season`() = runTest {
+        val animeTmdbId = 60625L
+
+        val engine = MockEngine { request ->
+            val path = request.url.encodedPath
+            val body = when {
+                path.endsWith("anime.json") -> ANIME_FEED_SINGLE_SHOW
+                else -> "[]"
+            }
+            respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
+        }
+
+        val source = buildSource(
+            engine = engine,
+            followedEntries = listOf(followedEntry(tmdbId = animeTmdbId)),
+        )
+
+        val result = source.getCalendarEntries(startDate = "2026-04-19", days = 7)
+
+        val success = result.shouldBeInstanceOf<ApiResponse.Success<List<RemoteCalendarEntry>>>()
+        success.body.single().seasonNumber shouldBe 1
     }
 
     @Test
@@ -189,14 +214,14 @@ private val TV_FEED_SINGLE_SHOW = """
   {
     "date": "2026-04-19T03:00:00.000Z",
     "title": "Breaking Bad",
-    "ep_title": "Pilot",
-    "season": 1,
-    "episode": 1,
-    "runtime": 50,
     "ids": {
-      "simkl": 583436,
+      "simkl_id": 583436,
       "tmdb": "1396",
       "imdb": "tt0903747"
+    },
+    "episode": {
+      "season": 1,
+      "episode": 1
     }
   }
 ]
@@ -207,27 +232,27 @@ private val TV_FEED_WITH_TWO_SHOWS = """
   {
     "date": "2026-04-19T03:00:00.000Z",
     "title": "Breaking Bad",
-    "ep_title": "Pilot",
-    "season": 1,
-    "episode": 1,
-    "runtime": 50,
     "ids": {
-      "simkl": 583436,
+      "simkl_id": 583436,
       "tmdb": "1396",
       "imdb": "tt0903747"
+    },
+    "episode": {
+      "season": 1,
+      "episode": 1
     }
   },
   {
     "date": "2026-04-26T03:00:00.000Z",
     "title": "Game of Thrones",
-    "ep_title": "Winter is Coming",
-    "season": 1,
-    "episode": 1,
-    "runtime": 60,
     "ids": {
-      "simkl": 1399,
+      "simkl_id": 1399,
       "tmdb": "1399",
       "imdb": "tt0944947"
+    },
+    "episode": {
+      "season": 1,
+      "episode": 1
     }
   }
 ]
@@ -238,14 +263,13 @@ private val ANIME_FEED_SINGLE_SHOW = """
   {
     "date": "2026-04-20T14:00:00.000Z",
     "title": "Attack on Titan",
-    "ep_title": "To You in 2000 Years",
-    "season": 1,
-    "episode": 1,
-    "runtime": 24,
     "ids": {
-      "simkl": 60625,
+      "simkl_id": 60625,
       "tmdb": "60625",
-      "imdb": "tt2560140"
+      "mal": "16498"
+    },
+    "episode": {
+      "episode": 1
     }
   }
 ]
@@ -256,9 +280,10 @@ private val TV_FEED_WITH_MISSING_IDS = """
   {
     "date": "2026-04-19T03:00:00.000Z",
     "title": "No IDs Show",
-    "ep_title": "Pilot",
-    "season": 1,
-    "episode": 1
+    "episode": {
+      "season": 1,
+      "episode": 1
+    }
   }
 ]
 """.trimIndent()
