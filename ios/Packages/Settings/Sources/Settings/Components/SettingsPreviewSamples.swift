@@ -175,8 +175,16 @@
             ]
         }
 
-        static func accountContent(authenticated: Bool) -> SettingsAccountContent {
-            SettingsAccountContent(
+        static func accountContent(
+            authenticated: Bool,
+            withSwitchAffordance: Bool = false,
+            isSwitching: Bool = false,
+            showSwitchConfirmation: Bool = false
+        ) -> SettingsAccountContent {
+            let switchLabel: String? = withSwitchAffordance || isSwitching || showSwitchConfirmation
+                ? "Switch to Simkl"
+                : nil
+            return SettingsAccountContent(
                 title: "Trakt",
                 description: "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
                 authenticationLabel: "Connect & Sync Your Content",
@@ -195,8 +203,22 @@
                     SwiftAuthProvider(id: "TRAKT", label: "Continue with Trakt", logoName: "TraktMono"),
                     SwiftAuthProvider(id: "SIMKL", label: "Continue with Simkl", logoName: "SimklMono"),
                 ],
+                switchTargetLogoName: switchLabel != nil ? "SimklMono" : nil,
+                switchActionLabel: switchLabel,
+                isSwitching: isSwitching,
+                showSwitchConfirmation: showSwitchConfirmation,
+                switchDialogTitle: showSwitchConfirmation ? "Switch to Simkl?" : nil,
+                switchDialogMessage: showSwitchConfirmation
+                    ? "You have 3 unsaved changes. Switching providers will discard them."
+                    : nil,
+                switchConfirmLabel: "Switch",
+                switchCancelLabel: "Cancel",
+                switchingLabel: "Switching...",
                 onLogout: {},
-                onProviderSelected: { _ in }
+                onProviderSelected: { _ in },
+                onSwitchProvider: {},
+                onConfirmSwitch: {},
+                onDismissSwitchDialog: {}
             )
         }
 

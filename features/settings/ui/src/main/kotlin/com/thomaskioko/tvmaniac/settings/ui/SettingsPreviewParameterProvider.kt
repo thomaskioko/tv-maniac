@@ -90,6 +90,9 @@ private val previewLabels = SettingsLabels(
     traktConnectedDescription = "Your watch history, watchlist, and episode progress sync with Trakt.",
     logout = "Logout",
     login = "Login",
+    switchConfirm = "Switch",
+    switchCancel = "Cancel",
+    switching = "Switching…",
 )
 
 private val loggedOutAccountLabels = previewLabels.copy(
@@ -147,6 +150,23 @@ internal val accountLoggedOutState = defaultState.copy(
         AuthProviderOption(AccountProvider.TRAKT, "Continue with Trakt"),
         AuthProviderOption(AccountProvider.SIMKL, "Continue with Simkl"),
     ),
+)
+
+internal val accountSwitchState = accountState.copy(
+    switchTargetProvider = AccountProvider.SIMKL,
+    switchActionLabel = "Switch to Simkl",
+)
+
+internal val accountSwitchDialogState = accountSwitchState.copy(
+    showSwitchConfirmation = true,
+    pendingSwitchProvider = AccountProvider.SIMKL,
+    switchUnsavedCount = 3,
+    switchDialogTitle = "Switch to Simkl?",
+    switchDialogMessage = "You have 3 unsynced items. Switching providers may cause data loss.",
+)
+
+internal val accountSwitchingState = accountSwitchState.copy(
+    isSwitching = true,
 )
 
 internal val loadingState = defaultState.copy(isLoading = true)

@@ -14,6 +14,7 @@ public struct SettingsView: View {
     @StateValue private var uiState: SettingsState
     @StateObject private var store = SettingsAppStorage.shared
     @State private var showingLogoutAlert: Bool = false
+    @State private var showingSwitchAlert: Bool = false
     @State private var showingErrorAlert: Bool = false
     @State private var showPolicy = false
     @State private var showNotificationPermissionDeniedAlert = false
@@ -52,13 +53,17 @@ public struct SettingsView: View {
         .settingsObservers(
             uiState: uiState,
             store: store,
-            showingErrorAlert: $showingErrorAlert
+            showingErrorAlert: $showingErrorAlert,
+            showingSwitchAlert: $showingSwitchAlert
         )
         .settingsAlerts(
             uiState: uiState,
             showingErrorAlert: $showingErrorAlert,
             showingLogoutAlert: $showingLogoutAlert,
+            showingSwitchAlert: $showingSwitchAlert,
             onLogout: { presenter.dispatch(action: AccountLogoutClicked()) },
+            onConfirmSwitch: { presenter.dispatch(action: ConfirmSwitchDiscard()) },
+            onDismissSwitchDialog: { presenter.dispatch(action: DismissSwitchDialog()) },
             onDismissError: { id in presenter.dispatch(action: SettingsMessageShown(id: id)) }
         )
         .alert(
@@ -316,10 +321,26 @@ public struct SettingsView: View {
                     logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
                 )
             },
+            switchTargetLogoName: uiState.switchTargetProvider?.name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
+            switchActionLabel: uiState.switchActionLabel,
+            isSwitching: uiState.isSwitching,
+            showSwitchConfirmation: showingSwitchAlert,
+            switchDialogTitle: uiState.switchDialogTitle,
+            switchDialogMessage: uiState.switchDialogMessage,
+            switchConfirmLabel: uiState.labels.switchConfirm,
+            switchCancelLabel: uiState.labels.switchCancel,
+            switchingLabel: uiState.labels.switching,
             onLogout: { showingLogoutAlert = true },
             onProviderSelected: { id in
                 presenter.dispatch(action: AccountLoginClicked(provider: id == "SIMKL" ? .simkl : .trakt))
-            }
+            },
+            onSwitchProvider: {
+                if let target = uiState.switchTargetProvider {
+                    presenter.dispatch(action: SwitchProviderClicked(provider: target))
+                }
+            },
+            onConfirmSwitch: { presenter.dispatch(action: ConfirmSwitchDiscard()) },
+            onDismissSwitchDialog: { presenter.dispatch(action: DismissSwitchDialog()) }
         )
     }
 
@@ -367,7 +388,8 @@ private extension View {
     func settingsObservers(
         uiState: SettingsState,
         store: SettingsAppStorage,
-        showingErrorAlert: Binding<Bool>
+        showingErrorAlert: Binding<Bool>,
+        showingSwitchAlert: Binding<Bool>
     ) -> some View {
         onChange(of: uiState.theme) { _, newTheme in
             store.appTheme = newTheme.toDeviceAppTheme()
@@ -378,13 +400,19 @@ private extension View {
         .onChange(of: uiState.message) { _, message in
             showingErrorAlert.wrappedValue = message != nil
         }
+        .onChange(of: uiState.showSwitchConfirmation) { _, show in
+            showingSwitchAlert.wrappedValue = show
+        }
     }
 
     func settingsAlerts(
         uiState: SettingsState,
         showingErrorAlert: Binding<Bool>,
         showingLogoutAlert: Binding<Bool>,
+        showingSwitchAlert: Binding<Bool>,
         onLogout: @escaping () -> Void,
+        onConfirmSwitch: @escaping () -> Void,
+        onDismissSwitchDialog: @escaping () -> Void,
         onDismissError: @escaping (Int64) -> Void
     ) -> some View {
         alert(isPresented: showingErrorAlert) {
@@ -408,5 +436,22 @@ private extension View {
                 secondaryButton: .cancel()
             )
         }
+        .alert(
+            uiState.switchDialogTitle ?? "",
+            isPresented: showingSwitchAlert,
+            actions: {
+                Button(uiState.labels.switchConfirm, role: .destructive) {
+                    onConfirmSwitch()
+                }
+                Button(uiState.labels.switchCancel, role: .cancel) {
+                    onDismissSwitchDialog()
+                }
+            },
+            message: {
+                if let message = uiState.switchDialogMessage {
+                    Text(message)
+                }
+            }
+        )
     }
 }
