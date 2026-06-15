@@ -26,7 +26,7 @@ public class SyncCalendarInteractor(
 
         logger.debug(TAG, "Starting calendar sync")
         withContext(dispatchers.io) {
-            episodeRepository.syncUpcomingEpisodesFromTrakt(
+            episodeRepository.syncUpcomingEpisodes(
                 startDate = dateTimeProvider.todayAsIsoDate(),
                 days = params.days,
                 forceRefresh = params.forceRefresh,
