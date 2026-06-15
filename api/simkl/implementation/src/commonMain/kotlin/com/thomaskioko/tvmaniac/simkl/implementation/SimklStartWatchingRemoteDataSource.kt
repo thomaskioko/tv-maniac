@@ -40,6 +40,5 @@ private fun SimklWatchedShow.toRemotePlanToWatchShow(): RemotePlanToWatchShow = 
     provider = AccountProvider.SIMKL,
     title = show.title ?: "",
     year = show.year,
-    followedAt = lastWatchedAt?.let { runCatching { Instant.parse(it) }.getOrNull() }
-        ?: Instant.fromEpochSeconds(0),
+    followedAt = lastWatchedAt?.let { Instant.parse(it) } ?: Instant.fromEpochSeconds(0),
 )
