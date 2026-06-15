@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.domain.calendar.model
 
 public data class GroupedEpisodeEntry(
     val showId: Long,
-    val episodeId: Long,
+    val episodeId: Long?,
     val showTitle: String,
     val posterUrl: String?,
     val episodeInfo: String,

@@ -148,6 +148,6 @@ public class FakeEpisodeRepository : EpisodeRepository {
     override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> =
         upcomingEpisodesFlow.value
 
-    override suspend fun syncUpcomingEpisodesFromTrakt(startDate: String, days: Int, forceRefresh: Boolean) {
+    override suspend fun syncUpcomingEpisodes(startDate: String, days: Int, forceRefresh: Boolean) {
     }
 }

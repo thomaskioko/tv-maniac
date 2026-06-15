@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.data.calendar
 
 public data class CalendarEntry(
     val showId: Long,
-    val episodeId: Long,
+    val episodeId: Long?,
     val seasonNumber: Int,
     val episodeNumber: Int,
     val episodeTitle: String?,

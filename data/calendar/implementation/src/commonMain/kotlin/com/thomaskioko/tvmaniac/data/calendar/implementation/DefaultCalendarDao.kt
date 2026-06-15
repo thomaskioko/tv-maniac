@@ -58,7 +58,7 @@ public class DefaultCalendarDao(
         val airDateEpoch = Instant.parse(entry.firstAiredIso).toEpochMilliseconds()
         database.calendarQueries.upsert(
             show_id = internalShowId,
-            trakt_id = entry.episodeTraktId ?: 0L,
+            trakt_id = entry.episodeTraktId,
             season_number = entry.seasonNumber.toLong(),
             episode_number = entry.episodeNumber.toLong(),
             episode_title = entry.episodeTitle,
