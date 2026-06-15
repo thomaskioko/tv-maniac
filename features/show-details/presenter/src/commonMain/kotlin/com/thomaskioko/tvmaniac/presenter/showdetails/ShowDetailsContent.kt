@@ -17,6 +17,7 @@ public data class ShowDetailsContent(
     val continueTrackingScrollIndex: Int = 0,
     val updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
     val message: UiMessage? = null,
+    val canAddToList: Boolean = false,
 ) {
     public val isRefreshing: Boolean
         get() = showDetailsRefreshing || similarShowsRefreshing
