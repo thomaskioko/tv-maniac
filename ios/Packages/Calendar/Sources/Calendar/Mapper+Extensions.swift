@@ -15,7 +15,7 @@ public extension TvManiac.CalendarEpisodeItem {
     func toSwift() -> SwiftCalendarEpisodeItem {
         .init(
             showId: showId,
-            episodeId: episodeId,
+            episodeId: episodeId as! Int64,
             showTitle: showTitle,
             posterUrl: posterUrl,
             episodeInfo: episodeInfo,
