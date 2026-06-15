@@ -294,6 +294,59 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should use the season episode count for total given episode rows are not synced`() = runTest {
+        val importedShowId = 5500L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(importedShowId),
+            name = "Imported Show",
+            overview = "Seasons synced from a provider, episodes never opened in-app",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Reality"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(importedShowId)
+        val _ = database.seasonsQueries.upsert(
+            id = Id(5501L),
+            show_id = resolvedShowId,
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 12L,
+            image_url = null,
+        )
+
+        watchedEpisodeDao.markAsWatched(
+            showId = importedShowId,
+            episodeId = 1L,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = importedShowId,
+            episodeId = 2L,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(importedShowId).test {
+            val progress = awaitItem()
+            val season1 = progress.first { it.seasonNumber == 1L }
+            season1.watchedCount shouldBe 2
+            season1.totalCount shouldBe 12
+            season1.progressPercentage shouldBe (2f / 12f)
+        }
+    }
+
+    @Test
     fun `should batch upsert multiple episodes in single transaction`() = runTest {
         val now = Clock.System.now()
         val entries = (1..5).map { episodeNumber ->

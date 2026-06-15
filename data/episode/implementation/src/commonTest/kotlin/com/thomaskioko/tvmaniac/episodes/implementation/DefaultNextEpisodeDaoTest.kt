@@ -462,6 +462,28 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should hide show given watched markers exist but no aired episodes are synced`() = runTest {
+        // A provider-imported show (e.g. Simkl): watched history is synced and the show stays in
+        // continue watching, but episode rows were never synced. With no aired next episode there
+        // is nothing to watch now, so it must be hidden even though progress looks incomplete.
+        insertShow(id = 13L, name = "Imported Show", status = "Returning Series")
+        insertSeason(seasonId = 131L, showId = 13L, seasonNumber = 1L, episodeCount = 12L)
+        followShow(showId = 13L, followedAt = watchDate)
+        database.watchedEpisodesQueries.upsert(
+            show_id = showIdByTraktId.getValue(13L),
+            episode_id = null,
+            season_number = 1L,
+            episode_number = 1L,
+            watched_at = watchDate,
+            pending_action = "NOTHING",
+        )
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            awaitItem().size shouldBe 0
+        }
+    }
+
+    @Test
     fun `should exclude show given followed with watched episodes and not in continue watching`() = runTest {
         // The Trakt fetcher drops a show from `trakt_continue_watching` once the user catches
         // up. If the followed_shows row stays (typical, the user did not unfollow), the
