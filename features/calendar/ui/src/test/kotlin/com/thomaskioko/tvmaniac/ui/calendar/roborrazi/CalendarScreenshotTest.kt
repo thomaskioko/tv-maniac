@@ -96,7 +96,7 @@ class CalendarScreenshotTest {
                                 episodes = persistentListOf(
                                     CalendarEpisodeItem(
                                         showId = 1,
-                                        episodeId = 100,
+                                        episodeId = 100L,
                                         showTitle = "Severance",
                                         posterUrl = null,
                                         episodeInfo = "S02E01 · Hello, Ms. Cobel",
@@ -116,7 +116,7 @@ class CalendarScreenshotTest {
                                 episodes = persistentListOf(
                                     CalendarEpisodeItem(
                                         showId = 2,
-                                        episodeId = 200,
+                                        episodeId = 200L,
                                         showTitle = "Hell's Paradise",
                                         posterUrl = null,
                                         episodeInfo = "S02E04 · The Battle Begins",
