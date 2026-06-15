@@ -12,10 +12,11 @@ public extension TvManiac.CalendarDateGroup {
 }
 
 public extension TvManiac.CalendarEpisodeItem {
-    func toSwift() -> SwiftCalendarEpisodeItem {
-        .init(
+    func toSwift() -> SwiftCalendarEpisodeItem? {
+        guard let episodeId = episodeId?.int64Value else { return nil }
+        return .init(
             showId: showId,
-            episodeId: episodeId as! Int64,
+            episodeId: episodeId,
             showTitle: showTitle,
             posterUrl: posterUrl,
             episodeInfo: episodeInfo,
