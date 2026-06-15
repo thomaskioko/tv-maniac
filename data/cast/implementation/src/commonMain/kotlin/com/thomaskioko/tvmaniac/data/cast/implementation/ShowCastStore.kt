@@ -41,20 +41,26 @@ public class ShowCastStore(
     fetcher = Fetcher.of { tmdbShowId: Long ->
         coroutineScope {
             val traktId = tvShowsDao.getTraktIdByTmdbId(tmdbShowId)
-                ?: error("No trakt id for tmdb show $tmdbShowId")
 
-            val traktDeferred = async {
-                traktRemoteDataSource.getShowPeople(traktId).getOrThrow()
+            val result = if (traktId != null) {
+                val traktDeferred = async {
+                    traktRemoteDataSource.getShowPeople(traktId).getOrThrow()
+                }
+                val tmdbCreditsDeferred = async {
+                    tmdbNetworkDataSource.getShowCredits(tmdbShowId).getOrNull()
+                }
+                ShowCastResult(
+                    showId = tmdbShowId,
+                    traktPeople = traktDeferred.await(),
+                    tmdbCredits = tmdbCreditsDeferred.await(),
+                )
+            } else {
+                ShowCastResult(
+                    showId = tmdbShowId,
+                    traktPeople = null,
+                    tmdbCredits = tmdbNetworkDataSource.getShowCredits(tmdbShowId).getOrNull(),
+                )
             }
-            val tmdbCreditsDeferred = async {
-                tmdbNetworkDataSource.getShowCredits(tmdbShowId).getOrNull()
-            }
-
-            val result = ShowCastResult(
-                showId = tmdbShowId,
-                traktPeople = traktDeferred.await(),
-                tmdbCredits = tmdbCreditsDeferred.await(),
-            )
 
             requestManagerRepository.upsert(
                 entityId = tmdbShowId,
@@ -73,29 +79,44 @@ public class ShowCastStore(
                 val internalShowId = showIdResolver.showIdForTmdbId(showId)
                     ?: return@databaseTransactionRunner
 
-                val tmdbCastMap = result.tmdbCredits?.cast
-                    ?.associateBy { it.id.toLong() }
-                    ?: emptyMap()
+                val traktPeople = result.traktPeople
+                if (traktPeople != null && traktPeople.cast.isNotEmpty()) {
+                    val tmdbCastMap = result.tmdbCredits?.cast
+                        ?.associateBy { it.id.toLong() }
+                        ?: emptyMap()
 
-                result.traktPeople.cast.forEach { castMember ->
-                    val person = castMember.person
-                    val tmdbId = person.ids.tmdb
+                    traktPeople.cast.forEach { castMember ->
+                        val person = castMember.person
+                        val tmdbId = person.ids.tmdb
 
-                    if (tmdbId != null) {
-                        val tmdbCast = tmdbCastMap[tmdbId]
-                        val formattedProfilePath = tmdbCast?.profilePath?.let {
-                            formatterUtil.formatTmdbPosterPath(it)
+                        if (tmdbId != null) {
+                            val tmdbCast = tmdbCastMap[tmdbId]
+                            castDao.upsert(
+                                Casts(
+                                    id = Id(tmdbId),
+                                    trakt_id = Id(person.ids.trakt),
+                                    show_id = internalShowId,
+                                    season_id = null,
+                                    name = person.name,
+                                    character_name = castMember.characters.firstOrNull() ?: "",
+                                    profile_path = tmdbCast?.profilePath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                                    popularity = tmdbCast?.popularity,
+                                ),
+                            )
                         }
+                    }
+                } else {
+                    result.tmdbCredits?.cast?.forEach { tmdbCast ->
                         castDao.upsert(
                             Casts(
-                                id = Id(tmdbId),
-                                trakt_id = Id(person.ids.trakt),
+                                id = Id(tmdbCast.id.toLong()),
+                                trakt_id = null,
                                 show_id = internalShowId,
                                 season_id = null,
-                                name = person.name,
-                                character_name = castMember.characters.firstOrNull() ?: "",
-                                profile_path = formattedProfilePath,
-                                popularity = tmdbCast?.popularity,
+                                name = tmdbCast.name,
+                                character_name = tmdbCast.character,
+                                profile_path = tmdbCast.profilePath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                                popularity = tmdbCast.popularity,
                             ),
                         )
                     }

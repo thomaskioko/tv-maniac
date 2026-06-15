@@ -6,7 +6,10 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowDetailsResponse
 import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
 
-public class FakeTmdbShowDetailsNetworkDataSource : TmdbShowDetailsNetworkDataSource {
+public class FakeTmdbShowDetailsNetworkDataSource(
+    private var recommendedShowsResponse: ApiResponse<TmdbShowResult> =
+        ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "FakeTmdbShowDetailsNetworkDataSource: getRecommendedShows not configured"),
+) : TmdbShowDetailsNetworkDataSource {
 
     private val showDetailsResponses = mutableMapOf<Long, ApiResponse<TmdbShowDetailsResponse>>()
     private var defaultDetailsResponse: ApiResponse<TmdbShowDetailsResponse> =
@@ -20,6 +23,10 @@ public class FakeTmdbShowDetailsNetworkDataSource : TmdbShowDetailsNetworkDataSo
         defaultDetailsResponse = response
     }
 
+    public fun setRecommendedShows(response: ApiResponse<TmdbShowResult>) {
+        recommendedShowsResponse = response
+    }
+
     override suspend fun getShowDetails(id: Long): ApiResponse<TmdbShowDetailsResponse> =
         showDetailsResponses[id] ?: defaultDetailsResponse
 
@@ -27,7 +34,7 @@ public class FakeTmdbShowDetailsNetworkDataSource : TmdbShowDetailsNetworkDataSo
         error("FakeTmdbShowDetailsNetworkDataSource: getSimilarShows not configured")
 
     override suspend fun getRecommendedShows(id: Long, page: Long): ApiResponse<TmdbShowResult> =
-        error("FakeTmdbShowDetailsNetworkDataSource: getRecommendedShows not configured")
+        recommendedShowsResponse
 
     override suspend fun getShowWatchProviders(id: Long): ApiResponse<WatchProvidersResult> =
         error("FakeTmdbShowDetailsNetworkDataSource: getShowWatchProviders not configured")

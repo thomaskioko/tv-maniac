@@ -1,0 +1,35 @@
+CREATE TABLE calendar_entry_new (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    show_id INTEGER NOT NULL,
+    trakt_id INTEGER,
+    season_number INTEGER NOT NULL,
+    episode_number INTEGER NOT NULL,
+    episode_title TEXT,
+    air_date INTEGER NOT NULL,
+    show_title TEXT NOT NULL,
+    show_poster_path TEXT,
+    network TEXT,
+    runtime INTEGER,
+    overview TEXT,
+    rating REAL,
+    votes INTEGER,
+    UNIQUE(show_id, season_number, episode_number)
+);
+
+INSERT INTO calendar_entry_new (
+    id, show_id, trakt_id, season_number, episode_number,
+    episode_title, air_date, show_title, show_poster_path,
+    network, runtime, overview, rating, votes
+)
+SELECT
+    id, show_id, CASE WHEN trakt_id = 0 THEN NULL ELSE trakt_id END,
+    season_number, episode_number,
+    episode_title, air_date, show_title, show_poster_path,
+    network, runtime, overview, rating, votes
+FROM calendar_entry;
+
+DROP TABLE calendar_entry;
+
+ALTER TABLE calendar_entry_new RENAME TO calendar_entry;
+
+CREATE INDEX IF NOT EXISTS idx_calendar_air_date ON calendar_entry(air_date);

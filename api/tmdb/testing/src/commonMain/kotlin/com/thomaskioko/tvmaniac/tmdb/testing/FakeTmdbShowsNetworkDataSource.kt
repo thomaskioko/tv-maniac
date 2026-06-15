@@ -8,10 +8,16 @@ import com.thomaskioko.tvmaniac.tmdb.api.model.TmdbShowResult
 
 public class FakeTmdbShowsNetworkDataSource(
     private var findShowByExternalIdResponse: ApiResponse<Long?> = ApiResponse.Success(null),
+    private var showCreditsResponse: ApiResponse<CreditsResponse> =
+        ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "FakeTmdbShowsNetworkDataSource: getShowCredits not configured"),
 ) : TmdbShowsNetworkDataSource {
 
     public fun setFindShowByExternalId(response: ApiResponse<Long?>) {
         findShowByExternalIdResponse = response
+    }
+
+    public fun setShowCredits(response: ApiResponse<CreditsResponse>) {
+        showCreditsResponse = response
     }
 
     override suspend fun getAiringToday(page: Long): ApiResponse<TmdbShowResult> =
@@ -61,7 +67,7 @@ public class FakeTmdbShowsNetworkDataSource(
         error("FakeTmdbShowsNetworkDataSource: getShowGenres not configured")
 
     override suspend fun getShowCredits(tmdbId: Long): ApiResponse<CreditsResponse> =
-        error("FakeTmdbShowsNetworkDataSource: getShowCredits not configured")
+        showCreditsResponse
 
     override suspend fun findShowByExternalId(
         externalId: String,

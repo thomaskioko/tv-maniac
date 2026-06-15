@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.data.recommendedshows.implementation
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrNull
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsDao
 import com.thomaskioko.tvmaniac.data.recommendedshows.api.RecommendedShowsParams
@@ -46,27 +46,37 @@ public class RecommendedShowsStore(
     fetcher = Fetcher.of { param: RecommendedShowsParams ->
         coroutineScope {
             val traktId = tvShowsDao.getTraktIdByTmdbId(param.showId)
-                ?: error("No trakt id for tmdb show ${param.showId}")
-            traktRemoteDataSource.getRelatedShows(
-                showId = traktId,
-                page = param.page.toInt(),
-            ).getOrThrow()
-                .mapNotNull { show ->
-                    val tmdbId = show.ids.tmdb ?: return@mapNotNull null
-                    async {
-                        val tmdbResult = runCatching {
-                            tmdbDataSource.getShowDetails(tmdbId)
+            if (traktId != null) {
+                traktRemoteDataSource.getRelatedShows(
+                    showId = traktId,
+                    page = param.page.toInt(),
+                ).getOrThrow()
+                    .mapNotNull { show ->
+                        val tmdbId = show.ids.tmdb ?: return@mapNotNull null
+                        async {
+                            val tmdbDetails = tmdbDataSource.getShowDetails(tmdbId).getOrNull()
+                            RecommendedShowResult(
+                                tmdbId = tmdbId,
+                                traktShow = show,
+                                tmdbDetails = tmdbDetails,
+                            )
                         }
+                    }
+                    .awaitAll()
+            } else {
+                tmdbDataSource.getRecommendedShows(
+                    id = param.showId,
+                    page = param.page,
+                ).getOrNull()
+                    ?.results
+                    ?.map { show ->
                         RecommendedShowResult(
-                            traktShow = show,
-                            tmdbId = tmdbId,
-                            tmdbDetails = tmdbResult.getOrNull()?.let {
-                                (it as? ApiResponse.Success)?.body
-                            },
+                            tmdbId = show.id.toLong(),
+                            tmdbShow = show,
                         )
                     }
-                }
-                .awaitAll()
+                    .orEmpty()
+            }
         }
     },
     sourceOfTruth = SourceOfTruth.of<RecommendedShowsParams, List<RecommendedShowResult>, List<RecommendedShows>>(
@@ -76,18 +86,17 @@ public class RecommendedShowsStore(
         },
         writer = { param: RecommendedShowsParams, response ->
             withContext(dispatchers.databaseWrite) {
-                val parentTraktId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
+                val parentId = tvShowsDao.getTraktIdByTmdbId(param.showId) ?: param.showId
                 databaseTransactionRunner {
-                    response.forEachIndexed { _, result ->
-                        val showId = result.traktShow.ids.trakt
+                    response.forEach { result ->
                         val tmdbId = result.tmdbId
 
-                        tvShowsDao.upsertMerging(result.toTvshow(showId, tmdbId, formatterUtil, dateTimeProvider))
+                        tvShowsDao.upsertMerging(result.toShowToPersist(formatterUtil, dateTimeProvider))
 
                         recommendedShowsDao.upsert(
                             showId = tmdbId,
                             tmdbId = tmdbId,
-                            traktId = parentTraktId,
+                            traktId = parentId,
                         )
                     }
                 }
@@ -120,29 +129,28 @@ public class RecommendedShowsStore(
     },
 ).build()
 
-private fun RecommendedShowResult.toTvshow(
-    showId: Long,
-    tmdbId: Long,
+private fun RecommendedShowResult.toShowToPersist(
     formatterUtil: FormatterUtil,
     dateTimeProvider: DateTimeProvider,
 ): ShowToPersist {
-    val tmdb = tmdbDetails
+    val tmdbDetails = tmdbDetails
+    val tmdbShow = tmdbShow
     val trakt = traktShow
-    val dateString = tmdb?.firstAirDate ?: trakt.firstAirDate
+    val dateString = tmdbDetails?.firstAirDate ?: tmdbShow?.firstAirDate ?: trakt?.firstAirDate
     return ShowToPersist(
-        showId = Id(showId),
+        showId = trakt?.ids?.trakt?.let { Id(it) },
         tmdbId = Id(tmdbId),
-        name = tmdb?.name ?: trakt.title,
-        overview = tmdb?.overview ?: trakt.overview ?: "",
-        language = tmdb?.originalLanguage ?: trakt.language,
+        name = tmdbDetails?.name ?: tmdbShow?.name ?: trakt?.title ?: "",
+        overview = tmdbDetails?.overview ?: tmdbShow?.overview ?: trakt?.overview ?: "",
+        language = tmdbDetails?.originalLanguage ?: tmdbShow?.originalLanguage ?: trakt?.language,
         year = dateString?.let { dateTimeProvider.extractYear(it) },
-        ratings = tmdb?.voteAverage ?: trakt.rating ?: 0.0,
-        voteCount = tmdb?.voteCount?.toLong() ?: trakt.votes ?: 0L,
-        posterPath = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-        backdropPath = tmdb?.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-        status = tmdb?.status ?: trakt.status,
-        genres = trakt.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-        episodeNumbers = trakt.airedEpisodes?.toString(),
+        ratings = tmdbDetails?.voteAverage ?: tmdbShow?.voteAverage ?: trakt?.rating ?: 0.0,
+        voteCount = tmdbDetails?.voteCount?.toLong() ?: tmdbShow?.voteCount?.toLong() ?: trakt?.votes ?: 0L,
+        posterPath = (tmdbDetails?.posterPath ?: tmdbShow?.posterPath)?.let { formatterUtil.formatTmdbPosterPath(it) },
+        backdropPath = (tmdbDetails?.backdropPath ?: tmdbShow?.backdropPath)?.let { formatterUtil.formatTmdbPosterPath(it) },
+        status = tmdbDetails?.status ?: trakt?.status,
+        genres = trakt?.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+        episodeNumbers = trakt?.airedEpisodes?.toString(),
         seasonNumbers = null,
     )
 }

@@ -182,7 +182,7 @@ public class DefaultEpisodeRepository(
                 }
         }
 
-    override suspend fun syncUpcomingEpisodesFromTrakt(
+    override suspend fun syncUpcomingEpisodes(
         startDate: String,
         days: Int,
         forceRefresh: Boolean,

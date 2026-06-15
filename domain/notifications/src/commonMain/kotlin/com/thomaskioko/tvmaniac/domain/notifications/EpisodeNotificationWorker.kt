@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.hours
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
 public class EpisodeNotificationWorker(
-    private val syncTraktCalendarInteractor: Lazy<SyncCalendarInteractor>,
+    private val syncCalendarInteractor: Lazy<SyncCalendarInteractor>,
     private val refreshInteractor: Lazy<RefreshUpcomingSeasonDetailsInteractor>,
     private val scheduleInteractor: Lazy<ScheduleEpisodeNotificationsInteractor>,
     private val syncObserver: SyncObserver,
@@ -37,7 +37,7 @@ public class EpisodeNotificationWorker(
         }.onFailure { logger.error(TAG, "Season details refresh failed: ${it.message}") }
 
         runCatching {
-            syncTraktCalendarInteractor.value.executeSync(
+            syncCalendarInteractor.value.executeSync(
                 SyncCalendarInteractor.Params(forceRefresh = true),
             )
         }.onFailure { logger.error(TAG, "Calendar sync failed: ${it.message}") }

@@ -13,7 +13,9 @@ import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CALENDAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.withContext
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
@@ -28,6 +30,7 @@ public data class CalendarParams(
 )
 
 @Inject
+@SingleIn(AppScope::class)
 public class CalendarStore(
     private val activeSource: () -> CalendarRemoteDataSource?,
     private val calendarDao: CalendarDao,
@@ -72,12 +75,13 @@ public class CalendarStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { cachedData ->
-        withContext(dispatchers.io) {
-            cachedData.isNotEmpty() && requestManagerRepository.isRequestValid(
-                requestType = CALENDAR_SHOWS.name,
-                threshold = CALENDAR_SHOWS.duration,
-            )
-        }
+    Validator.by { cachedEntries ->
+        cachedEntries.isNotEmpty() &&
+            withContext(dispatchers.io) {
+                requestManagerRepository.isRequestValid(
+                    requestType = CALENDAR_SHOWS.name,
+                    threshold = CALENDAR_SHOWS.duration,
+                )
+            }
     },
 ).build()

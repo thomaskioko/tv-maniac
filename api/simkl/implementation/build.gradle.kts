@@ -27,7 +27,6 @@ kotlin {
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
                 api(projects.data.calendar.api)
-                api(projects.data.followedshows.api)
                 api(projects.data.library.api)
                 api(projects.data.startWatching.api)
                 api(projects.data.oauth.api)
@@ -51,7 +50,6 @@ kotlin {
                 implementation(projects.api.simkl.testing)
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.calendar.api)
-                implementation(projects.data.episode.api)
                 implementation(projects.data.followedshows.testing)
             }
         }

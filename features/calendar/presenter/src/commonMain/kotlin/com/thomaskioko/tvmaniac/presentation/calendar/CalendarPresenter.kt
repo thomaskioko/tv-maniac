@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator.Companion.DAYS_IN_WEEK
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.calendar.ObserveFollowedShowIdsInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -42,6 +43,7 @@ public class CalendarPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
+    private val observeFollowedShowIdsInteractor: ObserveFollowedShowIdsInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val accountManager: AccountManager,
     private val calendarWeekCalculator: CalendarWeekCalculator,
@@ -109,31 +111,29 @@ public class CalendarPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            accountManager.isConnected
-                .distinctUntilChanged()
+            combine(
+                accountManager.isConnected,
+                observeFollowedShowIdsInteractor.flow
+                    .map { it.isNotEmpty() }
+                    .distinctUntilChanged(),
+            ) { isLoggedIn, _ -> isLoggedIn }
                 .collect { isLoggedIn ->
                     if (isLoggedIn) {
                         fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
                     }
                 }
         }
+        observeFollowedShowIdsInteractor(Unit)
     }
 
     private fun observeCalendar() {
-        coroutineScope.launch {
-            _state
-                .map { it.weekOffset }
-                .distinctUntilChanged()
-                .collect { weekOffset ->
-                    val (startEpoch, endEpoch) = calendarWeekCalculator.getWeekEpochRange(weekOffset)
-                    observeCalendarInteractor(
-                        ObserveCalendarInteractor.Params(
-                            startDate = startEpoch,
-                            endDate = endEpoch,
-                        ),
-                    )
-                }
-        }
+        val (startEpoch, endEpoch) = calendarWeekCalculator.getWeekEpochRange(_state.value.weekOffset)
+        observeCalendarInteractor(
+            ObserveCalendarInteractor.Params(
+                startDate = startEpoch,
+                endDate = endEpoch,
+            ),
+        )
     }
 
     private fun fetchCalendar(startDate: String, forceRefresh: Boolean = false) {
@@ -157,12 +157,14 @@ public class CalendarPresenter(
     private fun navigateToPreviousWeek() {
         if (_state.value.weekOffset > 0) {
             _state.update { it.copy(weekOffset = it.weekOffset - 1) }
+            observeCalendar()
             fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
         }
     }
 
     private fun navigateToNextWeek() {
         _state.update { it.copy(weekOffset = it.weekOffset + 1) }
+        observeCalendar()
         fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
     }
 

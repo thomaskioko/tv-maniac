@@ -94,7 +94,7 @@ private class CountingCalendarEpisodeRepository : EpisodeRepository {
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {}
     override fun observeUnwatchedCountInPreviousSeasons(showId: Long, seasonNumber: Long): Flow<Long> = flowOf(0L)
     override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> = emptyList()
-    override suspend fun syncUpcomingEpisodesFromTrakt(startDate: String, days: Int, forceRefresh: Boolean) {
+    override suspend fun syncUpcomingEpisodes(startDate: String, days: Int, forceRefresh: Boolean) {
         syncUpcomingCount++
         lastForceRefresh = forceRefresh
         lastDays = days

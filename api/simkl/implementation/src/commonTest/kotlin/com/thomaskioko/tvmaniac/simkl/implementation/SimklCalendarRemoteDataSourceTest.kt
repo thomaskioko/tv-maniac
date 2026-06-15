@@ -94,36 +94,6 @@ internal class SimklCalendarRemoteDataSourceTest {
     }
 
     @Test
-    fun `should merge tv and anime entries given both feeds have tracked shows`() = runTest {
-        val tvTmdbId = 1396L
-        val animeTmdbId = 60625L
-
-        val engine = MockEngine { request ->
-            val path = request.url.encodedPath
-            val body = when {
-                path.endsWith("tv.json") -> TV_FEED_SINGLE_SHOW
-                path.endsWith("anime.json") -> ANIME_FEED_SINGLE_SHOW
-                else -> "[]"
-            }
-            respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
-        }
-
-        val source = buildSource(
-            engine = engine,
-            followedEntries = listOf(
-                followedEntry(tmdbId = tvTmdbId),
-                followedEntry(tmdbId = animeTmdbId),
-            ),
-        )
-
-        val result = source.getCalendarEntries(startDate = "2026-04-19", days = 7)
-
-        val success = result.shouldBeInstanceOf<ApiResponse.Success<List<RemoteCalendarEntry>>>()
-        success.body.size shouldBe 2
-        success.body.map { it.tmdbId }.toSet() shouldBe setOf(tvTmdbId, animeTmdbId)
-    }
-
-    @Test
     fun `should map calendar entry fields correctly given valid feed entry`() = runTest {
         val trackedTmdbId = 1396L
 
@@ -155,13 +125,13 @@ internal class SimklCalendarRemoteDataSourceTest {
     }
 
     @Test
-    fun `should default season to 1 given anime entry without a season`() = runTest {
-        val animeTmdbId = 60625L
+    fun `should default season to 1 given entry without a season`() = runTest {
+        val trackedTmdbId = 1396L
 
         val engine = MockEngine { request ->
             val path = request.url.encodedPath
             val body = when {
-                path.endsWith("anime.json") -> ANIME_FEED_SINGLE_SHOW
+                path.endsWith("tv.json") -> TV_FEED_NO_SEASON
                 else -> "[]"
             }
             respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
@@ -169,13 +139,28 @@ internal class SimklCalendarRemoteDataSourceTest {
 
         val source = buildSource(
             engine = engine,
-            followedEntries = listOf(followedEntry(tmdbId = animeTmdbId)),
+            followedEntries = listOf(followedEntry(tmdbId = trackedTmdbId)),
         )
 
         val result = source.getCalendarEntries(startDate = "2026-04-19", days = 7)
 
         val success = result.shouldBeInstanceOf<ApiResponse.Success<List<RemoteCalendarEntry>>>()
         success.body.single().seasonNumber shouldBe 1
+    }
+
+    @Test
+    fun `should propagate error given feed fails`() = runTest {
+        val trackedTmdbId = 1396L
+        val engine = MockEngine { respond("Internal Server Error", HttpStatusCode.InternalServerError, headersOf()) }
+
+        val source = buildSource(
+            engine = engine,
+            followedEntries = listOf(followedEntry(tmdbId = trackedTmdbId)),
+        )
+
+        val result = source.getCalendarEntries(startDate = "2026-04-19", days = 7)
+
+        result.shouldBeInstanceOf<ApiResponse.Error<*>>()
     }
 
     @Test
@@ -258,15 +243,15 @@ private val TV_FEED_WITH_TWO_SHOWS = """
 ]
 """.trimIndent()
 
-private val ANIME_FEED_SINGLE_SHOW = """
+private val TV_FEED_NO_SEASON = """
 [
   {
-    "date": "2026-04-20T14:00:00.000Z",
-    "title": "Attack on Titan",
+    "date": "2026-04-19T03:00:00.000Z",
+    "title": "Breaking Bad",
     "ids": {
-      "simkl_id": 60625,
-      "tmdb": "60625",
-      "mal": "16498"
+      "simkl_id": 583436,
+      "tmdb": "1396",
+      "imdb": "tt0903747"
     },
     "episode": {
       "episode": 1

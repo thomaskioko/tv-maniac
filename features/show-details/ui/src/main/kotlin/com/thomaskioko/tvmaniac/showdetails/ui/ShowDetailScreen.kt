@@ -215,6 +215,7 @@ internal fun LazyColumnContent(
         item(key = "header") {
             HeaderContent(
                 show = detailsContent.showDetails,
+                canAddToList = detailsContent.canAddToList,
                 onUpdateFavoriteClicked = { onAction(FollowShowClicked(it)) },
                 onAddToListClicked = { onAction(OpenShowList) },
             )
@@ -324,6 +325,7 @@ internal fun LazyColumnContent(
 @Composable
 private fun HeaderContent(
     show: ShowDetailsModel?,
+    canAddToList: Boolean,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onAddToListClicked: () -> Unit,
 ) {
@@ -347,6 +349,7 @@ private fun HeaderContent(
         if (show != null) {
             ShowBody(
                 show = show,
+                canAddToList = canAddToList,
                 onUpdateFavoriteClicked = onUpdateFavoriteClicked,
                 onAddToListClicked = onAddToListClicked,
             )
@@ -357,6 +360,7 @@ private fun HeaderContent(
 @Composable
 private fun ShowBody(
     show: ShowDetailsModel,
+    canAddToList: Boolean,
     onUpdateFavoriteClicked: (Boolean) -> Unit,
     onAddToListClicked: () -> Unit,
 ) {
@@ -409,6 +413,7 @@ private fun ShowBody(
 
             ShowDetailButtons(
                 isFollowed = show.isInLibrary,
+                canAddToList = canAddToList,
                 onTrackShowClicked = onUpdateFavoriteClicked,
                 onAddToList = onAddToListClicked,
             )
@@ -575,6 +580,7 @@ private fun GenreText(
 @Composable
 internal fun ShowDetailButtons(
     isFollowed: Boolean,
+    canAddToList: Boolean,
     onTrackShowClicked: (Boolean) -> Unit,
     onAddToList: () -> Unit,
     modifier: Modifier = Modifier,
@@ -607,6 +613,7 @@ internal fun ShowDetailButtons(
             imageVector = Icons.Outlined.AutoAwesomeMotion,
             containerColor = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelMedium,
+            enabled = canAddToList,
             onClick = onAddToList,
         )
     }

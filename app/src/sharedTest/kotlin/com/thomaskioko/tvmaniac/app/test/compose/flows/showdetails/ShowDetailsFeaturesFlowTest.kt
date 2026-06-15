@@ -40,12 +40,6 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
             .assertCastListDisplayed()
             .assertTrailersListDisplayed()
             .assertSimilarShowsListDisplayed()
-            // Verify login-required content inside the sheet for logged-out users
-            .clickAddToListButton()
-
-        showListRobot
-            .assertSheetDisplayed()
-            .assertLoginRequiredDisplayed()
     }
 
     @Test
@@ -69,5 +63,20 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         showListRobot
             .assertSheetDisplayed()
             .assertTraktListItemDisplayed(favoritesListTraktId)
+    }
+
+    @Test
+    fun givenSimklSession_whenShowDetailsOpened_thenAddToListButtonIsDisabled() = runAppFlowTest {
+        scenarios.flags.enableSimklLogin()
+        scenarios.discover.stubBrowseGraph()
+        scenarios.stubAuthenticatedSimklProfile()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .assertAddToListButtonDisabled()
     }
 }

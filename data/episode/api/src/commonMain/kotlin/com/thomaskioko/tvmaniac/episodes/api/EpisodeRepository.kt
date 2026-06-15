@@ -92,15 +92,7 @@ public interface EpisodeRepository {
      */
     public suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode>
 
-    /**
-     * Sync upcoming episodes from Trakt Calendar API.
-     * Updates the first_aired timestamp for episodes in the user's followed shows.
-     * Uses request tracking to avoid redundant API calls within the cache window.
-     * @param startDate Start date in YYYY-MM-DD format
-     * @param days Number of days to fetch
-     * @param forceRefresh If true, bypasses cache validation and always fetches from API
-     */
-    public suspend fun syncUpcomingEpisodesFromTrakt(
+    public suspend fun syncUpcomingEpisodes(
         startDate: String,
         days: Int,
         forceRefresh: Boolean = false,

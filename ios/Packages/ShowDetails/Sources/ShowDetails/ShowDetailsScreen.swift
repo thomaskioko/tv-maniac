@@ -37,6 +37,7 @@ public struct ShowDetailsScreen: View {
         public let seasonDetailsTitle: String
         public let showSeasonDetailsHeader: Bool
         public let upToDateLabel: String
+        public let canAddToList: Bool
 
         public init(
             title: String,
@@ -70,6 +71,7 @@ public struct ShowDetailsScreen: View {
             seasonDetailsTitle: String,
             showSeasonDetailsHeader: Bool,
             upToDateLabel: String,
+            canAddToList: Bool = true,
             updatingEpisodeIds: Set<Int64> = []
         ) {
             self.title = title
@@ -104,6 +106,7 @@ public struct ShowDetailsScreen: View {
             self.seasonDetailsTitle = seasonDetailsTitle
             self.showSeasonDetailsHeader = showSeasonDetailsHeader
             self.upToDateLabel = upToDateLabel
+            self.canAddToList = canAddToList
         }
     }
 
@@ -208,6 +211,7 @@ public struct ShowDetailsScreen: View {
                     episodesWatchedFormat: episodesWatchedFormat,
                     episodesLeftFormat: episodesLeftFormat,
                     upToDateLabel: state.upToDateLabel,
+                    canAddToList: state.canAddToList,
                     onAddToCustomList: onAddToCustomList,
                     onAddToLibrary: onAddToLibrary,
                     onSeasonClicked: onSeasonClicked,

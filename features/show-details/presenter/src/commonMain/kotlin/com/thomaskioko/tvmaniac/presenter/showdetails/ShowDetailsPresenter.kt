@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -20,7 +21,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
-import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowMetadataInteractor
@@ -73,13 +74,14 @@ public class ShowDetailsPresenter(
     private val similarShowsInteractor: SimilarShowsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
-    private val syncTraktCalendarInteractor: SyncTraktCalendarInteractor,
+    private val syncCalendarInteractor: SyncCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observableShowMetadataInteractor: ObservableShowMetadataInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val accountManager: AccountManager,
+    private val activeProviderFeatures: () -> ProviderFeatures,
     private val mapper: ShowDetailsMapper,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -141,6 +143,7 @@ public class ShowDetailsPresenter(
 
         observeShowDetails(forceReload = param.forceRefresh)
         observeAuthState()
+        updateListAvailability()
     }
 
     public fun dispatch(action: ShowDetailsAction) {
@@ -171,7 +174,7 @@ public class ShowDetailsPresenter(
                         followShowInteractor(FollowShowInteractor.Param(showId = showId))
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
-                        syncTraktCalendarInteractor(SyncTraktCalendarInteractor.Params(forceRefresh = true))
+                        syncCalendarInteractor(SyncCalendarInteractor.Params(forceRefresh = true))
                             .collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
 
                         scheduleEpisodeNotificationsInteractor(ScheduleEpisodeNotificationsInteractor.Params())
@@ -185,7 +188,9 @@ public class ShowDetailsPresenter(
             DetailBackClicked -> navigator.navigateBack()
             ReloadShowDetails -> refreshShowContent()
             is ShowDetailsMessageShown -> coroutineScope.launch { uiMessageManager.clearMessage(action.id) }
-            OpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showId)))
+            OpenShowList -> if (_state.value.canAddToList) {
+                navigator.navigateTo(ShowListRoute(ShowListParam(showId = showId)))
+            }
 
             is MarkEpisodeWatched -> launchEpisodeMark(action.episodeId) {
                 markEpisodeWatchedInteractor(
@@ -238,8 +243,16 @@ public class ShowDetailsPresenter(
                 .drop(1)
                 .distinctUntilChanged()
                 .filter { it }
-                .collect { refreshShowContent() }
+                .collect {
+                    updateListAvailability()
+                    refreshShowContent()
+                }
         }
+    }
+
+    private fun updateListAvailability() {
+        val canAddToList = accountManager.getActiveProvider() == null || activeProviderFeatures().supportsLists
+        _state.update { it.copy(canAddToList = canAddToList) }
     }
 
     private fun launchEpisodeMark(episodeId: Long, block: suspend () -> Unit) {

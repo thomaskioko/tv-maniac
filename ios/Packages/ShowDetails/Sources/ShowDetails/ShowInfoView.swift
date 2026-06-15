@@ -36,6 +36,7 @@ public struct ShowInfoView: View {
     private let episodesWatchedFormat: (_ watched: Int32, _ total: Int32) -> String
     private let episodesLeftFormat: (_ count: Int32) -> String
     private let upToDateLabel: String
+    private let canAddToList: Bool
     private let onAddToCustomList: () -> Void
     private let onAddToLibrary: () -> Void
     private let onSeasonClicked: (Int, SwiftSeason) -> Void
@@ -71,6 +72,7 @@ public struct ShowInfoView: View {
         episodesWatchedFormat: @escaping (_ watched: Int32, _ total: Int32) -> String,
         episodesLeftFormat: @escaping (_ count: Int32) -> String,
         upToDateLabel: String,
+        canAddToList: Bool = true,
         onAddToCustomList: @escaping () -> Void,
         onAddToLibrary: @escaping () -> Void,
         onSeasonClicked: @escaping (Int, SwiftSeason) -> Void,
@@ -105,6 +107,7 @@ public struct ShowInfoView: View {
         self.episodesWatchedFormat = episodesWatchedFormat
         self.episodesLeftFormat = episodesLeftFormat
         self.upToDateLabel = upToDateLabel
+        self.canAddToList = canAddToList
         self.onAddToCustomList = onAddToCustomList
         self.onAddToLibrary = onAddToLibrary
         self.onSeasonClicked = onSeasonClicked
@@ -128,6 +131,7 @@ public struct ShowInfoView: View {
             HStack(alignment: .center, spacing: theme.spacing.xSmall) {
                 watchlistButton
                 listButton
+                    .disabled(!canAddToList)
             }
 
             ContinueTrackingSection(
@@ -202,7 +206,100 @@ public struct ShowInfoView: View {
     }
 }
 
-#Preview {
+private let previewGenreList: [SwiftGenres] = [
+    .init(name: "Sci-Fi"),
+    .init(name: "Horror"),
+    .init(name: "Action"),
+]
+
+private let previewSeasonList: [SwiftSeason] = [
+    .init(
+        tvShowId: 23,
+        seasonId: 23,
+        seasonNumber: 1,
+        name: "Season 1",
+        watchedCount: 6,
+        totalCount: 6,
+        progressPercentage: 1.0
+    ),
+    .init(
+        tvShowId: 123,
+        seasonId: 123,
+        seasonNumber: 2,
+        name: "Season 2",
+        watchedCount: 1,
+        totalCount: 6,
+        progressPercentage: 0.17
+    ),
+]
+
+private let previewProviderList: [SwiftProviders] = [
+    .init(providerId: 123, logoUrl: "https://image.tmdb.org/t/p/w780/4KAy34EHvRM25Ih8wb82AuGU7zJ.png"),
+    .init(providerId: 1233, logoUrl: "https://image.tmdb.org/t/p/w780/alqLicR1ZMHMaZGP3xRQxn9sq7p.png"),
+    .init(providerId: 23, logoUrl: "https://image.tmdb.org/t/p/w780/wwemzKWzjKYJFfCeiB57q3r4Bcm.png"),
+]
+
+private let previewTrailerList: [SwiftTrailer] = [
+    .init(
+        showId: 123,
+        key: "XZ8daibM3AE",
+        name: "Series Trailer",
+        youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
+    ),
+    .init(
+        showId: 1234,
+        key: "XZ8daibM3AE",
+        name: "Series Trailer",
+        youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
+    ),
+]
+
+private let previewCastsList: [SwiftCast] = [
+    .init(
+        castId: 123,
+        name: "Rosario Dawson",
+        characterName: "Claire Temple",
+        profileUrl: "https://image.tmdb.org/t/p/w780/1mm7JGHIUX3GRRGXEV9QCzsI0ao.jpg"
+    ),
+    .init(
+        castId: 1234,
+        name: "Hailee Steinfeld",
+        characterName: "Hailee Steinfeld",
+        profileUrl: "https://image.tmdb.org/t/p/w780/6aBclBl8GMcxbxr6XcwSGg3IBea.jpg"
+    ),
+    .init(
+        castId: 1235,
+        name: "内田夕夜",
+        characterName: "Yuuya Uchida",
+        profileUrl: "https://image.tmdb.org/t/p/w780/4xLLQGEDWtmLWUapo0UnfvCdsXp.jpg"
+    ),
+]
+
+private let previewSimilarShows: [SwiftShow] = [
+    .init(
+        showId: 1234,
+        title: "Arcane",
+        posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
+        backdropUrl: nil,
+        inLibrary: false
+    ),
+    .init(
+        showId: 123,
+        title: "The Lord of the Rings: The Rings of Power",
+        posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
+        backdropUrl: nil,
+        inLibrary: false
+    ),
+    .init(
+        showId: 12346,
+        title: "Kaos",
+        posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
+        backdropUrl: nil,
+        inLibrary: false
+    ),
+]
+
+#Preview("Trakt — Add to List shown") {
     VStack {
         Spacer(minLength: 520)
 
@@ -212,102 +309,12 @@ public struct ShowInfoView: View {
             status: "Ended",
             watchedEpisodesCount: 7,
             totalEpisodesCount: 12,
-            genreList: [
-                .init(name: "Sci-Fi"),
-                .init(name: "Horror"),
-                .init(name: "Action"),
-            ],
-            seasonList: [
-                .init(
-                    tvShowId: 23,
-                    seasonId: 23,
-                    seasonNumber: 1,
-                    name: "Season 1",
-                    watchedCount: 6,
-                    totalCount: 6,
-                    progressPercentage: 1.0
-                ),
-                .init(
-                    tvShowId: 123,
-                    seasonId: 123,
-                    seasonNumber: 2,
-                    name: "Season 2",
-                    watchedCount: 1,
-                    totalCount: 6,
-                    progressPercentage: 0.17
-                ),
-            ],
-            providerList: [
-                .init(
-                    providerId: 123,
-                    logoUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/4KAy34EHvRM25Ih8wb82AuGU7zJ.png"
-                ),
-                .init(
-                    providerId: 1233,
-                    logoUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/alqLicR1ZMHMaZGP3xRQxn9sq7p.png"
-                ),
-                .init(
-                    providerId: 23,
-                    logoUrl: "https://image.tmdb.org/t/p/w780/https://image.tmdb.org/t/p/w780/wwemzKWzjKYJFfCeiB57q3r4Bcm.png"
-                ),
-            ],
-            trailerList: [
-                .init(
-                    showId: 123,
-                    key: "XZ8daibM3AE",
-                    name: "Series Trailer",
-                    youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
-                ),
-                .init(
-                    showId: 1234,
-                    key: "XZ8daibM3AE",
-                    name: "Series Trailer",
-                    youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
-                ),
-            ],
-            castsList: [
-                .init(
-                    castId: 123,
-                    name: "Rosario Dawson",
-                    characterName: "Claire Temple",
-                    profileUrl: "https://image.tmdb.org/t/p/w780/1mm7JGHIUX3GRRGXEV9QCzsI0ao.jpg"
-                ),
-                .init(
-                    castId: 1234,
-                    name: "Hailee Steinfeld",
-                    characterName: "Hailee Steinfeld",
-                    profileUrl: "https://image.tmdb.org/t/p/w780/6aBclBl8GMcxbxr6XcwSGg3IBea.jpg"
-                ),
-                .init(
-                    castId: 1235,
-                    name: "内田夕夜",
-                    characterName: "Yuuya Uchida",
-                    profileUrl: "https://image.tmdb.org/t/p/w780/4xLLQGEDWtmLWUapo0UnfvCdsXp.jpg"
-                ),
-            ],
-            similarShows: [
-                .init(
-                    showId: 1234,
-                    title: "Arcane",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
-                    backdropUrl: nil,
-                    inLibrary: false
-                ),
-                .init(
-                    showId: 123,
-                    title: "The Lord of the Rings: The Rings of Power",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
-                    backdropUrl: nil,
-                    inLibrary: false
-                ),
-                .init(
-                    showId: 12346,
-                    title: "Kaos",
-                    posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
-                    backdropUrl: nil,
-                    inLibrary: false
-                ),
-            ],
+            genreList: previewGenreList,
+            seasonList: previewSeasonList,
+            providerList: previewProviderList,
+            trailerList: previewTrailerList,
+            castsList: previewCastsList,
+            similarShows: previewSimilarShows,
             continueTrackingTitle: "Continue tracking",
             dayLabelFormat: { count in count == 1 ? "day" : "days" },
             tbdLabel: "TBD",
@@ -322,6 +329,47 @@ public struct ShowInfoView: View {
                 count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
             },
             upToDateLabel: "You're up-to-date",
+            canAddToList: true,
+            onAddToCustomList: {},
+            onAddToLibrary: {},
+            onSeasonClicked: { _, _ in },
+            onShowClicked: { _ in }
+        )
+    }
+    .appPreview(LightTheme())
+}
+
+#Preview("Simkl — Add to List hidden") {
+    VStack {
+        Spacer(minLength: 520)
+
+        ShowInfoView(
+            isFollowed: true,
+            openTrailersInYoutube: false,
+            status: "Ended",
+            watchedEpisodesCount: 7,
+            totalEpisodesCount: 12,
+            genreList: previewGenreList,
+            seasonList: previewSeasonList,
+            providerList: previewProviderList,
+            trailerList: previewTrailerList,
+            castsList: previewCastsList,
+            similarShows: previewSimilarShows,
+            continueTrackingTitle: "Continue tracking",
+            dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
+            trackLabel: "Track",
+            stopTrackingLabel: "Stop Tracking",
+            addToListLabel: "Add To List",
+            similarShowsTitle: "Similar Shows",
+            seasonDetailsTitle: "Season Details",
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
+            episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
+            episodesLeftFormat: { count in
+                count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
+            },
+            upToDateLabel: "You're up-to-date",
+            canAddToList: false,
             onAddToCustomList: {},
             onAddToLibrary: {},
             onSeasonClicked: { _, _ in },
