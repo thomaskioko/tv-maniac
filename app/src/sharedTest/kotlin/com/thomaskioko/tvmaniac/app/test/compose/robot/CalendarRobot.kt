@@ -35,6 +35,7 @@ internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot
 
     fun assertDateHeaderDisplayed(text: String) = apply {
         val tag = CalendarTestTags.dateHeader(text)
+        awaitTagOnce(tag, timeoutMillis = 15_000)
         scrollTo(tag)
         assertDisplayed(tag)
         assertTextEquals(tag, text)
