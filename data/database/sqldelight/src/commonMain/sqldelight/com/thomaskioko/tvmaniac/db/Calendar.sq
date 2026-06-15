@@ -5,7 +5,7 @@ import kotlin.String;
 CREATE TABLE IF NOT EXISTS calendar_entry (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     show_id INTEGER AS Id<ShowId> NOT NULL,
-    trakt_id INTEGER NOT NULL,
+    trakt_id INTEGER,
     season_number INTEGER NOT NULL,
     episode_number INTEGER NOT NULL,
     episode_title TEXT,
