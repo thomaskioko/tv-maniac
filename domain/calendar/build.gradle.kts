@@ -15,6 +15,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.util.api)
                 api(projects.data.calendar.api)
+                api(projects.data.followedshows.api)
             }
         }
 

@@ -178,8 +178,8 @@ internal class ObserveCalendarInteractorTest {
 
         interactor.flow.test {
             val episode = awaitItem()[0].episodes[0]
-            episode.showId shouldBe 1
-            episode.episodeId shouldBe 10
+            episode.showId shouldBe 1L
+            episode.episodeId shouldBe 10L
             episode.showTitle shouldBe "Breaking Bad"
             episode.posterUrl shouldBe "/poster.jpg"
             episode.network shouldBe "AMC"
@@ -243,7 +243,7 @@ internal class ObserveCalendarInteractorTest {
 
         interactor.flow.test {
             val episode = awaitItem()[0].episodes[0]
-            episode.episodeId shouldBe 10
+            episode.episodeId shouldBe 10L
             episode.episodeInfo shouldBe "S01E01 · First"
             episode.additionalEpisodesCount shouldBe 1
         }
