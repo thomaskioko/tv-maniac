@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsContent
+import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsContentSimkl
 import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsContentWithError
 import org.junit.Rule
 import org.junit.Test
@@ -45,6 +46,20 @@ class ShowDetailsScreenScreenshotTest {
             TvManiacBackground {
                 ShowDetailsScreen(
                     state = showDetailsContentWithError,
+                    title = "",
+                    listState = LazyListState(),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsSimklProviderState() {
+        composeTestRule.captureMultiDevice("ShowDetailsSimklProviderState") {
+            TvManiacBackground {
+                ShowDetailsScreen(
+                    state = showDetailsContentSimkl,
                     title = "",
                     listState = LazyListState(),
                     onAction = {},
