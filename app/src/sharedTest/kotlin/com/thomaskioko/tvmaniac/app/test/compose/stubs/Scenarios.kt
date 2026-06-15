@@ -217,6 +217,10 @@ internal class Scenarios(
         fun stubActivities() {
             mockHandler.stubEndpoint(Endpoints.Simkl.SyncActivities)
         }
+
+        fun stubCalendarFeed() {
+            mockHandler.stubEndpoint(Endpoints.Simkl.CalendarTvFeed)
+        }
     }
 
     inner class Discover {
