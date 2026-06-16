@@ -86,6 +86,23 @@ internal class UpNextPresenterTest {
     }
 
     @Test
+    fun `should show loading until content is available`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            upNextRepository.setNextEpisodesForWatchlist(
+                listOf(createTestNextEpisode(showId = 1, showName = "Show 1")),
+            )
+
+            val loaded = awaitItem()
+            loaded.isEmpty shouldBe false
+            loaded.showLoading shouldBe false
+        }
+    }
+
+    @Test
     fun `should display episodes given episodes are available`() = runTest {
         val episodes = listOf(
             createTestNextEpisode(showId = 1, showName = "Show 1"),
