@@ -279,10 +279,14 @@ SELECT
     s.episode_count AS total_count
 FROM season s
 LEFT JOIN (
-    SELECT season_number, COUNT(*) AS cnt
-    FROM watched_episodes
-    WHERE show_id = :showId AND pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
-    GROUP BY season_number
-) watched ON watched.season_number = s.season_number
+    SELECT
+        COALESCE(ep_season.season_number, we.season_number) AS effective_season_number,
+        COUNT(*) AS cnt
+    FROM watched_episodes we
+    LEFT JOIN episode ep ON ep.id = we.episode_id
+    LEFT JOIN season ep_season ON ep_season.id = ep.season_id
+    WHERE we.show_id = :showId AND we.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY COALESCE(ep_season.season_number, we.season_number)
+) watched ON watched.effective_season_number = s.season_number
 WHERE s.show_id = :showId
 ORDER BY s.season_number;
