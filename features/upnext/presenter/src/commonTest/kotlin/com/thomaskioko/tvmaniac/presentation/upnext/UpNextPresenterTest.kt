@@ -29,6 +29,8 @@ import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerReposit
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -267,6 +269,22 @@ internal class UpNextPresenterTest {
                     seasonId = 9990L,
                     seasonNumber = 1L,
                 ),
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should navigate to show details given OpenShow action is dispatched`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            presenter.dispatch(OpenShow(showId = 999L))
+
+            navigator.lastNavigatedRoute shouldBe ShowDetailsRoute(
+                ShowDetailsParam(showId = 999L),
             )
             cancelAndIgnoreRemainingEvents()
         }
