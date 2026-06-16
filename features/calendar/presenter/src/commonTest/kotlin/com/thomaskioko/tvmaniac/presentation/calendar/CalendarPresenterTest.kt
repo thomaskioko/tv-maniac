@@ -13,9 +13,7 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarEpisodeFormatter
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
-import com.thomaskioko.tvmaniac.domain.calendar.ObserveFollowedShowIdsInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
-import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
@@ -41,7 +39,6 @@ internal class CalendarPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
     private val calendarRepository = FakeCalendarRepository()
-    private val followedShowsDao = FakeFollowedShowsDao()
     private val accountManager = FakeAccountManager()
     private val dateTimeProvider = FakeDateTimeProvider()
     private val formatterUtil = FakeFormatterUtil()
@@ -417,10 +414,6 @@ internal class CalendarPresenterTest {
             dispatchers = dispatchers,
         )
 
-        val observeFollowedShowIdsInteractor = ObserveFollowedShowIdsInteractor(
-            followedShowsDao = followedShowsDao,
-        )
-
         val calendarStateMapper = CalendarStateMapper(
             localizer = com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer(),
         )
@@ -429,7 +422,6 @@ internal class CalendarPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             navigator = navigator,
             observeCalendarInteractor = observeCalendarInteractor,
-            observeFollowedShowIdsInteractor = observeFollowedShowIdsInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
             accountManager = accountManager,
             calendarWeekCalculator = calendarWeekCalculator,

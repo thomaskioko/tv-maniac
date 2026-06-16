@@ -14,7 +14,6 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator.Companion.DAYS_IN_WEEK
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
-import com.thomaskioko.tvmaniac.domain.calendar.ObserveFollowedShowIdsInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,7 +41,6 @@ public class CalendarPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
-    private val observeFollowedShowIdsInteractor: ObserveFollowedShowIdsInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val accountManager: AccountManager,
     private val calendarWeekCalculator: CalendarWeekCalculator,
@@ -111,19 +108,14 @@ public class CalendarPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            combine(
-                accountManager.isConnected,
-                observeFollowedShowIdsInteractor.flow
-                    .map { it.isNotEmpty() }
-                    .distinctUntilChanged(),
-            ) { isLoggedIn, _ -> isLoggedIn }
+            accountManager.isConnected
+                .distinctUntilChanged()
                 .collect { isLoggedIn ->
                     if (isLoggedIn) {
                         fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
                     }
                 }
         }
-        observeFollowedShowIdsInteractor(Unit)
     }
 
     private fun observeCalendar() {
