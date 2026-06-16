@@ -13,7 +13,6 @@ scaffold {
     optIn(
         "androidx.compose.foundation.ExperimentalFoundationApi",
         "androidx.compose.material3.ExperimentalMaterial3Api",
-        "dev.chrisbanes.snapper.ExperimentalSnapperApi",
     )
 }
 
@@ -34,7 +33,6 @@ dependencies {
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.material3)
     implementation(libs.coil.compose)
-    implementation(libs.snapper)
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
