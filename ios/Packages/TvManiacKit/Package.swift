@@ -20,7 +20,7 @@ let package = Package(
         .package(name: "Models", path: "../Models"),
         .package(name: "Components", path: "../Components"),
         .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.14.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.15.0"),
     ],
     targets: [
         .target(
