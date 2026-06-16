@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -111,7 +113,6 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsMode
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.SeasonImagesModel
 import com.thomaskioko.tvmaniac.seasondetails.ui.components.CollapsableContent
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 
@@ -295,11 +296,9 @@ internal fun ImageGalleryContent(
     imageList: ImmutableList<SeasonImagesModel>,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         verticalItemSpacing = 4.dp,
-        flingBehavior = rememberSnapperFlingBehavior(listState),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier.fillMaxSize(),
     ) {
@@ -496,7 +495,7 @@ private fun CastContent(
             LazyRow(
                 modifier = Modifier,
                 state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
             ) {
                 itemsIndexed(castList) { index, cast ->
                     CastCard(

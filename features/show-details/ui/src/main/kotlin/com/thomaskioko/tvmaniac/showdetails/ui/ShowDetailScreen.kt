@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.showdetails.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -114,7 +116,6 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.showdetails.ui.components.ContinueTrackingSection
 import com.thomaskioko.tvmaniac.showdetails.ui.components.WatchProgressSection
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
 
@@ -639,7 +640,7 @@ internal fun WatchProvider(
         LazyRow(
             modifier = modifier,
             state = lazyListState,
-            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
@@ -688,7 +689,7 @@ private fun CastContent(
             LazyRow(
                 modifier = Modifier,
                 state = lazyListState,
-                flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -726,7 +727,7 @@ private fun TrailersContent(
 
         LazyRow(
             state = lazyListState,
-            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -831,7 +832,7 @@ private fun HorizontalRowContent(
         LazyRow(
             modifier = modifier,
             state = lazyListState,
-            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
