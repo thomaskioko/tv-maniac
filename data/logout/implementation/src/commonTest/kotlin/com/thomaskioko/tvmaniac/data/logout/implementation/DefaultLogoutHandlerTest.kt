@@ -107,6 +107,13 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should empty calendar_entry given clear called`() = runTest(testDispatcher) {
+        cleaner.clear()
+
+        database.calendarQueries.hasEntriesInRange(0L, Long.MAX_VALUE).executeAsOne() shouldBe false
+    }
+
+    @Test
     fun `should preserve tvshow catalog rows given clear called`() = runTest(testDispatcher) {
         cleaner.clear()
 
@@ -192,6 +199,22 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             status = WatchStatus.WATCHING,
             lastWatchedAt = now,
             lastSyncedAt = now,
+        )
+
+        database.calendarQueries.upsert(
+            show_id = showIdForBreakingBad,
+            trakt_id = null,
+            season_number = 1L,
+            episode_number = 1L,
+            episode_title = "Pilot",
+            air_date = now,
+            show_title = "Breaking Bad",
+            show_poster_path = null,
+            network = null,
+            runtime = null,
+            overview = null,
+            rating = null,
+            votes = null,
         )
     }
 

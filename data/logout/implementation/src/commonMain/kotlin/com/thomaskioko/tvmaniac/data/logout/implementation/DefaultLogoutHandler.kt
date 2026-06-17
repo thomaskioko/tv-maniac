@@ -36,6 +36,7 @@ public class DefaultLogoutHandler(
             database.traktListShowsQueries.deleteAll()
             database.traktListsQueries.deleteAll()
             database.showWatchStatusQueries.deleteAll()
+            database.calendarQueries.deleteAll()
         }
     }
 }
