@@ -113,7 +113,7 @@ jobs:
 
   build-ios:
     needs: prepare
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 60
     env:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
