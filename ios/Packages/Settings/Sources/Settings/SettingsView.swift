@@ -30,7 +30,6 @@ public struct SettingsView: View {
         SettingsScreen<DeviceAppTheme>.State(
             isLoading: uiState.isLoading,
             rootTitle: String(\.label_settings_title),
-            versionFooter: uiState.labels.version,
             currentPage: uiState.currentPage.toRoute(),
             rootSections: rootSections,
             themeItem: themeItem,

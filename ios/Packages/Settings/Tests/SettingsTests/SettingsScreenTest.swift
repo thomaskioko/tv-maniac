@@ -293,7 +293,6 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
             rootTitle: "Settings",
-            versionFooter: "Version 1.0.0",
             currentPage: page,
             rootSections: rootSections(authenticated: authenticated),
             themeItem: defaultThemeItem,
