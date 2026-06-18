@@ -62,4 +62,35 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .clickLogoutDismiss()
             .assertLogoutDialogDoesNotExist()
     }
+
+    @Test
+    fun givenAuthenticatedUser_whenLogoutConfirmed_thenSignsOut() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.signInAndDismissRationale()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertUserCardDisplayed("integration-test-user")
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openTraktPage()
+            .scrollToTraktAccountRow()
+            .clickTraktAccountRow()
+            .assertLogoutDialogDisplayed()
+            .clickLogoutConfirm()
+            .clickBackButton()
+            .clickBackButton()
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+    }
 }
