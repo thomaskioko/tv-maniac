@@ -106,12 +106,14 @@ public class ContinueWatchingPresenter(
         uiMessageManager.message,
         queryFlow,
         syncObserver.isSyncing,
-    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing ->
+        watchlistLoadingState.observable,
+    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, isLoading ->
         val sectionedItems = mapper.toSectionedItems(watchlistSections, sortOption)
         val sectionedEpisodes = mapper.toSectionedEpisodes(upNextSections)
         currentState.copy(
             query = query,
             isGridMode = isGridMode,
+            isLoading = isLoading,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,
             labels = mapper.resolveLabels(query),

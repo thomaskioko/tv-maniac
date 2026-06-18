@@ -29,6 +29,8 @@ import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerReposit
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -82,6 +84,23 @@ internal class UpNextPresenterTest {
             initialState.sortOption shouldBe UpNextSortOption.LAST_WATCHED
             initialState.episodes shouldHaveSize 0
             initialState.isEmpty shouldBe true
+        }
+    }
+
+    @Test
+    fun `should show loading until content is available`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            upNextRepository.setNextEpisodesForWatchlist(
+                listOf(createTestNextEpisode(showId = 1, showName = "Show 1")),
+            )
+
+            val loaded = awaitItem()
+            loaded.isEmpty shouldBe false
+            loaded.showLoading shouldBe false
         }
     }
 
@@ -250,6 +269,22 @@ internal class UpNextPresenterTest {
                     seasonId = 9990L,
                     seasonNumber = 1L,
                 ),
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should navigate to show details given OpenShow action is dispatched`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            presenter.dispatch(OpenShow(showId = 999L))
+
+            navigator.lastNavigatedRoute shouldBe ShowDetailsRoute(
+                ShowDetailsParam(showId = 999L),
             )
             cancelAndIgnoreRemainingEvents()
         }

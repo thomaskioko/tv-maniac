@@ -304,4 +304,18 @@ public interface DatastoreRepository {
      * @return Flow of Boolean. Defaults to false (banner can show).
      */
     public fun observeAccountLimitBannerDismissed(): Flow<Boolean>
+
+    /**
+     * Saves whether the hidden debug menu has been unlocked.
+     *
+     * @param enabled Whether the debug menu is unlocked.
+     */
+    public suspend fun setDebugMenuEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether the hidden debug menu has been unlocked.
+     *
+     * @return A Flow of Boolean, true once the debug menu has been unlocked. Defaults to false.
+     */
+    public fun observeDebugMenuEnabled(): Flow<Boolean>
 }

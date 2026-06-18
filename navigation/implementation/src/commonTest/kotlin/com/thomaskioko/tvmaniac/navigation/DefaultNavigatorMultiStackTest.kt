@@ -38,6 +38,17 @@ internal class DefaultNavigatorMultiStackTest {
     }
 
     @Test
+    fun `should ignore duplicate navigateTo when route already on top of active stack`() {
+        val (navigator, _, libraryStack) = newMultiStackNavigator(initialRoot = LibraryTestRoot)
+
+        navigator.navigateTo(DetailRoute)
+        navigator.navigateTo(DetailRoute)
+
+        libraryStack.value.active.configuration shouldBe DetailRoute
+        libraryStack.value.backStack.map { it.configuration } shouldBe listOf(LibraryTestRoot)
+    }
+
+    @Test
     fun `should preserve other tabs given navigateTo on active tab`() {
         val (navigator, discoverStack, libraryStack) = newMultiStackNavigator(initialRoot = LibraryTestRoot)
 

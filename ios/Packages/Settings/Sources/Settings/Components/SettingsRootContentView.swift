@@ -4,11 +4,9 @@ import SwiftUI
 struct SettingsRootContentView: View {
     @Environment(\.appTheme) private var appTheme
     private let sections: [SettingsRootSection]
-    private let versionFooter: String
 
-    init(sections: [SettingsRootSection], versionFooter: String) {
+    init(sections: [SettingsRootSection]) {
         self.sections = sections
-        self.versionFooter = versionFooter
     }
 
     var body: some View {
@@ -26,12 +24,6 @@ struct SettingsRootContentView: View {
                     }
                 }
             }
-
-            Text(versionFooter)
-                .textStyle(appTheme.typography.bodySmall)
-                .foregroundColor(appTheme.colors.onSurfaceVariant)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, appTheme.spacing.medium)
         }
     }
 }
@@ -39,8 +31,7 @@ struct SettingsRootContentView: View {
 #if DEBUG
     #Preview {
         SettingsRootContentView(
-            sections: SettingsPreviewSamples.rootSections(authenticated: true),
-            versionFooter: "Version 1.0.0"
+            sections: SettingsPreviewSamples.rootSections(authenticated: true)
         )
         .padding()
         .appPreview()

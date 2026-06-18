@@ -94,6 +94,7 @@ class ContinueWatchingScreenTest {
                 ContinueWatchingScreen(
                     state = ContinueWatchingState(
                         isRefreshing = false,
+                        isLoading = false,
                         labels = ContinueWatchingLabels(
                             emptyTitle = "Nothing in progress yet. Mark an episode as watched to see it here.",
                         ),
@@ -114,6 +115,7 @@ class ContinueWatchingScreenTest {
                     state = ContinueWatchingState(
                         isGridMode = false,
                         isRefreshing = false,
+                        isLoading = false,
                         labels = ContinueWatchingLabels(upToDate = "All caught up"),
                         watchNextItems = persistentListOf(),
                         query = "Show title",
@@ -132,6 +134,7 @@ class ContinueWatchingScreenTest {
                     state = ContinueWatchingState(
                         isGridMode = false,
                         isRefreshing = false,
+                        isLoading = false,
                         labels = ContinueWatchingLabels(upToDate = "All caught up"),
                         watchNextItems = persistentListOf(),
                     ),

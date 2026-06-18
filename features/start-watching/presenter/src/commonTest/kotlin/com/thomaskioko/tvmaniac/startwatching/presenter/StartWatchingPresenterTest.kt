@@ -58,6 +58,19 @@ class StartWatchingPresenterTest {
     }
 
     @Test
+    fun `should show loading until content is available`() = runTest {
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            factory.startWatchingRepository.setStartWatchingShows(startWatchingShows)
+
+            val loaded = awaitItem()
+            loaded.isEmpty shouldBe false
+            loaded.showLoading shouldBe false
+        }
+    }
+
+    @Test
     fun `should emit items as they arrive given repository emits shows`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe StartWatchingState()

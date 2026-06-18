@@ -49,6 +49,7 @@ import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextEpisodePreviewParameterP
 internal fun UpNextListItem(
     item: UpNextEpisodeUiModel,
     onItemClicked: (Long) -> Unit,
+    onShowTitleClicked: (Long) -> Unit,
     onMarkWatched: () -> Unit,
     modifier: Modifier = Modifier,
     onLongPress: () -> Unit = {},
@@ -94,7 +95,7 @@ internal fun UpNextListItem(
             ) {
                 TextTitlePill(
                     showName = item.showName,
-                    onClick = { onItemClicked(item.showId) },
+                    onClick = { onShowTitleClicked(item.showId) },
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -195,6 +196,7 @@ private fun UpNextListItemPreview(
     UpNextListItem(
         item = item,
         onItemClicked = {},
+        onShowTitleClicked = {},
         onMarkWatched = {},
     )
 }
