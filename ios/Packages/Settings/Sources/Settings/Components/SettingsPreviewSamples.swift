@@ -179,7 +179,8 @@
             authenticated: Bool,
             withSwitchAffordance: Bool = false,
             isSwitching: Bool = false,
-            showSwitchConfirmation: Bool = false
+            showSwitchConfirmation: Bool = false,
+            isProcessingAuth: Bool = false
         ) -> SettingsAccountContent {
             let switchLabel: String? = withSwitchAffordance || isSwitching || showSwitchConfirmation
                 ? "Switch to Simkl"
@@ -195,7 +196,7 @@
                     ? "Your watch history, watchlist, and episode progress sync with Trakt."
                     : "Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.",
                 isAuthenticated: authenticated,
-                isProcessingAuth: false,
+                isProcessingAuth: isProcessingAuth,
                 logoutLabel: "Logout",
                 loginLabel: "Login",
                 providerName: "Trakt",

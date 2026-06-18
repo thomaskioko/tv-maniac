@@ -19,6 +19,7 @@ public object SettingsTestTags {
     public const val SWITCH_DIALOG_CONFIRM_BUTTON_TEST_TAG: String = "settings_switch_dialog_confirm"
     public const val SWITCH_DIALOG_DISMISS_BUTTON_TEST_TAG: String = "settings_switch_dialog_dismiss"
     public const val SWITCHING_INDICATOR_TEST_TAG: String = "settings_switching_indicator"
+    public const val AUTH_PROCESSING_INDICATOR_TEST_TAG: String = "settings_auth_processing_indicator"
     public fun imageQualityChip(name: String): String = "settings_image_quality_${name.lowercase()}"
     public fun themeSwatch(name: String): String = "settings_theme_swatch_${name.lowercase()}"
 }

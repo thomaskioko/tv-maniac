@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
 import com.thomaskioko.tvmaniac.settings.ui.accountLoggedOutState
+import com.thomaskioko.tvmaniac.settings.ui.accountLoggingOutState
 import com.thomaskioko.tvmaniac.settings.ui.accountState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchDialogState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
@@ -198,6 +199,18 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = accountSwitchingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenAccountLoggingOut() {
+        composeTestRule.captureMultiDevice("SettingsScreenAccountLoggingOut") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = accountLoggingOutState,
                     onAction = {},
                 )
             }
