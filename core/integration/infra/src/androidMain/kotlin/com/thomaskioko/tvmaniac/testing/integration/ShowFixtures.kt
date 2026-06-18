@@ -59,8 +59,14 @@ private const val MAX_STUBBED_SEASON_NUMBER = 5
  *   with each season's `ids.trakt` rewritten to a per-show value so seasons don't collide on the
  *   shared PRIMARY KEY when multiple shows are synced from the same fixture.
  * - TMDB `/3/tv/{tmdbId}` returns the canonical `Endpoints.Tmdb.ShowDetails` body with the root
- *   `id` rewritten. For non-canonical shows the `seasons` array is emptied so their metadata sync
- *   does not re-fetch the canonical TMDB season-episode bodies, which would collide on `episode.id`.
+ *   `id` rewritten. The `seasons` array is kept so each show's metadata sync fetches its own
+ *   season-episode bodies.
+ * - TMDB `/3/tv/{tmdbId}/season/{1,2}` (non-canonical shows only) returns the canonical season
+ *   bodies with the season `id` and every `episodes[].id` rewritten to per-show values, so seasons
+ *   and episodes don't collide on the shared PRIMARY KEY when multiple shows sync from the same
+ *   fixture. Without unique ids, `INSERT OR REPLACE INTO episode (id, ...)` would leave only the
+ *   last-synced show owning the episode rows. The canonical show keeps the original ids and is
+ *   served by the `Endpoints.Tmdb.SeasonDetailsS{1,2}` pattern stubs.
  * - TMDB `/3/tv/{tmdbId}/watch/providers` returns the canonical
  *   `Endpoints.Tmdb.WatchProviders` body with the root `id` rewritten.
  *
@@ -77,6 +83,8 @@ public fun MockEngineHandler.stubShow(show: ShowFixture) {
     val traktSeasonsTemplate = FixtureLoader.load(Endpoints.Trakt.ShowSeasons.successFixture)
     val tmdbDetailsTemplate = FixtureLoader.load(Endpoints.Tmdb.ShowDetails.successFixture)
     val tmdbProvidersTemplate = FixtureLoader.load(Endpoints.Tmdb.WatchProviders.successFixture)
+    val tmdbSeason1Template = FixtureLoader.load(Endpoints.Tmdb.SeasonDetailsS1.successFixture)
+    val tmdbSeason2Template = FixtureLoader.load(Endpoints.Tmdb.SeasonDetailsS2.successFixture)
 
     stub(
         path = "/shows/${show.traktId}",
@@ -95,7 +103,7 @@ public fun MockEngineHandler.stubShow(show: ShowFixture) {
         body = if (show.traktId == CANONICAL_SHOW_TRAKT_ID) {
             rewriteRootId(tmdbDetailsTemplate, show.tmdbId)
         } else {
-            rewriteRootIdAndEmptySeasons(tmdbDetailsTemplate, show.tmdbId)
+            rewriteTmdbShowSeasonIds(tmdbDetailsTemplate, show)
         },
     )
     stub(
@@ -104,6 +112,15 @@ public fun MockEngineHandler.stubShow(show: ShowFixture) {
     )
 
     if (show.traktId != CANONICAL_SHOW_TRAKT_ID) {
+        stub(
+            path = "/3/tv/${show.tmdbId}/season/1",
+            body = rewriteTmdbSeasonDetailIds(tmdbSeason1Template, show),
+        )
+        stub(
+            path = "/3/tv/${show.tmdbId}/season/2",
+            body = rewriteTmdbSeasonDetailIds(tmdbSeason2Template, show),
+        )
+
         for (seasonNumber in 0..MAX_STUBBED_SEASON_NUMBER) {
             stub(
                 path = "/shows/${show.traktId}/seasons/$seasonNumber",
@@ -140,12 +157,44 @@ private fun rewriteRootId(template: String, id: Long): String {
     return Json.encodeToString(JsonObject.serializer(), updated)
 }
 
-private fun rewriteRootIdAndEmptySeasons(template: String, id: Long): String {
+private fun rewriteTmdbShowSeasonIds(template: String, show: ShowFixture): String {
     val obj = Json.parseToJsonElement(template).jsonObject
+    val rewrittenSeasons = obj.getValue("seasons").jsonArray.map { season ->
+        val seasonObj = season.jsonObject
+        val seasonNumber = seasonObj.getValue("season_number").jsonPrimitive.int
+        JsonObject(
+            seasonObj.toMutableMap().apply {
+                this["id"] = JsonPrimitive(show.tmdbId * 100 + seasonNumber)
+            },
+        )
+    }
     val updated = JsonObject(
         obj.toMutableMap().apply {
-            this["id"] = JsonPrimitive(id)
-            this["seasons"] = kotlinx.serialization.json.JsonArray(emptyList())
+            this["id"] = JsonPrimitive(show.tmdbId)
+            this["seasons"] = kotlinx.serialization.json.JsonArray(rewrittenSeasons)
+        },
+    )
+    return Json.encodeToString(JsonObject.serializer(), updated)
+}
+
+private fun rewriteTmdbSeasonDetailIds(template: String, show: ShowFixture): String {
+    val obj = Json.parseToJsonElement(template).jsonObject
+    val seasonNumber = obj.getValue("season_number").jsonPrimitive.int
+    val perShowSeasonId = show.tmdbId * 100 + seasonNumber
+    val rewrittenEpisodes = obj.getValue("episodes").jsonArray.map { episode ->
+        val episodeObj = episode.jsonObject
+        val episodeNumber = episodeObj.getValue("episode_number").jsonPrimitive.int
+        JsonObject(
+            episodeObj.toMutableMap().apply {
+                this["id"] = JsonPrimitive(perShowSeasonId * 100 + episodeNumber)
+                this["show_id"] = JsonPrimitive(show.tmdbId)
+            },
+        )
+    }
+    val updated = JsonObject(
+        obj.toMutableMap().apply {
+            this["id"] = JsonPrimitive(perShowSeasonId)
+            this["episodes"] = kotlinx.serialization.json.JsonArray(rewrittenEpisodes)
         },
     )
     return Json.encodeToString(JsonObject.serializer(), updated)
