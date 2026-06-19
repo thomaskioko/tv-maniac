@@ -169,6 +169,10 @@ internal val accountSwitchingState = accountSwitchState.copy(
     isSwitching = true,
 )
 
+internal val accountLoggingOutState = accountState.copy(
+    isProcessingAuth = true,
+)
+
 internal val loadingState = defaultState.copy(isLoading = true)
 
 internal class SettingsPreviewParameterProvider : PreviewParameterProvider<SettingsState> {

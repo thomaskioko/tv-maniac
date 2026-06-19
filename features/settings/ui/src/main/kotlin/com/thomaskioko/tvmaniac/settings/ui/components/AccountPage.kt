@@ -52,8 +52,8 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.SwitchProviderClicked
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
-import com.thomaskioko.tvmaniac.settings.ui.SettingsSectionLabel
 import com.thomaskioko.tvmaniac.settings.ui.accountLoggedOutState
+import com.thomaskioko.tvmaniac.settings.ui.accountLoggingOutState
 import com.thomaskioko.tvmaniac.settings.ui.accountState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchDialogState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
@@ -70,8 +70,9 @@ internal fun AccountPage(
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            SettingsSectionLabel(
+            AccountSectionHeader(
                 text = if (state.isAuthenticated) state.labels.traktAuthentication else state.labels.connectTitle,
+                isLoading = state.isProcessingAuth,
             )
         }
 
@@ -163,15 +164,7 @@ private fun ConnectedAccountCard(
                     ),
                     shape = MaterialTheme.shapes.medium,
                 ) {
-                    if (state.isProcessingAuth) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onSecondary,
-                        )
-                    } else {
-                        Text(text = state.labels.logout)
-                    }
+                    Text(text = state.labels.logout)
                 }
 
                 val switchTarget = state.switchTargetProvider
@@ -185,6 +178,35 @@ private fun ConnectedAccountCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AccountSectionHeader(
+    text: String,
+    isLoading: Boolean,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(14.dp)
+                    .testTag(SettingsTestTags.AUTH_PROCESSING_INDICATOR_TEST_TAG),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
         }
     }
 }
@@ -360,6 +382,16 @@ private fun AccountPageSwitchDialogPreview() {
 private fun AccountPageSwitchingPreview() {
     AccountPage(
         state = accountSwitchingState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun AccountPageLoggingOutPreview() {
+    AccountPage(
+        state = accountLoggingOutState,
         onAction = {},
     )
 }

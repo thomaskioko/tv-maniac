@@ -88,7 +88,5 @@ private fun List<NextEpisodeWithShow>.filterActionableEpisodes(
     nowMillis: Long,
 ): List<NextEpisodeWithShow> = filter { episode ->
     val airDate = episode.firstAired
-    val isCaughtUp = episode.totalCount > 0 && episode.watchedCount >= episode.totalCount
-    val hasNotAired = airDate == null || airDate > nowMillis
-    !(isCaughtUp && hasNotAired)
+    episode.episodeId != null && airDate != null && airDate <= nowMillis
 }

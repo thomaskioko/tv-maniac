@@ -12,7 +12,11 @@ import kotlin.reflect.KClass
  * accompanying transformer branch.
  */
 internal sealed interface MultiStackNavEvent {
-    /** Pushes [route] onto the active tab's stack. */
+    /**
+     * Pushes [route] onto the active tab's stack. Ignored when [route] already equals the stack's
+     * top entry so a rapid double-tap cannot enqueue a duplicate configuration, which Decompose
+     * rejects.
+     */
     data class Push(val route: NavRoute) : MultiStackNavEvent
 
     /** Brings any existing instance of [route]'s class to the top, or pushes [route] if absent. */

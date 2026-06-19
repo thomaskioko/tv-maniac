@@ -7,7 +7,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     public struct State {
         public let isLoading: Bool
         public let rootTitle: String
-        public let versionFooter: String
         public let currentPage: SettingsPageRoute
         public let rootSections: [SettingsRootSection]
         public let themeItem: SettingsThemeItem<Theme>
@@ -23,7 +22,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public init(
             isLoading: Bool,
             rootTitle: String,
-            versionFooter: String,
             currentPage: SettingsPageRoute,
             rootSections: [SettingsRootSection],
             themeItem: SettingsThemeItem<Theme>,
@@ -38,7 +36,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         ) {
             self.isLoading = isLoading
             self.rootTitle = rootTitle
-            self.versionFooter = versionFooter
             self.currentPage = currentPage
             self.rootSections = rootSections
             self.themeItem = themeItem
@@ -102,7 +99,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     private func pageBody(for page: SettingsPageRoute) -> some View {
         switch page {
         case .root:
-            SettingsRootContentView(sections: state.rootSections, versionFooter: state.versionFooter)
+            SettingsRootContentView(sections: state.rootSections)
         case .appearance:
             AppearancePageView(themeItem: state.themeItem, imageQualityItem: state.imageQualityItem)
         case .behavior:

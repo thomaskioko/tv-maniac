@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
@@ -25,7 +26,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
@@ -40,11 +41,13 @@ import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.SwitchProviderClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
+import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
@@ -71,6 +74,7 @@ class SettingsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val libraryRepository = FakeLibraryRepository()
     private val traktListRepository = FakeTraktListRepository()
+    private val navigator = FakeNavigator()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -104,7 +108,7 @@ class SettingsPresenterTest {
             toggleEpisodeNotificationsInteractor = ToggleEpisodeNotificationsInteractor(
                 datastoreRepository = datastoreRepository,
             ),
-            navigator = NoOpNavigator(),
+            navigator = navigator,
             pushPendingChangesInteractor = PushPendingChangesInteractor(
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 libraryRepository = libraryRepository,
@@ -455,5 +459,41 @@ class SettingsPresenterTest {
             state.switchTargetProvider shouldBe null
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `should navigate to the debug menu on a single tap given it is already enabled`() = runTest {
+        datastoreRepository.setDebugMenuEnabled(true)
+
+        presenter.state.test {
+            var state = awaitItem()
+            while (!state.isDebugMenuEnabled) {
+                state = awaitItem()
+            }
+
+            presenter.dispatch(VersionClicked)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        navigator.lastNavigatedRoute shouldBe DebugRoute
+    }
+
+    @Test
+    fun `should persist and navigate given the version is tapped to the threshold`() = runTest {
+        repeat(6) { presenter.dispatch(VersionClicked) }
+        testScheduler.advanceUntilIdle()
+
+        navigator.lastNavigatedRoute shouldBe DebugRoute
+        datastoreRepository.observeDebugMenuEnabled().first() shouldBe true
+    }
+
+    @Test
+    fun `should not navigate given the version is tapped fewer than the threshold`() = runTest {
+        repeat(5) { presenter.dispatch(VersionClicked) }
+        testScheduler.advanceUntilIdle()
+
+        navigator.lastNavigatedRoute shouldBe null
+        datastoreRepository.observeDebugMenuEnabled().first() shouldBe false
     }
 }

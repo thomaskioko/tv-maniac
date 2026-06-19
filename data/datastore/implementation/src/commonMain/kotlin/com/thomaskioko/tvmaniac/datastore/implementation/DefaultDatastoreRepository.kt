@@ -293,6 +293,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_ACCOUNT_LIMIT_BANNER_DISMISSED] ?: false
         }
 
+    override suspend fun setDebugMenuEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_DEBUG_MENU_ENABLED] = enabled
+        }
+    }
+
+    override fun observeDebugMenuEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_DEBUG_MENU_ENABLED] ?: false
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -316,5 +327,6 @@ public class DefaultDatastoreRepository(
         public val KEY_LAST_TOKEN_REFRESH_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_token_refresh_timestamp")
         public val KEY_ACCOUNT_LIMIT_BANNER_DISMISSED: Preferences.Key<Boolean> =
             booleanPreferencesKey("account_limit_banner_dismissed")
+        public val KEY_DEBUG_MENU_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("debug_menu_enabled")
     }
 }

@@ -41,6 +41,7 @@ public data class SettingsState(
     val isUpdating: Boolean = false,
     val isProcessingAuth: Boolean = false,
     val hiddenTapCount: Int = 0,
+    val isDebugMenuEnabled: Boolean = false,
     val githubUrl: String = GITHUB_URL,
     val privacyPolicyUrl: String = PRIVACY_POLICY_URL,
 ) {

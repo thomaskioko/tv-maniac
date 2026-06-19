@@ -12,7 +12,6 @@ scaffold {
 
     optIn(
         "androidx.compose.material3.ExperimentalMaterial3Api",
-        "dev.chrisbanes.snapper.ExperimentalSnapperApi",
     )
 }
 
@@ -30,7 +29,6 @@ dependencies {
     implementation(projects.data.genre.api)
     implementation(projects.i18n.generator)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.snapper)
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)

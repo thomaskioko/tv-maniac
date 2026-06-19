@@ -43,7 +43,7 @@ class StartWatchingScreenTest {
         composeTestRule.captureMultiDevice("StartWatchingEmpty") {
             TvManiacBackground {
                 StartWatchingScreen(
-                    state = StartWatchingState(),
+                    state = StartWatchingState(isLoading = false),
                     onAction = {},
                 )
             }

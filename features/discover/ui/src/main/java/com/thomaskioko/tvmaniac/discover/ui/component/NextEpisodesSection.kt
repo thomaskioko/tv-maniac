@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.discover.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +25,6 @@ import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -53,7 +54,7 @@ internal fun NextEpisodesSection(
 
                 LazyRow(
                     state = lazyListState,
-                    flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {

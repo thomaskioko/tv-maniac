@@ -51,7 +51,7 @@ struct UpNextPageContent: View {
                                     presenter.dispatch(action: UpNextShowClicked(showId: showId))
                                 },
                                 onShowTitleClicked: { showId in
-                                    presenter.dispatch(action: UpNextShowClicked(showId: showId))
+                                    presenter.dispatch(action: OpenShow(showId: showId))
                                 },
                                 onMarkWatched: {
                                     presenter.dispatch(action: MarkWatched(

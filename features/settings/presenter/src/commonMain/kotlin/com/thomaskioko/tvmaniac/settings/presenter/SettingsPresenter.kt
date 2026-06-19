@@ -131,6 +131,7 @@ public class SettingsPresenter(
             versionName = appMetadata.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
+            isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             currentPageTitle = resolvePageTitle(currentState.currentPage),
             rootGroups = buildRootGroups(),
@@ -343,14 +344,17 @@ public class SettingsPresenter(
     }
 
     private fun handleVersionTap() {
-        _state.update { state ->
-            val newCount = state.hiddenTapCount + 1
-            if (newCount >= HIDDEN_TAP_THRESHOLD) {
-                navigator.navigateTo(DebugRoute)
-                state.copy(hiddenTapCount = 0)
-            } else {
-                state.copy(hiddenTapCount = newCount)
-            }
+        if (state.value.isDebugMenuEnabled) {
+            navigator.navigateTo(DebugRoute)
+            return
+        }
+        val newCount = _state.value.hiddenTapCount + 1
+        if (newCount >= HIDDEN_TAP_THRESHOLD) {
+            coroutineScope.launch { datastoreRepository.setDebugMenuEnabled(true) }
+            navigator.navigateTo(DebugRoute)
+            _state.update { it.copy(hiddenTapCount = 0) }
+        } else {
+            _state.update { it.copy(hiddenTapCount = newCount) }
         }
     }
 

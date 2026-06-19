@@ -48,6 +48,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_air_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_last_watched
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.upnext.MarkWatched
+import com.thomaskioko.tvmaniac.presentation.upnext.OpenShow
 import com.thomaskioko.tvmaniac.presentation.upnext.RefreshUpNext
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextAction
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextChangeSortOption
@@ -180,6 +181,7 @@ private fun UpNextLoadedContent(
                 modifier = Modifier.animateItem(),
                 item = episode,
                 onItemClicked = { onAction(UpNextShowClicked(it)) },
+                onShowTitleClicked = { onAction(OpenShow(it)) },
                 onMarkWatched = {
                     onAction(
                         MarkWatched(
