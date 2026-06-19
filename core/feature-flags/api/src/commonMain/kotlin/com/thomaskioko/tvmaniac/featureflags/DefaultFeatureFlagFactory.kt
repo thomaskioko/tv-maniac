@@ -1,9 +1,5 @@
-package com.thomaskioko.tvmaniac.featureflags.implementation
+package com.thomaskioko.tvmaniac.featureflags
 
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlagFactory
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
-import com.thomaskioko.tvmaniac.featureflags.RemoteFlag
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
