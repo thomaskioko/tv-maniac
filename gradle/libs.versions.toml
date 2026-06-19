@@ -1,7 +1,7 @@
 [versions]
-android-compile = "36"
+android-compile = "37"
 android-min = "24"
-android-target = "36"
+android-target = "37"
 
 benchmarkMacro = "1.4.1"
 differ = "0.3.0"
@@ -19,7 +19,7 @@ androidx-compose-ui-test = "1.11.3"
 androidx-test-core = "1.7.0"
 androidx-test-orchestrator = "1.6.1"
 androidx-uiautomator = "2.3.0"
-androidx-core = "1.18.0"
+androidx-core = "1.19.0"
 androidx-core-splashscreen = "1.2.0"
 androidx-datastore = "1.2.1"
 androidx-material = "1.11.3"

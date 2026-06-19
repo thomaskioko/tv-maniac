@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +55,7 @@ internal fun WatchProgressSection(
     if (seasonsList.isEmpty()) return
 
     val context = LocalContext.current
+    val resources = LocalResources.current
     val remainingEpisodes = totalEpisodesCount - watchedEpisodesCount
     val isUpToDate = remainingEpisodes <= 0 && totalEpisodesCount > 0
     val seasonCount = seasonsList.size
@@ -107,7 +109,7 @@ internal fun WatchProgressSection(
 
                     withStyle(tagStyle) {
                         append(
-                            context.resources.getQuantityString(
+                            resources.getQuantityString(
                                 MR.plurals.season_count.resourceId,
                                 seasonCount,
                                 seasonCount,
