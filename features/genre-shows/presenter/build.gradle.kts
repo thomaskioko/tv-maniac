@@ -3,7 +3,7 @@ plugins {
 }
 
 scaffold {
-    useMetro()
+    useCodegen()
 }
 
 kotlin {
