@@ -1,14 +1,11 @@
 #!/bin/sh
+set -e
 
-# Script to install Git hooks
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+cd "$ROOT_DIR"
 
-echo "Installing Git hooks..."
+rm -f .git/hooks/pre-commit
+git config core.hooksPath scripts/git-hooks
+chmod +x scripts/git-hooks/* 2>/dev/null || true
 
-# Create hooks directory if it doesn't exist
-mkdir -p .git/hooks
-
-# Copy pre-commit hook
-cp scripts/git-hooks/pre-commit .git/hooks/
-chmod +x .git/hooks/pre-commit
-
-echo "Git hooks installed successfully! 🎉"
+echo "Git hooks active via core.hooksPath -> scripts/git-hooks (runs lefthook) 🎉"

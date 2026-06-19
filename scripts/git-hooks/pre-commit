@@ -1,62 +1,18 @@
 #!/bin/sh
+# Tracked pre-commit hook, activated by `git config core.hooksPath scripts/git-hooks`
+# (see scripts/install-git-hooks.sh). Points lefthook at git-hooks.yml and runs it.
+# Auto-formats staged files; skip a commit with `git commit --no-verify`.
+set -eu
 
-set -e  # Exit immediately if any command fails
+ROOT=$(git rev-parse --show-toplevel)
+export LEFTHOOK_CONFIG="$ROOT/git-hooks.yml"
 
-echo "🔍 Running pre-commit checks..."
-
-# Store the original directory
-ORIGINAL_DIR=$(pwd)
-
-# Cleanup function to ensure we return to original directory
-cleanup() {
-    cd "$ORIGINAL_DIR"
-}
-trap cleanup EXIT
-
-# Run spotlessCheck to verify code formatting
-echo "📝 Checking code formatting with Spotless..."
-if ! ./gradlew spotlessCheck --quiet; then
-    echo "❌ Code formatting check failed. Please run './gradlew spotlessApply' to fix formatting issues."
-    exit 1
+if command -v lefthook >/dev/null 2>&1; then
+  exec lefthook run pre-commit "$@"
+elif [ -x /opt/homebrew/bin/lefthook ]; then
+  exec /opt/homebrew/bin/lefthook run pre-commit "$@"
+elif [ -x /usr/local/bin/lefthook ]; then
+  exec /usr/local/bin/lefthook run pre-commit "$@"
 fi
 
-echo "✅ Code formatting check passed."
-
-# Check if there are iOS files in the commit
-ios_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(swift)$')
-
-if [ -n "$ios_files" ]; then
-    if [ -d "ios" ]; then
-        echo "📱 iOS files detected in commit. Running Swift checks..."
-        
-        # Always use fastlane for consistency
-        if command -v bundle &> /dev/null && [ -f "Gemfile" ]; then
-            echo "🧹 Running SwiftLint check via fastlane..."
-            if ! bundle exec fastlane ios lint; then
-                echo "❌ SwiftLint check failed. Please fix the violations and commit again."
-                echo "💡 Run 'bundle exec fastlane ios lint' to see detailed violations."
-                exit 1
-            fi
-            
-            echo "🔍 Running SwiftFormat check via fastlane..."
-            if ! bundle exec fastlane ios check_swift_format; then
-                echo "❌ Swift code formatting check failed. Please run the following command to fix formatting issues:"
-                echo "bundle exec fastlane ios format_swift_code"
-                echo "Note: This will modify your files to match the formatting rules. After fixing, commit again."
-                exit 1
-            fi
-            
-            echo "✅ All Swift checks passed."
-        else
-            echo "❌ Fastlane/Bundle not available. Please ensure Gemfile exists and run 'bundle install'."
-            exit 1
-        fi
-    else
-        echo "⚠️  iOS files detected in commit but ios directory not found. Skipping Swift checks."
-    fi
-else
-    echo "ℹ️  No iOS files in commit, skipping Swift checks."
-fi
-
-echo "🎉 All pre-commit checks passed!"
-exit 0
+echo "lefthook not found; skipping git hooks (run ./scripts/setup.sh to install)" >&2
