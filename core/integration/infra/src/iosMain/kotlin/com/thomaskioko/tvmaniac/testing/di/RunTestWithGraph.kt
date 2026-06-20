@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.di
 
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeRemoteConfigBridge
 import dev.zacsweers.metro.createGraphFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -21,7 +22,9 @@ public fun runTestWithGraph(
 ): TestResult = runTest(testDispatcher) {
     Dispatchers.setMain(testDispatcher)
     try {
-        val graph = createGraphFactory<TestGraph.Factory>().create()
+        val graph = createGraphFactory<TestGraph.Factory>().create(
+            remoteConfigBridge = FakeRemoteConfigBridge(),
+        )
         testBody(graph)
     } finally {
         Dispatchers.resetMain()
