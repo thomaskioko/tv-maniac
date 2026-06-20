@@ -1,0 +1,20 @@
+# Git hook definitions, run by lefthook (https://lefthook.dev).
+# Activated by scripts/git-hooks/pre-commit (via core.hooksPath), which points
+# lefthook at this file with LEFTHOOK_CONFIG. See scripts/install-git-hooks.sh.
+#
+# pre-commit auto-formats only the staged files, re-stages the results
+# (stage_fixed), and lints staged Swift. Skip with `git commit --no-verify`.
+pre-commit:
+  parallel: true
+  commands:
+    kotlin:
+      glob: "*.{kt,kts}"
+      run: scripts/spotless-staged.sh {staged_files}
+      stage_fixed: true
+    swiftformat:
+      glob: "*.swift"
+      run: swiftformat {staged_files} --config .swiftformat --swiftversion 5.9
+      stage_fixed: true
+    swiftlint:
+      glob: "*.swift"
+      run: mint run swiftlint lint --config .swiftlint.yml --quiet {staged_files}

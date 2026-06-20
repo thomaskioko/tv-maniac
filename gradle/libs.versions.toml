@@ -32,7 +32,7 @@ androidx-security-crypto = "1.1.0"
 androidx-lifecycle = "2.11.0"
 androidx-work = "2.11.2"
 appauth = "0.11.1"
-app-gradle-plugins = "0.7.9"
+app-gradle-plugins = "0.8.1"
 atomicfu = "0.33.0"
 baselineprofile = "1.5.0-alpha06"
 benchmarkMacroJunit4 = "1.4.1"
@@ -54,7 +54,7 @@ kenburns = "1.0.7"
 kermit = "2.1.0"
 kermitCore = "2.1.0"
 kotest = "6.2.1"
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 kotlinx-collections = "0.5.0"
 ktor = "3.5.0"
 lint = "1.5.2"
@@ -83,6 +83,8 @@ ktlint = "1.4.0"
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro", version.ref = "benchmarkMacro" }
 androidx-monitor = { module = "androidx.test:monitor", version.ref = "monitor" }
 codegen-annotations = { module = "io.github.thomaskioko.gradle.plugins:codegen-annotations", version.ref = "app-gradle-plugins" }
+codegen-featureflag-annotations = { module = "io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations", version.ref = "app-gradle-plugins" }
+codegen-featureflag-processor = { module = "io.github.thomaskioko.gradle.plugins:codegen-featureflag-processor", version.ref = "app-gradle-plugins" }
 codegen-processor = { module = "io.github.thomaskioko.gradle.plugins:codegen-processor", version.ref = "app-gradle-plugins" }
 
 android-lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "android-lint" }

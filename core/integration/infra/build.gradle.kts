@@ -117,7 +117,6 @@ kotlin {
             api(projects.domain.user)
             api(projects.domain.continueWatching)
             api(projects.features.discover.nav)
-            api(projects.features.genreShows.nav)
             api(projects.features.home.nav)
             api(projects.features.home.presenter)
             api(projects.features.library.nav)
@@ -159,6 +158,7 @@ kotlin {
             api(projects.core.tasks.api)
             api(projects.data.oauth.api)
 
+            implementation(libs.androidx.compose.runtime)
             implementation(libs.kotlinx.serialization.json)
         }
     }

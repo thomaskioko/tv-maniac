@@ -17,6 +17,7 @@ dependencies {
 
     api(libs.coil.base)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
     implementation(libs.coil.coil)
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)

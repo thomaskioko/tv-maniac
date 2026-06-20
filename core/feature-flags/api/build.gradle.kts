@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
+    useFeatureFlagCodegen()
 }
 
 kotlin {
