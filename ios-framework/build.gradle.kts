@@ -8,10 +8,9 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
-// TODO: add `scaffold { ignoreAll() }` to ignore wrong DAGP configuration
-
 scaffold {
     useMetro()
+    ignoreAll()
 
     addIosTargetsWithXcFramework(
         frameworkName = "TvManiac",
@@ -22,7 +21,7 @@ scaffold {
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
             disableNativeCache(
-                version = DisableCacheInKotlinVersion.`2_3_21`,
+                version = DisableCacheInKotlinVersion.`2_4_0`,
                 reason = "cache bug causes double runtime injection when linking multiple frameworks, see KT-42254",
                 issueUrl = URI("https://youtrack.jetbrains.com/issue/KT-42254"),
             )
@@ -38,7 +37,6 @@ scaffold {
             export(projects.features.calendar.presenter)
             export(projects.features.discover.nav)
             export(projects.features.discover.presenter)
-            export(projects.features.genreShows.presenter)
             export(projects.features.home.nav)
             export(projects.features.home.presenter)
             export(projects.features.myShows.nav)
@@ -95,7 +93,6 @@ kotlin {
                 api(projects.data.accountManager.api)
                 api(projects.features.calendar.presenter)
                 api(projects.features.discover.presenter)
-                api(projects.features.genreShows.presenter)
                 api(projects.features.myShows.presenter)
                 api(projects.features.home.nav)
                 api(projects.features.home.presenter)
