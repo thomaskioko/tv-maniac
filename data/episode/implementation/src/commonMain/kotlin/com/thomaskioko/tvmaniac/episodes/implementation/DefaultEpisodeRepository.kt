@@ -168,7 +168,7 @@ public class DefaultEpisodeRepository(
                     UpcomingEpisode(
                         episodeId = episode.episode_id.id,
                         seasonId = episode.season_id.id,
-                        showId = episode.show_trakt_id,
+                        showId = episode.show_id.id,
                         episodeNumber = episode.episode_number,
                         seasonNumber = episode.season_number,
                         title = episode.title,
@@ -182,7 +182,7 @@ public class DefaultEpisodeRepository(
                 }
         }
 
-    override suspend fun syncUpcomingEpisodesFromTrakt(
+    override suspend fun syncUpcomingEpisodes(
         startDate: String,
         days: Int,
         forceRefresh: Boolean,

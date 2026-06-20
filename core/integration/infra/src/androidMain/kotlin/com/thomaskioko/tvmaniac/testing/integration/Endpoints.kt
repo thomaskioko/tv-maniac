@@ -268,15 +268,47 @@ public object Endpoints {
         )
 
         /**
-         * Variant of `/shows/{showTraktId}/progress/watched` returning the progress state after
+         * Variant of `/shows/{traktId}/progress/watched` returning the progress state after
          * the pilot has been marked as watched (pilot becomes `last_episode`, episode 2 becomes
          * `next_episode`). Used to verify UpNext refresh after `markEpisodeAsWatched`.
          */
-        public fun showProgressAfterPilotWatched(showTraktId: Long): Endpoint.Exact = ExactEndpoint(
-            path = "/shows/$showTraktId/progress/watched",
+        public fun showProgressAfterPilotWatched(traktId: Long): Endpoint.Exact = ExactEndpoint(
+            path = "/shows/$traktId/progress/watched",
             successFixture = "trakt/shows/progress/refreshed/success.json",
             errorFixture = "trakt/shows/progress/refreshed/error.json",
         )
+    }
+
+    public object Simkl {
+        public object UsersSettings : Endpoint.Exact {
+            override val path: String = "/users/settings"
+            override val successFixture: String = "simkl/users/settings/success.json"
+            override val errorFixture: String = "simkl/users/settings/error.json"
+        }
+
+        public object UsersStats : Endpoint.Pattern {
+            override val pathRegex: String = "/users/[^/]+/stats"
+            override val successFixture: String = "simkl/users/stats/success.json"
+            override val errorFixture: String = "simkl/users/stats/error.json"
+        }
+
+        public object SyncAllItems : Endpoint.Exact {
+            override val path: String = "/sync/all-items/shows"
+            override val successFixture: String = "simkl/sync/all-items/success.json"
+            override val errorFixture: String = "simkl/sync/all-items/error.json"
+        }
+
+        public object SyncActivities : Endpoint.Exact {
+            override val path: String = "/sync/activities"
+            override val successFixture: String = "simkl/sync/activities/success.json"
+            override val errorFixture: String = "simkl/sync/activities/error.json"
+        }
+
+        public object CalendarTvFeed : Endpoint.Exact {
+            override val path: String = "/calendar/tv.json"
+            override val successFixture: String = "simkl/calendar/tv.json"
+            override val errorFixture: String = EMPTY_ARRAY_FIXTURE
+        }
     }
 
     /** TMDB API endpoints (paths begin with `/3/`). */
@@ -354,5 +386,10 @@ public object Endpoints {
         Tmdb.Credits,
         Tmdb.SeasonDetails,
         Tmdb.WatchProviders,
+        Simkl.UsersSettings,
+        Simkl.UsersStats,
+        Simkl.SyncAllItems,
+        Simkl.SyncActivities,
+        Simkl.CalendarTvFeed,
     )
 }

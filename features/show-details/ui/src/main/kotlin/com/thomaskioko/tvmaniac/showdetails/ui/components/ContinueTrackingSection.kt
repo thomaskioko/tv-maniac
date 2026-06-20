@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.showdetails.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +33,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.title_continue_tracking
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
@@ -88,7 +89,7 @@ internal fun ContinueTrackingSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag(ShowDetailsTestTags.CONTINUE_TRACKING_LIST_TEST_TAG),
-                    flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {

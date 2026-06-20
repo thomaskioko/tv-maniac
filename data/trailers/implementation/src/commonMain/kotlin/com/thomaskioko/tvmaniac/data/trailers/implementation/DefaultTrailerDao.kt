@@ -35,12 +35,12 @@ public class DefaultTrailerDao(
     }
 
     override fun getTrailersByShowId(showId: Long): List<SelectByShowId> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return emptyList()
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return emptyList()
         return database.trailersQueries.selectByShowId(internalShowId).executeAsList()
     }
 
     override fun observeTrailersByShowId(showId: Long): Flow<List<SelectByShowId>> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
         return database.trailersQueries.selectByShowId(internalShowId).asFlow().mapToList(dispatchers.io)
     }
 

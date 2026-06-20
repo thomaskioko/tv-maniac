@@ -8,7 +8,7 @@ internal fun NextEpisodeWithShow.toWatchlistShowInfo(): WatchlistShowInfo {
     val progress = if (totalCount > 0) watchedCount.toFloat() / totalCount else 0f
     return WatchlistShowInfo(
         showId = showId,
-        tmdbId = showTmdbId,
+        tmdbId = showId,
         title = showName,
         posterImageUrl = showPoster,
         status = showStatus,

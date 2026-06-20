@@ -26,4 +26,6 @@ public interface LibraryRepository {
     public suspend fun syncPendingFollowedShows()
 
     public suspend fun needsSync(expiry: Duration): Boolean
+
+    public suspend fun countPendingFollowedShows(): Long
 }

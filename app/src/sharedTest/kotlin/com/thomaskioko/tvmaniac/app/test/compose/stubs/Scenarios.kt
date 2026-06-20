@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.stubs
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.app.test.TestAppComponent
@@ -23,6 +24,8 @@ internal const val TEST_ACCESS_TOKEN: String = "test-access"
 internal const val TEST_REFRESH_TOKEN: String = "test-refresh"
 internal const val TEST_PROFILE_SLUG: String = "integration-test-user"
 internal const val TEST_TODAY: String = "2026-04-19"
+internal const val TEST_SIMKL_USER_NAME: String = "simkl-test-user"
+internal const val TEST_SIMKL_ACCOUNT_ID: Long = 12345678L
 
 /** Trakt id of the list returned by `trakt/users/lists/create/success.json`. */
 internal const val TEST_CREATED_LIST_TRAKT_ID: Long = 99887766L
@@ -30,6 +33,8 @@ internal const val TEST_CREATED_LIST_TRAKT_ID: Long = 99887766L
 /** Name of the list returned by `trakt/users/lists/create/success.json`. */
 internal const val TEST_CREATED_LIST_NAME: String = "Watch Later"
 internal const val TEST_NEXT_WEEK: String = "2026-04-26"
+internal const val SIMKL_LOGIN_FLAG_KEY: String = "simkl_login_enabled"
+internal const val ACCOUNT_SWITCH_FLAG_KEY: String = "enable_account_switch"
 
 internal class Scenarios(
     private val mockHandler: MockEngineHandler,
@@ -39,17 +44,33 @@ internal class Scenarios(
     val auth: Auth = Auth()
     val discover: Discover = Discover()
     val profile: Profile = Profile()
+    val simkl: Simkl = Simkl()
     val library: Library = Library()
     val watchlist: Watchlist = Watchlist()
     val search: Search = Search()
     val calendar: Calendar = Calendar()
     val upNext: UpNext = UpNext()
     val traktLists: TraktLists = TraktLists()
+    val flags: Flags = Flags()
 
     fun signInAndDismissRationale() {
         auth.stubLoggedInUser()
         profile.stubProfileSyncEndpoints()
         rootRobot.dismissNotificationRationale()
+    }
+
+    fun stubAuthenticatedSimklProfile() {
+        simkl.stubLoggedInUser()
+        simkl.stubProfileEndpoints()
+        simkl.stubWatchedHistoryEndpoints()
+        simkl.stubActivities()
+    }
+
+    fun stubAuthenticatedSimklStartWatching() {
+        simkl.stubLoggedInUser()
+        simkl.stubProfileEndpoints()
+        simkl.stubPlanToWatchWatchlist()
+        simkl.stubActivities()
     }
 
     fun stubAuthenticatedSync() {
@@ -152,6 +173,53 @@ internal class Scenarios(
             // `setState(LOGGED_IN)` only flips state, so we also emit the
             // login event here to drive ContinueWatchingTasksInitializer's collector.
             graph.traktAuthRepository.triggerLogin()
+        }
+    }
+
+    inner class Simkl {
+        fun stubLoggedInUser(
+            accessToken: String = "simkl-test-access",
+            refreshToken: String = "simkl-test-refresh",
+            tokenLifetimeSeconds: Long = 3600,
+        ) {
+            runBlocking {
+                graph.authStateHolder.saveTokens(
+                    provider = AccountProvider.SIMKL,
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    expiresAtSeconds = (Clock.System.now() + tokenLifetimeSeconds.seconds).epochSeconds,
+                )
+            }
+        }
+
+        fun stubProfileEndpoints() {
+            mockHandler.stubEndpoint(
+                endpoint = Endpoints.Simkl.UsersSettings,
+                method = HttpMethod.Post,
+            )
+            mockHandler.stubEndpoint(
+                endpoint = Endpoints.Simkl.UsersStats,
+                method = HttpMethod.Post,
+            )
+        }
+
+        fun stubWatchedHistoryEndpoints() {
+            mockHandler.stubEndpoint(Endpoints.Simkl.SyncAllItems)
+        }
+
+        fun stubPlanToWatchWatchlist() {
+            mockHandler.stubFixture(
+                path = Endpoints.Simkl.SyncAllItems.path,
+                fixturePath = "simkl/sync/all-items/start_watching.json",
+            )
+        }
+
+        fun stubActivities() {
+            mockHandler.stubEndpoint(Endpoints.Simkl.SyncActivities)
+        }
+
+        fun stubCalendarFeed() {
+            mockHandler.stubEndpoint(Endpoints.Simkl.CalendarTvFeed)
         }
     }
 
@@ -311,6 +379,16 @@ internal class Scenarios(
 
         fun stubCreateList(slug: String = TEST_PROFILE_SLUG) {
             mockHandler.stubEndpoint(Endpoints.Trakt.createList(slug), method = HttpMethod.Post)
+        }
+    }
+
+    inner class Flags {
+        fun enableSimklLogin() {
+            graph.featureFlagsRemoteConfig.setBoolean(SIMKL_LOGIN_FLAG_KEY, true)
+        }
+
+        fun enableAccountSwitch() {
+            graph.featureFlagsRemoteConfig.setBoolean(ACCOUNT_SWITCH_FLAG_KEY, true)
         }
     }
 }

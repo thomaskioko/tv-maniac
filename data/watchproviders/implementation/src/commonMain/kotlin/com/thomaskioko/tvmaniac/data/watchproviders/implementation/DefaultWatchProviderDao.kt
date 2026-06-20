@@ -47,7 +47,7 @@ public class DefaultWatchProviderDao(
             .map { rows -> rows.dedupedByBrand { it.name } }
 
     override fun observeWatchProvidersByShowId(showId: Long): Flow<List<WatchProvidersByShowId>> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
         return database.watchProvidersQueries.watchProvidersByShowId(internalShowId)
             .asFlow()
             .mapToList(dispatcher.io)
@@ -55,7 +55,7 @@ public class DefaultWatchProviderDao(
     }
 
     override fun deleteByShowId(showId: Long) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         database.watchProvidersQueries.deleteByShowId(internalShowId)
     }
 

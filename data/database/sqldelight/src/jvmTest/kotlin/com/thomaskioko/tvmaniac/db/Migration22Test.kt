@@ -21,7 +21,7 @@ class Migration22Test {
 
             val database = DatabaseFactory(driver).createDatabase()
 
-            database.traktListShowsQueries.selectByShowTraktId(show_trakt_id = 1L)
+            database.traktListShowsQueries.selectByTraktId(trakt_id = 1L)
                 .executeAsList() shouldBe emptyList()
             database.traktListShowsQueries.countActiveByListId()
                 .executeAsList() shouldBe emptyList()

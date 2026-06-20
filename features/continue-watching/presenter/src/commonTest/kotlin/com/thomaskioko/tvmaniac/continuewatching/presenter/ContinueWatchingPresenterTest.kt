@@ -53,6 +53,21 @@ class ContinueWatchingPresenterTest {
     }
 
     @Test
+    fun `should show loading until content is available`() = runTest {
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            factory.upNextRepository.setNextEpisodesForWatchlist(
+                listOf(createNextEpisodeWithShow(showId = 1L, showName = "Loki", episodeId = 101L)),
+            )
+
+            val loaded = awaitItem()
+            loaded.isEmpty shouldBe false
+            loaded.showLoading shouldBe false
+        }
+    }
+
+    @Test
     fun `should emit ContinueWatchingState with content on success`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe ContinueWatchingState()
@@ -205,7 +220,6 @@ class ContinueWatchingPresenterTest {
         firstAired: Long? = LocalDate(2021, 6, 9).toEpochMillis(),
     ) = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

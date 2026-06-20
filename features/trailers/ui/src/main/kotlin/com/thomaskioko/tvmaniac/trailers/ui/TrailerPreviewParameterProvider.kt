@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 private val trailersList = List(4) { index ->
     Trailer(
-        showTmdbId = 1232,
+        showId = 1232,
         key = "er_$index",
         name = "Trailer Name",
         youtubeThumbnailUrl = "",

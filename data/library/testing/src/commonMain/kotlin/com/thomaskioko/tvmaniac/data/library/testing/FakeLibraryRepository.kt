@@ -91,4 +91,12 @@ public class FakeLibraryRepository : LibraryRepository {
     }
 
     override suspend fun needsSync(expiry: Duration): Boolean = needsSyncResult
+
+    private var pendingFollowedShowsCount = 0L
+
+    public fun setPendingFollowedShowsCount(count: Long) {
+        pendingFollowedShowsCount = count
+    }
+
+    override suspend fun countPendingFollowedShows(): Long = pendingFollowedShowsCount
 }

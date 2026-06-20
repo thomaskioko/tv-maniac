@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
@@ -50,7 +49,7 @@ public class DefaultLibraryRepository(
     private val libraryStore: LibraryStore,
     private val datastoreRepository: DatastoreRepository,
     private val followedShowsDao: FollowedShowsDao,
-    private val sources: Set<LibraryRemoteDataSource>,
+    private val activeSource: () -> LibraryRemoteDataSource?,
     private val accountManager: AccountManager,
     private val requestManagerRepository: RequestManagerRepository,
     private val transactionRunner: DatabaseTransactionRunner,
@@ -80,7 +79,7 @@ public class DefaultLibraryRepository(
         if (shows.isEmpty()) return flowOf(emptyList())
 
         val providerFlows = shows.map { show ->
-            watchProviderDao.observeWatchProviders(show.show_tmdb_id.id)
+            watchProviderDao.observeWatchProviders(show.tmdb_id.id)
         }
 
         return combine(providerFlows) { providerArrays ->
@@ -128,8 +127,8 @@ public class DefaultLibraryRepository(
 
     private fun LibraryShows.toLibraryItem(watchProviders: List<WatchProvider>): LibraryItem =
         LibraryItem(
-            showId = show_trakt_id,
-            tmdbId = show_tmdb_id.id,
+            showId = show_id.id,
+            tmdbId = tmdb_id.id,
             title = title,
             posterPath = poster_path,
             status = status,
@@ -184,8 +183,7 @@ public class DefaultLibraryRepository(
             threshold = expiry,
         )
 
-    private fun activeSource(): LibraryRemoteDataSource? =
-        sources.getActiveProvider(accountManager)
+    override suspend fun countPendingFollowedShows(): Long = followedShowsDao.countPendingActions()
 
     private suspend fun processPendingUploadActions(): PendingActionOutcome {
         val pendingUploads = followedShowsDao.entriesWithUploadPendingAction()

@@ -5,6 +5,7 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 
 public interface ShowIdResolver {
+    public fun showIdForTmdbId(tmdbId: Long): Id<ShowId>?
     public fun showIdForTraktId(traktId: Long): Id<ShowId>?
 }
 
@@ -14,9 +15,15 @@ public class DefaultShowIdResolver(
     database: TvManiacDatabase,
 ) : ShowIdResolver {
 
-    private val queries = database.tvshowExternalIdQueries
+    private val queries = database.tvShowQueries
+    private val externalIdQueries = database.tvshowExternalIdQueries
+
+    override fun showIdForTmdbId(tmdbId: Long): Id<ShowId>? =
+        queries.getShowIdByTmdbId(Id(tmdbId)).executeAsOneOrNull()
 
     override fun showIdForTraktId(traktId: Long): Id<ShowId>? =
-        queries.showIdForExternalId(provider = Provider.TRAKT, externalId = traktId.toString())
-            .executeAsOneOrNull()
+        externalIdQueries.showIdForExternalId(
+            provider = Provider.TRAKT,
+            externalId = traktId.toString(),
+        ).executeAsOneOrNull()
 }

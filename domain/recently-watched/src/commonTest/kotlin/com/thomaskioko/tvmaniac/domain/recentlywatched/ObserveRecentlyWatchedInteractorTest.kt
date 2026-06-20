@@ -31,7 +31,6 @@ internal class ObserveRecentlyWatchedInteractorTest {
         val episodes = listOf(
             RecentlyWatchedEpisode(
                 showId = 1,
-                showTmdbId = 1,
                 showTitle = "Breaking Bad",
                 posterPath = "/1.jpg",
                 seasonNumber = 1,
@@ -41,7 +40,6 @@ internal class ObserveRecentlyWatchedInteractorTest {
             ),
             RecentlyWatchedEpisode(
                 showId = 2,
-                showTmdbId = 2,
                 showTitle = "Severance",
                 posterPath = "/2.jpg",
                 seasonNumber = 1,

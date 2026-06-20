@@ -5,20 +5,22 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.calendar.CalendarDao
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
-import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.data.calendar.RemoteCalendarEntry
 import com.thomaskioko.tvmaniac.db.ObserveEntriesBetweenDates
-import com.thomaskioko.tvmaniac.db.TraktId
+import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultCalendarDao(
     private val database: TvManiacDatabase,
+    private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : CalendarDao {
 
@@ -33,9 +35,10 @@ public class DefaultCalendarDao(
         database.calendarQueries.hasEntriesInRange(startDate, endDate).executeAsOne()
 
     override fun upsert(entry: CalendarEntry) {
+        val internalShowId = showIdResolver.showIdForTraktId(entry.showId) ?: return
         database.calendarQueries.upsert(
-            show_trakt_id = Id<TraktId>(entry.showId),
-            episode_trakt_id = entry.episodeId,
+            show_id = internalShowId,
+            trakt_id = entry.episodeId,
             season_number = entry.seasonNumber.toLong(),
             episode_number = entry.episodeNumber.toLong(),
             episode_title = entry.episodeTitle,
@@ -43,6 +46,26 @@ public class DefaultCalendarDao(
             show_title = entry.showTitle,
             show_poster_path = entry.showPosterPath,
             network = entry.network,
+            runtime = entry.runtime?.toLong(),
+            overview = entry.overview,
+            rating = entry.rating,
+            votes = entry.votes?.toLong(),
+        )
+    }
+
+    override fun upsertFromRemote(entry: RemoteCalendarEntry, posterPath: String?) {
+        val internalShowId = showIdResolver.showIdForTmdbId(entry.tmdbId) ?: return
+        val airDateEpoch = Instant.parse(entry.firstAiredIso).toEpochMilliseconds()
+        database.calendarQueries.upsert(
+            show_id = internalShowId,
+            trakt_id = entry.episodeTraktId,
+            season_number = entry.seasonNumber.toLong(),
+            episode_number = entry.episodeNumber.toLong(),
+            episode_title = entry.episodeTitle,
+            air_date = airDateEpoch,
+            show_title = entry.showTitle,
+            show_poster_path = posterPath,
+            network = null,
             runtime = entry.runtime?.toLong(),
             overview = entry.overview,
             rating = entry.rating,
@@ -64,8 +87,8 @@ public class DefaultCalendarDao(
 }
 
 private fun ObserveEntriesBetweenDates.toCalendarEntry(): CalendarEntry = CalendarEntry(
-    showId = show_trakt_id.id,
-    episodeId = episode_trakt_id,
+    showId = show_id.id,
+    episodeId = trakt_id,
     seasonNumber = season_number.toInt(),
     episodeNumber = episode_number.toInt(),
     episodeTitle = episode_title,

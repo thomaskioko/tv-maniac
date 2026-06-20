@@ -35,6 +35,8 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
         discoverRobot
             .assertDiscoverScreenDisplayed()
 
+        scenarios.library.stubLibrarySyncEndpoints()
+        scenarios.watchlist.stubWatchlistSyncEndpoints()
         scenarios.signInAndDismissRationale()
 
         scenarios.calendar.stubWeek()

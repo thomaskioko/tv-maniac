@@ -35,7 +35,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         similar_showsAdapter = Similar_shows.Adapter(
             tmdb_idAdapter = IdAdapter(),
             show_idAdapter = IdAdapter(),
-            similar_show_trakt_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
         ),
         trailersAdapter = Trailers.Adapter(
             show_idAdapter = IdAdapter(),
@@ -80,7 +80,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         recommended_showsAdapter = Recommended_shows.Adapter(
             tmdb_idAdapter = IdAdapter(),
             show_idAdapter = IdAdapter(),
-            recommended_show_trakt_idAdapter = IdAdapter(),
+            trakt_idAdapter = IdAdapter(),
         ),
         castsAdapter = Casts.Adapter(
             idAdapter = IdAdapter(),
@@ -118,7 +118,7 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             fetched_atAdapter = InstantColumnAdapter,
         ),
         calendar_entryAdapter = Calendar_entry.Adapter(
-            show_trakt_idAdapter = IdAdapter(),
+            show_idAdapter = IdAdapter(),
         ),
         continue_watchingAdapter = Continue_watching.Adapter(
             show_idAdapter = IdAdapter(),

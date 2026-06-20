@@ -1,7 +1,5 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.getActiveProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
@@ -10,14 +8,16 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationExcepti
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
-import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.LIBRARY_SYNC
+import com.thomaskioko.tvmaniac.shows.api.ShowReconciler
+import com.thomaskioko.tvmaniac.shows.api.ShowResolveOutcome
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
@@ -40,66 +40,84 @@ import org.mobilenativefoundation.store.store5.Validator
 @Inject
 @SingleIn(AppScope::class)
 public class LibraryStore(
-    private val sources: Set<LibraryRemoteDataSource>,
-    private val accountManager: AccountManager,
+    private val activeSource: () -> LibraryRemoteDataSource?,
     private val tmdbDataSource: TmdbShowDetailsNetworkDataSource,
     private val followedShowsDao: FollowedShowsDao,
     private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val syncRepository: ActivitySyncRepository,
     private val transactionRunner: DatabaseTransactionRunner,
+    private val showReconciler: ShowReconciler,
     private val formatterUtil: FormatterUtil,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<LibrarySortOption, List<FollowedShowEntry>> by storeBuilder(
     fetcher = Fetcher.of { _: LibrarySortOption ->
         coroutineScope {
-            val source = sources.getActiveProvider(accountManager)
+            val source = activeSource()
                 ?: throw AuthenticationException("No active sync provider")
             source.getWatchlist()
                 .getOrThrow()
                 .map { watchlistShow ->
                     async {
-                        when (val tmdb = tmdbDataSource.getShowDetails(watchlistShow.tmdbId)) {
-                            is ApiResponse.Success -> FollowedShowWithImages(
-                                show = watchlistShow,
-                                tmdbPosterPath = tmdb.body.posterPath,
-                                tmdbBackdropPath = tmdb.body.backdropPath,
-                            )
-                            is ApiResponse.Unauthenticated,
-                            is ApiResponse.Error,
-                            -> FollowedShowWithImages(
-                                show = watchlistShow,
-                                tmdbPosterPath = null,
-                                tmdbBackdropPath = null,
-                            )
+                        val (outcome, _) = showReconciler.reconcile(
+                            tmdbId = watchlistShow.tmdbId,
+                            imdbId = watchlistShow.imdbId,
+                            title = watchlistShow.title,
+                            providerShowId = watchlistShow.providerShowId,
+                            provider = watchlistShow.provider,
+                        )
+                        when (outcome) {
+                            is ShowResolveOutcome.Resolved -> {
+                                val resolvedTmdbId = outcome.tmdbId
+                                when (val tmdb = tmdbDataSource.getShowDetails(resolvedTmdbId)) {
+                                    is ApiResponse.Success -> ResolvedFollowedShow(
+                                        tmdbId = resolvedTmdbId,
+                                        followedAt = watchlistShow.followedAt,
+                                        year = watchlistShow.year,
+                                        title = watchlistShow.title,
+                                        tmdbPosterPath = tmdb.body.posterPath,
+                                        tmdbBackdropPath = tmdb.body.backdropPath,
+                                    )
+                                    is ApiResponse.Unauthenticated,
+                                    is ApiResponse.Error,
+                                    -> ResolvedFollowedShow(
+                                        tmdbId = resolvedTmdbId,
+                                        followedAt = watchlistShow.followedAt,
+                                        year = watchlistShow.year,
+                                        title = watchlistShow.title,
+                                        tmdbPosterPath = null,
+                                        tmdbBackdropPath = null,
+                                    )
+                                }
+                            }
+                            is ShowResolveOutcome.Skipped -> null
                         }
                     }
                 }
                 .awaitAll()
+                .filterNotNull()
         }
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { _: LibrarySortOption -> followedShowsDao.entriesObservable() },
-        writer = { _: LibrarySortOption, response: List<FollowedShowWithImages> ->
+        writer = { _: LibrarySortOption, response: List<ResolvedFollowedShow> ->
             transactionRunner {
                 val currentEntries = followedShowsDao.entriesWithNoPendingAction()
-                val networkShowIds = response.map { it.show.showId }.toSet()
+                val networkTmdbIds = response.map { it.tmdbId }.toSet()
 
                 response.forEach { item ->
-                    val entry = item.show.toFollowedShowEntry()
-
                     tvShowsDao.upsertMerging(
-                        item.show.toTvshow(
+                        item.toTvshow(
                             posterPath = item.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                             backdropPath = item.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                         ),
                     )
 
-                    val _ = followedShowsDao.upsert(entry)
+                    val _ = followedShowsDao.upsert(item.toFollowedShowEntry())
                 }
 
                 currentEntries.forEach { localEntry ->
-                    if (localEntry.showId !in networkShowIds) {
+                    if (localEntry.showId !in networkTmdbIds) {
                         followedShowsDao.deleteById(localEntry.id)
                     }
                 }
@@ -132,22 +150,25 @@ public class LibraryStore(
     },
 ).build()
 
-private data class FollowedShowWithImages(
-    val show: RemoteFollowedShow,
+private data class ResolvedFollowedShow(
+    val tmdbId: Long,
+    val followedAt: kotlin.time.Instant,
+    val year: Int?,
+    val title: String,
     val tmdbPosterPath: String?,
     val tmdbBackdropPath: String?,
 )
 
-private fun RemoteFollowedShow.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
-    showId = showId,
+private fun ResolvedFollowedShow.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
+    showId = tmdbId,
     tmdbId = tmdbId,
     followedAt = followedAt,
     pendingAction = PendingAction.NOTHING,
 )
 
-private fun RemoteFollowedShow.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
-    showId = Id(showId),
-    tmdbId = Id(tmdbId),
+private fun ResolvedFollowedShow.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
+    showId = null,
+    tmdbId = Id<TmdbId>(tmdbId),
     name = title,
     overview = "",
     language = null,

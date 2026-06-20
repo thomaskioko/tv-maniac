@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowSeasons
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.api.model.SeasonDetailsWithEpisodes
 import kotlinx.datetime.LocalDate
@@ -28,13 +29,13 @@ internal object MockData {
 
     val testShowSeasons = listOf(
         ShowSeasons(
-            show_trakt_id = TEST_SHOW_ID,
+            show_id = Id<TmdbId>(TEST_SHOW_ID),
             season_id = Id(SEASON_1_ID),
             season_title = "Season 1",
             season_number = SEASON_1_NUMBER,
         ),
         ShowSeasons(
-            show_trakt_id = TEST_SHOW_ID,
+            show_id = Id<TmdbId>(TEST_SHOW_ID),
             season_id = Id(SEASON_2_ID),
             season_title = "Season 2",
             season_number = SEASON_2_NUMBER,
@@ -82,7 +83,6 @@ internal object MockData {
     val season1Details = SeasonDetailsWithEpisodes(
         seasonId = SEASON_1_ID,
         showId = TEST_SHOW_ID,
-        showTmdbId = TEST_SHOW_ID,
         name = "Season 1",
         showTitle = TEST_SHOW_NAME,
         seasonOverview = "First season",
@@ -95,7 +95,6 @@ internal object MockData {
     val season2Details = SeasonDetailsWithEpisodes(
         seasonId = SEASON_2_ID,
         showId = TEST_SHOW_ID,
-        showTmdbId = TEST_SHOW_ID,
         name = "Season 2",
         showTitle = TEST_SHOW_NAME,
         seasonOverview = "Second season",
@@ -168,7 +167,6 @@ internal object MockData {
     ) = SeasonDetailsWithEpisodes(
         seasonId = seasonId,
         showId = TEST_SHOW_ID,
-        showTmdbId = TEST_SHOW_ID,
         name = "Season $seasonNumber",
         showTitle = "Test Show",
         seasonOverview = "Season $seasonNumber overview",

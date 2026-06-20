@@ -36,7 +36,7 @@ public class DefaultSeasonDetailsDao(
         showId: Long,
         seasonNumber: Long,
     ): Flow<List<SeasonDetails>> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(emptyList())
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
         return seasonQueries.seasonDetails(showId = internalShowId, seasonNumber = seasonNumber)
             .asFlow()
             .mapToList(dispatcher.io)
@@ -46,7 +46,7 @@ public class DefaultSeasonDetailsDao(
         showId: Long,
         seasonNumber: Long,
     ): Flow<GetSeasonWithShowInfo?> {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return flowOf(null)
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(null)
         return seasonQueries.getSeasonWithShowInfo(showId = internalShowId, seasonNumber = seasonNumber)
             .asFlow()
             .mapToOneOrNull(dispatcher.io)
@@ -58,7 +58,7 @@ public class DefaultSeasonDetailsDao(
             .mapToList(dispatcher.io)
 
     override fun delete(showId: Long) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         seasonQueries.delete(internalShowId)
     }
 

@@ -66,11 +66,13 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -107,6 +109,7 @@ public class ProfilePresenter(
     private val profileLoadingState = ObservableLoadingCounter()
     private val favoritesSyncState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
+    private val _isAuthenticating = MutableStateFlow(false)
 
     init {
         observeUserProfileInteractor(Unit)
@@ -119,6 +122,7 @@ public class ProfilePresenter(
         fetchUserData()
         syncFavorites()
         observeAuthState()
+        observeAuthError()
     }
 
     private val sectionsFlow: Flow<ProfileSections> = combine(
@@ -164,14 +168,18 @@ public class ProfilePresenter(
         uiMessageManager.message,
         sectionsFlow,
         simklLoginFlag.observe(),
-    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled ->
+        _isAuthenticating,
+    ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled, isAuthenticating ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
-        val profile = userProfile?.toPresentation()
+        // TODO:: Remove hardcoded provider
+        val statsExpected = activeProvider == AccountProvider.TRAKT || activeProvider == AccountProvider.SIMKL
+        val profile = userProfile?.toPresentation(statsExpected = statsExpected)
         val displayName = profile?.fullName ?: profile?.username ?: ""
 
         ProfileState(
             userProfile = profile,
             isLoading = isLoading,
+            isAuthenticating = isAuthenticating,
             errorMessage = errorMessage,
             authenticated = isConnected,
             activeProvider = activeProvider,
@@ -196,6 +204,7 @@ public class ProfilePresenter(
     public fun dispatch(action: ProfileAction) {
         when (action) {
             is LoginClicked -> {
+                _isAuthenticating.value = true
                 coroutineScope.launch {
                     authManagers[action.provider]?.launchWebView()
                 }
@@ -236,9 +245,18 @@ public class ProfilePresenter(
                 .drop(1)
                 .filter { it }
                 .collect {
+                    _isAuthenticating.value = false
                     fetchUserData(forceRefresh = true)
                     syncFavorites(forceRefresh = true)
                 }
+        }
+    }
+
+    private fun observeAuthError() {
+        coroutineScope.launch {
+            accountManager.authError
+                .filterNotNull()
+                .collect { _isAuthenticating.value = false }
         }
     }
 
@@ -331,14 +349,14 @@ private fun TraktListEntity.toListItem(localizer: Localizer): ProfileListItem = 
 
 private fun UpNextEpisode.toShowItem(): ProfileShowItem = ProfileShowItem(
     showId = showId,
-    tmdbId = showTmdbId,
+    tmdbId = showId,
     title = showName,
     posterUrl = showPoster,
 )
 
 private fun CompletedShow.toShowItem(): ProfileShowItem = ProfileShowItem(
     showId = showId,
-    tmdbId = showTmdbId,
+    tmdbId = showId,
     title = showName.orEmpty(),
     posterUrl = showPoster,
 )
@@ -366,33 +384,35 @@ private fun FavoriteShow.toShowItem(): ProfileShowItem = ProfileShowItem(
 
 private fun RecentlyWatchedEpisode.toRecentItem(): ProfileRecentItem = ProfileRecentItem(
     showId = showId,
-    tmdbId = showTmdbId,
+    tmdbId = showId,
     title = showTitle,
     posterUrl = posterPath,
     episodeLabel = "S${seasonNumber}E$episodeNumber",
 )
 
-private fun UserProfile.toPresentation(): ProfileInfo {
-    val breakdown = stats.userWatchTime
-
-    return ProfileInfo(
+private fun UserProfile.toPresentation(statsExpected: Boolean): ProfileInfo =
+    ProfileInfo(
         slug = slug,
         username = username,
         fullName = fullName,
         avatarUrl = avatarUrl,
-        stats = ProfileStats(
-            showsWatched = stats.showsWatchedLabel,
-            episodesWatched = stats.episodesWatchedLabel,
-            years = breakdown.years,
-            months = breakdown.months,
-            days = breakdown.remainingDays,
-            hours = breakdown.hours,
-            minutes = breakdown.minutes,
-        ),
+        stats = if (statsLoaded) {
+            val breakdown = stats.userWatchTime
+            ProfileStats(
+                showsWatched = stats.showsWatchedLabel,
+                episodesWatched = stats.episodesWatchedLabel,
+                years = breakdown.years,
+                months = breakdown.months,
+                days = breakdown.remainingDays,
+                hours = breakdown.hours,
+                minutes = breakdown.minutes,
+            )
+        } else {
+            null
+        },
         backgroundUrl = backgroundUrl,
-        statsLoaded = statsLoaded,
+        awaitingStats = statsExpected && !statsLoaded,
     )
-}
 
 private fun AuthError.toUiMessage(localizer: Localizer): UiMessage = when (this) {
     is AuthError.OAuthFailed -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginFailed, message))

@@ -273,7 +273,7 @@ private const val BREAKING_BAD_ID = 1388L
 private const val THE_WIRE_ID = 1429L
 private const val DARK_ID = 444L
 private const val RESET_SHOW_ID = 5000L
-private const val HELLS_PARADISE_ID = 181120L
+private const val HELLS_PARADISE_ID = 117465L
 
 private data class ParityTuple(
     val showId: Long,
@@ -290,14 +290,14 @@ private fun ContinueWatchingEntry.parityTuple(): ParityTuple = ParityTuple(
 )
 
 private val breakingBadTuple = ParityTuple(
-    showId = BREAKING_BAD_ID,
+    showId = 1396L,
     completedCount = 30,
     airedEpisodes = 62,
     lastWatchedAt = Instant.parse("2026-05-10T20:15:00Z").toEpochMilliseconds(),
 )
 
 private val theWireTuple = ParityTuple(
-    showId = THE_WIRE_ID,
+    showId = 1438L,
     completedCount = 12,
     airedEpisodes = 60,
     lastWatchedAt = Instant.parse("2026-04-22T09:00:00Z").toEpochMilliseconds(),

@@ -248,17 +248,22 @@ private fun ProfileContent(
                     )
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                val stats = userProfile.stats
+                if (stats != null) {
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
 
-                item {
-                    StatsCard(
-                        stats = userProfile.stats,
-                        labels = labels,
-                        listCount = listCount,
-                        onViewLists = onViewLists,
-                    )
+                    userProfile.stats?.let { stats ->
+                        item {
+                            StatsCard(
+                                stats = stats,
+                                labels = labels,
+                                listCount = listCount,
+                                onViewLists = onViewLists,
+                            )
+                        }
+                    }
                 }
 
                 if (recentlyWatched !is SectionState.Empty) {
@@ -335,13 +340,6 @@ private fun ProfileContent(
                     Spacer(modifier = Modifier.height(32.dp))
                 }
             }
-        }
-
-        else -> {
-            ProfileLoadingSkeleton(
-                contentPadding = contentPadding,
-                modifier = modifier,
-            )
         }
     }
 }

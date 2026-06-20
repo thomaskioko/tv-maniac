@@ -143,7 +143,7 @@ public class UpNextPresenter(
 
     private fun markEpisodeWatched(action: MarkWatched) {
         if (action.episodeId in updatingEpisodeIdsState.value) return
-        updatingEpisodeIdsState.update { it.add(action.episodeId) }
+        updatingEpisodeIdsState.update { it.adding(action.episodeId) }
         coroutineScope.launch {
             val marker = TimeSource.Monotonic.markNow()
             try {
@@ -160,7 +160,7 @@ public class UpNextPresenter(
                 if (elapsed < INDICATOR_FLOOR) {
                     delay(INDICATOR_FLOOR - elapsed)
                 }
-                updatingEpisodeIdsState.update { it.remove(action.episodeId) }
+                updatingEpisodeIdsState.update { it.removing(action.episodeId) }
             }
         }
     }
@@ -208,7 +208,6 @@ private fun UpNextEpisode.toUiModel(): UpNextEpisodeUiModel {
     val episode = episodeNumber.toString().padStart(2, '0')
     return UpNextEpisodeUiModel(
         showId = showId,
-        showTmdbId = showTmdbId,
         showName = showName,
         imageUrl = stillPath ?: showPoster,
         showStatus = showStatus,

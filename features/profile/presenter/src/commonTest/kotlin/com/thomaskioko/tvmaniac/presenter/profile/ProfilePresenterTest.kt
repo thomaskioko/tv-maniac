@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
@@ -112,7 +113,7 @@ internal class ProfilePresenterTest {
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
         traktListRepository = traktListRepository,
-        accountManager = accountManager,
+        activeProviderFeatures = { FakeProviderFeatures(supportsLists = true) },
         dispatchers = testDispatchers,
     )
 
@@ -150,6 +151,28 @@ internal class ProfilePresenterTest {
             loadedState.authenticated shouldBe true
             loadedState.activeProvider shouldBe AccountProvider.TRAKT
             loadedState.isLoading shouldBe false
+        }
+    }
+
+    @Test
+    fun `should show loading and not the sign in screen when login starts`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.showLoading || state.authenticated) {
+                state = awaitItem()
+            }
+            state.authenticated shouldBe false
+            state.showLoading shouldBe false
+
+            presenter.dispatch(ProfileAction.LoginClicked(AccountProvider.TRAKT))
+
+            var loading = awaitItem()
+            while (!loading.showLoading) {
+                loading = awaitItem()
+            }
+            loading.showLoading shouldBe true
+            loading.authenticated shouldBe false
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -283,6 +306,32 @@ internal class ProfilePresenterTest {
     }
 
     @Test
+    fun `should expect and surface stats given simkl active`() = runTest {
+        userRepository.holdStatsFetch()
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
+
+        val testPresenter = createPresenter()
+
+        testPresenter.state.test {
+            runCurrent()
+            val loadingState = expectMostRecentItem()
+            loadingState.userProfile shouldNotBe null
+            loadingState.userProfile?.awaitingStats shouldBe true
+            loadingState.showLoading shouldBe true
+
+            userRepository.setUserProfile(testProfile.copy(statsLoaded = true))
+            runCurrent()
+            val loadedState = expectMostRecentItem()
+            loadedState.userProfile?.stats shouldNotBe null
+            loadedState.userProfile?.awaitingStats shouldBe false
+            loadedState.showLoading shouldBe false
+
+            userRepository.releaseStatsFetch()
+        }
+    }
+
+    @Test
     fun `should not show loading after auth error is dismissed`() = runTest {
         userRepository.setUserProfile(null)
         accountManager.setActiveProvider(null)
@@ -361,7 +410,7 @@ internal class ProfilePresenterTest {
             recent.items shouldBe listOf(
                 ProfileRecentItem(
                     showId = 1L,
-                    tmdbId = 2L,
+                    tmdbId = 1L,
                     title = "Breaking Bad",
                     posterUrl = "/poster.jpg",
                     episodeLabel = "S1E5",
@@ -504,7 +553,6 @@ internal class ProfilePresenterTest {
 
     private fun createNextEpisode(): NextEpisodeWithShow = NextEpisodeWithShow(
         showId = 1L,
-        showTmdbId = 2L,
         showName = "Breaking Bad",
         showPoster = "/poster.jpg",
         showStatus = "Ended",
@@ -527,7 +575,6 @@ internal class ProfilePresenterTest {
 
     private fun createRecentlyWatched(): RecentlyWatchedEpisode = RecentlyWatchedEpisode(
         showId = 1L,
-        showTmdbId = 2L,
         showTitle = "Breaking Bad",
         posterPath = "/poster.jpg",
         seasonNumber = 1L,

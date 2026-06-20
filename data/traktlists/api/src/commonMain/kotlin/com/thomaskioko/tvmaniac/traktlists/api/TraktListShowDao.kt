@@ -17,4 +17,8 @@ public interface TraktListShowDao {
     public fun updatePendingAction(listId: Long, showId: Long, pendingAction: String)
 
     public fun deleteByListIdAndShowId(listId: Long, showId: Long)
+
+    public fun deleteAll()
+
+    public fun countPendingActions(): Long
 }

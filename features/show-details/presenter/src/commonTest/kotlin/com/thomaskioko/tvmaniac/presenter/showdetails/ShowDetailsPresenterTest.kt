@@ -5,6 +5,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -26,7 +27,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
-import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncTraktCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowMetadataInteractor
@@ -59,6 +60,7 @@ import com.thomaskioko.tvmaniac.trailers.testing.trailers
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
@@ -161,7 +163,7 @@ class ShowDetailsPresenterTest {
             ),
             trailersList = persistentListOf(
                 TrailerModel(
-                    showTmdbId = 84958,
+                    showId = 84958,
                     key = "Fd43V",
                     name = "Some title",
                     youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
@@ -685,6 +687,53 @@ class ShowDetailsPresenterTest {
         route.param.showId shouldBe 84958L
     }
 
+    @Test
+    fun `should expose canAddToList true given the active provider supports lists`() = runTest {
+        buildMockData()
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+
+        val presenter = buildShowDetailsPresenter(supportsLists = true)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.canAddToList shouldBe true
+    }
+
+    @Test
+    fun `should expose canAddToList false given the active provider does not support lists`() = runTest {
+        buildMockData()
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+
+        val presenter = buildShowDetailsPresenter(supportsLists = false)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.canAddToList shouldBe false
+    }
+
+    @Test
+    fun `should not navigate to ShowListRoute given OpenShowList is dispatched and lists are unsupported`() = runTest {
+        buildMockData()
+        accountManager.setActiveProvider(AccountProvider.SIMKL)
+
+        val presenter = buildShowDetailsPresenter(supportsLists = false)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(OpenShowList)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        fakeNavigator.lastActivatedOverlay.shouldBeNull()
+    }
+
+    @Test
+    fun `should expose canAddToList true given no active provider`() = runTest {
+        buildMockData()
+        accountManager.setActiveProvider(null)
+
+        val presenter = buildShowDetailsPresenter(supportsLists = false)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.value.canAddToList shouldBe true
+    }
+
     private suspend fun buildMockData(
         isYoutubeInstalled: Boolean = false,
         castList: List<ShowCast> = emptyList(),
@@ -706,6 +755,7 @@ class ShowDetailsPresenterTest {
     private fun buildShowDetailsPresenter(
         param: ShowDetailsParam = ShowDetailsParam(showId = 84958),
         onShowFollowed: () -> Unit = {},
+        supportsLists: Boolean = true,
     ): ShowDetailsPresenter {
         val notificationRationale = object : NotificationRationale {
             override suspend fun showIfNeeded() = onShowFollowed()
@@ -765,9 +815,10 @@ class ShowDetailsPresenterTest {
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
                 episodeRepository = episodeRepository,
             ),
-            syncTraktCalendarInteractor = SyncTraktCalendarInteractor(
+            syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = fakeDateTimeProvider,
+                activeProviderFeatures = { FakeProviderFeatures(supportsCalendar = true) },
                 logger = FakeLogger(),
                 dispatchers = coroutineDispatcher,
             ),
@@ -782,6 +833,7 @@ class ShowDetailsPresenterTest {
             ),
             notificationManager = fakeNotificationManager,
             accountManager = accountManager,
+            activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
             mapper = ShowDetailsMapper(localizer = fakeLocalizer),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             dispatchers = coroutineDispatcher,

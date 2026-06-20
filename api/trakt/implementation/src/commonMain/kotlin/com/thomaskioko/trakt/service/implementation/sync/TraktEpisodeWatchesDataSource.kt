@@ -31,12 +31,12 @@ public class TraktEpisodeWatchesDataSource(
     override val provider: AccountProvider = AccountProvider.TRAKT
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
-        return when (val response = remoteDataSource.getShowEpisodeWatches(showId)) {
+        val traktShowId = followedShowsDao.traktIdForTmdbId(showId) ?: return emptyList()
+        return when (val response = remoteDataSource.getShowEpisodeWatches(traktShowId)) {
             is ApiResponse.Success -> {
-                response.body.mapNotNull { entry ->
-                    val traktId = entry.show.ids.traktId ?: return@mapNotNull null
+                response.body.map { entry ->
                     WatchedEpisodeEntry(
-                        showId = traktId,
+                        showId = showId,
                         episodeId = 0L,
                         seasonNumber = entry.episode.season.toLong(),
                         episodeNumber = entry.episode.number.toLong(),
@@ -90,9 +90,8 @@ public class TraktEpisodeWatchesDataSource(
         }
     }
 
-    private suspend fun List<WatchedEpisodeEntry>.toShowSyncItems(): List<TraktSyncShow> =
-        groupBy { it.showId }.mapNotNull { (showId, showWatches) ->
-            val traktId = followedShowsDao.entryWithTraktId(showId)?.showId ?: return@mapNotNull null
+    private fun List<WatchedEpisodeEntry>.toShowSyncItems(): List<TraktSyncShow> =
+        groupBy { it.showId }.map { (traktId, showWatches) ->
             TraktSyncShow(
                 ids = TraktShowIds(traktId = traktId),
                 seasons = showWatches.groupBy { it.seasonNumber }.map { (seasonNumber, seasonWatches) ->
@@ -113,14 +112,14 @@ public class TraktEpisodeWatchesDataSource(
 internal class BulkWatchedShowsFetchException(message: String) : Exception(message)
 
 private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
-    val showId = show.ids.trakt
+    val tmdbId = show.ids.tmdb
     val seasons = seasons ?: return null
     val episodes = seasons.flatMap { season ->
         season.episodes.mapNotNull { episode ->
             val watchedAt = episode.lastWatchedAt?.let { runCatching { Instant.parse(it) }.getOrNull() }
                 ?: return@mapNotNull null
             WatchedEpisodeEntry(
-                showId = showId,
+                showId = tmdbId ?: 0L,
                 episodeId = null,
                 seasonNumber = season.number,
                 episodeNumber = episode.number,
@@ -130,5 +129,11 @@ private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
             )
         }
     }
-    return WatchedShowBatch(showId = showId, episodes = episodes)
+    return WatchedShowBatch(
+        tmdbId = tmdbId,
+        imdbId = show.ids.imdb,
+        title = show.title,
+        providerShowId = show.ids.trakt.toString(),
+        episodes = episodes,
+    )
 }

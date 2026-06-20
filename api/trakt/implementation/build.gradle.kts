@@ -27,7 +27,9 @@ kotlin {
                 api(projects.data.accountManager.api)
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
+                api(projects.data.calendar.api)
                 api(projects.data.library.api)
+                api(projects.data.startWatching.api)
                 api(projects.data.user.api)
                 api(projects.data.oauth.api)
                 api(projects.data.syncActivity.api)
@@ -48,6 +50,7 @@ kotlin {
                 implementation(projects.api.trakt.api)
                 implementation(projects.api.trakt.testing)
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.data.calendar.api)
             }
         }
 

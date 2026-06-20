@@ -164,7 +164,6 @@ class ObserveUpNextSectionsInteractorTest {
         val episodes = listOf(
             NextEpisodeWithShow(
                 showId = 1,
-                showTmdbId = 1,
                 showName = "Loki",
                 showPoster = "/poster.jpg",
                 showStatus = "Ended",
@@ -290,7 +289,6 @@ class ObserveUpNextSectionsInteractorTest {
         runtime: Long? = 45L,
     ) = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

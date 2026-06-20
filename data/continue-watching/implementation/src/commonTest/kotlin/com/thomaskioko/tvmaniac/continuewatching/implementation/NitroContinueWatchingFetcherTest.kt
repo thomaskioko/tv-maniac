@@ -76,7 +76,7 @@ internal class NitroContinueWatchingFetcherTest {
 
         val result = fetcher.collectEntries()
 
-        result.shouldNotBeNull().map { it.showId } shouldContainExactlyInAnyOrder listOf(THE_WIRE_ID)
+        result.shouldNotBeNull().map { it.showId } shouldContainExactlyInAnyOrder listOf(1438L)
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class NitroContinueWatchingFetcherTest {
 
         val result = fetcher.collectEntries()
 
-        result.shouldNotBeNull().map { it.showId } shouldContainExactlyInAnyOrder listOf(BREAKING_BAD_ID)
+        result.shouldNotBeNull().map { it.showId } shouldContainExactlyInAnyOrder listOf(1396L)
     }
 
     @Test
@@ -202,7 +202,7 @@ private val resetShowNitro = TraktUpNextNitroResponse(
 )
 
 private val breakingBadEntry = ContinueWatchingEntry(
-    showId = BREAKING_BAD_ID,
+    showId = 1396L,
     tmdbId = 1396,
     airedEpisodes = 62,
     completedCount = 30,
@@ -212,7 +212,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
 )
 
 private val theWireEntry = ContinueWatchingEntry(
-    showId = THE_WIRE_ID,
+    showId = 1438L,
     tmdbId = 1438,
     airedEpisodes = 60,
     completedCount = 12,

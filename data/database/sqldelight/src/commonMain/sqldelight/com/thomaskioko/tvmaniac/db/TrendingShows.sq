@@ -43,8 +43,8 @@ SELECT count(*) FROM trending_shows INNER JOIN tvshow ON tvshow.id = trending_sh
 
 entriesInPage:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    trending_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    trending_shows.tmdb_id AS tmdb_id,
     trending_shows.page,
     COALESCE(trending_shows.name, '') AS name,
     trending_shows.poster_path,
@@ -52,7 +52,6 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM trending_shows
 INNER JOIN tvshow ON tvshow.id = trending_shows.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE trending_shows.page = :page
 AND trending_shows.name IS NOT NULL
@@ -60,8 +59,8 @@ ORDER BY trending_shows.position ASC;
 
 trendingShowsByPage:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    trending_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    trending_shows.tmdb_id AS tmdb_id,
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -70,8 +69,6 @@ FROM
     trending_shows
 INNER JOIN
     tvshow ON tvshow.id = trending_shows.show_id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
@@ -83,8 +80,8 @@ ORDER BY
 
 pagedTrendingShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    trending_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    trending_shows.tmdb_id AS tmdb_id,
     trending_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -93,8 +90,6 @@ FROM
     trending_shows
 INNER JOIN
     tvshow ON tvshow.id = trending_shows.show_id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE

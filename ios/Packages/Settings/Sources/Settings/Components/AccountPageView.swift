@@ -13,12 +13,24 @@ struct AccountPageView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
-            SettingsSectionLabel(content.isAuthenticated ? content.authenticationLabel : content.connectTitle)
+            sectionHeader
 
             if content.isAuthenticated {
                 connectedCard
             } else {
                 providerList
+            }
+        }
+    }
+
+    private var sectionHeader: some View {
+        HStack(spacing: appTheme.spacing.small) {
+            SettingsSectionLabel(content.isAuthenticated ? content.authenticationLabel : content.connectTitle)
+            if content.isProcessingAuth {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .controlSize(.small)
+                    .tint(appTheme.colors.secondary)
             }
         }
     }
@@ -47,28 +59,67 @@ struct AccountPageView: View {
                     Spacer(minLength: 0)
                 }
 
-                Button(action: content.onLogout) {
-                    Group {
-                        if content.isProcessingAuth {
-                            ProgressView()
-                                .progressViewStyle(.circular)
-                                .tint(appTheme.colors.onSecondary)
-                        } else {
-                            Text(content.logoutLabel)
-                                .textStyle(appTheme.typography.labelLarge)
-                                .foregroundColor(appTheme.colors.onSecondary)
-                        }
+                HStack(spacing: appTheme.spacing.small) {
+                    logoutButton
+
+                    if let switchLabel = content.switchActionLabel {
+                        switchButton(label: switchLabel)
                     }
-                    .padding(.horizontal, appTheme.spacing.large)
-                    .padding(.vertical, appTheme.spacing.small)
-                    .background(appTheme.colors.secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
                 }
-                .buttonStyle(.plain)
-                .disabled(content.isProcessingAuth)
             }
             .padding(appTheme.spacing.medium)
         }
+    }
+
+    private var logoutButton: some View {
+        Button(action: content.onLogout) {
+            Text(content.logoutLabel)
+                .textStyle(appTheme.typography.labelLarge)
+                .foregroundColor(appTheme.colors.onSecondary)
+                .padding(.horizontal, appTheme.spacing.large)
+                .padding(.vertical, appTheme.spacing.small)
+                .background(appTheme.colors.secondary)
+                .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
+        }
+        .buttonStyle(.plain)
+        .disabled(content.isProcessingAuth || content.isSwitching)
+    }
+
+    private func switchButton(label: String) -> some View {
+        Button(action: content.onSwitchProvider) {
+            Group {
+                if content.isSwitching {
+                    HStack(spacing: appTheme.spacing.xxSmall) {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(appTheme.colors.secondary)
+                        Text(content.switchingLabel)
+                            .textStyle(appTheme.typography.labelLarge)
+                            .foregroundColor(appTheme.colors.secondary)
+                    }
+                } else {
+                    HStack(spacing: appTheme.spacing.xxSmall) {
+                        if let logoName = content.switchTargetLogoName {
+                            Image(logoName, bundle: .designSystem)
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+                                .foregroundColor(appTheme.colors.secondary)
+                        }
+                        Text(label)
+                            .textStyle(appTheme.typography.labelLarge)
+                            .foregroundColor(appTheme.colors.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal, appTheme.spacing.large)
+            .padding(.vertical, appTheme.spacing.small)
+            .background(appTheme.colors.secondary.opacity(0.12))
+            .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
+        }
+        .buttonStyle(.plain)
+        .disabled(content.isSwitching || content.isProcessingAuth)
     }
 
     private var providerList: some View {
@@ -90,6 +141,30 @@ struct AccountPageView: View {
 
     #Preview("Logged Out") {
         AccountPageView(content: SettingsPreviewSamples.accountContent(authenticated: false))
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Switch Affordance") {
+        AccountPageView(content: SettingsPreviewSamples.accountContent(authenticated: true, withSwitchAffordance: true))
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Logging Out") {
+        AccountPageView(content: SettingsPreviewSamples.accountContent(authenticated: true, isProcessingAuth: true))
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Switching In Progress") {
+        AccountPageView(content: SettingsPreviewSamples.accountContent(authenticated: true, isSwitching: true))
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Switch Confirm Dialog") {
+        AccountPageView(content: SettingsPreviewSamples.accountContent(authenticated: true, showSwitchConfirmation: true))
             .padding()
             .appPreview()
     }

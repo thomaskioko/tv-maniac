@@ -41,6 +41,10 @@ public annotation class SimklApi
 
 @Qualifier
 @Retention(BINARY)
+public annotation class SimklDataApi
+
+@Qualifier
+@Retention(BINARY)
 public annotation class IsDebugBuild
 
 @Qualifier

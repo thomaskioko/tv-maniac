@@ -152,7 +152,6 @@ class ObserveWatchlistSectionsInteractorTest {
         totalCount: Long = 10,
     ) = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         showName = showName,
         showPoster = "/poster.jpg",
         showStatus = "Ended",

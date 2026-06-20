@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository.SyncInvocation
@@ -52,15 +53,18 @@ class SyncContinueWatchingInteractorTest {
         dispatchers = dispatchers,
     )
 
-    private val interactor = SyncContinueWatchingInteractor(
+    private fun buildInteractor(supportsContinueWatchingFetch: Boolean = true) = SyncContinueWatchingInteractor(
         syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = supportsContinueWatchingFetch) },
         requestManagerRepository = requestManagerRepository,
         dispatchers = dispatchers,
         logger = FakeLogger(),
     )
+
+    private val interactor = buildInteractor()
 
     @Test
     fun `should skip when ttl valid and not force refresh`() = runTest(testDispatcher) {
@@ -142,6 +146,42 @@ class SyncContinueWatchingInteractorTest {
         showDetailsRepository.fetchInvocations().shouldBeEmpty()
         seasonDetailsRepository.getSyncedShowIds().shouldBeEmpty()
         watchProviderRepository.fetchInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should derive continue watching membership given continue watching fetch is unsupported`() = runTest(testDispatcher) {
+        buildInteractor(supportsContinueWatchingFetch = false)
+            .executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 1
+    }
+
+    @Test
+    fun `should not derive continue watching membership given continue watching fetch is supported`() = runTest(testDispatcher) {
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 0
+    }
+
+    @Test
+    fun `should skip continue watching sync given continue watching fetch is unsupported`() = runTest(testDispatcher) {
+        buildInteractor(supportsContinueWatchingFetch = false)
+            .executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.syncInvocations().shouldBeEmpty()
+        watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(false)
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 1
+    }
+
+    @Test
+    fun `should invoke continue watching sync given continue watching fetch is supported`() = runTest(testDispatcher) {
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        continueWatchingRepository.syncInvocations() shouldBe listOf(
+            SyncInvocation(forceRefresh = false, useNitro = false),
+        )
+        watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(false)
+        continueWatchingRepository.deriveMembershipInvocationCount() shouldBe 0
     }
 
     private fun watchedShow(showId: Long): ContinueWatchingEntry = ContinueWatchingEntry(

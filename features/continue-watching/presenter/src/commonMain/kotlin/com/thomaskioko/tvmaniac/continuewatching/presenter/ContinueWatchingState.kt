@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.persistentSetOf
 public data class ContinueWatchingState(
     val query: String = "",
     val isGridMode: Boolean = true,
+    val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val isSyncing: Boolean = false,
     val labels: ContinueWatchingLabels = ContinueWatchingLabels(),
@@ -26,5 +27,5 @@ public data class ContinueWatchingState(
             watchNextEpisodes.isEmpty() && staleEpisodes.isEmpty()
 
     val showLoading: Boolean
-        get() = isSyncing && isEmpty
+        get() = (isLoading || isSyncing) && isEmpty
 }

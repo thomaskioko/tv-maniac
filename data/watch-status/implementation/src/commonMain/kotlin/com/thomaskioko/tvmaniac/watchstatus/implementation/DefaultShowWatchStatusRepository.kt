@@ -23,7 +23,7 @@ public class DefaultShowWatchStatusRepository(
 
     override suspend fun refresh(showId: Long) {
         withContext(dispatchers.databaseWrite) {
-            val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return@withContext
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             val progress = dao.getWatchProgress(internalShowId) ?: return@withContext
             dao.upsert(
                 showId = internalShowId,

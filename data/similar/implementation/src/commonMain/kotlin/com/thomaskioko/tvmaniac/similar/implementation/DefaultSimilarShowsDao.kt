@@ -21,13 +21,13 @@ public class DefaultSimilarShowsDao(
     private val dispatchers: AppCoroutineDispatchers,
 ) : SimilarShowsDao {
 
-    override fun upsert(showId: Long, showTmdbId: Long, similarShowTraktId: Long, pageOrder: Int) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+    override fun upsert(showId: Long, tmdbId: Long, traktId: Long, pageOrder: Int) {
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         database.similarShowsQueries.transaction {
             database.similarShowsQueries.insertOrReplace(
                 show_id = internalShowId,
-                tmdb_id = Id(showTmdbId),
-                similar_show_trakt_id = Id(similarShowTraktId),
+                tmdb_id = Id(tmdbId),
+                trakt_id = Id(traktId),
                 page_order = pageOrder.toLong(),
             )
         }

@@ -15,8 +15,14 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
 
     override fun entriesObservable(): Flow<List<FollowedShowEntry>> = entriesFlow
 
-    override fun entryWithTraktId(showId: Long): FollowedShowEntry? =
-        entriesFlow.value.find { it.showId == showId }
+    override fun entryWithTraktId(traktId: Long): FollowedShowEntry? =
+        entriesFlow.value.find { it.showId == traktId }
+
+    override fun entryWithTmdbId(tmdbId: Long): FollowedShowEntry? =
+        entriesFlow.value.find { it.tmdbId == tmdbId || (it.tmdbId == null && it.showId == tmdbId) }
+
+    override fun traktIdForTmdbId(tmdbId: Long): Long? =
+        entriesFlow.value.find { it.tmdbId == tmdbId || (it.tmdbId == null && it.showId == tmdbId) }?.showId
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> =
         entriesFlow.value.filter { it.pendingAction == PendingAction.NOTHING }
@@ -55,6 +61,18 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
 
     override fun deleteByShowId(showId: Long) {
         entriesFlow.value = entriesFlow.value.filter { it.showId != showId }
+    }
+
+    override fun deleteAll() {
+        entriesFlow.value = emptyList()
+    }
+
+    override fun countPendingActions(): Long =
+        entriesFlow.value.count { it.pendingAction != PendingAction.NOTHING }.toLong()
+
+    public fun setEntries(entries: List<FollowedShowEntry>) {
+        entriesFlow.value = entries
+        nextId = (entries.maxOfOrNull { it.id } ?: 0L) + 1L
     }
 
     public fun clear() {

@@ -14,8 +14,8 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(libs.store5)
-                api(projects.api.trakt.api)
                 api(projects.core.base)
+                api(projects.data.calendar.api)
                 api(projects.core.logger.api)
                 api(projects.core.syncstate.api)
                 api(projects.core.util.api)
@@ -27,6 +27,7 @@ kotlin {
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.upnext.api)
+                api(projects.data.shows.api)
                 api(projects.data.watchStatus.api)
 
                 implementation(projects.core.networkUtil.api)
@@ -42,11 +43,13 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.data.accountManager.testing)
+                implementation(projects.data.calendar.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.api)
+                implementation(projects.data.shows.api)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.watchStatus.testing)
             }

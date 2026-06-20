@@ -1,21 +1,5 @@
-import com.autonomousapps.DependencyAnalysisSubExtension
-
 plugins {
     alias(libs.plugins.app.kmp)
-}
-
-// TODO: replace with `scaffold { ignoreUnused(...) }`.
-configure<DependencyAnalysisSubExtension> {
-    issues {
-        onUnusedDependencies {
-            exclude(
-                ":data:request-manager:testing",
-                ":data:sync-activity:testing",
-                ":data:traktlists:testing",
-                ":data:user:testing",
-            )
-        }
-    }
 }
 
 scaffold {
@@ -30,13 +14,20 @@ scaffold {
         )
     }
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+    ignoreUnusedDependencies(
+        ":data:request-manager:testing",
+        ":data:sync-activity:testing",
+        ":data:traktlists:testing",
+        ":data:user:testing",
+    )
 }
 
 kotlin {
     sourceSets {
-        val jvmAndIosMain by creating {
-            dependsOn(getByName("commonMain"))
-        }
+        val jvmAndIosMain =
+            create("jvmAndIosMain") {
+                dependsOn(getByName("commonMain"))
+            }
         getByName("jvmMain").dependsOn(jvmAndIosMain)
         getByName("iosMain").dependsOn(jvmAndIosMain)
 
@@ -110,13 +101,13 @@ kotlin {
             api(projects.data.watchproviders.implementation)
             api(projects.domain.episode)
             api(projects.domain.library)
+            api(projects.data.logout.implementation)
             api(projects.domain.logout)
             api(projects.domain.notifications)
             api(projects.domain.continueWatching)
             api(projects.domain.user)
             api(projects.domain.continueWatching)
             api(projects.features.discover.nav)
-            api(projects.features.genreShows.nav)
             api(projects.features.home.nav)
             api(projects.features.home.presenter)
             api(projects.features.library.nav)
@@ -158,6 +149,7 @@ kotlin {
             api(projects.core.tasks.api)
             api(projects.data.oauth.api)
 
+            implementation(libs.androidx.compose.runtime)
             implementation(libs.kotlinx.serialization.json)
         }
     }

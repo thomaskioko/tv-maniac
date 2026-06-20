@@ -7,7 +7,7 @@ import org.junit.Test
 
 internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
 
     @Test
     fun givenShow_whenTrackIsClicked_thenPersistsInFollowedShows() = runAppFlowTest {
@@ -15,7 +15,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
 
         trackShow()
     }
@@ -27,14 +27,14 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
         discoverRobot
             .assertFeaturedPagerDisplayed()
             .assertDisplayed(HomeTestTags.NAVIGATION_BAR)
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
             .assertShowDetailsDisplayed()
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .pressBack()
             .assertDoesNotExist(ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG)
 
         discoverRobot
-            .assertShowCardDisplayed(breakingBadTraktId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
             .assertDisplayed(HomeTestTags.NAVIGATION_BAR)
     }
 }

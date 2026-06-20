@@ -11,7 +11,7 @@ internal class SearchFlowTest : BaseAppFlowTest() {
         scenarios.discover.stubBrowseGraph()
 
         val query = "Breaking Bad"
-        val traktId = 1388L
+        val tmdbId = 1396L
 
         discoverRobot
             .assertDiscoverScreenDisplayed()
@@ -25,17 +25,17 @@ internal class SearchFlowTest : BaseAppFlowTest() {
             .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
             .enterSearchQuery(query)
             .assertSearchQueryDisplayed(query)
-            .assertResultItemDisplayed(traktId)
+            .assertResultItemDisplayed(tmdbId)
             .assertResultTitleDisplayed("Breaking Bad")
             // 2. Click Result -> Show Details
-            .clickResultItem(traktId)
+            .clickResultItem(tmdbId)
             .assertShowDetailsDisplayed()
             .pressBack()
 
         // 3. Back -> Search Screen restored
         searchRobot
             .assertSearchScreenDisplayed()
-            .assertResultItemDisplayed(traktId)
+            .assertResultItemDisplayed(tmdbId)
     }
 
     @Test

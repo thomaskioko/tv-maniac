@@ -12,8 +12,11 @@ public class FakeContinueWatchingRepository : ContinueWatchingRepository {
 
     private val syncInvocations = mutableListOf<SyncInvocation>()
     private var entries: List<ContinueWatchingEntry> = emptyList()
+    private var deriveMembershipCount = 0
 
     public fun syncInvocations(): List<SyncInvocation> = syncInvocations.toList()
+
+    public fun deriveMembershipInvocationCount(): Int = deriveMembershipCount
 
     public fun clearInvocations() {
         syncInvocations.clear()
@@ -28,4 +31,8 @@ public class FakeContinueWatchingRepository : ContinueWatchingRepository {
     }
 
     override suspend fun getEntries(): List<ContinueWatchingEntry> = entries
+
+    override suspend fun deriveMembershipFromWatchedEpisodes() {
+        deriveMembershipCount++
+    }
 }

@@ -43,8 +43,8 @@ SELECT count(*) FROM toprated_shows INNER JOIN tvshow ON tvshow.id = toprated_sh
 
 entriesInPage:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     COALESCE(toprated_shows.name, '') AS name,
     toprated_shows.poster_path,
@@ -52,7 +52,6 @@ SELECT
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM toprated_shows
 INNER JOIN tvshow ON tvshow.id = toprated_shows.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN followed_shows ON followed_shows.show_id = tvshow.id AND followed_shows.pending_action != 'DELETE'
 WHERE toprated_shows.page = :page
   AND toprated_shows.name IS NOT NULL
@@ -60,8 +59,8 @@ ORDER BY toprated_shows.page_order ASC;
 
 topRatedShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -70,8 +69,6 @@ FROM
     toprated_shows
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.show_id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY
@@ -79,8 +76,8 @@ ORDER BY
 
 topRatedShowByPage:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -89,8 +86,6 @@ FROM
     toprated_shows
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.show_id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
@@ -98,8 +93,8 @@ WHERE
 
 pagedTopRatedShows:
 SELECT
-    show_trakt.trakt_id AS show_trakt_id,
-    toprated_shows.tmdb_id AS show_tmdb_id,
+    tvshow.tmdb_id AS show_id,
+    toprated_shows.tmdb_id AS tmdb_id,
     toprated_shows.page,
     tvshow.name,
     tvshow.poster_path,
@@ -108,8 +103,6 @@ FROM
     toprated_shows
 INNER JOIN
     tvshow ON tvshow.id = toprated_shows.show_id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 ORDER BY

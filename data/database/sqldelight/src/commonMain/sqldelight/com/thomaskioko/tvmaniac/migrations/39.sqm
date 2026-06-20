@@ -1,0 +1,7 @@
+-- Phase 3b identity migration: clear last_requests freshness rows.
+-- After the boundary flip (tvshow.id is now TMDB-valued), any persisted
+-- last_requests row whose entity_id held an old Trakt show-ID would mark a
+-- TMDB-keyed Store fetch as fresh and suppress a re-fetch against the new key.
+-- Deleting all rows forces every per-show Store to re-fetch on next access.
+
+DELETE FROM last_requests;

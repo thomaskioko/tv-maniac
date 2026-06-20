@@ -206,7 +206,7 @@ private val breakingBadNitro = TraktUpNextNitroResponse(
 )
 
 private val breakingBadEntry = ContinueWatchingEntry(
-    showId = BREAKING_BAD_ID,
+    showId = 1396L,
     tmdbId = 1396,
     airedEpisodes = 62,
     completedCount = 30,
@@ -216,7 +216,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
 )
 
 private val theWireEntry = ContinueWatchingEntry(
-    showId = THE_WIRE_ID,
+    showId = 1438L,
     tmdbId = 1438,
     airedEpisodes = 60,
     completedCount = 12,

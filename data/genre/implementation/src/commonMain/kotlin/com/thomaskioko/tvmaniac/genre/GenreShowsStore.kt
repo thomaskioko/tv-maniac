@@ -117,7 +117,7 @@ public class GenreShowsStore(
 
                         traktGenreDao.upsertGenreShow(
                             genreSlug = key.genreSlug,
-                            showId = showId,
+                            showId = tmdbId,
                             pageOrder = showWithImages.pageOrder.toLong(),
                             category = key.category.name,
                         )

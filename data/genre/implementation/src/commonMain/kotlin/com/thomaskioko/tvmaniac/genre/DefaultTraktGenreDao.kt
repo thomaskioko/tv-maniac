@@ -43,7 +43,7 @@ public class DefaultTraktGenreDao(
     }
 
     override fun upsertGenreShow(genreSlug: String, showId: Long, pageOrder: Long, category: String) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         genreShowsQueries.upsert(
             genre_slug = genreSlug,
             show_id = internalShowId,
@@ -55,7 +55,7 @@ public class DefaultTraktGenreDao(
     override fun observeShowsByGenreSlug(slug: String): Flow<List<ShowEntity>> =
         genreShowsQueries.showsByGenreSlug(slug) { showId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                showId = showId,
+                showId = showId.id,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -72,7 +72,7 @@ public class DefaultTraktGenreDao(
     override fun observeShowsByGenreSlugAndCategory(slug: String, category: String): Flow<List<ShowEntity>> =
         genreShowsQueries.showsByGenreSlugAndCategory(slug, category) { showId, tmdbId, name, posterPath, overview, status, ratings, year, _ ->
             ShowEntity(
-                showId = showId,
+                showId = showId.id,
                 tmdbId = tmdbId.id,
                 title = name,
                 posterPath = posterPath,
@@ -92,7 +92,7 @@ public class DefaultTraktGenreDao(
                 genreSlug = genreSlug,
                 genreName = genreName,
                 show = ShowEntity(
-                    showId = showId,
+                    showId = showId.id,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,

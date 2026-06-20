@@ -41,29 +41,36 @@ Join the open beta on [Google Play](https://play.google.com/store/apps/details?i
 
 ### API Keys
 
-The app requires TMDB and Trakt API credentials. See [docs/setup.md](docs/setup.md) for detailed instructions.
+The app requires TMDB, Trakt, and Simkl API credentials. See [docs/setup.md](docs/setup.md) for detailed instructions.
 
-Create `local.properties` in the project root:
+The setup script below creates `local.properties` from the template. Fill in your keys:
 
 ```properties
 TMDB_API_KEY=your_tmdb_api_key
 TRAKT_CLIENT_ID=your_trakt_client_id
 TRAKT_CLIENT_SECRET=your_trakt_client_secret
 TRAKT_REDIRECT_URI=tvmaniac://auth/trakt
+SIMKL_CLIENT_ID=your_simkl_client_id
+SIMKL_CLIENT_SECRET=your_simkl_client_secret
+SIMKL_REDIRECT_URI=tvmaniac://auth/simkl
 ```
 
 ### Setup & Build
 
+One command sets up everything. It is idempotent and platform-aware: full setup including iOS on macOS, Android-only on Linux/Windows (iOS needs a Mac).
+
 ```bash
-./scripts/install-git-hooks.sh
+./scripts/setup.sh
 ```
+
+See [docs/setup.md](docs/setup.md) for what it installs and the manual steps.
 
 **Android:**
 ```bash
 ./gradlew :app:assembleDebug
 ```
 
-**iOS:**
+**iOS (macOS only):**
 Open `ios/tv-maniac.xcodeproj` in Xcode and run.
 
 ---

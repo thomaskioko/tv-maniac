@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.WatchProvidersByShowId
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.WATCH_PROVIDERS
-import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.model.WatchProvidersResult
 import dev.zacsweers.metro.Inject
@@ -23,7 +22,6 @@ import org.mobilenativefoundation.store.store5.Validator
 @Inject
 public class WatchProvidersStore(
     private val remoteDataSource: TmdbShowDetailsNetworkDataSource,
-    private val tvShowsDao: TvShowsDao,
     private val showIdResolver: ShowIdResolver,
     private val dao: WatchProviderDao,
     private val mapper: WatchProvidersMapper,
@@ -31,16 +29,14 @@ public class WatchProvidersStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, List<WatchProvidersByShowId>> by storeBuilder(
-    fetcher = Fetcher.of { showId ->
-        val tmdbId = tvShowsDao.getTmdbIdByShowId(showId)
-            ?: throw Throwable("TMDB ID not found for Trakt ID: $showId")
-        when (val response = remoteDataSource.getShowWatchProviders(tmdbId)) {
+    fetcher = Fetcher.of { tmdbShowId: Long ->
+        when (val response = remoteDataSource.getShowWatchProviders(tmdbShowId)) {
             is ApiResponse.Success -> {
                 requestManagerRepository.upsert(
-                    entityId = showId,
+                    entityId = tmdbShowId,
                     requestType = WATCH_PROVIDERS.name,
                 )
-                WatchProvidersFetchResult(tmdbId, response.body)
+                WatchProvidersFetchResult(tmdbShowId, response.body)
             }
             is ApiResponse.Unauthenticated -> throw Throwable("Not authenticated")
             is ApiResponse.Error.NetworkFailure -> throw Throwable("Network failure: ${response.kind}", response.cause)
@@ -56,7 +52,7 @@ public class WatchProvidersStore(
         writer = { showId, result ->
             databaseTransactionRunner {
                 dao.deleteByShowId(showId)
-                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                val internalShowId = showIdResolver.showIdForTmdbId(showId)
                 if (internalShowId != null) {
                     result.response.results.US
                         ?.let { mapper.mapToRows(us = it, tmdbId = result.tmdbId, showId = internalShowId) }
@@ -77,7 +73,7 @@ public class WatchProvidersStore(
 ).validator(
     Validator.by { result ->
         withContext(dispatchers.io) {
-            val showId = result.firstOrNull()?.trakt_id ?: return@withContext false
+            val showId = result.firstOrNull()?.show_id?.id ?: return@withContext false
             !requestManagerRepository.isRequestExpired(
                 entityId = showId,
                 requestType = WATCH_PROVIDERS.name,

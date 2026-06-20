@@ -100,6 +100,7 @@ private extension ShowDetailsContent {
             seasonDetailsTitle: String(\.title_season_details),
             showSeasonDetailsHeader: continueTrackingEpisodes.isEmpty,
             upToDateLabel: String(\.label_up_to_date),
+            canAddToList: canAddToList,
             updatingEpisodeIds: Set(updatingEpisodeIds.map(\.int64Value))
         )
     }

@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.search.ui.components
 
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +26,6 @@ import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -62,7 +63,7 @@ internal fun HorizontalShowContentRow(
 
         LazyRow(
             state = lazyListState,
-            flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+            flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
             contentPadding = PaddingValues(start = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

@@ -25,7 +25,7 @@ jobs:
     spotless:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -36,7 +36,7 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -55,7 +55,7 @@ jobs:
     dependency-health:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -73,7 +73,7 @@ jobs:
     swift-lint:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🔍 Run SwiftLint (pinned)
                 uses: docker://ghcr.io/realm/swiftlint:0.63.3
@@ -87,7 +87,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout Code
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -126,7 +126,7 @@ jobs:
     linux-test:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -171,7 +171,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout project
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 📱 Setup iOS Environment
                 uses: ./.github/actions/setup-ios
@@ -194,7 +194,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout project
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 📱 Setup iOS Environment
                 uses: ./.github/actions/setup-ios
@@ -241,7 +241,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout project
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 📱 Setup iOS Environment
                 uses: ./.github/actions/setup-ios

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasTestTag
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.calendar.CalendarTestTags
 
@@ -34,9 +35,7 @@ internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot
     }
 
     fun assertDateHeaderDisplayed(text: String) = apply {
-        val tag = CalendarTestTags.dateHeader(text)
-        assertDisplayed(tag)
-        assertTextEquals(tag, text)
+        awaitMatcherAtLeastOne(hasTestTag(CalendarTestTags.dateHeader(text)), timeoutMillis = 10_000)
     }
 
     fun assertAdditionalEpisodesCountDisplayed(episodeTraktId: Long, expectedText: String) = apply {

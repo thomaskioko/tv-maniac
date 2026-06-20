@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.appconfig.SimklConfig
 import com.thomaskioko.tvmaniac.core.base.SimklApi
+import com.thomaskioko.tvmaniac.core.base.SimklDataApi
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import dev.zacsweers.metro.AppScope
@@ -40,5 +41,19 @@ public object SimklBindingContainer {
         httpClientEngine = httpClientEngine,
         kermitLogger = logger,
         authStateHolder = authStateHolder,
+    )
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @SimklDataApi
+    public fun provideDataHttpClient(
+        @SimklApi httpClientEngine: HttpClientEngine,
+        debugConfig: DebugConfig,
+        logger: Logger,
+    ): HttpClient = simklDataHttpClient(
+        isDebug = debugConfig.isDebug,
+        json = json,
+        httpClientEngine = httpClientEngine,
+        kermitLogger = logger,
     )
 }

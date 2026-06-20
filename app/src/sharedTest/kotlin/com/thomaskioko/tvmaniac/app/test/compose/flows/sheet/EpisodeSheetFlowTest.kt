@@ -8,7 +8,7 @@ import org.junit.Test
 
 internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val pilotSeasonNumber = 1L
 
@@ -73,7 +73,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
 
         homeRobot.clickMyShowsTab()
-        watchlistRobot.clickShowCard(breakingBadTraktId)
+        watchlistRobot.clickShowCard(breakingBadTmdbId)
         showDetailsRobot
             .assertShowDetailsDisplayed()
             .clickSeasonChip(seasonNumber = pilotSeasonNumber)
@@ -90,8 +90,8 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .scrollToShowCard(breakingBadTraktId)
-            .assertShowCardDisplayed(breakingBadTraktId)
+            .scrollToShowCard(breakingBadTmdbId)
+            .assertShowCardDisplayed(breakingBadTmdbId)
 
         homeRobot
             .clickProgressTab()
@@ -100,7 +100,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         progressRobot
             .assertUpNextTabSelected()
             .assertUpNextPageDisplayed()
-            .assertUpNextEpisodeDisplayed(breakingBadTraktId)
+            .assertUpNextEpisodeDisplayed(breakingBadTmdbId)
 
         homeRobot
             .clickDiscoverTab()
@@ -108,7 +108,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickUpNextCard(breakingBadTraktId)
+            .clickUpNextCard(breakingBadTmdbId)
 
         episodeSheetRobot
             .assertEpisodeSheetDisplayed()

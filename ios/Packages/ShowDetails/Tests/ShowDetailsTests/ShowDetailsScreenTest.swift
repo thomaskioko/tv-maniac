@@ -72,7 +72,8 @@ class ShowDetailsScreenTest: SnapshotTestCase {
                 similarShowsTitle: "Similar Shows",
                 seasonDetailsTitle: "Season Details",
                 showSeasonDetailsHeader: true,
-                upToDateLabel: "Up to date"
+                upToDateLabel: "Up to date",
+                canAddToList: true
             ),
             dayLabelFormat: { "\($0) days" },
             seasonCountFormat: { "\($0) Seasons" },
@@ -124,7 +125,8 @@ class ShowDetailsScreenTest: SnapshotTestCase {
                 similarShowsTitle: "Similar Shows",
                 seasonDetailsTitle: "Season Details",
                 showSeasonDetailsHeader: true,
-                upToDateLabel: "Up to date"
+                upToDateLabel: "Up to date",
+                canAddToList: true
             ),
             dayLabelFormat: { "\($0) days" },
             seasonCountFormat: { "\($0) Seasons" },
@@ -141,5 +143,58 @@ class ShowDetailsScreenTest: SnapshotTestCase {
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_InLibrary")
+    }
+
+    func test_ShowDetailsScreen_SimklNoList() {
+        ShowDetailsScreen(
+            state: ShowDetailsScreen.State(
+                title: "The Last of Us",
+                overview: "Twenty years after modern civilization has been destroyed, Joel is hired to smuggle Ellie out of an oppressive quarantine zone.",
+                backdropImageUrl: nil,
+                posterImageUrl: nil,
+                status: "Returning Series",
+                year: "2023",
+                language: "en",
+                rating: 8.8,
+                isInLibrary: false,
+                isRefreshing: false,
+                openTrailersInYoutube: false,
+                selectedSeasonIndex: 0,
+                watchedEpisodesCount: 0,
+                totalEpisodesCount: 20,
+                genreList: sampleGenres,
+                seasonList: sampleSeasons,
+                providerList: [],
+                trailerList: [],
+                castsList: sampleCast,
+                similarShows: [],
+                continueTrackingEpisodes: [],
+                continueTrackingScrollIndex: 0,
+                continueTrackingTitle: "Continue Tracking",
+                tbdLabel: "TBD",
+                trackLabel: "Following",
+                stopTrackingLabel: "Unfollow",
+                addToListLabel: "Add to List",
+                similarShowsTitle: "Similar Shows",
+                seasonDetailsTitle: "Season Details",
+                showSeasonDetailsHeader: true,
+                upToDateLabel: "Up to date",
+                canAddToList: false
+            ),
+            dayLabelFormat: { "\($0) days" },
+            seasonCountFormat: { "\($0) Seasons" },
+            episodesWatchedFormat: { "\($0)/\($1) Watched" },
+            episodesLeftFormat: { "\($0) Left" },
+            toast: .constant(nil),
+            onBack: {},
+            onRefresh: {},
+            onAddToCustomList: {},
+            onAddToLibrary: {},
+            onSeasonClicked: { _, _ in },
+            onShowClicked: { _ in },
+            onMarkEpisodeWatched: { _ in }
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_SimklNoList")
     }
 }

@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.favorites.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -47,7 +46,6 @@ internal class DefaultFavoritesRepositoryGuardTest : BaseDatabaseTest() {
         databaseWrite = testDispatcher,
         databaseRead = testDispatcher,
     )
-    private val accountManager = FakeAccountManager()
     private val requestManager = FakeRequestManagerRepository(initialRequestValid = false)
     private val trackingTraktSource = TrackingTraktSource()
 
@@ -56,6 +54,9 @@ internal class DefaultFavoritesRepositoryGuardTest : BaseDatabaseTest() {
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+    }
+
+    private fun buildRepository(activeProviderFeatures: () -> FakeProviderFeatures): DefaultFavoritesRepository {
         val favoritesStore = FavoritesStore(
             traktUserDataSource = trackingTraktSource,
             tmdbDataSource = NoOpTmdbDataSource,
@@ -66,10 +67,10 @@ internal class DefaultFavoritesRepositoryGuardTest : BaseDatabaseTest() {
             formatterUtil = FakeFormatterUtil(),
             dispatchers = dispatchers,
         )
-        repository = DefaultFavoritesRepository(
+        return DefaultFavoritesRepository(
             dao = NoOpFavDao,
             favoritesStore = favoritesStore,
-            accountManager = accountManager,
+            activeProviderFeatures = activeProviderFeatures,
         )
     }
 
@@ -81,7 +82,7 @@ internal class DefaultFavoritesRepositoryGuardTest : BaseDatabaseTest() {
 
     @Test
     fun `should skip network fetch given no provider is active`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(null)
+        repository = buildRepository { FakeProviderFeatures(supportsFavorites = false) }
 
         repository.syncFavorites(forceRefresh = false)
 
@@ -90,7 +91,7 @@ internal class DefaultFavoritesRepositoryGuardTest : BaseDatabaseTest() {
 
     @Test
     fun `should skip network fetch given simkl provider is active`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        repository = buildRepository { FakeProviderFeatures(supportsFavorites = false) }
 
         repository.syncFavorites(forceRefresh = false)
 
@@ -139,6 +140,7 @@ private object NoOpTvShowsDao : TvShowsDao {
     override fun upsertMerging(show: ShowToPersist) {}
     override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> = emptyList()
     override fun getTmdbIdByShowId(showId: Long): Long? = null
+    override fun getTraktIdByTmdbId(tmdbId: Long): Long? = null
     override suspend fun existsByShowId(showId: Long): Boolean = false
 }
 

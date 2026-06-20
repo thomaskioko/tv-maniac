@@ -22,6 +22,7 @@ kotlin {
         androidMain.dependencies {
             api(libs.androidx.compose.ui.test)
             api(libs.androidx.compose.ui.test.common)
+            implementation(libs.androidx.compose.runtime)
             compileOnly(libs.robolectric)
             implementation(libs.androidx.uiautomator)
             implementation("androidx.test:monitor:1.8.0")

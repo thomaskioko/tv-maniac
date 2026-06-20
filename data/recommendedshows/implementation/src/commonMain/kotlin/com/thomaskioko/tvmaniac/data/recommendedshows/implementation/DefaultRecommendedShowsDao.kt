@@ -20,13 +20,13 @@ public class DefaultRecommendedShowsDao(
     private val showIdResolver: ShowIdResolver,
     private val dispatchers: AppCoroutineDispatchers,
 ) : RecommendedShowsDao {
-    override fun upsert(showId: Long, showTmdbId: Long, recommendedShowTraktId: Long) {
-        val internalShowId = showIdResolver.showIdForTraktId(showId) ?: return
+    override fun upsert(showId: Long, tmdbId: Long, traktId: Long) {
+        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return
         database.recommendedShowsQueries.transaction {
             database.recommendedShowsQueries.upsert(
                 show_id = internalShowId,
-                tmdb_id = Id(showTmdbId),
-                recommended_show_trakt_id = Id(recommendedShowTraktId),
+                tmdb_id = Id(tmdbId),
+                trakt_id = Id(traktId),
             )
         }
     }

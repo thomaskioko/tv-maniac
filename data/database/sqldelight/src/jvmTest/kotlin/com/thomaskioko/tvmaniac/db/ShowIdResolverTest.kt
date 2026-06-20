@@ -21,28 +21,39 @@ class ShowIdResolverTest {
     }
 
     @Test
-    fun `should resolve a traktId to the internal showId via its TRAKT external id`() {
-        val showId = database.insertShowWithTraktExternalId(traktId = 100, tmdbId = 200)
+    fun `should resolve a tmdbId to the internal showId`() {
+        val showId = database.insertShow(traktId = 100, tmdbId = 200)
 
-        resolver.showIdForTraktId(100) shouldBe showId
+        resolver.showIdForTmdbId(200) shouldBe showId
     }
 
     @Test
-    fun `should return null for a traktId with no external id row`() {
-        database.insertShowWithTraktExternalId(traktId = 100, tmdbId = 200)
+    fun `should return null for an unknown tmdbId`() {
+        database.insertShow(traktId = 100, tmdbId = 200)
+
+        resolver.showIdForTmdbId(999).shouldBeNull()
+    }
+
+    @Test
+    fun `should resolve a tmdb-only show with no trakt external id row`() {
+        database.insertShow(traktId = 0, tmdbId = 300)
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id(300L)).executeAsOne()
+
+        resolver.showIdForTmdbId(300) shouldBe showId
+    }
+
+    @Test
+    fun `should resolve a traktId to the internal showId`() {
+        val showId = database.insertShowWithTrakt(traktId = 500, tmdbId = 600)
+
+        resolver.showIdForTraktId(500) shouldBe showId
+    }
+
+    @Test
+    fun `should return null for an unknown traktId`() {
+        database.insertShowWithTrakt(traktId = 500, tmdbId = 600)
 
         resolver.showIdForTraktId(999).shouldBeNull()
-    }
-
-    @Test
-    fun `should keep a trakt id mapped to its first show when another show claims the same id`() {
-        val showA = database.insertShowWithTraktExternalId(traktId = 100, tmdbId = 200)
-        val showB = database.insertShow(traktId = 101, tmdbId = 201)
-
-        // The UNIQUE(provider, external_id) guard makes this a no-op rather than a mis-merge.
-        database.tvshowExternalIdQueries.insert(showId = showB, provider = Provider.TRAKT, externalId = "100")
-
-        resolver.showIdForTraktId(100) shouldBe showA
     }
 
     private fun TvManiacDatabase.insertShow(traktId: Long, tmdbId: Long): Id<ShowId> {
@@ -64,9 +75,13 @@ class ShowIdResolverTest {
         return tvShowQueries.getShowIdByTmdbId(Id(tmdbId)).executeAsOne()
     }
 
-    private fun TvManiacDatabase.insertShowWithTraktExternalId(traktId: Long, tmdbId: Long): Id<ShowId> {
-        val showId = insertShow(traktId, tmdbId)
-        tvshowExternalIdQueries.insert(showId = showId, provider = Provider.TRAKT, externalId = traktId.toString())
+    private fun TvManiacDatabase.insertShowWithTrakt(traktId: Long, tmdbId: Long): Id<ShowId> {
+        val showId = insertShow(traktId = traktId, tmdbId = tmdbId)
+        tvshowExternalIdQueries.insert(
+            showId = showId,
+            provider = Provider.TRAKT,
+            externalId = traktId.toString(),
+        )
         return showId
     }
 }

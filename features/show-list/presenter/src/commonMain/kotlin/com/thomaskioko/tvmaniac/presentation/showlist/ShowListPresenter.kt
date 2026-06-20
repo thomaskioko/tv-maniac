@@ -163,7 +163,7 @@ public class ShowListPresenter(
     }
 
     private fun toggleShowInList(listId: Long, isCurrentlyInList: Boolean) {
-        togglingListIds.update { it.add(listId) }
+        togglingListIds.update { it.adding(listId) }
         appScopeLauncher.launch(TAG) {
             try {
                 toggleShowInListInteractor(
@@ -179,7 +179,7 @@ public class ShowListPresenter(
                     errorToStringMapper = errorToStringMapper,
                 )
             } finally {
-                togglingListIds.update { it.remove(listId) }
+                togglingListIds.update { it.removing(listId) }
             }
         }
     }

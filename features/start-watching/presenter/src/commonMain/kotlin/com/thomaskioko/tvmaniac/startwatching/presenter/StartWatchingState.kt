@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 public data class StartWatchingState(
+    val isLoading: Boolean = true,
     val isSyncing: Boolean = false,
     val isRefreshing: Boolean = false,
     val items: ImmutableList<StartWatchingItem> = persistentListOf(),
@@ -15,5 +16,5 @@ public data class StartWatchingState(
         get() = items.isEmpty()
 
     val showLoading: Boolean
-        get() = isSyncing && isEmpty
+        get() = (isLoading || isSyncing) && isEmpty
 }

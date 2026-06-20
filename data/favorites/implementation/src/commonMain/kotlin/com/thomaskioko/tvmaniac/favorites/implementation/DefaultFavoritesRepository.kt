@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.favorites.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.favorites.api.FavoriteShow
@@ -17,14 +16,13 @@ import kotlinx.coroutines.flow.Flow
 public class DefaultFavoritesRepository(
     private val dao: FavoritesDao,
     private val favoritesStore: FavoritesStore,
-    private val accountManager: AccountManager,
+    private val activeProviderFeatures: () -> ProviderFeatures,
 ) : FavoritesRepository {
 
     override fun observeFavorites(): Flow<List<FavoriteShow>> = dao.observeFavoriteShows()
 
     override suspend fun syncFavorites(forceRefresh: Boolean) {
-        // TODO:: Remove hardcoded provider
-        if (accountManager.getActiveProvider() != AccountProvider.TRAKT) return
+        if (!activeProviderFeatures().supportsFavorites) return
 
         when {
             forceRefresh -> favoritesStore.fresh(Unit)

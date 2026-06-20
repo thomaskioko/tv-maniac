@@ -40,53 +40,85 @@ public class ShowDetailsStore(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<Long, TvshowDetails> by storeBuilder(
-    fetcher = Fetcher.of { showId: Long ->
-        val showDetails = traktRemoteDataSource.getShowDetails(showId).getOrThrow()
+    fetcher = Fetcher.of { tmdbShowId: Long ->
+        val traktId = tvShowsDao.getTraktIdByTmdbId(tmdbShowId)
 
-        val tmdbId = showDetails.ids.tmdb
-            ?: error("Show ${showDetails.title} (trakt: $showId) has no TMDB ID")
-        val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
+        val response = if (traktId != null) {
+            val traktShow = traktRemoteDataSource.getShowDetails(traktId).getOrThrow()
+            val tmdbId = traktShow.ids.tmdb
+                ?: error("Show ${traktShow.title} (trakt: $traktId) has no TMDB ID")
+            val tmdbDetails = tmdbRemoteDataSource.getShowDetails(tmdbId).getOrThrow()
+
+            ShowDetailsResponse(
+                name = traktShow.title,
+                overview = traktShow.overview,
+                language = traktShow.language,
+                status = traktShow.status,
+                year = traktShow.firstAirDate?.let { dateTimeProvider.extractYear(it) },
+                episodeNumbers = traktShow.airedEpisodes?.toString(),
+                seasonNumbers = tmdbDetails.seasons.size.toString(),
+                ratings = traktShow.rating ?: 0.0,
+                voteCount = traktShow.votes ?: 0L,
+                genres = traktShow.genres?.map { it.replaceFirstChar { c -> c.uppercase() } },
+                posterPath = tmdbDetails.posterPath,
+                backdropPath = tmdbDetails.backdropPath,
+                tmdbSeasons = tmdbDetails.seasons,
+                tmdbId = tmdbId,
+                traktId = traktShow.ids.trakt,
+            )
+        } else {
+            val tmdbShow = tmdbRemoteDataSource.getShowDetails(tmdbShowId).getOrThrow()
+
+            ShowDetailsResponse(
+                name = tmdbShow.name,
+                overview = tmdbShow.overview,
+                language = tmdbShow.originalLanguage,
+                status = tmdbShow.status,
+                year = tmdbShow.firstAirDate?.let { dateTimeProvider.extractYear(it) },
+                episodeNumbers = tmdbShow.numberOfEpisodes.toString(),
+                seasonNumbers = tmdbShow.numberOfSeasons.toString(),
+                ratings = tmdbShow.voteAverage,
+                voteCount = tmdbShow.voteCount.toLong(),
+                genres = tmdbShow.genres.map { it.name.replaceFirstChar { c -> c.uppercase() } },
+                posterPath = tmdbShow.posterPath,
+                backdropPath = tmdbShow.backdropPath,
+                tmdbSeasons = tmdbShow.seasons,
+                tmdbId = tmdbShowId,
+                traktId = null,
+            )
+        }
 
         requestManagerRepository.upsert(
-            entityId = showId,
+            entityId = tmdbShowId,
             requestType = SHOW_DETAILS.name,
         )
 
-        ShowDetailsResponse(
-            traktShow = showDetails,
-            tmdbSeasons = tmdbDetails.seasons,
-            tmdbId = tmdbId,
-            tmdbPosterPath = tmdbDetails.posterPath,
-            tmdbBackdropPath = tmdbDetails.backdropPath,
-        )
+        response
     },
     sourceOfTruth = SourceOfTruth.of<Long, ShowDetailsResponse, TvshowDetails>(
-        reader = { showId: Long -> showDetailsDao.observeTvShowByShowId(showId) },
-        writer = { showId, response ->
+        reader = { tmdbShowId: Long -> showDetailsDao.observeTvShowByShowId(tmdbShowId) },
+        writer = { tmdbShowId, response ->
             databaseTransactionRunner {
-                val show = response.traktShow
-                val tmdbId = response.tmdbId
-
                 tvShowsDao.upsert(
                     ShowToPersist(
-                        showId = Id(showId),
-                        tmdbId = Id(tmdbId),
-                        name = show.title,
-                        overview = show.overview ?: "",
-                        language = show.language,
-                        status = show.status,
-                        year = show.firstAirDate?.let { dateTimeProvider.extractYear(it) },
-                        episodeNumbers = show.airedEpisodes?.toString(),
-                        seasonNumbers = response.tmdbSeasons.size.toString(),
-                        ratings = show.rating ?: 0.0,
-                        voteCount = show.votes ?: 0L,
-                        genres = show.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
-                        posterPath = response.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-                        backdropPath = response.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        showId = response.traktId?.let { Id(it) },
+                        tmdbId = Id(response.tmdbId),
+                        name = response.name,
+                        overview = response.overview ?: "",
+                        language = response.language,
+                        status = response.status,
+                        year = response.year,
+                        episodeNumbers = response.episodeNumbers,
+                        seasonNumbers = response.seasonNumbers,
+                        ratings = response.ratings,
+                        voteCount = response.voteCount,
+                        genres = response.genres,
+                        posterPath = response.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
+                        backdropPath = response.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                     ),
                 )
 
-                val internalShowId = showIdResolver.showIdForTraktId(showId)
+                val internalShowId = showIdResolver.showIdForTmdbId(tmdbShowId)
                     ?: return@databaseTransactionRunner
 
                 response.tmdbSeasons.forEach { season ->
@@ -110,10 +142,10 @@ public class ShowDetailsStore(
             writeDispatcher = dispatchers.databaseWrite,
         ),
 ).validator(
-    Validator.by {
+    Validator.by { show ->
         withContext(dispatchers.io) {
             !requestManagerRepository.isRequestExpired(
-                entityId = it.trakt_id,
+                entityId = show.tmdb_id.id,
                 requestType = SHOW_DETAILS.name,
                 threshold = SHOW_DETAILS.duration,
             )

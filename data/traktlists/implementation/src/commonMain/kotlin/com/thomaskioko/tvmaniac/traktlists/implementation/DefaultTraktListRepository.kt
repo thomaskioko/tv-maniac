@@ -134,4 +134,6 @@ public class DefaultTraktListRepository(
             }
         }
     }
+
+    override suspend fun countPendingListShows(): Long = traktListShowDao.countPendingActions()
 }

@@ -11,13 +11,13 @@ class TrailerListViewTest: SnapshotTestCase {
         TrailerListView(
             trailers: [
                 .init(
-                    showTmdbId: 123,
+                    showId: 123,
                     key: "XZ8daibM3AE",
                     name: "Series Trailer",
                     youtubeThumbnailUrl: ""
                 ),
                 .init(
-                    showTmdbId: 1234,
+                    showId: 1234,
                     key: "XZ8daibM3AE",
                     name: "Series Trailer",
                     youtubeThumbnailUrl: ""

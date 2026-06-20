@@ -44,14 +44,20 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_title
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
+import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
+import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
+import com.thomaskioko.tvmaniac.settings.presenter.SwitchProviderClicked
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
-import com.thomaskioko.tvmaniac.settings.ui.SettingsSectionLabel
 import com.thomaskioko.tvmaniac.settings.ui.accountLoggedOutState
+import com.thomaskioko.tvmaniac.settings.ui.accountLoggingOutState
 import com.thomaskioko.tvmaniac.settings.ui.accountState
+import com.thomaskioko.tvmaniac.settings.ui.accountSwitchDialogState
+import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
+import com.thomaskioko.tvmaniac.settings.ui.accountSwitchingState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 @Composable
@@ -64,8 +70,9 @@ internal fun AccountPage(
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
-            SettingsSectionLabel(
+            AccountSectionHeader(
                 text = if (state.isAuthenticated) state.labels.traktAuthentication else state.labels.connectTitle,
+                isLoading = state.isProcessingAuth,
             )
         }
 
@@ -84,6 +91,16 @@ internal fun AccountPage(
         isVisible = state.showLogoutConfirmation,
         onLogoutClicked = { onAction(AccountLogoutClicked) },
         onDismissDialog = { onAction(DismissLogoutDialog) },
+    )
+
+    SwitchProviderDialog(
+        isVisible = state.showSwitchConfirmation,
+        title = state.switchDialogTitle.orEmpty(),
+        message = state.switchDialogMessage.orEmpty(),
+        confirmText = state.labels.switchConfirm,
+        cancelText = state.labels.switchCancel,
+        onConfirm = { onAction(ConfirmSwitchDiscard) },
+        onDismiss = { onAction(DismissSwitchDialog) },
     )
 }
 
@@ -133,25 +150,63 @@ private fun ConnectedAccountCard(
                 }
             }
 
-            Button(
-                modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
-                enabled = !state.isProcessingAuth,
-                onClick = { onAction(ShowLogoutDialog) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                ),
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (state.isProcessingAuth) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(18.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                    )
-                } else {
+                Button(
+                    modifier = Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG),
+                    enabled = !state.isProcessingAuth && !state.isSwitching,
+                    onClick = { onAction(ShowLogoutDialog) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
                     Text(text = state.labels.logout)
                 }
+
+                val switchTarget = state.switchTargetProvider
+                if (switchTarget != null) {
+                    SwitchProviderRow(
+                        provider = switchTarget,
+                        label = if (state.isSwitching) state.labels.switching else state.switchActionLabel.orEmpty(),
+                        enabled = !state.isSwitching && !state.isProcessingAuth,
+                        isSwitching = state.isSwitching,
+                        onClick = { onAction(SwitchProviderClicked(switchTarget)) },
+                    )
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun AccountSectionHeader(
+    text: String,
+    isLoading: Boolean,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(14.dp)
+                    .testTag(SettingsTestTags.AUTH_PROCESSING_INDICATOR_TEST_TAG),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
         }
     }
 }
@@ -179,6 +234,73 @@ private fun ProviderSignIn(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun SwitchProviderRow(
+    provider: AccountProvider,
+    label: String,
+    enabled: Boolean,
+    isSwitching: Boolean,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = Modifier.testTag(SettingsTestTags.SWITCH_PROVIDER_BUTTON_TEST_TAG),
+        enabled = enabled,
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f),
+            contentColor = MaterialTheme.colorScheme.secondary,
+        ),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        if (isSwitching) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(16.dp)
+                    .testTag(SettingsTestTags.SWITCHING_INDICATOR_TEST_TAG),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        } else {
+            Icon(
+                painter = painterResource(id = providerLogo(provider)),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.secondary,
+            )
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(text = label)
+    }
+}
+
+@Composable
+private fun SwitchProviderDialog(
+    isVisible: Boolean,
+    title: String,
+    message: String,
+    confirmText: String,
+    cancelText: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(initialAlpha = 0.4f),
+        exit = fadeOut(animationSpec = tween(durationMillis = 250)),
+    ) {
+        TvManiacAlertDialog(
+            title = title,
+            message = message,
+            confirmButtonText = confirmText,
+            dismissButtonText = cancelText,
+            onConfirm = onConfirm,
+            onDismiss = onDismiss,
+            confirmButtonTestTag = SettingsTestTags.SWITCH_DIALOG_CONFIRM_BUTTON_TEST_TAG,
+            dismissButtonTestTag = SettingsTestTags.SWITCH_DIALOG_DISMISS_BUTTON_TEST_TAG,
+        )
     }
 }
 
@@ -230,6 +352,46 @@ private fun AccountPageConnectedPreview() {
 private fun AccountPageLoggedOutPreview() {
     AccountPage(
         state = accountLoggedOutState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun AccountPageSwitchAffordancePreview() {
+    AccountPage(
+        state = accountSwitchState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun AccountPageSwitchDialogPreview() {
+    AccountPage(
+        state = accountSwitchDialogState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun AccountPageSwitchingPreview() {
+    AccountPage(
+        state = accountSwitchingState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun AccountPageLoggingOutPreview() {
+    AccountPage(
+        state = accountLoggingOutState,
         onAction = {},
     )
 }

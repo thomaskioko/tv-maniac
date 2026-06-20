@@ -84,7 +84,7 @@ public class ProgressContinueWatchingFetcher(
                     // Trakt's per-show logic returns null next_episode. Removing it would persist rows
                     // that never render in the watchlist.
                     if (progress.nextEpisode != null) {
-                        send(ProgressBatch.Entry(toEntry(showId, descriptors[showId], progress)))
+                        send(ProgressBatch.Entry(toEntry(showId, descriptors[showId], progress), traktId = showId))
                     }
                 }
                 is ApiResponse.Error -> {
@@ -114,13 +114,17 @@ public class ProgressContinueWatchingFetcher(
         )
 
         if (responses.all { (_, response) -> response is ApiResponse.Success }) {
-            val finalTraktIds = responses
-                .mapNotNull { (showId, response) ->
+            val completedShowIds = responses
+                .mapNotNull { (traktId, response) ->
                     val progress = (response as ApiResponse.Success).body
-                    if (progress.nextEpisode != null) showId else null
+                    if (progress.nextEpisode != null) {
+                        descriptors[traktId]?.tmdbId ?: traktId
+                    } else {
+                        null
+                    }
                 }
                 .toSet()
-            send(ProgressBatch.Complete(finalTraktIds))
+            send(ProgressBatch.Complete(completedShowIds))
         }
     }
 
@@ -130,10 +134,10 @@ public class ProgressContinueWatchingFetcher(
     ): Map<Long, ProgressDescriptor> = buildMap {
         watchedShows.forEach { item ->
             val show = item.show
-            put(show.ids.trakt, ProgressDescriptor(show.ids.tmdb, show.title, show.year))
+            put(show.ids.trakt, ProgressDescriptor(traktId = show.ids.trakt, tmdbId = show.ids.tmdb, title = show.title, year = show.year))
         }
         playback.forEach { item ->
-            put(item.show.ids.trakt, ProgressDescriptor(item.show.ids.tmdb, item.show.title, item.show.year))
+            put(item.show.ids.trakt, ProgressDescriptor(traktId = item.show.ids.trakt, tmdbId = item.show.ids.tmdb, title = item.show.title, year = item.show.year))
         }
     }
 
@@ -144,6 +148,7 @@ public class ProgressContinueWatchingFetcher(
 }
 
 internal data class ProgressDescriptor(
+    val traktId: Long,
     val tmdbId: Long?,
     val title: String?,
     val year: Long?,
@@ -156,14 +161,14 @@ internal data class ProgressDescriptor(
  * progressively as entries arrive instead of waiting for a single atomic flip.
  */
 internal sealed interface ProgressBatch {
-    /** Single resolved show entry, sent as soon as it is ready. */
-    data class Entry(val entry: ContinueWatchingEntry) : ProgressBatch
+    /** Single resolved show entry, sent as soon as it is ready. [traktId] carries the Trakt id for stub tvshow insertion. */
+    data class Entry(val entry: ContinueWatchingEntry, val traktId: Long? = null) : ProgressBatch
 
     /**
-     * Terminal event. [finalTraktIds] is the authoritative trakt-id set for the synced
+     * Terminal event. [finalShowIds] is the authoritative tmdb-boundary id set for the synced
      * watchlist; subscribers delete rows not in this set, then stamp freshness markers.
      */
-    data class Complete(val finalTraktIds: Set<Long>) : ProgressBatch
+    data class Complete(val finalShowIds: Set<Long>) : ProgressBatch
 }
 
 private fun toEntry(
@@ -175,7 +180,7 @@ private fun toEntry(
         ?.let { Instant.parse(it).toEpochMilliseconds() }
         ?: 0L
     return ContinueWatchingEntry(
-        showId = showId,
+        showId = descriptor?.tmdbId ?: showId,
         tmdbId = descriptor?.tmdbId,
         airedEpisodes = progress.aired.toLong(),
         completedCount = progress.completed.toLong(),

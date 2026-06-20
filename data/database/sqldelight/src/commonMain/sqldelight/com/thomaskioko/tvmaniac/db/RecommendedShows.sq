@@ -3,15 +3,15 @@ import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
--- The parent reference `recommended_show_trakt_id` is intentionally not FK-constrained and stays a
+-- The parent reference `trakt_id` is intentionally not FK-constrained and stays a
 -- plain trakt id, for the same reason as similar_shows: the parent show's tvshow row (and internal
 -- id) may not exist yet when this writer commits (parallel fetch race with ShowDetailsStore).
 -- Queries filter by parent id without joining tvshow on this column.
 CREATE TABLE recommended_shows (
     show_id INTEGER AS Id<ShowId>,
     tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
-    recommended_show_trakt_id INTEGER AS Id<TraktId> NOT NULL,
-    PRIMARY KEY (recommended_show_trakt_id, show_id),
+    trakt_id INTEGER AS Id<TraktId> NOT NULL,
+    PRIMARY KEY (trakt_id, show_id),
     FOREIGN KEY(show_id) REFERENCES tvshow(id)
 );
 
@@ -19,32 +19,30 @@ upsert:
 INSERT OR REPLACE INTO recommended_shows(
     show_id,
     tmdb_id,
-    recommended_show_trakt_id
+    trakt_id
 )
 VALUES(?,?,?);
 
 recommendedShows:
 SELECT
-   show_trakt.trakt_id AS show_trakt_id,
-   tvshow.tmdb_id AS show_tmdb_id,
+   tvshow.tmdb_id AS show_id,
+   tvshow.tmdb_id AS tmdb_id,
    tvshow.name,
    tvshow.poster_path,
    tvshow.backdrop_path,
-   recommended_shows.recommended_show_trakt_id,
+   recommended_shows.trakt_id,
    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library
 FROM
     tvshow
 JOIN
     recommended_shows ON recommended_shows.show_id = tvshow.id
-INNER JOIN
-    show_trakt ON show_trakt.show_id = tvshow.id
 LEFT OUTER JOIN
     followed_shows ON tvshow.id = followed_shows.show_id AND followed_shows.pending_action != 'DELETE'
 WHERE
-    recommended_shows.recommended_show_trakt_id = ?;
+    recommended_shows.trakt_id = ?;
 
 delete:
-DELETE FROM recommended_shows WHERE recommended_show_trakt_id = ?;
+DELETE FROM recommended_shows WHERE trakt_id = ?;
 
 deleteAll:
 DELETE FROM recommended_shows;

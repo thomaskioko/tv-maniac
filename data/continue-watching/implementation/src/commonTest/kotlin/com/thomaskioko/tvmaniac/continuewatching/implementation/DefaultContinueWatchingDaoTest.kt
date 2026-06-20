@@ -84,12 +84,12 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve null tmdb id`() {
-        val orphan = breakingBadEntry.copy(showId = ORPHAN_TRAKT_ID, tmdbId = null)
+        val orphan = breakingBadEntry.copy(showId = ORPHAN_TMDB_ID, tmdbId = null)
         dao.upsert(orphan)
 
         val stored = dao.entries().first()
         stored.tmdbId.shouldBeNull()
-        stored.showId shouldBe ORPHAN_TRAKT_ID
+        stored.showId shouldBe ORPHAN_TMDB_ID
     }
 
     @Test
@@ -136,6 +136,64 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
         dao.entries().shouldBeEmpty()
     }
 
+    @Test
+    fun `should seed continue watching membership from live watched episodes`() {
+        insertWatchedEpisode(tmdbId = BREAKING_BAD_TMDB_ID, season = 1L, episode = 1L, watchedAt = EARLIER)
+        insertWatchedEpisode(tmdbId = BREAKING_BAD_TMDB_ID, season = 1L, episode = 2L, watchedAt = LATER)
+
+        dao.insertMembershipFromWatchedEpisodes()
+
+        val entries = dao.entries()
+        entries.map { it.showId } shouldContainExactlyInAnyOrder listOf(BREAKING_BAD_TMDB_ID)
+        val entry = entries.first()
+        entry.lastWatchedAt shouldBe LATER
+        entry.completedCount shouldBe 0L
+        entry.airedEpisodes shouldBe 0L
+    }
+
+    @Test
+    fun `should not regress an existing row given membership derivation`() {
+        dao.upsert(breakingBadEntry)
+        insertWatchedEpisode(tmdbId = BREAKING_BAD_TMDB_ID, season = 1L, episode = 1L, watchedAt = EARLIER)
+
+        dao.insertMembershipFromWatchedEpisodes()
+
+        dao.entries() shouldContainExactlyInAnyOrder listOf(breakingBadEntry)
+    }
+
+    @Test
+    fun `should skip soft-deleted watched episodes given membership derivation`() {
+        insertWatchedEpisode(
+            tmdbId = THE_WIRE_TMDB_ID,
+            season = 1L,
+            episode = 1L,
+            watchedAt = EARLIER,
+            pendingAction = "DELETE",
+        )
+
+        dao.insertMembershipFromWatchedEpisodes()
+
+        dao.entries().shouldBeEmpty()
+    }
+
+    private fun insertWatchedEpisode(
+        tmdbId: Long,
+        season: Long,
+        episode: Long,
+        watchedAt: Long,
+        pendingAction: String = "NOTHING",
+    ) {
+        val internalShowId = showIdResolver.showIdForTmdbId(tmdbId) ?: error("no show for tmdb $tmdbId")
+        database.watchedEpisodesQueries.upsert(
+            show_id = internalShowId,
+            episode_id = null,
+            season_number = season,
+            episode_number = episode,
+            watched_at = watchedAt,
+            pending_action = pendingAction,
+        )
+    }
+
     private fun insertTvShow(showId: Long, tmdbId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
@@ -162,11 +220,13 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
         private const val THE_WIRE_TMDB_ID = 1438L
         private const val ORPHAN_TRAKT_ID = 9999L
         private const val ORPHAN_TMDB_ID = 9998L
+        private const val EARLIER = 1_700_000_000_000L
+        private const val LATER = 1_700_000_100_000L
     }
 }
 
 private val breakingBadEntry = ContinueWatchingEntry(
-    showId = 1388L,
+    showId = 1396L,
     tmdbId = 1396L,
     airedEpisodes = 62L,
     completedCount = 56L,
@@ -175,7 +235,7 @@ private val breakingBadEntry = ContinueWatchingEntry(
 )
 
 private val theWireEntry = ContinueWatchingEntry(
-    showId = 1429L,
+    showId = 1438L,
     tmdbId = 1438L,
     airedEpisodes = 60L,
     completedCount = 12L,

@@ -40,7 +40,7 @@ public class DefaultFeaturedShowsDao(
         featuredShowsQueries
             .entriesInPage { showId, tmdbId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    showId = showId,
+                    showId = showId.id,
                     tmdbId = tmdbId.id,
                     title = name,
                     posterPath = posterPath,
@@ -52,7 +52,7 @@ public class DefaultFeaturedShowsDao(
             .mapToList(dispatchers.io)
 
     override fun deleteFeaturedShows(id: Long) {
-        val showId = showIdResolver.showIdForTraktId(id) ?: return
+        val showId = showIdResolver.showIdForTmdbId(id) ?: return
         featuredShowsQueries.delete(showId)
     }
 

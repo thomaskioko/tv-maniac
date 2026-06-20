@@ -88,7 +88,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return recently watched episodes newest first with show and episode metadata`() = runTest {
+    fun `should return one row per show with the furthest watched episode and show metadata`() = runTest {
         fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
         watchedEpisodeDao.markAsWatched(
             showId = TEST_SHOW_ID,
@@ -108,15 +108,27 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
             val items = awaitItem()
-            items shouldHaveSize 2
+            items shouldHaveSize 1
 
             items[0].showTitle shouldBe TEST_SHOW_NAME
             items[0].episodeNumber shouldBe 2L
             items[0].episodeTitle shouldBe "Episode 2"
             items[0].watchedAt shouldBe 2_000L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 
-            items[1].episodeNumber shouldBe 1L
-            items[1].watchedAt shouldBe 1_000L
+    @Test
+    fun `should keep the latest episode per show even when an earlier episode is watched more recently`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 102L, SEASON_1_NUMBER, 2L, includeSpecials = false)
+        fakeDateTimeProvider.setCurrentTimeMillis(2_000L)
+        watchedEpisodeDao.markAsWatched(TEST_SHOW_ID, 101L, SEASON_1_NUMBER, 1L, includeSpecials = false)
+
+        watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
+            val items = awaitItem()
+            items shouldHaveSize 1
+            items[0].episodeNumber shouldBe 2L
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -278,6 +290,118 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
             val updatedProgress = awaitItem()
             updatedProgress.first { it.seasonNumber == SEASON_1_NUMBER }.watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should use the season episode count for total given episode rows are not synced`() = runTest {
+        val importedShowId = 5500L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(importedShowId),
+            name = "Imported Show",
+            overview = "Seasons synced from a provider, episodes never opened in-app",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Reality"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(importedShowId)
+        val _ = database.seasonsQueries.upsert(
+            id = Id(5501L),
+            show_id = resolvedShowId,
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 12L,
+            image_url = null,
+        )
+
+        watchedEpisodeDao.markAsWatched(
+            showId = importedShowId,
+            episodeId = 1L,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = importedShowId,
+            episodeId = 2L,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(importedShowId).test {
+            val progress = awaitItem()
+            val season1 = progress.first { it.seasonNumber == 1L }
+            season1.watchedCount shouldBe 2
+            season1.totalCount shouldBe 12
+            season1.progressPercentage shouldBe (2f / 12f)
+        }
+    }
+
+    @Test
+    fun `should attribute watched markers to the linked episode season given the raw season number differs`() = runTest {
+        val showId = 7000L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(showId),
+            name = "Linked Show",
+            overview = "Marker linked to the correct episode but carrying a mismatched season number",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Reality"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(showId)
+        val _ = database.seasonsQueries.upsert(
+            id = Id(7003L),
+            show_id = resolvedShowId,
+            season_number = 3L,
+            title = "Season 3",
+            overview = null,
+            episode_count = 10L,
+            image_url = null,
+        )
+        database.episodesQueries.upsert(
+            id = Id(70035L),
+            season_id = Id(7003L),
+            show_id = resolvedShowId,
+            title = "Episode 5",
+            overview = "",
+            runtime = null,
+            vote_count = 100L,
+            ratings = 8.0,
+            episode_number = 5L,
+            image_url = null,
+            first_aired = null,
+        )
+        database.watchedEpisodesQueries.upsert(
+            show_id = resolvedShowId,
+            episode_id = Id(70035L),
+            season_number = 99L,
+            episode_number = 5L,
+            watched_at = 1000L,
+            pending_action = "NOTHING",
+        )
+
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(showId).test {
+            val progress = awaitItem()
+            val season3 = progress.first { it.seasonNumber == 3L }
+            season3.watchedCount shouldBe 1
+            season3.totalCount shouldBe 10
+            season3.progressPercentage shouldBe (1f / 10f)
         }
     }
 

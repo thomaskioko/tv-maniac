@@ -212,8 +212,17 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
     }
 
-    private func accountContent(authenticated: Bool) -> SettingsAccountContent {
-        SettingsAccountContent(
+    private func accountContent(
+        authenticated: Bool,
+        withSwitchAffordance: Bool = false,
+        isSwitching: Bool = false,
+        showSwitchConfirmation: Bool = false,
+        isProcessingAuth: Bool = false
+    ) -> SettingsAccountContent {
+        let switchLabel: String? = withSwitchAffordance || isSwitching || showSwitchConfirmation
+            ? "Switch to Simkl"
+            : nil
+        return SettingsAccountContent(
             title: "Trakt",
             description: "Sync your watchlist, watch progress, continue watching, and personal lists with Trakt.",
             authenticationLabel: "Connect & Sync Your Content",
@@ -224,7 +233,7 @@ class SettingsScreenTest: SnapshotTestCase {
                 ? "Your watch history, watchlist, and episode progress sync with Trakt."
                 : "Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.",
             isAuthenticated: authenticated,
-            isProcessingAuth: false,
+            isProcessingAuth: isProcessingAuth,
             logoutLabel: "Logout",
             loginLabel: "Login",
             providerName: "Trakt",
@@ -232,8 +241,22 @@ class SettingsScreenTest: SnapshotTestCase {
                 SwiftAuthProvider(id: "TRAKT", label: "Continue with Trakt", logoName: "TraktMono"),
                 SwiftAuthProvider(id: "SIMKL", label: "Continue with Simkl", logoName: "SimklMono"),
             ],
+            switchTargetLogoName: switchLabel != nil ? "SimklMono" : nil,
+            switchActionLabel: switchLabel,
+            isSwitching: isSwitching,
+            showSwitchConfirmation: showSwitchConfirmation,
+            switchDialogTitle: showSwitchConfirmation ? "Switch to Simkl?" : nil,
+            switchDialogMessage: showSwitchConfirmation
+                ? "You have 3 unsaved changes. Switching providers will discard them."
+                : nil,
+            switchConfirmLabel: "Switch",
+            switchCancelLabel: "Cancel",
+            switchingLabel: "Switching...",
             onLogout: {},
-            onProviderSelected: { _ in }
+            onProviderSelected: { _ in },
+            onSwitchProvider: {},
+            onConfirmSwitch: {},
+            onDismissSwitchDialog: {}
         )
     }
 
@@ -264,12 +287,12 @@ class SettingsScreenTest: SnapshotTestCase {
     private func makeState(
         page: SettingsPageRoute,
         authenticated: Bool,
-        isLoading: Bool = false
+        isLoading: Bool = false,
+        customAccountContent: SettingsAccountContent? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
             rootTitle: "Settings",
-            versionFooter: "Version 1.0.0",
             currentPage: page,
             rootSections: rootSections(authenticated: authenticated),
             themeItem: defaultThemeItem,
@@ -280,7 +303,7 @@ class SettingsScreenTest: SnapshotTestCase {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            accountContent: accountContent(authenticated: authenticated)
+            accountContent: customAccountContent ?? accountContent(authenticated: authenticated)
         )
     }
 
@@ -348,5 +371,45 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .account, authenticated: false), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_TraktLoggedOut")
+    }
+
+    func test_SettingsScreen_Account_SwitchAffordance() {
+        let content = accountContent(authenticated: true, withSwitchAffordance: true)
+        SettingsScreen(
+            state: makeState(page: .account, authenticated: true, customAccountContent: content),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Account_SwitchAffordance")
+    }
+
+    func test_SettingsScreen_Account_Switching() {
+        let content = accountContent(authenticated: true, isSwitching: true)
+        SettingsScreen(
+            state: makeState(page: .account, authenticated: true, customAccountContent: content),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Account_Switching")
+    }
+
+    func test_SettingsScreen_Account_LoggingOut() {
+        let content = accountContent(authenticated: true, isProcessingAuth: true)
+        SettingsScreen(
+            state: makeState(page: .account, authenticated: true, customAccountContent: content),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Account_LoggingOut")
+    }
+
+    func test_SettingsScreen_Account_SwitchConfirmDialog() {
+        let content = accountContent(authenticated: true, showSwitchConfirmation: true)
+        SettingsScreen(
+            state: makeState(page: .account, authenticated: true, customAccountContent: content),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Account_SwitchConfirmDialog")
     }
 }

@@ -106,4 +106,9 @@ public interface TmdbShowsNetworkDataSource {
      * @param tmdbId TMDB show ID
      */
     public suspend fun getShowCredits(tmdbId: Long): ApiResponse<CreditsResponse>
+
+    public suspend fun findShowByExternalId(
+        externalId: String,
+        source: String = "imdb_id",
+    ): ApiResponse<Long?>
 }

@@ -49,8 +49,7 @@ public class DefaultNextEpisodeDao(
 
 private fun CompletedShowsForWatchlist.toCompletedShow(): CompletedShow {
     return CompletedShow(
-        showId = show_trakt_id,
-        showTmdbId = show_tmdb_id.id,
+        showId = show_id.id,
         showName = show_name,
         showPoster = show_poster,
         lastWatchedAt = last_watched_at,
@@ -61,8 +60,7 @@ private fun CompletedShowsForWatchlist.toCompletedShow(): CompletedShow {
 
 private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithShow {
     return NextEpisodeWithShow(
-        showId = show_trakt_id,
-        showTmdbId = show_tmdb_id.id,
+        showId = show_id.id,
         episodeId = episode_id?.id,
         episodeName = episode_name,
         seasonId = season_id?.id,
@@ -90,7 +88,5 @@ private fun List<NextEpisodeWithShow>.filterActionableEpisodes(
     nowMillis: Long,
 ): List<NextEpisodeWithShow> = filter { episode ->
     val airDate = episode.firstAired
-    val isCaughtUp = episode.totalCount > 0 && episode.watchedCount >= episode.totalCount
-    val hasNotAired = airDate == null || airDate > nowMillis
-    !(isCaughtUp && hasNotAired)
+    episode.episodeId != null && airDate != null && airDate <= nowMillis
 }

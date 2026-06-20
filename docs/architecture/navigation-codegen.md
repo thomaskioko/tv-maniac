@@ -23,7 +23,7 @@ Each annotation in the tables below is defined by the project. The processor rea
 |---|---|
 | `@NavDestination(route, parentScope, kind = SCREEN)` | `<Presenter>ScreenGraph`. A binding that contributes a `NavDestination.Screen` and a `NavRouteBinding<*>` into their respective sets at `parentScope`. |
 | `@NavDestination(route, parentScope, kind = OVERLAY)` | Same shape as `SCREEN`, but the binding contributes a `NavDestination.Overlay`. The route class must additionally implement [`OverlayRoute`](glossary.md#overlayroute) so `Navigator.navigateTo` dispatches to the slot. |
-| `@NavDestination(route, parentScope, kind = TAB_ROOT)` | `<Presenter>TabGraph`. A binding that contributes a `NavDestination.TabRoot` and a `NavRootBinding<*>` into their respective sets at `parentScope`. |
+| `@NavDestination(route, parentScope, kind = TAB_ROOT)` | `<Presenter>TabGraph`. A binding that contributes a `NavDestination.TabRoot`, a `NavRootBinding<*>`, and the route singleton into `Set<NavRoot>` at `parentScope`. |
 | `@ChildPresenter(scope, parentScope)` | `<Presenter>ChildGraph` graph extension exposing the presenter, plus a nested `@ContributesTo(parentScope) @GraphExtension.Factory` whose `create<BaseName>Graph` function takes a `ComponentContext` and returns the graph. Used for parent-owned child presenters such as tab pager pages. |
 | `@AppRoot(parentScope)` | `<RootInterface>BindingContainer`. A `@BindingContainer @ContributesTo(parentScope)` object that wires `DefaultRootPresenter.Factory` to the bound interface at `parentScope`. |
 
@@ -100,7 +100,7 @@ public class EpisodeSheetPresenter(
 
 ### Tab root
 
-Plain `@Inject`. The route is a `NavRoot` `data object`. The processor emits `NavDestination.TabRoot` and a `NavRootBinding<*>` for save and restore.
+Plain `@Inject`. The route is a `NavRoot` `data object`. The processor emits `NavDestination.TabRoot`, a `NavRootBinding<*>` for save and restore, and the route singleton into `Set<NavRoot>` so navigators can enumerate tabs without consulting destination factories.
 
 ```kotlin
 @Serializable

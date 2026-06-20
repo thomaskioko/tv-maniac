@@ -1,0 +1,15 @@
+[
+  {
+    "date": "2026-04-19T03:00:00.000Z",
+    "title": "Simkl Plan To Watch",
+    "ids": {
+      "simkl_id": 9001,
+      "tmdb": "778899",
+      "imdb": "tt7788990"
+    },
+    "episode": {
+      "season": 1,
+      "episode": 1
+    }
+  }
+]

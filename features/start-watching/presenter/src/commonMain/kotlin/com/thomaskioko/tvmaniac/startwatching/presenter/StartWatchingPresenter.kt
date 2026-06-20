@@ -71,8 +71,10 @@ public class StartWatchingPresenter(
         uiMessageManager.message,
         syncObserver.isSyncing,
         userRefreshState.observable,
-    ) { shows, query, sortOption, message, isSyncing, isRefreshing ->
+        watchlistLoadingState.observable,
+    ) { shows, query, sortOption, message, isSyncing, isRefreshing, isLoading ->
         StartWatchingState(
+            isLoading = isLoading,
             isSyncing = isSyncing,
             isRefreshing = isRefreshing,
             items = shows.toStartWatchingItems(query, sortOption),

@@ -47,8 +47,10 @@ class TraktLibraryRemoteDataSourceTest {
         val success = result.shouldBeInstanceOf<ApiResponse.Success<List<RemoteFollowedShow>>>()
         success.body shouldBe listOf(
             RemoteFollowedShow(
-                showId = 1,
                 tmdbId = 10,
+                imdbId = null,
+                providerShowId = "1",
+                provider = AccountProvider.TRAKT,
                 title = "Severance",
                 year = 2022,
                 followedAt = Instant.parse("2025-01-01T00:00:00Z"),

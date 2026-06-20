@@ -134,7 +134,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         val initialLastWatchedAt = database.continueWatchingQueries
             .entries()
             .executeAsList()
-            .first { it.trakt_id == SHOW_ID }
+            .first { it.show_id.id == SHOW_ID }
             .last_watched_at
 
         fakeDateTimeProvider.setCurrentTimeMillis(now + 10_000L)
@@ -149,7 +149,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         val afterMark = database.continueWatchingQueries
             .entries()
             .executeAsList()
-            .first { it.trakt_id == SHOW_ID }
+            .first { it.show_id.id == SHOW_ID }
             .last_watched_at
         afterMark shouldBe maxOf(initialLastWatchedAt, now + 10_000L)
     }
@@ -182,7 +182,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         val afterUnmark = database.continueWatchingQueries
             .entries()
             .executeAsList()
-            .first { it.trakt_id == SHOW_ID }
+            .first { it.show_id.id == SHOW_ID }
             .last_watched_at
         afterUnmark shouldBe now + 1_000L
     }

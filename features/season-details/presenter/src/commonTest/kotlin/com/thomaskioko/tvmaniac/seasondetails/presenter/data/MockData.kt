@@ -28,7 +28,6 @@ internal fun buildSeasonDetailsLoaded(
 internal fun buildSeasonDetailsWithEpisodes(
     seasonId: Long = 12343,
     showId: Long = 84958,
-    showTmdbId: Long = 84958,
     name: String = "Season 01",
     seasonOverview: String =
         "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
@@ -48,6 +47,5 @@ internal fun buildSeasonDetailsWithEpisodes(
         seasonNumber = seasonNumber,
         showTitle = showTitle,
         showId = showId,
-        showTmdbId = showTmdbId,
     )
 }

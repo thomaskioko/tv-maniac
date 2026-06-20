@@ -130,7 +130,7 @@ public class ShowDetailsMapper(
     private fun List<DomainTrailer>.toTrailerList(): ImmutableList<TrailerModel> =
         map {
             TrailerModel(
-                showTmdbId = it.showTmdbId,
+                showId = it.showId,
                 key = it.key,
                 name = it.name,
                 youtubeThumbnailUrl = it.youtubeThumbnailUrl,

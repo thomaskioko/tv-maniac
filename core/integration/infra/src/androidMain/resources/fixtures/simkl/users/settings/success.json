@@ -1,0 +1,9 @@
+{
+  "user": {
+    "name": "simkl-test-user",
+    "avatar": "https://simkl.in/avatars/simkl-test-user.jpg"
+  },
+  "account": {
+    "id": 12345678
+  }
+}

@@ -80,19 +80,17 @@ internal fun simklHttpClient(
 
                 refreshTokens {
                     val currentState = authStateHolder.getAuthState(AccountProvider.SIMKL)
+                        ?: return@refreshTokens null
 
-                    if (currentState != null && oldTokens?.accessToken != currentState.accessToken) {
+                    if (oldTokens?.accessToken != currentState.accessToken) {
                         return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
                     }
 
-                    if (authStateHolder.isLoggedIn(AccountProvider.SIMKL) && currentState != null) {
-                        authStateHolder.setAuthError(AccountProvider.SIMKL, AuthError.TokenExpired)
-                    }
-
+                    authStateHolder.setAuthError(AccountProvider.SIMKL, AuthError.TokenExpired)
                     null
                 }
 
-                sendWithoutRequest { true }
+                sendWithoutRequest { request -> request.url.host == "api.simkl.com" }
             }
         }
 

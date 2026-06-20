@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -64,7 +65,6 @@ import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableList
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -380,7 +380,7 @@ private fun SectionHeader(
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
         ) {
             Text(
-                text = title.uppercase(Locale.getDefault()),
+                text = title.uppercase(LocalLocale.current.platformLocale),
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.SemiBold,
                 ),

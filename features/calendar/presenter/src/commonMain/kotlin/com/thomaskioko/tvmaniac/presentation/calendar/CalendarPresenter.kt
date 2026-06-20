@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -120,20 +119,13 @@ public class CalendarPresenter(
     }
 
     private fun observeCalendar() {
-        coroutineScope.launch {
-            _state
-                .map { it.weekOffset }
-                .distinctUntilChanged()
-                .collect { weekOffset ->
-                    val (startEpoch, endEpoch) = calendarWeekCalculator.getWeekEpochRange(weekOffset)
-                    observeCalendarInteractor(
-                        ObserveCalendarInteractor.Params(
-                            startDate = startEpoch,
-                            endDate = endEpoch,
-                        ),
-                    )
-                }
-        }
+        val (startEpoch, endEpoch) = calendarWeekCalculator.getWeekEpochRange(_state.value.weekOffset)
+        observeCalendarInteractor(
+            ObserveCalendarInteractor.Params(
+                startDate = startEpoch,
+                endDate = endEpoch,
+            ),
+        )
     }
 
     private fun fetchCalendar(startDate: String, forceRefresh: Boolean = false) {
@@ -157,12 +149,14 @@ public class CalendarPresenter(
     private fun navigateToPreviousWeek() {
         if (_state.value.weekOffset > 0) {
             _state.update { it.copy(weekOffset = it.weekOffset - 1) }
+            observeCalendar()
             fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
         }
     }
 
     private fun navigateToNextWeek() {
         _state.update { it.copy(weekOffset = it.weekOffset + 1) }
+        observeCalendar()
         fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
     }
 

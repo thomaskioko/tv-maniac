@@ -4,9 +4,11 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -14,9 +16,9 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.START_WATCHING_SYNC
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.startwatching.api.RemotePlanToWatchShow
+import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingRemoteDataSource
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
-import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
@@ -29,12 +31,11 @@ import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
-import kotlin.time.Instant
 
 @Inject
 @SingleIn(AppScope::class)
 public class StartWatchingWatchlistStore(
-    private val traktListDataSource: TraktListRemoteDataSource,
+    private val activeSource: () -> StartWatchingRemoteDataSource?,
     private val tmdbDataSource: TmdbShowDetailsNetworkDataSource,
     private val followedShowsDao: FollowedShowsDao,
     private val tvShowsDao: TvShowsDao,
@@ -45,20 +46,28 @@ public class StartWatchingWatchlistStore(
 ) : Store<Unit, List<FollowedShowEntry>> by storeBuilder(
     fetcher = Fetcher.of { _: Unit ->
         coroutineScope {
-            traktListDataSource.getWatchList(sortBy = "added", sortHow = "desc")
+            val source = activeSource()
+                ?: throw AuthenticationException("No active sync provider")
+            source.getPlanToWatch()
                 .getOrThrow()
-                .map { followedShow ->
+                .mapNotNull { show ->
+                    val tmdbId = show.tmdbId ?: return@mapNotNull null
+                    tmdbId to show
+                }
+                .map { (tmdbId, show) ->
                     async {
-                        when (val tmdb = tmdbDataSource.getShowDetails(followedShow.show.ids.tmdb)) {
-                            is ApiResponse.Success -> FollowedShowWithImages(
-                                response = followedShow,
+                        when (val tmdb = tmdbDataSource.getShowDetails(tmdbId)) {
+                            is ApiResponse.Success -> PlanToWatchWithImages(
+                                show = show,
+                                resolvedTmdbId = tmdbId,
                                 tmdbPosterPath = tmdb.body.posterPath,
                                 tmdbBackdropPath = tmdb.body.backdropPath,
                             )
                             is ApiResponse.Unauthenticated,
                             is ApiResponse.Error,
-                            -> FollowedShowWithImages(
-                                response = followedShow,
+                            -> PlanToWatchWithImages(
+                                show = show,
+                                resolvedTmdbId = tmdbId,
                                 tmdbPosterPath = null,
                                 tmdbBackdropPath = null,
                             )
@@ -70,26 +79,24 @@ public class StartWatchingWatchlistStore(
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { _: Unit -> followedShowsDao.entriesObservable() },
-        writer = { _: Unit, response: List<FollowedShowWithImages> ->
+        writer = { _: Unit, response: List<PlanToWatchWithImages> ->
             transactionRunner {
                 val currentEntries = followedShowsDao.entriesWithNoPendingAction()
-                val networkTraktIds = response.map { it.response.show.ids.trakt }.toSet()
+                val networkTmdbIds = response.map { it.resolvedTmdbId }.toSet()
 
                 response.forEach { item ->
-                    val entry = item.response.toFollowedShowEntry()
-
                     tvShowsDao.upsertMerging(
-                        item.response.toTvshow(
+                        item.toShowToPersist(
                             posterPath = item.tmdbPosterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                             backdropPath = item.tmdbBackdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                         ),
                     )
 
-                    val _ = followedShowsDao.upsert(entry)
+                    val _ = followedShowsDao.upsert(item.toFollowedShowEntry())
                 }
 
                 currentEntries.forEach { localEntry ->
-                    if (localEntry.showId !in networkTraktIds) {
+                    if (localEntry.showId !in networkTmdbIds) {
                         followedShowsDao.deleteById(localEntry.id)
                     }
                 }
@@ -117,22 +124,26 @@ public class StartWatchingWatchlistStore(
     },
 ).build()
 
-private data class FollowedShowWithImages(
-    val response: TraktFollowedShowResponse,
+private data class PlanToWatchWithImages(
+    val show: RemotePlanToWatchShow,
+    val resolvedTmdbId: Long,
     val tmdbPosterPath: String?,
     val tmdbBackdropPath: String?,
 )
 
-private fun TraktFollowedShowResponse.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
-    showId = show.ids.trakt,
-    tmdbId = show.ids.tmdb,
-    followedAt = Instant.parse(listedAt),
+private fun PlanToWatchWithImages.toFollowedShowEntry(): FollowedShowEntry = FollowedShowEntry(
+    showId = resolvedTmdbId,
+    tmdbId = resolvedTmdbId,
+    followedAt = show.followedAt,
     pendingAction = PendingAction.NOTHING,
 )
 
-private fun TraktFollowedShowResponse.toTvshow(posterPath: String?, backdropPath: String?): ShowToPersist = ShowToPersist(
-    showId = Id(show.ids.trakt),
-    tmdbId = Id(show.ids.tmdb),
+private fun PlanToWatchWithImages.toShowToPersist(
+    posterPath: String?,
+    backdropPath: String?,
+): ShowToPersist = ShowToPersist(
+    showId = null,
+    tmdbId = Id<TmdbId>(resolvedTmdbId),
     name = show.title,
     overview = "",
     language = null,

@@ -11,7 +11,6 @@ import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.theme.Theme
-import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.util.getString
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
@@ -144,19 +143,6 @@ abstract class DefaultRootPresenterTest {
             val trailersScreen = awaitItem().active.instance
 
             trailersScreen.shouldBeInstanceOf<RootChild>()
-        }
-    }
-
-    @Test
-    fun `should return GenreShows as active instance`() = runTest(testDispatcher) {
-        presenter.homePresenter.discoverChildStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
-
-            navigator.bringToFront(GenreShowsRoute(1))
-
-            val genreShowsScreen = awaitItem().active.instance
-
-            genreShowsScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 

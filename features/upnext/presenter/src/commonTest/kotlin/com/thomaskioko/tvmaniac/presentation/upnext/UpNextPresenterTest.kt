@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -28,6 +29,8 @@ import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerReposit
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -81,6 +84,23 @@ internal class UpNextPresenterTest {
             initialState.sortOption shouldBe UpNextSortOption.LAST_WATCHED
             initialState.episodes shouldHaveSize 0
             initialState.isEmpty shouldBe true
+        }
+    }
+
+    @Test
+    fun `should show loading until content is available`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            upNextRepository.setNextEpisodesForWatchlist(
+                listOf(createTestNextEpisode(showId = 1, showName = "Show 1")),
+            )
+
+            val loaded = awaitItem()
+            loaded.isEmpty shouldBe false
+            loaded.showLoading shouldBe false
         }
     }
 
@@ -255,6 +275,22 @@ internal class UpNextPresenterTest {
     }
 
     @Test
+    fun `should navigate to show details given OpenShow action is dispatched`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            presenter.dispatch(OpenShow(showId = 999L))
+
+            navigator.lastNavigatedRoute shouldBe ShowDetailsRoute(
+                ShowDetailsParam(showId = 999L),
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should remove episode from list given episode is marked as watched`() = runTest {
         val episode1 = createTestNextEpisode(showId = 1, showName = "Show 1")
         val episode2 = createTestNextEpisode(showId = 2, showName = "Show 2")
@@ -324,8 +360,7 @@ internal class UpNextPresenterTest {
     @Test
     fun `should map all episode fields to ui model correctly`() = runTest {
         val episode = NextEpisodeWithShow(
-            showId = 42L,
-            showTmdbId = 84L,
+            showId = 84L,
             episodeId = 100L,
             episodeName = "Pilot",
             seasonId = 10L,
@@ -355,8 +390,7 @@ internal class UpNextPresenterTest {
             state.episodes shouldHaveSize 1
 
             val uiModel = state.episodes[0]
-            uiModel.showId shouldBe 42L
-            uiModel.showTmdbId shouldBe 84L
+            uiModel.showId shouldBe 84L
             uiModel.episodeId shouldBe 100L
             uiModel.episodeName shouldBe "Pilot"
             uiModel.seasonId shouldBe 10L
@@ -475,6 +509,7 @@ internal class UpNextPresenterTest {
                 dispatchers = dispatchers,
             ),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+            activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
             dispatchers = dispatchers,
             logger = logger,
@@ -510,7 +545,6 @@ internal class UpNextPresenterTest {
         firstAired: Long? = null,
     ): NextEpisodeWithShow = NextEpisodeWithShow(
         showId = showId,
-        showTmdbId = showId,
         episodeId = showId * 100,
         episodeName = "Episode 1",
         seasonId = showId * 10,

@@ -34,6 +34,7 @@ class ShowInfoViewTest: SnapshotTestCase {
                 count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
             },
             upToDateLabel: "You're up-to-date",
+            canAddToList: true,
             onAddToCustomList: {},
             onAddToLibrary: {},
             onSeasonClicked: { _, _ in },
@@ -41,6 +42,43 @@ class ShowInfoViewTest: SnapshotTestCase {
         )
         .appPreview()
         .assertSnapshot(testName: "ShowInfoView")
+    }
+
+    func test_ShowInfoView_SimklNoList() {
+        ShowInfoView(
+            isFollowed: true,
+            openTrailersInYoutube: false,
+            status: "Ended",
+            watchedEpisodesCount: 7,
+            totalEpisodesCount: 12,
+            genreList: genreList,
+            seasonList: seasonList,
+            providerList: providerList,
+            trailerList: trailerList,
+            castsList: castsList,
+            similarShows: showList,
+            continueTrackingTitle: "Continue tracking",
+            dayLabelFormat: { count in count == 1 ? "day" : "days" },
+            tbdLabel: "TBD",
+            trackLabel: "Track",
+            stopTrackingLabel: "Stop Tracking",
+            addToListLabel: "Add To List",
+            similarShowsTitle: "Similar Shows",
+            seasonDetailsTitle: "Season Details",
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
+            episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
+            episodesLeftFormat: { count in
+                count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
+            },
+            upToDateLabel: "You're up-to-date",
+            canAddToList: false,
+            onAddToCustomList: {},
+            onAddToLibrary: {},
+            onSeasonClicked: { _, _ in },
+            onShowClicked: { _ in }
+        )
+        .appPreview()
+        .assertSnapshot(testName: "ShowInfoView_SimklNoList")
     }
 
     private var genreList: [SwiftGenres] {
@@ -76,8 +114,8 @@ class ShowInfoViewTest: SnapshotTestCase {
 
     private var trailerList: [SwiftTrailer] {
         [
-            .init(showTmdbId: 123, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
-            .init(showTmdbId: 1234, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
+            .init(showId: 123, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
+            .init(showId: 1234, key: "XZ8daibM3AE", name: "Series Trailer", youtubeThumbnailUrl: ""),
         ]
     }
 

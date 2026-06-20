@@ -354,8 +354,8 @@ internal class CalendarPresenterTest {
             skipItems(1) // Skip initial loading state
             val state = awaitItem()
             val episode = state.dateGroups[0].episodes[0]
-            episode.showId shouldBe 1
-            episode.episodeId shouldBe 10
+            episode.showId shouldBe 1L
+            episode.episodeId shouldBe 10L
             episode.showTitle shouldBe "Breaking Bad"
             episode.posterUrl shouldBe "/poster.jpg"
             episode.network shouldBe "AMC"

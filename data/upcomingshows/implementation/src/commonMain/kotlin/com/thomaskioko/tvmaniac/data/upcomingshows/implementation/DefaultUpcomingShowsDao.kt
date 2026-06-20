@@ -43,7 +43,7 @@ public class DefaultUpcomingShowsDao(
         upcomingShowsQueries
             .entriesInPage(Id(page)) { showId, tmdbId, pageId, name, posterPath, overview, inLibrary ->
                 ShowEntity(
-                    showId = showId,
+                    showId = showId.id,
                     tmdbId = tmdbId.id,
                     page = pageId.id,
                     title = name,
@@ -66,7 +66,7 @@ public class DefaultUpcomingShowsDao(
                     offset = offset,
                 ) { showId, tmdbId, page, title, imageUrl, inLib ->
                     ShowEntity(
-                        showId = showId,
+                        showId = showId.id,
                         tmdbId = tmdbId.id,
                         page = page.id,
                         title = title,
@@ -82,7 +82,7 @@ public class DefaultUpcomingShowsDao(
     }
 
     override fun deleteUpcomingShow(id: Long) {
-        val showId = showIdResolver.showIdForTraktId(id) ?: return
+        val showId = showIdResolver.showIdForTmdbId(id) ?: return
         upcomingShowsQueries.delete(showId)
     }
 

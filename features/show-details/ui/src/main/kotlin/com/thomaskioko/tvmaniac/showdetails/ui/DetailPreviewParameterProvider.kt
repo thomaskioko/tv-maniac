@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import kotlinx.collections.immutable.persistentListOf
 
 internal val showDetailsContent = ShowDetailsContent(
+    canAddToList = true,
     showDetails = ShowDetailsModel(
         tmdbId = 849583,
         title = "Loki",
@@ -40,13 +41,13 @@ internal val showDetailsContent = ShowDetailsContent(
         ),
         trailersList = persistentListOf(
             TrailerModel(
-                showTmdbId = 1232,
+                showId = 1232,
                 key = "1",
                 name = "",
                 youtubeThumbnailUrl = "",
             ),
             TrailerModel(
-                showTmdbId = 1232,
+                showId = 1232,
                 key = "2",
                 name = "",
                 youtubeThumbnailUrl = "",
@@ -122,6 +123,8 @@ internal val showDetailsContentWithError = showDetailsContent.copy(
     ),
 )
 
+internal val showDetailsContentSimkl = showDetailsContent.copy(canAddToList = false)
+
 internal class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDetailsContent> {
     override val values: Sequence<ShowDetailsContent>
         get() {
@@ -129,6 +132,7 @@ internal class DetailPreviewParameterProvider : PreviewParameterProvider<ShowDet
                 showDetailsContent,
                 showDetailsContentWithEmptyInfo,
                 showDetailsContentWithError,
+                showDetailsContentSimkl,
             )
         }
 }

@@ -71,6 +71,16 @@ internal class PendingNotificationsStore(context: Context) {
         prefs.edit { remove(KEY_NOTIFICATIONS) }
     }
 
+    @Synchronized
+    internal fun clearStaleNotificationsOnce() {
+        if (!prefs.getBoolean(KEY_STALE_ID_MIGRATION_CLEARED, false)) {
+            prefs.edit {
+                remove(KEY_NOTIFICATIONS)
+                putBoolean(KEY_STALE_ID_MIGRATION_CLEARED, true)
+            }
+        }
+    }
+
     private fun getStoredNotifications(): List<StoredNotification> {
         val jsonString = prefs.getString(KEY_NOTIFICATIONS, null) ?: return emptyList()
         return try {
@@ -106,6 +116,7 @@ internal class PendingNotificationsStore(context: Context) {
         private const val TAG = "PendingNotificationsStore"
         private const val PREFS_NAME = "episode_notifications"
         private const val KEY_NOTIFICATIONS = "pending_notifications"
+        private const val KEY_STALE_ID_MIGRATION_CLEARED = "stale_show_id_migration_cleared_v39"
         private const val STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000L
     }
 }

@@ -6,6 +6,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -310,6 +311,7 @@ class DebugPresenterTest {
                     dispatchers = dispatchers,
                 ),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
                 requestManagerRepository = FakeRequestManagerRepository(),
                 dispatchers = dispatchers,
                 logger = logger,

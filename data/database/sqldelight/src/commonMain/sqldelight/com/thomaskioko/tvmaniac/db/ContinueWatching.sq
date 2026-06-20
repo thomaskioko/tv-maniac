@@ -18,7 +18,7 @@ CREATE INDEX IF NOT EXISTS idx_continue_watching_tmdb_id ON continue_watching(tm
 
 entries:
 SELECT
-    show_trakt.trakt_id,
+    tvshow.tmdb_id AS show_id,
     continue_watching.tmdb_id,
     continue_watching.aired_episodes,
     continue_watching.completed_count,
@@ -27,11 +27,8 @@ SELECT
     continue_watching.title,
     continue_watching.year
 FROM continue_watching
-JOIN tvshow ON tvshow.id = continue_watching.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id;
+JOIN tvshow ON tvshow.id = continue_watching.show_id;
 
--- Continue Watching shows whose tvshow row is still a stub (placeholder upsert leaves overview
--- empty); the sync layer fetches full details for these. Re-emits trakt_id for the caller.
 traktIdsMissingShowDetails:
 SELECT show_trakt.trakt_id
 FROM continue_watching
@@ -41,7 +38,7 @@ WHERE tvshow.overview = '';
 
 entriesObservable:
 SELECT
-    show_trakt.trakt_id,
+    tvshow.tmdb_id AS show_id,
     continue_watching.tmdb_id,
     continue_watching.aired_episodes,
     continue_watching.completed_count,
@@ -50,8 +47,7 @@ SELECT
     continue_watching.title,
     continue_watching.year
 FROM continue_watching
-JOIN tvshow ON tvshow.id = continue_watching.show_id
-INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id;
+JOIN tvshow ON tvshow.id = continue_watching.show_id;
 
 -- Server sync upsert. Preserves a more recent local last_watched_at so a
 -- pending local mark is not regressed when the server's projection trails.
@@ -89,6 +85,29 @@ WHERE show_id = :showId;
 upsertPlaceholder:
 INSERT OR IGNORE INTO continue_watching(show_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year)
 VALUES(:showId, :tmdbId, 0, 0, 0, 0, :title, :year);
+
+-- Seeds a membership row per show that has live watched episodes but no continue_watching row yet.
+-- Used by providers without a native continue-watching sync (Simkl): the watched-history sync fills
+-- watched_episodes, this derives membership, and the metadata fan-out + show_watch_progress view then
+-- compute counts. Count columns stay zero (non-load-bearing for reads). INSERT OR IGNORE never
+-- regresses an existing row (e.g. a Trakt Nitro-curated one).
+insertMembershipFromWatchedEpisodes:
+INSERT OR IGNORE INTO continue_watching(
+    show_id, tmdb_id, aired_episodes, completed_count, last_watched_at, last_updated_at, title, year
+)
+SELECT
+    tvshow.id,
+    tvshow.tmdb_id,
+    0,
+    0,
+    MAX(watched_episodes.watched_at),
+    MAX(watched_episodes.watched_at),
+    tvshow.name,
+    CAST(tvshow.year AS INTEGER)
+FROM watched_episodes
+INNER JOIN tvshow ON tvshow.id = watched_episodes.show_id
+WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+GROUP BY tvshow.id;
 
 deleteByShowId:
 DELETE FROM continue_watching WHERE show_id = ?;

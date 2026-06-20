@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
+import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.oauth.api.OAuthLauncher
@@ -10,6 +11,7 @@ import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
 
 @DependencyGraph(AppScope::class)
 public interface TestGraph {
@@ -24,6 +26,6 @@ public interface TestGraph {
 
     @DependencyGraph.Factory
     public fun interface Factory {
-        public fun create(): TestGraph
+        public fun create(@Provides remoteConfigBridge: RemoteConfigBridge): TestGraph
     }
 }

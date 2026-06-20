@@ -29,5 +29,11 @@ kotlin {
             implementation(projects.core.util.testing)
             implementation(libs.bundles.unittest)
         }
+
+        getByName("androidDeviceTest") {
+            dependencies {
+                implementation(libs.kotlin.test.junit)
+            }
+        }
     }
 }

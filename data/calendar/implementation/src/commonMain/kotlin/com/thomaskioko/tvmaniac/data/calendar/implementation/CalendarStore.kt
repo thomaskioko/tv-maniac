@@ -1,23 +1,26 @@
 package com.thomaskioko.tvmaniac.data.calendar.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.calendar.CalendarDao
 import com.thomaskioko.tvmaniac.data.calendar.CalendarEntry
+import com.thomaskioko.tvmaniac.data.calendar.CalendarRemoteDataSource
+import com.thomaskioko.tvmaniac.data.calendar.RemoteCalendarEntry
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.CALENDAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
-import com.thomaskioko.tvmaniac.trakt.api.TraktCalendarRemoteDataSource
-import com.thomaskioko.tvmaniac.trakt.api.model.TraktCalendarResponse
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.withContext
+import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Validator
-import kotlin.time.Instant
 
 public data class CalendarParams(
     val startDate: String,
@@ -27,52 +30,36 @@ public data class CalendarParams(
 )
 
 @Inject
+@SingleIn(AppScope::class)
 public class CalendarStore(
-    private val calendarDataSource: TraktCalendarRemoteDataSource,
+    private val activeSource: () -> CalendarRemoteDataSource?,
     private val calendarDao: CalendarDao,
     private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<CalendarParams, List<CalendarEntry>> by storeBuilder(
-    fetcher = apiFetcher { params: CalendarParams ->
-        calendarDataSource.getMyShowsCalendar(params.startDate, params.days)
+    fetcher = Fetcher.of { params: CalendarParams ->
+        val source = activeSource() ?: throw AuthenticationException("No active calendar provider")
+        source.getCalendarEntries(params.startDate, params.days).getOrThrow()
     },
     sourceOfTruth = SourceOfTruth.of(
         reader = { params: CalendarParams ->
             calendarDao.observeEntriesBetweenDates(params.startEpoch, params.endEpoch)
         },
-        writer = { params: CalendarParams, response: List<TraktCalendarResponse> ->
+        writer = { params: CalendarParams, response: List<RemoteCalendarEntry> ->
             withContext(dispatchers.databaseWrite) {
                 databaseTransactionRunner {
                     calendarDao.deleteEntriesInRange(params.startEpoch, params.endEpoch)
 
-                    val showIds = response.map { it.show.ids.trakt }.distinct()
-                    val showPosters = tvShowsDao.getShowsByIds(showIds)
-                        .associate { it.showId to it.posterPath }
+                    val tmdbIds = response.map { it.tmdbId }.distinct()
+                    val postersByTmdbId = tvShowsDao.getShowsByIds(tmdbIds)
+                        .associate { it.tmdbId to it.posterPath }
 
-                    response.forEach { calendarResponse ->
-                        val showId = calendarResponse.show.ids.trakt
-                        val firstAiredEpoch = Instant.parse(calendarResponse.firstAired).toEpochMilliseconds()
-
-                        val posterPath = showPosters[showId]
-
-                        calendarDao.upsert(
-                            CalendarEntry(
-                                showId = showId,
-                                episodeId = calendarResponse.episode.ids.trakt.toLong(),
-                                seasonNumber = calendarResponse.episode.seasonNumber,
-                                episodeNumber = calendarResponse.episode.episodeNumber,
-                                episodeTitle = calendarResponse.episode.title,
-                                airDate = firstAiredEpoch,
-                                showTitle = calendarResponse.show.title,
-                                showPosterPath = posterPath,
-                                network = null,
-                                runtime = calendarResponse.episode.runtime,
-                                overview = calendarResponse.episode.overview,
-                                rating = calendarResponse.episode.rating,
-                                votes = calendarResponse.episode.votes,
-                            ),
+                    response.forEach { entry ->
+                        calendarDao.upsertFromRemote(
+                            entry = entry,
+                            posterPath = postersByTmdbId[entry.tmdbId],
                         )
                     }
                 }
@@ -88,12 +75,13 @@ public class CalendarStore(
         writeDispatcher = dispatchers.databaseWrite,
     ),
 ).validator(
-    Validator.by { cachedData ->
-        withContext(dispatchers.io) {
-            cachedData.isNotEmpty() && requestManagerRepository.isRequestValid(
-                requestType = CALENDAR_SHOWS.name,
-                threshold = CALENDAR_SHOWS.duration,
-            )
-        }
+    Validator.by { cachedEntries ->
+        cachedEntries.isNotEmpty() &&
+            withContext(dispatchers.io) {
+                requestManagerRepository.isRequestValid(
+                    requestType = CALENDAR_SHOWS.name,
+                    threshold = CALENDAR_SHOWS.duration,
+                )
+            }
     },
 ).build()

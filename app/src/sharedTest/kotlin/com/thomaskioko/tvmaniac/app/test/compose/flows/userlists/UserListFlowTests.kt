@@ -9,7 +9,7 @@ import org.junit.Test
 
 internal class UserListFlowTests : BaseAppFlowTest() {
 
-    private val breakingBadTraktId = 1388L
+    private val breakingBadTmdbId = 1396L
     private val favoritesListTraktId = 34223248L
     private val animeListTraktId = 34223402L
 
@@ -61,7 +61,7 @@ internal class UserListFlowTests : BaseAppFlowTest() {
 
         discoverRobot
             .assertFeaturedPagerDisplayed()
-            .clickShowCard(breakingBadTraktId)
+            .clickShowCard(breakingBadTmdbId)
 
         showDetailsRobot
             .assertShowDetailsDisplayed()

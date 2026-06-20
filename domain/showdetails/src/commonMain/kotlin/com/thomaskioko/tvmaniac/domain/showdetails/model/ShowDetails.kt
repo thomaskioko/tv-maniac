@@ -68,7 +68,7 @@ public data class Show(
 )
 
 public data class Trailer(
-    val showTmdbId: Long,
+    val showId: Long,
     val key: String,
     val name: String,
     val youtubeThumbnailUrl: String,

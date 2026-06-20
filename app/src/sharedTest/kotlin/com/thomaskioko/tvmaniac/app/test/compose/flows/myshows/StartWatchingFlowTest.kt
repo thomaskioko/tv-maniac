@@ -7,9 +7,9 @@ import org.junit.Test
 internal class StartWatchingFlowTest : BaseAppFlowTest() {
 
     private val unstartedTraktId = 555555L
-    private val breakingBadTraktId = 1388L
-    private val forAllMankindTraktId = 140481L
-    private val theBoysTraktId = 139960L
+    private val breakingBadTmdbId = 1396L
+    private val forAllMankindTmdbId = 87917L
+    private val theBoysTmdbId = 76479L
 
     @Test
     fun givenAuthenticatedUser_whenStartWatchingTabOpened_thenShowsUnstartedShowAndExcludesContinueWatching() =
@@ -30,9 +30,9 @@ internal class StartWatchingFlowTest : BaseAppFlowTest() {
                 .assertStartWatchingGridDisplayed()
                 .scrollToStartWatchingShowCard(unstartedTraktId)
                 .assertStartWatchingShowCardDisplayed(unstartedTraktId)
-                .assertStartWatchingShowCardDoesNotExist(breakingBadTraktId)
-                .assertStartWatchingShowCardDoesNotExist(forAllMankindTraktId)
-                .assertStartWatchingShowCardDoesNotExist(theBoysTraktId)
+                .assertStartWatchingShowCardDoesNotExist(breakingBadTmdbId)
+                .assertStartWatchingShowCardDoesNotExist(forAllMankindTmdbId)
+                .assertStartWatchingShowCardDoesNotExist(theBoysTmdbId)
 
             rootRobot.assertNoSnackbarDisplayed()
         }

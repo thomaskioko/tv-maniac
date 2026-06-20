@@ -450,4 +450,11 @@
     <string name="account_limit_banner_message">Du hast dein Trakt-Listenlimit erreicht. Upgrade auf VIP, um weiterhin Serien hinzuzufügen.</string>
     <string name="account_limit_upgrade_cta">Upgraden</string>
     <string name="account_limit_dismiss_cta">Schließen</string>
+
+    <string name="label_account_switch_action">Zu %s wechseln</string>
+    <string name="label_account_switch_dialog_title">Zu %s wechseln?</string>
+    <string name="label_account_switch_dialog_message">Du hast %d nicht gespeicherte Änderungen, die verworfen werden.</string>
+    <string name="label_account_switch_dialog_confirm">Verwerfen &amp; wechseln</string>
+    <string name="label_account_switching">Wird gewechselt…</string>
+    <string name="label_account_switch_failed">Konten konnten nicht gewechselt werden. Bitte versuche es erneut.</string>
 </resources>
