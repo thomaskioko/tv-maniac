@@ -47,7 +47,6 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.integration.infra)
-                implementation(projects.features.genreShows.nav)
                 implementation(projects.features.moreShows.nav)
                 implementation(projects.features.trailers.nav)
                 implementation(projects.i18n.testing)

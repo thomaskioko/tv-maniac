@@ -246,7 +246,6 @@ dependencies {
     testImplementation(projects.data.oauth.api)
     testImplementation(projects.data.oauth.testing)
     testImplementation(projects.data.traktauth.testing)
-    testImplementation(projects.features.genreShows.nav)
     testImplementation(projects.core.locale.testing)
     testImplementation(projects.core.util.testing)
     testImplementation(projects.core.featureFlags.testing)

@@ -117,7 +117,6 @@ kotlin {
             api(projects.domain.user)
             api(projects.domain.continueWatching)
             api(projects.features.discover.nav)
-            api(projects.features.genreShows.nav)
             api(projects.features.home.nav)
             api(projects.features.home.presenter)
             api(projects.features.library.nav)

@@ -22,7 +22,6 @@ kotlin {
             implementation(libs.bundles.unittest)
             implementation(libs.kotlinx.serialization.json)
             implementation(projects.features.discover.nav)
-            implementation(projects.features.genreShows.nav)
             implementation(projects.features.home.nav)
             implementation(projects.features.library.nav)
             implementation(projects.features.moreShows.nav)
