@@ -159,6 +159,7 @@ kotlin {
             api(projects.core.tasks.api)
             api(projects.data.oauth.api)
 
+            implementation(libs.androidx.compose.runtime)
             implementation(libs.kotlinx.serialization.json)
         }
     }
