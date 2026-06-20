@@ -295,7 +295,6 @@ include(
     ":features:episode-sheet:nav",
     ":features:episode-sheet:ui",
     ":features:genre-shows:nav",
-    ":features:genre-shows:presenter",
     ":features:home:nav",
     ":features:home:presenter",
     ":features:library:nav",
