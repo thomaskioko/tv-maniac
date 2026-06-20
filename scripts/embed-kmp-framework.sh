@@ -30,6 +30,14 @@ if [ "${TVMANIAC_SKIP_FRAMEWORK_BUILD:-}" = "1" ] && [ -d "${TV_SRC}/TvManiac.fr
   ditto "${TV_SRC}/TvManiac.framework" "${BUILT_PRODUCTS_DIR}/TvManiac.framework"
   ditto "${I18N_SRC}/i18n.framework" "${BUILT_PRODUCTS_DIR}/i18n.framework"
 else
+  # Xcode scheme pre-actions inherit ARCHS but do not apply EXCLUDED_ARCHS, so a simulator
+  # build can request "arm64 x86_64". The framework configures only iosArm64 and
+  # iosSimulatorArm64, so strip x86_64 to match the available Kotlin/Native targets and
+  # satisfy the embedAndSign architecture validation.
+  ARCHS="${ARCHS:-arm64}"
+  ARCHS="$(echo "${ARCHS//x86_64/}" | xargs)"
+  export ARCHS="${ARCHS:-arm64}"
+
   ./gradlew \
     :ios-framework:embedAndSignAppleFrameworkForXcode \
     :i18n:generator:embedAndSignAppleFrameworkForXcode \

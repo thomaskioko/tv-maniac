@@ -1,21 +1,5 @@
-import com.autonomousapps.DependencyAnalysisSubExtension
-
 plugins {
     alias(libs.plugins.app.kmp)
-}
-
-// TODO: replace with `scaffold { ignoreUnused(...) }`.
-configure<DependencyAnalysisSubExtension> {
-    issues {
-        onUnusedDependencies {
-            exclude(
-                ":data:request-manager:testing",
-                ":data:sync-activity:testing",
-                ":data:traktlists:testing",
-                ":data:user:testing",
-            )
-        }
-    }
 }
 
 scaffold {
@@ -30,13 +14,20 @@ scaffold {
         )
     }
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+    ignoreUnusedDependencies(
+        ":data:request-manager:testing",
+        ":data:sync-activity:testing",
+        ":data:traktlists:testing",
+        ":data:user:testing",
+    )
 }
 
 kotlin {
     sourceSets {
-        val jvmAndIosMain by creating {
-            dependsOn(getByName("commonMain"))
-        }
+        val jvmAndIosMain =
+            create("jvmAndIosMain") {
+                dependsOn(getByName("commonMain"))
+            }
         getByName("jvmMain").dependsOn(jvmAndIosMain)
         getByName("iosMain").dependsOn(jvmAndIosMain)
 

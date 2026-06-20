@@ -17,19 +17,15 @@ kotlin {
             }
         }
 
-        val jvmAndroidMain by creating {
-            dependsOn(commonMain.get())
-            dependencies {
-                api(libs.junit4)
+        val jvmAndroidMain =
+            create("jvmAndroidMain") {
+                dependsOn(commonMain.get())
+                dependencies {
+                    api(libs.junit4)
+                }
             }
-        }
 
-        val jvmMain by getting {
-            dependsOn(jvmAndroidMain)
-        }
-
-        val androidMain by getting {
-            dependsOn(jvmAndroidMain)
-        }
+        jvmMain.get().dependsOn(jvmAndroidMain)
+        androidMain.get().dependsOn(jvmAndroidMain)
     }
 }
