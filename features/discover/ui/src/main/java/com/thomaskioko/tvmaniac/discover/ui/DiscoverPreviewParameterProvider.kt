@@ -3,8 +3,12 @@ package com.thomaskioko.tvmaniac.discover.ui
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
+import com.thomaskioko.tvmaniac.discover.presenter.catalog.DiscoverCatalogState
+import com.thomaskioko.tvmaniac.discover.presenter.featured.DiscoverFeaturedState
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
+import com.thomaskioko.tvmaniac.discover.presenter.startwatching.DiscoverStartWatchingState
+import com.thomaskioko.tvmaniac.discover.presenter.upnext.DiscoverUpNextState
 import kotlinx.collections.immutable.toImmutableList
 
 internal val discoverShow = DiscoverShow(
@@ -30,23 +34,42 @@ internal val nextEpisodeUiModel = NextEpisodeUiModel(
     isNew = true,
 )
 
-internal val discoverContentSuccess = DiscoverViewState(
+internal val discoverFeaturedContentSuccess = DiscoverFeaturedState(
+    isInitial = false,
+    loading = false,
     featuredShows = createDiscoverShowList(5),
-    topRatedShows = createDiscoverShowList(),
-    popularShows = createDiscoverShowList(),
+)
+
+internal val discoverCatalogContentSuccess = DiscoverCatalogState(
+    isInitial = false,
+    loading = false,
+    trendingShows = createDiscoverShowList(),
     upcomingShows = createDiscoverShowList(),
-    trendingToday = createDiscoverShowList(),
+    popularShows = createDiscoverShowList(),
+    topRatedShows = createDiscoverShowList(),
+    trendingTitle = "Trending Today",
+    upcomingTitle = "Upcoming",
+    popularTitle = "Popular",
+    topRatedTitle = "Top Rated",
+)
+
+internal val discoverUpNextContentSuccess = DiscoverUpNextState(
     nextEpisodes = createNextEpisodesList(3),
 )
 
-private fun createDiscoverShowList(size: Int = 20) = List(size) { index ->
+internal val discoverStartWatchingContentSuccess = DiscoverStartWatchingState(
+    startWatchingShows = createDiscoverShowList(),
+    startWatchingTitle = "Start Watching",
+)
+
+internal fun createDiscoverShowList(size: Int = 20) = List(size) { index ->
     discoverShow.copy(
         tmdbId = discoverShow.tmdbId + index,
         showId = discoverShow.showId + index,
     )
 }.toImmutableList()
 
-private fun createNextEpisodesList(size: Int = 3) = List(size) { index ->
+internal fun createNextEpisodesList(size: Int = 3) = List(size) { index ->
     nextEpisodeUiModel.copy(
         showId = (index + 1).toLong(),
         showName = when (index) {
@@ -66,17 +89,53 @@ private fun createNextEpisodesList(size: Int = 3) = List(size) { index ->
     )
 }.toImmutableList()
 
-internal class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverViewState> {
-    override val values: Sequence<DiscoverViewState>
-        get() {
-            return sequenceOf(
-                DiscoverViewState.Empty,
-                discoverContentSuccess,
-                DiscoverViewState(
-                    message = UiMessage(
-                        "Opps! Something went wrong",
-                    ),
+internal data class DiscoverPreviewState(
+    val hostState: DiscoverViewState,
+    val featuredState: DiscoverFeaturedState,
+    val catalogState: DiscoverCatalogState,
+    val upNextState: DiscoverUpNextState,
+    val startWatchingState: DiscoverStartWatchingState,
+)
+
+internal class DiscoverPreviewParameterProvider : PreviewParameterProvider<DiscoverPreviewState> {
+    override val values: Sequence<DiscoverPreviewState>
+        get() = sequenceOf(
+            DiscoverPreviewState(
+                hostState = DiscoverViewState(isLoading = true),
+                featuredState = DiscoverFeaturedState(),
+                catalogState = DiscoverCatalogState(),
+                upNextState = DiscoverUpNextState(),
+                startWatchingState = DiscoverStartWatchingState(),
+            ),
+            DiscoverPreviewState(
+                hostState = DiscoverViewState(isEmpty = true),
+                featuredState = DiscoverFeaturedState(isInitial = false),
+                catalogState = DiscoverCatalogState(isInitial = false),
+                upNextState = DiscoverUpNextState(),
+                startWatchingState = DiscoverStartWatchingState(),
+            ),
+            DiscoverPreviewState(
+                hostState = DiscoverViewState(),
+                featuredState = discoverFeaturedContentSuccess,
+                catalogState = discoverCatalogContentSuccess,
+                upNextState = discoverUpNextContentSuccess,
+                startWatchingState = discoverStartWatchingContentSuccess,
+            ),
+            DiscoverPreviewState(
+                hostState = DiscoverViewState(
+                    showError = true,
+                    message = UiMessage("Opps! Something went wrong"),
                 ),
-            )
-        }
+                featuredState = DiscoverFeaturedState(
+                    isInitial = false,
+                    message = UiMessage("Opps! Something went wrong"),
+                ),
+                catalogState = DiscoverCatalogState(
+                    isInitial = false,
+                    message = UiMessage("Opps! Something went wrong"),
+                ),
+                upNextState = DiscoverUpNextState(),
+                startWatchingState = DiscoverStartWatchingState(),
+            ),
+        )
 }

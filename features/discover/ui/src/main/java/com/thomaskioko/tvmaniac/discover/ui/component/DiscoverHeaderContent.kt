@@ -42,7 +42,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.util.LocalAutoAdvanceEnabled
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
-import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.discoverFeaturedContentSuccess
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
@@ -209,7 +209,7 @@ private fun ShowCardOverlay(
 internal fun DiscoverHeaderContentPreview() {
     val pagerState = rememberPagerState(pageCount = { 5 })
     DiscoverHeaderContent(
-        showList = discoverContentSuccess.featuredShows,
+        showList = discoverFeaturedContentSuccess.featuredShows,
         pagerState = pagerState,
         onShowClicked = {},
     )

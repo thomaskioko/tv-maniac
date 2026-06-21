@@ -24,7 +24,7 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
-import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.discoverCatalogContentSuccess
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
@@ -87,7 +87,7 @@ internal fun HorizontalRowContentPreview() {
         modifier = Modifier.height(220.dp),
         category = "Trending",
         rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
-        tvShows = discoverContentSuccess.topRatedShows,
+        tvShows = discoverCatalogContentSuccess.topRatedShows,
         onItemClicked = {},
         onMoreClicked = {},
     )
