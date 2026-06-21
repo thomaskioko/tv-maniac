@@ -304,33 +304,39 @@ public extension TvManiac.UpNextEpisodeUiModel {
     }
 }
 
-public extension TvManiac.DiscoverViewState {
+public extension TvManiac.DiscoverFeaturedState {
     var featuredShowsSwift: [SwiftShow] {
-        featuredShows.map { $0.toSwift() }
+        Array(featuredShows).map { $0.toSwift() }
     }
+}
 
-    var nextEpisodesSwift: [SwiftNextEpisode] {
-        nextEpisodes.map { $0.toSwift() }
-    }
-
-    var startWatchingShowsSwift: [SwiftShow] {
-        startWatchingShows.map { $0.toSwift() }
-    }
-
-    var trendingTodaySwift: [SwiftShow] {
-        trendingToday.map { $0.toSwift() }
+public extension TvManiac.DiscoverCatalogState {
+    var trendingShowsSwift: [SwiftShow] {
+        Array(trendingShows).map { $0.toSwift() }
     }
 
     var upcomingShowsSwift: [SwiftShow] {
-        upcomingShows.map { $0.toSwift() }
+        Array(upcomingShows).map { $0.toSwift() }
     }
 
     var popularShowsSwift: [SwiftShow] {
-        popularShows.map { $0.toSwift() }
+        Array(popularShows).map { $0.toSwift() }
     }
 
     var topRatedShowsSwift: [SwiftShow] {
-        topRatedShows.map { $0.toSwift() }
+        Array(topRatedShows).map { $0.toSwift() }
+    }
+}
+
+public extension TvManiac.DiscoverUpNextState {
+    var nextEpisodesSwift: [SwiftNextEpisode] {
+        Array(nextEpisodes).map { $0.toSwift() }
+    }
+}
+
+public extension TvManiac.DiscoverStartWatchingState {
+    var startWatchingShowsSwift: [SwiftShow] {
+        Array(startWatchingShows).map { $0.toSwift() }
     }
 }
 

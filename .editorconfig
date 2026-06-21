@@ -12,6 +12,7 @@ trim_trailing_whitespace = true
 ij_kotlin_allow_trailing_comma = true
 ij_kotlin_allow_trailing_comma_on_call_site = true
 ktlint_function_naming_ignore_when_annotated_with = Composable, Test
+ktlint_tvmaniac_unrouted_screens = DiscoverFeaturedSection, DiscoverUpNextSection, DiscoverStartWatchingSection, DiscoverCatalogSection
 ktlint_standard_backing-property-naming = disabled
 ktlint_standard_binary-expression-wrapping = disabled
 ktlint_standard_chain-method-continuation = disabled
