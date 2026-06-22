@@ -19,7 +19,6 @@ import com.thomaskioko.tvmaniac.discover.presenter.featured.FeaturedShowClicked
 import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
 import com.thomaskioko.tvmaniac.discover.ui.discoverFeaturedContentSuccess
 
-@Suppress("ktlint:tvmaniac:compose-screen-needs-codegen-annotation")
 @Composable
 public fun DiscoverFeaturedSection(presenter: DiscoverFeaturedPresenter) {
     val state by presenter.state.collectAsState()

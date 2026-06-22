@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
 import com.thomaskioko.tvmaniac.discover.ui.discoverStartWatchingContentSuccess
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
-@Suppress("ktlint:tvmaniac:compose-screen-needs-codegen-annotation")
 @Composable
 public fun DiscoverStartWatchingSection(presenter: DiscoverStartWatchingPresenter) {
     val state by presenter.state.collectAsState()

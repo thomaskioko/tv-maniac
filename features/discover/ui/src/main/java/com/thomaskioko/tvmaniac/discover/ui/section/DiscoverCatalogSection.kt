@@ -21,7 +21,6 @@ import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
 import com.thomaskioko.tvmaniac.discover.ui.discoverCatalogContentSuccess
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
-@Suppress("ktlint:tvmaniac:compose-screen-needs-codegen-annotation")
 @Composable
 public fun DiscoverCatalogSection(presenter: DiscoverCatalogPresenter) {
     val state by presenter.state.collectAsState()

@@ -19,7 +19,6 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 
-@Suppress("ktlint:tvmaniac:compose-screen-needs-codegen-annotation")
 @Composable
 public fun DiscoverUpNextSection(presenter: DiscoverUpNextPresenter) {
     val state by presenter.state.collectAsState()
