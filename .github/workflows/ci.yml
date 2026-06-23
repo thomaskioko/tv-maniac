@@ -255,7 +255,7 @@ jobs:
 
             -   name: 🗂️ Restore DerivedData
                 id: derived-data
-                uses: actions/cache/restore@v5
+                uses: actions/cache/restore@v6
                 with:
                     path: derived_data
                     key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
@@ -267,7 +267,7 @@ jobs:
 
             -   name: 🗂️ Save DerivedData
                 if: github.ref == 'refs/heads/main' && steps.derived-data.outputs.cache-hit != 'true'
-                uses: actions/cache/save@v5
+                uses: actions/cache/save@v6
                 with:
                     path: derived_data
                     key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
