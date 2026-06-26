@@ -25,7 +25,6 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.locale.api)
-                api(projects.data.datastore.api)
                 implementation(projects.core.base)
             }
         }

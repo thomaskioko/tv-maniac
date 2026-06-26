@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.locale.implementation
 
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.locale.api.LanguagePreference
 import com.thomaskioko.tvmaniac.locale.api.LocaleProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.Flow
 @ContributesBinding(AppScope::class)
 public class DefaultLocaleProvider(
     private val platformLocaleProvider: PlatformLocaleProvider,
-    private val datastoreRepository: DatastoreRepository,
+    private val languagePreference: LanguagePreference,
 ) : LocaleProvider {
 
-    override val currentLocale: Flow<String> = datastoreRepository.observeLanguage()
+    override val currentLocale: Flow<String> = languagePreference.observeLanguage()
 
     override suspend fun setLocale(languageCode: String) {
-        datastoreRepository.saveLanguage(languageCode)
+        languagePreference.saveLanguage(languageCode)
     }
 
     override fun getPreferredLocales(): Flow<List<String>> {
