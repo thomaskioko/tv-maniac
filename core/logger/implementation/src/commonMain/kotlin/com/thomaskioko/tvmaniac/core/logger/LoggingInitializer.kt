@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.Initializers
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Inject
@@ -17,7 +16,7 @@ import kotlinx.coroutines.launch
 public class LoggingInitializer(
     private val debugConfig: DebugConfig,
     private val crashReporter: CrashReporter,
-    private val datastoreRepository: DatastoreRepository,
+    private val crashReportingPreference: CrashReportingPreference,
     private val logger: Logger,
     @IoCoroutineScope private val scope: CoroutineScope,
 ) {
@@ -26,7 +25,7 @@ public class LoggingInitializer(
         logger.setup(debugConfig.isDebug)
 
         scope.launch {
-            datastoreRepository.observeCrashReportingEnabled()
+            crashReportingPreference.observeCrashReportingEnabled()
                 .collect {
                     crashReporter.setCollectionEnabled(it)
                 }

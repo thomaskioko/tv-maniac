@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.imageloading.implementation
 
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
-import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.imageloading.api.ImageQualityPreference
 import com.thomaskioko.tvmaniac.imageloading.api.ImageQualityProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -18,16 +18,16 @@ import kotlinx.coroutines.launch
 @ContributesBinding(AppScope::class)
 public class DefaultImageQualityProvider(
     @IoCoroutineScope coroutineScope: CoroutineScope,
-    private val datastoreRepository: DatastoreRepository,
+    private val imageQualityPreference: ImageQualityPreference,
 ) : ImageQualityProvider {
 
     private val currentQuality = MutableStateFlow(ImageQuality.AUTO)
 
     init {
         coroutineScope.launch {
-            datastoreRepository.observeImageQuality()
-                .collectLatest { quality ->
-                    currentQuality.value = ImageQuality.valueOf(quality.name)
+            imageQualityPreference.observeImageQuality()
+                .collectLatest { name ->
+                    currentQuality.value = ImageQuality.entries.firstOrNull { it.name == name } ?: ImageQuality.AUTO
                 }
         }
     }

@@ -24,6 +24,9 @@ kotlin {
             dependencies {
                 api(projects.data.datastore.api)
                 implementation(projects.core.base)
+                implementation(projects.core.locale.api)
+                implementation(projects.core.logger.api)
+                implementation(projects.core.imageloading.api)
 
                 api(libs.androidx.datastore.preference)
             }
