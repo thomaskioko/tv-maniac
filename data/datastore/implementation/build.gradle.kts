@@ -23,10 +23,10 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.data.datastore.api)
+                api(projects.core.locale.api)
+                api(projects.core.logger.api)
+                api(projects.core.imageloading.api)
                 implementation(projects.core.base)
-                implementation(projects.core.locale.api)
-                implementation(projects.core.logger.api)
-                implementation(projects.core.imageloading.api)
 
                 api(libs.androidx.datastore.preference)
             }
