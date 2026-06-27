@@ -36,7 +36,6 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(libs.kotlinx.datetime)
                 implementation(projects.core.logger.testing)
-                implementation(projects.data.cast.api)
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.episode.testing)

@@ -25,7 +25,6 @@ kotlin {
                 api(libs.kotlinx.collections)
 
                 implementation(projects.core.base)
-                implementation(projects.core.util.api)
                 implementation(projects.data.calendar.api)
                 implementation(projects.features.episodeSheet.nav)
             }

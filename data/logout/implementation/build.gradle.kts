@@ -21,7 +21,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.core.base)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.requestManager.testing)

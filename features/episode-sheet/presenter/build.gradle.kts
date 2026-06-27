@@ -25,8 +25,6 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.kotlinx.collections)
 
-                implementation(projects.data.episode.api)
-                implementation(projects.data.followedshows.api)
                 implementation(projects.features.showDetails.nav)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.i18n.generator)
