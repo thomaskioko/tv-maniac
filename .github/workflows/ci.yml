@@ -70,6 +70,48 @@ jobs:
                     name: dependency-health-report
                     path: '**/build/reports/dependency-analysis/build-health-report.txt'
 
+    module-graph:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            -   uses: actions/checkout@v7
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
+            -   name: Update Module Graphs
+                run: ./gradlew graphUpdate
+
+            -   name: Check Module Graphs
+                id: graphs_verify
+                continue-on-error: true
+                run: git add -- '**/README.md' && git diff --cached --quiet --exit-code -- '**/README.md'
+
+            -   name: Fail on stale graphs (no auto-commit available)
+                if: steps.graphs_verify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+                run: |
+                    echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files." && exit 1
+
+            -   name: Commit refreshed graphs
+                if: steps.graphs_verify.outcome == 'failure' && github.event_name == 'pull_request'
+                uses: stefanzweifel/git-auto-commit-action@v5
+                with:
+                    file_pattern: '**/README.md'
+                    disable_globbing: true
+                    commit_message: "🤖 Update module graphs"
+
+    dependency-guard:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v7
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
+            -   name: Run Dependency Guard
+                run: ./gradlew :app:dependencyGuard :ios-framework:dependencyGuard -Papp.debugOnly=false
+
     swift-lint:
         runs-on: ubuntu-latest
         steps:
