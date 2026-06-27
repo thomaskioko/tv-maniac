@@ -2,379 +2,121 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
-import UpNext
 
 public struct ShowInfoView: View {
     @Environment(\.appTheme) private var theme
-    @State private var toast: Toast?
 
     private let isFollowed: Bool
-    private let openTrailersInYoutube: Bool
-    private let selectedSeasonIndex: Int
-    private let status: String?
-    private let watchedEpisodesCount: Int32
-    private let totalEpisodesCount: Int32
-    private let genreList: [SwiftGenres]
-    private let seasonList: [SwiftSeason]
-    private let providerList: [SwiftProviders]
-    private let trailerList: [SwiftTrailer]
-    private let castsList: [SwiftCast]
-    private let similarShows: [SwiftShow]
-    private let continueTrackingEpisodes: [SwiftContinueTrackingEpisode]
-    private let continueTrackingScrollIndex: Int
-    private let continueTrackingTitle: String
-    private let updatingEpisodeIds: Set<Int64>
-    private let dayLabelFormat: (_ count: Int) -> String
-    private let tbdLabel: String
+    private let canAddToList: Bool
+    private let genres: [SwiftGenres]
     private let trackLabel: String
     private let stopTrackingLabel: String
     private let addToListLabel: String
-    private let similarShowsTitle: String
-    private let seasonDetailsTitle: String
-    private let showSeasonDetailsHeader: Bool
-    private let seasonCountFormat: (_ count: Int32) -> String
-    private let episodesWatchedFormat: (_ watched: Int32, _ total: Int32) -> String
-    private let episodesLeftFormat: (_ count: Int32) -> String
-    private let upToDateLabel: String
-    private let canAddToList: Bool
-    private let onAddToCustomList: () -> Void
     private let onAddToLibrary: () -> Void
-    private let onSeasonClicked: (Int, SwiftSeason) -> Void
-    private let onShowClicked: (Int64) -> Void
-    private let onMarkEpisodeWatched: (SwiftContinueTrackingEpisode) -> Void
+    private let onAddToCustomList: () -> Void
 
     public init(
         isFollowed: Bool,
-        openTrailersInYoutube: Bool,
-        selectedSeasonIndex: Int = 0,
-        status: String?,
-        watchedEpisodesCount: Int32,
-        totalEpisodesCount: Int32,
-        genreList: [SwiftGenres],
-        seasonList: [SwiftSeason],
-        providerList: [SwiftProviders],
-        trailerList: [SwiftTrailer],
-        castsList: [SwiftCast],
-        similarShows: [SwiftShow],
-        continueTrackingEpisodes: [SwiftContinueTrackingEpisode] = [],
-        continueTrackingScrollIndex: Int = 0,
-        continueTrackingTitle: String,
-        updatingEpisodeIds: Set<Int64> = [],
-        dayLabelFormat: @escaping (_ count: Int) -> String,
-        tbdLabel: String,
+        canAddToList: Bool,
+        genres: [SwiftGenres],
         trackLabel: String,
         stopTrackingLabel: String,
         addToListLabel: String,
-        similarShowsTitle: String,
-        seasonDetailsTitle: String,
-        showSeasonDetailsHeader: Bool = true,
-        seasonCountFormat: @escaping (_ count: Int32) -> String,
-        episodesWatchedFormat: @escaping (_ watched: Int32, _ total: Int32) -> String,
-        episodesLeftFormat: @escaping (_ count: Int32) -> String,
-        upToDateLabel: String,
-        canAddToList: Bool = true,
-        onAddToCustomList: @escaping () -> Void,
         onAddToLibrary: @escaping () -> Void,
-        onSeasonClicked: @escaping (Int, SwiftSeason) -> Void,
-        onShowClicked: @escaping (Int64) -> Void,
-        onMarkEpisodeWatched: @escaping (SwiftContinueTrackingEpisode) -> Void = { _ in }
+        onAddToCustomList: @escaping () -> Void
     ) {
         self.isFollowed = isFollowed
-        self.openTrailersInYoutube = openTrailersInYoutube
-        self.selectedSeasonIndex = selectedSeasonIndex
-        self.status = status
-        self.watchedEpisodesCount = watchedEpisodesCount
-        self.totalEpisodesCount = totalEpisodesCount
-        self.genreList = genreList
-        self.seasonList = seasonList
-        self.providerList = providerList
-        self.trailerList = trailerList
-        self.castsList = castsList
-        self.similarShows = similarShows
-        self.continueTrackingEpisodes = continueTrackingEpisodes
-        self.continueTrackingScrollIndex = continueTrackingScrollIndex
-        self.continueTrackingTitle = continueTrackingTitle
-        self.updatingEpisodeIds = updatingEpisodeIds
-        self.dayLabelFormat = dayLabelFormat
-        self.tbdLabel = tbdLabel
+        self.canAddToList = canAddToList
+        self.genres = genres
         self.trackLabel = trackLabel
         self.stopTrackingLabel = stopTrackingLabel
         self.addToListLabel = addToListLabel
-        self.similarShowsTitle = similarShowsTitle
-        self.seasonDetailsTitle = seasonDetailsTitle
-        self.showSeasonDetailsHeader = showSeasonDetailsHeader
-        self.seasonCountFormat = seasonCountFormat
-        self.episodesWatchedFormat = episodesWatchedFormat
-        self.episodesLeftFormat = episodesLeftFormat
-        self.upToDateLabel = upToDateLabel
-        self.canAddToList = canAddToList
-        self.onAddToCustomList = onAddToCustomList
         self.onAddToLibrary = onAddToLibrary
-        self.onSeasonClicked = onSeasonClicked
-        self.onShowClicked = onShowClicked
-        self.onMarkEpisodeWatched = onMarkEpisodeWatched
+        self.onAddToCustomList = onAddToCustomList
     }
 
     public var body: some View {
         VStack(spacing: theme.spacing.medium) {
-            if !genreList.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center, spacing: theme.spacing.xSmall) {
-                        ForEach(genreList, id: \.name) { item in
-                            ChipView(label: item.name)
-                        }
-                    }
-                    .padding(.horizontal, theme.spacing.medium)
-                }
-            }
-
-            HStack(alignment: .center, spacing: theme.spacing.xSmall) {
-                watchlistButton
-                listButton
-                    .disabled(!canAddToList)
-            }
-
-            ContinueTrackingSection(
-                title: continueTrackingTitle,
-                episodes: continueTrackingEpisodes,
-                scrollIndex: continueTrackingScrollIndex,
-                dayLabelFormat: dayLabelFormat,
-                tbdLabel: tbdLabel,
-                onMarkWatched: onMarkEpisodeWatched,
-                updatingEpisodeIds: updatingEpisodeIds
-            )
-
-            SeasonProgressSection(
-                title: seasonDetailsTitle,
-                showHeader: showSeasonDetailsHeader,
-                status: status,
-                watchedEpisodesCount: watchedEpisodesCount,
-                totalEpisodesCount: totalEpisodesCount,
-                seasonsList: seasonList,
-                selectedSeasonIndex: selectedSeasonIndex,
-                seasonCountFormat: seasonCountFormat,
-                episodesWatchedFormat: episodesWatchedFormat,
-                episodesLeftFormat: episodesLeftFormat,
-                upToDateLabel: upToDateLabel,
-                onSeasonClicked: onSeasonClicked
-            )
-
-            ProviderListView(items: providerList)
-
-            TrailerListView(
-                trailers: trailerList,
-                openInYouTube: openTrailersInYoutube,
-                onError: { error in
-                    toast = Toast(
-                        type: .error,
-                        title: "Error",
-                        message: "Failed to play video: \(error.localizedDescription)",
-                        duration: 3.5
-                    )
-                }
-            )
-
-            CastListView(casts: castsList)
-
-            HorizontalShowContentView(
-                title: similarShowsTitle,
-                cardStyle: .backdrop,
-                items: similarShows,
-                onClick: { id in onShowClicked(id) }
-            )
+            genreChips
+            actionButtons
         }
-        .toastView(toast: $toast)
     }
 
-    private var watchlistButton: some View {
-        FilledVerticalIconButton(
-            text: isFollowed ? stopTrackingLabel : trackLabel,
-            systemImage: isFollowed ? "minus.circle.fill" : "plus.circle.fill",
-            containerColor: isFollowed ? .red.opacity(0.65) : nil,
-            symbolEffectValue: isFollowed,
-            symbolEffectDirection: isFollowed ? .down : .up,
-            action: onAddToLibrary
-        )
+    @ViewBuilder
+    private var genreChips: some View {
+        if !genres.isEmpty {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .center, spacing: theme.spacing.xSmall) {
+                    ForEach(genres, id: \.name) { item in
+                        ChipView(label: item.name)
+                    }
+                }
+                .padding(.horizontal, theme.spacing.medium)
+            }
+        }
     }
 
-    private var listButton: some View {
-        FilledVerticalIconButton(
-            text: addToListLabel,
-            systemImage: "rectangle.on.rectangle.angled",
-            action: onAddToCustomList
-        )
+    private var actionButtons: some View {
+        HStack(alignment: .center, spacing: theme.spacing.xSmall) {
+            FilledVerticalIconButton(
+                text: isFollowed ? stopTrackingLabel : trackLabel,
+                systemImage: isFollowed ? "minus.circle.fill" : "plus.circle.fill",
+                containerColor: isFollowed ? .red.opacity(0.65) : nil,
+                symbolEffectValue: isFollowed,
+                symbolEffectDirection: isFollowed ? .down : .up,
+                action: onAddToLibrary
+            )
+            FilledVerticalIconButton(
+                text: addToListLabel,
+                systemImage: "rectangle.on.rectangle.angled",
+                action: onAddToCustomList
+            )
+            .disabled(!canAddToList)
+        }
     }
 }
 
-private let previewGenreList: [SwiftGenres] = [
-    .init(name: "Sci-Fi"),
-    .init(name: "Horror"),
-    .init(name: "Action"),
-]
-
-private let previewSeasonList: [SwiftSeason] = [
-    .init(
-        tvShowId: 23,
-        seasonId: 23,
-        seasonNumber: 1,
-        name: "Season 1",
-        watchedCount: 6,
-        totalCount: 6,
-        progressPercentage: 1.0
-    ),
-    .init(
-        tvShowId: 123,
-        seasonId: 123,
-        seasonNumber: 2,
-        name: "Season 2",
-        watchedCount: 1,
-        totalCount: 6,
-        progressPercentage: 0.17
-    ),
-]
-
-private let previewProviderList: [SwiftProviders] = [
-    .init(providerId: 123, logoUrl: "https://image.tmdb.org/t/p/w780/4KAy34EHvRM25Ih8wb82AuGU7zJ.png"),
-    .init(providerId: 1233, logoUrl: "https://image.tmdb.org/t/p/w780/alqLicR1ZMHMaZGP3xRQxn9sq7p.png"),
-    .init(providerId: 23, logoUrl: "https://image.tmdb.org/t/p/w780/wwemzKWzjKYJFfCeiB57q3r4Bcm.png"),
-]
-
-private let previewTrailerList: [SwiftTrailer] = [
-    .init(
-        showId: 123,
-        key: "XZ8daibM3AE",
-        name: "Series Trailer",
-        youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
-    ),
-    .init(
-        showId: 1234,
-        key: "XZ8daibM3AE",
-        name: "Series Trailer",
-        youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
-    ),
-]
-
-private let previewCastsList: [SwiftCast] = [
-    .init(
-        castId: 123,
-        name: "Rosario Dawson",
-        characterName: "Claire Temple",
-        profileUrl: "https://image.tmdb.org/t/p/w780/1mm7JGHIUX3GRRGXEV9QCzsI0ao.jpg"
-    ),
-    .init(
-        castId: 1234,
-        name: "Hailee Steinfeld",
-        characterName: "Hailee Steinfeld",
-        profileUrl: "https://image.tmdb.org/t/p/w780/6aBclBl8GMcxbxr6XcwSGg3IBea.jpg"
-    ),
-    .init(
-        castId: 1235,
-        name: "内田夕夜",
-        characterName: "Yuuya Uchida",
-        profileUrl: "https://image.tmdb.org/t/p/w780/4xLLQGEDWtmLWUapo0UnfvCdsXp.jpg"
-    ),
-]
-
-private let previewSimilarShows: [SwiftShow] = [
-    .init(
-        showId: 1234,
-        title: "Arcane",
-        posterUrl: "https://image.tmdb.org/t/p/w780/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
-        backdropUrl: nil,
-        inLibrary: false
-    ),
-    .init(
-        showId: 123,
-        title: "The Lord of the Rings: The Rings of Power",
-        posterUrl: "https://image.tmdb.org/t/p/w780/NNC08YmJFFlLi1prBkK8quk3dp.jpg",
-        backdropUrl: nil,
-        inLibrary: false
-    ),
-    .init(
-        showId: 12346,
-        title: "Kaos",
-        posterUrl: "https://image.tmdb.org/t/p/w780/9Piw6Zju39bn3enIDLZzPfjMTBR.jpg",
-        backdropUrl: nil,
-        inLibrary: false
-    ),
-]
-
-#Preview("Trakt — Add to List shown") {
-    VStack {
-        Spacer(minLength: 520)
-
-        ShowInfoView(
-            isFollowed: true,
-            openTrailersInYoutube: false,
-            status: "Ended",
-            watchedEpisodesCount: 7,
-            totalEpisodesCount: 12,
-            genreList: previewGenreList,
-            seasonList: previewSeasonList,
-            providerList: previewProviderList,
-            trailerList: previewTrailerList,
-            castsList: previewCastsList,
-            similarShows: previewSimilarShows,
-            continueTrackingTitle: "Continue tracking",
-            dayLabelFormat: { count in count == 1 ? "day" : "days" },
-            tbdLabel: "TBD",
-            trackLabel: "Track",
-            stopTrackingLabel: "Stop Tracking",
-            addToListLabel: "Add To List",
-            similarShowsTitle: "Similar Shows",
-            seasonDetailsTitle: "Season Details",
-            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
-            episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
-            episodesLeftFormat: { count in
-                count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
-            },
-            upToDateLabel: "You're up-to-date",
-            canAddToList: true,
-            onAddToCustomList: {},
-            onAddToLibrary: {},
-            onSeasonClicked: { _, _ in },
-            onShowClicked: { _ in }
-        )
-    }
+#Preview("Followed — Add to List shown") {
+    ShowInfoView(
+        isFollowed: true,
+        canAddToList: true,
+        genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+        trackLabel: "Track",
+        stopTrackingLabel: "Stop Tracking",
+        addToListLabel: "Add To List",
+        onAddToLibrary: {},
+        onAddToCustomList: {}
+    )
+    .padding()
     .appPreview(LightTheme())
 }
 
-#Preview("Simkl — Add to List hidden") {
-    VStack {
-        Spacer(minLength: 520)
-
-        ShowInfoView(
-            isFollowed: true,
-            openTrailersInYoutube: false,
-            status: "Ended",
-            watchedEpisodesCount: 7,
-            totalEpisodesCount: 12,
-            genreList: previewGenreList,
-            seasonList: previewSeasonList,
-            providerList: previewProviderList,
-            trailerList: previewTrailerList,
-            castsList: previewCastsList,
-            similarShows: previewSimilarShows,
-            continueTrackingTitle: "Continue tracking",
-            dayLabelFormat: { count in count == 1 ? "day" : "days" },
-            tbdLabel: "TBD",
-            trackLabel: "Track",
-            stopTrackingLabel: "Stop Tracking",
-            addToListLabel: "Add To List",
-            similarShowsTitle: "Similar Shows",
-            seasonDetailsTitle: "Season Details",
-            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
-            episodesWatchedFormat: { watched, total in "\(watched) of \(total) episodes watched" },
-            episodesLeftFormat: { count in
-                count == 1 ? "\(count) episode left to watch" : "\(count) episodes left to watch"
-            },
-            upToDateLabel: "You're up-to-date",
-            canAddToList: false,
-            onAddToCustomList: {},
-            onAddToLibrary: {},
-            onSeasonClicked: { _, _ in },
-            onShowClicked: { _ in }
-        )
-    }
+#Preview("Followed — Add to List hidden") {
+    ShowInfoView(
+        isFollowed: true,
+        canAddToList: false,
+        genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+        trackLabel: "Track",
+        stopTrackingLabel: "Stop Tracking",
+        addToListLabel: "Add To List",
+        onAddToLibrary: {},
+        onAddToCustomList: {}
+    )
+    .padding()
     .appPreview(LightTheme())
+}
+
+#Preview("Not Followed") {
+    ShowInfoView(
+        isFollowed: false,
+        canAddToList: true,
+        genres: [.init(name: "Drama"), .init(name: "Fantasy")],
+        trackLabel: "Track",
+        stopTrackingLabel: "Stop Tracking",
+        addToListLabel: "Add To List",
+        onAddToLibrary: {},
+        onAddToCustomList: {}
+    )
+    .padding()
+    .appPreview(DarkTheme())
 }
