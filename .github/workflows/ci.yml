@@ -76,7 +76,7 @@ jobs:
             -   uses: actions/checkout@v7
 
             -   name: 🔍 Run SwiftLint (pinned)
-                uses: docker://ghcr.io/realm/swiftlint:0.64.1
+                uses: docker://ghcr.io/realm/swiftlint:0.65.0
                 with:
                     args: --config .swiftlint.yml
 
