@@ -13,16 +13,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.DismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.outlined.ErrorOutline
-import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -37,13 +34,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
@@ -56,33 +51,22 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.discover.presenter.DiscoverEpisodeLongPressed
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
 import com.thomaskioko.tvmaniac.discover.presenter.MessageShown
-import com.thomaskioko.tvmaniac.discover.presenter.PopularClicked
 import com.thomaskioko.tvmaniac.discover.presenter.RefreshData
 import com.thomaskioko.tvmaniac.discover.presenter.SearchIconClicked
-import com.thomaskioko.tvmaniac.discover.presenter.ShowClicked
-import com.thomaskioko.tvmaniac.discover.presenter.StartWatchingMoreClicked
-import com.thomaskioko.tvmaniac.discover.presenter.TopRatedClicked
-import com.thomaskioko.tvmaniac.discover.presenter.TrendingClicked
-import com.thomaskioko.tvmaniac.discover.presenter.UpComingClicked
-import com.thomaskioko.tvmaniac.discover.ui.component.DiscoverHeaderContent
-import com.thomaskioko.tvmaniac.discover.ui.component.HorizontalRowContent
-import com.thomaskioko.tvmaniac.discover.ui.component.NextEpisodesSection
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverCatalogSection
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverFeaturedSection
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverStartWatchingSection
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverUpNextSection
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_title
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_discover_up_next
 import com.thomaskioko.tvmaniac.i18n.MR.strings.missing_api_key
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_popular
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_top_rated
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_trending_today
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_category_upcoming
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import io.github.thomaskioko.codegen.annotations.TabUi
@@ -93,10 +77,7 @@ public fun DiscoverScreen(
     presenter: DiscoverShowsPresenter,
     modifier: Modifier = Modifier,
 ) {
-    val discoverState by presenter.state.collectAsState()
-    val pagerState = rememberPagerState(
-        pageCount = { discoverState.featuredShows.size },
-    )
+    val hostState by presenter.state.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val dismissSnackbarState = rememberDismissState { value ->
         if (value != DismissValue.Default) {
@@ -107,101 +88,118 @@ public fun DiscoverScreen(
         }
     }
 
-    DiscoverScreen(
+    DiscoverScaffold(
         modifier = modifier,
-        state = discoverState,
+        hostState = hostState,
         snackBarHostState = snackBarHostState,
         dismissSnackbarState = dismissSnackbarState,
-        pagerState = pagerState,
-        onAction = presenter::dispatch,
-    )
+        onHostAction = presenter::dispatch,
+    ) {
+        DiscoverLazyColumn(
+            onSearch = { presenter.dispatch(SearchIconClicked) },
+            onRefresh = { presenter.dispatch(RefreshData) },
+            isRefreshing = hostState.isRefreshing,
+        ) {
+            item(key = DiscoverTestTags.FEATURED_PAGER_TEST_TAG) {
+                DiscoverFeaturedSection(presenter = presenter.featuredPresenter)
+            }
+            item(key = DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG) {
+                DiscoverUpNextSection(presenter = presenter.upNextPresenter)
+            }
+            item(key = DiscoverTestTags.ROW_KEY_START_WATCHING) {
+                DiscoverStartWatchingSection(presenter = presenter.startWatchingPresenter)
+            }
+            item(key = DiscoverTestTags.CATALOG_SECTION_TEST_TAG) {
+                DiscoverCatalogSection(presenter = presenter.catalogPresenter)
+            }
+        }
+    }
 
     TvManiacSnackBarHost(
-        message = discoverState.message?.message,
+        message = hostState.message?.message,
         style = SnackBarStyle.Error,
-        onDismiss = { discoverState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
+        onDismiss = { hostState.message?.let { presenter.dispatch(MessageShown(it.id)) } },
     )
 }
 
 @Composable
-internal fun DiscoverScreen(
-    state: DiscoverViewState,
+internal fun DiscoverScaffold(
+    hostState: DiscoverViewState,
     snackBarHostState: SnackbarHostState,
     dismissSnackbarState: DismissState,
-    pagerState: PagerState,
-    onAction: (DiscoverShowAction) -> Unit,
+    onHostAction: (DiscoverShowAction) -> Unit,
     modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
+    val context = LocalContext.current
     Scaffold(
         modifier = modifier.testTag(DiscoverTestTags.SCREEN_TEST_TAG),
     ) { paddingValues ->
-        val context = LocalContext.current
         when {
-            state.isLoading -> LoadingIndicator(
+            hostState.isLoading -> LoadingIndicator(
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag(DiscoverTestTags.PROGRESS_INDICATOR)
                     .padding(paddingValues.copy(copyBottom = false)),
             )
 
-            state.showError -> EmptyStateView(
+            hostState.showError -> EmptyStateView(
                 imageVector = Icons.Outlined.ErrorOutline,
-                title = state.message?.message ?: generic_error_message.resolve(context),
+                title = hostState.message?.message ?: generic_error_message.resolve(context),
                 buttonText = generic_retry.resolve(context),
                 buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
-                onClick = { onAction(RefreshData) },
+                onClick = { onHostAction(RefreshData) },
             )
 
-            state.isEmpty ->
-                EmptyStateView(
-                    modifier = Modifier
-                        .padding(paddingValues.copy(copyBottom = false)),
-                    imageVector = Icons.Filled.Movie,
-                    title = generic_empty_content.resolve(context),
-                    message = missing_api_key.resolve(context),
-                    buttonText = generic_retry.resolve(context),
-                    buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
-                    onClick = { onAction(RefreshData) },
-                )
-
-            else -> DiscoverContent(
-                modifier = modifier,
-                pagerState = pagerState,
-                state = state,
-                snackBarHostState = snackBarHostState,
-                onAction = onAction,
+            hostState.isEmpty -> EmptyStateView(
+                modifier = Modifier
+                    .padding(paddingValues.copy(copyBottom = false)),
+                imageVector = Icons.Filled.Movie,
+                title = generic_empty_content.resolve(context),
+                message = missing_api_key.resolve(context),
+                buttonText = generic_retry.resolve(context),
+                buttonTestTag = DiscoverTestTags.ERROR_RETRY_BUTTON_TEST_TAG,
+                onClick = { onHostAction(RefreshData) },
             )
+
+            else -> content()
         }
     }
 }
 
 @Composable
-private fun DiscoverContent(
-    state: DiscoverViewState,
-    snackBarHostState: SnackbarHostState,
-    pagerState: PagerState,
-    onAction: (DiscoverShowAction) -> Unit,
+internal fun DiscoverLazyColumn(
+    isRefreshing: Boolean,
+    onSearch: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
+    content: LazyListScope.() -> Unit,
 ) {
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = false, onRefresh = { onAction(RefreshData) })
+    val pullRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = onRefresh)
     val listState = rememberLazyListState()
     val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pullRefresh(pullRefreshState),
     ) {
-        LazyColumnContent(
-            modifier = modifier,
-            pagerState = pagerState,
-            dataLoadedState = state,
-            listState = listState,
-            onAction = onAction,
-        )
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .testTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG)
+                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+            state = listState,
+        ) {
+            content()
+
+            item(key = "spacer_bottom") {
+                Spacer(modifier = Modifier.navigationBarsPadding())
+            }
+        }
 
         PullRefreshIndicator(
-            refreshing = state.isRefreshing,
+            refreshing = isRefreshing,
             state = pullRefreshState,
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -229,7 +227,7 @@ private fun DiscoverContent(
             actions = { showAppBarBackground ->
                 ScrimButton(
                     show = showAppBarBackground,
-                    onClick = { onAction(SearchIconClicked) },
+                    onClick = onSearch,
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .testTag(DiscoverTestTags.SEARCH_BUTTON_TEST_TAG),
@@ -245,120 +243,44 @@ private fun DiscoverContent(
     }
 }
 
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun LazyColumnContent(
-    pagerState: PagerState,
-    dataLoadedState: DiscoverViewState,
-    listState: LazyListState,
-    modifier: Modifier = Modifier,
-    onAction: (DiscoverShowAction) -> Unit,
-) {
-    val context = LocalContext.current
-
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(DiscoverTestTags.DISCOVER_LIST_TEST_TAG)
-            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
-        state = listState,
-    ) {
-        if (dataLoadedState.featuredShows.isEmpty()) {
-            item {
-                Spacer(modifier = Modifier.padding(top = 108.dp))
-            }
-        }
-
-        item(key = "featured_header") {
-            DiscoverHeaderContent(
-                pagerState = pagerState,
-                showList = dataLoadedState.featuredShows,
-                onShowClicked = { onAction(ShowClicked(it)) },
-            )
-        }
-
-        item(key = DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG) {
-            NextEpisodesSection(
-                modifier = Modifier.testTag(DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG),
-                title = label_discover_up_next.resolve(context),
-                nextEpisodes = dataLoadedState.nextEpisodes,
-                onEpisodeClick = { episode ->
-                    onAction(DiscoverEpisodeLongPressed(showId = episode.showId, episodeId = episode.episodeId))
-                },
-            )
-        }
-
-        item(key = DiscoverTestTags.ROW_KEY_START_WATCHING) {
-            HorizontalRowContent(
-                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_START_WATCHING),
-                category = dataLoadedState.startWatchingTitle,
-                rowKey = DiscoverTestTags.ROW_KEY_START_WATCHING,
-                tvShows = dataLoadedState.startWatchingShows,
-                onItemClicked = { onAction(ShowClicked(it)) },
-                onMoreClicked = { onAction(StartWatchingMoreClicked) },
-            )
-        }
-
-        item(key = DiscoverTestTags.ROW_KEY_TRENDING) {
-            HorizontalRowContent(
-                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_TRENDING),
-                category = title_category_trending_today.resolve(context),
-                rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
-                tvShows = dataLoadedState.trendingToday,
-                onItemClicked = { onAction(ShowClicked(it)) },
-                onMoreClicked = { onAction(TrendingClicked) },
-            )
-        }
-
-        item(key = DiscoverTestTags.ROW_KEY_UPCOMING) {
-            HorizontalRowContent(
-                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_UPCOMING),
-                category = title_category_upcoming.resolve(context),
-                rowKey = DiscoverTestTags.ROW_KEY_UPCOMING,
-                tvShows = dataLoadedState.upcomingShows,
-                onItemClicked = { onAction(ShowClicked(it)) },
-                onMoreClicked = { onAction(UpComingClicked) },
-            )
-        }
-
-        item(key = DiscoverTestTags.ROW_KEY_POPULAR) {
-            HorizontalRowContent(
-                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_POPULAR),
-                category = title_category_popular.resolve(context),
-                rowKey = DiscoverTestTags.ROW_KEY_POPULAR,
-                tvShows = dataLoadedState.popularShows,
-                onItemClicked = { onAction(ShowClicked(it)) },
-                onMoreClicked = { onAction(PopularClicked) },
-            )
-        }
-
-        item(key = DiscoverTestTags.ROW_KEY_TOP_RATED) {
-            HorizontalRowContent(
-                modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_TOP_RATED),
-                category = title_category_top_rated.resolve(context),
-                rowKey = DiscoverTestTags.ROW_KEY_TOP_RATED,
-                tvShows = dataLoadedState.topRatedShows,
-                onItemClicked = { onAction(ShowClicked(it)) },
-                onMoreClicked = { onAction(TopRatedClicked) },
-            )
-        }
-
-        item {
-            Spacer(modifier = Modifier.navigationBarsPadding())
-        }
-    }
+private fun DiscoverScreenLoadingPreview() {
+    DiscoverScaffold(
+        hostState = DiscoverViewState(isLoading = true),
+        snackBarHostState = remember { SnackbarHostState() },
+        dismissSnackbarState = rememberDismissState { true },
+        onHostAction = {},
+        content = {},
+    )
 }
 
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun DiscoverScreenPreview(
-    @PreviewParameter(DiscoverPreviewParameterProvider::class) state: DiscoverViewState,
-) {
-    DiscoverScreen(
-        state = state,
-        pagerState = rememberPagerState(pageCount = { 5 }),
+private fun DiscoverScreenEmptyPreview() {
+    DiscoverScaffold(
+        hostState = DiscoverViewState(isEmpty = true),
         snackBarHostState = remember { SnackbarHostState() },
         dismissSnackbarState = rememberDismissState { true },
-        onAction = {},
+        onHostAction = {},
+        content = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun DiscoverScreenErrorPreview() {
+    DiscoverScaffold(
+        hostState = DiscoverViewState(
+            showError = true,
+            message = com.thomaskioko.tvmaniac.core.view.UiMessage("Opps! Something went wrong"),
+        ),
+        snackBarHostState = remember { SnackbarHostState() },
+        dismissSnackbarState = rememberDismissState { true },
+        onHostAction = {},
+        content = {},
     )
 }

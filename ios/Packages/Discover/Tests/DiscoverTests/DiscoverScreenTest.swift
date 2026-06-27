@@ -1,6 +1,6 @@
 import Components
 import DesignSystem
-import Discover
+@testable import Discover
 import Models
 import SnapshotTestingLib
 import SwiftUI
@@ -64,178 +64,99 @@ class DiscoverScreenTest: SnapshotTestCase {
     ]
 
     func test_DiscoverScreen_Loading() {
-        DiscoverScreen(
-            state: DiscoverScreen.State(
-                title: "Discover",
-                isLoading: true,
-                isEmpty: false,
-                showError: false,
-                errorMessage: nil,
-                featuredShows: [],
-                nextEpisodes: [],
-                startWatchingShows: [],
-                trendingToday: [],
-                upcomingShows: [],
-                popularShows: [],
-                topRatedShows: [],
-                isRefreshing: false,
-                emptyContentText: "No content available",
-                missingApiKeyText: "API key missing",
-                retryText: "Retry",
-                upNextTitle: "Up Next",
-                startWatchingTitle: "Start Watching",
-                trendingTitle: "Trending Today",
-                upcomingTitle: "Upcoming",
-                popularTitle: "Popular",
-                topRatedTitle: "Top Rated"
-            ),
-            currentIndex: .constant(0),
-            toast: .constant(nil),
-            selectedEpisode: .constant(nil),
-            onShowClicked: { _ in },
-            onSearchClicked: {},
-            onRefresh: {},
-            onTrendingClicked: {},
-            onUpcomingClicked: {},
-            onPopularClicked: {},
-            onTopRatedClicked: {},
-            onStartWatchingMoreClicked: {},
-            onNextEpisodeClicked: { _ in },
-            onCarouselIndexChanged: { _ in }
-        )
-        .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loading")
+        LoadingIndicatorView()
+            .appScreen()
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loading")
     }
 
     func test_DiscoverScreen_Empty() {
-        DiscoverScreen(
-            state: DiscoverScreen.State(
-                title: "Discover",
-                isLoading: false,
-                isEmpty: true,
-                showError: false,
-                errorMessage: nil,
-                featuredShows: [],
-                nextEpisodes: [],
-                startWatchingShows: [],
-                trendingToday: [],
-                upcomingShows: [],
-                popularShows: [],
-                topRatedShows: [],
-                isRefreshing: false,
-                emptyContentText: "No content available",
-                missingApiKeyText: "API key missing",
-                retryText: "Retry",
-                upNextTitle: "Up Next",
-                startWatchingTitle: "Start Watching",
-                trendingTitle: "Trending Today",
-                upcomingTitle: "Upcoming",
-                popularTitle: "Popular",
-                topRatedTitle: "Top Rated"
-            ),
-            currentIndex: .constant(0),
-            toast: .constant(nil),
-            selectedEpisode: .constant(nil),
-            onShowClicked: { _ in },
-            onSearchClicked: {},
-            onRefresh: {},
-            onTrendingClicked: {},
-            onUpcomingClicked: {},
-            onPopularClicked: {},
-            onTopRatedClicked: {},
-            onStartWatchingMoreClicked: {},
-            onNextEpisodeClicked: { _ in },
-            onCarouselIndexChanged: { _ in }
+        EmptyStateView(
+            systemName: "list.bullet.below.rectangle",
+            title: "No content available",
+            message: "API key missing",
+            buttonText: "Retry",
+            action: {}
         )
+        .appScreen()
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Empty")
     }
 
     func test_DiscoverScreen_Error() {
-        DiscoverScreen(
-            state: DiscoverScreen.State(
-                title: "Discover",
-                isLoading: false,
-                isEmpty: false,
-                showError: true,
-                errorMessage: "Something went wrong",
-                featuredShows: [],
-                nextEpisodes: [],
-                startWatchingShows: [],
-                trendingToday: [],
-                upcomingShows: [],
-                popularShows: [],
-                topRatedShows: [],
-                isRefreshing: false,
-                emptyContentText: "No content available",
-                missingApiKeyText: "API key missing",
-                retryText: "Retry",
-                upNextTitle: "Up Next",
-                startWatchingTitle: "Start Watching",
-                trendingTitle: "Trending Today",
-                upcomingTitle: "Upcoming",
-                popularTitle: "Popular",
-                topRatedTitle: "Top Rated"
-            ),
-            currentIndex: .constant(0),
-            toast: .constant(nil),
-            selectedEpisode: .constant(nil),
-            onShowClicked: { _ in },
-            onSearchClicked: {},
-            onRefresh: {},
-            onTrendingClicked: {},
-            onUpcomingClicked: {},
-            onPopularClicked: {},
-            onTopRatedClicked: {},
-            onStartWatchingMoreClicked: {},
-            onNextEpisodeClicked: { _ in },
-            onCarouselIndexChanged: { _ in }
+        EmptyStateView(
+            systemName: "exclamationmark.arrow.triangle.2.circlepath",
+            title: "Something went wrong"
         )
+        .appScreen()
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Error")
     }
 
-    func test_DiscoverScreen_Loaded() {
-        DiscoverScreen(
-            state: DiscoverScreen.State(
-                title: "Discover",
-                isLoading: false,
-                isEmpty: false,
-                showError: false,
-                errorMessage: nil,
-                featuredShows: sampleShows,
-                nextEpisodes: sampleEpisodes,
-                startWatchingShows: samplePosters,
-                trendingToday: samplePosters,
-                upcomingShows: samplePosters,
-                popularShows: samplePosters,
-                topRatedShows: samplePosters,
-                isRefreshing: false,
-                emptyContentText: "No content available",
-                missingApiKeyText: "API key missing",
-                retryText: "Retry",
-                upNextTitle: "Up Next",
-                startWatchingTitle: "Start Watching",
-                trendingTitle: "Trending Today",
-                upcomingTitle: "Upcoming",
-                popularTitle: "Popular",
-                topRatedTitle: "Top Rated"
-            ),
-            currentIndex: .constant(0),
-            toast: .constant(nil),
-            selectedEpisode: .constant(nil),
-            onShowClicked: { _ in },
-            onSearchClicked: {},
-            onRefresh: {},
-            onTrendingClicked: {},
-            onUpcomingClicked: {},
-            onPopularClicked: {},
-            onTopRatedClicked: {},
-            onStartWatchingMoreClicked: {},
-            onNextEpisodeClicked: { _ in },
-            onCarouselIndexChanged: { _ in }
+    func test_DiscoverUpNextSection_Content() {
+        DiscoverUpNextContent(
+            title: "Up Next",
+            episodes: sampleEpisodes,
+            onEpisodeClicked: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loaded")
+        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_UpNext")
+    }
+
+    func test_DiscoverStartWatchingSection_Content() {
+        DiscoverStartWatchingContent(
+            title: "Start Watching",
+            shows: samplePosters,
+            onShowClicked: { _ in },
+            onMoreClicked: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_StartWatching")
+    }
+
+    func test_DiscoverCatalogSection_Content() {
+        DiscoverCatalogContent(
+            trendingTitle: "Trending Today",
+            upcomingTitle: "Upcoming",
+            popularTitle: "Popular",
+            topRatedTitle: "Top Rated",
+            trendingShows: samplePosters,
+            upcomingShows: samplePosters,
+            popularShows: samplePosters,
+            topRatedShows: samplePosters,
+            onShowClicked: { _ in },
+            onTrendingMoreClicked: {},
+            onUpcomingMoreClicked: {},
+            onPopularMoreClicked: {},
+            onTopRatedMoreClicked: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog")
+    }
+
+    func test_DiscoverFeaturedSection_Empty() {
+        DiscoverFeaturedContent(
+            shows: [],
+            currentIndex: .constant(0),
+            selectedShow: .constant(nil),
+            isDraggingCarousel: .constant(false),
+            onShowClicked: { _ in },
+            onIndexChanged: { _ in }
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Featured_Empty")
+    }
+
+    func test_DiscoverFeaturedSection_Content() {
+        DiscoverFeaturedContent(
+            shows: sampleShows,
+            currentIndex: .constant(0),
+            selectedShow: .constant(sampleShows.first),
+            isDraggingCarousel: .constant(false),
+            onShowClicked: { _ in },
+            onIndexChanged: { _ in }
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Featured_Content")
     }
 }

@@ -156,6 +156,25 @@ public class ProgressPresenter(
 
 The factory function name embeds the base name (`createUpNextGraph`, `createCalendarGraph`) so two child graphs contributing to the same `parentScope` do not collide.
 
+### Embeddable / reusable component
+
+`parentScope` decides which hosts can embed the child. The example above pins `UpNextPresenter` to the progress tab because `parentScope` is `ProgressRoot::class`. A component meant to live in its own module and be reused across screens (for example a featured-shows hero embedded in both Discover and Search) instead sets `parentScope` to `ActivityScope::class`.
+
+Metro graph extensions resolve bindings from any ancestor scope, and every screen descends from `ActivityScope` (`AppScope -> ActivityScope -> {tab roots} -> {child scopes}`). A factory contributed to `ActivityScope` is therefore visible to every tab root, stack screen, and child below it, so any host can inject it and embed the component with the same two lines shown above.
+
+```kotlin
+@Inject
+@ChildPresenter(
+    scope = FeaturedShowsComponentScope::class,
+    parentScope = ActivityScope::class,
+)
+public class FeaturedShowsPresenter(componentContext: ComponentContext) : ComponentContext by componentContext
+```
+
+The generator is scope-agnostic, so this needs no annotation or codegen change: it is purely the `parentScope` chosen. The one constraint is that an embeddable component may inject only bindings reachable at `ActivityScope` or `AppScope`; depending on a tab-root-scoped binding fails as an ordinary Metro missing-binding error at the embedding site. Nesting one embeddable component inside another works for free, because the outer component's graph also descends from `ActivityScope`.
+
+On the UI side the component's composable is a plain `@Composable` that takes the child presenter and is called directly by the host (the host already holds the child presenter, so there is no nav-stack entry to dispatch). It carries no UI codegen annotation: `@ScreenUi`/`@SheetUi`/`@TabUi` exist only for routed destinations the navigation host renders from `Set<ScreenContent>`. An embedded component is rendered by its host, not the navigation host, so there is no rule requiring an annotation on it.
+
 ### App root pair
 
 The activity-scope root presenter and its host composable use `@AppRoot` and `@AppRootUi`. The activity graph extends the generated `AppRootProvider` interface, and `MainActivity` invokes `graph.AppRootContent()` instead of forwarding each dependency to `RootScreen` by hand. There is one such pair per project.
@@ -169,4 +188,4 @@ The processor handles every presenter and UI binding. Two things still need to b
 
 ## Configuration
 
-Enable codegen in a presenter module by applying `scaffold { useCodegen() }` in `build.gradle.kts`. UI modules that contribute `@ScreenUi`, `@SheetUi`, or `@TabUi` bindings additionally need `api(projects.navigation.ui)`. Modules that consume `@ChildPresenter`-generated graphs need `implementation(projects.features.<host>.nav)` so the parent and child scopes resolve.
+Enable codegen in a presenter module by applying `scaffold { useCodegen() }` in `build.gradle.kts`. UI modules that contribute `@ScreenUi`, `@SheetUi`, or `@TabUi` bindings additionally need `api(projects.navigation.ui)`. Modules that consume `@ChildPresenter`-generated graphs need `implementation(projects.features.<host>.nav)` so the parent and child scopes resolve. A host embedding a reusable component (the `ActivityScope` variant above) depends instead on that component's own module, which carries both its scope marker and its generated `<Component>ChildGraph.Factory`.

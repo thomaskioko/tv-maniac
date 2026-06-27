@@ -9,9 +9,18 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverViewState
-import com.thomaskioko.tvmaniac.discover.ui.DiscoverScreen
-import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.DiscoverLazyColumn
+import com.thomaskioko.tvmaniac.discover.ui.DiscoverScaffold
+import com.thomaskioko.tvmaniac.discover.ui.discoverCatalogContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.discoverFeaturedContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.discoverStartWatchingContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.discoverUpNextContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverCatalogSection
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverFeaturedSection
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverStartWatchingSection
+import com.thomaskioko.tvmaniac.discover.ui.section.DiscoverUpNextSection
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
+import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,12 +42,12 @@ class DiscoverScreenshotTest {
     fun discoverScreenLoadingState() {
         composeTestRule.captureMultiDevice("DiscoverScreenLoadingState") {
             TvManiacBackground {
-                DiscoverScreen(
-                    state = DiscoverViewState.Empty,
-                    pagerState = rememberPagerState(pageCount = { 5 }),
-                    dismissSnackbarState = rememberDismissState { true },
+                DiscoverScaffold(
+                    hostState = DiscoverViewState(isLoading = true),
                     snackBarHostState = remember { SnackbarHostState() },
-                    onAction = {},
+                    dismissSnackbarState = rememberDismissState { true },
+                    onHostAction = {},
+                    content = {},
                 )
             }
         }
@@ -48,12 +57,12 @@ class DiscoverScreenshotTest {
     fun discoverScreenEmptyState() {
         composeTestRule.captureMultiDevice("DiscoverScreenEmptyState") {
             TvManiacBackground {
-                DiscoverScreen(
-                    state = DiscoverViewState.Empty.copy(isInitial = false),
-                    pagerState = rememberPagerState(pageCount = { 5 }),
-                    dismissSnackbarState = rememberDismissState { true },
+                DiscoverScaffold(
+                    hostState = DiscoverViewState(isEmpty = true),
                     snackBarHostState = remember { SnackbarHostState() },
-                    onAction = {},
+                    dismissSnackbarState = rememberDismissState { true },
+                    onHostAction = {},
+                    content = {},
                 )
             }
         }
@@ -63,15 +72,15 @@ class DiscoverScreenshotTest {
     fun discoverScreenErrorState() {
         composeTestRule.captureMultiDevice("DiscoverScreenErrorState") {
             TvManiacBackground {
-                DiscoverScreen(
-                    state = DiscoverViewState.Empty.copy(
-                        isInitial = false,
+                DiscoverScaffold(
+                    hostState = DiscoverViewState(
+                        showError = true,
                         message = UiMessage(message = "Opps! Something went wrong"),
                     ),
-                    dismissSnackbarState = rememberDismissState { true },
-                    pagerState = rememberPagerState(pageCount = { 5 }),
                     snackBarHostState = remember { SnackbarHostState() },
-                    onAction = {},
+                    dismissSnackbarState = rememberDismissState { true },
+                    onHostAction = {},
+                    content = {},
                 )
             }
         }
@@ -81,13 +90,48 @@ class DiscoverScreenshotTest {
     fun discoverScreenDataLoaded() {
         composeTestRule.captureMultiDevice("DiscoverScreenDataLoaded") {
             TvManiacBackground {
-                DiscoverScreen(
-                    state = discoverContentSuccess,
-                    pagerState = rememberPagerState(pageCount = { 5 }),
-                    dismissSnackbarState = rememberDismissState { true },
+                DiscoverScaffold(
+                    hostState = DiscoverViewState(),
                     snackBarHostState = remember { SnackbarHostState() },
-                    onAction = {},
-                )
+                    dismissSnackbarState = rememberDismissState { true },
+                    onHostAction = {},
+                ) {
+                    DiscoverLazyColumn(
+                        isRefreshing = false,
+                        onSearch = {},
+                        onRefresh = {},
+                    ) {
+                        item(key = DiscoverTestTags.FEATURED_PAGER_TEST_TAG) {
+                            val pagerState = rememberPagerState(
+                                pageCount = { discoverFeaturedContentSuccess.featuredShows.size },
+                            )
+                            DiscoverFeaturedSection(
+                                state = discoverFeaturedContentSuccess,
+                                pagerState = pagerState,
+                                onAction = {},
+                            )
+                        }
+                        item(key = DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG) {
+                            DiscoverUpNextSection(
+                                state = discoverUpNextContentSuccess,
+                                title = "Up Next",
+                                onAction = {},
+                            )
+                        }
+                        item(key = DiscoverTestTags.ROW_KEY_START_WATCHING) {
+                            DiscoverStartWatchingSection(
+                                state = discoverStartWatchingContentSuccess,
+                                onAction = {},
+                            )
+                        }
+                        item(key = DiscoverTestTags.CATALOG_SECTION_TEST_TAG) {
+                            DiscoverCatalogSection(
+                                state = discoverCatalogContentSuccess,
+                                onAction = {},
+                            )
+                        }
+                    }
+                }
             }
         }
     }
