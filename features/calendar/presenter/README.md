@@ -76,7 +76,6 @@ graph TB
   :domain:calendar --> :data:followedshows:api
   :features:calendar:presenter -.-> :core:base
   :features:calendar:presenter --> :core:logger:api
-  :features:calendar:presenter -.-> :core:util:api
   :features:calendar:presenter --> :core:view
   :features:calendar:presenter --> :data:account-manager:api
   :features:calendar:presenter -.-> :data:calendar:api

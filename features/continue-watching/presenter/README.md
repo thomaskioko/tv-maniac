@@ -210,11 +210,8 @@ graph TB
   :features:continue-watching:presenter --> :core:base
   :features:continue-watching:presenter --> :core:feature-flags:api
   :features:continue-watching:presenter --> :core:logger:api
-  :features:continue-watching:presenter --> :core:util:api
   :features:continue-watching:presenter --> :core:view
   :features:continue-watching:presenter --> :data:account-manager:api
-  :features:continue-watching:presenter --> :data:episode:api
-  :features:continue-watching:presenter --> :data:followedshows:api
   :features:continue-watching:presenter --> :data:watchlist-prefs:api
   :features:continue-watching:presenter --> :domain:continue-watching
   :features:continue-watching:presenter --> :domain:episode

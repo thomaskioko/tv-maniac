@@ -42,9 +42,9 @@ graph TB
   :core:view --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:datastore:implementation -.-> :core:base
-  :data:datastore:implementation -.-> :core:imageloading:api
-  :data:datastore:implementation -.-> :core:locale:api
-  :data:datastore:implementation -.-> :core:logger:api
+  :data:datastore:implementation --> :core:imageloading:api
+  :data:datastore:implementation --> :core:locale:api
+  :data:datastore:implementation --> :core:logger:api
   :data:datastore:implementation --> :data:datastore:api
   :domain:theme --> :i18n:generator
 

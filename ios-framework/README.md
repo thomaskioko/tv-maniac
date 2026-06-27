@@ -507,9 +507,9 @@ graph TB
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:datastore:implementation -.-> :core:base
-  :data:datastore:implementation -.-> :core:imageloading:api
-  :data:datastore:implementation -.-> :core:locale:api
-  :data:datastore:implementation -.-> :core:logger:api
+  :data:datastore:implementation --> :core:imageloading:api
+  :data:datastore:implementation --> :core:locale:api
+  :data:datastore:implementation --> :core:logger:api
   :data:datastore:implementation --> :data:datastore:api
   :data:episode:api --> :data:account-manager:api
   :data:episode:api --> :data:database:sqldelight
@@ -924,7 +924,6 @@ graph TB
   :domain:user --> :data:user:api
   :features:calendar:presenter -.-> :core:base
   :features:calendar:presenter --> :core:logger:api
-  :features:calendar:presenter -.-> :core:util:api
   :features:calendar:presenter --> :core:view
   :features:calendar:presenter --> :data:account-manager:api
   :features:calendar:presenter -.-> :data:calendar:api
@@ -937,11 +936,8 @@ graph TB
   :features:continue-watching:presenter --> :core:base
   :features:continue-watching:presenter --> :core:feature-flags:api
   :features:continue-watching:presenter --> :core:logger:api
-  :features:continue-watching:presenter --> :core:util:api
   :features:continue-watching:presenter --> :core:view
   :features:continue-watching:presenter --> :data:account-manager:api
-  :features:continue-watching:presenter --> :data:episode:api
-  :features:continue-watching:presenter --> :data:followedshows:api
   :features:continue-watching:presenter --> :data:watchlist-prefs:api
   :features:continue-watching:presenter --> :domain:continue-watching
   :features:continue-watching:presenter --> :domain:episode
@@ -971,8 +967,6 @@ graph TB
   :features:discover:presenter --> :core:logger:api
   :features:discover:presenter --> :core:view
   :features:discover:presenter --> :data:account-manager:api
-  :features:discover:presenter -.-> :data:episode:api
-  :features:discover:presenter -.-> :data:followedshows:api
   :features:discover:presenter -.-> :data:start-watching:api
   :features:discover:presenter --> :domain:continue-watching
   :features:discover:presenter --> :domain:discover
@@ -995,8 +989,6 @@ graph TB
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
   :features:episode-sheet:presenter --> :core:view
-  :features:episode-sheet:presenter -.-> :data:episode:api
-  :features:episode-sheet:presenter -.-> :data:followedshows:api
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
@@ -1125,7 +1117,6 @@ graph TB
   :features:settings:presenter --> :core:base
   :features:settings:presenter --> :core:feature-flags:api
   :features:settings:presenter --> :core:logger:api
-  :features:settings:presenter --> :core:util:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
   :features:settings:presenter --> :data:datastore:api
@@ -1144,7 +1135,6 @@ graph TB
   :features:show-details:presenter --> :core:base
   :features:show-details:presenter --> :core:logger:api
   :features:show-details:presenter --> :core:notifications:api
-  :features:show-details:presenter --> :core:util:api
   :features:show-details:presenter --> :core:view
   :features:show-details:presenter --> :data:account-manager:api
   :features:show-details:presenter --> :data:episode:api
@@ -1193,8 +1183,6 @@ graph TB
   :features:upnext:presenter --> :core:syncstate:api
   :features:upnext:presenter --> :core:view
   :features:upnext:presenter --> :data:account-manager:api
-  :features:upnext:presenter --> :data:episode:api
-  :features:upnext:presenter --> :data:followedshows:api
   :features:upnext:presenter --> :data:upnext:api
   :features:upnext:presenter --> :domain:continue-watching
   :features:upnext:presenter --> :domain:episode

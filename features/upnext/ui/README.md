@@ -223,8 +223,6 @@ graph TB
   :features:upnext:presenter --> :core:syncstate:api
   :features:upnext:presenter --> :core:view
   :features:upnext:presenter --> :data:account-manager:api
-  :features:upnext:presenter --> :data:episode:api
-  :features:upnext:presenter --> :data:followedshows:api
   :features:upnext:presenter --> :data:upnext:api
   :features:upnext:presenter --> :domain:continue-watching
   :features:upnext:presenter --> :domain:episode

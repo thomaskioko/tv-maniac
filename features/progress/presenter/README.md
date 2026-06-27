@@ -229,7 +229,6 @@ graph TB
   :domain:sync-activity --> :data:sync-activity:api
   :features:calendar:presenter -.-> :core:base
   :features:calendar:presenter --> :core:logger:api
-  :features:calendar:presenter -.-> :core:util:api
   :features:calendar:presenter --> :core:view
   :features:calendar:presenter --> :data:account-manager:api
   :features:calendar:presenter -.-> :data:calendar:api
@@ -255,8 +254,6 @@ graph TB
   :features:upnext:presenter --> :core:syncstate:api
   :features:upnext:presenter --> :core:view
   :features:upnext:presenter --> :data:account-manager:api
-  :features:upnext:presenter --> :data:episode:api
-  :features:upnext:presenter --> :data:followedshows:api
   :features:upnext:presenter --> :data:upnext:api
   :features:upnext:presenter --> :domain:continue-watching
   :features:upnext:presenter --> :domain:episode

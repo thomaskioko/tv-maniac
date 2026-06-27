@@ -303,8 +303,6 @@ graph TB
   :features:discover:presenter --> :core:logger:api
   :features:discover:presenter --> :core:view
   :features:discover:presenter --> :data:account-manager:api
-  :features:discover:presenter -.-> :data:episode:api
-  :features:discover:presenter -.-> :data:followedshows:api
   :features:discover:presenter -.-> :data:start-watching:api
   :features:discover:presenter --> :domain:continue-watching
   :features:discover:presenter --> :domain:discover

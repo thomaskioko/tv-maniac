@@ -377,7 +377,6 @@ graph TB
   :features:settings:presenter --> :core:base
   :features:settings:presenter --> :core:feature-flags:api
   :features:settings:presenter --> :core:logger:api
-  :features:settings:presenter --> :core:util:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
   :features:settings:presenter --> :data:datastore:api

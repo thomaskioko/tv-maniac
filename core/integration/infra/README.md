@@ -446,9 +446,9 @@ graph TB
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:datastore:implementation -.-> :core:base
-  :data:datastore:implementation -.-> :core:imageloading:api
-  :data:datastore:implementation -.-> :core:locale:api
-  :data:datastore:implementation -.-> :core:logger:api
+  :data:datastore:implementation --> :core:imageloading:api
+  :data:datastore:implementation --> :core:locale:api
+  :data:datastore:implementation --> :core:logger:api
   :data:datastore:implementation --> :data:datastore:api
   :data:episode:api --> :data:account-manager:api
   :data:episode:api --> :data:database:sqldelight
@@ -734,7 +734,6 @@ graph TB
   :features:settings:presenter --> :core:base
   :features:settings:presenter --> :core:feature-flags:api
   :features:settings:presenter --> :core:logger:api
-  :features:settings:presenter --> :core:util:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
   :features:settings:presenter --> :data:datastore:api

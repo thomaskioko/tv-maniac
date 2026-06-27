@@ -119,8 +119,6 @@ graph TB
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
   :features:episode-sheet:presenter --> :core:view
-  :features:episode-sheet:presenter -.-> :data:episode:api
-  :features:episode-sheet:presenter -.-> :data:followedshows:api
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
