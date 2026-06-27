@@ -76,6 +76,9 @@ jobs:
             contents: write
         steps:
             -   uses: actions/checkout@v7
+                with:
+                    token: ${{ secrets.GH_COMMIT_PAT || github.token }}
+                    persist-credentials: true
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
