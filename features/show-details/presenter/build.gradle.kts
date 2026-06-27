@@ -22,7 +22,6 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.notifications.api)
-                api(projects.core.util.api)
                 api(projects.core.view)
                 api(projects.data.accountManager.api)
                 api(projects.data.episode.api)

@@ -11,6 +11,8 @@ plugins {
 scaffold {
     useMetro()
     ignoreAll()
+    useDependencyGuard("iosArm64CompileKlibraries")
+    optIn("kotlin.experimental.ExperimentalObjCName")
 
     addIosTargetsWithXcFramework(
         frameworkName = "TvManiac",
@@ -74,8 +76,6 @@ scaffold {
             export(libs.essenty.lifecycle)
         }
     }
-
-    optIn("kotlin.experimental.ExperimentalObjCName")
 }
 
 kotlin {

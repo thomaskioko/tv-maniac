@@ -293,7 +293,7 @@ dependencies {
 
     androidTestRuntimeOnly(libs.androidx.test.core)
 }
-
+// TODO:: Move to FirebasePlugin in apps-gradle-plugin
 val hasGoogleServicesConfig =
     file("google-services.json").exists() ||
         file("src/debug/google-services.json").exists() ||
