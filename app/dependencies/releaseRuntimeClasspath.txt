@@ -222,10 +222,10 @@ io.coil-kt:coil-compose-base:2.7.0
 io.coil-kt:coil-compose:2.7.0
 io.coil-kt:coil-gif:2.7.0
 io.coil-kt:coil:2.7.0
-io.github.thomaskioko.gradle.plugins:codegen-annotations-jvm:0.8.3
-io.github.thomaskioko.gradle.plugins:codegen-annotations:0.8.3
-io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations-jvm:0.8.3
-io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations:0.8.3
+io.github.thomaskioko.gradle.plugins:codegen-annotations-jvm:0.8.4
+io.github.thomaskioko.gradle.plugins:codegen-annotations:0.8.4
+io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations-jvm:0.8.4
+io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations:0.8.4
 io.ktor:ktor-client-auth-jvm:3.5.0
 io.ktor:ktor-client-auth:3.5.0
 io.ktor:ktor-client-content-negotiation-jvm:3.5.0
