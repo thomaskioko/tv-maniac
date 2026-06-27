@@ -1,5 +1,3 @@
-import com.autonomousapps.DependencyAnalysisExtension
-
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -27,29 +25,4 @@ plugins {
     alias(libs.plugins.app.resource.generator) apply false
     alias(libs.plugins.app.spotless) apply false
     alias(libs.plugins.app.buildconfig) apply false
-}
-
-// TEMPORARY: dependency-analysis 3.16.0 mis-reports KMP commonMain/commonTest project dependencies
-// as unused (mirrored "declare in androidMain" advice that breaks compilation if applied, plus test
-// fakes consumed via fixtures). Remove this block once the suppression ships in app-gradle-plugins.
-configure<DependencyAnalysisExtension> {
-    issues {
-        all {
-            sourceSet("commonMain") {
-                onUnusedDependencies { severity("ignore") }
-            }
-            sourceSet("commonTest") {
-                onUnusedDependencies { severity("ignore") }
-            }
-            sourceSet("jvmAndroidMain") {
-                onUnusedDependencies { severity("ignore") }
-            }
-            sourceSet("androidMain") {
-                onUsedTransitiveDependencies { severity("ignore") }
-            }
-            sourceSet("androidDeviceTest") {
-                onUsedTransitiveDependencies { severity("ignore") }
-            }
-        }
-    }
 }
