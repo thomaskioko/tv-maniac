@@ -88,7 +88,7 @@ public class DefaultRootPresenter(
     private val uiMessageManager = UiMessageManager()
     private val syncErrorMessages = UiMessageManager()
     private val syncStatusDismissed = MutableStateFlow(false)
-    private val accountLimitErrorOccurred = MutableStateFlow(false)
+    private val accountLimitBannerState = MutableStateFlow(AccountLimitBannerState())
 
     init {
         coroutineScope.launch {
@@ -126,7 +126,7 @@ public class DefaultRootPresenter(
         coroutineScope.launch {
             syncObserver.errors.collect { error ->
                 if (error is SyncStateError.AccountLimitExceeded) {
-                    accountLimitErrorOccurred.value = true
+                    accountLimitBannerState.update { it.copy(errorOccurred = true) }
                 } else {
                     syncErrorMessages.emitMessage(
                         UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
@@ -216,10 +216,8 @@ public class DefaultRootPresenter(
 
     override val toastStateValue: Value<ToastState> = toastState.asValue(coroutineScope)
 
-    override val accountLimitBannerVisible: StateFlow<Boolean> = combine(
-        accountLimitErrorOccurred,
-        datastoreRepository.observeAccountLimitBannerDismissed(),
-    ) { occurred, dismissed -> occurred && !dismissed }
+    override val accountLimitBannerVisible: StateFlow<Boolean> = accountLimitBannerState
+        .map { state -> state.errorOccurred && !state.dismissed }
         .distinctUntilChanged()
         .stateIn(
             scope = coroutineScope,
@@ -311,7 +309,7 @@ public class DefaultRootPresenter(
     }
 
     override fun onDismissAccountLimitBanner() {
-        accountLimitErrorOccurred.value = false
+        accountLimitBannerState.update { it.copy(dismissed = true) }
     }
 
     @AssistedFactory
@@ -323,3 +321,8 @@ public class DefaultRootPresenter(
         private val MIN_STATUS_DISPLAY = 2_500.milliseconds
     }
 }
+
+private data class AccountLimitBannerState(
+    val errorOccurred: Boolean = false,
+    val dismissed: Boolean = false,
+)

@@ -537,4 +537,35 @@ abstract class DefaultRootPresenterTest {
             errorToast.persistent shouldBe false
         }
     }
+
+    @Test
+    fun `should show account limit banner given limit error occurs`() = runTest(testDispatcher) {
+        presenter.accountLimitBannerVisible.test {
+            awaitItem() shouldBe false
+
+            syncObserver.log(SyncError.AccountLimitExceeded(message = "limit", cause = RuntimeException("boom")))
+
+            awaitItem() shouldBe true
+        }
+    }
+
+    @Test
+    fun `should keep account limit banner hidden for the session given limit error fires again after dismiss`() =
+        runTest(testDispatcher) {
+            presenter.accountLimitBannerVisible.test {
+                awaitItem() shouldBe false
+
+                syncObserver.log(SyncError.AccountLimitExceeded(message = "limit", cause = RuntimeException("boom")))
+                awaitItem() shouldBe true
+
+                presenter.onDismissAccountLimitBanner()
+                awaitItem() shouldBe false
+
+                syncObserver.log(SyncError.AccountLimitExceeded(message = "limit", cause = RuntimeException("boom")))
+                runCurrent()
+
+                expectNoEvents()
+                presenter.accountLimitBannerVisible.value shouldBe false
+            }
+        }
 }
