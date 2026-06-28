@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.domain.showdetails
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
+import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -15,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Instant
 
 class ObserveContinueTrackingInteractorTest {
 
@@ -27,6 +30,7 @@ class ObserveContinueTrackingInteractorTest {
         main = testDispatcher,
     )
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
+    private val followedShowsRepository = FakeFollowedShowsRepository()
     private lateinit var interactor: ObserveContinueTrackingInteractor
 
     @BeforeTest
@@ -34,7 +38,14 @@ class ObserveContinueTrackingInteractorTest {
         Dispatchers.setMain(testDispatcher)
         interactor = ObserveContinueTrackingInteractor(
             seasonDetailsRepository = seasonDetailsRepository,
+            followedShowsRepository = followedShowsRepository,
             dispatchers = dispatchers,
+        )
+    }
+
+    private fun markFollowed(showId: Long) {
+        followedShowsRepository.setEntries(
+            listOf(FollowedShowEntry(showId = showId, followedAt = Instant.fromEpochMilliseconds(0))),
         )
     }
 
@@ -68,6 +79,7 @@ class ObserveContinueTrackingInteractorTest {
                 currentSeasonId = 1L,
             ),
         )
+        markFollowed(84958L)
         interactor(84958L)
 
         interactor.flow.test {
@@ -79,6 +91,40 @@ class ObserveContinueTrackingInteractorTest {
     @Test
     fun `should emit empty list given null continue tracking result`() = runTest {
         seasonDetailsRepository.setContinueTrackingResult(null)
+        markFollowed(84958L)
+        interactor(84958L)
+
+        interactor.flow.test {
+            awaitItem() shouldBe persistentListOf()
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit empty list given show is not followed`() = runTest {
+        val episode = EpisodeDetails(
+            id = 1L,
+            seasonId = 1L,
+            name = "Pilot",
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            runtime = 45L,
+            overview = "Overview",
+            voteAverage = 8.5,
+            voteCount = 100L,
+            stillPath = null,
+            firstAired = null,
+            isWatched = false,
+            daysUntilAir = null,
+            hasAired = true,
+        )
+        seasonDetailsRepository.setContinueTrackingResult(
+            ContinueTrackingResult(
+                episodes = persistentListOf(episode),
+                currentSeasonNumber = 1L,
+                currentSeasonId = 1L,
+            ),
+        )
         interactor(84958L)
 
         interactor.flow.test {

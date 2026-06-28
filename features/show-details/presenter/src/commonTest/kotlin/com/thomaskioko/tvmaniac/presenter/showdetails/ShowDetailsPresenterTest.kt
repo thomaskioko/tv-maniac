@@ -323,6 +323,7 @@ internal class ShowDetailsPresenterTest {
             ),
             observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
+                followedShowsRepository = followedShowsRepository,
                 dispatchers = dispatchers,
             ),
             fetchSeasonsEpisodesInteractor = FetchSeasonsEpisodesInteractor(

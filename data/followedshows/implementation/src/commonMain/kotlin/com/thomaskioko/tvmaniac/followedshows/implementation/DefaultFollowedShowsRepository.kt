@@ -11,6 +11,9 @@ import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
@@ -25,6 +28,11 @@ public class DefaultFollowedShowsRepository(
 
     override suspend fun getFollowedShows(): List<FollowedShowEntry> =
         withContext(dispatchers.io) { followedShowsDao.entries() }
+
+    override fun observeIsFollowed(showId: Long): Flow<Boolean> =
+        followedShowsDao.entriesObservable()
+            .map { entries -> entries.any { it.showId == showId && it.pendingAction != PendingAction.DELETE } }
+            .distinctUntilChanged()
 
     override suspend fun addFollowedShow(showId: Long) {
         withContext(dispatchers.io) {

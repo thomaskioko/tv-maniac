@@ -15,6 +15,8 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingIntera
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
+import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.testContinueTrackingResult
 import com.thomaskioko.tvmaniac.presenter.showdetails.testSeasonWatchProgress
@@ -37,6 +39,7 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Instant
 
 internal class ShowDetailsSeasonsEpisodesPresenterTest {
 
@@ -55,10 +58,14 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val accountManager = FakeAccountManager()
     private val navigator = FakeNavigator()
+    private val followedShowsRepository = FakeFollowedShowsRepository()
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        followedShowsRepository.setEntries(
+            listOf(FollowedShowEntry(showId = SHOW_ID, followedAt = Instant.fromEpochMilliseconds(0))),
+        )
     }
 
     @AfterTest
@@ -218,6 +225,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
             ),
             observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
+                followedShowsRepository = followedShowsRepository,
                 dispatchers = dispatchers,
             ),
             fetchSeasonsEpisodesInteractor = FetchSeasonsEpisodesInteractor(
