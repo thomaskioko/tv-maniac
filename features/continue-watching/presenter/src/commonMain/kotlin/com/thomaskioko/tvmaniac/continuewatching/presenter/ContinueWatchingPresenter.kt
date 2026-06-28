@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.core.view.launchUpdating
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
@@ -30,14 +31,13 @@ import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
-import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = MyShowsChildScope::class, parentScope = MyShowsRoot::class)
@@ -62,11 +62,11 @@ public class ContinueWatchingPresenter(
 
     private val watchlistLoadingState = ObservableLoadingCounter()
     private val userRefreshState = ObservableLoadingCounter()
-    private val upNextActionLoadingState = ObservableLoadingCounter()
+    private val episodeActionLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val coroutineScope = coroutineScope()
     private val queryFlow = MutableStateFlow("")
-    private val _state = MutableStateFlow(ContinueWatchingState())
+    private val updatingEpisodeIdsState = MutableStateFlow(persistentSetOf<Long>())
 
     // TODO:: This is an experiment. Move to repository
     private val nitroEnabled: StateFlow<Boolean> = nitroFlag
@@ -93,7 +93,7 @@ public class ContinueWatchingPresenter(
     }
 
     public val state: StateFlow<ContinueWatchingState> = combine(
-        _state,
+        updatingEpisodeIdsState,
         userRefreshState.observable,
         observeWatchlistSectionsInteractor.flow,
         observeUpNextSectionsInteractor.flow,
@@ -103,10 +103,11 @@ public class ContinueWatchingPresenter(
         queryFlow,
         syncObserver.isSyncing,
         watchlistLoadingState.observable,
-    ) { currentState, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, isLoading ->
+        episodeActionLoadingState.observable,
+    ) { updatingEpisodeIds, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, isLoading, isUpdating ->
         val sectionedItems = mapper.toSectionedItems(watchlistSections, sortOption)
         val sectionedEpisodes = mapper.toSectionedEpisodes(upNextSections)
-        currentState.copy(
+        ContinueWatchingState(
             query = query,
             isGridMode = isGridMode,
             isLoading = isLoading,
@@ -118,6 +119,8 @@ public class ContinueWatchingPresenter(
             watchNextEpisodes = sectionedEpisodes.watchNext,
             staleEpisodes = sectionedEpisodes.stale,
             message = message,
+            updatingEpisodeIds = updatingEpisodeIds,
+            isUpdating = isUpdating,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -150,26 +153,22 @@ public class ContinueWatchingPresenter(
     }
 
     private fun markEpisodeWatched(action: MarkUpNextEpisodeWatched) {
-        if (action.episodeId in _state.value.updatingEpisodeIds) return
-        _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds + action.episodeId).toPersistentSet()) }
-        coroutineScope.launch {
-            try {
-                markEpisodeWatchedInteractor(
-                    MarkEpisodeWatchedParams(
-                        showId = action.showId,
-                        episodeId = action.episodeId,
-                        seasonNumber = action.seasonNumber,
-                        episodeNumber = action.episodeNumber,
-                    ),
-                ).collectStatus(
-                    upNextActionLoadingState,
-                    logger,
-                    uiMessageManager,
-                    errorToStringMapper = errorToStringMapper,
-                )
-            } finally {
-                _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds - action.episodeId).toPersistentSet()) }
-            }
+        coroutineScope.launchUpdating(
+            id = action.episodeId,
+            updatingIds = updatingEpisodeIdsState,
+            counter = episodeActionLoadingState,
+            logger = logger,
+            uiMessageManager = uiMessageManager,
+            errorToStringMapper = errorToStringMapper,
+        ) {
+            markEpisodeWatchedInteractor(
+                MarkEpisodeWatchedParams(
+                    showId = action.showId,
+                    episodeId = action.episodeId,
+                    seasonNumber = action.seasonNumber,
+                    episodeNumber = action.episodeNumber,
+                ),
+            )
         }
     }
 

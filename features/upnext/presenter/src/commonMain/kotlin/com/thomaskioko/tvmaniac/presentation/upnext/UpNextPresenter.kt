@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.core.view.launchUpdating
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
@@ -41,7 +42,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
@@ -65,6 +65,7 @@ public class UpNextPresenter(
     private val uiMessageManager = UiMessageManager()
     private val loadingState = ObservableLoadingCounter()
     private val refreshingState = ObservableLoadingCounter()
+    private val episodeActionLoadingState = ObservableLoadingCounter()
     private val updatingEpisodeIdsState = MutableStateFlow(persistentSetOf<Long>())
 
     init {
@@ -78,7 +79,8 @@ public class UpNextPresenter(
         loadingState.observable,
         updatingEpisodeIdsState,
         syncObserver.isSyncing,
-    ) { result, message, isRefreshing, isLoading, updatingEpisodeIds, isSyncing ->
+        episodeActionLoadingState.observable,
+    ) { result, message, isRefreshing, isLoading, updatingEpisodeIds, isSyncing, isUpdating ->
         UpNextState(
             isLoading = isLoading,
             isSyncing = isSyncing,
@@ -86,6 +88,7 @@ public class UpNextPresenter(
             sortOption = result.sortOption,
             episodes = result.episodes.map { it.toUiModel() }.toImmutableList(),
             updatingEpisodeIds = updatingEpisodeIds,
+            isUpdating = isUpdating,
             message = message,
         )
     }.stateIn(
@@ -138,21 +141,23 @@ public class UpNextPresenter(
     }
 
     private fun markEpisodeWatched(action: MarkWatched) {
-        if (action.episodeId in updatingEpisodeIdsState.value) return
-        updatingEpisodeIdsState.update { it.adding(action.episodeId) }
-        coroutineScope.launch {
-            try {
-                markEpisodeWatchedInteractor(
-                    MarkEpisodeWatchedParams(
-                        showId = action.showId,
-                        episodeId = action.episodeId,
-                        seasonNumber = action.seasonNumber,
-                        episodeNumber = action.episodeNumber,
-                    ),
-                ).collectStatus(loadingState, logger, uiMessageManager, "Mark Watched", errorToStringMapper)
-            } finally {
-                updatingEpisodeIdsState.update { it.removing(action.episodeId) }
-            }
+        coroutineScope.launchUpdating(
+            id = action.episodeId,
+            updatingIds = updatingEpisodeIdsState,
+            counter = episodeActionLoadingState,
+            logger = logger,
+            uiMessageManager = uiMessageManager,
+            sourceId = "Mark Watched",
+            errorToStringMapper = errorToStringMapper,
+        ) {
+            markEpisodeWatchedInteractor(
+                MarkEpisodeWatchedParams(
+                    showId = action.showId,
+                    episodeId = action.episodeId,
+                    seasonNumber = action.seasonNumber,
+                    episodeNumber = action.episodeNumber,
+                ),
+            )
         }
     }
 

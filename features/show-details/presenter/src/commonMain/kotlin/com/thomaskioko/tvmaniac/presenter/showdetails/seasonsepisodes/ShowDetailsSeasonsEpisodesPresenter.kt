@@ -4,12 +4,14 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.core.view.launchUpdating
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -30,11 +32,10 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
-import kotlinx.collections.immutable.toPersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -65,6 +66,7 @@ public class ShowDetailsSeasonsEpisodesPresenter(
     private val episodeActionLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val _state = MutableStateFlow(ShowDetailsSeasonsEpisodesState())
+    private val updatingEpisodeIdsState = MutableStateFlow(persistentSetOf<Long>())
 
     init {
         observeSeasonsInteractor(showId)
@@ -80,7 +82,10 @@ public class ShowDetailsSeasonsEpisodesPresenter(
         observeContinueTrackingInteractor.flow,
         uiMessageManager.message,
         _state,
-    ) { seasons, progress, continueEpisodes, message, currentState ->
+        loadingState.observable,
+        updatingEpisodeIdsState,
+        episodeActionLoadingState.observable,
+    ) { seasons, progress, continueEpisodes, message, currentState, isRefreshing, updatingEpisodeIds, isUpdating ->
         currentState.copy(
             seasonsList = seasons.toSeasonModels(),
             numberOfSeasons = seasons.size,
@@ -89,10 +94,11 @@ public class ShowDetailsSeasonsEpisodesPresenter(
             watchProgress = progress.progressPercentage,
             continueTrackingEpisodes = continueEpisodes.toContinueTrackingModels(showId),
             continueTrackingScrollIndex = continueEpisodes.toScrollIndex(),
+            isRefreshing = isRefreshing,
+            updatingEpisodeIds = updatingEpisodeIds,
+            isUpdating = isUpdating,
             message = message,
         )
-    }.combine(loadingState.observable) { currentState, isLoading ->
-        currentState.copy(isRefreshing = isLoading)
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(),
@@ -116,7 +122,14 @@ public class ShowDetailsSeasonsEpisodesPresenter(
                 )
             }
 
-            is ShowDetailsMarkEpisodeWatched -> launchEpisodeMark(action.episodeId) {
+            is ShowDetailsMarkEpisodeWatched -> coroutineScope.launchUpdating(
+                id = action.episodeId,
+                updatingIds = updatingEpisodeIdsState,
+                counter = episodeActionLoadingState,
+                logger = logger,
+                uiMessageManager = uiMessageManager,
+                errorToStringMapper = errorToStringMapper,
+            ) {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
                         showId = action.showId,
@@ -125,16 +138,23 @@ public class ShowDetailsSeasonsEpisodesPresenter(
                         episodeNumber = action.episodeNumber,
                         markPreviousEpisodes = false,
                     ),
-                ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                )
             }
 
-            is ShowDetailsMarkEpisodeUnwatched -> launchEpisodeMark(action.episodeId) {
+            is ShowDetailsMarkEpisodeUnwatched -> coroutineScope.launchUpdating(
+                id = action.episodeId,
+                updatingIds = updatingEpisodeIdsState,
+                counter = episodeActionLoadingState,
+                logger = logger,
+                uiMessageManager = uiMessageManager,
+                errorToStringMapper = errorToStringMapper,
+            ) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
                         showId = action.showId,
                         episodeId = action.episodeId,
                     ),
-                ).collectStatus(episodeActionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                )
             }
         }
     }
@@ -163,18 +183,6 @@ public class ShowDetailsSeasonsEpisodesPresenter(
         coroutineScope.launch {
             fetchSeasonsEpisodesInteractor(FetchSeasonsEpisodesInteractor.Param(showId, forceRefresh))
                 .collectStatus(loadingState, logger, uiMessageManager, "Seasons & Episodes", errorToStringMapper)
-        }
-    }
-
-    private fun launchEpisodeMark(episodeId: Long, block: suspend () -> Unit) {
-        if (episodeId in _state.value.updatingEpisodeIds) return
-        _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds + episodeId).toPersistentSet()) }
-        coroutineScope.launch {
-            try {
-                block()
-            } finally {
-                _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds - episodeId).toPersistentSet()) }
-            }
         }
     }
 

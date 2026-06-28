@@ -20,6 +20,7 @@ public data class ContinueWatchingState(
     val watchNextEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),
     val staleEpisodes: ImmutableList<UpNextEpisodeItem> = persistentListOf(),
     val updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
+    val isUpdating: Boolean = false,
     val message: UiMessage? = null,
 ) {
     val isEmpty: Boolean
