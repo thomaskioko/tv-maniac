@@ -98,7 +98,7 @@ jobs:
 
             -   name: Commit refreshed graphs
                 if: steps.graphs_verify.outcome == 'failure' && github.event_name == 'pull_request'
-                uses: stefanzweifel/git-auto-commit-action@v5
+                uses: stefanzweifel/git-auto-commit-action@v7
                 with:
                     file_pattern: '**/README.md'
                     disable_globbing: true
@@ -132,7 +132,7 @@ jobs:
 
             -   name: Commit refreshed baselines
                 if: steps.guard_verify.outcome == 'failure' && github.event_name == 'pull_request'
-                uses: stefanzweifel/git-auto-commit-action@v5
+                uses: stefanzweifel/git-auto-commit-action@v7
                 with:
                     file_pattern: '**/dependencies/*.txt'
                     disable_globbing: true
