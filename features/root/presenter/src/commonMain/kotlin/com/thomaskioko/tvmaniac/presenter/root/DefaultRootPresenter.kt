@@ -87,8 +87,7 @@ public class DefaultRootPresenter(
     private val profileLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val syncErrorMessages = UiMessageManager()
-    private val syncStatusDismissed = MutableStateFlow(false)
-    private val accountLimitBannerState = MutableStateFlow(AccountLimitBannerState())
+    private val uiState = MutableStateFlow(RootUiState())
 
     init {
         coroutineScope.launch {
@@ -120,18 +119,18 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
-            syncObserver.syncStarted.collect { syncStatusDismissed.update { false } }
+            syncObserver.syncStarted.collect { uiState.update { it.copy(syncStatusDismissed = false) } }
         }
 
         coroutineScope.launch {
             syncObserver.errors.collect { error ->
                 if (error is SyncStateError.AccountLimitExceeded) {
-                    accountLimitBannerState.update { it.copy(errorOccurred = true) }
+                    uiState.update { it.copy(accountLimitErrorOccurred = true) }
                 } else {
                     syncErrorMessages.emitMessage(
                         UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
                     )
-                    syncStatusDismissed.update { true }
+                    uiState.update { it.copy(syncStatusDismissed = true) }
                 }
             }
         }
@@ -189,7 +188,7 @@ public class DefaultRootPresenter(
 
     override val toastState: StateFlow<ToastState> = combine(
         syncObserver.isSyncing.minTrueDuration(MIN_STATUS_DISPLAY),
-        syncStatusDismissed,
+        uiState.map { it.syncStatusDismissed }.distinctUntilChanged(),
         syncErrorMessages.message,
     ) { syncing, dismissed, errorMessage ->
         when {
@@ -216,8 +215,8 @@ public class DefaultRootPresenter(
 
     override val toastStateValue: Value<ToastState> = toastState.asValue(coroutineScope)
 
-    override val accountLimitBannerVisible: StateFlow<Boolean> = accountLimitBannerState
-        .map { state -> state.errorOccurred && !state.dismissed }
+    override val accountLimitBannerVisible: StateFlow<Boolean> = uiState
+        .map { state -> state.accountLimitErrorOccurred && !state.accountLimitBannerDismissed }
         .distinctUntilChanged()
         .stateIn(
             scope = coroutineScope,
@@ -305,11 +304,11 @@ public class DefaultRootPresenter(
     }
 
     override fun dismissSyncStatus() {
-        syncStatusDismissed.update { true }
+        uiState.update { it.copy(syncStatusDismissed = true) }
     }
 
     override fun onDismissAccountLimitBanner() {
-        accountLimitBannerState.update { it.copy(dismissed = true) }
+        uiState.update { it.copy(accountLimitBannerDismissed = true) }
     }
 
     @AssistedFactory
@@ -322,7 +321,8 @@ public class DefaultRootPresenter(
     }
 }
 
-private data class AccountLimitBannerState(
-    val errorOccurred: Boolean = false,
-    val dismissed: Boolean = false,
+private data class RootUiState(
+    val accountLimitErrorOccurred: Boolean = false,
+    val accountLimitBannerDismissed: Boolean = false,
+    val syncStatusDismissed: Boolean = false,
 )
