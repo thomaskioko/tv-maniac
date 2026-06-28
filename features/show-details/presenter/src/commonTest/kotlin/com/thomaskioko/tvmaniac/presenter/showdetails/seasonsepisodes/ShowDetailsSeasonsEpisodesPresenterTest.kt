@@ -157,13 +157,15 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
 
         presenter.state.test {
             testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().updatingEpisodeIds.shouldBeEmpty()
 
             presenter.dispatch(
                 ShowDetailsMarkEpisodeWatched(showId = SHOW_ID, episodeId = 1001L, seasonNumber = 1L, episodeNumber = 1L),
             )
-            testDispatcher.scheduler.runCurrent()
+            awaitItem().updatingEpisodeIds shouldContain 1001L
 
-            expectMostRecentItem().updatingEpisodeIds shouldContain 1001L
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().updatingEpisodeIds.shouldBeEmpty()
         }
     }
 
@@ -191,11 +193,13 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
 
         presenter.state.test {
             testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().updatingEpisodeIds.shouldBeEmpty()
 
             presenter.dispatch(ShowDetailsMarkEpisodeUnwatched(showId = SHOW_ID, episodeId = 1001L))
-            testDispatcher.scheduler.runCurrent()
+            awaitItem().updatingEpisodeIds shouldContain 1001L
 
-            expectMostRecentItem().updatingEpisodeIds shouldContain 1001L
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().updatingEpisodeIds.shouldBeEmpty()
         }
     }
 

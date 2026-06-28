@@ -31,7 +31,6 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.toPersistentSet
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -42,9 +41,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 @ChildPresenter(scope = ShowDetailsChildScope::class, parentScope = ShowDetailsRoute::class)
 @AssistedInject
@@ -174,14 +170,9 @@ public class ShowDetailsSeasonsEpisodesPresenter(
         if (episodeId in _state.value.updatingEpisodeIds) return
         _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds + episodeId).toPersistentSet()) }
         coroutineScope.launch {
-            val marker = TimeSource.Monotonic.markNow()
             try {
                 block()
             } finally {
-                val elapsed = marker.elapsedNow()
-                if (elapsed < INDICATOR_FLOOR) {
-                    delay(INDICATOR_FLOOR - elapsed)
-                }
                 _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds - episodeId).toPersistentSet()) }
             }
         }
@@ -190,9 +181,5 @@ public class ShowDetailsSeasonsEpisodesPresenter(
     @AssistedFactory
     public fun interface Factory {
         public fun create(showId: Long, forceRefresh: Boolean): ShowDetailsSeasonsEpisodesPresenter
-    }
-
-    private companion object {
-        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 }

@@ -31,7 +31,6 @@ import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.toPersistentSet
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,9 +39,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 @ChildPresenter(scope = MyShowsChildScope::class, parentScope = MyShowsRoot::class)
 @Inject
@@ -157,7 +153,6 @@ public class ContinueWatchingPresenter(
         if (action.episodeId in _state.value.updatingEpisodeIds) return
         _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds + action.episodeId).toPersistentSet()) }
         coroutineScope.launch {
-            val marker = TimeSource.Monotonic.markNow()
             try {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
@@ -173,17 +168,9 @@ public class ContinueWatchingPresenter(
                     errorToStringMapper = errorToStringMapper,
                 )
             } finally {
-                val elapsed = marker.elapsedNow()
-                if (elapsed < INDICATOR_FLOOR) {
-                    delay(INDICATOR_FLOOR - elapsed)
-                }
                 _state.update { it.copy(updatingEpisodeIds = (it.updatingEpisodeIds - action.episodeId).toPersistentSet()) }
             }
         }
-    }
-
-    private companion object {
-        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 
     private fun unfollowShow(showId: Long) {

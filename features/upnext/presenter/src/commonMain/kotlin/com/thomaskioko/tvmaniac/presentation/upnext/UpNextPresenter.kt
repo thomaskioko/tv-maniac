@@ -35,7 +35,6 @@ import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -44,9 +43,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 @ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
@@ -145,7 +141,6 @@ public class UpNextPresenter(
         if (action.episodeId in updatingEpisodeIdsState.value) return
         updatingEpisodeIdsState.update { it.adding(action.episodeId) }
         coroutineScope.launch {
-            val marker = TimeSource.Monotonic.markNow()
             try {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
@@ -156,17 +151,9 @@ public class UpNextPresenter(
                     ),
                 ).collectStatus(loadingState, logger, uiMessageManager, "Mark Watched", errorToStringMapper)
             } finally {
-                val elapsed = marker.elapsedNow()
-                if (elapsed < INDICATOR_FLOOR) {
-                    delay(INDICATOR_FLOOR - elapsed)
-                }
                 updatingEpisodeIdsState.update { it.removing(action.episodeId) }
             }
         }
-    }
-
-    private companion object {
-        private val INDICATOR_FLOOR: Duration = 150.milliseconds
     }
 
     private fun changeSortOption(sortOption: UpNextSortOption) {
