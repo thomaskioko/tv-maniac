@@ -12,7 +12,8 @@ public extension TvManiac.ShowItem {
             status: status,
             imageUrl: posterImageUrl,
             year: year,
-            voteAverage: voteAverage?.doubleValue
+            voteAverage: voteAverage?.doubleValue,
+            inLibrary: inLibrary
         )
     }
 }

@@ -44,6 +44,7 @@ internal fun SearchResultItem(
     overview: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isInLibrary: Boolean = false,
     shape: Shape = MaterialTheme.shapes.small,
 ) {
     Card(
@@ -58,6 +59,7 @@ internal fun SearchResultItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             PosterCard(
                 imageUrl = imageUrl,
+                isInLibrary = isInLibrary,
                 modifier = Modifier
                     .width(100.dp)
                     .aspectRatio(0.8f),

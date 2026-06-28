@@ -13,6 +13,7 @@ public struct SearchItemView: View {
     private let status: String?
     private let year: String?
     private let voteAverage: Double?
+    private let inLibrary: Bool
 
     public init(
         title: String,
@@ -20,7 +21,8 @@ public struct SearchItemView: View {
         imageUrl: String?,
         status: String?,
         year: String?,
-        voteAverage: Double?
+        voteAverage: Double?,
+        inLibrary: Bool = false
     ) {
         self.title = title
         self.overview = overview
@@ -28,6 +30,7 @@ public struct SearchItemView: View {
         self.status = status
         self.year = year
         self.voteAverage = voteAverage
+        self.inLibrary = inLibrary
     }
 
     public var body: some View {
@@ -35,6 +38,7 @@ public struct SearchItemView: View {
             PosterItemView(
                 title: nil,
                 posterUrl: imageUrl,
+                isInLibrary: inLibrary,
                 posterWidth: ImageType.poster.width(widthSizeClass),
                 aspectRatio: ImageType.poster.aspect,
                 posterRadius: 0
@@ -110,7 +114,8 @@ public struct SearchItemView: View {
             imageUrl: "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
             status: "Ended",
             year: "2012",
-            voteAverage: 6.0
+            voteAverage: 6.0,
+            inLibrary: true
         )
 
         SearchItemView(

@@ -87,6 +87,7 @@ import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import com.thomaskioko.tvmaniac.search.ui.components.HorizontalShowContentRow
 import com.thomaskioko.tvmaniac.search.ui.components.SearchResultItem
+import com.thomaskioko.tvmaniac.search.ui.components.SearchResultsShimmer
 import com.thomaskioko.tvmaniac.testtags.search.SearchTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 import kotlinx.collections.immutable.ImmutableList
@@ -243,7 +244,10 @@ private fun SearchScreenContent(
         lazyListState = lazyListState,
     ) {
         when (val uiState = state.uiState) {
-            InitialLoading, SearchLoading -> LoadingIndicator()
+            InitialLoading -> LoadingIndicator()
+            SearchLoading -> SearchResultsShimmer(
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
             SearchEmpty -> {
                 EmptyStateView(
                     modifier = Modifier.testTag(SearchTestTags.EMPTY_STATE_TEST_TAG),
@@ -345,6 +349,7 @@ private fun SearchResultsContent(
                     year = item.year,
                     overview = item.overview,
                     imageUrl = item.posterImageUrl,
+                    isInLibrary = item.inLibrary,
                     onClick = { onAction(SearchShowClicked(item.showId)) },
                 )
             }

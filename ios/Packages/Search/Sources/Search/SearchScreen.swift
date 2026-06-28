@@ -5,6 +5,7 @@ import SwiftUI
 
 public enum SearchScreenState {
     case loading
+    case searchLoading
     case empty
     case searchResults(results: [SwiftSearchShow], isUpdating: Bool)
     case browsingGenres(genres: [SwiftGenreRow], isRefreshing: Bool)
@@ -206,6 +207,9 @@ public struct SearchScreen: View {
         switch state.screenState {
         case .loading:
             loadingView
+                .transition(.opacity)
+        case .searchLoading:
+            SearchResultsShimmerView()
                 .transition(.opacity)
         case .empty:
             emptyStateView

@@ -33,6 +33,11 @@ internal class SearchPreviewParameterProvider : PreviewParameterProvider<SearchS
                     searchResults = createDiscoverShowList(),
                 ),
                 SearchShowState(
+                    query = "loki",
+                    isUpdating = true,
+                    isRefreshing = false,
+                ),
+                SearchShowState(
                     isRefreshing = true,
                 ),
             )
@@ -43,6 +48,7 @@ internal fun createDiscoverShowList(size: Int = 5) = List(size) { index ->
     discoverShow.copy(
         tmdbId = discoverShow.tmdbId + index.toLong(),
         showId = discoverShow.showId + index.toLong(),
+        inLibrary = index % 2 == 0,
     )
 }.toImmutableList()
 

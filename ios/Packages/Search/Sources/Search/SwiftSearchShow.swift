@@ -12,6 +12,7 @@ public struct SwiftSearchShow: Identifiable {
     public let imageUrl: String?
     public let year: String?
     public let voteAverage: Double?
+    public let inLibrary: Bool
 
     public init(
         tmdbId: Int64,
@@ -21,7 +22,8 @@ public struct SwiftSearchShow: Identifiable {
         status: String?,
         imageUrl: String?,
         year: String?,
-        voteAverage: Double?
+        voteAverage: Double?,
+        inLibrary: Bool = false
     ) {
         self.tmdbId = tmdbId
         self.showId = showId
@@ -31,5 +33,6 @@ public struct SwiftSearchShow: Identifiable {
         self.imageUrl = imageUrl
         self.year = year
         self.voteAverage = voteAverage
+        self.inLibrary = inLibrary
     }
 }
