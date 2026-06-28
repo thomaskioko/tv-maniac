@@ -11,11 +11,13 @@ import kotlinx.coroutines.launch
 /**
  * Flags [id] in [updatingIds] while [statusFlow] runs, driving a per-item progress indicator.
  * Removes [id] once collection finishes, on success or failure, and routes errors through
- * [collectStatus]. Ignores re-dispatch while [id] is already updating.
+ * [collectStatus]. [counter] additionally tracks the operation as a global loading signal.
+ * Ignores re-dispatch while [id] is already updating.
  */
 public fun CoroutineScope.launchUpdating(
     id: Long,
     updatingIds: MutableStateFlow<PersistentSet<Long>>,
+    counter: ObservableLoadingCounter,
     logger: Logger? = null,
     uiMessageManager: UiMessageManager? = null,
     sourceId: String? = null,
@@ -27,6 +29,7 @@ public fun CoroutineScope.launchUpdating(
     launch {
         try {
             statusFlow().collectStatus(
+                counter = counter,
                 logger = logger,
                 uiMessageManager = uiMessageManager,
                 sourceId = sourceId,
