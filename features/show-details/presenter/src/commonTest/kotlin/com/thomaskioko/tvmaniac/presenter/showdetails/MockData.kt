@@ -1,16 +1,15 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.ShowCast
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.SimilarShows
 import com.thomaskioko.tvmaniac.db.TvshowDetails
 import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -18,24 +17,6 @@ import kotlinx.datetime.atStartOfDayIn
 
 private fun LocalDate.toEpochMillis(): Long =
     atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
-
-val showDetailsContent = ShowDetailsContent(
-    showDetails = ShowDetailsModel.Empty.copy(
-        tmdbId = 849583,
-        title = "Loki",
-        overview = "After stealing the Tesseract in Avengers: Endgame, Loki lands before the Time Variance Authority.",
-        posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-        language = "en",
-        year = "2021-06-09",
-        status = "Ended",
-        votes = 1L,
-        rating = 8.0,
-        genres = persistentListOf("Action", "Adventure", "Sci-Fi"),
-        isInLibrary = false,
-    ),
-    message = null,
-)
 
 val similarShowList = listOf(
     SimilarShows(
@@ -73,6 +54,17 @@ val tvShowDetails = TvshowDetails(
     genres = listOf("Action", "Adventure", "Sci-Fi"),
     season_numbers = "2",
     in_library = 0,
+)
+
+val showCast = listOf(
+    ShowCast(
+        cast_id = Id(1),
+        trakt_id = Id(849583),
+        show_id = Id(849583),
+        name = "Tom Hiddleston",
+        profile_path = "/profile.jpg",
+        character_name = "Loki",
+    ),
 )
 
 val watchProviderList = listOf(

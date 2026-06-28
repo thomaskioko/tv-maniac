@@ -106,14 +106,37 @@ jobs:
 
     dependency-guard:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             -   uses: actions/checkout@v7
+                with:
+                    token: ${{ secrets.GH_COMMIT_PAT || github.token }}
+                    persist-credentials: true
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
 
-            -   name: Run Dependency Guard
-                run: ./gradlew :app:dependencyGuard :ios-framework:dependencyGuard -Papp.debugOnly=false
+            -   name: Update Dependency Guard Baselines
+                run: ./gradlew :app:dependencyGuardBaseline :ios-framework:dependencyGuardBaseline -Papp.debugOnly=false
+
+            -   name: Check Dependency Guard Baselines
+                id: guard_verify
+                continue-on-error: true
+                run: git add -- '**/dependencies/*.txt' && git diff --cached --quiet --exit-code -- '**/dependencies/*.txt'
+
+            -   name: Fail on stale baselines (no auto-commit available)
+                if: steps.guard_verify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+                run: |
+                    echo "::error::Dependency guard baselines are stale. Run ./gradlew dependencyGuardBaseline and commit the updated dependencies/*.txt files." && exit 1
+
+            -   name: Commit refreshed baselines
+                if: steps.guard_verify.outcome == 'failure' && github.event_name == 'pull_request'
+                uses: stefanzweifel/git-auto-commit-action@v5
+                with:
+                    file_pattern: '**/dependencies/*.txt'
+                    disable_globbing: true
+                    commit_message: "🤖 Update dependency guard baselines"
 
     swift-lint:
         runs-on: ubuntu-latest

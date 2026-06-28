@@ -1,5 +1,3 @@
-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
-
 plugins {
     alias(libs.plugins.app.application)
 }
@@ -10,6 +8,7 @@ scaffold {
         minify(
             rootProject.file("app/proguard-rules.pro"),
         )
+        useFirebase()
     }
     useMetro()
 
@@ -292,24 +291,4 @@ dependencies {
     androidTestImplementation(libs.ktor.http)
 
     androidTestRuntimeOnly(libs.androidx.test.core)
-}
-// TODO:: Move to FirebasePlugin in apps-gradle-plugin
-val hasGoogleServicesConfig =
-    file("google-services.json").exists() ||
-        file("src/debug/google-services.json").exists() ||
-        file("src/release/google-services.json").exists()
-
-if (hasGoogleServicesConfig) {
-    apply(plugin = libs.plugins.google.services.get().pluginId)
-    apply(plugin = libs.plugins.firebase.crashlytics.gradle.get().pluginId)
-}
-
-afterEvaluate {
-    if (pluginManager.hasPlugin("com.google.firebase.crashlytics")) {
-        android.buildTypes.getByName("release") {
-            configure<CrashlyticsExtension> {
-                mappingFileUploadEnabled = true
-            }
-        }
-    }
 }

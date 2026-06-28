@@ -1,14 +1,30 @@
 package com.thomaskioko.tvmaniac.showdetails.roborrazi
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
-import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScreen
-import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsContent
-import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsContentSimkl
-import com.thomaskioko.tvmaniac.showdetails.ui.showDetailsContentWithError
+import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScaffold
+import com.thomaskioko.tvmaniac.showdetails.ui.previewCastState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateSimkl
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHostState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHostStateWithMessage
+import com.thomaskioko.tvmaniac.showdetails.ui.previewProvidersState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewSeasonsEpisodesState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewSimilarState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewTrailersState
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsCastSection
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsHeaderSection
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsProvidersSection
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsSeasonEpisodesSection
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsSimilarSection
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsTrailersSection
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,12 +46,39 @@ class ShowDetailsScreenScreenshotTest {
     fun showDetailsLoadedState() {
         composeTestRule.captureMultiDevice("ShowDetailsLoadedState") {
             TvManiacBackground {
-                ShowDetailsScreen(
-                    state = showDetailsContent,
-                    title = "",
+                ShowDetailsScaffold(
+                    hostState = previewHostState,
+                    title = previewHeaderState.title,
+                    isHeaderEmpty = false,
                     listState = LazyListState(),
-                    onAction = {},
-                )
+                    onHostAction = {},
+                ) {
+                    item(key = "header") {
+                        ShowDetailsHeaderSection(state = previewHeaderState, onAction = {})
+                    }
+                    item(key = "season_episodes") {
+                        ShowDetailsSeasonEpisodesSection(
+                            state = previewSeasonsEpisodesState,
+                            status = previewHeaderState.status,
+                            onAction = {},
+                        )
+                    }
+                    item(key = "providers") {
+                        ShowDetailsProvidersSection(state = previewProvidersState)
+                    }
+                    item(key = "trailers") {
+                        ShowDetailsTrailersSection(state = previewTrailersState, onAction = {})
+                    }
+                    item(key = "casts") {
+                        ShowDetailsCastSection(state = previewCastState)
+                    }
+                    item(key = "similar") {
+                        ShowDetailsSimilarSection(state = previewSimilarState, onAction = {})
+                    }
+                    item(key = "bottom_spacer") {
+                        Spacer(modifier = Modifier.height(54.dp))
+                    }
+                }
             }
         }
     }
@@ -44,11 +87,13 @@ class ShowDetailsScreenScreenshotTest {
     fun showDetailsLoadedWithErrorInfoState() {
         composeTestRule.captureMultiDevice("ShowDetailsLoadedWithErrorInfoState") {
             TvManiacBackground {
-                ShowDetailsScreen(
-                    state = showDetailsContentWithError,
+                ShowDetailsScaffold(
+                    hostState = previewHostStateWithMessage,
                     title = "",
+                    isHeaderEmpty = true,
                     listState = LazyListState(),
-                    onAction = {},
+                    onHostAction = {},
+                    content = {},
                 )
             }
         }
@@ -58,12 +103,39 @@ class ShowDetailsScreenScreenshotTest {
     fun showDetailsSimklProviderState() {
         composeTestRule.captureMultiDevice("ShowDetailsSimklProviderState") {
             TvManiacBackground {
-                ShowDetailsScreen(
-                    state = showDetailsContentSimkl,
-                    title = "",
+                ShowDetailsScaffold(
+                    hostState = previewHostState,
+                    title = previewHeaderStateSimkl.title,
+                    isHeaderEmpty = false,
                     listState = LazyListState(),
-                    onAction = {},
-                )
+                    onHostAction = {},
+                ) {
+                    item(key = "header") {
+                        ShowDetailsHeaderSection(state = previewHeaderStateSimkl, onAction = {})
+                    }
+                    item(key = "season_episodes") {
+                        ShowDetailsSeasonEpisodesSection(
+                            state = previewSeasonsEpisodesState,
+                            status = previewHeaderStateSimkl.status,
+                            onAction = {},
+                        )
+                    }
+                    item(key = "providers") {
+                        ShowDetailsProvidersSection(state = previewProvidersState)
+                    }
+                    item(key = "trailers") {
+                        ShowDetailsTrailersSection(state = previewTrailersState, onAction = {})
+                    }
+                    item(key = "casts") {
+                        ShowDetailsCastSection(state = previewCastState)
+                    }
+                    item(key = "similar") {
+                        ShowDetailsSimilarSection(state = previewSimilarState, onAction = {})
+                    }
+                    item(key = "bottom_spacer") {
+                        Spacer(modifier = Modifier.height(54.dp))
+                    }
+                }
             }
         }
     }
