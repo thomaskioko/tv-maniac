@@ -81,9 +81,6 @@ public class StartWatchingWatchlistStore(
         reader = { _: Unit -> followedShowsDao.entriesObservable() },
         writer = { _: Unit, response: List<PlanToWatchWithImages> ->
             transactionRunner {
-                val currentEntries = followedShowsDao.entriesWithNoPendingAction()
-                val networkTmdbIds = response.map { it.resolvedTmdbId }.toSet()
-
                 response.forEach { item ->
                     tvShowsDao.upsertMerging(
                         item.toShowToPersist(
@@ -93,12 +90,6 @@ public class StartWatchingWatchlistStore(
                     )
 
                     val _ = followedShowsDao.upsert(item.toFollowedShowEntry())
-                }
-
-                currentEntries.forEach { localEntry ->
-                    if (localEntry.showId !in networkTmdbIds) {
-                        followedShowsDao.deleteById(localEntry.id)
-                    }
                 }
             }
 

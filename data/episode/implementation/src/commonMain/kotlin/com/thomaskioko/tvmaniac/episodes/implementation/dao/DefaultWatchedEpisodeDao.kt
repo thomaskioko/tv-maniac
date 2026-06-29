@@ -79,11 +79,6 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
-                val _ = database.followedShowsQueries.upsertIfNotExists(
-                    showId = internalShowId,
-                    tmdbId = null,
-                    followedAt = timestamp,
-                )
                 val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
                     showId = internalShowId,
                     tmdbId = null,
@@ -218,11 +213,6 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
-                val _ = database.followedShowsQueries.upsertIfNotExists(
-                    showId = internalShowId,
-                    tmdbId = null,
-                    followedAt = timestamp,
-                )
                 val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
                     showId = internalShowId,
                     tmdbId = null,
@@ -313,11 +303,6 @@ public class DefaultWatchedEpisodeDao(
                     .getEpisodesForSeason(internalShowId, seasonNumber)
                     .executeAsList()
 
-                val _ = database.followedShowsQueries.upsertIfNotExists(
-                    showId = internalShowId,
-                    tmdbId = null,
-                    followedAt = timestamp,
-                )
                 val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
                     showId = internalShowId,
                     tmdbId = null,
@@ -372,11 +357,6 @@ public class DefaultWatchedEpisodeDao(
                     )
                 }
 
-                val _ = database.followedShowsQueries.upsertIfNotExists(
-                    showId = internalShowId,
-                    tmdbId = null,
-                    followedAt = timestamp,
-                )
                 val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
                     showId = internalShowId,
                     tmdbId = null,
@@ -538,12 +518,6 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
-                val _ = database.followedShowsQueries.upsertIfNotExists(
-                    showId = internalShowId,
-                    tmdbId = null,
-                    followedAt = entries.first().watchedAt.toEpochMilliseconds(),
-                )
-
                 entries.forEach { entry ->
                     val _ = database.watchedEpisodesQueries.upsertFromTrakt(
                         show_id = internalShowId,
