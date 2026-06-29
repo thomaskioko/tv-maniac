@@ -97,6 +97,10 @@ public fun TvManiacSnackBarHost(
     var visible by remember { mutableStateOf(false) }
     val currentOnDismiss by rememberUpdatedState(onDismiss)
 
+    var displayedMessage by remember { mutableStateOf(message.orEmpty()) }
+    var displayedStyle by remember { mutableStateOf(style) }
+    var displayedLoading by remember { mutableStateOf(loading) }
+
     fun dismiss() {
         visible = false
         currentOnDismiss()
@@ -104,6 +108,9 @@ public fun TvManiacSnackBarHost(
 
     LaunchedEffect(message, persistent) {
         if (message != null) {
+            displayedMessage = message
+            displayedStyle = style
+            displayedLoading = loading
             visible = true
             if (!persistent) {
                 delay(durationMillis.milliseconds)
@@ -173,9 +180,9 @@ public fun TvManiacSnackBarHost(
                             },
                         )
                     },
-                message = message.orEmpty(),
-                style = style,
-                loading = loading,
+                message = displayedMessage,
+                style = displayedStyle,
+                loading = displayedLoading,
             )
         }
     }
