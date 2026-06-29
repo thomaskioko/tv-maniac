@@ -16,6 +16,7 @@ public struct HorizontalShowContentView: View {
     private let subtitle: String?
     private let chevronStyle: ChevronStyle
     private let cardStyle: CardStyle
+    private let libraryImageOverlay: String
     private let items: [SwiftShow]
     private let onClick: (Int64) -> Void
     private let onMoreClicked: () -> Void
@@ -27,6 +28,7 @@ public struct HorizontalShowContentView: View {
         subtitle: String? = nil,
         chevronStyle: ChevronStyle = .none,
         cardStyle: CardStyle = .metallic,
+        libraryImageOverlay: String = "square.stack.fill",
         items: [SwiftShow],
         spacing: CGFloat? = nil,
         edgeInsets: EdgeInsets? = nil,
@@ -37,6 +39,7 @@ public struct HorizontalShowContentView: View {
         self.subtitle = subtitle
         self.chevronStyle = chevronStyle
         self.cardStyle = cardStyle
+        self.libraryImageOverlay = libraryImageOverlay
         self.items = items
         self.onClick = onClick
         self.onMoreClicked = onMoreClicked
@@ -86,6 +89,7 @@ public struct HorizontalShowContentView: View {
             PosterItemView(
                 title: item.title,
                 posterUrl: item.posterUrl,
+                libraryImageOverlay: libraryImageOverlay,
                 isInLibrary: item.inLibrary,
                 posterWidth: ImageType.poster.width(widthSizeClass),
                 aspectRatio: ImageType.poster.aspect

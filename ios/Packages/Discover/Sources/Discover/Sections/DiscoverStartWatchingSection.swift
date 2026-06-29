@@ -38,6 +38,7 @@ struct DiscoverStartWatchingContent: View {
             title: title,
             chevronStyle: .chevronOnly,
             cardStyle: .poster,
+            libraryImageOverlay: "clock.fill",
             items: shows,
             onClick: onShowClicked,
             onMoreClicked: onMoreClicked
@@ -59,9 +60,9 @@ struct DiscoverStartWatchingContent: View {
     DiscoverStartWatchingContent(
         title: "Start Watching",
         shows: [
-            SwiftShow(showId: 1, title: "Breaking Bad", posterUrl: nil, inLibrary: false),
-            SwiftShow(showId: 2, title: "Game of Thrones", posterUrl: nil, inLibrary: false),
-            SwiftShow(showId: 3, title: "The Wire", posterUrl: nil, inLibrary: false),
+            SwiftShow(showId: 1, title: "Breaking Bad", posterUrl: nil, inLibrary: true),
+            SwiftShow(showId: 2, title: "Game of Thrones", posterUrl: nil, inLibrary: true),
+            SwiftShow(showId: 3, title: "The Wire", posterUrl: nil, inLibrary: true),
         ],
         onShowClicked: { _ in },
         onMoreClicked: {}

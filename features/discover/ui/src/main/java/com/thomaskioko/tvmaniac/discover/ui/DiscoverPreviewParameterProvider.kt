@@ -58,7 +58,7 @@ internal val discoverUpNextContentSuccess = DiscoverUpNextState(
 )
 
 internal val discoverStartWatchingContentSuccess = DiscoverStartWatchingState(
-    startWatchingShows = createDiscoverShowList(),
+    startWatchingShows = createDiscoverShowList().map { it.copy(inLibrary = true) }.toImmutableList(),
     startWatchingTitle = "Start Watching",
 )
 
