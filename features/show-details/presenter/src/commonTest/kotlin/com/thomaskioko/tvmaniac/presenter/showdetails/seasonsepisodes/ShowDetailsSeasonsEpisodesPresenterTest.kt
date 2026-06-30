@@ -3,13 +3,16 @@ package com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
@@ -24,7 +27,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.testSeasonsWithProgress
 import com.thomaskioko.tvmaniac.presenter.showdetails.testShowWatchProgress
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsEpisodesSyncRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -54,7 +56,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     private val seasonsRepository = FakeSeasonsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
-    private val seasonsEpisodesSyncRepository = FakeSeasonsEpisodesSyncRepository()
+    private val showDetailsRepository = FakeShowDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val accountManager = FakeAccountManager()
     private val navigator = FakeNavigator()
@@ -210,6 +212,26 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
         }
     }
 
+    @Test
+    fun `should sync only watch status given trakt connects`() = runTest {
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val seasonSyncCountBefore = seasonDetailsRepository.getSyncedShowIds().size
+            val watchSyncCountBefore = watchedEpisodeSyncRepository.getSyncedShowIds().size
+
+            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            watchedEpisodeSyncRepository.getSyncedShowIds().size shouldBe watchSyncCountBefore + 1
+            watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
+            seasonDetailsRepository.getSyncedShowIds().size shouldBe seasonSyncCountBefore
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun buildPresenter(): ShowDetailsSeasonsEpisodesPresenter =
         ShowDetailsSeasonsEpisodesPresenter(
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
@@ -229,8 +251,12 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
                 dispatchers = dispatchers,
             ),
             fetchSeasonsEpisodesInteractor = FetchSeasonsEpisodesInteractor(
-                seasonsEpisodesSyncRepository = seasonsEpisodesSyncRepository,
+                showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = dispatchers,
+            ),
+            syncShowEpisodeWatchesInteractor = SyncShowEpisodeWatchesInteractor(
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 dispatchers = dispatchers,
             ),

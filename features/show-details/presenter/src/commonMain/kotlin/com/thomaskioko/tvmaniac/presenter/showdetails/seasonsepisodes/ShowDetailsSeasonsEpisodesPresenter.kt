@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
@@ -53,6 +54,7 @@ public class ShowDetailsSeasonsEpisodesPresenter(
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     observeContinueTrackingInteractor: ObserveContinueTrackingInteractor,
     private val fetchSeasonsEpisodesInteractor: FetchSeasonsEpisodesInteractor,
+    private val syncShowEpisodeWatchesInteractor: SyncShowEpisodeWatchesInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val navigator: Navigator,
@@ -175,7 +177,7 @@ public class ShowDetailsSeasonsEpisodesPresenter(
                 .drop(1)
                 .distinctUntilChanged()
                 .filter { it }
-                .collect { fetchSeasonsEpisodes(forceRefresh = true) }
+                .collect { syncWatchStatus(forceRefresh = true) }
         }
     }
 
@@ -183,6 +185,13 @@ public class ShowDetailsSeasonsEpisodesPresenter(
         coroutineScope.launch {
             fetchSeasonsEpisodesInteractor(FetchSeasonsEpisodesInteractor.Param(showId, forceRefresh))
                 .collectStatus(loadingState, logger, uiMessageManager, "Seasons & Episodes", errorToStringMapper)
+        }
+    }
+
+    private fun syncWatchStatus(forceRefresh: Boolean = false) {
+        coroutineScope.launch {
+            syncShowEpisodeWatchesInteractor(SyncShowEpisodeWatchesInteractor.Param(showId, forceRefresh))
+                .collectStatus(loadingState, logger, uiMessageManager, "Watch status", errorToStringMapper)
         }
     }
 
