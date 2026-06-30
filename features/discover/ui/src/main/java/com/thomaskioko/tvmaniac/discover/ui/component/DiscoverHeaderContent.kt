@@ -113,6 +113,11 @@ internal fun PosterCardsPager(
         if (list.isNotEmpty()) {
             val isInPreview = LocalInspectionMode.current
             val autoAdvanceEnabled = LocalAutoAdvanceEnabled.current
+            LaunchedEffect(Unit) {
+                if (!pagerState.isScrollInProgress && pagerState.currentPageOffsetFraction != 0f) {
+                    pagerState.scrollToPage(pagerState.currentPage)
+                }
+            }
             LaunchedEffect(key1 = list.size, key2 = autoAdvanceEnabled) {
                 if (isInPreview) return@LaunchedEffect
                 if (!autoAdvanceEnabled) return@LaunchedEffect
