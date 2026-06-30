@@ -232,7 +232,7 @@ jobs:
 
     build-ios-framework:
         needs: [swift-lint]
-        runs-on: macos-15
+        runs-on: macos-26
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
@@ -254,7 +254,7 @@ jobs:
 
     build-ios:
         needs: [build-ios-framework]
-        runs-on: macos-15
+        runs-on: macos-26
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
@@ -301,7 +301,7 @@ jobs:
 
     ios-snapshot-test:
         needs: [build-ios-framework]
-        runs-on: macos-15
+        runs-on: macos-26
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
