@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -80,6 +81,10 @@ public enum class SnackBarStyle(
     Info(
         backgroundColor = Color(0xFF1E88E5),
         icon = Icons.Default.Info,
+    ),
+    Syncing(
+        backgroundColor = Color(0xFFCC5500),
+        icon = Icons.Default.Sync,
     ),
 }
 
@@ -316,6 +321,10 @@ private class SnackBarPreviewParameterProvider : PreviewParameterProvider<SnackB
         SnackBarPreviewParam(
             message = "Your data has been synced successfully.",
             style = SnackBarStyle.Info,
+        ),
+        SnackBarPreviewParam(
+            message = "Syncing your library",
+            style = SnackBarStyle.Syncing,
         ),
     )
 }

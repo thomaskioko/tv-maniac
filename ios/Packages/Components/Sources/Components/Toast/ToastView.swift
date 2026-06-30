@@ -47,9 +47,19 @@ public struct ToastView: View {
         }
         .padding(theme.spacing.medium)
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-        .background(type.themeColor)
+        .background(backgroundColor)
         .cornerRadius(theme.shapes.large)
         .padding(.horizontal, theme.spacing.medium)
+    }
+
+    private var backgroundColor: Color {
+        switch type {
+        case .error: .red
+        case .warning: .orange
+        case .info: .blue
+        case .success: .green
+        case .syncing: theme.colors.syncing
+        }
     }
 }
 
@@ -80,6 +90,14 @@ public struct ToastView: View {
             type: .success,
             title: "Success",
             message: "Changes saved successfully.",
+            onCancelTapped: {}
+        )
+
+        ToastView(
+            type: .syncing,
+            title: "Syncing",
+            message: "Syncing your library",
+            loading: true,
             onCancelTapped: {}
         )
     }

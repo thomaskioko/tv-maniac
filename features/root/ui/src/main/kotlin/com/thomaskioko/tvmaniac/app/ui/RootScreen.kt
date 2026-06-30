@@ -177,7 +177,7 @@ internal fun RootContent(
 
 private fun ToastType.toSnackBarStyle(): SnackBarStyle = when (this) {
     ToastType.Error -> SnackBarStyle.Error
-    ToastType.Status -> SnackBarStyle.Info
+    ToastType.Status -> SnackBarStyle.Syncing
 }
 
 private fun handleToastDismiss(rootPresenter: RootPresenter, state: ToastState) {

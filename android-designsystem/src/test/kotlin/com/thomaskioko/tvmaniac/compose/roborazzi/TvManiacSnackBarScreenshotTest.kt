@@ -70,4 +70,16 @@ internal class TvManiacSnackBarScreenshotTest {
             }
         }
     }
+
+    @Test
+    fun snackBarSyncing() {
+        composeTestRule.captureMultiDevice("TvManiacSnackBar_Syncing") {
+            Surface {
+                TvManiacSnackBar(
+                    message = "Syncing your library",
+                    style = SnackBarStyle.Syncing,
+                )
+            }
+        }
+    }
 }
