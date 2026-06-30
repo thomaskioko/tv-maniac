@@ -94,6 +94,12 @@ public struct MyShowsTab: View {
         }
     }
 
+    private var isCurrentPageRefreshing: Bool {
+        uiState.selectedPage == 0
+            ? continueWatchingState.showRefreshIndicator
+            : startWatchingState.showRefreshIndicator
+    }
+
     private var pagePicker: some View {
         Picker("", selection: Binding(
             get: { Int(uiState.selectedPage) },
@@ -125,10 +131,18 @@ public struct MyShowsTab: View {
                 }
             }
             ToolbarItem(placement: .principal) {
-                Text(String(\.label_tab_my_shows))
-                    .textStyle(appTheme.typography.titleMedium)
-                    .lineLimit(1)
-                    .foregroundStyle(.appOnSurface)
+                HStack(spacing: appTheme.spacing.xSmall) {
+                    Text(String(\.label_tab_my_shows))
+                        .textStyle(appTheme.typography.titleMedium)
+                        .lineLimit(1)
+                        .foregroundStyle(.appOnSurface)
+
+                    if isCurrentPageRefreshing {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
+                            .scaleEffect(0.7)
+                    }
+                }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: appTheme.spacing.xSmall) {

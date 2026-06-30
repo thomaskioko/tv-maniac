@@ -29,4 +29,7 @@ public data class ContinueWatchingState(
 
     val showLoading: Boolean
         get() = (isLoading || isSyncing) && isEmpty
+
+    val showRefreshIndicator: Boolean
+        get() = (isLoading || isSyncing || isRefreshing) && !isEmpty
 }
