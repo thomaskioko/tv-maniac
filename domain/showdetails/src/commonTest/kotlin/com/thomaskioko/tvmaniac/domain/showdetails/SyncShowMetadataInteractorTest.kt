@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -50,5 +51,16 @@ class SyncShowMetadataInteractorTest {
 
         showDetailsRepository.fetchInvocations().single().forceRefresh shouldBe true
         watchProviderRepository.fetchInvocations().single().forceRefresh shouldBe true
+    }
+
+    @Test
+    fun `should skip watch providers given includeWatchProviders is false`() = runTest(testDispatcher) {
+        interactor.executeSync(
+            SyncShowMetadataInteractor.Param(showId = 1388L, includeWatchProviders = false),
+        )
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(1388L)
+        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1388L)
+        watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
 }

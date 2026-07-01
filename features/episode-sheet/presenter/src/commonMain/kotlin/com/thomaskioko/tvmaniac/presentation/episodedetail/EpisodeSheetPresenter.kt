@@ -65,10 +65,11 @@ public class EpisodeSheetPresenter(
     public val state: StateFlow<EpisodeDetailSheetState> = combine(
         observeEpisodeByIdInteractor.flow,
         uiMessageManager.message,
-    ) { episode, message ->
+        actionLoadingState.observable,
+    ) { episode, message, isTogglingWatched ->
         currentEpisode = episode
-        episode?.toState(param.source, localizer)?.copy(message = message)
-            ?: EpisodeDetailSheetState(isLoading = true, message = message)
+        episode?.toState(param.source, localizer)?.copy(message = message, isTogglingWatched = isTogglingWatched)
+            ?: EpisodeDetailSheetState(isLoading = true, message = message, isTogglingWatched = isTogglingWatched)
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -94,15 +95,15 @@ public class EpisodeSheetPresenter(
 
     private fun toggleWatched() {
         val episode = currentEpisode ?: return
-        navigator.dismissOverlay()
+        if (state.value.isTogglingWatched) return
         appScopeLauncher.launch(TAG) {
-            if (episode.is_watched != 0L) {
+            val markStatus = if (episode.is_watched != 0L) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
                         showId = episode.show_id.id,
                         episodeId = episode.episode_id.id,
                     ),
-                ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                )
             } else {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
@@ -111,8 +112,10 @@ public class EpisodeSheetPresenter(
                         seasonNumber = episode.season_number,
                         episodeNumber = episode.episode_number,
                     ),
-                ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                )
             }
+            markStatus.collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            coroutineScope.launch { navigator.dismissOverlay() }
         }
     }
 

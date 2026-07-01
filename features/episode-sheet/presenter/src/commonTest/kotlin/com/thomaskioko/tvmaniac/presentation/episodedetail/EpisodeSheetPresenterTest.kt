@@ -194,6 +194,7 @@ internal class EpisodeSheetPresenterTest {
             )
             episodeRepository.lastMarkEpisodeUnwatchedCall.shouldBeNull()
             navigator.overlayDismissCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -217,11 +218,12 @@ internal class EpisodeSheetPresenterTest {
                 episodeId = 1L,
             )
             navigator.overlayDismissCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `should dismiss sheet immediately given ToggleWatched is dispatched and before background work completes`() = runTest {
+    fun `should keep sheet until mark completes then dismiss given ToggleWatched is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = false))
 
         val presenter = createPresenter()
@@ -233,7 +235,7 @@ internal class EpisodeSheetPresenterTest {
 
             presenter.dispatch(EpisodeSheetAction.ToggleWatched)
 
-            navigator.overlayDismissCount shouldBe 1
+            navigator.overlayDismissCount shouldBe 0
             episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
 
             testDispatcher.scheduler.advanceUntilIdle()
@@ -245,6 +247,8 @@ internal class EpisodeSheetPresenterTest {
                     seasonNumber = 1L,
                     episodeNumber = 1L,
                 )
+            navigator.overlayDismissCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

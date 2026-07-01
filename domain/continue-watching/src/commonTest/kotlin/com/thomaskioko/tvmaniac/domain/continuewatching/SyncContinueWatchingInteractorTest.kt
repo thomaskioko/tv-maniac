@@ -113,7 +113,7 @@ class SyncContinueWatchingInteractorTest {
     }
 
     @Test
-    fun `should sync metadata for every watched show`() = runTest(testDispatcher) {
+    fun `should sync show and season details for every watched show without fetching providers`() = runTest(testDispatcher) {
         continueWatchingRepository.setEntries(
             listOf(
                 watchedShow(showId = 42L),
@@ -126,17 +126,18 @@ class SyncContinueWatchingInteractorTest {
 
         showDetailsRepository.fetchInvocations().map { it.id } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
         seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
-        watchProviderRepository.fetchInvocations().map { it.showId } shouldContainExactlyInAnyOrder listOf(42L, 99L, 101L)
+        watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
 
     @Test
-    fun `should propagate force refresh to per-show metadata sync`() = runTest(testDispatcher) {
+    fun `should not force refresh per-show metadata even when the sync is forced`() = runTest(testDispatcher) {
         continueWatchingRepository.setEntries(listOf(watchedShow(showId = 7L)))
 
         interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
 
-        showDetailsRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
-        watchProviderRepository.fetchInvocations().all { it.forceRefresh } shouldBe true
+        showDetailsRepository.fetchInvocations().map { it.forceRefresh } shouldBe listOf(false)
+        seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(7L)
+        watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
 
     @Test
