@@ -47,6 +47,7 @@ public data class SimklShowEntry(
     @SerialName("title") val title: String? = null,
     @SerialName("year") val year: Int? = null,
     @SerialName("ids") val ids: SimklShowIds,
+    @SerialName("ratings") val ratings: SimklRatings? = null,
 )
 
 @Serializable
