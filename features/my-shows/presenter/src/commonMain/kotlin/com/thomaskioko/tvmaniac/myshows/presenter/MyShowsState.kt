@@ -10,4 +10,5 @@ public data class MyShowsState(
     val isSearchActive: Boolean = false,
     val isGridMode: Boolean = true,
     val sortOption: WatchlistSortOption = WatchlistSortOption.ADDED_DESC,
+    val showRefreshIndicator: Boolean = false,
 )

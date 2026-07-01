@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -248,6 +249,7 @@ private fun Toolbar(
                     CollapsedToolbarContent(
                         isGridMode = state.isGridMode,
                         showListStyleToggle = state.selectedPage == 0,
+                        showRefreshIndicator = state.showRefreshIndicator,
                         onToggleListStyle = { onAction(MyShowsAction.ChangeListStyle(state.isGridMode)) },
                         onSearchClick = { onAction(MyShowsAction.ToggleSearch) },
                         onSortClick = onSortClick,
@@ -267,6 +269,7 @@ private fun Toolbar(
 private fun CollapsedToolbarContent(
     isGridMode: Boolean,
     showListStyleToggle: Boolean,
+    showRefreshIndicator: Boolean,
     onToggleListStyle: () -> Unit,
     onSearchClick: () -> Unit,
     onSortClick: () -> Unit,
@@ -293,14 +296,27 @@ private fun CollapsedToolbarContent(
             Spacer(Modifier.size(48.dp))
         }
 
-        Text(
-            text = menu_item_my_shows.resolve(context),
-            style = MaterialTheme.typography.titleLarge.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = menu_item_my_shows.resolve(context),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            if (showRefreshIndicator) {
+                LoadingIndicator(
+                    modifier = Modifier
+                        .testTag(MyShowsTestTags.MY_SHOWS_INDICATOR)
+                        .size(20.dp),
+                )
+            }
+        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,

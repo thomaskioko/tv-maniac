@@ -94,12 +94,6 @@ public struct MyShowsTab: View {
         }
     }
 
-    private var isCurrentPageRefreshing: Bool {
-        uiState.selectedPage == 0
-            ? continueWatchingState.showRefreshIndicator
-            : startWatchingState.showRefreshIndicator
-    }
-
     private var pagePicker: some View {
         Picker("", selection: Binding(
             get: { Int(uiState.selectedPage) },
@@ -137,7 +131,7 @@ public struct MyShowsTab: View {
                         .lineLimit(1)
                         .foregroundStyle(.appOnSurface)
 
-                    if isCurrentPageRefreshing {
+                    if uiState.showRefreshIndicator {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
                             .scaleEffect(0.7)
