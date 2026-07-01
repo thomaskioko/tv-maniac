@@ -19,5 +19,6 @@ public data class ShowDetailsSeasonsEpisodesState(
     val continueTrackingScrollIndex: Int = 0,
     val updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
     val isRefreshing: Boolean = false,
+    val isUpdating: Boolean = false,
     val message: UiMessage? = null,
 )

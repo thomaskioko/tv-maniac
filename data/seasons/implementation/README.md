@@ -5,34 +5,14 @@
 <!--region graph-->
 ```mermaid
 graph TB
-  subgraph :api:tmdb
-    direction TB
-    :api:tmdb:api[api]:::multiplatform
-  end
   subgraph :core
     direction TB
     :core:base[base]:::multiplatform
     :core:view[view]:::multiplatform
   end
-  subgraph :core:connectivity
-    direction TB
-    :core:connectivity:api[api]:::multiplatform
-  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
-  end
-  subgraph :core:network-util
-    direction TB
-    :core:network-util:api[api]:::multiplatform
-  end
-  subgraph :core:util
-    direction TB
-    :core:util:api[api]:::multiplatform
-  end
-  subgraph :data:account-manager
-    direction TB
-    :data:account-manager:api[api]:::multiplatform
   end
   subgraph :data:database
     direction TB
@@ -42,52 +22,25 @@ graph TB
     direction TB
     :data:datastore:api[api]:::multiplatform
   end
-  subgraph :data:episode
-    direction TB
-    :data:episode:api[api]:::multiplatform
-  end
-  subgraph :data:followedshows
-    direction TB
-    :data:followedshows:api[api]:::multiplatform
-  end
-  subgraph :data:request-manager
-    direction TB
-    :data:request-manager:api[api]:::multiplatform
-  end
   subgraph :data:seasons
     direction TB
     :data:seasons:api[api]:::multiplatform
     :data:seasons:implementation[implementation]:::multiplatform
-  end
-  subgraph :data:upnext
-    direction TB
-    :data:upnext:api[api]:::multiplatform
   end
   subgraph :i18n
     direction TB
     :i18n:generator[generator]:::multiplatform
   end
 
-  :api:tmdb:api --> :core:network-util:api
   :core:base --> :core:logger:api
   :core:base --> :core:view
-  :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
-  :data:episode:api --> :data:account-manager:api
-  :data:episode:api --> :data:database:sqldelight
-  :data:episode:api --> :data:followedshows:api
-  :data:episode:api --> :data:upnext:api
   :data:seasons:api --> :data:database:sqldelight
-  :data:seasons:implementation --> :api:tmdb:api
   :data:seasons:implementation --> :core:base
-  :data:seasons:implementation -.-> :core:network-util:api
-  :data:seasons:implementation --> :core:util:api
   :data:seasons:implementation --> :data:database:sqldelight
   :data:seasons:implementation --> :data:datastore:api
-  :data:seasons:implementation --> :data:episode:api
-  :data:seasons:implementation --> :data:request-manager:api
   :data:seasons:implementation --> :data:seasons:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

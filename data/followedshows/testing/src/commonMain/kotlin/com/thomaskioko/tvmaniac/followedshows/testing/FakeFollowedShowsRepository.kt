@@ -2,7 +2,11 @@ package com.thomaskioko.tvmaniac.followedshows.testing
 
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
 
 public class FakeFollowedShowsRepository : FollowedShowsRepository {
@@ -31,6 +35,11 @@ public class FakeFollowedShowsRepository : FollowedShowsRepository {
         _removedShowIds.add(showId)
         entries.value = entries.value.filter { it.showId != showId }
     }
+
+    override fun observeIsFollowed(showId: Long): Flow<Boolean> =
+        entries
+            .map { list -> list.any { it.showId == showId && it.pendingAction != PendingAction.DELETE } }
+            .distinctUntilChanged()
 
     public fun setEntries(newEntries: List<FollowedShowEntry>) {
         entries.value = newEntries

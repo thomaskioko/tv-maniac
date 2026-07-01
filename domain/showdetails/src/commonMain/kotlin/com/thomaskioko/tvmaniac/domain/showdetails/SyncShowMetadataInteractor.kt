@@ -26,15 +26,18 @@ public class SyncShowMetadataInteractor(
                 showId = params.showId,
                 forceRefresh = params.forceRefresh,
             )
-            watchProviderRepository.fetchWatchProviders(
-                showId = params.showId,
-                forceRefresh = params.forceRefresh,
-            )
+            if (params.includeWatchProviders) {
+                watchProviderRepository.fetchWatchProviders(
+                    showId = params.showId,
+                    forceRefresh = params.forceRefresh,
+                )
+            }
         }
     }
 
     public data class Param(
         val showId: Long,
         val forceRefresh: Boolean = false,
+        val includeWatchProviders: Boolean = true,
     )
 }

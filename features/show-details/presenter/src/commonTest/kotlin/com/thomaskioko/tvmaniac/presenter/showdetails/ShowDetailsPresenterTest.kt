@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
@@ -55,7 +56,6 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.similar.di.ShowDetailsSimi
 import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.ShowDetailsTrailersPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.di.ShowDetailsTrailersChildGraph
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsEpisodesSyncRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
@@ -89,7 +89,6 @@ internal class ShowDetailsPresenterTest {
 
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
-    private val seasonsEpisodesSyncRepository = FakeSeasonsEpisodesSyncRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
@@ -132,7 +131,7 @@ internal class ShowDetailsPresenterTest {
 
     @Test
     fun `should surface the first child message given a child fetch fails`() = runTest {
-        showDetailsRepository.setFetchError(IllegalStateException("boom"))
+        watchProvidersRepository.setFetchError(IllegalStateException("boom"))
 
         val presenter = buildPresenter()
 
@@ -323,11 +322,16 @@ internal class ShowDetailsPresenterTest {
             ),
             observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
+                followedShowsRepository = followedShowsRepository,
                 dispatchers = dispatchers,
             ),
             fetchSeasonsEpisodesInteractor = FetchSeasonsEpisodesInteractor(
-                seasonsEpisodesSyncRepository = seasonsEpisodesSyncRepository,
+                showDetailsRepository = showDetailsRepository,
                 seasonDetailsRepository = seasonDetailsRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = dispatchers,
+            ),
+            syncShowEpisodeWatchesInteractor = SyncShowEpisodeWatchesInteractor(
                 watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
                 dispatchers = dispatchers,
             ),

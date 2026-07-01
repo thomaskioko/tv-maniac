@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingPrese
 import com.thomaskioko.tvmaniac.continuewatching.presenter.di.ContinueWatchingChildGraph
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -20,7 +21,6 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -63,7 +63,9 @@ public class MyShowsPresenter(
         searchActive,
         repository.observeListStyle(),
         repository.observeSortOption(),
-    ) { page, currentQuery, isSearchActive, isGridMode, sortOption ->
+        continueWatchingPresenter.state,
+        startWatchingPresenter.state,
+    ) { page, currentQuery, isSearchActive, isGridMode, sortOption, continueWatching, startWatching ->
         MyShowsState(
             selectedPage = page,
             continueWatchingTitle = continueWatchingTitle,
@@ -72,6 +74,11 @@ public class MyShowsPresenter(
             isSearchActive = isSearchActive,
             isGridMode = isGridMode,
             sortOption = sortOption,
+            showRefreshIndicator = if (page == 0) {
+                continueWatching.showRefreshIndicator
+            } else {
+                startWatching.showRefreshIndicator
+            },
         )
     }.stateIn(
         scope = coroutineScope,

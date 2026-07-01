@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.search.presenter.Mapper
 import com.thomaskioko.tvmaniac.search.presenter.QueryChanged
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowState
 import com.thomaskioko.tvmaniac.search.presenter.SearchShowsPresenter
+import com.thomaskioko.tvmaniac.search.presenter.SearchUiState
 import com.thomaskioko.tvmaniac.search.presenter.model.CategoryItem
 import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
@@ -27,10 +28,12 @@ import com.thomaskioko.tvmaniac.search.testing.FakeSearchRepository
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -134,6 +137,24 @@ internal class SearchShowsPresenterTest {
                 query = "test",
                 genreRows = genreRowModelList(),
             )
+        }
+    }
+
+    @Test
+    fun `should show loading state when query is valid and updating with no results`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+
+            setGenreRows(createGenreWithShowsList())
+            skipItems(1)
+
+            awaitItem() shouldBe settledState(
+                genreRows = genreRowModelList(),
+            )
+
+            presenter.dispatch(QueryChanged("loki"))
+
+            awaitItem().uiState shouldBe SearchUiState.SearchLoading
         }
     }
 
@@ -289,6 +310,47 @@ internal class SearchShowsPresenterTest {
                 searchResults = persistentListOf(),
                 genreRows = genreRowModelList(),
             )
+        }
+    }
+
+    @Test
+    fun `should clear results and return to genres when query is backspaced below minimum length`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+
+            presenter.dispatch(QueryChanged("test"))
+            fakeSearchRepository.setSearchResult(createDiscoverShowList())
+            advanceUntilIdle()
+            expectMostRecentItem() shouldBe settledState(
+                query = "test",
+                genreRows = genreRowModelList(),
+                searchResults = uiModelList(),
+            )
+
+            presenter.dispatch(QueryChanged("t"))
+            advanceUntilIdle()
+            expectMostRecentItem() shouldBe settledState(
+                query = "t",
+                genreRows = genreRowModelList(),
+            )
+        }
+    }
+
+    @Test
+    fun `should return to browsing genres when query is cleared after a search error`() = runTest {
+        fakeSearchRepository.setSearchError(IllegalStateException("Network error"))
+        presenter.state.test {
+            awaitItem() shouldBe SearchShowState.Empty
+            setGenreRows(createGenreWithShowsList())
+
+            presenter.dispatch(QueryChanged("test"))
+            advanceUntilIdle()
+            expectMostRecentItem().uiState.shouldBeInstanceOf<SearchUiState.Error>()
+
+            presenter.dispatch(ClearQuery)
+            advanceUntilIdle()
+            expectMostRecentItem() shouldBe settledState(genreRows = genreRowModelList())
         }
     }
 

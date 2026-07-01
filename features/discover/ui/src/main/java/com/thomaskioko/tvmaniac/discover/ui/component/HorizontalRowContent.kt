@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -38,6 +41,7 @@ internal fun HorizontalRowContent(
     tvShows: ImmutableList<DiscoverShow>,
     onItemClicked: (Long) -> Unit,
     onMoreClicked: () -> Unit,
+    libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
 ) {
     Box(modifier = modifier) {
         AnimatedVisibility(visible = tvShows.isNotEmpty()) {
@@ -71,6 +75,7 @@ internal fun HorizontalRowContent(
                             modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.showId)),
                             title = tvShow.title,
                             isInLibrary = tvShow.inLibrary,
+                            libraryImageOverlay = libraryImageOverlay,
                         )
                     }
                 }

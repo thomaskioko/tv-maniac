@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.discover.ui.section
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +40,7 @@ internal fun DiscoverStartWatchingSection(
         tvShows = state.startWatchingShows,
         onItemClicked = { onAction(StartWatchingItemClicked(it)) },
         onMoreClicked = { onAction(StartWatchingMoreClicked) },
+        libraryImageOverlay = Icons.Filled.WatchLater,
     )
 }
 

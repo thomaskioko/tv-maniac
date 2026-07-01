@@ -28,7 +28,8 @@ public struct SearchResultListView: View {
                             imageUrl: item.imageUrl,
                             status: item.status,
                             year: item.year,
-                            voteAverage: item.voteAverage
+                            voteAverage: item.voteAverage,
+                            inLibrary: item.inLibrary
                         )
                         .padding(.horizontal, theme.spacing.xSmall)
                         .onTapGesture {

@@ -123,4 +123,20 @@ class SearchScreenTest {
             }
         }
     }
+
+    @Test
+    fun searchScreenSearchLoading() {
+        composeTestRule.captureMultiDevice("SearchLoading") {
+            TvManiacBackground {
+                SearchScreen(
+                    state = SearchShowState(
+                        query = "loki",
+                        isRefreshing = false,
+                        isUpdating = true,
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
 }

@@ -21,6 +21,24 @@ import SwiftUI
     .preferredColorScheme(.dark)
 }
 
+#Preview("Search Loading") {
+    SearchScreen(
+        state: SearchScreen.State(
+            title: "Search",
+            screenState: .searchLoading,
+            searchPlaceholder: "Enter Show Title",
+            emptyResultsMessage: "No results found",
+            retryButtonText: "Retry"
+        ),
+        query: .constant("penguin"),
+        onShowClicked: { _ in },
+        onRetry: {},
+        onBack: {}
+    )
+    .appPreview()
+    .preferredColorScheme(.dark)
+}
+
 #Preview("Browsing Genres") {
     SearchScreen(
         state: SearchScreen.State(
@@ -74,7 +92,7 @@ import SwiftUI
                         overview: "Follow Oswald Oz Cobb's quest for control.",
                         status: "Ended",
                         imageUrl: "https://image.tmdb.org/t/p/w780/VSRmtRlYgd0pBISf7d34TAwWgB.jpg",
-                        year: "2024", voteAverage: 8.5
+                        year: "2024", voteAverage: 8.5, inLibrary: true
                     ),
                     .init(
                         tmdbId: 1234, showId: 1234, title: "Kaos",

@@ -89,6 +89,10 @@ public extension ShapeStyle where Self == AppColorStyle {
         .init(\.success)
     }
 
+    static var appSyncing: AppColorStyle {
+        .init(\.syncing)
+    }
+
     static var appGrey: AppColorStyle {
         .init(\.grey)
     }

@@ -15,6 +15,7 @@ public data class UpNextState(
     val sortOption: UpNextSortOption = UpNextSortOption.LAST_WATCHED,
     val episodes: ImmutableList<UpNextEpisodeUiModel> = persistentListOf(),
     val updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
+    val isUpdating: Boolean = false,
     val message: UiMessage? = null,
 ) {
     val isEmpty: Boolean

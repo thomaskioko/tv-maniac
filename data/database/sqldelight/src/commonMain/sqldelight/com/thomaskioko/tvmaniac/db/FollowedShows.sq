@@ -108,10 +108,6 @@ SELECT COUNT(*) FROM followed_shows;
 countEntriesWithPendingAction:
 SELECT COUNT(*) FROM followed_shows WHERE pending_action != 'NOTHING';
 
-upsertIfNotExists:
-INSERT OR IGNORE INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
-VALUES(:showId, :tmdbId, :followedAt, 'UPLOAD');
-
 isShowFollowed:
 SELECT COUNT(*) > 0 FROM followed_shows WHERE show_id = ? AND pending_action != 'DELETE';
 

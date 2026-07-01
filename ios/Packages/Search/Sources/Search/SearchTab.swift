@@ -57,8 +57,10 @@ private extension SearchShowState {
 private extension SearchUiState {
     func toScreenState() -> SearchScreenState {
         switch self {
-        case is SearchUiStateInitialLoading, is SearchUiStateSearchLoading:
+        case is SearchUiStateInitialLoading:
             .loading
+        case is SearchUiStateSearchLoading:
+            .searchLoading
         case is SearchUiStateSearchEmpty:
             .empty
         case let state as SearchUiStateSearchResults:

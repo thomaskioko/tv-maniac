@@ -15,6 +15,7 @@ kotlin {
             dependencies {
                 api(projects.core.logger.api)
                 api(libs.coroutines.core)
+                api(libs.kotlinx.collections)
                 implementation(libs.kotlinx.atomicfu)
             }
         }

@@ -125,10 +125,18 @@ public struct MyShowsTab: View {
                 }
             }
             ToolbarItem(placement: .principal) {
-                Text(String(\.label_tab_my_shows))
-                    .textStyle(appTheme.typography.titleMedium)
-                    .lineLimit(1)
-                    .foregroundStyle(.appOnSurface)
+                HStack(spacing: appTheme.spacing.xSmall) {
+                    Text(String(\.label_tab_my_shows))
+                        .textStyle(appTheme.typography.titleMedium)
+                        .lineLimit(1)
+                        .foregroundStyle(.appOnSurface)
+
+                    if uiState.showRefreshIndicator {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
+                            .scaleEffect(0.7)
+                    }
+                }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: appTheme.spacing.xSmall) {

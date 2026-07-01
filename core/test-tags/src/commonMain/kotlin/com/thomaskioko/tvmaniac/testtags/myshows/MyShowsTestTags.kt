@@ -14,5 +14,6 @@ public object MyShowsTestTags {
     public const val TOGGLE_LIST_STYLE_BUTTON_TEST_TAG: String = "my_shows_toggle_list_style"
     public const val SORT_BUTTON_TEST_TAG: String = "my_shows_sort_button"
     public const val SORT_SHEET_TEST_TAG: String = "my_shows_sort_sheet"
+    public const val MY_SHOWS_INDICATOR: String = "my_shows_loading_indicator"
     public fun showCard(traktId: Long): String = "my_shows_show_card_$traktId"
 }

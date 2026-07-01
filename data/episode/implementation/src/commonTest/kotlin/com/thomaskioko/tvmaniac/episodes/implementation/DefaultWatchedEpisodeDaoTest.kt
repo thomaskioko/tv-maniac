@@ -696,6 +696,93 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         }
     }
 
+    @Test
+    fun `should not follow the show given an episode is marked watched`() = runTest {
+        val unfollowedShowId = 5500L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(unfollowedShowId),
+            name = "Watched But Not Followed",
+            overview = "Watched locally without being added to the watchlist",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(unfollowedShowId)
+        val _ = database.seasonsQueries.upsert(
+            id = Id(5501L),
+            show_id = resolvedShowId,
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 10L,
+            image_url = null,
+        )
+
+        watchedEpisodeDao.markAsWatched(
+            showId = unfollowedShowId,
+            episodeId = 1L,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+
+        database.followedShowsQueries.isShowFollowed(resolvedShowId).executeAsOne() shouldBe false
+
+        watchedEpisodeDao.observeWatchedEpisodes(unfollowedShowId).test {
+            awaitItem() shouldHaveSize 1
+        }
+    }
+
+    @Test
+    fun `should not follow the show given watched history is merged from a provider`() = runTest {
+        val unfollowedShowId = 5500L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(unfollowedShowId),
+            name = "Remote Watched Not Followed",
+            overview = "Watched history synced from a provider without a watchlist entry",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(unfollowedShowId)
+
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showId = unfollowedShowId,
+            entries = listOf(
+                WatchedEpisodeEntry(
+                    id = 0,
+                    showId = unfollowedShowId,
+                    episodeId = null,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
+                    watchedAt = Clock.System.now(),
+                    traktId = 9100L,
+                ),
+            ),
+            includeSpecials = false,
+        )
+
+        database.followedShowsQueries.isShowFollowed(resolvedShowId).executeAsOne() shouldBe false
+
+        watchedEpisodeDao.observeWatchedEpisodes(unfollowedShowId).test {
+            awaitItem() shouldHaveSize 1
+        }
+    }
+
     private fun insertTestData() {
         val _ = database.tvShowQueries.upsert(
             tmdb_id = Id(TEST_SHOW_ID),

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -81,6 +82,10 @@ public enum class SnackBarStyle(
         backgroundColor = Color(0xFF1E88E5),
         icon = Icons.Default.Info,
     ),
+    Syncing(
+        backgroundColor = Color(0xFFCC5500),
+        icon = Icons.Default.Sync,
+    ),
 }
 
 @Composable
@@ -97,6 +102,10 @@ public fun TvManiacSnackBarHost(
     var visible by remember { mutableStateOf(false) }
     val currentOnDismiss by rememberUpdatedState(onDismiss)
 
+    var displayedMessage by remember { mutableStateOf(message.orEmpty()) }
+    var displayedStyle by remember { mutableStateOf(style) }
+    var displayedLoading by remember { mutableStateOf(loading) }
+
     fun dismiss() {
         visible = false
         currentOnDismiss()
@@ -104,6 +113,9 @@ public fun TvManiacSnackBarHost(
 
     LaunchedEffect(message, persistent) {
         if (message != null) {
+            displayedMessage = message
+            displayedStyle = style
+            displayedLoading = loading
             visible = true
             if (!persistent) {
                 delay(durationMillis.milliseconds)
@@ -173,9 +185,9 @@ public fun TvManiacSnackBarHost(
                             },
                         )
                     },
-                message = message.orEmpty(),
-                style = style,
-                loading = loading,
+                message = displayedMessage,
+                style = displayedStyle,
+                loading = displayedLoading,
             )
         }
     }
@@ -309,6 +321,10 @@ private class SnackBarPreviewParameterProvider : PreviewParameterProvider<SnackB
         SnackBarPreviewParam(
             message = "Your data has been synced successfully.",
             style = SnackBarStyle.Info,
+        ),
+        SnackBarPreviewParam(
+            message = "Syncing your library",
+            style = SnackBarStyle.Syncing,
         ),
     )
 }

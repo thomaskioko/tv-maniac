@@ -646,14 +646,9 @@ graph TB
   :data:seasondetails:implementation --> :data:seasondetails:api
   :data:seasondetails:implementation --> :data:seasons:api
   :data:seasons:api --> :data:database:sqldelight
-  :data:seasons:implementation --> :api:tmdb:api
   :data:seasons:implementation --> :core:base
-  :data:seasons:implementation -.-> :core:network-util:api
-  :data:seasons:implementation --> :core:util:api
   :data:seasons:implementation --> :data:database:sqldelight
   :data:seasons:implementation --> :data:datastore:api
-  :data:seasons:implementation --> :data:episode:api
-  :data:seasons:implementation --> :data:request-manager:api
   :data:seasons:implementation --> :data:seasons:api
   :data:showdetails:api --> :data:database:sqldelight
   :data:showdetails:implementation --> :api:tmdb:api

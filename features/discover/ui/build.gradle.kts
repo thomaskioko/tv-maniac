@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material)
 
+    testImplementation(libs.kotest.assertions)
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
 }
