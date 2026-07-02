@@ -69,6 +69,7 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:continue-watching:implementation --> :api:trakt:api
   :data:continue-watching:implementation --> :core:base
   :data:continue-watching:implementation --> :core:logger:api

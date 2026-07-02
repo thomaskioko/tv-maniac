@@ -142,6 +142,8 @@ kotlin {
                 api(projects.data.watchlistPrefs.implementation)
                 api(projects.data.library.api)
                 api(projects.data.library.implementation)
+                api(projects.data.ratings.api)
+                api(projects.data.ratings.implementation)
                 api(projects.data.upnext.api)
                 api(projects.data.upnext.implementation)
                 api(projects.data.accountManager.implementation)

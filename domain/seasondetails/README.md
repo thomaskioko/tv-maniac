@@ -50,6 +50,7 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:cast:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:episode:api --> :data:account-manager:api

@@ -26,6 +26,10 @@ graph TB
     direction TB
     :data:account-manager:api[api]:::multiplatform
   end
+  subgraph :data:database
+    direction TB
+    :data:database:sqldelight[sqldelight]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -39,6 +43,8 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
+  :data:database:sqldelight --> :core:logger:api
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
   :domain:sync-activity --> :core:base

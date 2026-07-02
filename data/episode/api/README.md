@@ -30,6 +30,7 @@ graph TB
     :data:upnext:api[api]:::multiplatform
   end
 
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:episode:api --> :data:account-manager:api
   :data:episode:api --> :data:database:sqldelight

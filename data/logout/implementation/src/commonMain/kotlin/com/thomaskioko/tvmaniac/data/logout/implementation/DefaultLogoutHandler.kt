@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.data.logout.implementation
 
 import com.thomaskioko.tvmaniac.data.logout.api.LogoutHandler
+import com.thomaskioko.tvmaniac.data.ratings.api.ProviderMetaDao
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingsDao
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -18,6 +20,8 @@ public class DefaultLogoutHandler(
     private val traktActivityRepository: TraktActivityRepository,
     private val syncRepository: ActivitySyncRepository,
     private val requestManagerRepository: RequestManagerRepository,
+    private val ratingsDao: RatingsDao,
+    private val providerMetaDao: ProviderMetaDao,
     private val database: TvManiacDatabase,
     private val transactionRunner: DatabaseTransactionRunner,
 ) : LogoutHandler {
@@ -37,6 +41,8 @@ public class DefaultLogoutHandler(
             database.traktListsQueries.deleteAll()
             database.showWatchStatusQueries.deleteAll()
             database.calendarQueries.deleteAll()
+            ratingsDao.clearAll()
+            providerMetaDao.clearAll()
         }
     }
 }

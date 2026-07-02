@@ -59,6 +59,10 @@ graph TB
     direction TB
     :data:oauth:api[api]:::multiplatform
   end
+  subgraph :data:ratings
+    direction TB
+    :data:ratings:api[api]:::multiplatform
+  end
   subgraph :data:start-watching
     direction TB
     :data:start-watching:api[api]:::multiplatform
@@ -88,6 +92,7 @@ graph TB
   :api:simkl:implementation --> :data:followedshows:api
   :api:simkl:implementation --> :data:library:api
   :api:simkl:implementation --> :data:oauth:api
+  :api:simkl:implementation --> :data:ratings:api
   :api:simkl:implementation --> :data:start-watching:api
   :api:simkl:implementation --> :data:sync-activity:api
   :api:simkl:implementation --> :data:user:api
@@ -95,6 +100,7 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:database:sqldelight --> :core:logger:api
@@ -106,6 +112,10 @@ graph TB
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
   :data:oauth:api --> :data:account-manager:api
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
   :data:start-watching:api --> :core:network-util:api
   :data:start-watching:api --> :data:account-manager:api
   :data:sync-activity:api --> :core:network-util:api

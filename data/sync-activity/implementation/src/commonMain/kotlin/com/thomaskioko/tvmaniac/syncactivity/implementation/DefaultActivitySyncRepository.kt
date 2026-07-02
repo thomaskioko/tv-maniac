@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.syncactivity.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
@@ -69,9 +69,4 @@ public class DefaultActivitySyncRepository(
             )
             .executeAsOneOrNull()
             ?.synced_until
-}
-
-private fun AccountProvider.toDbProvider(): Provider = when (this) {
-    AccountProvider.TRAKT -> Provider.TRAKT
-    AccountProvider.SIMKL -> Provider.SIMKL
 }

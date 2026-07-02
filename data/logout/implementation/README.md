@@ -25,10 +25,18 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
+  subgraph :data:followedshows
+    direction TB
+    :data:followedshows:api[api]:::multiplatform
+  end
   subgraph :data:logout
     direction TB
     :data:logout:api[api]:::multiplatform
     :data:logout:implementation[implementation]:::multiplatform
+  end
+  subgraph :data:ratings
+    direction TB
+    :data:ratings:api[api]:::multiplatform
   end
   subgraph :data:request-manager
     direction TB
@@ -44,12 +52,18 @@ graph TB
   end
 
   :core:network-util:api --> :core:connectivity:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
+  :data:logout:implementation --> :data:ratings:api
   :data:logout:implementation --> :data:request-manager:api
   :data:logout:implementation --> :data:sync-activity:api
   :data:logout:implementation --> :data:user:api
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
   :data:user:api --> :core:network-util:api

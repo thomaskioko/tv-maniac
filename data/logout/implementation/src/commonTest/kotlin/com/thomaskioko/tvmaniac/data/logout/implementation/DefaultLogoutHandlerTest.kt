@@ -1,9 +1,13 @@
 package com.thomaskioko.tvmaniac.data.logout.implementation
 
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.data.ratings.implementation.DefaultProviderMetaDao
+import com.thomaskioko.tvmaniac.data.ratings.implementation.DefaultRatingsDao
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.WatchStatus
@@ -26,6 +30,13 @@ import kotlin.time.Clock
 internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
 
     private val testDispatcher = UnconfinedTestDispatcher()
+    private val dispatchers = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
+    )
 
     private val fakeUserRepository = FakeUserRepository()
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
@@ -33,16 +44,22 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     private val fakeRequestManagerRepository = FakeRequestManagerRepository()
 
     private lateinit var cleaner: DefaultLogoutHandler
+    private lateinit var ratingsDao: DefaultRatingsDao
+    private lateinit var providerMetaDao: DefaultProviderMetaDao
     private var showIdForBreakingBad: Id<ShowId> = Id(0L)
     private var showIdForTheWire: Id<ShowId> = Id(0L)
 
     @BeforeTest
     fun setUp() {
+        ratingsDao = DefaultRatingsDao(database, dispatchers)
+        providerMetaDao = DefaultProviderMetaDao(database, dispatchers)
         cleaner = DefaultLogoutHandler(
             userRepository = fakeUserRepository,
             traktActivityRepository = fakeTraktActivityRepository,
             syncRepository = fakeActivitySyncRepository,
             requestManagerRepository = fakeRequestManagerRepository,
+            ratingsDao = ratingsDao,
+            providerMetaDao = providerMetaDao,
             database = database,
             transactionRunner = DbTransactionRunner(database),
         )
@@ -111,6 +128,29 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
         cleaner.clear()
 
         database.calendarQueries.hasEntriesInRange(0L, Long.MAX_VALUE).executeAsOne() shouldBe false
+    }
+
+    @Test
+    fun `should empty show_ratings given clear called`() = runTest(testDispatcher) {
+        cleaner.clear()
+
+        database.ratingsQueries.showRatingsWithUploadPendingAction().executeAsList().shouldBeEmpty()
+        database.ratingsQueries.observeShowRating(showIdForBreakingBad).executeAsOneOrNull().shouldBeNull()
+    }
+
+    @Test
+    fun `should empty season_ratings and episode_ratings given clear called`() = runTest(testDispatcher) {
+        cleaner.clear()
+
+        database.ratingsQueries.seasonRatingsWithUploadPendingAction().executeAsList().shouldBeEmpty()
+        database.ratingsQueries.episodeRatingsWithUploadPendingAction().executeAsList().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should empty tvshow_provider_meta given clear called`() = runTest(testDispatcher) {
+        cleaner.clear()
+
+        database.tvshowProviderMetaQueries.providerRating(showIdForBreakingBad, Provider.TRAKT).executeAsOneOrNull().shouldBeNull()
     }
 
     @Test
@@ -215,6 +255,21 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             overview = null,
             rating = null,
             votes = null,
+        )
+
+        ratingsDao.upsertShowUserRating(
+            showId = showIdForBreakingBad.id,
+            userRating = 9L,
+            ratedAt = now,
+            pendingAction = PendingAction.UPLOAD,
+        )
+
+        providerMetaDao.upsertProviderRating(
+            showId = showIdForBreakingBad.id,
+            provider = Provider.TRAKT,
+            rating = 9.3,
+            voteCount = 1000L,
+            lastSyncedAt = now,
         )
     }
 

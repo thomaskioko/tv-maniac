@@ -34,6 +34,10 @@ graph TB
     direction TB
     :data:calendar:api[api]:::multiplatform
   end
+  subgraph :data:database
+    direction TB
+    :data:database:sqldelight[sqldelight]:::multiplatform
+  end
   subgraph :data:followedshows
     direction TB
     :data:followedshows:api[api]:::multiplatform
@@ -47,8 +51,10 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
+  :data:database:sqldelight --> :core:logger:api
   :domain:calendar --> :core:base
   :domain:calendar --> :core:util:api
   :domain:calendar --> :data:calendar:api

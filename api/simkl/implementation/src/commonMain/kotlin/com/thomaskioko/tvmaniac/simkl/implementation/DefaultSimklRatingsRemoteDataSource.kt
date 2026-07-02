@@ -2,17 +2,20 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 
 import com.thomaskioko.tvmaniac.core.base.SimklApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.simkl.api.SimklRatingsRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddRatingsResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRatingsRequest
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveRatingsRequest
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveRatingsResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowSummaryResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklUserRatingsResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -50,6 +53,15 @@ public class DefaultSimklRatingsRemoteDataSource(
             url {
                 method = HttpMethod.Get
                 path("sync/ratings/shows")
+            }
+        }
+
+    override suspend fun getShowSummary(simklId: Long): ApiResponse<SimklShowSummaryResponse> =
+        httpClient.safeRequest {
+            url {
+                method = HttpMethod.Get
+                path("tv", simklId.toString())
+                parameter("extended", "full")
             }
         }
 }

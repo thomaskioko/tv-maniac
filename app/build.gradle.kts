@@ -174,6 +174,7 @@ dependencies {
     implementation(projects.core.tasks.api)
     implementation(projects.data.followedshows.implementation)
     implementation(projects.data.library.implementation)
+    implementation(projects.data.ratings.implementation)
     implementation(projects.data.syncActivity.implementation)
     implementation(projects.data.upnext.implementation)
     implementation(projects.data.continueWatching.implementation)
