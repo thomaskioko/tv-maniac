@@ -1,0 +1,32 @@
+CREATE TABLE show_ratings(
+    show_id INTEGER NOT NULL PRIMARY KEY,
+    user_rating INTEGER DEFAULT NULL,
+    rated_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_show_ratings_pending_action ON show_ratings(pending_action);
+
+CREATE TABLE season_ratings(
+    season_id INTEGER NOT NULL PRIMARY KEY,
+    user_rating INTEGER DEFAULT NULL,
+    rated_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    FOREIGN KEY(season_id) REFERENCES season(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_season_ratings_pending_action ON season_ratings(pending_action);
+
+CREATE TABLE episode_ratings(
+    episode_id INTEGER NOT NULL PRIMARY KEY,
+    user_rating INTEGER DEFAULT NULL,
+    rated_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_episode_ratings_pending_action ON episode_ratings(pending_action);
