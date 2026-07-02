@@ -34,6 +34,7 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:popularshows:api --> :core:base
   :data:popularshows:api --> :data:database:sqldelight

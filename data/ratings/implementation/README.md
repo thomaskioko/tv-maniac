@@ -1,4 +1,4 @@
-# `:domain:sync-activity`
+# `:data:ratings:implementation`
 
 ## Module dependency graph
 
@@ -22,6 +22,14 @@ graph TB
     direction TB
     :core:network-util:api[api]:::multiplatform
   end
+  subgraph :core:syncstate
+    direction TB
+    :core:syncstate:api[api]:::multiplatform
+  end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
   subgraph :data:account-manager
     direction TB
     :data:account-manager:api[api]:::multiplatform
@@ -30,13 +38,22 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
-  subgraph :data:sync-activity
+  subgraph :data:followedshows
     direction TB
-    :data:sync-activity:api[api]:::multiplatform
+    :data:followedshows:api[api]:::multiplatform
   end
-  subgraph :domain
+  subgraph :data:ratings
     direction TB
-    :domain:sync-activity[sync-activity]:::multiplatform
+    :data:ratings:api[api]:::multiplatform
+    :data:ratings:implementation[implementation]:::multiplatform
+  end
+  subgraph :data:request-manager
+    direction TB
+    :data:request-manager:api[api]:::multiplatform
+  end
+  subgraph :data:shows
+    direction TB
+    :data:shows:api[api]:::multiplatform
   end
 
   :core:base --> :core:logger:api
@@ -45,10 +62,23 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
-  :data:sync-activity:api --> :core:network-util:api
-  :data:sync-activity:api --> :data:account-manager:api
-  :domain:sync-activity --> :core:base
-  :domain:sync-activity --> :data:sync-activity:api
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
+  :data:ratings:implementation --> :core:base
+  :data:ratings:implementation --> :core:logger:api
+  :data:ratings:implementation --> :core:network-util:api
+  :data:ratings:implementation --> :core:syncstate:api
+  :data:ratings:implementation --> :core:util:api
+  :data:ratings:implementation --> :data:account-manager:api
+  :data:ratings:implementation --> :data:database:sqldelight
+  :data:ratings:implementation --> :data:followedshows:api
+  :data:ratings:implementation --> :data:ratings:api
+  :data:ratings:implementation --> :data:request-manager:api
+  :data:ratings:implementation --> :data:shows:api
+  :data:shows:api --> :data:account-manager:api
+  :data:shows:api --> :data:database:sqldelight
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

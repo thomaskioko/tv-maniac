@@ -1,15 +1,10 @@
-# `:domain:sync-activity`
+# `:data:ratings:api`
 
 ## Module dependency graph
 
 <!--region graph-->
 ```mermaid
 graph TB
-  subgraph :core
-    direction TB
-    :core:base[base]:::multiplatform
-    :core:view[view]:::multiplatform
-  end
   subgraph :core:connectivity
     direction TB
     :core:connectivity:api[api]:::multiplatform
@@ -30,25 +25,22 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
-  subgraph :data:sync-activity
+  subgraph :data:followedshows
     direction TB
-    :data:sync-activity:api[api]:::multiplatform
+    :data:followedshows:api[api]:::multiplatform
   end
-  subgraph :domain
+  subgraph :data:ratings
     direction TB
-    :domain:sync-activity[sync-activity]:::multiplatform
+    :data:ratings:api[api]:::multiplatform
   end
 
-  :core:base --> :core:logger:api
-  :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
-  :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
-  :data:sync-activity:api --> :core:network-util:api
-  :data:sync-activity:api --> :data:account-manager:api
-  :domain:sync-activity --> :core:base
-  :domain:sync-activity --> :data:sync-activity:api
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

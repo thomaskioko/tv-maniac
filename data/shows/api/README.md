@@ -22,6 +22,7 @@ graph TB
     :data:shows:api[api]:::multiplatform
   end
 
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight

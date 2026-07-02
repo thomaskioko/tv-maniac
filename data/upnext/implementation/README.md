@@ -39,6 +39,7 @@ graph TB
     :i18n:generator[generator]:::multiplatform
   end
 
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:episode:api --> :data:account-manager:api

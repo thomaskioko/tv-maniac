@@ -135,6 +135,11 @@ graph TB
     :data:oauth:api[api]:::multiplatform
     :data:oauth:implementation[implementation]:::multiplatform
   end
+  subgraph :data:ratings
+    direction TB
+    :data:ratings:api[api]:::multiplatform
+    :data:ratings:implementation[implementation]:::multiplatform
+  end
   subgraph :data:request-manager
     direction TB
     :data:request-manager:api[api]:::multiplatform
@@ -294,6 +299,7 @@ graph TB
   :api:simkl:implementation --> :data:followedshows:api
   :api:simkl:implementation --> :data:library:api
   :api:simkl:implementation --> :data:oauth:api
+  :api:simkl:implementation --> :data:ratings:api
   :api:simkl:implementation --> :data:start-watching:api
   :api:simkl:implementation --> :data:sync-activity:api
   :api:simkl:implementation --> :data:user:api
@@ -317,6 +323,7 @@ graph TB
   :api:trakt:implementation --> :data:followedshows:api
   :api:trakt:implementation --> :data:library:api
   :api:trakt:implementation --> :data:oauth:api
+  :api:trakt:implementation --> :data:ratings:api
   :api:trakt:implementation --> :data:start-watching:api
   :api:trakt:implementation --> :data:sync-activity:api
   :api:trakt:implementation --> :data:user:api
@@ -366,6 +373,7 @@ graph TB
   :core:integration:infra --> :data:library:implementation
   :core:integration:infra --> :data:logout:implementation
   :core:integration:infra --> :data:oauth:implementation
+  :core:integration:infra --> :data:ratings:implementation
   :core:integration:infra --> :data:request-manager:implementation
   :core:integration:infra --> :data:seasondetails:implementation
   :core:integration:infra --> :data:seasons:implementation
@@ -409,6 +417,7 @@ graph TB
   :core:tasks:implementation --> :core:tasks:api
   :core:util:implementation --> :core:util:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
   :data:calendar:api --> :core:network-util:api
@@ -495,6 +504,7 @@ graph TB
   :data:library:implementation --> :data:watchproviders:api
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
+  :data:logout:implementation --> :data:ratings:api
   :data:logout:implementation --> :data:request-manager:api
   :data:logout:implementation --> :data:sync-activity:api
   :data:logout:implementation --> :data:user:api
@@ -506,6 +516,21 @@ graph TB
   :data:oauth:implementation --> :data:datastore:api
   :data:oauth:implementation --> :data:oauth:api
   :data:oauth:implementation --> :data:request-manager:api
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
+  :data:ratings:implementation --> :core:base
+  :data:ratings:implementation --> :core:logger:api
+  :data:ratings:implementation --> :core:network-util:api
+  :data:ratings:implementation --> :core:syncstate:api
+  :data:ratings:implementation --> :core:util:api
+  :data:ratings:implementation --> :data:account-manager:api
+  :data:ratings:implementation --> :data:database:sqldelight
+  :data:ratings:implementation --> :data:followedshows:api
+  :data:ratings:implementation --> :data:ratings:api
+  :data:ratings:implementation --> :data:request-manager:api
+  :data:ratings:implementation --> :data:shows:api
   :data:request-manager:implementation --> :core:util:api
   :data:request-manager:implementation --> :data:database:sqldelight
   :data:request-manager:implementation --> :data:request-manager:api

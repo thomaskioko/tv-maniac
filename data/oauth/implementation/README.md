@@ -22,6 +22,10 @@ graph TB
     direction TB
     :data:account-manager:api[api]:::multiplatform
   end
+  subgraph :data:database
+    direction TB
+    :data:database:sqldelight[sqldelight]:::multiplatform
+  end
   subgraph :data:datastore
     direction TB
     :data:datastore:api[api]:::multiplatform
@@ -43,6 +47,8 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
+  :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:oauth:api --> :data:account-manager:api
   :data:oauth:implementation --> :core:base

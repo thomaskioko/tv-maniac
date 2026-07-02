@@ -5,15 +5,25 @@
 <!--region graph-->
 ```mermaid
 graph TB
+  subgraph :core:logger
+    direction TB
+    :core:logger:api[api]:::multiplatform
+  end
   subgraph :data:account-manager
     direction TB
     :data:account-manager:api[api]:::multiplatform
+  end
+  subgraph :data:database
+    direction TB
+    :data:database:sqldelight[sqldelight]:::multiplatform
   end
   subgraph :data:oauth
     direction TB
     :data:oauth:api[api]:::multiplatform
   end
 
+  :data:account-manager:api --> :data:database:sqldelight
+  :data:database:sqldelight --> :core:logger:api
   :data:oauth:api --> :data:account-manager:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

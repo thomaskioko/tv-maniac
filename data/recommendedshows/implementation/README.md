@@ -62,6 +62,7 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:recommendedshows:api --> :data:database:sqldelight
   :data:recommendedshows:implementation --> :api:tmdb:api

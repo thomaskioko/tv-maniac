@@ -48,6 +48,7 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api

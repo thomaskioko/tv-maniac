@@ -19,12 +19,18 @@ graph TB
     :data:account-manager:api[api]:::multiplatform
     :data:account-manager:implementation[implementation]:::multiplatform
   end
+  subgraph :data:database
+    direction TB
+    :data:database:sqldelight[sqldelight]:::multiplatform
+  end
 
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
+  :data:database:sqldelight --> :core:logger:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;
