@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.Id
-import com.thomaskioko.tvmaniac.db.Provider
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.shows.api.ReconciliationResult
@@ -100,9 +100,4 @@ public class DefaultShowReconciler(
     private companion object {
         private const val TAG = "ShowReconciler"
     }
-}
-
-private fun AccountProvider.toDbProvider(): Provider = when (this) {
-    AccountProvider.TRAKT -> Provider.TRAKT
-    AccountProvider.SIMKL -> Provider.SIMKL
 }
