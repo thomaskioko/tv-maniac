@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.simkl.api.model.SimklRatingsRequest
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveRatingsRequest
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveRatingsResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowIds
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowSummaryResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklUserRatingsResponse
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -259,6 +260,49 @@ internal class DefaultSimklRatingsRemoteDataSourceTest {
     }
 
     @Test
+    fun `should use GET method with extended full param and correct path given getShowSummary is called`() = runTest {
+        var capturedMethod: HttpMethod? = null
+        var capturedPath: String? = null
+        var capturedExtendedParam: String? = null
+
+        val engine = MockEngine { request ->
+            capturedMethod = request.method
+            capturedPath = request.url.encodedPath
+            capturedExtendedParam = request.url.parameters["extended"]
+            respond(
+                content = SIMKL_SHOW_SUMMARY_RESPONSE,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.getShowSummary(simklId = 39687L)
+
+        capturedMethod shouldBe HttpMethod.Get
+        capturedPath shouldBe "/tv/39687"
+        capturedExtendedParam shouldBe "full"
+    }
+
+    @Test
+    fun `should deserialize simkl community rating and votes given getShowSummary returns ratings`() = runTest {
+        val engine = MockEngine { _ ->
+            respond(
+                content = SIMKL_SHOW_SUMMARY_RESPONSE,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        val result = dataSource.getShowSummary(simklId = 39687L)
+
+        val success = result.shouldBeInstanceOf<ApiResponse.Success<SimklShowSummaryResponse>>()
+        success.body.ratings?.simkl?.rating shouldBe 8.4
+        success.body.ratings?.simkl?.votes shouldBe 123
+    }
+
+    @Test
     fun `should return Unauthenticated given user is not authenticated and getUserShowRatings is called`() = runTest {
         val engine = MockEngine { _ ->
             respond(
@@ -304,6 +348,17 @@ private val SIMKL_REMOVE_RATINGS_RESPONSE = """
   "not_found": {
     "movies": [],
     "shows": []
+  }
+}
+""".trimIndent()
+
+private val SIMKL_SHOW_SUMMARY_RESPONSE = """
+{
+  "ratings": {
+    "simkl": {
+      "rating": 8.4,
+      "votes": 123
+    }
   }
 }
 """.trimIndent()
