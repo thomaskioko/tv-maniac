@@ -27,7 +27,7 @@ The framework must stay singular. It also carries the i18n module (Moko `MR` acc
 The binary target points into `ios-framework/build/` so the built XCFramework is the one source, with no copy inside this package. Two trade-offs come with that, both deliberate:
 
 - A relative path escaping the package root is not covered by Apple or SwiftPM documentation. It resolves and builds on Xcode 26.5 (verified with app, standalone, and missing-artifact tests); if a future Xcode starts rejecting it, move the artifact back inside the package and point the manifest at it.
-- `./gradlew clean` deletes the artifact. The next application build rebuilds it through the scheme pre-action; when working on a package on its own, re-run the script. The failure in the meantime is loud and names the path (`does not contain a binary artifact`, or the manifest's own message with instructions).
+- `./gradlew clean` deletes the artifact, and package resolution runs BEFORE scheme pre-actions, so a missing artifact fails any Xcode build until the script runs once. The fastlane lanes call the script before invoking xcodebuild, so they provision themselves; in Xcode (or when working on a package on its own), run `./scripts/build-kmp-framework.sh`. The failure in the meantime is loud and names the path (`does not contain a binary artifact`, or the manifest's own message with instructions).
 
 ## Full application builds
 
@@ -39,6 +39,8 @@ The `tv-maniac` and `Snapshots` schemes run `scripts/build-kmp-framework.sh` as 
 4. Xcode resolves this package, compiles the Swift packages against the fresh framework, and links the static library into the app.
 
 Kotlin changes therefore flow into full app builds automatically; nobody runs the script by hand for the app workflow. A Release archive works the same way: the pre-action sees `CONFIGURATION=Release` and a device SDK, relinks the release device slice, and overwrites the artifact.
+
+One limit: pre-actions refresh an EXISTING artifact, they cannot create a missing one, because package resolution runs before scheme actions. The fastlane lanes therefore run the script before xcodebuild (`build_kmp_framework` in `fastlane/Fastfile`), and a missing artifact in Xcode means running the script once by hand.
 
 ## Working on a package on its own
 
