@@ -12,10 +12,7 @@ public class RateInteractor(
 
     override suspend fun doWork(params: Param) {
         when (params.type) {
-            RatingEntityType.SHOW -> {
-                ratingsRepository.rateShow(params.id, params.rating)
-                ratingsRepository.refreshCommunityRating(params.id, params.forceRefresh)
-            }
+            RatingEntityType.SHOW -> ratingsRepository.rateShow(params.id, params.rating)
             RatingEntityType.SEASON -> ratingsRepository.rateSeason(params.id, params.rating)
             RatingEntityType.EPISODE -> ratingsRepository.rateEpisode(params.id, params.rating)
         }
@@ -25,6 +22,5 @@ public class RateInteractor(
         val type: RatingEntityType,
         val id: Long,
         val rating: Int,
-        val forceRefresh: Boolean = false,
     )
 }
