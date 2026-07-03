@@ -136,6 +136,7 @@ dependencies {
     implementation(projects.features.calendar.presenter)
     implementation(projects.features.discover.presenter)
     implementation(projects.features.episodeSheet.presenter)
+    implementation(projects.features.ratingSheet.presenter)
     implementation(projects.features.library.presenter)
     implementation(projects.features.home.presenter)
     implementation(projects.features.moreShows.presenter)

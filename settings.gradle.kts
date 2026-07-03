@@ -298,6 +298,8 @@ include(
     ":features:episode-sheet:presenter",
     ":features:episode-sheet:nav",
     ":features:episode-sheet:ui",
+    ":features:rating-sheet:presenter",
+    ":features:rating-sheet:nav",
     ":features:home:nav",
     ":features:home:presenter",
     ":features:library:nav",
