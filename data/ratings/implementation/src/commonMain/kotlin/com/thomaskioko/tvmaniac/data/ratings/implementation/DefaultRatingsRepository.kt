@@ -26,6 +26,7 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
@@ -45,6 +46,9 @@ public class DefaultRatingsRepository(
 ) : RatingsRepository {
 
     private val syncMutex = Mutex()
+
+    override fun observePendingRatings(): Flow<Boolean> =
+        ratingsDao.observePendingRatingsCount().map { it > 0 }.distinctUntilChanged()
 
     override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
         when {

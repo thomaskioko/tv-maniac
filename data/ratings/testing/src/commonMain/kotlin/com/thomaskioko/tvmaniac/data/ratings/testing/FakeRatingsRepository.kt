@@ -21,10 +21,17 @@ public class FakeRatingsRepository : RatingsRepository {
     private val episodeRatingFlow = MutableStateFlow(
         EpisodeRating(userRating = null, pendingAction = PendingAction.NOTHING),
     )
+    private val pendingRatingsFlow = MutableStateFlow(false)
 
     public fun setSyncPendingRatingsError(error: Throwable?) {
         syncPendingRatingsError = error
     }
+
+    public fun setPendingRatings(hasPending: Boolean) {
+        pendingRatingsFlow.value = hasPending
+    }
+
+    override fun observePendingRatings(): Flow<Boolean> = pendingRatingsFlow.asStateFlow()
 
     public fun setShowRating(rating: ShowRating) {
         showRatingFlow.value = rating
