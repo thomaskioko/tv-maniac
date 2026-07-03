@@ -28,6 +28,7 @@ let package = Package(
         .package(name: "MoreShows", path: "../MoreShows"),
         .package(name: "ShowList", path: "../ShowList"),
         .package(name: "EpisodeDetail", path: "../EpisodeDetail"),
+        .package(name: "RatingSheet", path: "../RatingSheet"),
     ],
     targets: [
         .target(
@@ -46,6 +47,7 @@ let package = Package(
                 "MoreShows",
                 "ShowList",
                 "EpisodeDetail",
+                "RatingSheet",
             ]
         ),
     ]

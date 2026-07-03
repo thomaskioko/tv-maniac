@@ -300,6 +300,7 @@ include(
     ":features:episode-sheet:ui",
     ":features:rating-sheet:presenter",
     ":features:rating-sheet:nav",
+    ":features:rating-sheet:ui",
     ":features:home:nav",
     ":features:home:presenter",
     ":features:library:nav",
