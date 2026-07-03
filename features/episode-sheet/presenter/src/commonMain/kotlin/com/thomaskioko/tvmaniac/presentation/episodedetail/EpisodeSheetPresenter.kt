@@ -104,8 +104,8 @@ public class EpisodeSheetPresenter(
             is EpisodeSheetAction.RatingClicked -> navigator.navigateTo(
                 RatingSheetRoute(
                     RatingSheetParam(
-                        entityType = RatingEntityType.EPISODE,
-                        entityId = param.episodeId,
+                        ratingType = RatingEntityType.EPISODE,
+                        id = param.episodeId,
                     ),
                 ),
             )
