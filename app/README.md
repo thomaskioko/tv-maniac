@@ -526,6 +526,7 @@ graph TB
   :app -.-> :data:oauth:implementation
   :app -.-> :data:popularshows:api
   :app -.-> :data:popularshows:implementation
+  :app -.-> :data:ratings:api
   :app -.-> :data:ratings:implementation
   :app -.-> :data:request-manager:implementation
   :app -.-> :data:search:api
@@ -573,6 +574,7 @@ graph TB
   :app -.-> :domain:library
   :app -.-> :domain:logout
   :app -.-> :domain:notifications
+  :app -.-> :domain:ratings
   :app -.-> :domain:recently-watched
   :app -.-> :domain:seasondetails
   :app -.-> :domain:settings
@@ -615,6 +617,7 @@ graph TB
   :app -.-> :features:progress:nav
   :app -.-> :features:progress:presenter
   :app -.-> :features:progress:ui
+  :app -.-> :features:rating-sheet:nav
   :app -.-> :features:rating-sheet:presenter
   :app -.-> :features:root:nav
   :app -.-> :features:root:presenter
