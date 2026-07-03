@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRatingEntry
@@ -47,8 +48,11 @@ public class DefaultRatingsRepository(
 
     private val syncMutex = Mutex()
 
-    override suspend fun refreshCommunityRating(showId: Long) {
-        ratingsStore.fresh(showId) { logger.debug(TAG, it) }
+    override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
+        when {
+            forceRefresh -> ratingsStore.fresh(showId)
+            else -> ratingsStore.get(showId)
+        }
     }
 
     override fun observeShowRating(showId: Long): Flow<ShowRating> {

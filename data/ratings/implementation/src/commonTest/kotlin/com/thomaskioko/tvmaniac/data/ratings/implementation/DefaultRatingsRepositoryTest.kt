@@ -215,7 +215,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         val repository = buildRepository(FakeSyncObserver())
         remoteDataSource.provider = AccountProvider.TRAKT
 
-        repository.refreshCommunityRating(SHOW_ID)
+        repository.refreshCommunityRating(SHOW_ID, forceRefresh = true)
     }
 
     @Test
