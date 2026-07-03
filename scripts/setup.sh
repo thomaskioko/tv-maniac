@@ -90,17 +90,18 @@ ensure_ios() {
     warn "Xcode not found. Install Xcode 16+ to build iOS."
     return
   fi
+  info "Building the shared KMP XCFramework (first run is slow)..."
+  if ./scripts/build-kmp-framework.sh; then
+    ok "KMP XCFramework built for SwiftPM"
+  else
+    warn "Framework build failed; run ./scripts/build-kmp-framework.sh before opening Xcode"
+    return
+  fi
   info "Resolving Swift Package dependencies..."
   if xcodebuild -resolvePackageDependencies -project ios/tv-maniac.xcodeproj -scheme tv-maniac >/dev/null 2>&1; then
     ok "SwiftPM resolved"
   else
     warn "Could not resolve SwiftPM packages (open ios/tv-maniac.xcodeproj in Xcode to retry)"
-  fi
-  info "Pre-building the shared KMP framework (first run is slow)..."
-  if ./gradlew :ios-framework:linkDebugFrameworkIosSimulatorArm64 -Papp.enableIos=true; then
-    ok "KMP framework built"
-  else
-    warn "Framework pre-build failed; Xcode will build it on first run"
   fi
 }
 
