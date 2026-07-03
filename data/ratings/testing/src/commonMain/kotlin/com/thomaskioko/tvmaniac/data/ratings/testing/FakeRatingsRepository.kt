@@ -48,7 +48,7 @@ public class FakeRatingsRepository : RatingsRepository {
         syncPendingRatingsError?.let { throw it }
     }
 
-    override suspend fun refreshCommunityRating(showId: Long) {
+    override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
     }
 
     override fun observeShowRating(showId: Long): Flow<ShowRating> = showRatingFlow.asStateFlow()
