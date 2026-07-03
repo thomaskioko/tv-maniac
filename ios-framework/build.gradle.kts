@@ -29,6 +29,7 @@ scaffold {
             )
 
             export(projects.i18n.api)
+            export(projects.i18n.generator)
             export(projects.core.appconfig.api)
             export(projects.core.logger.api)
             export(projects.core.featureFlags.api)
@@ -76,6 +77,7 @@ scaffold {
 
             export(libs.decompose.decompose)
             export(libs.essenty.lifecycle)
+            export(libs.moko.resources)
         }
     }
 }
@@ -91,6 +93,8 @@ kotlin {
                 api(projects.core.networkUtil.api)
                 api(projects.core.networkUtil.implementation)
                 api(projects.i18n.api)
+                api(projects.i18n.generator)
+                api(libs.moko.resources)
                 api(projects.navigation.api)
                 api(projects.data.accountManager.api)
                 api(projects.data.subscription.api)
