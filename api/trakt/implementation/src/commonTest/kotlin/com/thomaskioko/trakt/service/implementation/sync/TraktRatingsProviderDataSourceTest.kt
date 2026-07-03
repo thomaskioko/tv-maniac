@@ -2,13 +2,18 @@ package com.thomaskioko.trakt.service.implementation.sync
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktAddRatingsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryShow
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktHistoryShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktRatingResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktRatingsCount
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktRatingsNotFound
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktRemoveRatingsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserRatingItem
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktRatingsRemoteDataSource
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.test.runTest
@@ -23,6 +28,36 @@ class TraktRatingsProviderDataSourceTest {
     fun `should report trakt as its provider`() {
         source.provider shouldBe AccountProvider.TRAKT
     }
+
+    @Test
+    fun `should return the user rating for the matching trakt id`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(
+                listOf(
+                    userRatingItem(traktId = 10, rating = 6),
+                    userRatingItem(traktId = 20, rating = 9),
+                ),
+            ),
+        )
+
+        source.getShowUserRating(providerShowId = 20).getOrThrow() shouldBe 9
+    }
+
+    @Test
+    fun `should return null user rating given no trakt id matches`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(listOf(userRatingItem(traktId = 10, rating = 6))),
+        )
+
+        source.getShowUserRating(providerShowId = 99).getOrThrow().shouldBeNull()
+    }
+
+    private fun userRatingItem(traktId: Long, rating: Int): TraktUserRatingItem = TraktUserRatingItem(
+        ratedAt = "2026-01-01T00:00:00Z",
+        rating = rating,
+        type = "show",
+        show = TraktHistoryShow(ids = TraktHistoryShowIds(traktId = traktId)),
+    )
 
     @Test
     fun `should map add rating response to success given trakt accepts the rating`() = runTest {

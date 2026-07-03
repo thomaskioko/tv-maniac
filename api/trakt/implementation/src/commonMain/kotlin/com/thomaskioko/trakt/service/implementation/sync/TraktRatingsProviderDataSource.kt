@@ -50,6 +50,11 @@ public class TraktRatingsProviderDataSource(
     override suspend fun getShowCommunityRating(providerShowId: Long): ApiResponse<CommunityRating> =
         remoteDataSource.getShowCommunityRating(providerShowId).map { CommunityRating(rating = it.rating, votes = it.votes) }
 
+    override suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?> =
+        remoteDataSource.getUserShowRatings().map { items ->
+            items.firstOrNull { it.show.ids.traktId == providerShowId }?.rating
+        }
+
     override suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit> =
         remoteDataSource.addRatings(
             TraktRatingsRequest(

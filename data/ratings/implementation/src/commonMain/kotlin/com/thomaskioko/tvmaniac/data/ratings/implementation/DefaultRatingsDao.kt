@@ -39,6 +39,14 @@ public class DefaultRatingsDao(
         )
     }
 
+    override fun saveRemoteShowRating(showId: Long, userRating: Long, ratedAt: Long) {
+        queries.saveRemoteShowRating(
+            showId = Id(showId),
+            userRating = userRating,
+            ratedAt = ratedAt,
+        )
+    }
+
     override fun observeShowRating(showId: Long): Flow<ShowRatingEntry?> = queries.observeShowRating(Id(showId))
         .asFlow()
         .mapToOneOrNull(dispatchers.io)

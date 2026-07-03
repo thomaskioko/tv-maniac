@@ -47,11 +47,13 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
     private val dateTimeProvider = FakeDateTimeProvider()
 
     private lateinit var providerMetaDao: DefaultProviderMetaDao
+    private lateinit var ratingsDao: DefaultRatingsDao
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         providerMetaDao = DefaultProviderMetaDao(database = database, dispatchers = dispatchers)
+        ratingsDao = DefaultRatingsDao(database = database, dispatchers = dispatchers)
     }
 
     @AfterTest
@@ -63,6 +65,7 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
     private fun buildStore(): RatingsStore = RatingsStore(
         activeSource = { activeRemoteSource },
         providerMetaDao = providerMetaDao,
+        ratingsDao = ratingsDao,
         database = database,
         requestManagerRepository = requestManagerRepository,
         dateTimeProvider = dateTimeProvider,
