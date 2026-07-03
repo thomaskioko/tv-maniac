@@ -25,6 +25,7 @@ let package = Package(
         .package(name: "Profile", path: "../Profile"),
         .package(name: "Calendar", path: "../Calendar"),
         .package(name: "Progress", path: "../Progress"),
+        .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
     ],
     targets: [
         .target(
@@ -40,6 +41,7 @@ let package = Package(
                 "Profile",
                 "Calendar",
                 "Progress",
+                .product(name: "TvManiac", package: "TvManiacFramework"),
             ]
         ),
     ]

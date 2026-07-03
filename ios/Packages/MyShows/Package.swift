@@ -20,6 +20,7 @@ let package = Package(
         .package(name: "Models", path: "../Models"),
         .package(name: "TvManiacKit", path: "../TvManiacKit"),
         .package(name: "UpNext", path: "../UpNext"),
+        .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
     targets: [
@@ -31,6 +32,7 @@ let package = Package(
                 "Models",
                 "UpNext",
                 "TvManiacKit",
+                .product(name: "TvManiac", package: "TvManiacFramework"),
             ]
         ),
         .testTarget(

@@ -29,6 +29,7 @@ let package = Package(
         .package(name: "ShowList", path: "../ShowList"),
         .package(name: "EpisodeDetail", path: "../EpisodeDetail"),
         .package(name: "RatingSheet", path: "../RatingSheet"),
+        .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
     ],
     targets: [
         .target(
@@ -48,6 +49,7 @@ let package = Package(
                 "ShowList",
                 "EpisodeDetail",
                 "RatingSheet",
+                .product(name: "TvManiac", package: "TvManiacFramework"),
             ]
         ),
     ]
