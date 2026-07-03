@@ -8,15 +8,21 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.FetchRateEpisodeInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObservableEpisodeRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RemoveEpisodeRatingInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
@@ -43,6 +49,7 @@ internal class EpisodeSheetPresenterTest {
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val episodeRepository = FakeEpisodeRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val ratingsRepository = FakeRatingsRepository()
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
 
@@ -67,6 +74,33 @@ internal class EpisodeSheetPresenterTest {
             val initialState = awaitItem()
             initialState.isLoading shouldBe true
             initialState.episodeTitle shouldBe ""
+        }
+    }
+
+    @Test
+    fun `should emit episode user rating given rating is observed`() = runTest {
+        ratingsRepository.setEpisodeRating(EpisodeRating(userRating = 7, pendingAction = PendingAction.NOTHING))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().userRating shouldBe 7
+        }
+    }
+
+    @Test
+    fun `should toggle rating sheet given clicked then dismissed`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            presenter.dispatch(EpisodeSheetAction.RatingClicked)
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().isRatingSheetVisible shouldBe true
+
+            presenter.dispatch(EpisodeSheetAction.RatingSheetDismissed)
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().isRatingSheetVisible shouldBe false
         }
     }
 
@@ -375,8 +409,11 @@ internal class EpisodeSheetPresenterTest {
             param = EpisodeSheetParam(episodeId = 1L, source = source),
             navigator = navigator,
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
+            observableEpisodeRatingInteractor = ObservableEpisodeRatingInteractor(ratingsRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),
+            fetchRateEpisodeInteractor = FetchRateEpisodeInteractor(ratingsRepository),
+            removeEpisodeRatingInteractor = RemoveEpisodeRatingInteractor(ratingsRepository),
             unfollowShowInteractor = UnfollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
                 libraryRepository = FakeLibraryRepository(),

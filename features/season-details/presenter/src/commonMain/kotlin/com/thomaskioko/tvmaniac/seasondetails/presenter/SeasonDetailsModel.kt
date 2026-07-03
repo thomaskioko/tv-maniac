@@ -69,6 +69,9 @@ public data class SeasonDetailsModel(
     val imageUrl: String?,
     val episodeDetailsList: ImmutableList<EpisodeDetailsModel>,
     val seasonCast: ImmutableList<Cast>,
+    val userRating: Int? = null,
+    val isRatingSheetVisible: Boolean = false,
+    val isSubmittingRating: Boolean = false,
     val message: UiMessage? = null,
 ) {
     val isRefreshing: Boolean

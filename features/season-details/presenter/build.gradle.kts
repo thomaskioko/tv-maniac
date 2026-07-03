@@ -19,6 +19,7 @@ kotlin {
                 api(projects.data.episode.api)
                 api(projects.data.seasondetails.api)
                 api(projects.domain.episode)
+                api(projects.domain.ratings)
                 api(projects.domain.seasondetails)
                 api(projects.features.seasonDetails.nav)
                 api(projects.navigation.api)
@@ -39,6 +40,7 @@ kotlin {
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.ratings.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.navigation.testing)
             }

@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -18,6 +19,9 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.FetchRateEpisodeInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObservableEpisodeRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RemoveEpisodeRatingInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -31,9 +35,9 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -47,9 +51,12 @@ public class EpisodeSheetPresenter(
     @Assisted private val param: EpisodeSheetParam,
     componentContext: ComponentContext,
     observeEpisodeByIdInteractor: ObserveEpisodeByIdInteractor,
+    observableEpisodeRatingInteractor: ObservableEpisodeRatingInteractor,
     private val navigator: Navigator,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
+    private val fetchRateEpisodeInteractor: FetchRateEpisodeInteractor,
+    private val removeEpisodeRatingInteractor: RemoveEpisodeRatingInteractor,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
@@ -60,16 +67,27 @@ public class EpisodeSheetPresenter(
     private val coroutineScope = componentContext.coroutineScope()
     private val uiMessageManager = UiMessageManager()
     private val actionLoadingState = ObservableLoadingCounter()
+    private val ratingLoadingState = ObservableLoadingCounter()
+    private val ratingSheetVisible = MutableStateFlow(false)
     private var currentEpisode: EpisodeById? = null
 
     public val state: StateFlow<EpisodeDetailSheetState> = combine(
         observeEpisodeByIdInteractor.flow,
         uiMessageManager.message,
         actionLoadingState.observable,
-    ) { episode, message, isTogglingWatched ->
+        observableEpisodeRatingInteractor.flow,
+        ratingLoadingState.observable,
+        ratingSheetVisible,
+    ) { episode, message, isTogglingWatched, rating, isSubmittingRating, isRatingSheetVisible ->
         currentEpisode = episode
-        episode?.toState(param.source, localizer)?.copy(message = message, isTogglingWatched = isTogglingWatched)
-            ?: EpisodeDetailSheetState(isLoading = true, message = message, isTogglingWatched = isTogglingWatched)
+        val current = episode?.toState(param.source, localizer) ?: EpisodeDetailSheetState(isLoading = true)
+        current.copy(
+            message = message,
+            isTogglingWatched = isTogglingWatched,
+            userRating = rating.userRating,
+            isSubmittingRating = isSubmittingRating,
+            isRatingSheetVisible = isRatingSheetVisible,
+        )
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -80,6 +98,7 @@ public class EpisodeSheetPresenter(
 
     init {
         observeEpisodeByIdInteractor(param.episodeId)
+        observableEpisodeRatingInteractor(param.episodeId)
     }
 
     public fun dispatch(action: EpisodeSheetAction) {
@@ -90,6 +109,26 @@ public class EpisodeSheetPresenter(
             is EpisodeSheetAction.Unfollow -> unfollowShow()
             is EpisodeSheetAction.Dismiss -> navigator.dismissOverlay()
             is EpisodeSheetAction.MessageShown -> clearMessage(action.id)
+            is EpisodeSheetAction.RatingClicked -> ratingSheetVisible.value = true
+            is EpisodeSheetAction.RatingSheetDismissed -> ratingSheetVisible.value = false
+            is EpisodeSheetAction.RatingSelected -> onRatingSelected(action.rating)
+            is EpisodeSheetAction.RatingRemoved -> onRatingRemoved()
+        }
+    }
+
+    private fun onRatingSelected(rating: Int) {
+        ratingSheetVisible.value = false
+        appScopeLauncher.launch(TAG) {
+            fetchRateEpisodeInteractor(FetchRateEpisodeInteractor.Param(episodeId = param.episodeId, rating = rating))
+                .collectStatus(ratingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        }
+    }
+
+    private fun onRatingRemoved() {
+        ratingSheetVisible.value = false
+        appScopeLauncher.launch(TAG) {
+            removeEpisodeRatingInteractor(param.episodeId)
+                .collectStatus(ratingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 
