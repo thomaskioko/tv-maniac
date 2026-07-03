@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.data.ratings.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
-import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
@@ -40,7 +39,6 @@ public class DefaultRatingsRepository(
     private val providerMetaDao: ProviderMetaDao,
     private val ratingsStore: RatingsStore,
     private val activeSource: () -> RatingsRemoteDataSource?,
-    private val appScopeLauncher: AppScopeLauncher,
     private val syncObserver: SyncObserver,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
@@ -77,14 +75,10 @@ public class DefaultRatingsRepository(
             ratedAt = dateTimeProvider.nowMillis(),
             pendingAction = PendingAction.UPLOAD,
         )
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun removeShowRating(showId: Long) {
         ratingsDao.clearShowUserRating(showId)
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override fun observeSeasonRating(seasonId: Long): Flow<SeasonRating> =
@@ -102,14 +96,10 @@ public class DefaultRatingsRepository(
             ratedAt = dateTimeProvider.nowMillis(),
             pendingAction = PendingAction.UPLOAD,
         )
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun removeSeasonRating(seasonId: Long) {
         ratingsDao.clearSeasonUserRating(seasonId)
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override fun observeEpisodeRating(episodeId: Long): Flow<EpisodeRating> =
@@ -127,14 +117,10 @@ public class DefaultRatingsRepository(
             ratedAt = dateTimeProvider.nowMillis(),
             pendingAction = PendingAction.UPLOAD,
         )
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun removeEpisodeRating(episodeId: Long) {
         ratingsDao.clearEpisodeUserRating(episodeId)
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun syncPendingRatings() {

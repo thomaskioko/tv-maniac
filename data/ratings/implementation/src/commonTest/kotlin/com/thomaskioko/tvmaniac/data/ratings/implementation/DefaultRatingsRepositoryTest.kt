@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.data.ratings.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
@@ -25,7 +24,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -399,14 +397,13 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         }
     }
 
-    private fun TestScope.buildRepository(syncObserver: FakeSyncObserver): DefaultRatingsRepository =
+    private fun buildRepository(syncObserver: FakeSyncObserver): DefaultRatingsRepository =
         DefaultRatingsRepository(
             ratingsDao = ratingsDao,
             tvShowsDao = tvShowsDao,
             providerMetaDao = providerMetaDao,
             ratingsStore = ratingsStore,
             activeSource = { activeRemoteSource },
-            appScopeLauncher = FakeAppScopeLauncher(scope = this),
             syncObserver = syncObserver,
             dateTimeProvider = dateTimeProvider,
             logger = FakeLogger(),
