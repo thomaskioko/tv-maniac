@@ -75,7 +75,7 @@ The Swift packages under `ios/Packages/` resolve the shared Kotlin code through 
 xed ios/Packages/Search
 ```
 
-Re-run the script after changing Kotlin code; an outdated framework shows up as compile errors against the Kotlin API. Other slices when needed:
+Re-run the script after changing Kotlin code; an outdated framework shows up as compile errors against the Kotlin API. `./gradlew clean` deletes the built framework, so re-run the script after that too. Other slices when needed:
 
 ```bash
 ./scripts/build-kmp-framework.sh --platform device

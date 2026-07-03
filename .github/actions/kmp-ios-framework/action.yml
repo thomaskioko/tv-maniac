@@ -24,20 +24,20 @@ runs:
       if: inputs.mode == 'build'
       uses: actions/cache@v6
       with:
-        path: ios/Packages/TvManiacFramework/Frameworks
+        path: ios-framework/build/spm
         key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ hashFiles('**/*.kt', '**/*.kts', 'gradle/libs.versions.toml', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}
 
     - name: 🗂️ Restore prebuilt KMP XCFramework
       if: inputs.mode == 'restore'
       uses: actions/cache/restore@v6
       with:
-        path: ios/Packages/TvManiacFramework/Frameworks
+        path: ios-framework/build/spm
         key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ hashFiles('**/*.kt', '**/*.kts', 'gradle/libs.versions.toml', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}
 
-    # Builds the XCFramework into ios/Packages/TvManiacFramework/Frameworks,
-    # the directory the TvManiacFramework package's binaryTarget points at.
-    # Consumer jobs restore this directory and set TVMANIAC_SKIP_FRAMEWORK_BUILD=1
-    # so the scheme pre-action skips the gradle build. Only on a cache miss.
+    # Builds the XCFramework into ios-framework/build/spm, the directory the
+    # TvManiacFramework package's binaryTarget points at. Consumer jobs restore
+    # this directory and set TVMANIAC_SKIP_FRAMEWORK_BUILD=1 so the scheme
+    # pre-action skips the gradle build. Only on a cache miss.
     - name: 🧱 Assemble KMP XCFramework
       if: inputs.mode == 'build' && steps.cache-build.outputs.cache-hit != 'true'
       shell: bash
@@ -46,4 +46,4 @@ runs:
     - name: ✅ Verify built framework
       if: inputs.mode == 'build'
       shell: bash
-      run: test -f "ios/Packages/TvManiacFramework/Frameworks/TvManiac.xcframework/ios-arm64-simulator/TvManiac.framework/TvManiac"
+      run: test -f "ios-framework/build/spm/TvManiac.xcframework/ios-arm64-simulator/TvManiac.framework/TvManiac"

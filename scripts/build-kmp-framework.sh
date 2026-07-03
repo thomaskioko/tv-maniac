@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 #
 # Builds the KMP framework (TvManiac) and packages it as an XCFramework at
-# ios/Packages/TvManiacFramework/Frameworks/, the one location the
-# TvManiacFramework Swift package reads it from. The app, any package opened
-# on its own (`xed ios/Packages/<Name>`), and CI all resolve it from there.
+# ios-framework/build/spm/, the location the TvManiacFramework Swift package's
+# binary target points at. The app, any package opened on its own
+# (`xed ios/Packages/<Name>`), and CI all resolve it from there.
+#
+# The artifact lives in gradle build output on purpose (one source, no copy),
+# so `./gradlew clean` removes it: the next app build rebuilds it through the
+# scheme pre-action, and standalone package work re-runs this script.
 #
 # Ways to run:
 #   - Xcode scheme pre-action: no arguments; CONFIGURATION and SDK_NAME come
@@ -22,7 +26,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
-DEST="$REPO_ROOT/ios/Packages/TvManiacFramework/Frameworks"
+DEST="$REPO_ROOT/ios-framework/build/spm"
 
 CONFIG=""
 PLATFORM=""
