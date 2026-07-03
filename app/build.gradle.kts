@@ -210,6 +210,9 @@ dependencies {
     implementation(projects.domain.featureFlags)
     implementation(projects.features.featureFlags.nav)
     implementation(projects.features.featureFlags.presenter)
+    implementation(projects.data.ratings.api)
+    implementation(projects.domain.ratings)
+    implementation(projects.features.ratingSheet.nav)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)
