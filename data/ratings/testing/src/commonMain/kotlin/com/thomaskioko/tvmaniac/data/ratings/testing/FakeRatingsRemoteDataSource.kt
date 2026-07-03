@@ -16,6 +16,7 @@ public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
     public var lastRemoveShowRatingTmdbId: Long? = null
         private set
     private var communityRatingResponse: ApiResponse<CommunityRating> = ApiResponse.Success(CommunityRating(rating = 0.0, votes = 0))
+    private var userRatingResponse: ApiResponse<Int?> = ApiResponse.Success(null)
     private var addSeasonRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
     private var removeSeasonRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
     private var addEpisodeRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
@@ -31,6 +32,10 @@ public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
 
     public fun setCommunityRatingResponse(response: ApiResponse<CommunityRating>) {
         communityRatingResponse = response
+    }
+
+    public fun setUserRatingResponse(response: ApiResponse<Int?>) {
+        userRatingResponse = response
     }
 
     public fun setAddSeasonRatingResponse(response: ApiResponse<Unit>) {
@@ -60,6 +65,8 @@ public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
     }
 
     override suspend fun getShowCommunityRating(providerShowId: Long): ApiResponse<CommunityRating> = communityRatingResponse
+
+    override suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?> = userRatingResponse
 
     override suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit> = addSeasonRatingResponse
 

@@ -2,14 +2,20 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddRatingsResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRatingValue
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRatings
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRatingsCountBucket
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveRatingsResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowEntry
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowIds
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowSummaryResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklUserRatedShow
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklUserRatingsResponse
 import com.thomaskioko.tvmaniac.simkl.testing.FakeSimklRatingsRemoteDataSource
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.test.runTest
@@ -19,6 +25,37 @@ class SimklRatingsProviderDataSourceTest {
 
     private val remoteDataSource = FakeSimklRatingsRemoteDataSource()
     private val source = SimklRatingsProviderDataSource(remoteDataSource)
+
+    @Test
+    fun `should return the user rating for the matching simkl id`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(
+                SimklUserRatingsResponse(
+                    shows = listOf(
+                        userRatedShow(simklId = 10, rating = 6),
+                        userRatedShow(simklId = 20, rating = 9),
+                    ),
+                ),
+            ),
+        )
+
+        source.getShowUserRating(providerShowId = 20).getOrThrow() shouldBe 9
+    }
+
+    @Test
+    fun `should return null user rating given no simkl id matches`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(SimklUserRatingsResponse(shows = listOf(userRatedShow(simklId = 10, rating = 6)))),
+        )
+
+        source.getShowUserRating(providerShowId = 99).getOrThrow().shouldBeNull()
+    }
+
+    private fun userRatedShow(simklId: Long, rating: Int): SimklUserRatedShow = SimklUserRatedShow(
+        userRating = rating,
+        ratedAt = "2026-01-01T00:00:00Z",
+        show = SimklShowEntry(ids = SimklShowIds(simkl = simklId)),
+    )
 
     @Test
     fun `should report simkl as its provider`() {

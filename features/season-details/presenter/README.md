@@ -54,6 +54,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:ratings
+    direction TB
+    :data:ratings:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -65,11 +69,16 @@ graph TB
   subgraph :domain
     direction TB
     :domain:episode[episode]:::multiplatform
+    :domain:ratings[ratings]:::multiplatform
     :domain:seasondetails[seasondetails]:::multiplatform
   end
   subgraph :features:episode-sheet
     direction TB
     :features:episode-sheet:nav[nav]:::multiplatform
+  end
+  subgraph :features:rating-sheet
+    direction TB
+    :features:rating-sheet:nav[nav]:::multiplatform
   end
   subgraph :features:season-details
     direction TB
@@ -95,6 +104,10 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
   :data:seasondetails:api --> :data:database:sqldelight
   :domain:episode --> :core:base
   :domain:episode --> :core:logger:api
@@ -105,11 +118,15 @@ graph TB
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:ratings --> :core:base
+  :domain:ratings --> :data:ratings:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
   :domain:seasondetails --> :data:seasondetails:api
   :features:episode-sheet:nav --> :navigation:api
+  :features:rating-sheet:nav --> :data:ratings:api
+  :features:rating-sheet:nav --> :navigation:api
   :features:season-details:nav --> :navigation:api
   :features:season-details:presenter --> :core:base
   :features:season-details:presenter --> :core:logger:api
@@ -117,8 +134,10 @@ graph TB
   :features:season-details:presenter --> :data:episode:api
   :features:season-details:presenter --> :data:seasondetails:api
   :features:season-details:presenter --> :domain:episode
+  :features:season-details:presenter --> :domain:ratings
   :features:season-details:presenter --> :domain:seasondetails
   :features:season-details:presenter -.-> :features:episode-sheet:nav
+  :features:season-details:presenter --> :features:rating-sheet:nav
   :features:season-details:presenter --> :features:season-details:nav
   :features:season-details:presenter --> :navigation:api
 

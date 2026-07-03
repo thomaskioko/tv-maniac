@@ -17,7 +17,9 @@ kotlin {
                 api(projects.core.view)
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)
+                api(projects.domain.ratings)
                 api(projects.features.episodeSheet.nav)
+                api(projects.features.ratingSheet.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
 
@@ -38,6 +40,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.database.sqldelight)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.ratings.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.library.testing)
                 implementation(projects.i18n.testing)

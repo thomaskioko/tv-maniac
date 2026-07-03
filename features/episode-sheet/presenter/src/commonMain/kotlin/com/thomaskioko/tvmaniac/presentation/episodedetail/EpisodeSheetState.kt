@@ -15,6 +15,7 @@ public data class EpisodeDetailSheetState(
     val voteCount: Long? = null,
     val isWatched: Boolean = false,
     val isTogglingWatched: Boolean = false,
+    val userRating: Int? = null,
     val availableActions: ImmutableList<EpisodeSheetActionUi> = persistentListOf(),
     val message: UiMessage? = null,
 )

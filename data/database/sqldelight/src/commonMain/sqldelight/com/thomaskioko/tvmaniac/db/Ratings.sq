@@ -44,6 +44,21 @@ ON CONFLICT(show_id) DO UPDATE SET
     rated_at = excluded.rated_at,
     pending_action = excluded.pending_action;
 
+saveRemoteShowRating:
+INSERT INTO show_ratings(show_id, user_rating, rated_at, pending_action)
+VALUES(:showId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(show_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at
+WHERE show_ratings.pending_action = 'NOTHING';
+
+pendingRatingsCount:
+SELECT (
+    (SELECT COUNT(*) FROM show_ratings WHERE pending_action != 'NOTHING')
+    + (SELECT COUNT(*) FROM season_ratings WHERE pending_action != 'NOTHING')
+    + (SELECT COUNT(*) FROM episode_ratings WHERE pending_action != 'NOTHING')
+) AS pending_count;
+
 observeShowRating:
 SELECT * FROM show_ratings WHERE show_id = :showId;
 

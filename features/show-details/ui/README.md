@@ -68,6 +68,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:ratings
+    direction TB
+    :data:ratings:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -100,9 +104,14 @@ graph TB
     direction TB
     :domain:episode[episode]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
+    :domain:ratings[ratings]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:similarshows[similarshows]:::multiplatform
     :domain:theme[theme]:::multiplatform
+  end
+  subgraph :features:rating-sheet
+    direction TB
+    :features:rating-sheet:nav[nav]:::multiplatform
   end
   subgraph :features:root
     direction TB
@@ -155,6 +164,10 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
@@ -183,6 +196,8 @@ graph TB
   :domain:notifications --> :data:seasondetails:api
   :domain:notifications --> :data:seasons:api
   :domain:notifications --> :i18n:api
+  :domain:ratings --> :core:base
+  :domain:ratings --> :data:ratings:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api
@@ -198,6 +213,8 @@ graph TB
   :domain:similarshows --> :core:base
   :domain:similarshows --> :data:similar:api
   :domain:theme --> :i18n:generator
+  :features:rating-sheet:nav --> :data:ratings:api
+  :features:rating-sheet:nav --> :navigation:api
   :features:root:nav --> :domain:theme
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
@@ -211,8 +228,10 @@ graph TB
   :features:show-details:presenter --> :data:seasondetails:api
   :features:show-details:presenter --> :domain:episode
   :features:show-details:presenter --> :domain:notifications
+  :features:show-details:presenter --> :domain:ratings
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
+  :features:show-details:presenter --> :features:rating-sheet:nav
   :features:show-details:presenter --> :features:root:nav
   :features:show-details:presenter -.-> :features:season-details:nav
   :features:show-details:presenter --> :features:show-details:nav

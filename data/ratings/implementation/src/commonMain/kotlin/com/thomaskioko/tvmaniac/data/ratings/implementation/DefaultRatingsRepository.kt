@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.ratings.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
-import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRatingEntry
@@ -26,6 +26,7 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
@@ -39,7 +40,6 @@ public class DefaultRatingsRepository(
     private val providerMetaDao: ProviderMetaDao,
     private val ratingsStore: RatingsStore,
     private val activeSource: () -> RatingsRemoteDataSource?,
-    private val appScopeLauncher: AppScopeLauncher,
     private val syncObserver: SyncObserver,
     private val dateTimeProvider: DateTimeProvider,
     private val logger: Logger,
@@ -47,8 +47,14 @@ public class DefaultRatingsRepository(
 
     private val syncMutex = Mutex()
 
-    override suspend fun refreshCommunityRating(showId: Long) {
-        ratingsStore.fresh(showId) { logger.debug(TAG, it) }
+    override fun observePendingRatings(): Flow<Boolean> =
+        ratingsDao.observePendingRatingsCount().map { it > 0 }.distinctUntilChanged()
+
+    override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
+        when {
+            forceRefresh -> ratingsStore.fresh(showId)
+            else -> ratingsStore.get(showId)
+        }
     }
 
     override fun observeShowRating(showId: Long): Flow<ShowRating> {
@@ -73,14 +79,10 @@ public class DefaultRatingsRepository(
             ratedAt = dateTimeProvider.nowMillis(),
             pendingAction = PendingAction.UPLOAD,
         )
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun removeShowRating(showId: Long) {
         ratingsDao.clearShowUserRating(showId)
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override fun observeSeasonRating(seasonId: Long): Flow<SeasonRating> =
@@ -98,14 +100,10 @@ public class DefaultRatingsRepository(
             ratedAt = dateTimeProvider.nowMillis(),
             pendingAction = PendingAction.UPLOAD,
         )
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun removeSeasonRating(seasonId: Long) {
         ratingsDao.clearSeasonUserRating(seasonId)
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override fun observeEpisodeRating(episodeId: Long): Flow<EpisodeRating> =
@@ -123,14 +121,10 @@ public class DefaultRatingsRepository(
             ratedAt = dateTimeProvider.nowMillis(),
             pendingAction = PendingAction.UPLOAD,
         )
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun removeEpisodeRating(episodeId: Long) {
         ratingsDao.clearEpisodeUserRating(episodeId)
-
-        appScopeLauncher.launch(TAG) { syncPendingRatings() }
     }
 
     override suspend fun syncPendingRatings() {

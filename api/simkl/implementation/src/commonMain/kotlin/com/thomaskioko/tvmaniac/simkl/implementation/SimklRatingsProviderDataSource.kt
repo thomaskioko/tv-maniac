@@ -67,6 +67,11 @@ public class SimklRatingsProviderDataSource(
             is ApiResponse.Error.OfflineError -> response
         }
 
+    override suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?> =
+        remoteDataSource.getUserShowRatings().map { response ->
+            response.shows.firstOrNull { it.show.ids.simkl == providerShowId }?.userRating
+        }
+
     override suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit> = unsupportedRating()
 
     override suspend fun removeSeasonRating(seasonTmdbId: Long): ApiResponse<Unit> = unsupportedRating()

@@ -2,7 +2,7 @@ package com.thomaskioko.tvmaniac.data.ratings.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
-import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
+import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
@@ -25,7 +25,6 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -61,6 +60,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         ratingsStore = RatingsStore(
             activeSource = { activeRemoteSource },
             providerMetaDao = providerMetaDao,
+            ratingsDao = ratingsDao,
             database = database,
             requestManagerRepository = requestManagerRepository,
             dateTimeProvider = dateTimeProvider,
@@ -215,7 +215,47 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         val repository = buildRepository(FakeSyncObserver())
         remoteDataSource.provider = AccountProvider.TRAKT
 
-        repository.refreshCommunityRating(SHOW_ID)
+        repository.refreshCommunityRating(SHOW_ID, forceRefresh = true)
+    }
+
+    @Test
+    fun `should save the provider user rating given refreshCommunityRating fetches it`() = runTest {
+        val repository = buildRepository(FakeSyncObserver())
+        remoteDataSource.provider = AccountProvider.TRAKT
+        seedProviderShowId(SHOW_ID, AccountProvider.TRAKT, externalId = 555L)
+        remoteDataSource.setUserRatingResponse(ApiResponse.Success(7))
+
+        repository.refreshCommunityRating(SHOW_ID, forceRefresh = true)
+
+        ratingsDao.observeShowRating(SHOW_ID).test {
+            val entry = awaitItem()
+            entry?.userRating shouldBe 7L
+            entry?.pendingAction shouldBe PendingAction.NOTHING
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should keep the pending local rating given a provider user rating is fetched`() = runTest {
+        val repository = buildRepository(FakeSyncObserver())
+        remoteDataSource.provider = AccountProvider.TRAKT
+        seedProviderShowId(SHOW_ID, AccountProvider.TRAKT, externalId = 555L)
+        ratingsDao.upsertShowUserRating(
+            showId = SHOW_ID,
+            userRating = 5L,
+            ratedAt = dateTimeProvider.nowMillis(),
+            pendingAction = PendingAction.UPLOAD,
+        )
+        remoteDataSource.setUserRatingResponse(ApiResponse.Success(7))
+
+        repository.refreshCommunityRating(SHOW_ID, forceRefresh = true)
+
+        ratingsDao.observeShowRating(SHOW_ID).test {
+            val entry = awaitItem()
+            entry?.userRating shouldBe 5L
+            entry?.pendingAction shouldBe PendingAction.UPLOAD
+            cancelAndConsumeRemainingEvents()
+        }
     }
 
     @Test
@@ -399,18 +439,25 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         }
     }
 
-    private fun TestScope.buildRepository(syncObserver: FakeSyncObserver): DefaultRatingsRepository =
+    private fun buildRepository(syncObserver: FakeSyncObserver): DefaultRatingsRepository =
         DefaultRatingsRepository(
             ratingsDao = ratingsDao,
             tvShowsDao = tvShowsDao,
             providerMetaDao = providerMetaDao,
             ratingsStore = ratingsStore,
             activeSource = { activeRemoteSource },
-            appScopeLauncher = FakeAppScopeLauncher(scope = this),
             syncObserver = syncObserver,
             dateTimeProvider = dateTimeProvider,
             logger = FakeLogger(),
         )
+
+    private fun seedProviderShowId(showId: Long, provider: AccountProvider, externalId: Long) {
+        database.tvshowExternalIdQueries.insert(
+            showId = Id(showId),
+            provider = provider.toDbProvider(),
+            externalId = externalId.toString(),
+        )
+    }
 
     private fun seedShow(showId: Long): Long {
         database.tvShowQueries.upsert(

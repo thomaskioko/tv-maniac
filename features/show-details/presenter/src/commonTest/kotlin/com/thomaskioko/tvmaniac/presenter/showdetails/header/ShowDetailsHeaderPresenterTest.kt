@@ -13,21 +13,29 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
+import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.tvShowDetails
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -64,6 +72,7 @@ internal class ShowDetailsHeaderPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val ratingsRepository = FakeRatingsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
     private val notificationManager = FakeNotificationManager()
@@ -77,6 +86,7 @@ internal class ShowDetailsHeaderPresenterTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         notificationManager.reset()
+        showDetailsRepository.setShowDetailsResult(tvShowDetails)
     }
 
     @AfterTest
@@ -236,6 +246,9 @@ internal class ShowDetailsHeaderPresenterTest {
                 formatterUtil = formatterUtil,
                 dispatchers = dispatchers,
             ),
+            refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
+            observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
+            observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,
@@ -259,6 +272,35 @@ internal class ShowDetailsHeaderPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )
+    }
+
+    @Test
+    fun `should emit user and community rating given rating is observed`() = runTest {
+        ratingsRepository.setShowRating(
+            ShowRating(userRating = 9, communityRating = 8.4, communityVotes = 500, pendingAction = PendingAction.NOTHING),
+        )
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.userRating shouldBe 9
+            state.communityRating shouldBe 8.4
+            state.communityVotes shouldBe 500L
+        }
+    }
+
+    @Test
+    fun `should navigate to rating sheet given show rating clicked`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowRatingClicked)
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.ratingType shouldBe RatingEntityType.SHOW
+        route.param.id shouldBe SHOW_ID
     }
 
     private companion object {

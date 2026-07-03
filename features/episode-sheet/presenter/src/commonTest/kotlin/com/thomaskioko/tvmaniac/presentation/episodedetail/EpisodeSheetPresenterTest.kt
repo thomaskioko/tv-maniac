@@ -8,23 +8,30 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,6 +50,7 @@ internal class EpisodeSheetPresenterTest {
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val episodeRepository = FakeEpisodeRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val ratingsRepository = FakeRatingsRepository()
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
 
@@ -68,6 +76,30 @@ internal class EpisodeSheetPresenterTest {
             initialState.isLoading shouldBe true
             initialState.episodeTitle shouldBe ""
         }
+    }
+
+    @Test
+    fun `should emit episode user rating given rating is observed`() = runTest {
+        ratingsRepository.setEpisodeRating(EpisodeRating(userRating = 7, pendingAction = PendingAction.NOTHING))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().userRating shouldBe 7
+        }
+    }
+
+    @Test
+    fun `should navigate to rating sheet given rating clicked`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.dispatch(EpisodeSheetAction.RatingClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.ratingType shouldBe RatingEntityType.EPISODE
+        route.param.id shouldBe 1L
     }
 
     @Test
@@ -375,6 +407,7 @@ internal class EpisodeSheetPresenterTest {
             param = EpisodeSheetParam(episodeId = 1L, source = source),
             navigator = navigator,
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
+            observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),
             unfollowShowInteractor = UnfollowShowInteractor(

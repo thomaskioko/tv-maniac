@@ -136,6 +136,7 @@ dependencies {
     implementation(projects.features.calendar.presenter)
     implementation(projects.features.discover.presenter)
     implementation(projects.features.episodeSheet.presenter)
+    implementation(projects.features.ratingSheet.presenter)
     implementation(projects.features.library.presenter)
     implementation(projects.features.home.presenter)
     implementation(projects.features.moreShows.presenter)
@@ -209,6 +210,9 @@ dependencies {
     implementation(projects.domain.featureFlags)
     implementation(projects.features.featureFlags.nav)
     implementation(projects.features.featureFlags.presenter)
+    implementation(projects.data.ratings.api)
+    implementation(projects.domain.ratings)
+    implementation(projects.features.ratingSheet.nav)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)

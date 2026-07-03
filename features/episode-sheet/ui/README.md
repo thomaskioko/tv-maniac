@@ -52,6 +52,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:ratings
+    direction TB
+    :data:ratings:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -60,6 +64,7 @@ graph TB
     direction TB
     :domain:episode[episode]:::multiplatform
     :domain:followedshows[followedshows]:::multiplatform
+    :domain:ratings[ratings]:::multiplatform
     :domain:theme[theme]:::multiplatform
   end
   subgraph :features:episode-sheet
@@ -67,6 +72,10 @@ graph TB
     :features:episode-sheet:nav[nav]:::multiplatform
     :features:episode-sheet:presenter[presenter]:::multiplatform
     :features:episode-sheet:ui[ui]:::android-library
+  end
+  subgraph :features:rating-sheet
+    direction TB
+    :features:rating-sheet:nav[nav]:::multiplatform
   end
   subgraph :features:season-details
     direction TB
@@ -103,6 +112,10 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
   :domain:episode --> :core:base
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
@@ -115,6 +128,8 @@ graph TB
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api
+  :domain:ratings --> :core:base
+  :domain:ratings --> :data:ratings:api
   :domain:theme --> :i18n:generator
   :features:episode-sheet:nav --> :navigation:api
   :features:episode-sheet:presenter --> :core:base
@@ -122,7 +137,9 @@ graph TB
   :features:episode-sheet:presenter --> :core:view
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
+  :features:episode-sheet:presenter --> :domain:ratings
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
+  :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav
   :features:episode-sheet:presenter -.-> :features:show-details:nav
   :features:episode-sheet:presenter --> :i18n:api
@@ -135,6 +152,8 @@ graph TB
   :features:episode-sheet:ui --> :features:episode-sheet:presenter
   :features:episode-sheet:ui --> :navigation:api
   :features:episode-sheet:ui --> :navigation:ui
+  :features:rating-sheet:nav --> :data:ratings:api
+  :features:rating-sheet:nav --> :navigation:api
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
   :i18n:api --> :i18n:generator

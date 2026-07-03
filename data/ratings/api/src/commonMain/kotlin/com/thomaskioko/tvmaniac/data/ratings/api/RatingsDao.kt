@@ -4,7 +4,9 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 
 public interface RatingsDao {
+    public fun observePendingRatingsCount(): Flow<Long>
     public fun upsertShowUserRating(showId: Long, userRating: Long, ratedAt: Long, pendingAction: PendingAction)
+    public fun saveRemoteShowRating(showId: Long, userRating: Long, ratedAt: Long)
     public fun observeShowRating(showId: Long): Flow<ShowRatingEntry?>
     public fun clearShowUserRating(showId: Long)
     public fun showRatingsWithUploadPendingAction(): List<ShowRatingEntry>

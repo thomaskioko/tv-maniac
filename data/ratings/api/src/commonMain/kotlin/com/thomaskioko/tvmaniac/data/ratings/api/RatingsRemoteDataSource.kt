@@ -7,6 +7,7 @@ public interface RatingsRemoteDataSource : ProviderScoped {
     public suspend fun addShowRating(tmdbId: Long, rating: Int): ApiResponse<Unit>
     public suspend fun removeShowRating(tmdbId: Long): ApiResponse<Unit>
     public suspend fun getShowCommunityRating(providerShowId: Long): ApiResponse<CommunityRating>
+    public suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?>
     public suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit>
     public suspend fun removeSeasonRating(seasonTmdbId: Long): ApiResponse<Unit>
     public suspend fun addEpisodeRating(episodeTmdbId: Long, rating: Int): ApiResponse<Unit>
