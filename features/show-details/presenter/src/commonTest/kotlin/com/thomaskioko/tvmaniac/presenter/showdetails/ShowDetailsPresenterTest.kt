@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManag
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -23,6 +24,10 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.FetchRateShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObservableShowRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RemoveShowRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
@@ -92,6 +97,7 @@ internal class ShowDetailsPresenterTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val ratingsRepository = FakeRatingsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
     private val notificationManager = FakeNotificationManager()
@@ -278,6 +284,10 @@ internal class ShowDetailsPresenterTest {
                 formatterUtil = formatterUtil,
                 dispatchers = dispatchers,
             ),
+            fetchRateShowInteractor = FetchRateShowInteractor(ratingsRepository),
+            removeShowRatingInteractor = RemoveShowRatingInteractor(ratingsRepository),
+            refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
+            observableShowRatingInteractor = ObservableShowRatingInteractor(ratingsRepository),
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,

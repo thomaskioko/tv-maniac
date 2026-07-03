@@ -13,16 +13,23 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.FetchRateShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObservableShowRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RemoveShowRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
@@ -64,6 +71,7 @@ internal class ShowDetailsHeaderPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val ratingsRepository = FakeRatingsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
     private val notificationManager = FakeNotificationManager()
@@ -77,6 +85,7 @@ internal class ShowDetailsHeaderPresenterTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         notificationManager.reset()
+        showDetailsRepository.setShowDetailsResult(tvShowDetails)
     }
 
     @AfterTest
@@ -236,6 +245,10 @@ internal class ShowDetailsHeaderPresenterTest {
                 formatterUtil = formatterUtil,
                 dispatchers = dispatchers,
             ),
+            fetchRateShowInteractor = FetchRateShowInteractor(ratingsRepository),
+            removeShowRatingInteractor = RemoveShowRatingInteractor(ratingsRepository),
+            refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
+            observableShowRatingInteractor = ObservableShowRatingInteractor(ratingsRepository),
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,
@@ -259,6 +272,72 @@ internal class ShowDetailsHeaderPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )
+    }
+
+    @Test
+    fun `should emit user and community rating given rating is observed`() = runTest {
+        ratingsRepository.setShowRating(
+            ShowRating(userRating = 9, communityRating = 8.4, communityVotes = 500, pendingAction = PendingAction.NOTHING),
+        )
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.userRating shouldBe 9
+            state.communityRating shouldBe 8.4
+            state.communityVotes shouldBe 500L
+        }
+    }
+
+    @Test
+    fun `should toggle rating sheet visibility given clicked then dismissed`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            presenter.dispatch(ShowRatingClicked)
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().isRatingSheetVisible shouldBe true
+
+            presenter.dispatch(RatingSheetDismissed)
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().isRatingSheetVisible shouldBe false
+        }
+    }
+
+    @Test
+    fun `should close rating sheet given rating selected`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowRatingClicked)
+        presenter.dispatch(RatingSelected(rating = 7))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val state = expectMostRecentItem()
+            state.isRatingSheetVisible shouldBe false
+            state.isSubmittingRating shouldBe false
+        }
+    }
+
+    @Test
+    fun `should close rating sheet given rating removed`() = runTest {
+        ratingsRepository.setShowRating(
+            ShowRating(userRating = 6, communityRating = null, communityVotes = null, pendingAction = PendingAction.NOTHING),
+        )
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(ShowRatingClicked)
+        presenter.dispatch(RatingRemoved)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().isRatingSheetVisible shouldBe false
+        }
     }
 
     private companion object {
