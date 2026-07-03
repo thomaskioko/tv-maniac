@@ -14,12 +14,12 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.FetchRateShowInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.ObservableShowRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.RemoveShowRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -27,6 +27,8 @@ import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.toHeaderState
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.scope.ShowDetailsChildScope
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
@@ -56,11 +58,10 @@ public class ShowDetailsHeaderPresenter(
     private val followedShowsRepository: FollowedShowsRepository,
     private val followShowInteractor: FollowShowInteractor,
     private val showDetailsInteractor: ShowDetailsInteractor,
-    private val fetchRateShowInteractor: FetchRateShowInteractor,
-    private val removeShowRatingInteractor: RemoveShowRatingInteractor,
     private val refreshCommunityRatingInteractor: RefreshCommunityRatingInteractor,
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
-    observableShowRatingInteractor: ObservableShowRatingInteractor,
+    observeRatingInteractor: ObserveRatingInteractor,
+    observeCommunityRatingInteractor: ObserveCommunityRatingInteractor,
     private val syncCalendarInteractor: SyncCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
@@ -74,14 +75,14 @@ public class ShowDetailsHeaderPresenter(
     private val coroutineScope = coroutineScope()
     private val loadingState = ObservableLoadingCounter()
     private val followLoadingState = ObservableLoadingCounter()
-    private val ratingLoadingState = ObservableLoadingCounter()
     private val communityRatingLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val _state = MutableStateFlow(ShowDetailsHeaderState())
 
     init {
         observableShowDetailsInteractor(showId)
-        observableShowRatingInteractor(showId)
+        observeRatingInteractor(ObserveRatingInteractor.Param(RatingEntityType.SHOW, showId))
+        observeCommunityRatingInteractor(showId)
 
         fetchShowDetails(forceRefresh = forceRefresh)
         refreshCommunityRating(forceRefresh = forceRefresh)
@@ -91,21 +92,19 @@ public class ShowDetailsHeaderPresenter(
 
     public val state: StateFlow<ShowDetailsHeaderState> = combine(
         observableShowDetailsInteractor.flow,
-        observableShowRatingInteractor.flow,
+        observeRatingInteractor.flow,
+        observeCommunityRatingInteractor.flow,
         loadingState.observable,
-        ratingLoadingState.observable,
         uiMessageManager.message,
         _state,
-    ) { details, rating, isRefreshing, isSubmittingRating, message, current ->
+    ) { details, userRating, communityRating, isRefreshing, message, current ->
         details.toHeaderState(localizer).copy(
-            communityRating = rating.communityRating,
-            communityVotes = rating.communityVotes,
-            userRating = rating.userRating,
+            communityRating = communityRating?.rating,
+            communityVotes = communityRating?.votes,
+            userRating = userRating,
             isRefreshing = isRefreshing,
-            isSubmittingRating = isSubmittingRating,
             message = message,
             canAddToList = current.canAddToList,
-            isRatingSheetVisible = current.isRatingSheetVisible,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -121,10 +120,9 @@ public class ShowDetailsHeaderPresenter(
             ShowDetailsOpenShowList -> if (_state.value.canAddToList) {
                 navigator.navigateTo(ShowListRoute(ShowListParam(showId = showId)))
             }
-            ShowRatingClicked -> _state.update { it.copy(isRatingSheetVisible = true) }
-            RatingSheetDismissed -> _state.update { it.copy(isRatingSheetVisible = false) }
-            is RatingSelected -> onRatingSelected(action.rating)
-            RatingRemoved -> onRatingRemoved()
+            ShowRatingClicked -> navigator.navigateTo(
+                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.SHOW, id = showId)),
+            )
         }
     }
 
@@ -156,22 +154,6 @@ public class ShowDetailsHeaderPresenter(
 
                 notificationRationale.showIfNeeded()
             }
-        }
-    }
-
-    private fun onRatingSelected(rating: Int) {
-        _state.update { it.copy(isRatingSheetVisible = false) }
-        coroutineScope.launch {
-            fetchRateShowInteractor(FetchRateShowInteractor.Param(showId = showId, rating = rating))
-                .collectStatus(ratingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-        }
-    }
-
-    private fun onRatingRemoved() {
-        _state.update { it.copy(isRatingSheetVisible = false) }
-        coroutineScope.launch {
-            removeShowRatingInteractor(showId)
-                .collectStatus(ratingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
 

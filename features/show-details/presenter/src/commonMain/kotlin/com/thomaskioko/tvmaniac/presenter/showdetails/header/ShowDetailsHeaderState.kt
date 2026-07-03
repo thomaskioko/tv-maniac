@@ -18,8 +18,6 @@ public data class ShowDetailsHeaderState(
     val communityRating: Double? = null,
     val communityVotes: Long? = null,
     val userRating: Int? = null,
-    val isRatingSheetVisible: Boolean = false,
-    val isSubmittingRating: Boolean = false,
     val isInLibrary: Boolean = false,
     val genres: ImmutableList<String> = persistentListOf(),
     val canAddToList: Boolean = false,

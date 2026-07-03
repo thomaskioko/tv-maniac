@@ -24,10 +24,9 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteracto
 import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.FetchRateShowInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.ObservableShowRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.RemoveShowRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
@@ -284,10 +283,9 @@ internal class ShowDetailsPresenterTest {
                 formatterUtil = formatterUtil,
                 dispatchers = dispatchers,
             ),
-            fetchRateShowInteractor = FetchRateShowInteractor(ratingsRepository),
-            removeShowRatingInteractor = RemoveShowRatingInteractor(ratingsRepository),
             refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
-            observableShowRatingInteractor = ObservableShowRatingInteractor(ratingsRepository),
+            observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
+            observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,

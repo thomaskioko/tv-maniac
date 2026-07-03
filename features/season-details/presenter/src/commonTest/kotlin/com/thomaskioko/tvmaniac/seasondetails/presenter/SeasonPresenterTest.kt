@@ -7,15 +7,14 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRating
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.FetchRateSeasonInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.ObservableSeasonRatingInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.RemoveSeasonRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonWatchedInteractor
@@ -30,6 +29,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
@@ -104,19 +104,16 @@ class SeasonPresenterTest {
     }
 
     @Test
-    fun `should toggle season rating sheet given clicked then dismissed`() = runTest {
+    fun `should navigate to rating sheet given season rating clicked`() = runTest {
         seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes(episodeCount = 1))
         castRepository.setSeasonCast(emptyList())
 
-        presenter.state.test {
-            presenter.dispatch(SeasonRatingClicked)
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().isRatingSheetVisible shouldBe true
+        presenter.dispatch(SeasonRatingClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            presenter.dispatch(SeasonRatingSheetDismissed)
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().isRatingSheetVisible shouldBe false
-        }
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.ratingType shouldBe RatingEntityType.SEASON
+        route.param.id shouldBe 1L
     }
 
     @Test
@@ -1244,15 +1241,13 @@ class SeasonPresenterTest {
             fetchPreviousSeasonsInteractor = FetchPreviousSeasonsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,
             ),
-            fetchRateSeasonInteractor = FetchRateSeasonInteractor(ratingsRepository),
-            removeSeasonRatingInteractor = RemoveSeasonRatingInteractor(ratingsRepository),
             observeSeasonWatchProgressInteractor = ObserveSeasonWatchProgressInteractor(
                 episodeRepository = episodeRepository,
             ),
             observeUnwatchedInPreviousSeasonsInteractor = ObserveUnwatchedInPreviousSeasonsInteractor(
                 episodeRepository = episodeRepository,
             ),
-            observableSeasonRatingInteractor = ObservableSeasonRatingInteractor(ratingsRepository),
+            observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )

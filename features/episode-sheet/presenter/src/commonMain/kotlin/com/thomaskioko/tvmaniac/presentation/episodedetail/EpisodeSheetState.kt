@@ -16,8 +16,6 @@ public data class EpisodeDetailSheetState(
     val isWatched: Boolean = false,
     val isTogglingWatched: Boolean = false,
     val userRating: Int? = null,
-    val isRatingSheetVisible: Boolean = false,
-    val isSubmittingRating: Boolean = false,
     val availableActions: ImmutableList<EpisodeSheetActionUi> = persistentListOf(),
     val message: UiMessage? = null,
 )

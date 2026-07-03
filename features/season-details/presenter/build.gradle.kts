@@ -21,6 +21,7 @@ kotlin {
                 api(projects.domain.episode)
                 api(projects.domain.ratings)
                 api(projects.domain.seasondetails)
+                api(projects.features.ratingSheet.nav)
                 api(projects.features.seasonDetails.nav)
                 api(projects.navigation.api)
 

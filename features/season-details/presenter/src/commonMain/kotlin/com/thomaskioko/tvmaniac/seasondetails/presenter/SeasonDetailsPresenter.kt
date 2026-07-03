@@ -11,13 +11,12 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
-import com.thomaskioko.tvmaniac.domain.ratings.FetchRateSeasonInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.ObservableSeasonRatingInteractor
-import com.thomaskioko.tvmaniac.domain.ratings.RemoveSeasonRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
@@ -34,6 +33,8 @@ import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -68,11 +69,9 @@ public class SeasonDetailsPresenter(
     private val markSeasonWatchedInteractor: MarkSeasonWatchedInteractor,
     private val markSeasonUnwatchedInteractor: MarkSeasonUnwatchedInteractor,
     private val fetchPreviousSeasonsInteractor: FetchPreviousSeasonsInteractor,
-    private val fetchRateSeasonInteractor: FetchRateSeasonInteractor,
-    private val removeSeasonRatingInteractor: RemoveSeasonRatingInteractor,
     observeSeasonWatchProgressInteractor: ObserveSeasonWatchProgressInteractor,
     observeUnwatchedInPreviousSeasonsInteractor: ObserveUnwatchedInPreviousSeasonsInteractor,
-    observableSeasonRatingInteractor: ObservableSeasonRatingInteractor,
+    observeRatingInteractor: ObserveRatingInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -85,7 +84,6 @@ public class SeasonDetailsPresenter(
     private val seasonDetailsLoadingState = ObservableLoadingCounter()
     private val episodeLoadingState = ObservableLoadingCounter()
     private val checkingPreviousSeasonsLoadingState = ObservableLoadingCounter()
-    private val seasonRatingLoadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
     private val coroutineScope = coroutineScope()
     private val _state: MutableStateFlow<SeasonDetailsModel> = MutableStateFlow(SeasonDetailsModel.Empty)
@@ -98,16 +96,14 @@ public class SeasonDetailsPresenter(
         observeSeasonWatchProgressInteractor.flow,
         observeUnwatchedInPreviousSeasonsInteractor.flow,
         uiMessageManager.message,
-        observableSeasonRatingInteractor.flow,
-        seasonRatingLoadingState.observable,
+        observeRatingInteractor.flow,
         _state,
     ) { seasonDetailsUpdating, checkingPreviousSeasons, episodeUpdating,
         detailsResult, watchProgress, unwatchedInPreviousSeasons, message,
-        seasonRating, isSubmittingRating, currentState,
+        userRating, currentState,
         ->
         currentState.copy(
-            userRating = seasonRating.userRating,
-            isSubmittingRating = isSubmittingRating,
+            userRating = userRating,
             isSeasonDetailsUpdating = seasonDetailsUpdating,
             isEpisodeUpdating = episodeUpdating,
             seasonId = detailsResult.seasonDetails.seasonId,
@@ -149,7 +145,7 @@ public class SeasonDetailsPresenter(
                 seasonNumber = param.seasonNumber,
             ),
         )
-        observableSeasonRatingInteractor(param.seasonId)
+        observeRatingInteractor(ObserveRatingInteractor.Param(RatingEntityType.SEASON, param.seasonId))
         observeSeasonDetails(forceReload = param.forceRefresh)
         prefetchPreviousSeasonsData()
     }
@@ -180,24 +176,11 @@ public class SeasonDetailsPresenter(
                 is SeasonDetailsMessageShown -> uiMessageManager.clearMessage(action.id)
                 ConfirmDialogAction -> handleConfirmDialogAction()
                 SecondaryDialogAction -> handleSecondaryDialogAction()
-                SeasonRatingClicked -> updateState { copy(isRatingSheetVisible = true) }
-                SeasonRatingSheetDismissed -> updateState { copy(isRatingSheetVisible = false) }
-                is SeasonRatingSelected -> onSeasonRatingSelected(action.rating)
-                SeasonRatingRemoved -> onSeasonRatingRemoved()
+                SeasonRatingClicked -> navigator.navigateTo(
+                    RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.SEASON, id = param.seasonId)),
+                )
             }
         }
-    }
-
-    private suspend fun onSeasonRatingSelected(rating: Int) {
-        updateState { copy(isRatingSheetVisible = false) }
-        fetchRateSeasonInteractor(FetchRateSeasonInteractor.Param(seasonId = param.seasonId, rating = rating))
-            .collectStatus(seasonRatingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-    }
-
-    private suspend fun onSeasonRatingRemoved() {
-        updateState { copy(isRatingSheetVisible = false) }
-        removeSeasonRatingInteractor(param.seasonId)
-            .collectStatus(seasonRatingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
     }
 
     private suspend fun handleMarkEpisodeWatched(action: MarkEpisodeWatched) {
