@@ -269,6 +269,7 @@ include(
     ":domain:start-watching",
     ":domain:favorites",
     ":domain:recently-watched",
+    ":domain:ratings",
     ":domain:library",
     ":domain:logout",
     ":domain:account-switcher",
