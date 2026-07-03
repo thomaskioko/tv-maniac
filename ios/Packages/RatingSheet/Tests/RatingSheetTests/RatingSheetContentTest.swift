@@ -22,6 +22,8 @@ class RatingSheetContentTest: SnapshotTestCase {
 
     private func makeSheet(userRating: Int?) -> some View {
         RatingSheetContent(
+            title: "Your rating",
+            removeLabel: "Remove rating",
             userRating: userRating,
             onRatingSelected: { _ in },
             onRemove: {}

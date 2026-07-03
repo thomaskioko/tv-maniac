@@ -14,6 +14,8 @@ public struct RatingSheetView: View {
 
     public var body: some View {
         RatingSheetContent(
+            title: state.title,
+            removeLabel: state.removeRatingLabel,
             userRating: state.userRating as? Int,
             onRatingSelected: { rating in
                 presenter.dispatch(action: RatingSheetActionRatingSelected(rating: Int32(rating)))

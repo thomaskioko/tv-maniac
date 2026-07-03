@@ -1,20 +1,25 @@
 import Components
 import DesignSystem
 import SwiftUI
-import TvManiacKit
 
 public struct RatingSheetContent: View {
     @Environment(\.appTheme) private var theme
 
+    private let title: String
+    private let removeLabel: String
     private let userRating: Int?
     private let onRatingSelected: (Int) -> Void
     private let onRemove: () -> Void
 
     public init(
+        title: String,
+        removeLabel: String,
         userRating: Int?,
         onRatingSelected: @escaping (Int) -> Void,
         onRemove: @escaping () -> Void
     ) {
+        self.title = title
+        self.removeLabel = removeLabel
         self.userRating = userRating
         self.onRatingSelected = onRatingSelected
         self.onRemove = onRemove
@@ -22,7 +27,7 @@ public struct RatingSheetContent: View {
 
     public var body: some View {
         VStack(spacing: theme.spacing.large) {
-            Text(String(\.label_rating_sheet_title))
+            Text(title)
                 .textStyle(theme.typography.titleLarge)
                 .foregroundStyle(.appOnSurface)
                 .padding(.top, theme.spacing.large)
@@ -31,7 +36,7 @@ public struct RatingSheetContent: View {
 
             if userRating != nil {
                 Button(action: onRemove) {
-                    Text(String(\.label_action_remove_rating))
+                    Text(removeLabel)
                         .textStyle(theme.typography.bodyLarge)
                         .foregroundStyle(.appError)
                 }
@@ -76,6 +81,8 @@ private let pointsPerStar = 2
 
 #Preview("Unrated") {
     RatingSheetContent(
+        title: "Your rating",
+        removeLabel: "Remove rating",
         userRating: nil,
         onRatingSelected: { _ in },
         onRemove: {}
@@ -85,6 +92,8 @@ private let pointsPerStar = 2
 
 #Preview("Rated") {
     RatingSheetContent(
+        title: "Your rating",
+        removeLabel: "Remove rating",
         userRating: 8,
         onRatingSelected: { _ in },
         onRemove: {}
