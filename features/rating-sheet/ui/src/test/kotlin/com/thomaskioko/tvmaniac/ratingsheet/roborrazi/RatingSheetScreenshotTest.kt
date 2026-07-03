@@ -28,7 +28,7 @@ class RatingSheetScreenshotTest {
         composeTestRule.captureMultiDevice("RatingSheetUnrated") {
             TvManiacBackground {
                 RatingSheetContent(
-                    state = RatingSheetState(userRating = null),
+                    state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = null),
                     onAction = {},
                 )
             }
@@ -40,7 +40,7 @@ class RatingSheetScreenshotTest {
         composeTestRule.captureMultiDevice("RatingSheetRated") {
             TvManiacBackground {
                 RatingSheetContent(
-                    state = RatingSheetState(userRating = 8),
+                    state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 8),
                     onAction = {},
                 )
             }
@@ -52,7 +52,7 @@ class RatingSheetScreenshotTest {
         composeTestRule.captureMultiDevice("RatingSheetHalfRated") {
             TvManiacBackground {
                 RatingSheetContent(
-                    state = RatingSheetState(userRating = 7),
+                    state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 7),
                     onAction = {},
                 )
             }

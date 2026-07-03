@@ -24,15 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_remove_rating
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_rating_sheet_title
 import com.thomaskioko.tvmaniac.ratingsheet.presenter.RatingSheetAction
 import com.thomaskioko.tvmaniac.ratingsheet.presenter.RatingSheetPresenter
 import com.thomaskioko.tvmaniac.ratingsheet.presenter.RatingSheetState
@@ -77,7 +74,7 @@ internal fun RatingSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = stringResource(label_rating_sheet_title.resourceId),
+            text = state.title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -100,6 +97,7 @@ internal fun RatingSheetContent(
 
         if (userRating != null) {
             RemoveRatingRow(
+                label = state.removeRatingLabel,
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = { onAction(RatingSheetAction.RatingCleared) },
             )
@@ -138,6 +136,7 @@ private fun RatingStar(
 
 @Composable
 private fun RemoveRatingRow(
+    label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -157,7 +156,7 @@ private fun RemoveRatingRow(
         )
 
         Text(
-            text = stringResource(label_action_remove_rating.resourceId),
+            text = label,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.error,
         )
@@ -169,7 +168,7 @@ private fun RemoveRatingRow(
 @Composable
 private fun RatingSheetContentUnratedPreview() {
     RatingSheetContent(
-        state = RatingSheetState(userRating = null),
+        state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = null),
         onAction = {},
     )
 }
@@ -179,7 +178,7 @@ private fun RatingSheetContentUnratedPreview() {
 @Composable
 private fun RatingSheetContentRatedPreview() {
     RatingSheetContent(
-        state = RatingSheetState(userRating = 8),
+        state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 8),
         onAction = {},
     )
 }
@@ -189,7 +188,7 @@ private fun RatingSheetContentRatedPreview() {
 @Composable
 private fun RatingSheetContentHalfRatedPreview() {
     RatingSheetContent(
-        state = RatingSheetState(userRating = 7),
+        state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 7),
         onAction = {},
     )
 }

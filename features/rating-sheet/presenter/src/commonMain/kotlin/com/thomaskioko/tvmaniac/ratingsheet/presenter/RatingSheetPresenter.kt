@@ -14,6 +14,8 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RateInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RemoveRatingInteractor
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
@@ -40,6 +42,7 @@ public class RatingSheetPresenter(
     private val rateInteractor: RateInteractor,
     private val removeRatingInteractor: RemoveRatingInteractor,
     private val navigator: Navigator,
+    private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
     private val appScopeLauncher: AppScopeLauncher,
@@ -48,9 +51,11 @@ public class RatingSheetPresenter(
     private val coroutineScope = componentContext.coroutineScope()
     private val uiMessageManager = UiMessageManager()
     private val ratingLoadingState = ObservableLoadingCounter()
+    private val title = localizer.getString(StringResourceKey.LabelRatingSheetTitle)
+    private val removeRatingLabel = localizer.getString(StringResourceKey.LabelActionRemoveRating)
 
     public val state: StateFlow<RatingSheetState> = observeRatingInteractor.flow
-        .map { RatingSheetState(userRating = it) }
+        .map { RatingSheetState(title = title, removeRatingLabel = removeRatingLabel, userRating = it) }
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5_000),
