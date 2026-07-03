@@ -283,6 +283,7 @@ graph TB
     :domain:library[library]:::multiplatform
     :domain:logout[logout]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
+    :domain:ratings[ratings]:::multiplatform
     :domain:recently-watched[recently-watched]:::multiplatform
     :domain:seasondetails[seasondetails]:::multiplatform
     :domain:settings[settings]:::multiplatform
@@ -351,6 +352,11 @@ graph TB
     direction TB
     :features:progress:nav[nav]:::multiplatform
     :features:progress:presenter[presenter]:::multiplatform
+  end
+  subgraph :features:rating-sheet
+    direction TB
+    :features:rating-sheet:nav[nav]:::multiplatform
+    :features:rating-sheet:presenter[presenter]:::multiplatform
   end
   subgraph :features:root
     direction TB
@@ -904,6 +910,8 @@ graph TB
   :domain:notifications --> :data:seasondetails:api
   :domain:notifications --> :data:seasons:api
   :domain:notifications --> :i18n:api
+  :domain:ratings --> :core:base
+  :domain:ratings --> :data:ratings:api
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api
   :domain:seasondetails --> :core:base
@@ -1010,7 +1018,9 @@ graph TB
   :features:episode-sheet:presenter --> :core:view
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
+  :features:episode-sheet:presenter --> :domain:ratings
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
+  :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav
   :features:episode-sheet:presenter -.-> :features:show-details:nav
   :features:episode-sheet:presenter --> :i18n:api
@@ -1090,6 +1100,15 @@ graph TB
   :features:progress:presenter --> :features:progress:nav
   :features:progress:presenter --> :features:upnext:presenter
   :features:progress:presenter --> :navigation:api
+  :features:rating-sheet:nav --> :data:ratings:api
+  :features:rating-sheet:nav --> :navigation:api
+  :features:rating-sheet:presenter --> :core:base
+  :features:rating-sheet:presenter --> :core:logger:api
+  :features:rating-sheet:presenter --> :core:view
+  :features:rating-sheet:presenter --> :data:ratings:api
+  :features:rating-sheet:presenter --> :domain:ratings
+  :features:rating-sheet:presenter --> :features:rating-sheet:nav
+  :features:rating-sheet:presenter --> :navigation:api
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:logger:api
@@ -1127,8 +1146,10 @@ graph TB
   :features:season-details:presenter --> :data:episode:api
   :features:season-details:presenter --> :data:seasondetails:api
   :features:season-details:presenter --> :domain:episode
+  :features:season-details:presenter --> :domain:ratings
   :features:season-details:presenter --> :domain:seasondetails
   :features:season-details:presenter -.-> :features:episode-sheet:nav
+  :features:season-details:presenter --> :features:rating-sheet:nav
   :features:season-details:presenter --> :features:season-details:nav
   :features:season-details:presenter --> :navigation:api
   :features:settings:nav --> :navigation:api
@@ -1161,8 +1182,10 @@ graph TB
   :features:show-details:presenter --> :data:seasondetails:api
   :features:show-details:presenter --> :domain:episode
   :features:show-details:presenter --> :domain:notifications
+  :features:show-details:presenter --> :domain:ratings
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
+  :features:show-details:presenter --> :features:rating-sheet:nav
   :features:show-details:presenter --> :features:root:nav
   :features:show-details:presenter -.-> :features:season-details:nav
   :features:show-details:presenter --> :features:show-details:nav
@@ -1348,6 +1371,7 @@ graph TB
   :ios-framework --> :features:profile:presenter
   :ios-framework --> :features:progress:nav
   :ios-framework --> :features:progress:presenter
+  :ios-framework --> :features:rating-sheet:presenter
   :ios-framework --> :features:root:nav
   :ios-framework --> :features:root:presenter
   :ios-framework --> :features:search:presenter
