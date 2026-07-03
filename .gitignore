@@ -91,6 +91,7 @@ fastlane/builds
 /ios/fastlane/report.xml
 ios/build
 ios/SourcePackages/
+ios/Packages/TvManiacFramework/Frameworks/
 
 derived_data/
 *.xcresult
