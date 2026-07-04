@@ -366,6 +366,7 @@ graph TB
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
     :features:rating-sheet:presenter[presenter]:::multiplatform
+    :features:rating-sheet:ui[ui]:::android-library
   end
   subgraph :features:root
     direction TB
@@ -619,6 +620,7 @@ graph TB
   :app -.-> :features:progress:ui
   :app -.-> :features:rating-sheet:nav
   :app -.-> :features:rating-sheet:presenter
+  :app -.-> :features:rating-sheet:ui
   :app -.-> :features:root:nav
   :app -.-> :features:root:presenter
   :app -.-> :features:root:ui
@@ -1399,7 +1401,15 @@ graph TB
   :features:rating-sheet:presenter --> :data:ratings:api
   :features:rating-sheet:presenter --> :domain:ratings
   :features:rating-sheet:presenter --> :features:rating-sheet:nav
+  :features:rating-sheet:presenter --> :i18n:api
+  :features:rating-sheet:presenter --> :i18n:generator
   :features:rating-sheet:presenter --> :navigation:api
+  :features:rating-sheet:ui -.-> :android-designsystem
+  :features:rating-sheet:ui --> :core:base
+  :features:rating-sheet:ui -.-> :core:test-tags
+  :features:rating-sheet:ui --> :features:rating-sheet:presenter
+  :features:rating-sheet:ui --> :navigation:api
+  :features:rating-sheet:ui --> :navigation:ui
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:logger:api

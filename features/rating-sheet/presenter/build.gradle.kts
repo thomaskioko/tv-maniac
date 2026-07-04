@@ -17,6 +17,8 @@ kotlin {
                 api(projects.data.ratings.api)
                 api(projects.domain.ratings)
                 api(projects.features.ratingSheet.nav)
+                api(projects.i18n.api)
+                api(projects.i18n.generator)
                 api(projects.navigation.api)
 
                 api(libs.decompose.decompose)
@@ -30,6 +32,7 @@ kotlin {
                 implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.ratings.testing)
+                implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
         }

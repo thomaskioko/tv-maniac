@@ -457,4 +457,8 @@
     <string name="label_account_switch_dialog_confirm">Verwerfen &amp; wechseln</string>
     <string name="label_account_switching">Wird gewechselt…</string>
     <string name="label_account_switch_failed">Konten konnten nicht gewechselt werden. Bitte versuche es erneut.</string>
+    <string name="label_rating_sheet_title">Deine Bewertung</string>
+    <string name="label_action_rate">Bewerten</string>
+    <string name="label_action_rate_episode">Folge bewerten</string>
+    <string name="label_action_remove_rating">Bewertung entfernen</string>
 </resources>

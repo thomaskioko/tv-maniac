@@ -1108,6 +1108,8 @@ graph TB
   :features:rating-sheet:presenter --> :data:ratings:api
   :features:rating-sheet:presenter --> :domain:ratings
   :features:rating-sheet:presenter --> :features:rating-sheet:nav
+  :features:rating-sheet:presenter --> :i18n:api
+  :features:rating-sheet:presenter --> :i18n:generator
   :features:rating-sheet:presenter --> :navigation:api
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base

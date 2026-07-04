@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RateInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RemoveRatingInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
 import io.kotest.matchers.shouldBe
@@ -90,6 +91,7 @@ internal class RatingSheetPresenterTest {
             rateInteractor = RateInteractor(ratingsRepository),
             removeRatingInteractor = RemoveRatingInteractor(ratingsRepository),
             navigator = navigator,
+            localizer = FakeLocalizer(),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
             appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),

@@ -12,6 +12,7 @@ import DesignSystem
 import EpisodeDetail
 import FeatureFlags
 import MoreShows
+import RatingSheet
 import Search
 import SeasonDetails
 import Settings
@@ -49,6 +50,11 @@ public enum ScreenRegistryBootstrap {
             for: ShowListPresenter.self,
             builder: { ShowListSheetView(presenter: $0) },
             dismiss: { $0.dispatch(action: ShowListActionDismiss()) }
+        )
+        registry.registerSheet(
+            for: RatingSheetPresenter.self,
+            builder: { RatingSheetView(presenter: $0) },
+            dismiss: { $0.dispatch(action: RatingSheetActionDismissed()) }
         )
     }
 }

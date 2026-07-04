@@ -454,4 +454,8 @@
     <string name="label_account_switch_dialog_confirm">Ignorer et changer</string>
     <string name="label_account_switching">Changement…</string>
     <string name="label_account_switch_failed">Impossible de changer de compte. Veuillez réessayer.</string>
+    <string name="label_rating_sheet_title">Votre note</string>
+    <string name="label_action_rate">Noter</string>
+    <string name="label_action_rate_episode">Noter l\'épisode</string>
+    <string name="label_action_remove_rating">Supprimer la note</string>
 </resources>

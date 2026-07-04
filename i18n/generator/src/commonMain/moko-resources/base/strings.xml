@@ -465,4 +465,8 @@
     <string name="label_account_switch_dialog_confirm">Discard &amp; switch</string>
     <string name="label_account_switching">Switching…</string>
     <string name="label_account_switch_failed">Couldn\'t switch accounts. Please try again.</string>
+    <string name="label_rating_sheet_title">Your rating</string>
+    <string name="label_action_rate">Rate</string>
+    <string name="label_action_rate_episode">Rate episode</string>
+    <string name="label_action_remove_rating">Remove rating</string>
 </resources>
