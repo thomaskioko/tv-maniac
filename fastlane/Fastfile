@@ -1,6 +1,6 @@
 default_platform(:ios)
 
-TEST_DEVICE = "iPhone 16 Pro"
+TEST_DEVICE = "iPhone 17 Pro"
 TEST_OS = "26.5"
 TEST_DESTINATION = "platform=iOS Simulator,OS=#{TEST_OS},name=#{TEST_DEVICE}"
 PACKAGE_NAME = "com.thomaskioko.tvmaniac"
