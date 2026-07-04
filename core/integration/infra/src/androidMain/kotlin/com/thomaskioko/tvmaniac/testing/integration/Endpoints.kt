@@ -332,6 +332,42 @@ public object Endpoints {
             override val errorFixture: String = "simkl/sync/activities/error.json"
         }
 
+        /**
+         * `GET /tv/{simklId}?extended=full` — show summary, community rating comes from
+         * `body.ratings.simkl`. Shares its path shape with no other endpoint in this catalog.
+         */
+        public object ShowSummary : Endpoint.Pattern {
+            override val pathRegex: String = "/tv/\\d+"
+            override val successFixture: String = "simkl/tv/success.json"
+            override val errorFixture: String = "simkl/tv/error.json"
+        }
+
+        /**
+         * `POST /sync/ratings` — adds a show rating. Same path as [Trakt.SyncRatingsAdd] but
+         * served by a distinct [io.ktor.client.engine.mock.MockEngine] bound to `@SimklApi`; never
+         * stub both providers' rating endpoints in the same test (`MockEngineHandler` matches by
+         * path only, not host).
+         */
+        public object SyncRatingsAdd : Endpoint.Exact {
+            override val path: String = "/sync/ratings"
+            override val successFixture: String = "simkl/sync/ratings/success.json"
+            override val errorFixture: String = "simkl/sync/ratings/error.json"
+        }
+
+        /** `POST /sync/ratings/remove` — removes a show rating. */
+        public object SyncRatingsRemove : Endpoint.Exact {
+            override val path: String = "/sync/ratings/remove"
+            override val successFixture: String = "simkl/sync/ratings/remove/success.json"
+            override val errorFixture: String = "simkl/sync/ratings/remove/error.json"
+        }
+
+        /** `GET /sync/ratings/shows` — the user's rated shows, used to reconcile the local user rating. */
+        public object SyncRatingsShows : Endpoint.Exact {
+            override val path: String = "/sync/ratings/shows"
+            override val successFixture: String = "simkl/sync/ratings/shows/success.json"
+            override val errorFixture: String = "simkl/sync/ratings/shows/error.json"
+        }
+
         public object CalendarTvFeed : Endpoint.Exact {
             override val path: String = "/calendar/tv.json"
             override val successFixture: String = "simkl/calendar/tv.json"
@@ -422,6 +458,10 @@ public object Endpoints {
         Simkl.UsersStats,
         Simkl.SyncAllItems,
         Simkl.SyncActivities,
+        Simkl.ShowSummary,
+        Simkl.SyncRatingsAdd,
+        Simkl.SyncRatingsRemove,
+        Simkl.SyncRatingsShows,
         Simkl.CalendarTvFeed,
     )
 }
