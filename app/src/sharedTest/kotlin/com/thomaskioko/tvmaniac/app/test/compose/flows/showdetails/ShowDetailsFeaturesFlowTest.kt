@@ -9,6 +9,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val favoritesListTraktId = 34223248L
+    private val ratedStarValue = 8
 
     @Test
     fun givenShowDetails_whenOpened_thenInteractiveSurfacesAreExercised() = runAppFlowTest {
@@ -63,6 +64,31 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         showListRobot
             .assertSheetDisplayed()
             .assertTraktListItemDisplayed(favoritesListTraktId)
+    }
+
+    @Test
+    fun givenAuthenticatedUser_whenShowRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+        scenarios.stubAuthenticatedSync()
+        scenarios.ratings.stubRatingsSync()
+
+        rootRobot.dismissNotificationRationale()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickRateButton()
+
+        ratingSheetRobot
+            .assertSheetDisplayed()
+            .assertClearRatingButtonDoesNotExist()
+            .clickStar(ratedStarValue)
+            .assertClearRatingButtonDisplayed()
+            .clickClearRatingButton()
+            .assertClearRatingButtonDoesNotExist()
     }
 
     @Test

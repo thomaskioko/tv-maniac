@@ -30,6 +30,12 @@ internal class EpisodeSheetRobot(composeUi: ComposeUiTest) : BaseRobot<EpisodeSh
         click(tag)
     }
 
+    fun clickRateAction() = apply {
+        val tag = EpisodeSheetTestTags.actionItem("rate")
+        scrollTo(tag)
+        click(tag)
+    }
+
     private companion object {
         private const val SHEET_APPEARANCE_TIMEOUT_MILLIS: Long = 15_000
     }

@@ -52,6 +52,7 @@ internal class Scenarios(
     val upNext: UpNext = UpNext()
     val traktLists: TraktLists = TraktLists()
     val flags: Flags = Flags()
+    val ratings: Ratings = Ratings()
 
     fun signInAndDismissRationale() {
         auth.stubLoggedInUser()
@@ -379,6 +380,20 @@ internal class Scenarios(
 
         fun stubCreateList(slug: String = TEST_PROFILE_SLUG) {
             mockHandler.stubEndpoint(Endpoints.Trakt.createList(slug), method = HttpMethod.Post)
+        }
+    }
+
+    /**
+     * Stubs the Trakt rating endpoints so the pending-ratings drain (`RatingsSyncInitializer`)
+     * and the show-details community-rating reconcile (`RatingsStore`) both resolve cleanly
+     * instead of logging a background-sync failure to [com.thomaskioko.tvmaniac.syncstate.api.SyncObserver].
+     */
+    inner class Ratings {
+        fun stubRatingsSync() {
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncRatingsAdd, method = HttpMethod.Post)
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncRatingsRemove, method = HttpMethod.Post)
+            mockHandler.stubEndpoint(Endpoints.Trakt.SyncRatingsShows)
+            mockHandler.stubEndpoint(Endpoints.Trakt.ShowCommunityRating)
         }
     }
 
