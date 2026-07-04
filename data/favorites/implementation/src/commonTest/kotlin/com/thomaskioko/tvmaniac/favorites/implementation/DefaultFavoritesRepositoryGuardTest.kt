@@ -141,6 +141,7 @@ private object NoOpTvShowsDao : TvShowsDao {
     override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> = emptyList()
     override fun getTmdbIdByShowId(showId: Long): Long? = null
     override fun getTmdbIdForLocalShowId(showId: Long): Long? = null
+    override fun getLocalShowIdByTmdbId(tmdbId: Long): Long? = null
     override fun getTraktIdByTmdbId(tmdbId: Long): Long? = null
     override suspend fun existsByShowId(showId: Long): Boolean = false
 }

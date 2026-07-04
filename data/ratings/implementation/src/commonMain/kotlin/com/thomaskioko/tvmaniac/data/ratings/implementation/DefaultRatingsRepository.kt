@@ -51,18 +51,21 @@ public class DefaultRatingsRepository(
         ratingsDao.observePendingRatingsCount().map { it > 0 }.distinctUntilChanged()
 
     override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
         when {
-            forceRefresh -> ratingsStore.fresh(showId)
-            else -> ratingsStore.get(showId)
+            forceRefresh -> ratingsStore.fresh(localShowId)
+            else -> ratingsStore.get(localShowId)
         }
     }
 
     override fun observeShowRating(showId: Long): Flow<ShowRating> {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return flowOf(EMPTY_SHOW_RATING)
+
         val communityFlow = activeSource()?.provider?.toDbProvider()
-            ?.let { providerMetaDao.observeProviderRating(showId, it) }
+            ?.let { providerMetaDao.observeProviderRating(localShowId, it) }
             ?: flowOf(null)
 
-        return combine(ratingsDao.observeShowRating(showId), communityFlow) { userEntry, community ->
+        return combine(ratingsDao.observeShowRating(localShowId), communityFlow) { userEntry, community ->
             ShowRating(
                 userRating = userEntry?.userRating?.toInt(),
                 communityRating = community?.rating,
@@ -73,8 +76,9 @@ public class DefaultRatingsRepository(
     }
 
     override suspend fun rateShow(showId: Long, rating: Int) {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
         ratingsDao.upsertShowUserRating(
-            showId = showId,
+            showId = localShowId,
             userRating = rating.toLong(),
             ratedAt = dateTimeProvider.nowMillis(),
             pendingAction = PendingAction.UPLOAD,
@@ -82,7 +86,8 @@ public class DefaultRatingsRepository(
     }
 
     override suspend fun removeShowRating(showId: Long) {
-        ratingsDao.clearShowUserRating(showId)
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
+        ratingsDao.clearShowUserRating(localShowId)
     }
 
     override fun observeSeasonRating(seasonId: Long): Flow<SeasonRating> =
@@ -260,5 +265,11 @@ public class DefaultRatingsRepository(
 
     private companion object {
         private const val TAG = "ratings_sync"
+        private val EMPTY_SHOW_RATING = ShowRating(
+            userRating = null,
+            communityRating = null,
+            communityVotes = null,
+            pendingAction = PendingAction.NOTHING,
+        )
     }
 }

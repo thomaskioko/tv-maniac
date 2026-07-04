@@ -143,6 +143,10 @@ public class DefaultTvShowsDao(
         return tvShowQueries.tmdbIdForLocalShowId(Id(showId)).executeAsOneOrNull()?.id
     }
 
+    override fun getLocalShowIdByTmdbId(tmdbId: Long): Long? {
+        return tvShowQueries.getShowIdByTmdbId(Id(tmdbId)).executeAsOneOrNull()?.id
+    }
+
     override fun getTraktIdByTmdbId(tmdbId: Long): Long? =
         tvShowQueries.getTraktIdByTmdbId(Id(tmdbId)).executeAsOneOrNull()
 
