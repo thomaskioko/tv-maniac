@@ -26,28 +26,38 @@ public struct RatingSheetContent: View {
     }
 
     public var body: some View {
-        VStack(spacing: theme.spacing.large) {
-            Text(title)
-                .textStyle(theme.typography.titleLarge)
-                .foregroundStyle(.appOnSurface)
-                .padding(.top, theme.spacing.large)
+        VStack(alignment: .leading, spacing: 0) {
+            grabber
 
-            starRow
+            VStack(alignment: .leading, spacing: theme.spacing.medium) {
+                Text(title)
+                    .textStyle(theme.typography.titleLarge)
+                    .foregroundStyle(.appOnSurface)
+
+                starRow
+            }
+            .padding(.horizontal, theme.spacing.medium)
+            .padding(.top, theme.spacing.small)
 
             if userRating != nil {
-                Button(action: onRemove) {
-                    Text(removeLabel)
-                        .textStyle(theme.typography.bodyLarge)
-                        .foregroundStyle(.appError)
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.bottom, theme.spacing.small)
+                Divider()
+                    .padding(.top, theme.spacing.medium)
+
+                removeRow
             }
         }
-        .padding(.horizontal, theme.spacing.medium)
         .padding(.bottom, theme.spacing.large)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(.appSurface)
+        .clipShape(.rect(topLeadingRadius: sheetCornerRadius, topTrailingRadius: sheetCornerRadius))
+    }
+
+    private var grabber: some View {
+        RoundedRectangle(cornerRadius: 2.5)
+            .fill(theme.colors.onSurface.opacity(0.4))
+            .frame(width: 36, height: 5)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.vertical, theme.spacing.small)
     }
 
     private var starRow: some View {
@@ -68,6 +78,26 @@ public struct RatingSheetContent: View {
         .accessibilityLabel("Rate \(value) out of 10")
     }
 
+    private var removeRow: some View {
+        Button(action: onRemove) {
+            HStack(spacing: theme.spacing.medium) {
+                Image(systemName: "trash")
+                    .textStyle(theme.typography.titleMedium)
+                    .foregroundStyle(.appError)
+                    .frame(width: 24)
+
+                Text(removeLabel)
+                    .textStyle(theme.typography.bodyLarge)
+                    .foregroundStyle(.appError)
+
+                Spacer()
+            }
+            .padding(.horizontal, theme.spacing.medium)
+            .padding(.vertical, theme.spacing.small)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
     private func symbol(for value: Int) -> String {
         guard let userRating else { return "star" }
         if userRating >= value { return "star.fill" }
@@ -78,6 +108,7 @@ public struct RatingSheetContent: View {
 
 private let starCount = 5
 private let pointsPerStar = 2
+private let sheetCornerRadius: CGFloat = 16
 
 #Preview("Unrated") {
     RatingSheetContent(

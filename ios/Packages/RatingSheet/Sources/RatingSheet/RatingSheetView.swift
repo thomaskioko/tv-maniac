@@ -25,7 +25,7 @@ public struct RatingSheetView: View {
             }
         )
         .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
+        .presentationDragIndicator(.hidden)
         .presentationCornerRadius(16)
         .appTheme()
     }
