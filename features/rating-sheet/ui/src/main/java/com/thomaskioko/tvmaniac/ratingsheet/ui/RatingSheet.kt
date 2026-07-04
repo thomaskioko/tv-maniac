@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thomaskioko.tvmaniac.compose.components.HorizontalOutlinedButton
+import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -111,20 +111,13 @@ internal fun RatingSheetContent(
             }
 
             if (userRating != null) {
-                HorizontalOutlinedButton(
+                FilledHorizontalIconButton(
                     text = state.removeRatingLabel,
                     onClick = { onAction(RatingSheetAction.RatingCleared) },
                     modifier = Modifier.testTag(RatingSheetTestTags.CLEAR_RATING_BUTTON),
+                    imageVector = Icons.Outlined.DeleteOutline,
                     shape = CircleShape,
-                    borderColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.error,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.DeleteOutline,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                        )
-                    },
+                    containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.65f),
                 )
             }
         }

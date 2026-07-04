@@ -80,15 +80,15 @@ public struct RatingSheetContent: View {
             HStack(spacing: theme.spacing.xSmall) {
                 Image(systemName: "trash")
                     .textStyle(theme.typography.bodyMedium)
-                    .foregroundStyle(.appError)
+                    .foregroundStyle(.appOnButtonBackground)
 
                 Text(removeLabel)
                     .textStyle(theme.typography.bodyMedium)
-                    .foregroundStyle(.appError)
+                    .foregroundStyle(.appOnButtonBackground)
             }
             .padding(.horizontal, theme.spacing.medium)
             .padding(.vertical, theme.spacing.xSmall)
-            .overlay(Capsule().stroke(.appError, lineWidth: 1))
+            .background(.appError.opacity(0.65), in: Capsule())
         }
         .buttonStyle(PlainButtonStyle())
     }
