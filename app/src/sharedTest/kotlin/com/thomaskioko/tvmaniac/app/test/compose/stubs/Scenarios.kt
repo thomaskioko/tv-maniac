@@ -120,6 +120,16 @@ internal class Scenarios(
         stubActiveProvider(AccountProvider.TRAKT)
     }
 
+    /**
+     * Authenticated Trakt session with the Simkl-login and account-switch feature flags enabled:
+     * the precondition for exercising a Trakt-to-Simkl account switch.
+     */
+    fun stubAuthenticatedSyncWithAccountSwitch() {
+        flags.enableSimklLogin()
+        flags.enableAccountSwitch()
+        stubAuthenticatedSync()
+    }
+
     fun stubTmdb() {
         stubPublicCatalog()
     }
@@ -191,9 +201,7 @@ internal class Scenarios(
      * auth-state collector still observes real LOGGED_OUT to LOGGED_IN transition.
      */
     fun stubAuthenticatedSyncOnSignIn() {
-        graph.oAuthLauncher.setOnLaunch {
-            stubActiveProvider(AccountProvider.TRAKT)
-        }
+        stubOnSignIn(AccountProvider.TRAKT)
     }
 
     /**
@@ -201,8 +209,20 @@ internal class Scenarios(
      * authenticated Trakt session and flips fake auth state to LOGGED_IN.
      */
     fun stubProfileOnSignIn() {
+        stubOnSignIn(AccountProvider.TRAKT)
+    }
+
+    /**
+     * Registers the OAuth callback so the next sign-in click lazily wires the given provider's
+     * authenticated session, mirroring a live OAuth round-trip. Owns the only `graph.oAuthLauncher`
+     * access so journey tests never reach into the launcher directly.
+     */
+    fun stubOnSignIn(provider: AccountProvider) {
         graph.oAuthLauncher.setOnLaunch {
-            stubActiveProvider(AccountProvider.TRAKT)
+            when (provider) {
+                AccountProvider.TRAKT -> stubActiveProvider(AccountProvider.TRAKT)
+                AccountProvider.SIMKL -> stubAuthenticatedSimklProfile()
+            }
         }
     }
 
@@ -379,17 +399,6 @@ internal class Scenarios(
     }
 
     inner class UpNext {
-        /**
-         * Stubs the provider's watched-history upload endpoint (`POST /sync/history` on both
-         * Trakt and Simkl) so the background launcher fired by `markEpisodeAsWatched` resolves
-         * cleanly when pushing the local UPLOAD-pending row. UpNext list and count derive live
-         * from the local `watched_episodes` table, so no provider UpNext API stub is required
-         * after the click.
-         *
-         * The unused [showTraktId] parameter is kept so callers can keep the per-show signature
-         * if/when the upload assertion grows to verify a specific show id.
-         */
-        @Suppress("UNUSED_PARAMETER")
         fun stubProgressAfterPilotWatched(
             showTraktId: Long,
             provider: AccountProvider = AccountProvider.TRAKT,
