@@ -16,8 +16,6 @@ kotlin {
                 api(projects.core.syncstate.api)
                 api(projects.core.view)
                 api(projects.data.accountManager.api)
-                api(projects.data.episode.api)
-                api(projects.data.followedshows.api)
                 api(projects.data.upnext.api)
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)

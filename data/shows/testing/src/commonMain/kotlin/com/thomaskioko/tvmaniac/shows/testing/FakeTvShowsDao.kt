@@ -14,8 +14,13 @@ import kotlinx.coroutines.flow.map
 public class FakeTvShowsDao : TvShowsDao {
 
     private val state = MutableStateFlow<Map<Long, Tvshow>>(emptyMap())
+    private val tmdbIdByLocalShowId = MutableStateFlow<Map<Long, Long>>(emptyMap())
 
     public fun entries(): List<Tvshow> = state.value.values.toList()
+
+    public fun setTmdbIdForLocalShowId(showId: Long, tmdbId: Long) {
+        tmdbIdByLocalShowId.value += (showId to tmdbId)
+    }
 
     override fun upsert(show: ShowToPersist) {
         val key = show.showId?.id ?: show.tmdbId.id
@@ -52,6 +57,8 @@ public class FakeTvShowsDao : TvShowsDao {
     override fun getShowsByIds(showIds: List<Long>): List<ShowEntity> = emptyList()
 
     override fun getTmdbIdByShowId(showId: Long): Long? = state.value[showId]?.tmdb_id?.id
+
+    override fun getTmdbIdForLocalShowId(showId: Long): Long? = tmdbIdByLocalShowId.value[showId]
 
     override fun getTraktIdByTmdbId(tmdbId: Long): Long? = null
 

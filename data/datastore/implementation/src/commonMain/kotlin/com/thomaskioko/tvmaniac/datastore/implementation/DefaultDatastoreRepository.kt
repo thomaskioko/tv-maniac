@@ -282,15 +282,15 @@ public class DefaultDatastoreRepository(
             preferences[KEY_CRASH_REPORTING_ENABLED] ?: true
         }
 
-    override suspend fun setAccountLimitBannerDismissed(dismissed: Boolean) {
+    override suspend fun setDebugMenuEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
-            preferences[KEY_ACCOUNT_LIMIT_BANNER_DISMISSED] = dismissed
+            preferences[KEY_DEBUG_MENU_ENABLED] = enabled
         }
     }
 
-    override fun observeAccountLimitBannerDismissed(): Flow<Boolean> =
+    override fun observeDebugMenuEnabled(): Flow<Boolean> =
         dataStore.data.map { preferences ->
-            preferences[KEY_ACCOUNT_LIMIT_BANNER_DISMISSED] ?: false
+            preferences[KEY_DEBUG_MENU_ENABLED] ?: false
         }
 
     public companion object {
@@ -314,7 +314,6 @@ public class DefaultDatastoreRepository(
         public val KEY_GENRE_SHOW_CATEGORY: Preferences.Key<String> = stringPreferencesKey("genre_show_category")
         public val KEY_CRASH_REPORTING_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("crash_reporting_enabled")
         public val KEY_LAST_TOKEN_REFRESH_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_token_refresh_timestamp")
-        public val KEY_ACCOUNT_LIMIT_BANNER_DISMISSED: Preferences.Key<Boolean> =
-            booleanPreferencesKey("account_limit_banner_dismissed")
+        public val KEY_DEBUG_MENU_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("debug_menu_enabled")
     }
 }

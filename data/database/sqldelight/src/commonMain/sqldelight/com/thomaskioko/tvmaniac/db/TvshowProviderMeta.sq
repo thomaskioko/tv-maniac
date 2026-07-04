@@ -13,3 +13,19 @@ CREATE TABLE IF NOT EXISTS tvshow_provider_meta(
     PRIMARY KEY (show_id, provider),
     FOREIGN KEY (show_id) REFERENCES tvshow(id) ON DELETE CASCADE
 );
+
+upsertProviderRating:
+INSERT INTO tvshow_provider_meta(show_id, provider, rating, vote_count, last_synced_at)
+VALUES (:showId, :provider, :rating, :voteCount, :lastSyncedAt)
+ON CONFLICT(show_id, provider) DO UPDATE SET
+    rating = excluded.rating,
+    vote_count = excluded.vote_count,
+    last_synced_at = excluded.last_synced_at;
+
+providerRating:
+SELECT rating, vote_count
+FROM tvshow_provider_meta
+WHERE show_id = :showId AND provider = :provider;
+
+deleteAll:
+DELETE FROM tvshow_provider_meta;

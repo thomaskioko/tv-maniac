@@ -44,3 +44,5 @@ public data object ToggleSeasonWatched : SeasonDetailsAction
 public data class EpisodeClicked(
     val id: Long,
 ) : SeasonDetailsAction
+
+public data object SeasonRatingClicked : SeasonDetailsAction

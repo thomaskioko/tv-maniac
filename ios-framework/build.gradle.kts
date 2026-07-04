@@ -8,10 +8,11 @@ plugins {
     alias(libs.plugins.app.kmp)
 }
 
-// TODO: add `scaffold { ignoreAll() }` to ignore wrong DAGP configuration
-
 scaffold {
     useMetro()
+    ignoreAll()
+    useDependencyGuard("iosArm64CompileKlibraries")
+    optIn("kotlin.experimental.ExperimentalObjCName")
 
     addIosTargetsWithXcFramework(
         frameworkName = "TvManiac",
@@ -22,7 +23,7 @@ scaffold {
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
             disableNativeCache(
-                version = DisableCacheInKotlinVersion.`2_3_21`,
+                version = DisableCacheInKotlinVersion.`2_4_0`,
                 reason = "cache bug causes double runtime injection when linking multiple frameworks, see KT-42254",
                 issueUrl = URI("https://youtrack.jetbrains.com/issue/KT-42254"),
             )
@@ -38,7 +39,6 @@ scaffold {
             export(projects.features.calendar.presenter)
             export(projects.features.discover.nav)
             export(projects.features.discover.presenter)
-            export(projects.features.genreShows.presenter)
             export(projects.features.home.nav)
             export(projects.features.home.presenter)
             export(projects.features.myShows.nav)
@@ -64,6 +64,7 @@ scaffold {
             export(projects.features.upnext.presenter)
             export(projects.features.debug.presenter)
             export(projects.features.episodeSheet.presenter)
+            export(projects.features.ratingSheet.presenter)
             export(projects.domain.featureFlags)
             export(projects.features.featureFlags.nav)
             export(projects.features.featureFlags.presenter)
@@ -76,8 +77,6 @@ scaffold {
             export(libs.essenty.lifecycle)
         }
     }
-
-    optIn("kotlin.experimental.ExperimentalObjCName")
 }
 
 kotlin {
@@ -95,7 +94,6 @@ kotlin {
                 api(projects.data.accountManager.api)
                 api(projects.features.calendar.presenter)
                 api(projects.features.discover.presenter)
-                api(projects.features.genreShows.presenter)
                 api(projects.features.myShows.presenter)
                 api(projects.features.home.nav)
                 api(projects.features.home.presenter)
@@ -116,6 +114,7 @@ kotlin {
                 api(projects.features.upnext.presenter)
                 api(projects.features.debug.presenter)
                 api(projects.features.episodeSheet.presenter)
+                api(projects.features.ratingSheet.presenter)
                 api(projects.domain.featureFlags)
                 api(projects.features.featureFlags.nav)
                 api(projects.features.featureFlags.presenter)
@@ -145,6 +144,8 @@ kotlin {
                 api(projects.data.watchlistPrefs.implementation)
                 api(projects.data.library.api)
                 api(projects.data.library.implementation)
+                api(projects.data.ratings.api)
+                api(projects.data.ratings.implementation)
                 api(projects.data.upnext.api)
                 api(projects.data.upnext.implementation)
                 api(projects.data.accountManager.implementation)

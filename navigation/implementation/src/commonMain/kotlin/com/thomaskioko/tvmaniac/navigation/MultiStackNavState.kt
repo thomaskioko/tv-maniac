@@ -90,7 +90,9 @@ internal fun multiStackNavTransformer(
     state: MultiStackNavState,
     event: MultiStackNavEvent,
 ): MultiStackNavState = when (event) {
-    is MultiStackNavEvent.Push -> state.withActiveStack { it + (event.route as BaseRoute) }
+    is MultiStackNavEvent.Push -> state.withActiveStack { stack ->
+        if (stack.lastOrNull() == event.route) stack else stack + (event.route as BaseRoute)
+    }
 
     is MultiStackNavEvent.BringToFront -> state.withActiveStack { stack ->
         stack.filterNot { it::class == event.route::class } + (event.route as BaseRoute)

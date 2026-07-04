@@ -1,21 +1,5 @@
-import com.autonomousapps.DependencyAnalysisSubExtension
-
 plugins {
     alias(libs.plugins.app.kmp)
-}
-
-// TODO: replace with `scaffold { ignoreUnused(...) }`.
-configure<DependencyAnalysisSubExtension> {
-    issues {
-        onUnusedDependencies {
-            exclude(
-                ":data:request-manager:testing",
-                ":data:sync-activity:testing",
-                ":data:traktlists:testing",
-                ":data:user:testing",
-            )
-        }
-    }
 }
 
 scaffold {
@@ -30,13 +14,20 @@ scaffold {
         )
     }
     optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+    ignoreUnusedDependencies(
+        ":data:request-manager:testing",
+        ":data:sync-activity:testing",
+        ":data:traktlists:testing",
+        ":data:user:testing",
+    )
 }
 
 kotlin {
     sourceSets {
-        val jvmAndIosMain by creating {
-            dependsOn(getByName("commonMain"))
-        }
+        val jvmAndIosMain =
+            create("jvmAndIosMain") {
+                dependsOn(getByName("commonMain"))
+            }
         getByName("jvmMain").dependsOn(jvmAndIosMain)
         getByName("iosMain").dependsOn(jvmAndIosMain)
 
@@ -57,7 +48,6 @@ kotlin {
             api(projects.core.logger.api)
             api(projects.core.logger.implementation)
             api(projects.core.logger.testing)
-            api(projects.core.networkUtil.implementation)
             api(projects.core.notifications.implementation)
             api(projects.core.notifications.testing)
             api(projects.core.syncstate.api)
@@ -74,30 +64,20 @@ kotlin {
             api(projects.data.datastore.api)
             api(projects.data.datastore.implementation)
             api(projects.data.episode.implementation)
-            api(projects.data.featuredshows.implementation)
             api(projects.data.followedshows.implementation)
-            api(projects.data.genre.implementation)
             api(projects.data.library.implementation)
-            api(projects.data.popularshows.implementation)
+            api(projects.data.ratings.implementation)
             api(projects.data.requestManager.implementation)
-            api(projects.data.search.implementation)
             api(projects.data.seasondetails.implementation)
             api(projects.data.seasons.implementation)
             api(projects.data.showdetails.implementation)
             api(projects.data.shows.implementation)
-            api(projects.data.similar.implementation)
             api(projects.data.syncActivity.implementation)
-            api(projects.data.topratedshows.implementation)
-            api(projects.data.trailers.implementation)
             api(projects.data.traktauth.implementation)
             api(projects.data.traktauth.testing)
             api(projects.data.oauth.implementation)
             api(projects.data.oauth.testing)
             api(projects.data.simklauth.implementation)
-            api(projects.data.traktlists.implementation)
-            api(projects.data.trendingshows.implementation)
-            api(projects.data.upcomingshows.implementation)
-            api(projects.data.upnext.implementation)
             api(projects.core.featureFlags.api)
             api(projects.core.featureFlags.implementation)
             api(projects.core.featureFlags.testing)
@@ -106,7 +86,6 @@ kotlin {
             api(projects.data.user.api)
             api(projects.data.user.implementation)
             api(projects.data.watchStatus.implementation)
-            api(projects.data.watchlistPrefs.implementation)
             api(projects.data.watchproviders.implementation)
             api(projects.domain.episode)
             api(projects.domain.library)
@@ -117,7 +96,6 @@ kotlin {
             api(projects.domain.user)
             api(projects.domain.continueWatching)
             api(projects.features.discover.nav)
-            api(projects.features.genreShows.nav)
             api(projects.features.home.nav)
             api(projects.features.home.presenter)
             api(projects.features.library.nav)
@@ -138,9 +116,9 @@ kotlin {
 
         jvmMain.dependencies {
             api(projects.data.requestManager.testing)
-            api(projects.data.syncActivity.testing)
-            api(projects.data.traktlists.testing)
-            api(projects.data.user.testing)
+            implementation(projects.data.syncActivity.testing)
+            implementation(projects.data.traktlists.testing)
+            implementation(projects.data.user.testing)
             implementation(libs.sqldelight.driver.jvm)
         }
 
@@ -159,6 +137,7 @@ kotlin {
             api(projects.core.tasks.api)
             api(projects.data.oauth.api)
 
+            implementation(libs.androidx.compose.runtime)
             implementation(libs.kotlinx.serialization.json)
         }
     }

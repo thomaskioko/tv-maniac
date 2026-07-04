@@ -48,6 +48,12 @@
             "matchPackageNames": [
                 "/io.github.takahirom.roborazzi/"
             ]
+        },
+        {
+            "groupName": "SwiftLint",
+            "matchPackageNames": [
+                "/swiftlint/i"
+            ]
         }
     ],
     "dependencyDashboard": true,

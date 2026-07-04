@@ -13,6 +13,8 @@ import com.thomaskioko.tvmaniac.search.presenter.model.GenreRowModel
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 public sealed interface SearchUiState {
     public data object InitialLoading : SearchUiState
@@ -59,6 +61,8 @@ public data class SearchShowState(
 
     public companion object {
         public const val SEARCH_QUERY_LENGTH: Int = 2
+        public val LOCAL_SUGGESTION_DEBOUNCE: Duration = 100.milliseconds
+        public val NETWORK_DEBOUNCE: Duration = 300.milliseconds
         public val Empty: SearchShowState = SearchShowState()
     }
 }

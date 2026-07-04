@@ -7,10 +7,14 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
+import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRating
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonWatchedInteractor
@@ -23,7 +27,9 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
+import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.api.model.EpisodeDetails
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsLoaded
@@ -57,6 +63,7 @@ class SeasonPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val castRepository = FakeCastRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val ratingsRepository = FakeRatingsRepository()
     private val navigator = FakeNavigator()
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -82,6 +89,31 @@ class SeasonPresenterTest {
     @Test
     fun `should emit InitialSeasonsState when no data is fetched`() = runTest {
         presenter.state.test { awaitItem() shouldBe SeasonDetailsModel.Empty }
+    }
+
+    @Test
+    fun `should emit season user rating given rating is observed`() = runTest {
+        seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes(episodeCount = 1))
+        castRepository.setSeasonCast(emptyList())
+        ratingsRepository.setSeasonRating(SeasonRating(userRating = 8, pendingAction = PendingAction.NOTHING))
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().userRating shouldBe 8
+        }
+    }
+
+    @Test
+    fun `should navigate to rating sheet given season rating clicked`() = runTest {
+        seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes(episodeCount = 1))
+        castRepository.setSeasonCast(emptyList())
+
+        presenter.dispatch(SeasonRatingClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.ratingType shouldBe RatingEntityType.SEASON
+        route.param.id shouldBe 1L
     }
 
     @Test
@@ -1215,6 +1247,7 @@ class SeasonPresenterTest {
             observeUnwatchedInPreviousSeasonsInteractor = ObserveUnwatchedInPreviousSeasonsInteractor(
                 episodeRepository = episodeRepository,
             ),
+            observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )

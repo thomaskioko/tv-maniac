@@ -31,38 +31,44 @@ public struct CarouselView<T, Content: View>: View {
         GeometryReader { geometry in
             let itemWidth = geometry.size.width
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 0) {
-                    ForEach(items.indices, id: \.self) { index in
-                        content(index)
-                            .frame(width: itemWidth)
-                            .id(index)
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 0) {
+                        ForEach(items.indices, id: \.self) { index in
+                            content(index)
+                                .frame(width: itemWidth)
+                                .id(index)
+                        }
                     }
+                    .scrollTargetLayout()
                 }
-                .scrollTargetLayout()
-            }
-            .scrollTargetBehavior(.paging)
-            .scrollPosition(id: $scrollPosition)
-            .onChange(of: scrollPosition) { _, newValue in
-                if let newIndex = newValue {
-                    currentIndex = newIndex
-                    notifyActiveItem()
+                .scrollTargetBehavior(.paging)
+                .scrollPosition(id: $scrollPosition)
+                .onChange(of: scrollPosition) { _, newValue in
+                    if let newIndex = newValue {
+                        currentIndex = newIndex
+                        notifyActiveItem()
+                    }
+                    stopAutoScroll()
+                    setupAutoScroll()
+                    onDraggingChanged?(false)
                 }
-                stopAutoScroll()
-                setupAutoScroll()
-                onDraggingChanged?(false)
-            }
-            .onChange(of: currentIndex) { _, newValue in
-                if scrollPosition != newValue {
-                    DispatchQueue.main.async {
-                        withAnimation(.easeOut(duration: 0.8)) {
-                            scrollPosition = newValue
+                .onChange(of: currentIndex) { _, newValue in
+                    if scrollPosition != newValue {
+                        DispatchQueue.main.async {
+                            withAnimation(.easeOut(duration: 0.8)) {
+                                scrollPosition = newValue
+                            }
                         }
                     }
                 }
-            }
-            .onAppear {
-                scrollPosition = currentIndex
+                .onAppear {
+                    scrollPosition = currentIndex
+                    snapToCurrentPage(using: proxy)
+                }
+                .onChange(of: scenePhase) { _, newPhase in
+                    handleScenePhaseChange(newPhase, proxy: proxy)
+                }
             }
         }
         .onAppear {
@@ -72,19 +78,26 @@ public struct CarouselView<T, Content: View>: View {
         .onDisappear {
             stopAutoScroll()
         }
-        .onChange(of: scenePhase) { _, newPhase in
-            handleScenePhaseChange(newPhase)
-        }
     }
 
-    private func handleScenePhaseChange(_ phase: ScenePhase) {
+    private func handleScenePhaseChange(_ phase: ScenePhase, proxy: ScrollViewProxy) {
         switch phase {
         case .active:
             setupAutoScroll()
+            snapToCurrentPage(using: proxy)
         case .inactive, .background:
             stopAutoScroll()
         @unknown default:
             break
+        }
+    }
+
+    private func snapToCurrentPage(using proxy: ScrollViewProxy) {
+        guard items.indices.contains(currentIndex) else { return }
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            proxy.scrollTo(currentIndex, anchor: .center)
         }
     }
 

@@ -25,7 +25,6 @@ kotlin {
                 api(libs.kotlinx.collections)
 
                 implementation(projects.core.base)
-                implementation(projects.core.util.api)
                 implementation(projects.data.calendar.api)
                 implementation(projects.features.episodeSheet.nav)
             }
@@ -38,7 +37,6 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.calendar.testing)
-                implementation(projects.data.followedshows.testing)
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)

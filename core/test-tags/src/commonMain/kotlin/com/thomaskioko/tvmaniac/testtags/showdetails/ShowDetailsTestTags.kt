@@ -16,6 +16,7 @@ public object ShowDetailsTestTags {
     public const val CONTINUE_TRACKING_LIST_TEST_TAG: String = "show_details_continue_tracking_list"
     public const val WATCH_PROGRESS_SECTION_TEST_TAG: String = "show_details_watch_progress_section"
     public const val WATCH_PROGRESS_LIST_TEST_TAG: String = "show_details_watch_progress_list"
+    public const val WATCH_PROVIDERS_SECTION_TEST_TAG: String = "show_details_watch_providers"
     public fun seasonChip(seasonNumber: Long): String = "show_details_season_chip_$seasonNumber"
     public fun continueTrackingMarkWatchedButton(episodeId: Long): String =
         "show_details_continue_tracking_mark_watched_$episodeId"

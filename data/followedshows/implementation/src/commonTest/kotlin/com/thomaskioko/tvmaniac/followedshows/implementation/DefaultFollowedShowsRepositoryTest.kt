@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.followedshows.implementation
 
+import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -174,5 +175,39 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
         val entries = repository.getFollowedShows()
         entries.size shouldBe 2
         entries.map { it.showId }.toSet() shouldBe setOf(1L, 2L)
+    }
+
+    @Test
+    fun `should emit true given show is followed`() = runTest {
+        repository.addFollowedShow(1L)
+
+        repository.observeIsFollowed(1L).test {
+            awaitItem() shouldBe true
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit false given show is not followed`() = runTest {
+        repository.observeIsFollowed(2L).test {
+            awaitItem() shouldBe false
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit false given show marked for deletion`() = runTest {
+        val _ = dao.upsert(
+            FollowedShowEntry(
+                showId = 1L,
+                followedAt = testInstant,
+                pendingAction = PendingAction.DELETE,
+            ),
+        )
+
+        repository.observeIsFollowed(1L).test {
+            awaitItem() shouldBe false
+            cancelAndConsumeRemainingEvents()
+        }
     }
 }

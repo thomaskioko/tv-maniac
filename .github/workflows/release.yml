@@ -26,7 +26,7 @@ jobs:
       changelog: ${{ steps.changelog.outputs.body }}
     steps:
       - name: Checkout tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -131,7 +131,7 @@ jobs:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
     steps:
       - name: Checkout tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup iOS Release
         uses: ./.github/actions/setup-ios-release
@@ -163,7 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download Android artifacts
         if: ${{ needs.build-android.result == 'success' }}

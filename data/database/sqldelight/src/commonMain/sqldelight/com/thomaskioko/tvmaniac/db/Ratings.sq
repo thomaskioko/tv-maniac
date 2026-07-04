@@ -1,0 +1,139 @@
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.SeasonId;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+CREATE TABLE IF NOT EXISTS show_ratings(
+    show_id INTEGER AS Id<ShowId> PRIMARY KEY NOT NULL,
+    user_rating INTEGER DEFAULT NULL,
+    rated_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_show_ratings_pending_action ON show_ratings(pending_action);
+
+CREATE TABLE IF NOT EXISTS season_ratings(
+    season_id INTEGER AS Id<SeasonId> PRIMARY KEY NOT NULL,
+    user_rating INTEGER DEFAULT NULL,
+    rated_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    FOREIGN KEY(season_id) REFERENCES season(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_season_ratings_pending_action ON season_ratings(pending_action);
+
+CREATE TABLE IF NOT EXISTS episode_ratings(
+    episode_id INTEGER AS Id<EpisodeId> PRIMARY KEY NOT NULL,
+    user_rating INTEGER DEFAULT NULL,
+    rated_at INTEGER DEFAULT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_episode_ratings_pending_action ON episode_ratings(pending_action);
+
+upsertShowUserRating:
+INSERT INTO show_ratings(show_id, user_rating, rated_at, pending_action)
+VALUES(:showId, :userRating, :ratedAt, :pendingAction)
+ON CONFLICT(show_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = excluded.pending_action;
+
+saveRemoteShowRating:
+INSERT INTO show_ratings(show_id, user_rating, rated_at, pending_action)
+VALUES(:showId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(show_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at
+WHERE show_ratings.pending_action = 'NOTHING';
+
+pendingRatingsCount:
+SELECT (
+    (SELECT COUNT(*) FROM show_ratings WHERE pending_action != 'NOTHING')
+    + (SELECT COUNT(*) FROM season_ratings WHERE pending_action != 'NOTHING')
+    + (SELECT COUNT(*) FROM episode_ratings WHERE pending_action != 'NOTHING')
+) AS pending_count;
+
+observeShowRating:
+SELECT * FROM show_ratings WHERE show_id = :showId;
+
+clearShowUserRating:
+UPDATE show_ratings SET pending_action = 'DELETE' WHERE show_id = :showId;
+
+showRatingsWithUploadPendingAction:
+SELECT * FROM show_ratings WHERE pending_action = 'UPLOAD';
+
+showRatingsWithDeletePendingAction:
+SELECT * FROM show_ratings WHERE pending_action = 'DELETE';
+
+updateShowRatingPendingAction:
+UPDATE show_ratings SET pending_action = :pendingAction WHERE show_id = :showId;
+
+deleteShowRating:
+DELETE FROM show_ratings WHERE show_id = :showId;
+
+deleteAllShowRatings:
+DELETE FROM show_ratings;
+
+upsertSeasonUserRating:
+INSERT INTO season_ratings(season_id, user_rating, rated_at, pending_action)
+VALUES(:seasonId, :userRating, :ratedAt, :pendingAction)
+ON CONFLICT(season_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = excluded.pending_action;
+
+observeSeasonRating:
+SELECT * FROM season_ratings WHERE season_id = :seasonId;
+
+clearSeasonUserRating:
+UPDATE season_ratings SET pending_action = 'DELETE' WHERE season_id = :seasonId;
+
+seasonRatingsWithUploadPendingAction:
+SELECT * FROM season_ratings WHERE pending_action = 'UPLOAD';
+
+seasonRatingsWithDeletePendingAction:
+SELECT * FROM season_ratings WHERE pending_action = 'DELETE';
+
+updateSeasonRatingPendingAction:
+UPDATE season_ratings SET pending_action = :pendingAction WHERE season_id = :seasonId;
+
+deleteSeasonRating:
+DELETE FROM season_ratings WHERE season_id = :seasonId;
+
+deleteAllSeasonRatings:
+DELETE FROM season_ratings;
+
+upsertEpisodeUserRating:
+INSERT INTO episode_ratings(episode_id, user_rating, rated_at, pending_action)
+VALUES(:episodeId, :userRating, :ratedAt, :pendingAction)
+ON CONFLICT(episode_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = excluded.pending_action;
+
+observeEpisodeRating:
+SELECT * FROM episode_ratings WHERE episode_id = :episodeId;
+
+clearEpisodeUserRating:
+UPDATE episode_ratings SET pending_action = 'DELETE' WHERE episode_id = :episodeId;
+
+episodeRatingsWithUploadPendingAction:
+SELECT * FROM episode_ratings WHERE pending_action = 'UPLOAD';
+
+episodeRatingsWithDeletePendingAction:
+SELECT * FROM episode_ratings WHERE pending_action = 'DELETE';
+
+updateEpisodeRatingPendingAction:
+UPDATE episode_ratings SET pending_action = :pendingAction WHERE episode_id = :episodeId;
+
+deleteEpisodeRating:
+DELETE FROM episode_ratings WHERE episode_id = :episodeId;
+
+deleteAllEpisodeRatings:
+DELETE FROM episode_ratings;

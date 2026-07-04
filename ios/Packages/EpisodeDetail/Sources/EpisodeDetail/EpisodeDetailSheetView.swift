@@ -61,6 +61,8 @@ public struct EpisodeDetailSheetView: View {
             SheetActionItem(
                 icon: state.isWatched ? "checkmark.circle.fill" : "checkmark.circle",
                 label: action.label,
+                isEnabled: !state.isTogglingWatched,
+                showProgress: state.isTogglingWatched,
                 action: { presenter.dispatch(action: EpisodeSheetActionToggleWatched()) }
             )
         case .openShow:

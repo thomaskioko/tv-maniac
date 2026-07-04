@@ -1,33 +1,9 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
-import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
-
 public sealed interface ShowDetailsAction
 
-public data object OpenShowList : ShowDetailsAction
+public data object ShowDetailsBackClicked : ShowDetailsAction
+
+public data object ShowDetailsReload : ShowDetailsAction
 
 public data class ShowDetailsMessageShown(val id: Long) : ShowDetailsAction
-
-public data object DetailBackClicked : ShowDetailsAction
-
-public data object ReloadShowDetails : ShowDetailsAction
-
-public data class SeasonClicked(val params: ShowSeasonDetailsParam) : ShowDetailsAction
-
-public data class DetailShowClicked(val showId: Long) : ShowDetailsAction
-
-public data class WatchTrailerClicked(val id: Long) : ShowDetailsAction
-
-public data class FollowShowClicked(val isInLibrary: Boolean) : ShowDetailsAction
-
-public data class MarkEpisodeWatched(
-    val showId: Long,
-    val episodeId: Long,
-    val seasonNumber: Long,
-    val episodeNumber: Long,
-) : ShowDetailsAction
-
-public data class MarkEpisodeUnwatched(
-    val showId: Long,
-    val episodeId: Long,
-) : ShowDetailsAction

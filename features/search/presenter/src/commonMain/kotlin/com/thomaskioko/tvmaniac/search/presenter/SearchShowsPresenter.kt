@@ -27,21 +27,27 @@ import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val SEARCH_SOURCE_ID = "Search"
+
+private fun String.isSearchable(): Boolean = trim().length >= SearchShowState.SEARCH_QUERY_LENGTH
 
 @NavDestination(
     route = SearchRoute::class,
@@ -115,7 +121,8 @@ public class SearchShowsPresenter(
 
             coroutineScope.launch {
                 launch { observeCategoryChanges() }
-                launch { observeQueryFlow() }
+                launch { observeLocalResults() }
+                launch { fetchSearchQuery() }
             }
         }
 
@@ -135,7 +142,7 @@ public class SearchShowsPresenter(
                 }
 
                 ClearQuery -> {
-                    _state.update { it.copy(query = "", searchResults = persistentListOf()) }
+                    coroutineScope.launch { resetSearch() }
                 }
 
                 is CategoryChanged -> {
@@ -165,39 +172,69 @@ public class SearchShowsPresenter(
             }
         }
 
-        private suspend fun observeQueryFlow() {
+        private suspend fun observeLocalResults() {
             queryFlow
                 .distinctUntilChanged()
-                .debounce(300)
-                .filter { it.trim().length >= SearchShowState.SEARCH_QUERY_LENGTH }
-                .onEach { _state.update { it.copy(isUpdating = true) } }
+                .debounce(SearchShowState.LOCAL_SUGGESTION_DEBOUNCE)
                 .flatMapLatest { query ->
-                    searchRepository.observeSearchResults(query)
-                        .onStart { searchRepository.search(query) }
+                    if (query.isSearchable()) {
+                        searchRepository.observeSearchResults(query)
+                    } else {
+                        flowOf(emptyList())
+                    }
                 }
                 .catch { error ->
-                    _state.update { it.copy(isUpdating = false) }
-                    uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = "Search"))
+                    uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = SEARCH_SOURCE_ID))
                 }
-                .collect { result ->
-                    handleSearchResults(result)
-                }
+                .collect { results -> handleSearchResults(results) }
         }
+
+        private suspend fun fetchSearchQuery() {
+            queryFlow
+                .distinctUntilChanged()
+                .debounce(SearchShowState.NETWORK_DEBOUNCE)
+                .flatMapLatest { query ->
+                    if (query.isSearchable()) {
+                        searchNetwork(query)
+                    } else {
+                        emptyFlow()
+                    }
+                }
+                .collect()
+        }
+
+        private fun searchNetwork(query: String): Flow<Unit> = flow {
+            _state.update { it.copy(isUpdating = true) }
+            searchRepository.search(query)
+            _state.update { it.copy(isUpdating = false) }
+            emit(Unit)
+        }
+            .catch { error ->
+                _state.update { it.copy(isUpdating = false) }
+                uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = SEARCH_SOURCE_ID))
+            }
 
         private fun handleQueryChange(query: String) {
             coroutineScope.launch {
-                if (query.isEmpty()) {
-                    _state.update { it.copy(query = "", searchResults = persistentListOf()) }
-                } else {
-                    val isSearchable = query.trim().length >= SearchShowState.SEARCH_QUERY_LENGTH
-                    _state.update { it.copy(query = query, isUpdating = isSearchable) }
+                if (query.isSearchable()) {
+                    _state.update { it.copy(query = query, isUpdating = true) }
                     queryFlow.emit(query)
+                } else {
+                    resetSearch(query)
                 }
             }
         }
 
+        private suspend fun resetSearch(query: String = "") {
+            state.value.message
+                ?.takeIf { it.sourceId == SEARCH_SOURCE_ID }
+                ?.let { uiMessageManager.clearMessage(it.id) }
+            _state.update { it.copy(query = query, isUpdating = false, searchResults = persistentListOf()) }
+            queryFlow.emit(query)
+        }
+
         private fun handleSearchResults(shows: List<ShowEntity>) {
-            _state.update { it.copy(isUpdating = false, searchResults = mapper.toShowList(shows)) }
+            _state.update { it.copy(searchResults = mapper.toShowList(shows)) }
         }
     }
 }

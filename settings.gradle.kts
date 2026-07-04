@@ -36,8 +36,20 @@ dependencyResolutionManagement {
     }
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // DAGP (applied via the app-gradle-plugins root convention) bundles a kotlin-metadata-jvm
+        // that maxes out at metadata 2.3.0. Force it to match the project's Kotlin 2.4.0 so its
+        // metadata-reading tasks (explodeJar) can parse 2.4.0 class metadata.
+        classpath("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.0")
+    }
+}
+
 plugins {
-    id("com.gradle.develocity") version ("4.4.3")
+    id("com.gradle.develocity") version ("4.5.0")
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
@@ -166,6 +178,9 @@ include(
     ":data:library:api",
     ":data:library:implementation",
     ":data:library:testing",
+    ":data:ratings:api",
+    ":data:ratings:implementation",
+    ":data:ratings:testing",
     ":data:oauth:api",
     ":data:oauth:implementation",
     ":data:oauth:testing",
@@ -254,6 +269,7 @@ include(
     ":domain:start-watching",
     ":domain:favorites",
     ":domain:recently-watched",
+    ":domain:ratings",
     ":domain:library",
     ":domain:logout",
     ":domain:account-switcher",
@@ -282,8 +298,9 @@ include(
     ":features:episode-sheet:presenter",
     ":features:episode-sheet:nav",
     ":features:episode-sheet:ui",
-    ":features:genre-shows:nav",
-    ":features:genre-shows:presenter",
+    ":features:rating-sheet:presenter",
+    ":features:rating-sheet:nav",
+    ":features:rating-sheet:ui",
     ":features:home:nav",
     ":features:home:presenter",
     ":features:library:nav",

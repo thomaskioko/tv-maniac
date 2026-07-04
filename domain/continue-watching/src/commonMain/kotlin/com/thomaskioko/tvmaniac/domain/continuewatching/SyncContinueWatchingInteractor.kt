@@ -72,7 +72,7 @@ public class SyncContinueWatchingInteractor(
                     continueWatchingRepository.deriveMembershipFromWatchedEpisodes()
                 }
 
-                syncShowMetadata(forceRefresh = params.forceRefresh)
+                syncShowMetadata()
 
                 logger.debug(TAG, "Continue Watching sync complete")
             }
@@ -84,8 +84,9 @@ public class SyncContinueWatchingInteractor(
         threshold = CONTINUE_WATCHING_SYNC.duration,
     )
 
-    private suspend fun syncShowMetadata(forceRefresh: Boolean) {
+    private suspend fun syncShowMetadata() {
         val watchedShows = continueWatchingRepository.getEntries()
+            .sortedByDescending { it.lastWatchedAt }
         logger.debug(TAG, "Syncing metadata for ${watchedShows.size} watched shows")
 
         val shouldStopMetadataSync = MutableStateFlow(false)
@@ -101,7 +102,8 @@ public class SyncContinueWatchingInteractor(
                             syncShowMetadataInteractor.executeSync(
                                 params = SyncShowMetadataInteractor.Param(
                                     showId = show.showId,
-                                    forceRefresh = forceRefresh,
+                                    forceRefresh = false,
+                                    includeWatchProviders = false,
                                 ),
                             )
                         }
@@ -132,6 +134,6 @@ public class SyncContinueWatchingInteractor(
 
     private companion object {
         private const val TAG = "SyncContinueWatchingInteractor"
-        private const val CONTINUE_WATCHING_SYNC_CONCURRENCY = 10
+        private const val CONTINUE_WATCHING_SYNC_CONCURRENCY = 4
     }
 }

@@ -22,7 +22,7 @@ runs:
     - name: 🗂️ Cache KMP frameworks
       id: cache-build
       if: inputs.mode == 'build'
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: |
           ios-framework/build/xcode-frameworks
@@ -31,7 +31,7 @@ runs:
 
     - name: 🗂️ Restore prebuilt KMP frameworks
       if: inputs.mode == 'restore'
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@v6
       with:
         path: |
           ios-framework/build/xcode-frameworks

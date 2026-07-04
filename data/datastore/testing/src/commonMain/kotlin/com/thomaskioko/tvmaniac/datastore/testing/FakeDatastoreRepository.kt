@@ -24,7 +24,6 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val showNotificationRationaleFlow = MutableStateFlow(false)
     private val requestNotificationPermissionFlow = MutableStateFlow(false)
     private val librarySortOptionFlow = MutableStateFlow("ADDED_DESC")
-    private val accountLimitBannerDismissedFlow = MutableStateFlow(false)
 
     public suspend fun setTheme(appTheme: AppTheme) {
         appThemeFlow.value = appTheme
@@ -144,6 +143,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val lastUpNextSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val lastTokenRefreshTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val crashReportingEnabledFlow = MutableStateFlow(true)
+    private val debugMenuEnabledFlow = MutableStateFlow(false)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -183,10 +183,9 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     override fun observeCrashReportingEnabled(): Flow<Boolean> = crashReportingEnabledFlow.asStateFlow()
 
-    override suspend fun setAccountLimitBannerDismissed(dismissed: Boolean) {
-        accountLimitBannerDismissedFlow.value = dismissed
+    override suspend fun setDebugMenuEnabled(enabled: Boolean) {
+        debugMenuEnabledFlow.value = enabled
     }
 
-    override fun observeAccountLimitBannerDismissed(): Flow<Boolean> =
-        accountLimitBannerDismissedFlow.asStateFlow()
+    override fun observeDebugMenuEnabled(): Flow<Boolean> = debugMenuEnabledFlow.asStateFlow()
 }

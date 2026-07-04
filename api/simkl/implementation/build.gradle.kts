@@ -28,6 +28,7 @@ kotlin {
                 api(projects.data.followedshows.api)
                 api(projects.data.calendar.api)
                 api(projects.data.library.api)
+                api(projects.data.ratings.api)
                 api(projects.data.startWatching.api)
                 api(projects.data.oauth.api)
                 api(projects.data.syncActivity.api)

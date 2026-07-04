@@ -294,6 +294,118 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should use the season episode count for total given episode rows are not synced`() = runTest {
+        val importedShowId = 5500L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(importedShowId),
+            name = "Imported Show",
+            overview = "Seasons synced from a provider, episodes never opened in-app",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Reality"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(importedShowId)
+        val _ = database.seasonsQueries.upsert(
+            id = Id(5501L),
+            show_id = resolvedShowId,
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 12L,
+            image_url = null,
+        )
+
+        watchedEpisodeDao.markAsWatched(
+            showId = importedShowId,
+            episodeId = 1L,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = importedShowId,
+            episodeId = 2L,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(importedShowId).test {
+            val progress = awaitItem()
+            val season1 = progress.first { it.seasonNumber == 1L }
+            season1.watchedCount shouldBe 2
+            season1.totalCount shouldBe 12
+            season1.progressPercentage shouldBe (2f / 12f)
+        }
+    }
+
+    @Test
+    fun `should attribute watched markers to the linked episode season given the raw season number differs`() = runTest {
+        val showId = 7000L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(showId),
+            name = "Linked Show",
+            overview = "Marker linked to the correct episode but carrying a mismatched season number",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Reality"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(showId)
+        val _ = database.seasonsQueries.upsert(
+            id = Id(7003L),
+            show_id = resolvedShowId,
+            season_number = 3L,
+            title = "Season 3",
+            overview = null,
+            episode_count = 10L,
+            image_url = null,
+        )
+        database.episodesQueries.upsert(
+            id = Id(70035L),
+            season_id = Id(7003L),
+            show_id = resolvedShowId,
+            title = "Episode 5",
+            overview = "",
+            runtime = null,
+            vote_count = 100L,
+            ratings = 8.0,
+            episode_number = 5L,
+            image_url = null,
+            first_aired = null,
+        )
+        database.watchedEpisodesQueries.upsert(
+            show_id = resolvedShowId,
+            episode_id = Id(70035L),
+            season_number = 99L,
+            episode_number = 5L,
+            watched_at = 1000L,
+            pending_action = "NOTHING",
+        )
+
+        watchedEpisodeDao.observeAllSeasonsWatchProgress(showId).test {
+            val progress = awaitItem()
+            val season3 = progress.first { it.seasonNumber == 3L }
+            season3.watchedCount shouldBe 1
+            season3.totalCount shouldBe 10
+            season3.progressPercentage shouldBe (1f / 10f)
+        }
+    }
+
+    @Test
     fun `should batch upsert multiple episodes in single transaction`() = runTest {
         val now = Clock.System.now()
         val entries = (1..5).map { episodeNumber ->
@@ -581,6 +693,93 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         watchedEpisodeDao.observeShowWatchProgress(TEST_SHOW_ID).test {
             awaitItem().watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should not follow the show given an episode is marked watched`() = runTest {
+        val unfollowedShowId = 5500L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(unfollowedShowId),
+            name = "Watched But Not Followed",
+            overview = "Watched locally without being added to the watchlist",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(unfollowedShowId)
+        val _ = database.seasonsQueries.upsert(
+            id = Id(5501L),
+            show_id = resolvedShowId,
+            season_number = 1L,
+            title = "Season 1",
+            overview = null,
+            episode_count = 10L,
+            image_url = null,
+        )
+
+        watchedEpisodeDao.markAsWatched(
+            showId = unfollowedShowId,
+            episodeId = 1L,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+
+        database.followedShowsQueries.isShowFollowed(resolvedShowId).executeAsOne() shouldBe false
+
+        watchedEpisodeDao.observeWatchedEpisodes(unfollowedShowId).test {
+            awaitItem() shouldHaveSize 1
+        }
+    }
+
+    @Test
+    fun `should not follow the show given watched history is merged from a provider`() = runTest {
+        val unfollowedShowId = 5500L
+        val _ = database.tvShowQueries.upsert(
+            tmdb_id = Id(unfollowedShowId),
+            name = "Remote Watched Not Followed",
+            overview = "Watched history synced from a provider without a watchlist entry",
+            language = "en",
+            year = "2024",
+            ratings = 8.0,
+            vote_count = 100,
+            genres = listOf("Drama"),
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = "/p.jpg",
+            backdrop_path = "/b.jpg",
+        )
+        val resolvedShowId = showIdForTraktId(unfollowedShowId)
+
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showId = unfollowedShowId,
+            entries = listOf(
+                WatchedEpisodeEntry(
+                    id = 0,
+                    showId = unfollowedShowId,
+                    episodeId = null,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
+                    watchedAt = Clock.System.now(),
+                    traktId = 9100L,
+                ),
+            ),
+            includeSpecials = false,
+        )
+
+        database.followedShowsQueries.isShowFollowed(resolvedShowId).executeAsOne() shouldBe false
+
+        watchedEpisodeDao.observeWatchedEpisodes(unfollowedShowId).test {
+            awaitItem() shouldHaveSize 1
         }
     }
 

@@ -113,7 +113,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
 
         val rows = database.recommendedShowsQueries.recommendedShows(Id(PARENT_TRAKT_ID)).executeAsList()
         rows shouldHaveSize 1
-        rows[0].tmdb_id?.id shouldBe REC_TMDB_ID
+        rows[0].tmdb_id.id shouldBe REC_TMDB_ID
     }
 
     @Test

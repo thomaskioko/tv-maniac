@@ -30,16 +30,18 @@ public struct RootNavigationView: View {
 
     public var body: some View {
         SplashView(isDebug: appDelegate.isDebug) {
-            VStack(spacing: 0) {
+            TabBarView(
+                presenter: rootPresenter.homePresenter,
+                navigator: navigator,
+                registry: registry
+            )
+            .overlay(alignment: .top) {
                 if accountLimitBannerVisible.boolValue {
                     AccountLimitBanner(onDismiss: { rootPresenter.onDismissAccountLimitBanner() })
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
-                TabBarView(
-                    presenter: rootPresenter.homePresenter,
-                    navigator: navigator,
-                    registry: registry
-                )
             }
+            .animation(.spring(), value: accountLimitBannerVisible.boolValue)
         }
         .appTheme()
         .sheet(

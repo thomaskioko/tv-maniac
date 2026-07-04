@@ -136,9 +136,22 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
             show_idAdapter = IdAdapter(),
             providerAdapter = ProviderColumnAdapter,
         ),
+        tvshow_provider_metaAdapter = Tvshow_provider_meta.Adapter(
+            show_idAdapter = IdAdapter(),
+            providerAdapter = ProviderColumnAdapter,
+        ),
         show_watch_statusAdapter = Show_watch_status.Adapter(
             show_idAdapter = IdAdapter(),
             statusAdapter = WatchStatusColumnAdapter,
+        ),
+        show_ratingsAdapter = Show_ratings.Adapter(
+            show_idAdapter = IdAdapter(),
+        ),
+        season_ratingsAdapter = Season_ratings.Adapter(
+            season_idAdapter = IdAdapter(),
+        ),
+        episode_ratingsAdapter = Episode_ratings.Adapter(
+            episode_idAdapter = IdAdapter(),
         ),
     )
 }

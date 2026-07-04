@@ -22,6 +22,8 @@ public interface TvShowsDao {
 
     public fun getTmdbIdByShowId(showId: Long): Long?
 
+    public fun getTmdbIdForLocalShowId(showId: Long): Long?
+
     public fun getTraktIdByTmdbId(tmdbId: Long): Long?
 
     public suspend fun existsByShowId(showId: Long): Boolean

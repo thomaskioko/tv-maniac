@@ -8,7 +8,7 @@
 - [Module Archetypes](#module-archetypes)
 - [Adding a New Feature](#adding-a-new-feature)
 
-The application splits into roughly 100 Gradle modules grouped by layer and feature. Every module depends on API contracts only; the matching implementation is selected at compile time by [Metro](glossary.md#metro). Lint rules reject any consumer that crosses the boundary into another feature's `implementation/`.
+The application splits into more than 330 Gradle modules grouped by layer and feature. Each module's own dependency graph is generated into its `README.md` by `./gradlew graphUpdate`; the conceptual diagram below is a hand-maintained overview. Every module depends on API contracts only; the matching implementation is selected at compile time by [Metro](glossary.md#metro). Lint rules reject any consumer that crosses the boundary into another feature's `implementation/`.
 
 ## Module Dependency Graph
 

@@ -193,7 +193,7 @@ internal class StartWatchingWatchlistStoreTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should remove stale entries given show no longer in plan-to-watch`() = runTest(testDispatcher) {
+    fun `should keep existing followed entries given show no longer in plan-to-watch`() = runTest(testDispatcher) {
         val source = FakeStartWatchingSource(provider = AccountProvider.TRAKT)
         source.setPlanToWatch(
             listOf(
@@ -234,7 +234,7 @@ internal class StartWatchingWatchlistStoreTest : BaseDatabaseTest() {
         }
 
         followedCount = database.followedShowsQueries.countEntries().executeAsOne()
-        followedCount shouldBe 0L
+        followedCount shouldBe 1L
     }
 
     @Test

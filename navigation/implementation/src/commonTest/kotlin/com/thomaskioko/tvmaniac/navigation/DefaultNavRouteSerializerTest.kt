@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.arkivanov.essenty.statekeeper.consumeRequired
-import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.home.nav.HomeRoute
+import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -19,7 +19,7 @@ internal class DefaultNavRouteSerializerTest {
         NavRouteBinding(HomeRoute::class, HomeRoute.serializer()),
         NavRouteBinding(ShowDetailsRoute::class, ShowDetailsRoute.serializer()),
         NavRouteBinding(SeasonDetailsRoute::class, SeasonDetailsRoute.serializer()),
-        NavRouteBinding(GenreShowsRoute::class, GenreShowsRoute.serializer()),
+        NavRouteBinding(MoreShowsRoute::class, MoreShowsRoute.serializer()),
     )
 
     private val serializer = DefaultNavRouteSerializer(bindings).serializer
@@ -33,7 +33,7 @@ internal class DefaultNavRouteSerializerTest {
 
     @Test
     fun `should round trip route with primitive param`() {
-        val route = GenreShowsRoute(id = 42L)
+        val route = MoreShowsRoute(categoryId = 42L)
 
         roundTrip(route) shouldBe route
     }
@@ -64,7 +64,7 @@ internal class DefaultNavRouteSerializerTest {
         val stack: List<NavRoute> = listOf(
             HomeRoute,
             ShowDetailsRoute(ShowDetailsParam(1)),
-            GenreShowsRoute(7),
+            MoreShowsRoute(7),
         )
 
         val container = SerializableContainer(
@@ -113,10 +113,10 @@ internal class DefaultNavRouteSerializerTest {
     }
 
     @Test
-    fun `should preserve id given GenreShowsRoute round trip`() {
-        val restored = roundTrip(GenreShowsRoute(id = 99L)).shouldBeInstanceOf<GenreShowsRoute>()
+    fun `should preserve id given MoreShowsRoute round trip`() {
+        val restored = roundTrip(MoreShowsRoute(categoryId = 99L)).shouldBeInstanceOf<MoreShowsRoute>()
 
-        restored.id shouldBe 99L
+        restored.categoryId shouldBe 99L
     }
 
     @Test

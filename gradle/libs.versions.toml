@@ -1,7 +1,7 @@
 [versions]
-android-compile = "36"
+android-compile = "37"
 android-min = "24"
-android-target = "36"
+android-target = "37"
 
 benchmarkMacro = "1.4.1"
 differ = "0.3.0"
@@ -15,31 +15,31 @@ androidx-activity = "1.13.0"
 androidx-annotation = "1.10.0"
 androidx-browser = "1.10.0"
 androidx-collections = "1.6.0"
-androidx-compose-ui-test = "1.11.3"
+androidx-compose-ui-test = "1.11.4"
 androidx-test-core = "1.7.0"
 androidx-test-orchestrator = "1.6.1"
-androidx-uiautomator = "2.3.0"
-androidx-core = "1.18.0"
+androidx-uiautomator = "2.4.0"
+androidx-core = "1.19.0"
 androidx-core-splashscreen = "1.2.0"
 androidx-datastore = "1.2.1"
-androidx-material = "1.11.3"
+androidx-material = "1.11.4"
 androidx-material-icons = "1.7.8"
 androidx-material3 = "1.4.0"
 androidx-palette = "1.0.0"
 androidx-paging = "3.5.0"
 androidx-savedstate = "1.5.0"
 androidx-security-crypto = "1.1.0"
-androidx-lifecycle = "2.10.0"
+androidx-lifecycle = "2.11.0"
 androidx-work = "2.11.2"
 appauth = "0.11.1"
-app-gradle-plugins = "0.7.9"
+app-gradle-plugins = "0.8.4"
 atomicfu = "0.33.0"
-baselineprofile = "1.5.0-alpha06"
+baselineprofile = "1.5.0-alpha07"
 benchmarkMacroJunit4 = "1.4.1"
 coil = "2.7.0"
 compose-bom = "2026.06.00"
 compose-constraintlayout = "1.1.1"
-compose-runtime = "1.11.3"
+compose-runtime = "1.11.4"
 coroutines = "1.11.0"
 datetime = "0.8.0-0.6.x-compat"
 decompose = "3.5.0"
@@ -53,12 +53,12 @@ junit4 = "4.13.2"
 kenburns = "1.0.7"
 kermit = "2.1.0"
 kermitCore = "2.1.0"
-kotest = "6.2.0"
-kotlin = "2.3.21"
+kotest = "6.2.1"
+kotlin = "2.4.0"
 kotlinx-collections = "0.5.0"
 ktor = "3.5.0"
 lint = "1.5.2"
-metro = "1.1.1"
+metro = "1.2.1"
 moko-resources = "0.26.4"
 monitor = "1.8.0"
 multiplatformsettings = "1.3.0"
@@ -72,9 +72,8 @@ roborazziCore = "1.64.0"
 runner = "1.7.0"
 serialization = "1.11.0"
 shadowsFramework = "4.16.1"
-snapper = "0.3.0"
 sqldelight = "2.3.2"
-spotless = "8.7.0"
+spotless = "8.8.0"
 store5 = "5.0.0"
 turbine = "1.2.1"
 youtubePlayer = "13.0.0"
@@ -84,6 +83,8 @@ ktlint = "1.4.0"
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro", version.ref = "benchmarkMacro" }
 androidx-monitor = { module = "androidx.test:monitor", version.ref = "monitor" }
 codegen-annotations = { module = "io.github.thomaskioko.gradle.plugins:codegen-annotations", version.ref = "app-gradle-plugins" }
+codegen-featureflag-annotations = { module = "io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations", version.ref = "app-gradle-plugins" }
+codegen-featureflag-processor = { module = "io.github.thomaskioko.gradle.plugins:codegen-featureflag-processor", version.ref = "app-gradle-plugins" }
 codegen-processor = { module = "io.github.thomaskioko.gradle.plugins:codegen-processor", version.ref = "app-gradle-plugins" }
 
 android-lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "android-lint" }
@@ -197,7 +198,6 @@ roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", versi
 
 roborazzi-core = { module = "io.github.takahirom.roborazzi:roborazzi-core", version.ref = "roborazziCore" }
 shadows-framework = { module = "org.robolectric:shadows-framework", version.ref = "shadowsFramework" }
-snapper = { module = "dev.chrisbanes.snapper:snapper", version.ref = "snapper" }
 
 sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-25-dialect", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }

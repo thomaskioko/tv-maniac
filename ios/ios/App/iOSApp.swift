@@ -147,7 +147,7 @@ private struct RootToastForwarder: View {
         }
         toastManager.show(
             Toast(
-                type: state.type == .error ? .error : .info,
+                type: state.type == .error ? .error : .syncing,
                 message: message,
                 persistent: state.persistent,
                 loading: state.type == .status

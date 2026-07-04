@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
@@ -18,10 +19,13 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -47,6 +51,7 @@ public class EpisodeSheetPresenter(
     @Assisted private val param: EpisodeSheetParam,
     componentContext: ComponentContext,
     observeEpisodeByIdInteractor: ObserveEpisodeByIdInteractor,
+    observeRatingInteractor: ObserveRatingInteractor,
     private val navigator: Navigator,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
@@ -65,10 +70,16 @@ public class EpisodeSheetPresenter(
     public val state: StateFlow<EpisodeDetailSheetState> = combine(
         observeEpisodeByIdInteractor.flow,
         uiMessageManager.message,
-    ) { episode, message ->
+        actionLoadingState.observable,
+        observeRatingInteractor.flow,
+    ) { episode, message, isTogglingWatched, userRating ->
         currentEpisode = episode
-        episode?.toState(param.source, localizer)?.copy(message = message)
-            ?: EpisodeDetailSheetState(isLoading = true, message = message)
+        val current = episode?.toState(param.source, localizer) ?: EpisodeDetailSheetState(isLoading = true)
+        current.copy(
+            message = message,
+            isTogglingWatched = isTogglingWatched,
+            userRating = userRating,
+        )
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -79,6 +90,7 @@ public class EpisodeSheetPresenter(
 
     init {
         observeEpisodeByIdInteractor(param.episodeId)
+        observeRatingInteractor(ObserveRatingInteractor.Param(RatingEntityType.EPISODE, param.episodeId))
     }
 
     public fun dispatch(action: EpisodeSheetAction) {
@@ -89,20 +101,28 @@ public class EpisodeSheetPresenter(
             is EpisodeSheetAction.Unfollow -> unfollowShow()
             is EpisodeSheetAction.Dismiss -> navigator.dismissOverlay()
             is EpisodeSheetAction.MessageShown -> clearMessage(action.id)
+            is EpisodeSheetAction.RatingClicked -> navigator.navigateTo(
+                RatingSheetRoute(
+                    RatingSheetParam(
+                        ratingType = RatingEntityType.EPISODE,
+                        id = param.episodeId,
+                    ),
+                ),
+            )
         }
     }
 
     private fun toggleWatched() {
         val episode = currentEpisode ?: return
-        navigator.dismissOverlay()
+        if (state.value.isTogglingWatched) return
         appScopeLauncher.launch(TAG) {
-            if (episode.is_watched != 0L) {
+            val markStatus = if (episode.is_watched != 0L) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
                         showId = episode.show_id.id,
                         episodeId = episode.episode_id.id,
                     ),
-                ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                )
             } else {
                 markEpisodeWatchedInteractor(
                     MarkEpisodeWatchedParams(
@@ -111,8 +131,10 @@ public class EpisodeSheetPresenter(
                         seasonNumber = episode.season_number,
                         episodeNumber = episode.episode_number,
                     ),
-                ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+                )
             }
+            markStatus.collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            coroutineScope.launch { navigator.dismissOverlay() }
         }
     }
 

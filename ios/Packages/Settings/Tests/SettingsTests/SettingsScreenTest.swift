@@ -216,7 +216,8 @@ class SettingsScreenTest: SnapshotTestCase {
         authenticated: Bool,
         withSwitchAffordance: Bool = false,
         isSwitching: Bool = false,
-        showSwitchConfirmation: Bool = false
+        showSwitchConfirmation: Bool = false,
+        isProcessingAuth: Bool = false
     ) -> SettingsAccountContent {
         let switchLabel: String? = withSwitchAffordance || isSwitching || showSwitchConfirmation
             ? "Switch to Simkl"
@@ -232,7 +233,7 @@ class SettingsScreenTest: SnapshotTestCase {
                 ? "Your watch history, watchlist, and episode progress sync with Trakt."
                 : "Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.",
             isAuthenticated: authenticated,
-            isProcessingAuth: false,
+            isProcessingAuth: isProcessingAuth,
             logoutLabel: "Logout",
             loginLabel: "Login",
             providerName: "Trakt",
@@ -292,7 +293,6 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
             rootTitle: "Settings",
-            versionFooter: "Version 1.0.0",
             currentPage: page,
             rootSections: rootSections(authenticated: authenticated),
             themeItem: defaultThemeItem,
@@ -391,6 +391,16 @@ class SettingsScreenTest: SnapshotTestCase {
         )
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Account_Switching")
+    }
+
+    func test_SettingsScreen_Account_LoggingOut() {
+        let content = accountContent(authenticated: true, isProcessingAuth: true)
+        SettingsScreen(
+            state: makeState(page: .account, authenticated: true, customAccountContent: content),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Account_LoggingOut")
     }
 
     func test_SettingsScreen_Account_SwitchConfirmDialog() {

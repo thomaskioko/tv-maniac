@@ -1,70 +1,73 @@
 package com.thomaskioko.tvmaniac.presenter.showdetails
 
+import app.cash.turbine.test
+import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
-import com.thomaskioko.tvmaniac.db.SelectByShowId
-import com.thomaskioko.tvmaniac.db.ShowCast
-import com.thomaskioko.tvmaniac.db.ShowSeasons
-import com.thomaskioko.tvmaniac.db.SimilarShows
-import com.thomaskioko.tvmaniac.db.TvshowDetails
-import com.thomaskioko.tvmaniac.db.WatchProviders
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.FetchWatchProvidersInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowMetadataInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObserveCastInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSimilarShowsInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObserveTrailersInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ObserveWatchProvidersInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
-import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
-import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
-import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
-import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ProviderModel
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
-import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
-import com.thomaskioko.tvmaniac.seasondetails.api.model.ContinueTrackingResult
-import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
+import com.thomaskioko.tvmaniac.presenter.showdetails.cast.ShowDetailsCastPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.cast.di.ShowDetailsCastChildGraph
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.di.ShowDetailsHeaderChildGraph
+import com.thomaskioko.tvmaniac.presenter.showdetails.providers.ShowDetailsProvidersPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.providers.di.ShowDetailsProvidersChildGraph
+import com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes.ShowDetailsSeasonsEpisodesPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes.di.ShowDetailsSeasonsEpisodesChildGraph
+import com.thomaskioko.tvmaniac.presenter.showdetails.similar.ShowDetailsSimilarPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.similar.di.ShowDetailsSimilarChildGraph
+import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.ShowDetailsTrailersPresenter
+import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.di.ShowDetailsTrailersChildGraph
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
-import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsEpisodesSyncRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
-import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
-import com.thomaskioko.tvmaniac.trailers.testing.trailers
-import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -72,38 +75,15 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class ShowDetailsPresenterTest {
+internal class ShowDetailsPresenterTest {
 
-    private val seasonsRepository = FakeSeasonsRepository()
-    private val seasonsEpisodesSyncRepository = FakeSeasonsEpisodesSyncRepository()
-    private val seasonDetailsRepository = FakeSeasonDetailsRepository()
-    private val trailerRepository = FakeTrailerRepository()
-    private val similarShowsRepository = FakeSimilarShowsRepository()
-    private val followedShowsRepository = FakeFollowedShowsRepository()
-    private val watchProvidersRepository = FakeWatchProviderRepository()
-    private val castRepository = FakeCastRepository()
-    private val showDetailsRepository = FakeShowDetailsRepository()
-    private val episodeRepository = FakeEpisodeRepository()
-    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
-    private val upNextRepository = FakeUpNextRepository()
-    private val accountManager = FakeAccountManager()
-    private val fakeLocalizer = FakeLocalizer()
-    private val fakeFormatterUtil = FakeFormatterUtil()
-    private val fakeNotificationManager = FakeNotificationManager()
-    private val fakeDatastoreRepository = FakeDatastoreRepository()
-    private val fakeLogger = FakeLogger()
-    private val fakeDateTimeProvider = FakeDateTimeProvider()
-    private val fakeNavigator = FakeNavigator()
     private val testDispatcher = StandardTestDispatcher()
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
-    private val coroutineDispatcher = AppCoroutineDispatchers(
+    private val dispatchers = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
         computation = testDispatcher,
@@ -111,10 +91,29 @@ class ShowDetailsPresenterTest {
         databaseRead = testDispatcher,
     )
 
+    private val showDetailsRepository = FakeShowDetailsRepository()
+    private val seasonDetailsRepository = FakeSeasonDetailsRepository()
+    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val watchProvidersRepository = FakeWatchProviderRepository()
+    private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val ratingsRepository = FakeRatingsRepository()
+    private val episodeRepository = FakeEpisodeRepository()
+    private val datastoreRepository = FakeDatastoreRepository()
+    private val notificationManager = FakeNotificationManager()
+    private val seasonsRepository = FakeSeasonsRepository()
+    private val castRepository = FakeCastRepository()
+    private val trailerRepository = FakeTrailerRepository()
+    private val similarShowsRepository = FakeSimilarShowsRepository()
+    private val accountManager = FakeAccountManager()
+    private val localizer = FakeLocalizer()
+    private val formatterUtil = FakeFormatterUtil()
+    private val dateTimeProvider = FakeDateTimeProvider()
+    private val navigator = FakeNavigator()
+
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        fakeNotificationManager.reset()
+        notificationManager.reset()
     }
 
     @AfterTest
@@ -123,647 +122,145 @@ class ShowDetailsPresenterTest {
     }
 
     @Test
-    fun `should not flag refreshing when initial state is empty`() {
-        val empty = ShowDetailsContent.Empty
+    fun `should expose empty aggregated state given children have no data`() = runTest {
+        val presenter = buildPresenter()
 
-        empty.showDetailsRefreshing shouldBe false
-        empty.similarShowsRefreshing shouldBe false
-        empty.isRefreshing shouldBe false
-    }
-
-    @Test
-    fun `should return SeasonDetailsLoaded when all data is available`() = runTest {
-        buildMockData(
-            showDetailResult = tvShowDetails,
-            watchProviderResult = watchProviderList,
-            similarShowResult = similarShowList,
-            trailersResult = trailers,
-        )
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        state.showDetails shouldBe showDetailsContent.showDetails.copy(
-            providers = persistentListOf(
-                ProviderModel(
-                    id = 184958,
-                    logoUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    name = "Netflix",
-                ),
-            ),
-            similarShows = persistentListOf(
-                ShowModel(
-                    showId = 18495,
-                    title = "Loki",
-                    posterImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    backdropImageUrl = "/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
-                    isInLibrary = false,
-                ),
-            ),
-            trailersList = persistentListOf(
-                TrailerModel(
-                    showId = 84958,
-                    key = "Fd43V",
-                    name = "Some title",
-                    youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
-                ),
-            ),
-        )
-        state.isRefreshing shouldBe false
-        state.message shouldBe null
-    }
-
-    @Test
-    fun `should update state to Loaded when ReloadShowDetails and new data is available`() =
-        runTest {
-            buildMockData()
-
-            val presenter = buildShowDetailsPresenter()
+        presenter.state.test {
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val initialState = presenter.state.value
-            initialState.showDetails shouldBe showDetailsContent.showDetails
-            initialState.isRefreshing shouldBe false
-            initialState.message shouldBe null
-
-            seasonsRepository.setSeasonsResult(seasons)
-            watchProvidersRepository.setWatchProvidersResult(watchProviderList)
-            similarShowsRepository.setSimilarShowsResult(similarShowList)
-            trailerRepository.setTrailerResult(trailers)
-
-            presenter.dispatch(ReloadShowDetails)
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val updatedState = presenter.state.value.showDetails
-            updatedState.seasonsList.size shouldBe 1
-            updatedState.similarShows.size shouldBe 1
-            updatedState.providers.size shouldBe 1
+            val state = expectMostRecentItem()
+            state.isRefreshing shouldBe false
+            state.message.shouldBeNull()
         }
+    }
 
     @Test
-    fun `should update infoState to Loaded with correct data when ReloadShowDetails and fetching season fails`() =
-        runTest {
-            buildMockData()
+    fun `should surface the first child message given a child fetch fails`() = runTest {
+        watchProvidersRepository.setFetchError(IllegalStateException("boom"))
 
-            val presenter = buildShowDetailsPresenter()
+        val presenter = buildPresenter()
+
+        presenter.state.test {
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val initialState = presenter.state.value
-            initialState.showDetails shouldBe showDetailsContent.showDetails
-            initialState.isRefreshing shouldBe false
-            initialState.message shouldBe null
+            val withMessage = expectMostRecentItem()
+            withMessage.message?.message shouldBe "boom"
 
-            watchProvidersRepository.setWatchProvidersResult(watchProviderList)
-            similarShowsRepository.setSimilarShowsResult(similarShowList)
-            trailerRepository.setTrailerResult(trailers)
-
-            presenter.dispatch(ReloadShowDetails)
+            presenter.dispatch(ShowDetailsMessageShown(withMessage.message!!.id))
             testDispatcher.scheduler.advanceUntilIdle()
 
-            val updatedState = presenter.state.value.showDetails
-            updatedState.seasonsList.size shouldBe 0
-            updatedState.similarShows.size shouldBe 1
-            updatedState.providers.size shouldBe 1
+            expectMostRecentItem().message.shouldBeNull()
         }
-
-    @Test
-    fun `should invoke navigateToSeason when SeasonClicked`() = runTest {
-        val presenter = buildShowDetailsPresenter()
-
-        presenter.dispatch(
-            SeasonClicked(
-                ShowSeasonDetailsParam(
-                    showId = 2,
-                    selectedSeasonIndex = 2,
-                    seasonNumber = 0,
-                    seasonId = 0,
-                ),
-            ),
-        )
-
-        fakeNavigator.lastNavigatedRoute.shouldBeInstanceOf<SeasonDetailsRoute>()
     }
 
     @Test
-    fun `should display continue tracking episodes when available`() = runTest {
-        buildMockData()
-        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
+    fun `should re-trigger child fetches given reload dispatched`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+        showDetailsRepository.clearInvocations()
+        watchProvidersRepository.clearFetchInvocations()
 
-        val presenter = buildShowDetailsPresenter()
+        presenter.dispatch(ShowDetailsReload)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        val state = presenter.state.value
-        state.continueTrackingEpisodes.size shouldBe 3
-        state.continueTrackingScrollIndex shouldBe 0
+        showDetailsRepository.fetchInvocations().last().forceRefresh shouldBe true
+        watchProvidersRepository.fetchInvocations().last().forceRefresh shouldBe true
     }
 
     @Test
-    fun `should display watch progress when show is in library`() = runTest {
-        buildMockData()
-        episodeRepository.setShowWatchProgress(testShowWatchProgress)
-
-        val presenter = buildShowDetailsPresenter()
+    fun `should navigate back given back clicked dispatched`() = runTest {
+        val presenter = buildPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        val state = presenter.state.value
-        state.showDetails.watchProgress shouldBe 0.5f
+        presenter.dispatch(ShowDetailsBackClicked)
+
+        navigator.navigateBackCount shouldBe 1
     }
 
-    @Test
-    fun `should show completed status when all episodes watched`() = runTest {
-        buildMockData()
-        episodeRepository.setShowWatchProgress(
-            testShowWatchProgress.copy(watchedCount = 10, totalCount = 10),
-        )
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        state.showDetails.watchProgress shouldBe 1f
-    }
-
-    @Test
-    fun `should mark episode as watched when MarkEpisodeWatchedFromTracking is dispatched`() =
-        runTest {
-            buildMockData()
-
-            val presenter = buildShowDetailsPresenter()
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            presenter.dispatch(
-                MarkEpisodeWatched(
-                    showId = 84958,
-                    episodeId = 1001,
-                    seasonNumber = 1,
-                    episodeNumber = 1,
-                ),
-            )
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 84958,
-                episodeId = 1001,
-                seasonNumber = 1,
-                episodeNumber = 1,
-            )
-        }
-
-    @Test
-    fun `should mark episode as unwatched when MarkEpisodeUnwatched is dispatched`() =
-        runTest {
-            buildMockData()
-
-            val presenter = buildShowDetailsPresenter()
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            presenter.dispatch(
-                MarkEpisodeUnwatched(
-                    showId = 84958,
-                    episodeId = 1001,
-                ),
-            )
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe MarkEpisodeUnwatchedCall(
-                showId = 84958,
-                episodeId = 1001,
-            )
-        }
-
-    @Test
-    fun `should update library when FollowShowClicked is dispatched`() = runTest {
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(FollowShowClicked(isInLibrary = false))
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        followedShowsRepository.addedShowIds shouldBe listOf(84958L)
-    }
-
-    @Test
-    fun `should invoke onShowFollowed callback when following a show`() = runTest {
-        buildMockData()
-        var onShowFollowedCalled = false
-
-        val presenter = buildShowDetailsPresenter(
-            onShowFollowed = { onShowFollowedCalled = true },
-        )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(FollowShowClicked(isInLibrary = false))
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        onShowFollowedCalled shouldBe true
-    }
-
-    @Test
-    fun `should not invoke onShowFollowed callback when unfollowing a show`() = runTest {
-        buildMockData()
-        var onShowFollowedCalled = false
-
-        val presenter = buildShowDetailsPresenter(
-            onShowFollowed = { onShowFollowedCalled = true },
-        )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(FollowShowClicked(isInLibrary = true))
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        onShowFollowedCalled shouldBe false
-    }
-
-    @Test
-    fun `should schedule episode notifications when following a show with notifications enabled`() = runTest {
-        buildMockData()
-        fakeDatastoreRepository.setEpisodeNotificationsEnabled(true)
-
-        fakeDateTimeProvider.setCurrentTimeMillis(
-            LocalDateTime(2025, 1, 1, 8, 0).toInstant(TimeZone.UTC).toEpochMilliseconds(),
-        )
-
-        episodeRepository.setUpcomingEpisodes(
-            listOf(
-                UpcomingEpisode(
-                    episodeId = 101,
-                    seasonId = 1,
-                    showId = 84958,
-                    episodeNumber = 1,
-                    seasonNumber = 1,
-                    title = "Episode 1",
-                    overview = "Overview",
-                    runtime = 45,
-                    imageUrl = "/still.jpg",
-                    firstAired = LocalDateTime(2025, 1, 1, 20, 0).toInstant(TimeZone.UTC).toEpochMilliseconds(),
-                    showName = "Loki",
-                    showPoster = "/poster.jpg",
-                ),
-            ),
-        )
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(FollowShowClicked(isInLibrary = false))
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        fakeNotificationManager.getPendingNotifications().size shouldBe 1
-    }
-
-    @Test
-    fun `should not schedule notifications when following a show with notifications disabled`() = runTest {
-        buildMockData()
-        fakeDatastoreRepository.setEpisodeNotificationsEnabled(false)
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(FollowShowClicked(isInLibrary = false))
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        fakeNotificationManager.getScheduledNotifications() shouldBe emptyMap()
-    }
-
-    @Test
-    fun `should cancel notifications for show when unfollowing`() = runTest {
-        buildMockData()
-        fakeNotificationManager.addPendingNotification(
-            EpisodeNotification(
-                id = 1,
-                showId = 84958,
-                seasonId = 1,
-                showName = "Loki",
-                episodeTitle = "Episode 1",
-                seasonNumber = 1,
-                episodeNumber = 1,
-                imageUrl = null,
-                scheduledTime = 1000L,
-                message = fakeLocalizer.getString(StringResourceKey.NotificationNewEpisode, "Episode 1", 1L, 1L),
-            ),
-        )
-        fakeNotificationManager.addPendingNotification(
-            EpisodeNotification(
-                id = 2,
-                showId = 99999,
-                seasonId = 2,
-                showName = "Other Show",
-                episodeTitle = "Episode 1",
-                seasonNumber = 1,
-                episodeNumber = 1,
-                imageUrl = null,
-                scheduledTime = 2000L,
-                message = fakeLocalizer.getString(StringResourceKey.NotificationNewEpisode, "Episode 1", 1L, 1L),
-            ),
-        )
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(FollowShowClicked(isInLibrary = true))
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val pendingNotifications = fakeNotificationManager.getPendingNotifications()
-        pendingNotifications.filter { it.showId == 84958L } shouldBe emptyList()
-        pendingNotifications.filter { it.showId == 99999L }.size shouldBe 1
-    }
-
-    @Test
-    fun `should update continue tracking list when episode is marked as watched`() = runTest {
-        buildMockData()
-        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val initialState = presenter.state.value
-        initialState.continueTrackingEpisodes.size shouldBe 3
-        initialState.continueTrackingScrollIndex shouldBe 0
-
-        val updatedTrackingResult = ContinueTrackingResult(
-            episodes = listOf(
-                testEpisodeDetails.copy(isWatched = true),
-                testEpisodeDetails.copy(id = 1002L, episodeNumber = 2L, name = "Episode 2"),
-                testEpisodeDetails.copy(id = 1003L, episodeNumber = 3L, name = "Episode 3"),
-            ).toImmutableList(),
-            currentSeasonNumber = 1L,
-            currentSeasonId = 101L,
-        )
-        seasonDetailsRepository.setContinueTrackingResult(updatedTrackingResult)
-
-        presenter.dispatch(
-            MarkEpisodeWatched(
-                showId = 84958,
-                episodeId = 1001,
-                seasonNumber = 1,
-                episodeNumber = 1,
-            ),
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val updatedState = presenter.state.value
-        updatedState.continueTrackingScrollIndex shouldBe 1
-    }
-
-    @Test
-    fun `should clear continue tracking list when show is removed from library`() = runTest {
-        buildMockData()
-        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val initialState = presenter.state.value
-        initialState.continueTrackingEpisodes.size shouldBe 3
-
-        seasonDetailsRepository.setContinueTrackingResult(null)
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val updatedState = presenter.state.value
-        updatedState.continueTrackingEpisodes.size shouldBe 0
-    }
-
-    @Test
-    fun `should display season progress when seasons have watched episodes`() = runTest {
-        buildMockData(seasonResult = testSeasonsWithProgress)
-        episodeRepository.setAllSeasonsWatchProgress(testSeasonWatchProgress)
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        val seasonsList = state.showDetails.seasonsList
-
-        seasonsList.size shouldBe 2
-
-        val season1 = seasonsList.first { it.seasonNumber == 1L }
-        season1.watchedCount shouldBe 8
-        season1.totalCount shouldBe 10
-        season1.progressPercentage shouldBe 0.8f
-        season1.isSeasonWatched shouldBe false
-
-        val season2 = seasonsList.first { it.seasonNumber == 2L }
-        season2.watchedCount shouldBe 3
-        season2.totalCount shouldBe 12
-        season2.progressPercentage shouldBe 0.25f
-        season2.isSeasonWatched shouldBe false
-    }
-
-    @Test
-    fun `should mark season as watched when all episodes are watched`() = runTest {
-        buildMockData(seasonResult = testSeasonsWithProgress)
-        episodeRepository.setAllSeasonsWatchProgress(testCompletedSeasonProgress)
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        val season1 = state.showDetails.seasonsList.first { it.seasonNumber == 1L }
-
-        season1.watchedCount shouldBe 10
-        season1.totalCount shouldBe 10
-        season1.progressPercentage shouldBe 1f
-        season1.isSeasonWatched shouldBe true
-    }
-
-    @Test
-    fun `should display total episodes count in ShowDetailsModel`() = runTest {
-        buildMockData()
-        episodeRepository.setShowWatchProgress(
-            testShowWatchProgress.copy(watchedCount = 12, totalCount = 38),
-        )
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        state.showDetails.watchedEpisodesCount shouldBe 12
-        state.showDetails.totalEpisodesCount shouldBe 38
-    }
-
-    @Test
-    fun `should update season progress when episode is marked as watched`() = runTest {
-        buildMockData(seasonResult = testSeasonsWithProgress)
-        episodeRepository.setAllSeasonsWatchProgress(testPartialSeasonProgress)
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val initialState = presenter.state.value
-        val season1Initial = initialState.showDetails.seasonsList.first { it.seasonNumber == 1L }
-        season1Initial.watchedCount shouldBe 5
-        season1Initial.progressPercentage shouldBe 0.5f
-
-        episodeRepository.setAllSeasonsWatchProgress(
-            listOf(
-                testPartialSeasonProgress.first().copy(watchedCount = 6),
-            ),
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val updatedState = presenter.state.value
-        val season1Updated = updatedState.showDetails.seasonsList.first { it.seasonNumber == 1L }
-        season1Updated.watchedCount shouldBe 6
-        season1Updated.progressPercentage shouldBe 0.6f
-    }
-
-    @Test
-    fun `should display zero progress when no episodes are watched`() = runTest {
-        buildMockData(seasonResult = testSeasonsWithProgress)
-        episodeRepository.setAllSeasonsWatchProgress(emptyList())
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = presenter.state.value
-        val season1 = state.showDetails.seasonsList.first { it.seasonNumber == 1L }
-
-        season1.watchedCount shouldBe 0
-        season1.totalCount shouldBe 0
-        season1.progressPercentage shouldBe 0f
-        season1.isSeasonWatched shouldBe false
-    }
-
-    @Test
-    fun `should sync watched episodes given auth state changes to logged in`() = runTest {
-        buildMockData(seasonResult = seasons)
-
-        val _ = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        watchedEpisodeSyncRepository.reset()
-
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
-        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe true
-    }
-
-    @Test
-    fun `should sync watch progress on initial load given user is logged in`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
-        buildMockData(seasonResult = seasons)
-
-        val _ = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
-        watchedEpisodeSyncRepository.wasForceRefreshUsed() shouldBe false
-    }
-
-    @Test
-    fun `should always attempt sync on initial load given user is logged out`() = runTest {
-        accountManager.setActiveProvider(null)
-        buildMockData(seasonResult = seasons)
-
-        val _ = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        watchedEpisodeSyncRepository.getLastSyncedShowId() shouldBe 84958L
-    }
-
-    @Test
-    fun `should navigate to ShowListRoute given OpenShowList is dispatched`() = runTest {
-        buildMockData()
-
-        val presenter = buildShowDetailsPresenter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(OpenShowList)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val route = fakeNavigator.lastActivatedOverlay
-        route.shouldBeInstanceOf<ShowListRoute>()
-        route.param.showId shouldBe 84958L
-    }
-
-    @Test
-    fun `should expose canAddToList true given the active provider supports lists`() = runTest {
-        buildMockData()
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
-
-        val presenter = buildShowDetailsPresenter(supportsLists = true)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.state.value.canAddToList shouldBe true
-    }
-
-    @Test
-    fun `should expose canAddToList false given the active provider does not support lists`() = runTest {
-        buildMockData()
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
-
-        val presenter = buildShowDetailsPresenter(supportsLists = false)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.state.value.canAddToList shouldBe false
-    }
-
-    @Test
-    fun `should not navigate to ShowListRoute given OpenShowList is dispatched and lists are unsupported`() = runTest {
-        buildMockData()
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
-
-        val presenter = buildShowDetailsPresenter(supportsLists = false)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.dispatch(OpenShowList)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        fakeNavigator.lastActivatedOverlay.shouldBeNull()
-    }
-
-    @Test
-    fun `should expose canAddToList true given no active provider`() = runTest {
-        buildMockData()
-        accountManager.setActiveProvider(null)
-
-        val presenter = buildShowDetailsPresenter(supportsLists = false)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        presenter.state.value.canAddToList shouldBe true
-    }
-
-    private suspend fun buildMockData(
-        isYoutubeInstalled: Boolean = false,
-        castList: List<ShowCast> = emptyList(),
-        showDetailResult: TvshowDetails = tvShowDetails,
-        seasonResult: List<ShowSeasons> = emptyList(),
-        watchProviderResult: List<WatchProviders> = emptyList(),
-        similarShowResult: List<SimilarShows> = emptyList(),
-        trailersResult: List<SelectByShowId> = emptyList(),
-    ) {
-        showDetailsRepository.setShowDetailsResult(showDetailResult)
-        trailerRepository.setYoutubePlayerInstalled(isYoutubeInstalled)
-        seasonsRepository.setSeasonsResult(seasonResult)
-        castRepository.setShowCast(castList)
-        watchProvidersRepository.setWatchProvidersResult(watchProviderResult)
-        similarShowsRepository.setSimilarShowsResult(similarShowResult)
-        trailerRepository.setTrailerResult(trailersResult)
-    }
-
-    private fun buildShowDetailsPresenter(
-        param: ShowDetailsParam = ShowDetailsParam(showId = 84958),
-        onShowFollowed: () -> Unit = {},
-        supportsLists: Boolean = true,
-    ): ShowDetailsPresenter {
-        val notificationRationale = object : NotificationRationale {
-            override suspend fun showIfNeeded() = onShowFollowed()
-        }
-        return ShowDetailsPresenter(
-            param = param,
+    private fun buildPresenter(): ShowDetailsPresenter =
+        ShowDetailsPresenter(
             componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-            navigator = fakeNavigator,
+            param = ShowDetailsParam(showId = SHOW_ID),
+            headerGraphFactory = headerGraphFactory(),
+            seasonsEpisodesGraphFactory = seasonsEpisodesGraphFactory(),
+            castGraphFactory = castGraphFactory(),
+            providersGraphFactory = providersGraphFactory(),
+            trailersGraphFactory = trailersGraphFactory(),
+            similarGraphFactory = similarGraphFactory(),
+            navigator = navigator,
+        )
+
+    private fun headerGraphFactory() = object : ShowDetailsHeaderChildGraph.Factory {
+        override fun createShowDetailsHeaderGraph(componentContext: ComponentContext): ShowDetailsHeaderChildGraph =
+            object : ShowDetailsHeaderChildGraph {
+                override val showDetailsHeaderFactory = ShowDetailsHeaderPresenter.Factory { showId, forceRefresh ->
+                    buildHeader(componentContext, showId, forceRefresh)
+                }
+            }
+    }
+
+    private fun seasonsEpisodesGraphFactory() = object : ShowDetailsSeasonsEpisodesChildGraph.Factory {
+        override fun createShowDetailsSeasonsEpisodesGraph(
+            componentContext: ComponentContext,
+        ): ShowDetailsSeasonsEpisodesChildGraph =
+            object : ShowDetailsSeasonsEpisodesChildGraph {
+                override val showDetailsSeasonsEpisodesFactory =
+                    ShowDetailsSeasonsEpisodesPresenter.Factory { showId, forceRefresh ->
+                        buildSeasonsEpisodes(componentContext, showId, forceRefresh)
+                    }
+            }
+    }
+
+    private fun castGraphFactory() = object : ShowDetailsCastChildGraph.Factory {
+        override fun createShowDetailsCastGraph(componentContext: ComponentContext): ShowDetailsCastChildGraph =
+            object : ShowDetailsCastChildGraph {
+                override val showDetailsCastFactory = ShowDetailsCastPresenter.Factory { showId, forceRefresh ->
+                    buildCast(componentContext, showId, forceRefresh)
+                }
+            }
+    }
+
+    private fun providersGraphFactory() = object : ShowDetailsProvidersChildGraph.Factory {
+        override fun createShowDetailsProvidersGraph(componentContext: ComponentContext): ShowDetailsProvidersChildGraph =
+            object : ShowDetailsProvidersChildGraph {
+                override val showDetailsProvidersFactory =
+                    ShowDetailsProvidersPresenter.Factory { showId, forceRefresh ->
+                        buildProviders(componentContext, showId, forceRefresh)
+                    }
+            }
+    }
+
+    private fun trailersGraphFactory() = object : ShowDetailsTrailersChildGraph.Factory {
+        override fun createShowDetailsTrailersGraph(componentContext: ComponentContext): ShowDetailsTrailersChildGraph =
+            object : ShowDetailsTrailersChildGraph {
+                override val showDetailsTrailersFactory = ShowDetailsTrailersPresenter.Factory { showId, forceRefresh ->
+                    buildTrailers(componentContext, showId, forceRefresh)
+                }
+            }
+    }
+
+    private fun similarGraphFactory() = object : ShowDetailsSimilarChildGraph.Factory {
+        override fun createShowDetailsSimilarGraph(componentContext: ComponentContext): ShowDetailsSimilarChildGraph =
+            object : ShowDetailsSimilarChildGraph {
+                override val showDetailsSimilarFactory = ShowDetailsSimilarPresenter.Factory { showId, forceRefresh ->
+                    buildSimilar(componentContext, showId, forceRefresh)
+                }
+            }
+    }
+
+    private fun buildHeader(
+        componentContext: ComponentContext,
+        showId: Long,
+        forceRefresh: Boolean,
+    ): ShowDetailsHeaderPresenter {
+        val notificationRationale = object : NotificationRationale {
+            override suspend fun showIfNeeded() = Unit
+        }
+        return ShowDetailsHeaderPresenter(
+            componentContext = componentContext,
+            showId = showId,
+            forceRefresh = forceRefresh,
+            navigator = navigator,
             notificationRationale = notificationRationale,
             followedShowsRepository = followedShowsRepository,
             followShowInteractor = FollowShowInteractor(
@@ -773,38 +270,78 @@ class ShowDetailsPresenterTest {
                     showDetailsRepository = showDetailsRepository,
                     seasonDetailsRepository = seasonDetailsRepository,
                     watchProviderRepository = watchProvidersRepository,
-                    dispatchers = coroutineDispatcher,
+                    dispatchers = dispatchers,
                 ),
                 appScopeLauncher = FakeAppScopeLauncher(scope = appCoroutineScope),
             ),
             showDetailsInteractor = ShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
-                castRepository = castRepository,
-                trailerRepository = trailerRepository,
-                providerRepository = watchProvidersRepository,
-                seasonDetailsRepository = seasonDetailsRepository,
-                seasonsEpisodesSyncRepository = seasonsEpisodesSyncRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                dispatchers = coroutineDispatcher,
-            ),
-            similarShowsInteractor = SimilarShowsInteractor(
-                similarShowsRepository = similarShowsRepository,
-                dispatchers = coroutineDispatcher,
+                dispatchers = dispatchers,
             ),
             observableShowDetailsInteractor = ObservableShowDetailsInteractor(
                 showDetailsRepository = showDetailsRepository,
-                formatterUtil = fakeFormatterUtil,
-                dispatchers = coroutineDispatcher,
+                formatterUtil = formatterUtil,
+                dispatchers = dispatchers,
             ),
-            observableShowMetadataInteractor = ObservableShowMetadataInteractor(
-                castRepository = castRepository,
+            refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
+            observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
+            observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
+            syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
-                seasonDetailsRepository = seasonDetailsRepository,
+                dateTimeProvider = dateTimeProvider,
+                activeProviderFeatures = { FakeProviderFeatures(supportsCalendar = true) },
+                logger = FakeLogger(),
+                dispatchers = dispatchers,
+            ),
+            scheduleEpisodeNotificationsInteractor = ScheduleEpisodeNotificationsInteractor(
+                datastoreRepository = datastoreRepository,
+                episodeRepository = episodeRepository,
+                notificationManager = notificationManager,
+                localizer = localizer,
+                dateTimeProvider = dateTimeProvider,
+                logger = FakeLogger(),
+                dispatchers = dispatchers,
+            ),
+            notificationManager = notificationManager,
+            accountManager = accountManager,
+            activeProviderFeatures = { FakeProviderFeatures(supportsLists = true) },
+            localizer = localizer,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            logger = FakeLogger(),
+        )
+    }
+
+    private fun buildSeasonsEpisodes(
+        componentContext: ComponentContext,
+        showId: Long,
+        forceRefresh: Boolean,
+    ): ShowDetailsSeasonsEpisodesPresenter =
+        ShowDetailsSeasonsEpisodesPresenter(
+            componentContext = componentContext,
+            showId = showId,
+            forceRefresh = forceRefresh,
+            observeSeasonsInteractor = ObserveSeasonsInteractor(
                 seasonsRepository = seasonsRepository,
-                similarShowsRepository = similarShowsRepository,
-                trailerRepository = trailerRepository,
-                watchProviderRepository = watchProvidersRepository,
-                dispatchers = coroutineDispatcher,
+                episodeRepository = episodeRepository,
+                dispatchers = dispatchers,
+            ),
+            observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
+                episodeRepository = episodeRepository,
+            ),
+            observeContinueTrackingInteractor = ObserveContinueTrackingInteractor(
+                seasonDetailsRepository = seasonDetailsRepository,
+                followedShowsRepository = followedShowsRepository,
+                dispatchers = dispatchers,
+            ),
+            fetchSeasonsEpisodesInteractor = FetchSeasonsEpisodesInteractor(
+                showDetailsRepository = showDetailsRepository,
+                seasonDetailsRepository = seasonDetailsRepository,
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = dispatchers,
+            ),
+            syncShowEpisodeWatchesInteractor = SyncShowEpisodeWatchesInteractor(
+                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                dispatchers = dispatchers,
             ),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(
                 episodeRepository = episodeRepository,
@@ -812,32 +349,103 @@ class ShowDetailsPresenterTest {
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
-            observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(
-                episodeRepository = episodeRepository,
-            ),
-            syncCalendarInteractor = SyncCalendarInteractor(
-                episodeRepository = episodeRepository,
-                dateTimeProvider = fakeDateTimeProvider,
-                activeProviderFeatures = { FakeProviderFeatures(supportsCalendar = true) },
-                logger = FakeLogger(),
-                dispatchers = coroutineDispatcher,
-            ),
-            scheduleEpisodeNotificationsInteractor = ScheduleEpisodeNotificationsInteractor(
-                datastoreRepository = fakeDatastoreRepository,
-                episodeRepository = episodeRepository,
-                notificationManager = fakeNotificationManager,
-                localizer = fakeLocalizer,
-                dateTimeProvider = fakeDateTimeProvider,
-                logger = FakeLogger(),
-                dispatchers = coroutineDispatcher,
-            ),
-            notificationManager = fakeNotificationManager,
+            navigator = navigator,
             accountManager = accountManager,
-            activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
-            mapper = ShowDetailsMapper(localizer = fakeLocalizer),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
-            dispatchers = coroutineDispatcher,
-            logger = fakeLogger,
+            logger = FakeLogger(),
         )
+
+    private fun buildCast(
+        componentContext: ComponentContext,
+        showId: Long,
+        forceRefresh: Boolean,
+    ): ShowDetailsCastPresenter =
+        ShowDetailsCastPresenter(
+            componentContext = componentContext,
+            showId = showId,
+            forceRefresh = forceRefresh,
+            observeCastInteractor = ObserveCastInteractor(
+                castRepository = castRepository,
+                dispatchers = dispatchers,
+            ),
+            fetchCastInteractor = FetchCastInteractor(
+                castRepository = castRepository,
+                dispatchers = dispatchers,
+            ),
+            accountManager = accountManager,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            logger = FakeLogger(),
+        )
+
+    private fun buildProviders(
+        componentContext: ComponentContext,
+        showId: Long,
+        forceRefresh: Boolean,
+    ): ShowDetailsProvidersPresenter =
+        ShowDetailsProvidersPresenter(
+            componentContext = componentContext,
+            showId = showId,
+            forceRefresh = forceRefresh,
+            observeWatchProvidersInteractor = ObserveWatchProvidersInteractor(
+                watchProviderRepository = watchProvidersRepository,
+                dispatchers = dispatchers,
+            ),
+            fetchWatchProvidersInteractor = FetchWatchProvidersInteractor(
+                watchProviderRepository = watchProvidersRepository,
+                dispatchers = dispatchers,
+            ),
+            accountManager = accountManager,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            logger = FakeLogger(),
+        )
+
+    private fun buildTrailers(
+        componentContext: ComponentContext,
+        showId: Long,
+        forceRefresh: Boolean,
+    ): ShowDetailsTrailersPresenter =
+        ShowDetailsTrailersPresenter(
+            componentContext = componentContext,
+            showId = showId,
+            forceRefresh = forceRefresh,
+            observeTrailersInteractor = ObserveTrailersInteractor(
+                trailerRepository = trailerRepository,
+                dispatchers = dispatchers,
+            ),
+            fetchTrailersInteractor = FetchTrailersInteractor(
+                trailerRepository = trailerRepository,
+                dispatchers = dispatchers,
+            ),
+            navigator = navigator,
+            accountManager = accountManager,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            logger = FakeLogger(),
+        )
+
+    private fun buildSimilar(
+        componentContext: ComponentContext,
+        showId: Long,
+        forceRefresh: Boolean,
+    ): ShowDetailsSimilarPresenter =
+        ShowDetailsSimilarPresenter(
+            componentContext = componentContext,
+            showId = showId,
+            forceRefresh = forceRefresh,
+            observeSimilarShowsInteractor = ObserveSimilarShowsInteractor(
+                similarShowsRepository = similarShowsRepository,
+                dispatchers = dispatchers,
+            ),
+            similarShowsInteractor = SimilarShowsInteractor(
+                similarShowsRepository = similarShowsRepository,
+                dispatchers = dispatchers,
+            ),
+            navigator = navigator,
+            accountManager = accountManager,
+            errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            logger = FakeLogger(),
+        )
+
+    private companion object {
+        private const val SHOW_ID = 84958L
     }
 }

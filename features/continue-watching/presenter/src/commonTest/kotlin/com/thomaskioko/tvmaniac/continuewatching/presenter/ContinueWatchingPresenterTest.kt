@@ -53,6 +53,43 @@ class ContinueWatchingPresenterTest {
     }
 
     @Test
+    fun `should show loading until content is available`() = runTest {
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            factory.upNextRepository.setNextEpisodesForWatchlist(
+                listOf(createNextEpisodeWithShow(showId = 1L, showName = "Loki", episodeId = 101L)),
+            )
+
+            val loaded = awaitItem()
+            loaded.isEmpty shouldBe false
+            loaded.showLoading shouldBe false
+        }
+    }
+
+    @Test
+    fun `should show refresh indicator given syncing but content already present`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe ContinueWatchingState()
+
+            factory.upNextRepository.setNextEpisodesForWatchlist(
+                listOf(createNextEpisodeWithShow(showId = 1L, showName = "Loki", episodeId = 101L)),
+            )
+
+            val loaded = awaitItem()
+            loaded.isEmpty shouldBe false
+            loaded.showRefreshIndicator shouldBe false
+
+            factory.syncObserver.setSyncing(true)
+
+            val syncing = awaitItem()
+            syncing.isSyncing shouldBe true
+            syncing.showLoading shouldBe false
+            syncing.showRefreshIndicator shouldBe true
+        }
+    }
+
+    @Test
     fun `should emit ContinueWatchingState with content on success`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe ContinueWatchingState()

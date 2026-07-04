@@ -83,10 +83,13 @@ private fun EpisodeSheetActions(
     onAction: (EpisodeSheetAction) -> Unit,
 ) {
     state.availableActions.forEach { action ->
+        val isToggling = action.item == EpisodeSheetActionItem.TOGGLE_WATCHED && state.isTogglingWatched
         SheetActionItem(
             modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem(action.item.name)),
             icon = action.item.icon,
             label = action.label,
+            enabled = !isToggling,
+            showProgress = isToggling,
             onClick = { onAction(action.item.toAction()) },
         )
     }

@@ -5,6 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(libs.coroutines.core)
             api(projects.core.logger.api)
         }
     }

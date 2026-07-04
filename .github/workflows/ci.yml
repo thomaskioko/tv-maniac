@@ -25,7 +25,7 @@ jobs:
     spotless:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -36,7 +36,7 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -55,7 +55,7 @@ jobs:
     dependency-health:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -70,13 +70,81 @@ jobs:
                     name: dependency-health-report
                     path: '**/build/reports/dependency-analysis/build-health-report.txt'
 
+    module-graph:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            -   uses: actions/checkout@v7
+                with:
+                    token: ${{ secrets.GH_COMMIT_PAT || github.token }}
+                    persist-credentials: true
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
+            -   name: Update Module Graphs
+                run: ./gradlew graphUpdate
+
+            -   name: Check Module Graphs
+                id: graphs_verify
+                continue-on-error: true
+                run: git add -- '**/README.md' && git diff --cached --quiet --exit-code -- '**/README.md'
+
+            -   name: Fail on stale graphs (no auto-commit available)
+                if: steps.graphs_verify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+                run: |
+                    echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files." && exit 1
+
+            -   name: Commit refreshed graphs
+                if: steps.graphs_verify.outcome == 'failure' && github.event_name == 'pull_request'
+                uses: stefanzweifel/git-auto-commit-action@v7
+                with:
+                    file_pattern: '**/README.md'
+                    disable_globbing: true
+                    commit_message: "🤖 Update module graphs"
+
+    dependency-guard:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            -   uses: actions/checkout@v7
+                with:
+                    token: ${{ secrets.GH_COMMIT_PAT || github.token }}
+                    persist-credentials: true
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
+            -   name: Update Dependency Guard Baselines
+                run: ./gradlew :app:dependencyGuardBaseline :ios-framework:dependencyGuardBaseline -Papp.debugOnly=false
+
+            -   name: Check Dependency Guard Baselines
+                id: guard_verify
+                continue-on-error: true
+                run: git add -- '**/dependencies/*.txt' && git diff --cached --quiet --exit-code -- '**/dependencies/*.txt'
+
+            -   name: Fail on stale baselines (no auto-commit available)
+                if: steps.guard_verify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+                run: |
+                    echo "::error::Dependency guard baselines are stale. Run ./gradlew dependencyGuardBaseline and commit the updated dependencies/*.txt files." && exit 1
+
+            -   name: Commit refreshed baselines
+                if: steps.guard_verify.outcome == 'failure' && github.event_name == 'pull_request'
+                uses: stefanzweifel/git-auto-commit-action@v7
+                with:
+                    file_pattern: '**/dependencies/*.txt'
+                    disable_globbing: true
+                    commit_message: "🤖 Update dependency guard baselines"
+
     swift-lint:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🔍 Run SwiftLint (pinned)
-                uses: docker://ghcr.io/realm/swiftlint:0.63.3
+                uses: docker://ghcr.io/realm/swiftlint:0.64.1
                 with:
                     args: --config .swiftlint.yml
 
@@ -87,7 +155,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout Code
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -126,7 +194,7 @@ jobs:
     linux-test:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v6
+            -   uses: actions/checkout@v7
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -171,7 +239,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout project
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 📱 Setup iOS Environment
                 uses: ./.github/actions/setup-ios
@@ -194,7 +262,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout project
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 📱 Setup iOS Environment
                 uses: ./.github/actions/setup-ios
@@ -241,7 +309,7 @@ jobs:
 
         steps:
             -   name: 🚚 Checkout project
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: 📱 Setup iOS Environment
                 uses: ./.github/actions/setup-ios
@@ -255,7 +323,7 @@ jobs:
 
             -   name: 🗂️ Restore DerivedData
                 id: derived-data
-                uses: actions/cache/restore@v5
+                uses: actions/cache/restore@v6
                 with:
                     path: derived_data
                     key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
@@ -267,7 +335,7 @@ jobs:
 
             -   name: 🗂️ Save DerivedData
                 if: github.ref == 'refs/heads/main' && steps.derived-data.outputs.cache-hit != 'true'
-                uses: actions/cache/save@v5
+                uses: actions/cache/save@v6
                 with:
                     path: derived_data
                     key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}

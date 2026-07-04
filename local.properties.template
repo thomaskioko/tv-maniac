@@ -1,0 +1,16 @@
+# Copy this file to local.properties and fill in your keys.
+#   cp local.properties.template local.properties
+# See docs/setup.md for where to obtain each credential.
+
+# TMDB API key: https://www.themoviedb.org/settings/api
+TMDB_API_KEY=your_tmdb_api_key
+
+# Trakt OAuth app: https://trakt.tv/oauth/applications/new  (Redirect URI: tvmaniac://auth/trakt)
+TRAKT_CLIENT_ID=your_trakt_client_id
+TRAKT_CLIENT_SECRET=your_trakt_client_secret
+TRAKT_REDIRECT_URI=tvmaniac://auth/trakt
+
+# Simkl developer app: https://simkl.com/settings/developer/  (Redirect URI: tvmaniac://auth/simkl)
+SIMKL_CLIENT_ID=your_simkl_client_id
+SIMKL_CLIENT_SECRET=your_simkl_client_secret
+SIMKL_REDIRECT_URI=tvmaniac://auth/simkl

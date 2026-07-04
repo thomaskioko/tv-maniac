@@ -7,4 +7,5 @@ public sealed interface EpisodeSheetAction {
     public data object Unfollow : EpisodeSheetAction
     public data object Dismiss : EpisodeSheetAction
     public data class MessageShown(val id: Long) : EpisodeSheetAction
+    public data object RatingClicked : EpisodeSheetAction
 }

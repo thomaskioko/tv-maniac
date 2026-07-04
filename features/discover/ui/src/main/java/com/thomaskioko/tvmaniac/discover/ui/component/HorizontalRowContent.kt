@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.discover.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -22,11 +27,10 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
-import com.thomaskioko.tvmaniac.discover.ui.discoverContentSuccess
+import com.thomaskioko.tvmaniac.discover.ui.discoverCatalogContentSuccess
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.discover.DiscoverTestTags
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -37,6 +41,7 @@ internal fun HorizontalRowContent(
     tvShows: ImmutableList<DiscoverShow>,
     onItemClicked: (Long) -> Unit,
     onMoreClicked: () -> Unit,
+    libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
 ) {
     Box(modifier = modifier) {
         AnimatedVisibility(visible = tvShows.isNotEmpty()) {
@@ -55,7 +60,7 @@ internal fun HorizontalRowContent(
 
                 LazyRow(
                     state = lazyListState,
-                    flingBehavior = rememberSnapperFlingBehavior(lazyListState),
+                    flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
@@ -70,6 +75,7 @@ internal fun HorizontalRowContent(
                             modifier = Modifier.testTag(DiscoverTestTags.showCard(rowKey, tvShow.showId)),
                             title = tvShow.title,
                             isInLibrary = tvShow.inLibrary,
+                            libraryImageOverlay = libraryImageOverlay,
                         )
                     }
                 }
@@ -86,7 +92,7 @@ internal fun HorizontalRowContentPreview() {
         modifier = Modifier.height(220.dp),
         category = "Trending",
         rowKey = DiscoverTestTags.ROW_KEY_TRENDING,
-        tvShows = discoverContentSuccess.topRatedShows,
+        tvShows = discoverCatalogContentSuccess.topRatedShows,
         onItemClicked = {},
         onMoreClicked = {},
     )

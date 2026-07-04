@@ -31,8 +31,6 @@ kotlin {
                 api(libs.kotlinx.collections)
 
                 api(projects.domain.continueWatching)
-                implementation(projects.data.episode.api)
-                implementation(projects.data.followedshows.api)
                 implementation(projects.data.startWatching.api)
                 implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.home.nav)
@@ -65,9 +63,7 @@ kotlin {
                 implementation(projects.data.library.testing)
                 implementation(projects.data.popularshows.api)
                 implementation(projects.data.popularshows.testing)
-                implementation(projects.data.seasondetails.api)
                 implementation(projects.data.seasondetails.testing)
-                implementation(projects.data.showdetails.api)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.shows.api)
                 implementation(projects.data.startWatching.testing)

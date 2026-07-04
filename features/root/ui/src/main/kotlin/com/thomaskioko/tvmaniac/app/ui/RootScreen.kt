@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -148,11 +149,19 @@ internal fun RootContent(
                     .fillMaxSize()
                     .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
             ) {
+                content()
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
+            ) {
                 AccountLimitBanner(
                     onDismiss = onDismissAccountLimitBanner,
                     visible = accountLimitBannerVisible,
+                    modifier = Modifier.align(Alignment.TopCenter),
                 )
-                content()
             }
 
             TvManiacSnackBarHost(
@@ -168,7 +177,7 @@ internal fun RootContent(
 
 private fun ToastType.toSnackBarStyle(): SnackBarStyle = when (this) {
     ToastType.Error -> SnackBarStyle.Error
-    ToastType.Status -> SnackBarStyle.Info
+    ToastType.Status -> SnackBarStyle.Syncing
 }
 
 private fun handleToastDismiss(rootPresenter: RootPresenter, state: ToastState) {

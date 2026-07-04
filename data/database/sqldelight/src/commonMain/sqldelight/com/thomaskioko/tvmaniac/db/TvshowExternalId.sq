@@ -29,6 +29,11 @@ SELECT show_id
 FROM tvshow_external_id
 WHERE provider = :provider AND external_id = :externalId;
 
+externalIdForShow:
+SELECT external_id
+FROM tvshow_external_id
+WHERE show_id = :showId AND provider = :provider;
+
 insert:
 INSERT OR IGNORE INTO tvshow_external_id(show_id, provider, external_id)
 VALUES (:showId, :provider, :externalId);

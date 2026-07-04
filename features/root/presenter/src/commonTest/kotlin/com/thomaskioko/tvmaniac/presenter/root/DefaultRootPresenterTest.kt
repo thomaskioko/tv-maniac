@@ -11,7 +11,6 @@ import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.theme.Theme
-import com.thomaskioko.tvmaniac.genreshows.nav.GenreShowsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.util.getString
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
@@ -144,19 +143,6 @@ abstract class DefaultRootPresenterTest {
             val trailersScreen = awaitItem().active.instance
 
             trailersScreen.shouldBeInstanceOf<RootChild>()
-        }
-    }
-
-    @Test
-    fun `should return GenreShows as active instance`() = runTest(testDispatcher) {
-        presenter.homePresenter.discoverChildStack.test {
-            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
-
-            navigator.bringToFront(GenreShowsRoute(1))
-
-            val genreShowsScreen = awaitItem().active.instance
-
-            genreShowsScreen.shouldBeInstanceOf<RootChild>()
         }
     }
 
@@ -551,4 +537,35 @@ abstract class DefaultRootPresenterTest {
             errorToast.persistent shouldBe false
         }
     }
+
+    @Test
+    fun `should show account limit banner given limit error occurs`() = runTest(testDispatcher) {
+        presenter.accountLimitBannerVisible.test {
+            awaitItem() shouldBe false
+
+            syncObserver.log(SyncError.AccountLimitExceeded(message = "limit", cause = RuntimeException("boom")))
+
+            awaitItem() shouldBe true
+        }
+    }
+
+    @Test
+    fun `should keep account limit banner hidden for the session given limit error fires again after dismiss`() =
+        runTest(testDispatcher) {
+            presenter.accountLimitBannerVisible.test {
+                awaitItem() shouldBe false
+
+                syncObserver.log(SyncError.AccountLimitExceeded(message = "limit", cause = RuntimeException("boom")))
+                awaitItem() shouldBe true
+
+                presenter.onDismissAccountLimitBanner()
+                awaitItem() shouldBe false
+
+                syncObserver.log(SyncError.AccountLimitExceeded(message = "limit", cause = RuntimeException("boom")))
+                runCurrent()
+
+                expectNoEvents()
+                presenter.accountLimitBannerVisible.value shouldBe false
+            }
+        }
 }

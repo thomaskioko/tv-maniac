@@ -294,14 +294,16 @@ public interface DatastoreRepository {
     public fun observeCrashReportingEnabled(): Flow<Boolean>
 
     /**
-     * Records that the user dismissed the Trakt account-limit banner so it does not reappear.
+     * Saves whether the hidden debug menu has been unlocked.
+     *
+     * @param enabled Whether the debug menu is unlocked.
      */
-    public suspend fun setAccountLimitBannerDismissed(dismissed: Boolean)
+    public suspend fun setDebugMenuEnabled(enabled: Boolean)
 
     /**
-     * Observes whether the Trakt account-limit banner has been dismissed by the user.
+     * Observes whether the hidden debug menu has been unlocked.
      *
-     * @return Flow of Boolean. Defaults to false (banner can show).
+     * @return A Flow of Boolean, true once the debug menu has been unlocked. Defaults to false.
      */
-    public fun observeAccountLimitBannerDismissed(): Flow<Boolean>
+    public fun observeDebugMenuEnabled(): Flow<Boolean>
 }

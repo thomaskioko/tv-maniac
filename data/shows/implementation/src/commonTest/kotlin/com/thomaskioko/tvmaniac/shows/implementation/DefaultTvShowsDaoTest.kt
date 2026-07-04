@@ -76,9 +76,32 @@ internal class DefaultTvShowsDaoTest : BaseDatabaseTest() {
         externalId.shouldBeNull()
     }
 
+    @Test
+    fun `should resolve tmdb id given the local show id`() = runTest(testDispatcher) {
+        dao.upsert(
+            ShowToPersist(
+                showId = Id<TraktId>(TRAKT_ID),
+                tmdbId = Id<TmdbId>(TMDB_ID),
+                name = SHOW_NAME,
+                overview = "An overview",
+                ratings = 8.0,
+                voteCount = 1000L,
+            ),
+        )
+        val localShowId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(TMDB_ID)).executeAsOne().id
+
+        dao.getTmdbIdForLocalShowId(localShowId) shouldBe TMDB_ID
+    }
+
+    @Test
+    fun `should return null given the local show id does not exist`() = runTest(testDispatcher) {
+        dao.getTmdbIdForLocalShowId(UNKNOWN_LOCAL_SHOW_ID).shouldBeNull()
+    }
+
     private companion object {
         private const val TMDB_ID = 5500L
         private const val TRAKT_ID = 7700L
         private const val SHOW_NAME = "Simkl Only Show"
+        private const val UNKNOWN_LOCAL_SHOW_ID = 999L
     }
 }

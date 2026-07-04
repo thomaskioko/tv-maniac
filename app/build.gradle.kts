@@ -1,5 +1,3 @@
-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
-
 plugins {
     alias(libs.plugins.app.application)
 }
@@ -10,6 +8,7 @@ scaffold {
         minify(
             rootProject.file("app/proguard-rules.pro"),
         )
+        useFirebase()
     }
     useMetro()
 
@@ -61,6 +60,7 @@ dependencies {
     implementation(projects.features.discover.ui)
     implementation(projects.features.featureFlags.ui)
     implementation(projects.features.episodeSheet.ui)
+    implementation(projects.features.ratingSheet.ui)
     implementation(projects.features.home.ui)
     implementation(projects.features.library.ui)
     implementation(projects.features.myShows.ui)
@@ -90,7 +90,6 @@ dependencies {
     implementation(projects.data.simklauth.implementation)
     implementation(projects.data.popularshows.api)
     implementation(projects.data.popularshows.implementation)
-    implementation(projects.data.recommendedshows.implementation)
     implementation(projects.data.requestManager.implementation)
     implementation(projects.data.search.implementation)
     implementation(projects.data.seasondetails.api)
@@ -138,7 +137,7 @@ dependencies {
     implementation(projects.features.calendar.presenter)
     implementation(projects.features.discover.presenter)
     implementation(projects.features.episodeSheet.presenter)
-    implementation(projects.features.genreShows.presenter)
+    implementation(projects.features.ratingSheet.presenter)
     implementation(projects.features.library.presenter)
     implementation(projects.features.home.presenter)
     implementation(projects.features.moreShows.presenter)
@@ -177,6 +176,7 @@ dependencies {
     implementation(projects.core.tasks.api)
     implementation(projects.data.followedshows.implementation)
     implementation(projects.data.library.implementation)
+    implementation(projects.data.ratings.implementation)
     implementation(projects.data.syncActivity.implementation)
     implementation(projects.data.upnext.implementation)
     implementation(projects.data.continueWatching.implementation)
@@ -211,6 +211,9 @@ dependencies {
     implementation(projects.domain.featureFlags)
     implementation(projects.features.featureFlags.nav)
     implementation(projects.features.featureFlags.presenter)
+    implementation(projects.data.ratings.api)
+    implementation(projects.domain.ratings)
+    implementation(projects.features.ratingSheet.nav)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)
@@ -247,7 +250,6 @@ dependencies {
     testImplementation(projects.data.oauth.api)
     testImplementation(projects.data.oauth.testing)
     testImplementation(projects.data.traktauth.testing)
-    testImplementation(projects.features.genreShows.nav)
     testImplementation(projects.core.locale.testing)
     testImplementation(projects.core.util.testing)
     testImplementation(projects.core.featureFlags.testing)
@@ -295,24 +297,4 @@ dependencies {
     androidTestImplementation(libs.ktor.http)
 
     androidTestRuntimeOnly(libs.androidx.test.core)
-}
-
-val hasGoogleServicesConfig =
-    file("google-services.json").exists() ||
-        file("src/debug/google-services.json").exists() ||
-        file("src/release/google-services.json").exists()
-
-if (hasGoogleServicesConfig) {
-    apply(plugin = libs.plugins.google.services.get().pluginId)
-    apply(plugin = libs.plugins.firebase.crashlytics.gradle.get().pluginId)
-}
-
-afterEvaluate {
-    if (pluginManager.hasPlugin("com.google.firebase.crashlytics")) {
-        android.buildTypes.getByName("release") {
-            configure<CrashlyticsExtension> {
-                mappingFileUploadEnabled = true
-            }
-        }
-    }
 }

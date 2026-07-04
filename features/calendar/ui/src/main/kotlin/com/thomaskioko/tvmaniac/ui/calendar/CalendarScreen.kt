@@ -151,6 +151,7 @@ private fun CalendarBody(
         else -> {
             CalendarContent(
                 modifier = Modifier.testTag(CalendarTestTags.SCREEN_TEST_TAG),
+                weekOffset = state.weekOffset,
                 dateGroups = state.dateGroups,
                 moreEpisodesFormat = state.moreEpisodesFormat,
                 contentPadding = contentPadding,
@@ -236,6 +237,7 @@ internal fun WeekNavigationHeader(
 
 @Composable
 private fun CalendarContent(
+    weekOffset: Int,
     dateGroups: ImmutableList<CalendarDateGroup>,
     moreEpisodesFormat: String,
     contentPadding: PaddingValues,
@@ -243,7 +245,7 @@ private fun CalendarContent(
     onEpisodeClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val listState = remember(dateGroups.firstOrNull()?.dateLabel) { LazyListState() }
+    val listState = remember(weekOffset) { LazyListState() }
     LazyColumn(
         state = listState,
         modifier = modifier
