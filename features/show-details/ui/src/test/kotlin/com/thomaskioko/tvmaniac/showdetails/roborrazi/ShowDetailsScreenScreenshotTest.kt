@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScaffold
 import com.thomaskioko.tvmaniac.showdetails.ui.previewCastState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRated
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateSimkl
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHostState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHostStateWithMessage
@@ -95,6 +96,25 @@ class ShowDetailsScreenScreenshotTest {
                     onHostAction = {},
                     content = {},
                 )
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsRatedState() {
+        composeTestRule.captureMultiDevice("ShowDetailsRatedState") {
+            TvManiacBackground {
+                ShowDetailsScaffold(
+                    hostState = previewHostState,
+                    title = previewHeaderStateRated.title,
+                    isHeaderEmpty = false,
+                    listState = LazyListState(),
+                    onHostAction = {},
+                ) {
+                    item(key = "header") {
+                        ShowDetailsHeaderSection(state = previewHeaderStateRated, onAction = {})
+                    }
+                }
             }
         }
     }

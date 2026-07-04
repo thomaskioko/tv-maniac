@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.seasondetails.ui.SeasonDetailsScreen
 import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsLoaded
+import com.thomaskioko.tvmaniac.seasondetails.ui.seasonDetailsRated
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +31,18 @@ class SeasonScreenshotTest {
             TvManiacBackground {
                 SeasonDetailsScreen(
                     state = seasonDetailsLoaded,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun seasonDetailsScreenRatedState() {
+        composeTestRule.captureMultiDevice("SeasonDetailsRatedState") {
+            TvManiacBackground {
+                SeasonDetailsScreen(
+                    state = seasonDetailsRated,
                     onAction = {},
                 )
             }
