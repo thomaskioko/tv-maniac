@@ -402,23 +402,40 @@ internal class Scenarios(
     }
 
     inner class Calendar {
-        fun stubWeek(weekStart: String = TEST_TODAY, days: Int = 7) {
-            mockHandler.stubEndpoint(Endpoints.Trakt.calendar(weekStart, days))
+        private fun endpoint(provider: AccountProvider, weekStart: String, days: Int): Endpoint.Exact =
+            when (provider) {
+                AccountProvider.TRAKT -> Endpoints.Trakt.calendar(weekStart, days)
+                AccountProvider.SIMKL -> Endpoints.Simkl.CalendarTvFeed
+            }
+
+        fun stubWeek(
+            provider: AccountProvider = AccountProvider.TRAKT,
+            weekStart: String = TEST_TODAY,
+            days: Int = 7,
+        ) {
+            mockHandler.stubEndpoint(endpoint(provider, weekStart, days))
         }
 
-        fun stubEmptyWeek(weekStart: String = TEST_TODAY, days: Int = 7) {
+        fun stubEmptyWeek(
+            provider: AccountProvider = AccountProvider.TRAKT,
+            weekStart: String = TEST_TODAY,
+            days: Int = 7,
+        ) {
+            val calendar = endpoint(provider, weekStart, days)
             mockHandler.stubFixture(
-                path = Endpoints.Trakt.calendar(weekStart, days).path,
+                path = calendar.path,
                 fixturePath = EMPTY_ARRAY_FIXTURE,
+                host = calendar.host,
             )
         }
 
         fun stubWeekError(
+            provider: AccountProvider = AccountProvider.TRAKT,
             weekStart: String = TEST_TODAY,
             days: Int = 7,
             status: Int = 404,
         ) {
-            mockHandler.stubEndpoint(Endpoints.Trakt.calendar(weekStart, days), HttpStatusCode.fromValue(status))
+            mockHandler.stubEndpoint(endpoint(provider, weekStart, days), HttpStatusCode.fromValue(status))
         }
     }
 
