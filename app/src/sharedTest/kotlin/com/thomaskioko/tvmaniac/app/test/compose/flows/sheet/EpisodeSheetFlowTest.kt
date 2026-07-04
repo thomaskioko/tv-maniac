@@ -11,6 +11,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val pilotSeasonNumber = 1L
+    private val ratedStarValue = 8
 
     @Test
     fun givenAuthenticatedUser_whenUpNextCardClicked_thenOpensEpisodeSheet() = runAppFlowTest {
@@ -78,6 +79,25 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .assertShowDetailsDisplayed()
             .clickSeasonChip(seasonNumber = pilotSeasonNumber)
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+    }
+
+    @Test
+    fun givenEpisodeSheet_whenEpisodeRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+        scenarios.ratings.stubRatingsSync()
+
+        openEpisodeSheetFromUpNextCard()
+
+        episodeSheetRobot
+            .clickRateAction()
+
+        ratingSheetRobot
+            .assertSheetDisplayed()
+            .assertClearRatingButtonDoesNotExist()
+            .clickStar(ratedStarValue)
+            .assertClearRatingButtonDisplayed()
+            .clickClearRatingButton()
+            .assertClearRatingButtonDoesNotExist()
     }
 
     private fun AppFlowScope.openEpisodeSheetFromUpNextCard() {

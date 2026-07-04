@@ -76,6 +76,7 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
                 voteCount: voteCount
             )
         ) {
+            SheetActionItem(icon: "star", label: "Rate episode", action: {})
             SheetActionItem(
                 icon: isWatched ? "checkmark.circle.fill" : "checkmark.circle",
                 label: isWatched ? "Mark unwatched" : "Mark watched",

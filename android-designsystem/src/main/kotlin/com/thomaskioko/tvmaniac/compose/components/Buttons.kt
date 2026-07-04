@@ -190,6 +190,7 @@ public fun HorizontalOutlinedButton(
     textPadding: Dp = 0.dp,
     shape: Shape = MaterialTheme.shapes.small,
     borderColor: Color = MaterialTheme.colorScheme.secondary,
+    contentColor: Color = MaterialTheme.colorScheme.secondary,
     leadingIcon: @Composable (() -> Unit)? = null,
 ) {
     OutlinedButton(
@@ -213,7 +214,7 @@ public fun HorizontalOutlinedButton(
                     text = text,
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (enabled) {
-                        MaterialTheme.colorScheme.secondary
+                        contentColor
                     } else {
                         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                     },

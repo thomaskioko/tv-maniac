@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -50,6 +52,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
 import com.thomaskioko.tvmaniac.i18n.MR.strings.following
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsFollowClicked
@@ -57,7 +60,9 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderAc
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderState
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsOpenShowList
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowRatingClicked
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderState
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRated
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 import kotlinx.collections.immutable.ImmutableList
 
@@ -138,7 +143,8 @@ private fun ShowBody(
                 releaseYear = state.year,
                 status = state.status,
                 language = state.language,
-                rating = state.rating,
+                communityRating = state.communityRating,
+                communityVotes = state.communityVotes,
             )
 
             ExpandingText(
@@ -156,8 +162,10 @@ private fun ShowBody(
             ShowDetailButtons(
                 isFollowed = state.isInLibrary,
                 canAddToList = state.canAddToList,
+                userRating = state.userRating,
                 onTrackShowClicked = { onAction(ShowDetailsFollowClicked(state.isInLibrary)) },
                 onAddToList = { onAction(ShowDetailsOpenShowList) },
+                onRateClicked = { onAction(ShowRatingClicked) },
             )
         }
 
@@ -170,7 +178,8 @@ internal fun ShowMetadata(
     releaseYear: String,
     status: String?,
     language: String?,
-    rating: Double,
+    communityRating: Double?,
+    communityVotes: Long?,
     modifier: Modifier = Modifier,
 ) {
     val colorScheme = MaterialTheme.colorScheme
@@ -248,25 +257,45 @@ internal fun ShowMetadata(
                     fontWeight = FontWeight.Medium,
                 )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(end = 4.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = null,
-                        modifier = Modifier.size(12.dp),
+                if (communityRating != null) {
+                    RatingBadge(
+                        rating = formatCommunityRating(communityRating, communityVotes),
                         tint = MaterialTheme.colorScheme.secondary,
-                    )
-                    Text(
-                        text = "$rating",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(start = 2.dp),
+                        modifier = Modifier.padding(end = 4.dp),
                     )
                 }
             }
         }
+    }
+}
+
+private fun formatCommunityRating(rating: Double, votes: Long?): String {
+    val ratingText = "%.1f".format(rating)
+    return if (votes != null && votes > 0) "$ratingText ($votes)" else ratingText
+}
+
+@Composable
+private fun RatingBadge(
+    rating: String,
+    tint: Color,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Star,
+            contentDescription = null,
+            modifier = Modifier.size(12.dp),
+            tint = tint,
+        )
+        Text(
+            text = rating,
+            style = MaterialTheme.typography.bodyMedium,
+            color = tint,
+            modifier = Modifier.padding(start = 2.dp),
+        )
     }
 }
 
@@ -307,23 +336,29 @@ private fun GenreText(
 internal fun ShowDetailButtons(
     isFollowed: Boolean,
     canAddToList: Boolean,
+    userRating: Int?,
     onTrackShowClicked: (Boolean) -> Unit,
     onAddToList: () -> Unit,
+    onRateClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(top = 8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val context = LocalContext.current
         FilledVerticalIconButton(
-            modifier = Modifier.testTag(
-                if (isFollowed) {
-                    ShowDetailsTestTags.STOP_TRACKING_BUTTON_TEST_TAG
-                } else {
-                    ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG
-                },
-            ),
+            modifier = Modifier
+                .weight(1f)
+                .testTag(
+                    if (isFollowed) {
+                        ShowDetailsTestTags.STOP_TRACKING_BUTTON_TEST_TAG
+                    } else {
+                        ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG
+                    },
+                ),
             shape = MaterialTheme.shapes.medium,
             text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
             imageVector = if (isFollowed) Icons.Filled.RemoveCircle else Icons.Filled.AddCircle,
@@ -337,7 +372,9 @@ internal fun ShowDetailButtons(
         )
 
         FilledVerticalIconButton(
-            modifier = Modifier.testTag(ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG),
+            modifier = Modifier
+                .weight(1f)
+                .testTag(ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG),
             shape = MaterialTheme.shapes.medium,
             text = btn_add_to_list.resolve(context),
             imageVector = Icons.Outlined.AutoAwesomeMotion,
@@ -345,6 +382,18 @@ internal fun ShowDetailButtons(
             style = MaterialTheme.typography.labelMedium,
             enabled = canAddToList,
             onClick = onAddToList,
+        )
+
+        FilledVerticalIconButton(
+            modifier = Modifier
+                .weight(1f)
+                .testTag(ShowDetailsTestTags.RATE_BUTTON_TEST_TAG),
+            shape = MaterialTheme.shapes.medium,
+            text = label_action_rate.resolve(context),
+            imageVector = if (userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
+            containerColor = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.labelMedium,
+            onClick = onRateClicked,
         )
     }
 }
@@ -355,6 +404,16 @@ internal fun ShowDetailButtons(
 private fun ShowDetailsHeaderSectionPreview() {
     ShowDetailsHeaderSection(
         state = previewHeaderState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun ShowDetailsHeaderSectionRatedPreview() {
+    ShowDetailsHeaderSection(
+        state = previewHeaderStateRated,
         onAction = {},
     )
 }

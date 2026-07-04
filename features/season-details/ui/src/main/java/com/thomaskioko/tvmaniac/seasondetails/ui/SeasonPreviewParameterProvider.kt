@@ -53,11 +53,14 @@ internal val seasonDetailsLoaded = SeasonDetailsModel(
     seasonCast = persistentListOf(),
 )
 
+internal val seasonDetailsRated = seasonDetailsLoaded.copy(userRating = 8)
+
 internal class SeasonPreviewParameterProvider : PreviewParameterProvider<SeasonDetailsModel> {
     override val values: Sequence<SeasonDetailsModel>
         get() {
             return sequenceOf(
                 seasonDetailsLoaded,
+                seasonDetailsRated,
                 seasonDetailsLoaded.copy(message = UiMessage("Opps! Something went wrong")),
             )
         }

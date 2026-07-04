@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.episodedetail.ui
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -13,12 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate_episode
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeDetailSheetState
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetAction
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
@@ -50,11 +55,7 @@ public fun EpisodeSheet(
         } else {
             EpisodeDetailSheetContent(
                 episode = state.toEpisodeDetailInfo(),
-                actions = if (state.availableActions.isEmpty()) {
-                    null
-                } else {
-                    { EpisodeSheetActions(state, presenter::dispatch) }
-                },
+                actions = { EpisodeSheetActions(state, presenter::dispatch) },
             )
         }
     }
@@ -69,11 +70,7 @@ internal fun EpisodeDetailContent(
     EpisodeDetailSheetContent(
         episode = state.toEpisodeDetailInfo(),
         modifier = modifier,
-        actions = if (state.availableActions.isEmpty()) {
-            null
-        } else {
-            { EpisodeSheetActions(state, onAction) }
-        },
+        actions = { EpisodeSheetActions(state, onAction) },
     )
 }
 
@@ -82,6 +79,15 @@ private fun EpisodeSheetActions(
     state: EpisodeDetailSheetState,
     onAction: (EpisodeSheetAction) -> Unit,
 ) {
+    val context = LocalContext.current
+
+    SheetActionItem(
+        modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem("rate")),
+        icon = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
+        label = label_action_rate_episode.resolve(context),
+        onClick = { onAction(EpisodeSheetAction.RatingClicked) },
+    )
+
     state.availableActions.forEach { action ->
         val isToggling = action.item == EpisodeSheetActionItem.TOGGLE_WATCHED && state.isTogglingWatched
         SheetActionItem(
@@ -138,6 +144,31 @@ private fun EpisodeDetailContentAllActionsPreview() {
             isWatched = false,
             availableActions = persistentListOf(
                 EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
+            ),
+        ),
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun EpisodeDetailContentRatedPreview() {
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "The Walking Dead: Daryl Dixon",
+            showName = "The Walking Dead",
+            seasonEpisodeNumber = "S02E01",
+            overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating = 8.5,
+            voteCount = 1234,
+            isWatched = true,
+            userRating = 9,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),

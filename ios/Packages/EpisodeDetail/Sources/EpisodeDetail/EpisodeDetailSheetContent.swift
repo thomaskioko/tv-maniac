@@ -207,6 +207,7 @@ public struct SheetActionItem: View {
             voteCount: 856
         )
     ) {
+        SheetActionItem(icon: "star", label: "Rate episode", action: {})
         SheetActionItem(icon: "checkmark.circle", label: "Mark as Watched", action: {})
         SheetActionItem(icon: "tv", label: "Open Show", action: {})
         SheetActionItem(icon: "list.bullet", label: "Open Season", action: {})

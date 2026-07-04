@@ -25,6 +25,8 @@ dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
     implementation(projects.core.view)
+    implementation(projects.i18n.generator)
+
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)

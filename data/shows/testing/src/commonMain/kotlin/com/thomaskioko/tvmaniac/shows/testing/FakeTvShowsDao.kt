@@ -15,11 +15,16 @@ public class FakeTvShowsDao : TvShowsDao {
 
     private val state = MutableStateFlow<Map<Long, Tvshow>>(emptyMap())
     private val tmdbIdByLocalShowId = MutableStateFlow<Map<Long, Long>>(emptyMap())
+    private val localShowIdByTmdbId = MutableStateFlow<Map<Long, Long>>(emptyMap())
 
     public fun entries(): List<Tvshow> = state.value.values.toList()
 
     public fun setTmdbIdForLocalShowId(showId: Long, tmdbId: Long) {
         tmdbIdByLocalShowId.value += (showId to tmdbId)
+    }
+
+    public fun setLocalShowIdForTmdbId(tmdbId: Long, showId: Long) {
+        localShowIdByTmdbId.value += (tmdbId to showId)
     }
 
     override fun upsert(show: ShowToPersist) {
@@ -59,6 +64,8 @@ public class FakeTvShowsDao : TvShowsDao {
     override fun getTmdbIdByShowId(showId: Long): Long? = state.value[showId]?.tmdb_id?.id
 
     override fun getTmdbIdForLocalShowId(showId: Long): Long? = tmdbIdByLocalShowId.value[showId]
+
+    override fun getLocalShowIdByTmdbId(tmdbId: Long): Long? = localShowIdByTmdbId.value[tmdbId]
 
     override fun getTraktIdByTmdbId(tmdbId: Long): Long? = null
 

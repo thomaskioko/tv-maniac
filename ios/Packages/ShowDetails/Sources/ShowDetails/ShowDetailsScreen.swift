@@ -11,7 +11,9 @@ public struct ShowDetailsScreen<Content: View>: View {
         public let status: String?
         public let year: String
         public let language: String?
-        public let rating: Double
+        public let communityRating: Double?
+        public let communityVotes: Int64?
+        public let userRating: Int?
         public let numberOfSeasons: Int
         public let isRefreshing: Bool
 
@@ -22,7 +24,9 @@ public struct ShowDetailsScreen<Content: View>: View {
             status: String?,
             year: String,
             language: String?,
-            rating: Double,
+            communityRating: Double?,
+            communityVotes: Int64?,
+            userRating: Int?,
             numberOfSeasons: Int,
             isRefreshing: Bool
         ) {
@@ -32,7 +36,9 @@ public struct ShowDetailsScreen<Content: View>: View {
             self.status = status
             self.year = year
             self.language = language
-            self.rating = rating
+            self.communityRating = communityRating
+            self.communityVotes = communityVotes
+            self.userRating = userRating
             self.numberOfSeasons = numberOfSeasons
             self.isRefreshing = isRefreshing
         }
@@ -77,7 +83,8 @@ public struct ShowDetailsScreen<Content: View>: View {
                     status: state.status,
                     year: state.year,
                     language: state.language,
-                    rating: state.rating,
+                    communityRating: state.communityRating,
+                    communityVotes: state.communityVotes,
                     seasonCount: state.numberOfSeasons,
                     seasonCountFormat: seasonCountFormat,
                     progress: proxy.getTitleOpacity(
@@ -141,7 +148,9 @@ private enum DimensionConstants {
             status: "Ended",
             year: "2024",
             language: "EN",
-            rating: 4.8,
+            communityRating: 4.8,
+            communityVotes: 12500,
+            userRating: 9,
             numberOfSeasons: 2,
             isRefreshing: false
         ),

@@ -77,6 +77,15 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<ShowDetail
         click(tag)
     }
 
+    fun clickRateButton() = apply {
+        val tag = ShowDetailsTestTags.RATE_BUTTON_TEST_TAG
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = tag,
+        )
+        click(tag)
+    }
+
     fun assertAddToListButtonDisabled() = apply {
         val tag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG
         scrollDownUntilTag(

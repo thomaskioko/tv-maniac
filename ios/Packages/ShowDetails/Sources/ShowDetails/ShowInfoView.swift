@@ -12,8 +12,11 @@ public struct ShowInfoView: View {
     private let trackLabel: String
     private let stopTrackingLabel: String
     private let addToListLabel: String
+    private let rateLabel: String
+    private let userRating: Int?
     private let onAddToLibrary: () -> Void
     private let onAddToCustomList: () -> Void
+    private let onRate: () -> Void
 
     public init(
         isFollowed: Bool,
@@ -22,8 +25,11 @@ public struct ShowInfoView: View {
         trackLabel: String,
         stopTrackingLabel: String,
         addToListLabel: String,
+        rateLabel: String,
+        userRating: Int? = nil,
         onAddToLibrary: @escaping () -> Void,
-        onAddToCustomList: @escaping () -> Void
+        onAddToCustomList: @escaping () -> Void,
+        onRate: @escaping () -> Void
     ) {
         self.isFollowed = isFollowed
         self.canAddToList = canAddToList
@@ -31,8 +37,11 @@ public struct ShowInfoView: View {
         self.trackLabel = trackLabel
         self.stopTrackingLabel = stopTrackingLabel
         self.addToListLabel = addToListLabel
+        self.rateLabel = rateLabel
+        self.userRating = userRating
         self.onAddToLibrary = onAddToLibrary
         self.onAddToCustomList = onAddToCustomList
+        self.onRate = onRate
     }
 
     public var body: some View {
@@ -72,6 +81,12 @@ public struct ShowInfoView: View {
                 action: onAddToCustomList
             )
             .disabled(!canAddToList)
+
+            FilledVerticalIconButton(
+                text: rateLabel,
+                systemImage: userRating != nil ? "star.fill" : "star",
+                action: onRate
+            )
         }
     }
 }
@@ -84,8 +99,10 @@ public struct ShowInfoView: View {
         trackLabel: "Track",
         stopTrackingLabel: "Stop Tracking",
         addToListLabel: "Add To List",
+        rateLabel: "Rate",
         onAddToLibrary: {},
-        onAddToCustomList: {}
+        onAddToCustomList: {},
+        onRate: {}
     )
     .padding()
     .appPreview(LightTheme())
@@ -99,8 +116,10 @@ public struct ShowInfoView: View {
         trackLabel: "Track",
         stopTrackingLabel: "Stop Tracking",
         addToListLabel: "Add To List",
+        rateLabel: "Rate",
         onAddToLibrary: {},
-        onAddToCustomList: {}
+        onAddToCustomList: {},
+        onRate: {}
     )
     .padding()
     .appPreview(LightTheme())
@@ -114,9 +133,29 @@ public struct ShowInfoView: View {
         trackLabel: "Track",
         stopTrackingLabel: "Stop Tracking",
         addToListLabel: "Add To List",
+        rateLabel: "Rate",
         onAddToLibrary: {},
-        onAddToCustomList: {}
+        onAddToCustomList: {},
+        onRate: {}
     )
     .padding()
     .appPreview(DarkTheme())
+}
+
+#Preview("Already Rated") {
+    ShowInfoView(
+        isFollowed: true,
+        canAddToList: true,
+        genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+        trackLabel: "Track",
+        stopTrackingLabel: "Stop Tracking",
+        addToListLabel: "Add To List",
+        rateLabel: "Rate",
+        userRating: 9,
+        onAddToLibrary: {},
+        onAddToCustomList: {},
+        onRate: {}
+    )
+    .padding()
+    .appPreview(LightTheme())
 }

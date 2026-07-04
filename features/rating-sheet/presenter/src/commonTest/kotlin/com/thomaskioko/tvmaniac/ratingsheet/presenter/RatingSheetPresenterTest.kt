@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,14 +63,34 @@ internal class RatingSheetPresenterTest {
     }
 
     @Test
-    fun `should dismiss overlay given star selected`() = runTest {
+    fun `should update rating without dismissing given star selected`() = runTest {
         val presenter = createPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        presenter.dispatch(RatingSheetAction.RatingSelected(9))
+        presenter.state.test {
+            presenter.dispatch(RatingSheetAction.RatingSelected(9))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().userRating shouldBe 9
+            navigator.overlayDismissCount shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should clear rating without dismissing given rating cleared`() = runTest {
+        ratingsRepository.setShowRating(
+            ShowRating(userRating = 7, communityRating = null, communityVotes = null, pendingAction = PendingAction.NOTHING),
+        )
+        val presenter = createPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
-        navigator.overlayDismissCount shouldBe 1
+        presenter.state.test {
+            presenter.dispatch(RatingSheetAction.RatingCleared)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().userRating.shouldBeNull()
+            navigator.overlayDismissCount shouldBe 0
+        }
     }
 
     @Test

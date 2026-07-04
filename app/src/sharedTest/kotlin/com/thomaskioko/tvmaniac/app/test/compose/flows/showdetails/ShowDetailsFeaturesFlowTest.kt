@@ -9,6 +9,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val favoritesListTraktId = 34223248L
+    private val ratedStarValue = 8
 
     @Test
     fun givenShowDetails_whenOpened_thenInteractiveSurfacesAreExercised() = runAppFlowTest {
@@ -66,6 +67,31 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    fun givenAuthenticatedUser_whenShowRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+        scenarios.stubAuthenticatedSync()
+        scenarios.ratings.stubRatingsSync()
+
+        rootRobot.dismissNotificationRationale()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickRateButton()
+
+        ratingSheetRobot
+            .assertSheetDisplayed()
+            .assertClearRatingButtonDoesNotExist()
+            .clickStar(ratedStarValue)
+            .assertClearRatingButtonDisplayed()
+            .clickClearRatingButton()
+            .assertClearRatingButtonDoesNotExist()
+    }
+
+    @Test
     fun givenSimklSession_whenShowDetailsOpened_thenAddToListButtonIsDisabled() = runAppFlowTest {
         scenarios.flags.enableSimklLogin()
         scenarios.discover.stubBrowseGraph()
@@ -78,5 +104,29 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         showDetailsRobot
             .assertShowDetailsDisplayed()
             .assertAddToListButtonDisabled()
+    }
+
+    @Test
+    fun givenSimklSession_whenShowRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
+        scenarios.flags.enableSimklLogin()
+        scenarios.discover.stubBrowseGraph()
+        scenarios.stubAuthenticatedSimklProfile()
+        scenarios.simkl.stubRatingsSync()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickRateButton()
+
+        ratingSheetRobot
+            .assertSheetDisplayed()
+            .assertClearRatingButtonDoesNotExist()
+            .clickStar(ratedStarValue)
+            .assertClearRatingButtonDisplayed()
+            .clickClearRatingButton()
+            .assertClearRatingButtonDoesNotExist()
     }
 }
