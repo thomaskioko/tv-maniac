@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.testing.integration
 
 import com.thomaskioko.tvmaniac.testing.integration.util.FixtureLoader
 import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.withClue
+import io.kotest.matchers.string.shouldNotBeEmpty
 import org.junit.Test
 
 /**
@@ -26,6 +28,15 @@ class EndpointsCatalogTest {
         Endpoints.all.forEach { endpoint ->
             shouldNotThrowAny(label(endpoint, endpoint.errorFixture)) {
                 FixtureLoader.load(endpoint.errorFixture)
+            }
+        }
+    }
+
+    @Test
+    fun `every endpoint declares a non-empty host`() {
+        Endpoints.all.forEach { endpoint ->
+            withClue(label(endpoint, endpoint.host)) {
+                endpoint.host.shouldNotBeEmpty()
             }
         }
     }

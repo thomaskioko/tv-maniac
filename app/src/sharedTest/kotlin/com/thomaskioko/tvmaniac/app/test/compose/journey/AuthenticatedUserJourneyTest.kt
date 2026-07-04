@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.journey
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_NEXT_WEEK
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
@@ -20,8 +19,6 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     @Test
     fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {
         scenarios.stubUnauthenticatedState()
-        scenarios.calendar.stubWeek()
-        scenarios.calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
 
         // Verify public content on Discover
         discoverRobot

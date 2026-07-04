@@ -69,6 +69,34 @@ internal class MockEngineHandlerTest {
     }
 
     @Test
+    fun `should isolate stubs by host when paths overlap`() = runTest {
+        val handler = MockEngineHandler()
+        handler.stubFixture(path = "/sync/ratings", fixturePath = "test/hello.json", host = "api.trakt.tv")
+        handler.stub(path = "/sync/ratings", body = "simkl response", host = "api.simkl.com")
+        val client = mockClient(handler)
+
+        val traktBody = client.get("https://api.trakt.tv/sync/ratings").bodyAsText()
+        val simklBody = client.get("https://api.simkl.com/sync/ratings").bodyAsText()
+
+        traktBody shouldContain "hello from the fixture"
+        simklBody shouldBe "simkl response"
+    }
+
+    @Test
+    fun `should isolate exact and pattern stubs by host on the same path`() = runTest {
+        val handler = MockEngineHandler()
+        handler.stub(path = "/users/me/stats", body = "trakt stats", host = "api.trakt.tv")
+        handler.stubPattern(pathRegex = "/users/[^/]+/stats", body = "simkl stats", host = "api.simkl.com")
+        val client = mockClient(handler)
+
+        val traktBody = client.get("https://api.trakt.tv/users/me/stats").bodyAsText()
+        val simklBody = client.get("https://api.simkl.com/users/me/stats").bodyAsText()
+
+        traktBody shouldBe "trakt stats"
+        simklBody shouldBe "simkl stats"
+    }
+
+    @Test
     fun `should clear stubs on reset`() = runTest {
         val handler = MockEngineHandler()
         handler.stubFixture(path = "/test", fixturePath = "test/hello.json")
