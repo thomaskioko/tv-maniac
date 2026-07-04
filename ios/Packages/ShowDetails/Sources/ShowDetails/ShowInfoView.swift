@@ -13,6 +13,7 @@ public struct ShowInfoView: View {
     private let stopTrackingLabel: String
     private let addToListLabel: String
     private let rateLabel: String
+    private let userRating: Int?
     private let onAddToLibrary: () -> Void
     private let onAddToCustomList: () -> Void
     private let onRate: () -> Void
@@ -25,6 +26,7 @@ public struct ShowInfoView: View {
         stopTrackingLabel: String,
         addToListLabel: String,
         rateLabel: String,
+        userRating: Int? = nil,
         onAddToLibrary: @escaping () -> Void,
         onAddToCustomList: @escaping () -> Void,
         onRate: @escaping () -> Void
@@ -36,6 +38,7 @@ public struct ShowInfoView: View {
         self.stopTrackingLabel = stopTrackingLabel
         self.addToListLabel = addToListLabel
         self.rateLabel = rateLabel
+        self.userRating = userRating
         self.onAddToLibrary = onAddToLibrary
         self.onAddToCustomList = onAddToCustomList
         self.onRate = onRate
@@ -81,7 +84,7 @@ public struct ShowInfoView: View {
 
             FilledVerticalIconButton(
                 text: rateLabel,
-                systemImage: "star",
+                systemImage: userRating != nil ? "star.fill" : "star",
                 action: onRate
             )
         }
@@ -137,4 +140,22 @@ public struct ShowInfoView: View {
     )
     .padding()
     .appPreview(DarkTheme())
+}
+
+#Preview("Already Rated") {
+    ShowInfoView(
+        isFollowed: true,
+        canAddToList: true,
+        genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+        trackLabel: "Track",
+        stopTrackingLabel: "Stop Tracking",
+        addToListLabel: "Add To List",
+        rateLabel: "Rate",
+        userRating: 9,
+        onAddToLibrary: {},
+        onAddToCustomList: {},
+        onRate: {}
+    )
+    .padding()
+    .appPreview(LightTheme())
 }

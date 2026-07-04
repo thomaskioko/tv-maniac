@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.episodedetail.ui
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.Movie
@@ -82,7 +83,7 @@ private fun EpisodeSheetActions(
 
     SheetActionItem(
         modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem("rate")),
-        icon = Icons.Outlined.StarOutline,
+        icon = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
         label = label_action_rate_episode.resolve(context),
         onClick = { onAction(EpisodeSheetAction.RatingClicked) },
     )

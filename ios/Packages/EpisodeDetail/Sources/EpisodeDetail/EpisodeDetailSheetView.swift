@@ -36,7 +36,7 @@ public struct EpisodeDetailSheetView: View {
                     )
                 ) {
                     SheetActionItem(
-                        icon: "star",
+                        icon: (state.userRating as? Int) != nil ? "star.fill" : "star",
                         label: rateActionLabel,
                         action: { presenter.dispatch(action: EpisodeSheetActionRatingClicked()) }
                     )

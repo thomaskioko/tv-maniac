@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.StarOutline
@@ -246,6 +247,7 @@ internal fun LazyColumnContent(
                 title = seasonDetailsModel.seasonName,
                 imagesCount = seasonDetailsModel.seasonImages.size,
                 watchProgress = seasonDetailsModel.watchProgress,
+                userRating = seasonDetailsModel.userRating,
                 isLoading = isLoading,
                 onAction = onAction,
                 listState = listState,
@@ -330,6 +332,7 @@ private fun HeaderContent(
     title: String,
     watchProgress: Float,
     imagesCount: Int,
+    userRating: Int?,
     isLoading: Boolean,
     listState: LazyListState,
     onAction: (SeasonDetailsAction) -> Unit,
@@ -413,7 +416,7 @@ private fun HeaderContent(
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.StarOutline,
+                        imageVector = if (userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
                     )

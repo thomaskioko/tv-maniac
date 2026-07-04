@@ -162,6 +162,7 @@ private fun ShowBody(
             ShowDetailButtons(
                 isFollowed = state.isInLibrary,
                 canAddToList = state.canAddToList,
+                userRating = state.userRating,
                 onTrackShowClicked = { onAction(ShowDetailsFollowClicked(state.isInLibrary)) },
                 onAddToList = { onAction(ShowDetailsOpenShowList) },
                 onRateClicked = { onAction(ShowRatingClicked) },
@@ -335,24 +336,29 @@ private fun GenreText(
 internal fun ShowDetailButtons(
     isFollowed: Boolean,
     canAddToList: Boolean,
+    userRating: Int?,
     onTrackShowClicked: (Boolean) -> Unit,
     onAddToList: () -> Unit,
     onRateClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(top = 8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val context = LocalContext.current
         FilledVerticalIconButton(
-            modifier = Modifier.testTag(
-                if (isFollowed) {
-                    ShowDetailsTestTags.STOP_TRACKING_BUTTON_TEST_TAG
-                } else {
-                    ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG
-                },
-            ),
+            modifier = Modifier
+                .weight(1f)
+                .testTag(
+                    if (isFollowed) {
+                        ShowDetailsTestTags.STOP_TRACKING_BUTTON_TEST_TAG
+                    } else {
+                        ShowDetailsTestTags.TRACK_BUTTON_TEST_TAG
+                    },
+                ),
             shape = MaterialTheme.shapes.medium,
             text = if (isFollowed) unfollow.resolve(context) else following.resolve(context),
             imageVector = if (isFollowed) Icons.Filled.RemoveCircle else Icons.Filled.AddCircle,
@@ -366,7 +372,9 @@ internal fun ShowDetailButtons(
         )
 
         FilledVerticalIconButton(
-            modifier = Modifier.testTag(ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG),
+            modifier = Modifier
+                .weight(1f)
+                .testTag(ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG),
             shape = MaterialTheme.shapes.medium,
             text = btn_add_to_list.resolve(context),
             imageVector = Icons.Outlined.AutoAwesomeMotion,
@@ -377,10 +385,12 @@ internal fun ShowDetailButtons(
         )
 
         FilledVerticalIconButton(
-            modifier = Modifier.testTag(ShowDetailsTestTags.RATE_BUTTON_TEST_TAG),
+            modifier = Modifier
+                .weight(1f)
+                .testTag(ShowDetailsTestTags.RATE_BUTTON_TEST_TAG),
             shape = MaterialTheme.shapes.medium,
             text = label_action_rate.resolve(context),
-            imageVector = Icons.Outlined.StarOutline,
+            imageVector = if (userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
             containerColor = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.labelMedium,
             onClick = onRateClicked,

@@ -22,6 +22,7 @@ struct ShowDetailsHeaderSection: View {
             stopTrackingLabel: String(\.unfollow),
             addToListLabel: String(\.btn_add_to_list),
             rateLabel: String(\.label_action_rate),
+            userRating: state.userRating as? Int,
             onAddToLibrary: {
                 presenter.dispatch(action: ShowDetailsFollowClicked(isInLibrary: state.isInLibrary))
             },

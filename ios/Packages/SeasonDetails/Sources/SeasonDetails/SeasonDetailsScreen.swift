@@ -291,7 +291,7 @@ public struct SeasonDetailsScreen: View {
     private var rateAffordance: some View {
         Button(action: onRateClicked) {
             HStack(spacing: appTheme.spacing.xSmall) {
-                Image(systemName: "star")
+                Image(systemName: state.userRating != nil ? "star.fill" : "star")
                     .textStyle(appTheme.typography.bodyMedium)
                     .foregroundStyle(.appOnSurface)
 
