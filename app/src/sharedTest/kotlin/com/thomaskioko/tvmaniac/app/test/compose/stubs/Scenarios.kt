@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.app.test.TestAppComponent
 import com.thomaskioko.tvmaniac.app.test.compose.robot.RootRobot
 import com.thomaskioko.tvmaniac.testing.integration.EMPTY_ARRAY_FIXTURE
+import com.thomaskioko.tvmaniac.testing.integration.Endpoint
 import com.thomaskioko.tvmaniac.testing.integration.Endpoints
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.testing.integration.showFixtures
@@ -43,83 +44,191 @@ internal class Scenarios(
 ) {
     val auth: Auth = Auth()
     val discover: Discover = Discover()
-    val profile: Profile = Profile()
     val simkl: Simkl = Simkl()
-    val library: Library = Library()
-    val watchlist: Watchlist = Watchlist()
     val search: Search = Search()
     val calendar: Calendar = Calendar()
     val upNext: UpNext = UpNext()
     val traktLists: TraktLists = TraktLists()
     val flags: Flags = Flags()
-    val ratings: Ratings = Ratings()
+    val library: Library = Library()
+    val watchlist: Watchlist = Watchlist()
+    val profile: Profile = Profile()
 
     fun signInAndDismissRationale() {
-        auth.stubLoggedInUser()
-        profile.stubProfileSyncEndpoints()
+        stubLoggedInUser(AccountProvider.TRAKT)
+        stubProfileEndpoints(AccountProvider.TRAKT)
         rootRobot.dismissNotificationRationale()
     }
 
+    /**
+     * Provider-aware sign-in: flips the given account provider's fake auth state to LOGGED_IN,
+     * dispatching to each provider's existing mechanism ([Auth.stubLoggedInUser] for Trakt via
+     * `FakeTraktAuthRepository`, [Simkl.stubLoggedInUser] for Simkl via `AuthStateHolder`).
+     */
+    fun stubLoggedInUser(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> auth.stubLoggedInUser()
+            AccountProvider.SIMKL -> simkl.stubLoggedInUser()
+        }
+    }
+
+    fun stubProfileEndpoints(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> profile.stubProfileSyncEndpoints()
+            AccountProvider.SIMKL -> simkl.stubProfileEndpoints()
+        }
+    }
+
+    /**
+     * Provider-aware watched-library sync: Trakt's watched-shows/activities set, or Simkl's
+     * watched-history (`sync/all-items`).
+     */
+    fun stubLibrarySyncEndpoints(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> library.stubLibrarySyncEndpoints()
+            AccountProvider.SIMKL -> simkl.stubWatchedHistoryEndpoints()
+        }
+    }
+
+    /**
+     * Provider-aware watchlist / up-next sync: Trakt's Continue Watching pipeline, or Simkl's
+     * plan-to-watch list.
+     */
+    fun stubWatchlistSyncEndpoints(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> watchlist.stubWatchlistSyncEndpoints()
+            AccountProvider.SIMKL -> simkl.stubPlanToWatchWatchlist()
+        }
+    }
+
     fun stubAuthenticatedSimklProfile() {
-        simkl.stubLoggedInUser()
-        simkl.stubProfileEndpoints()
-        simkl.stubWatchedHistoryEndpoints()
+        stubLoggedInUser(AccountProvider.SIMKL)
+        stubProfileEndpoints(AccountProvider.SIMKL)
+        stubLibrarySyncEndpoints(AccountProvider.SIMKL)
         simkl.stubActivities()
     }
 
     fun stubAuthenticatedSimklStartWatching() {
-        simkl.stubLoggedInUser()
-        simkl.stubProfileEndpoints()
-        simkl.stubPlanToWatchWatchlist()
+        stubLoggedInUser(AccountProvider.SIMKL)
+        stubProfileEndpoints(AccountProvider.SIMKL)
+        stubWatchlistSyncEndpoints(AccountProvider.SIMKL)
         simkl.stubActivities()
     }
 
     fun stubAuthenticatedSync() {
-        auth.stubLoggedInUser()
-        discover.stubBrowseGraph()
-        library.stubLibrarySyncEndpoints()
-        watchlist.stubWatchlistSyncEndpoints()
-        profile.stubProfileSyncEndpoints()
-        calendar.stubWeek()
-        calendar.stubWeek(weekStart = TEST_NEXT_WEEK)
-    }
-
-    fun stubUsersMeUnauthorized() {
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
+        stubPublicCatalog()
+        stubActiveProvider(AccountProvider.TRAKT)
     }
 
     /**
-     * Registers OAuth WebView callback so that next `clickSignInButton()` lazily wires profile sync
-     * endpoints, library sync endpoints, and flips fake auth state to LOGGED_IN. Mirrors live
-     * OAuth round-trip without pre-stubbing LOGGED_IN in `@Before`, so DefaultRootPresenter's
+     * Authenticated Trakt session with the Simkl-login and account-switch feature flags enabled:
+     * the precondition for exercising a Trakt-to-Simkl account switch.
+     */
+    fun stubAuthenticatedSyncWithAccountSwitch() {
+        flags.enableSimklLogin()
+        flags.enableAccountSwitch()
+        stubAuthenticatedSync()
+    }
+
+    fun stubTmdb() {
+        stubPublicCatalog()
+    }
+
+    fun stubPublicCatalog() {
+        discover.stubBrowseGraph()
+    }
+
+    /**
+     * Wires the given [AccountProvider]'s baseline authenticated session: sign-in state, plus its
+     * catalog-declared [Endpoints.Trakt.authenticatedEndpoints] / [Endpoints.Simkl.authenticatedEndpoints]
+     * in one shared loop. Host-aware matching in [MockEngineHandler] means this is safe to call
+     * once per test alongside [stubPublicCatalog]; call sites don't need to know which provider
+     * owns which path. A cross-provider account endpoint is added to those catalog lists, not to
+     * a new branch here.
+     *
+     * Always pair this with [stubPublicCatalog]: it is the only source of TMDB/discover coverage
+     * for either provider.
+     */
+    fun stubActiveProvider(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> {
+                stubLoggedInUser(AccountProvider.TRAKT)
+                val endpoints = Endpoints.Trakt.authenticatedEndpoints + listOf(
+                    Endpoints.Trakt.userStats(TEST_PROFILE_SLUG),
+                    Endpoints.Trakt.userLists(TEST_PROFILE_SLUG),
+                    Endpoints.Trakt.calendar(TEST_TODAY, 7),
+                    Endpoints.Trakt.calendar(TEST_NEXT_WEEK, 7),
+                )
+                endpoints.forEach { mockHandler.stubEndpoint(it) }
+
+                // Shared empty-array fixture, not tied to one catalog entry, so it isn't a
+                // plain Endpoint. Kept as explicit glue, mirroring the seasons catch-all in
+                // Discover.stubBrowseGraph.
+                mockHandler.stubPatternFixture(
+                    pathRegex = "/users/me/history/shows/\\d+",
+                    fixturePath = EMPTY_ARRAY_FIXTURE,
+                )
+
+                val watchedShows = FixtureLoader.load(Endpoints.Trakt.SyncWatchedShows.successFixture)
+                showFixtures(watchedShows).forEach { mockHandler.stubShow(it) }
+                val nitroShows = FixtureLoader.load(Endpoints.Trakt.SyncProgressUpNextNitro.successFixture)
+                showFixtures(nitroShows).forEach { mockHandler.stubShow(it) }
+            }
+            AccountProvider.SIMKL -> {
+                flags.enableSimklLogin()
+                Endpoints.Simkl.authenticatedEndpoints.forEach { mockHandler.stubEndpoint(it) }
+                // Sign in LAST (see TRAKT note) so login-triggered sync finds its stubs.
+                stubLoggedInUser(AccountProvider.SIMKL)
+            }
+        }
+    }
+
+    /** Fake authentication endpoint used to detect a signed-in account, per provider. */
+    private fun userEndpoint(provider: AccountProvider): Endpoint.Exact =
+        when (provider) {
+            AccountProvider.TRAKT -> Endpoints.Trakt.UsersMe
+            AccountProvider.SIMKL -> Endpoints.Simkl.UsersSettings
+        }
+
+    fun stubUsersMeUnauthorized(provider: AccountProvider = AccountProvider.TRAKT) {
+        mockHandler.stubEndpoint(userEndpoint(provider), HttpStatusCode.Unauthorized)
+    }
+
+    /**
+     * Registers OAuth WebView callback so that next `clickSignInButton()` lazily wires the full
+     * authenticated Trakt session and flips fake auth state to LOGGED_IN. Mirrors live OAuth
+     * round-trip without pre-stubbing LOGGED_IN in `@Before`, so DefaultRootPresenter's
      * auth-state collector still observes real LOGGED_OUT to LOGGED_IN transition.
      */
     fun stubAuthenticatedSyncOnSignIn() {
-        graph.oAuthLauncher.setOnLaunch {
-            profile.stubProfileSyncEndpoints()
-            library.stubLibrarySyncEndpoints()
-            watchlist.stubWatchlistSyncEndpoints()
-            auth.stubLoggedInUser()
-            calendar.stubWeek()
-        }
+        stubOnSignIn(AccountProvider.TRAKT)
     }
 
     /**
-     * Registers OAuth WebView callback so that next `clickSignInButton()` lazily wires profile
-     * endpoints and flips fake auth state to LOGGED_IN. Use when test cares only about user-card
-     * surface and does not exercise library or UpNext sync.
+     * Registers OAuth WebView callback so that next `clickSignInButton()` lazily wires the
+     * authenticated Trakt session and flips fake auth state to LOGGED_IN.
      */
     fun stubProfileOnSignIn() {
+        stubOnSignIn(AccountProvider.TRAKT)
+    }
+
+    /**
+     * Registers the OAuth callback so the next sign-in click lazily wires the given provider's
+     * authenticated session, mirroring a live OAuth round-trip. Owns the only `graph.oAuthLauncher`
+     * access so journey tests never reach into the launcher directly.
+     */
+    fun stubOnSignIn(provider: AccountProvider) {
         graph.oAuthLauncher.setOnLaunch {
-            profile.stubProfileSyncEndpoints()
-            library.stubLibrarySyncEndpoints()
-            auth.stubLoggedInUser()
+            when (provider) {
+                AccountProvider.TRAKT -> stubActiveProvider(AccountProvider.TRAKT)
+                AccountProvider.SIMKL -> stubAuthenticatedSimklProfile()
+            }
         }
     }
 
-    fun stubUnauthenticatedState() {
-        discover.stubBrowseGraph()
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
+    fun stubUnauthenticatedState(provider: AccountProvider = AccountProvider.TRAKT) {
+        stubPublicCatalog()
+        mockHandler.stubEndpoint(userEndpoint(provider), HttpStatusCode.Unauthorized)
     }
 
     /**
@@ -133,24 +242,36 @@ internal class Scenarios(
 
     /**
      * Simulates 401-then-refresh round-trip on `/users/me`. Configures fake repo with fresh
-     * AuthState so next refresh resolves successfully, and re-stubs profile endpoints so
-     * post-refresh calls pass.
+     * AuthState so next refresh resolves successfully, and re-stubs the profile endpoints so
+     * post-refresh calls pass. Stubs the profile endpoints directly rather than going through
+     * [stubActiveProvider], which would also reset the auth/refresh state this test is verifying.
      */
     fun stubTokenRefresh(
+        provider: AccountProvider = AccountProvider.TRAKT,
         accessToken: String = "refreshed-access",
         refreshToken: String = "refreshed-refresh",
         tokenLifetimeSeconds: Long = 3600,
     ) {
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
-        val refreshedAuthState = AuthState(
-            accessToken = accessToken,
-            refreshToken = refreshToken,
-            isAuthorized = true,
-            expiresAt = Clock.System.now() + tokenLifetimeSeconds.seconds,
-            tokenLifetimeSeconds = tokenLifetimeSeconds,
-        )
-        graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(refreshedAuthState))
-        profile.stubProfileSyncEndpoints()
+        when (provider) {
+            AccountProvider.TRAKT -> {
+                mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
+                val refreshedAuthState = AuthState(
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    isAuthorized = true,
+                    expiresAt = Clock.System.now() + tokenLifetimeSeconds.seconds,
+                    tokenLifetimeSeconds = tokenLifetimeSeconds,
+                )
+                graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(refreshedAuthState))
+                mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)
+                mockHandler.stubEndpoint(Endpoints.Trakt.userStats(TEST_PROFILE_SLUG))
+                mockHandler.stubEndpoint(Endpoints.Trakt.userLists(TEST_PROFILE_SLUG))
+                mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
+            }
+            AccountProvider.SIMKL -> error(
+                "Simkl token refresh is not stubbed yet; add it when a Simkl refresh journey exists.",
+            )
+        }
     }
 
     inner class Auth {
@@ -218,53 +339,37 @@ internal class Scenarios(
         fun stubActivities() {
             mockHandler.stubEndpoint(Endpoints.Simkl.SyncActivities)
         }
-
-        /**
-         * Stubs the Simkl rating endpoints so the pending-ratings drain (`RatingsSyncInitializer`)
-         * and the show-details community-rating reconcile (`RatingsStore`) both resolve cleanly
-         * under a Simkl session. Never call alongside [Ratings.stubRatingsSync] in the same test —
-         * both providers share the `/sync/ratings*` path strings in [MockEngineHandler].
-         */
-        fun stubRatingsSync() {
-            mockHandler.stubEndpoint(Endpoints.Simkl.SyncRatingsAdd, method = HttpMethod.Post)
-            mockHandler.stubEndpoint(Endpoints.Simkl.SyncRatingsRemove, method = HttpMethod.Post)
-            mockHandler.stubEndpoint(Endpoints.Simkl.SyncRatingsShows)
-            mockHandler.stubEndpoint(Endpoints.Simkl.ShowSummary)
-        }
-
-        fun stubCalendarFeed() {
-            mockHandler.stubEndpoint(Endpoints.Simkl.CalendarTvFeed)
-        }
     }
 
     inner class Discover {
         /**
-         * Stubs every endpoint reachable from the Discover surface: the Trakt and TMDB list
-         * endpoints, plus the per-show graph (details, seasons, episodes, people, related,
-         * videos, watched progress, TMDB show, credits, season, watch providers).
+         * Stubs the agnostic public data graph reachable from the Discover surface, independent
+         * of login state: the Trakt and TMDB list endpoints, plus the per-show graph (details,
+         * seasons, episodes, people, related, videos, TMDB show, credits, season, watch
+         * providers). Account-specific endpoints (e.g. watched progress, watch history) are
+         * stubbed by [stubActiveProvider], not here.
          */
         fun stubBrowseGraph() {
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowsFavoritedWeekly)
-            mockHandler.stubEndpoint(Endpoints.Trakt.GenresShows)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowsTrending)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowsPopular)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowsFavoritedWeekly)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.GenresShows)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowsTrending)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowsPopular)
             mockHandler.stubEndpoint(Endpoints.Tmdb.DiscoverTv)
-            mockHandler.stubEndpoint(Endpoints.Trakt.SearchByTmdb)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.SearchByTmdb)
 
-            // Per-show Trakt endpoints — single canonical fixture for any trakt id.
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowDetails)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowSeasons)
+            // Per-show public-catalog endpoints — single canonical fixture for any trakt id.
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowDetails)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowSeasons)
             // Per-season episodes: catch-all returns empty so unstubbed seasons don't re-write
             // episode rows. The per-season stubs registered after win under last-registered-first-match
             // ordering. (Catalog has no entry for the catch-all because the empty-array fixture is
             // shared across endpoints and isn't tied to one resource folder.)
             mockHandler.stubPatternFixture(pathRegex = "/shows/\\d+/seasons/\\d+", fixturePath = "empty_array.json")
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowSeasonEpisodesS1)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowSeasonEpisodesS2)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowPeople)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowRelated)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowVideos)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowProgressWatched)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowSeasonEpisodesS1)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowSeasonEpisodesS2)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowPeople)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowRelated)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowVideos)
 
             // Per-show TMDB endpoints — single canonical fixture for any tmdb id.
             mockHandler.stubEndpoint(Endpoints.Tmdb.ShowDetails)
@@ -276,28 +381,70 @@ internal class Scenarios(
             mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetailsS1)
             mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetailsS2)
             mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
-            mockHandler.stubPatternFixture(
-                pathRegex = "/users/me/history/shows/\\d+",
-                fixturePath = EMPTY_ARRAY_FIXTURE,
-            )
-        }
-
-        fun stubDiscoverError() {
-            mockHandler.stubEndpoint(Endpoints.Trakt.GenresShows, HttpStatusCode.InternalServerError)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowsTrending, HttpStatusCode.InternalServerError)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowsPopular, HttpStatusCode.InternalServerError)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowsFavoritedWeekly, HttpStatusCode.InternalServerError)
-            mockHandler.stub(path = "/shows/anticipated", body = "", status = HttpStatusCode.InternalServerError)
-            mockHandler.stubEndpoint(Endpoints.Tmdb.DiscoverTv, HttpStatusCode.InternalServerError)
         }
     }
 
-    inner class Profile {
-        fun stubProfileSyncEndpoints(slug: String = TEST_PROFILE_SLUG) {
-            mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)
-            mockHandler.stubEndpoint(Endpoints.Trakt.userStats(slug))
-            mockHandler.stubEndpoint(Endpoints.Trakt.userLists(slug))
-            mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
+    inner class Search {
+        fun stubSearch(query: String) {
+            mockHandler.stubSearchByQuery(query)
+        }
+
+        fun stubEmptySearch() {
+            mockHandler.stubFixture(path = Endpoints.PublicCatalog.Search.path, fixturePath = EMPTY_ARRAY_FIXTURE)
+        }
+
+        fun stubSearchError(query: String) {
+            mockHandler.stubSearchByQuery(query, HttpStatusCode.Forbidden)
+        }
+    }
+
+    inner class UpNext {
+        fun stubProgressAfterPilotWatched(
+            showTraktId: Long,
+            provider: AccountProvider = AccountProvider.TRAKT,
+        ) {
+            when (provider) {
+                AccountProvider.TRAKT -> mockHandler.stubEndpoint(Endpoints.Trakt.SyncHistory, method = HttpMethod.Post)
+                AccountProvider.SIMKL -> mockHandler.stubEndpoint(Endpoints.Simkl.SyncHistory, method = HttpMethod.Post)
+            }
+        }
+    }
+
+    inner class Calendar {
+        private fun endpoint(provider: AccountProvider, weekStart: String, days: Int): Endpoint.Exact =
+            when (provider) {
+                AccountProvider.TRAKT -> Endpoints.Trakt.calendar(weekStart, days)
+                AccountProvider.SIMKL -> Endpoints.Simkl.CalendarTvFeed
+            }
+
+        fun stubWeek(
+            provider: AccountProvider = AccountProvider.TRAKT,
+            weekStart: String = TEST_TODAY,
+            days: Int = 7,
+        ) {
+            mockHandler.stubEndpoint(endpoint(provider, weekStart, days))
+        }
+
+        fun stubEmptyWeek(
+            provider: AccountProvider = AccountProvider.TRAKT,
+            weekStart: String = TEST_TODAY,
+            days: Int = 7,
+        ) {
+            val calendar = endpoint(provider, weekStart, days)
+            mockHandler.stubFixture(
+                path = calendar.path,
+                fixturePath = EMPTY_ARRAY_FIXTURE,
+                host = calendar.host,
+            )
+        }
+
+        fun stubWeekError(
+            provider: AccountProvider = AccountProvider.TRAKT,
+            weekStart: String = TEST_TODAY,
+            days: Int = 7,
+            status: Int = 404,
+        ) {
+            mockHandler.stubEndpoint(endpoint(provider, weekStart, days), HttpStatusCode.fromValue(status))
         }
     }
 
@@ -306,8 +453,8 @@ internal class Scenarios(
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncLastActivities)
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncWatchedShows)
             mockHandler.stubEndpoint(Endpoints.Trakt.UsersMeWatchlistShows)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowDetails)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowSeasons)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowDetails)
+            mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowSeasons)
             mockHandler.stubEndpoint(Endpoints.Tmdb.ShowDetails)
             mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
 
@@ -317,12 +464,6 @@ internal class Scenarios(
     }
 
     inner class Watchlist {
-        /**
-         * Stubs the Continue Watching pipeline that drives the Watchlist and Up Next tabs:
-         * `/sync/progress/up_next_nitro` (default Nitro fetcher) plus the documented fallback
-         * (`/sync/watched/shows` + `/sync/playback/episodes`). Per-show metadata fan-out reuses
-         * [Library]'s show stubs since the same Trakt ids appear in both fixtures.
-         */
         fun stubWatchlistSyncEndpoints() {
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncProgressUpNextNitro)
             mockHandler.stubEndpoint(Endpoints.Trakt.SyncPlaybackEpisodes)
@@ -335,54 +476,12 @@ internal class Scenarios(
         }
     }
 
-    inner class Search {
-        fun stubSearch(query: String) {
-            mockHandler.stubSearchByQuery(query)
-        }
-
-        fun stubEmptySearch() {
-            mockHandler.stubFixture(path = Endpoints.Trakt.Search.path, fixturePath = EMPTY_ARRAY_FIXTURE)
-        }
-
-        fun stubSearchError(query: String) {
-            mockHandler.stubSearchByQuery(query, HttpStatusCode.Forbidden)
-        }
-    }
-
-    inner class UpNext {
-        /**
-         * Stubs `POST /sync/history` so the background launcher fired by `markEpisodeAsWatched`
-         * resolves cleanly when pushing the local UPLOAD-pending row to Trakt. UpNext list and
-         * count derive live from the local `watched_episodes` table, so no Trakt UpNext API stub
-         * is required after the click.
-         *
-         * The unused [showTraktId] parameter is kept so callers can keep the per-show signature
-         * if/when the upload assertion grows to verify a specific show id.
-         */
-        @Suppress("UNUSED_PARAMETER")
-        fun stubProgressAfterPilotWatched(showTraktId: Long) {
-            mockHandler.stubEndpoint(Endpoints.Trakt.SyncHistory, method = HttpMethod.Post)
-        }
-    }
-
-    inner class Calendar {
-        fun stubWeek(weekStart: String = TEST_TODAY, days: Int = 7) {
-            mockHandler.stubEndpoint(Endpoints.Trakt.calendar(weekStart, days))
-        }
-
-        fun stubEmptyWeek(weekStart: String = TEST_TODAY, days: Int = 7) {
-            mockHandler.stubFixture(
-                path = Endpoints.Trakt.calendar(weekStart, days).path,
-                fixturePath = EMPTY_ARRAY_FIXTURE,
-            )
-        }
-
-        fun stubWeekError(
-            weekStart: String = TEST_TODAY,
-            days: Int = 7,
-            status: Int = 404,
-        ) {
-            mockHandler.stubEndpoint(Endpoints.Trakt.calendar(weekStart, days), HttpStatusCode.fromValue(status))
+    inner class Profile {
+        fun stubProfileSyncEndpoints(slug: String = TEST_PROFILE_SLUG) {
+            mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)
+            mockHandler.stubEndpoint(Endpoints.Trakt.userStats(slug))
+            mockHandler.stubEndpoint(Endpoints.Trakt.userLists(slug))
+            mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
         }
     }
 
@@ -393,22 +492,6 @@ internal class Scenarios(
 
         fun stubCreateList(slug: String = TEST_PROFILE_SLUG) {
             mockHandler.stubEndpoint(Endpoints.Trakt.createList(slug), method = HttpMethod.Post)
-        }
-    }
-
-    /**
-     * Stubs the Trakt rating endpoints so the pending-ratings drain (`RatingsSyncInitializer`)
-     * and the show-details community-rating reconcile (`RatingsStore`) both resolve cleanly
-     * instead of logging a background-sync failure to [com.thomaskioko.tvmaniac.syncstate.api.SyncObserver].
-     * Never call alongside [Simkl.stubRatingsSync] in the same test — both providers share the
-     * `/sync/ratings*` path strings in [MockEngineHandler].
-     */
-    inner class Ratings {
-        fun stubRatingsSync() {
-            mockHandler.stubEndpoint(Endpoints.Trakt.SyncRatingsAdd, method = HttpMethod.Post)
-            mockHandler.stubEndpoint(Endpoints.Trakt.SyncRatingsRemove, method = HttpMethod.Post)
-            mockHandler.stubEndpoint(Endpoints.Trakt.SyncRatingsShows)
-            mockHandler.stubEndpoint(Endpoints.Trakt.ShowCommunityRating)
         }
     }
 

@@ -10,11 +10,11 @@ import io.ktor.http.isSuccess
  * fixture for [status] when the incoming request's `query` parameter matches [query].
  */
 public fun MockEngineHandler.stubSearchByQuery(query: String, status: HttpStatusCode = HttpStatusCode.OK) {
-    stub(path = Endpoints.Trakt.Search.path) { request ->
+    stub(path = Endpoints.PublicCatalog.Search.path) { request ->
         if (request.url.parameters["query"] != query) {
             error("No stub match for search query '${request.url.parameters["query"]}'. Expected '$query'.")
         }
-        val fixture = if (status.isSuccess()) Endpoints.Trakt.Search.successFixture else Endpoints.Trakt.Search.errorFixture
+        val fixture = if (status.isSuccess()) Endpoints.PublicCatalog.Search.successFixture else Endpoints.PublicCatalog.Search.errorFixture
         respond(
             content = FixtureLoader.load(fixture),
             status = status,

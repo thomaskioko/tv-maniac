@@ -53,9 +53,9 @@ private const val MAX_STUBBED_SEASON_NUMBER = 5
 
 /**
  * Registers per-show exact-path stubs for [show] on this [MockEngineHandler]:
- * - Trakt `/shows/{traktId}` returns the canonical `Endpoints.Trakt.ShowDetails` body with ids,
+ * - Trakt `/shows/{traktId}` returns the canonical `Endpoints.PublicCatalog.ShowDetails` body with ids,
  *   title, year, and `first_aired` rewritten to match [show].
- * - Trakt `/shows/{traktId}/seasons` returns the canonical `Endpoints.Trakt.ShowSeasons` body
+ * - Trakt `/shows/{traktId}/seasons` returns the canonical `Endpoints.PublicCatalog.ShowSeasons` body
  *   with each season's `ids.trakt` rewritten to a per-show value so seasons don't collide on the
  *   shared PRIMARY KEY when multiple shows are synced from the same fixture.
  * - TMDB `/3/tv/{tmdbId}` returns the canonical `Endpoints.Tmdb.ShowDetails` body with the root
@@ -75,12 +75,12 @@ private const val MAX_STUBBED_SEASON_NUMBER = 5
  * canonical Breaking Bad episodes for every show, and `INSERT OR REPLACE INTO episode (id, ...)`
  * leaves only the last-synced show owning the episode rows.
  *
- * Pattern fallbacks (`Endpoints.Trakt.ShowDetails`, etc.) registered earlier are overridden by
+ * Pattern fallbacks (`Endpoints.PublicCatalog.ShowDetails`, etc.) registered earlier are overridden by
  * these exact-path stubs because `MockEngineHandler.handle()` iterates `stubs.asReversed()`.
  */
 public fun MockEngineHandler.stubShow(show: ShowFixture) {
-    val traktDetailsTemplate = FixtureLoader.load(Endpoints.Trakt.ShowDetails.successFixture)
-    val traktSeasonsTemplate = FixtureLoader.load(Endpoints.Trakt.ShowSeasons.successFixture)
+    val traktDetailsTemplate = FixtureLoader.load(Endpoints.PublicCatalog.ShowDetails.successFixture)
+    val traktSeasonsTemplate = FixtureLoader.load(Endpoints.PublicCatalog.ShowSeasons.successFixture)
     val tmdbDetailsTemplate = FixtureLoader.load(Endpoints.Tmdb.ShowDetails.successFixture)
     val tmdbProvidersTemplate = FixtureLoader.load(Endpoints.Tmdb.WatchProviders.successFixture)
     val tmdbSeason1Template = FixtureLoader.load(Endpoints.Tmdb.SeasonDetailsS1.successFixture)

@@ -23,9 +23,10 @@ public class MockEngineHandler {
     public fun stub(
         method: HttpMethod = HttpMethod.Get,
         path: String,
+        host: String? = null,
         response: StubResponder,
     ) {
-        stubs += Stub.Single(method, path, response)
+        stubs += Stub.Single(method, path, host, response)
     }
 
     public fun stub(
@@ -33,8 +34,9 @@ public class MockEngineHandler {
         path: String,
         body: String,
         status: HttpStatusCode = HttpStatusCode.OK,
+        host: String? = null,
     ) {
-        stubs += Stub.Single(method, path) { _ ->
+        stubs += Stub.Single(method, path, host) { _ ->
             respond(
                 content = body,
                 status = status,
@@ -48,8 +50,9 @@ public class MockEngineHandler {
         path: String,
         fixturePath: String,
         status: HttpStatusCode = HttpStatusCode.OK,
+        host: String? = null,
     ) {
-        stubs += Stub.Single(method, path) { _ ->
+        stubs += Stub.Single(method, path, host) { _ ->
             respond(
                 content = FixtureLoader.load(fixturePath),
                 status = status,
@@ -61,26 +64,29 @@ public class MockEngineHandler {
     public fun stubSequence(
         method: HttpMethod = HttpMethod.Get,
         path: String,
+        host: String? = null,
         block: SequenceBuilder.() -> Unit,
     ) {
         val builder = SequenceBuilder().apply(block)
-        stubs += Stub.Sequence(method, path, builder.responses)
+        stubs += Stub.Sequence(method, path, host, builder.responses)
     }
 
     public fun stubByQuery(
         method: HttpMethod = HttpMethod.Get,
         path: String,
+        host: String? = null,
         fixtureSelector: (Parameters) -> String?,
     ) {
-        stubs += Stub.ByQuery(method, path, fixtureSelector)
+        stubs += Stub.ByQuery(method, path, host, fixtureSelector)
     }
 
     public fun stubPattern(
         method: HttpMethod = HttpMethod.Get,
         pathRegex: String,
+        host: String? = null,
         response: StubResponder,
     ) {
-        stubs += Stub.PathPattern(method, pathRegex.toRegex(), response)
+        stubs += Stub.PathPattern(method, pathRegex.toRegex(), host, response)
     }
 
     public fun stubPattern(
@@ -88,8 +94,9 @@ public class MockEngineHandler {
         pathRegex: String,
         body: String,
         status: HttpStatusCode = HttpStatusCode.OK,
+        host: String? = null,
     ) {
-        stubs += Stub.PathPattern(method, pathRegex.toRegex()) { _ ->
+        stubs += Stub.PathPattern(method, pathRegex.toRegex(), host) { _ ->
             respond(
                 content = body,
                 status = status,
@@ -103,8 +110,9 @@ public class MockEngineHandler {
         pathRegex: String,
         fixturePath: String,
         status: HttpStatusCode = HttpStatusCode.OK,
+        host: String? = null,
     ) {
-        stubs += Stub.PathPattern(method, pathRegex.toRegex()) { _ ->
+        stubs += Stub.PathPattern(method, pathRegex.toRegex(), host) { _ ->
             respond(
                 content = FixtureLoader.load(fixturePath),
                 status = status,
@@ -123,9 +131,12 @@ public class MockEngineHandler {
         printLogs: Boolean = false,
     ): HttpResponseData {
         val requestPath = request.url.encodedPath
+        val requestHost = request.url.host
 
         stubs.asReversed().forEach { stub ->
-            if (stub.method != request.method || !stub.matches(requestPath)) return@forEach
+            if (stub.method != request.method || !stub.matchesPath(requestPath) || !stub.matchesHost(requestHost)) {
+                return@forEach
+            }
             when (stub) {
                 is Stub.Single -> return stub.response(scope, request)
                 is Stub.Sequence -> {
@@ -206,36 +217,43 @@ public class MockEngineHandler {
     private sealed interface Stub {
         val method: HttpMethod
         val path: String
+        val host: String?
 
-        fun matches(requestPath: String): Boolean = path == requestPath
+        fun matchesPath(requestPath: String): Boolean = path == requestPath
 
-        fun describe(): String = "${method.value} $path (${this::class.simpleName})"
+        fun matchesHost(requestHost: String): Boolean = host == null || host == requestHost
+
+        fun describe(): String = "${method.value} ${host ?: "*"}$path (${this::class.simpleName})"
 
         data class Single(
             override val method: HttpMethod,
             override val path: String,
+            override val host: String?,
             val response: StubResponder,
         ) : Stub
 
         data class Sequence(
             override val method: HttpMethod,
             override val path: String,
+            override val host: String?,
             val responses: MutableList<StubResponder>,
         ) : Stub
 
         data class ByQuery(
             override val method: HttpMethod,
             override val path: String,
+            override val host: String?,
             val fixtureSelector: (Parameters) -> String?,
         ) : Stub
 
         data class PathPattern(
             override val method: HttpMethod,
             val pathRegex: Regex,
+            override val host: String?,
             val response: StubResponder,
         ) : Stub {
             override val path: String get() = pathRegex.pattern
-            override fun matches(requestPath: String): Boolean = pathRegex.matches(requestPath)
+            override fun matchesPath(requestPath: String): Boolean = pathRegex.matches(requestPath)
         }
     }
 

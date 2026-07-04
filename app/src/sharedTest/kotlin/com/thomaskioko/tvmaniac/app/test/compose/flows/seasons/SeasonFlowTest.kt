@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.seasons
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
@@ -104,9 +105,8 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
 
     @Test
     fun givenAuthenticatedUser_whenSeasonRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
-        scenarios.discover.stubBrowseGraph()
-        scenarios.stubAuthenticatedSync()
-        scenarios.ratings.stubRatingsSync()
+        scenarios.stubTmdb()
+        scenarios.stubActiveProvider(AccountProvider.TRAKT)
 
         rootRobot.dismissNotificationRationale()
 
