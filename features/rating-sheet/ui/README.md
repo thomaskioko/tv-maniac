@@ -1,13 +1,15 @@
-# `:features:rating-sheet:presenter`
+# `:features:rating-sheet:ui`
 
 ## Module dependency graph
 
 <!--region graph-->
 ```mermaid
 graph TB
+  :android-designsystem[android-designsystem]:::android-library
   subgraph :core
     direction TB
     :core:base[base]:::multiplatform
+    :core:test-tags[test-tags]:::multiplatform
     :core:view[view]:::multiplatform
   end
   subgraph :core:connectivity
@@ -41,11 +43,13 @@ graph TB
   subgraph :domain
     direction TB
     :domain:ratings[ratings]:::multiplatform
+    :domain:theme[theme]:::multiplatform
   end
   subgraph :features:rating-sheet
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
     :features:rating-sheet:presenter[presenter]:::multiplatform
+    :features:rating-sheet:ui[ui]:::android-library
   end
   subgraph :i18n
     direction TB
@@ -55,8 +59,12 @@ graph TB
   subgraph :navigation
     direction TB
     :navigation:api[api]:::multiplatform
+    :navigation:ui[ui]:::android-library
   end
 
+  :android-designsystem -.-> :core:test-tags
+  :android-designsystem --> :domain:theme
+  :android-designsystem -.-> :i18n:generator
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
@@ -69,6 +77,7 @@ graph TB
   :data:ratings:api --> :data:followedshows:api
   :domain:ratings --> :core:base
   :domain:ratings --> :data:ratings:api
+  :domain:theme --> :i18n:generator
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
   :features:rating-sheet:presenter --> :core:base
@@ -80,7 +89,15 @@ graph TB
   :features:rating-sheet:presenter --> :i18n:api
   :features:rating-sheet:presenter --> :i18n:generator
   :features:rating-sheet:presenter --> :navigation:api
+  :features:rating-sheet:ui -.-> :android-designsystem
+  :features:rating-sheet:ui --> :core:base
+  :features:rating-sheet:ui -.-> :core:test-tags
+  :features:rating-sheet:ui --> :features:rating-sheet:presenter
+  :features:rating-sheet:ui --> :navigation:api
+  :features:rating-sheet:ui --> :navigation:ui
   :i18n:api --> :i18n:generator
+  :navigation:ui --> :core:base
+  :navigation:ui --> :navigation:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;
