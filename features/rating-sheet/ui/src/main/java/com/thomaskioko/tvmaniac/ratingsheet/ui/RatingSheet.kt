@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
@@ -19,7 +20,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.compose.components.HorizontalOutlinedButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -86,9 +87,11 @@ internal fun RatingSheetContent(
 
         Column(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(
                 text = state.title,
@@ -106,14 +109,24 @@ internal fun RatingSheetContent(
                     )
                 }
             }
-        }
 
-        if (userRating != null) {
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
-            RemoveRatingRow(
-                label = state.removeRatingLabel,
-                onClick = { onAction(RatingSheetAction.RatingCleared) },
-            )
+            if (userRating != null) {
+                HorizontalOutlinedButton(
+                    text = state.removeRatingLabel,
+                    onClick = { onAction(RatingSheetAction.RatingCleared) },
+                    modifier = Modifier.testTag(RatingSheetTestTags.CLEAR_RATING_BUTTON),
+                    shape = CircleShape,
+                    borderColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.error,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.DeleteOutline,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                        )
+                    },
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -163,36 +176,6 @@ private fun SheetGrabber(modifier: Modifier = Modifier) {
                 .height(5.dp)
                 .clip(RoundedCornerShape(percent = 50))
                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)),
-        )
-    }
-}
-
-@Composable
-private fun RemoveRatingRow(
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .testTag(RatingSheetTestTags.CLEAR_RATING_BUTTON)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.DeleteOutline,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.error,
-        )
-
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error,
         )
     }
 }

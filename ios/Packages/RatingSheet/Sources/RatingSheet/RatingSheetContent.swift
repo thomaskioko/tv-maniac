@@ -26,28 +26,25 @@ public struct RatingSheetContent: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(spacing: 0) {
             grabber
 
-            VStack(alignment: .leading, spacing: theme.spacing.medium) {
+            VStack(spacing: theme.spacing.large) {
                 Text(title)
                     .textStyle(theme.typography.titleLarge)
                     .foregroundStyle(.appOnSurface)
 
                 starRow
+
+                if userRating != nil {
+                    removeButton
+                }
             }
             .padding(.horizontal, theme.spacing.medium)
             .padding(.top, theme.spacing.small)
-
-            if userRating != nil {
-                Divider()
-                    .padding(.top, theme.spacing.medium)
-
-                removeRow
-            }
         }
         .padding(.bottom, theme.spacing.large)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
         .background(.appSurface)
         .clipShape(.rect(topLeadingRadius: sheetCornerRadius, topTrailingRadius: sheetCornerRadius))
     }
@@ -78,22 +75,20 @@ public struct RatingSheetContent: View {
         .accessibilityLabel("Rate \(value) out of 10")
     }
 
-    private var removeRow: some View {
+    private var removeButton: some View {
         Button(action: onRemove) {
-            HStack(spacing: theme.spacing.medium) {
+            HStack(spacing: theme.spacing.xSmall) {
                 Image(systemName: "trash")
-                    .textStyle(theme.typography.titleMedium)
+                    .textStyle(theme.typography.bodyMedium)
                     .foregroundStyle(.appError)
-                    .frame(width: 24)
 
                 Text(removeLabel)
-                    .textStyle(theme.typography.bodyLarge)
+                    .textStyle(theme.typography.bodyMedium)
                     .foregroundStyle(.appError)
-
-                Spacer()
             }
             .padding(.horizontal, theme.spacing.medium)
-            .padding(.vertical, theme.spacing.small)
+            .padding(.vertical, theme.spacing.xSmall)
+            .overlay(Capsule().stroke(.appError, lineWidth: 1))
         }
         .buttonStyle(PlainButtonStyle())
     }
