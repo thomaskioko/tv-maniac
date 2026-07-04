@@ -1248,6 +1248,7 @@ graph TB
   :features:episode-sheet:ui -.-> :core:test-tags
   :features:episode-sheet:ui -.-> :core:view
   :features:episode-sheet:ui --> :features:episode-sheet:presenter
+  :features:episode-sheet:ui -.-> :i18n:generator
   :features:episode-sheet:ui --> :navigation:api
   :features:episode-sheet:ui --> :navigation:ui
   :features:feature-flags:nav --> :navigation:api

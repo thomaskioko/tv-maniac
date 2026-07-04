@@ -6,6 +6,7 @@ public object ShowDetailsTestTags {
     public const val TRACK_BUTTON_TEST_TAG: String = "show_details_track_button"
     public const val STOP_TRACKING_BUTTON_TEST_TAG: String = "show_details_stop_tracking_button"
     public const val ADD_TO_LIST_BUTTON_TEST_TAG: String = "show_details_add_to_list_button"
+    public const val RATE_BUTTON_TEST_TAG: String = "show_details_rate_button"
     public const val BACK_BUTTON_TEST_TAG: String = "show_details_back_button"
     public const val REFRESH_BUTTON_TEST_TAG: String = "show_details_refresh_button"
     public const val ERROR_RETRY_BUTTON_TEST_TAG: String = "show_details_error_retry_button"

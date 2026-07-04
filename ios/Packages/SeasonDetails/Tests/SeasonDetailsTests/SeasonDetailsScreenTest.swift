@@ -69,11 +69,13 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
                 seasonImages: [],
                 episodes: sampleEpisodes,
                 casts: sampleCasts,
+                userRating: 8,
                 errorTitle: "Something went wrong",
                 errorRetryText: "Retry",
                 overviewTitle: "Season Overview",
                 episodesTitle: "Episodes",
-                tbdLabel: "TBD"
+                tbdLabel: "TBD",
+                rateLabel: "Rate"
             ),
             seasonImagesCountFormat: { "\($0) Images" },
             dayLabelFormat: { "\($0) days" },
@@ -105,11 +107,13 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
                 seasonImages: [],
                 episodes: [],
                 casts: [],
+                userRating: nil,
                 errorTitle: "Something went wrong",
                 errorRetryText: "Retry",
                 overviewTitle: "Season Overview",
                 episodesTitle: "Episodes",
-                tbdLabel: "TBD"
+                tbdLabel: "TBD",
+                rateLabel: "Rate"
             ),
             seasonImagesCountFormat: { "\($0) Images" },
             dayLabelFormat: { "\($0) days" },
@@ -157,11 +161,13 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
                 seasonImages: [],
                 episodes: watchedEpisodes,
                 casts: sampleCasts,
+                userRating: 8,
                 errorTitle: "Something went wrong",
                 errorRetryText: "Retry",
                 overviewTitle: "Season Overview",
                 episodesTitle: "Episodes",
-                tbdLabel: "TBD"
+                tbdLabel: "TBD",
+                rateLabel: "Rate"
             ),
             seasonImagesCountFormat: { "\($0) Images" },
             dayLabelFormat: { "\($0) days" },

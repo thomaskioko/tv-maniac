@@ -24,9 +24,10 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 @NavDestination(
@@ -53,14 +54,26 @@ public class RatingSheetPresenter(
     private val ratingLoadingState = ObservableLoadingCounter()
     private val title = localizer.getString(StringResourceKey.LabelRatingSheetTitle)
     private val removeRatingLabel = localizer.getString(StringResourceKey.LabelActionRemoveRating)
+    private val pendingSelection = MutableStateFlow<PendingSelection>(PendingSelection.None)
 
-    public val state: StateFlow<RatingSheetState> = observeRatingInteractor.flow
-        .map { RatingSheetState(title = title, removeRatingLabel = removeRatingLabel, userRating = it) }
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = RatingSheetState(),
+    public val state: StateFlow<RatingSheetState> = combine(
+        observeRatingInteractor.flow,
+        pendingSelection,
+    ) { savedRating, pending ->
+        RatingSheetState(
+            title = title,
+            removeRatingLabel = removeRatingLabel,
+            userRating = when (pending) {
+                PendingSelection.None -> savedRating
+                is PendingSelection.Rated -> pending.rating
+                PendingSelection.Cleared -> null
+            },
         )
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = RatingSheetState(title = title, removeRatingLabel = removeRatingLabel),
+    )
 
     public val stateValue: Value<RatingSheetState> = state.asValue(coroutineScope)
 
@@ -77,24 +90,30 @@ public class RatingSheetPresenter(
     }
 
     private fun onStarSelected(rating: Int) {
+        pendingSelection.value = PendingSelection.Rated(rating)
         appScopeLauncher.launch(TAG) {
             rateInteractor(RateInteractor.Param(type = param.ratingType, id = param.id, rating = rating))
                 .collectStatus(ratingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
-        navigator.dismissOverlay()
     }
 
     private fun onRatingCleared() {
+        pendingSelection.value = PendingSelection.Cleared
         appScopeLauncher.launch(TAG) {
             removeRatingInteractor(RemoveRatingInteractor.Param(type = param.ratingType, id = param.id))
                 .collectStatus(ratingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
-        navigator.dismissOverlay()
     }
 
     @AssistedFactory
     public fun interface Factory {
         public fun create(param: RatingSheetParam): RatingSheetPresenter
+    }
+
+    private sealed interface PendingSelection {
+        data object None : PendingSelection
+        data class Rated(val rating: Int) : PendingSelection
+        data object Cleared : PendingSelection
     }
 
     private companion object {

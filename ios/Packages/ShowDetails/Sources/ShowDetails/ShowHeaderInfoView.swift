@@ -11,7 +11,8 @@ public struct ShowHeaderInfoView: View {
     private let status: String?
     private let year: String
     private let language: String?
-    private let rating: Double
+    private let communityRating: Double?
+    private let communityVotes: Int64?
     private let seasonCount: Int
     private let seasonCountFormat: (_ count: Int) -> String
 
@@ -21,7 +22,8 @@ public struct ShowHeaderInfoView: View {
         status: String?,
         year: String,
         language: String?,
-        rating: Double,
+        communityRating: Double?,
+        communityVotes: Int64?,
         seasonCount: Int,
         seasonCountFormat: @escaping (_ count: Int) -> String
     ) {
@@ -30,7 +32,8 @@ public struct ShowHeaderInfoView: View {
         self.status = status
         self.year = year
         self.language = language
-        self.rating = rating
+        self.communityRating = communityRating
+        self.communityVotes = communityVotes
         self.seasonCount = seasonCount
         self.seasonCountFormat = seasonCountFormat
     }
@@ -90,24 +93,34 @@ public struct ShowHeaderInfoView: View {
                     .textStyle(theme.typography.bodyMedium)
             }
 
-            Text("•")
-                .textStyle(theme.typography.labelSmall)
-                .foregroundStyle(.appAccent)
+            if let communityRating {
+                Text("•")
+                    .textStyle(theme.typography.labelSmall)
+                    .foregroundStyle(.appAccent)
 
-            Image(systemName: "star.fill")
-                .resizable()
-                .frame(width: 14, height: 14)
-                .foregroundStyle(.appAccent)
+                Image(systemName: "star.fill")
+                    .resizable()
+                    .frame(width: 14, height: 14)
+                    .foregroundStyle(.appAccent)
 
-            Text(String(format: "%.1f", rating))
-                .textStyle(theme.typography.bodyMedium)
-                .foregroundStyle(.appAccent)
+                Text(String(format: "%.1f", communityRating))
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundStyle(.appAccent)
+                    .accessibilityLabel(communityRatingAccessibilityLabel(communityRating))
+            }
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
+
+    private func communityRatingAccessibilityLabel(_ communityRating: Double) -> String {
+        guard let communityVotes else {
+            return String(format: "%.1f", communityRating)
+        }
+        return "\(String(format: "%.1f", communityRating)) (\(communityVotes) votes)"
+    }
 }
 
-#Preview {
+#Preview("Community rating") {
     VStack {
         ShowHeaderInfoView(
             title: "Arcane",
@@ -115,7 +128,25 @@ public struct ShowHeaderInfoView: View {
             status: "Ended",
             year: "2024",
             language: "EN",
-            rating: 4.8,
+            communityRating: 4.8,
+            communityVotes: 12500,
+            seasonCount: 2,
+            seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" }
+        )
+    }
+    .appPreview()
+}
+
+#Preview("No community rating") {
+    VStack {
+        ShowHeaderInfoView(
+            title: "Arcane",
+            overview: "Set in Utopian Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League of Legends champions and the power that will tear them apart.",
+            status: "Ended",
+            year: "2024",
+            language: "EN",
+            communityRating: nil,
+            communityVotes: nil,
             seasonCount: 2,
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" }
         )

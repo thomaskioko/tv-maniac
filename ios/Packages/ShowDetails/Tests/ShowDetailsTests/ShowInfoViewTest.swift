@@ -15,8 +15,10 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
+            rateLabel: "Rate",
             onAddToLibrary: {},
-            onAddToCustomList: {}
+            onAddToCustomList: {},
+            onRate: {}
         )
         .padding()
         .appPreview()
@@ -31,8 +33,10 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
+            rateLabel: "Rate",
             onAddToLibrary: {},
-            onAddToCustomList: {}
+            onAddToCustomList: {},
+            onRate: {}
         )
         .padding()
         .appPreview()
@@ -47,11 +51,32 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
+            rateLabel: "Rate",
             onAddToLibrary: {},
-            onAddToCustomList: {}
+            onAddToCustomList: {},
+            onRate: {}
         )
         .padding()
         .appPreview()
         .assertSnapshot(testName: "ShowInfoView_SimklNoList")
+    }
+
+    func test_ShowInfoView_AlreadyRated() {
+        ShowInfoView(
+            isFollowed: true,
+            canAddToList: true,
+            genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+            trackLabel: "Track",
+            stopTrackingLabel: "Stop Tracking",
+            addToListLabel: "Add To List",
+            rateLabel: "Rate",
+            userRating: 9,
+            onAddToLibrary: {},
+            onAddToCustomList: {},
+            onRate: {}
+        )
+        .padding()
+        .appPreview()
+        .assertSnapshot(testName: "ShowInfoView_AlreadyRated")
     }
 }

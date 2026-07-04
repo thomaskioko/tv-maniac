@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -78,6 +79,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
             ),
         )
         tvShowsDao.setTmdbIdForLocalShowId(showId = SHOW_ID, tmdbId = TMDB_ID)
+        tvShowsDao.setLocalShowIdForTmdbId(tmdbId = TMDB_ID, showId = SHOW_ID)
     }
 
     @AfterTest
@@ -90,7 +92,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     fun `should persist pending action as upload immediately after rating a show`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
 
-        repository.rateShow(showId = SHOW_ID, rating = 8)
+        repository.rateShow(showId = TMDB_ID, rating = 8)
 
         val entries = ratingsDao.showRatingsWithUploadPendingAction()
         entries.size shouldBe 1
@@ -123,9 +125,10 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         val repository = buildRepository(FakeSyncObserver())
         val secondShowId = seedShow(showId = SECOND_TMDB_ID)
         tvShowsDao.setTmdbIdForLocalShowId(showId = secondShowId, tmdbId = DISTINCT_TMDB_ID)
+        tvShowsDao.setLocalShowIdForTmdbId(tmdbId = DISTINCT_TMDB_ID, showId = secondShowId)
         remoteDataSource.setAddShowRatingResponse(ApiResponse.Success(Unit))
 
-        repository.rateShow(showId = secondShowId, rating = 8)
+        repository.rateShow(showId = DISTINCT_TMDB_ID, rating = 8)
         repository.syncPendingRatings()
 
         remoteDataSource.lastAddShowRatingTmdbId shouldBe DISTINCT_TMDB_ID
@@ -181,7 +184,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
             lastSyncedAt = dateTimeProvider.nowMillis(),
         )
 
-        repository.observeShowRating(SHOW_ID).test {
+        repository.observeShowRating(TMDB_ID).test {
             val rating = awaitItem()
             rating.userRating shouldBe 9
             rating.communityRating shouldBe 8.4
@@ -201,7 +204,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
             pendingAction = PendingAction.NOTHING,
         )
 
-        repository.observeShowRating(SHOW_ID).test {
+        repository.observeShowRating(TMDB_ID).test {
             val rating = awaitItem()
             rating.userRating shouldBe 6
             rating.communityRating.shouldBeNull()
@@ -215,7 +218,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         val repository = buildRepository(FakeSyncObserver())
         remoteDataSource.provider = AccountProvider.TRAKT
 
-        repository.refreshCommunityRating(SHOW_ID, forceRefresh = true)
+        repository.refreshCommunityRating(TMDB_ID, forceRefresh = true)
     }
 
     @Test
@@ -225,7 +228,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         seedProviderShowId(SHOW_ID, AccountProvider.TRAKT, externalId = 555L)
         remoteDataSource.setUserRatingResponse(ApiResponse.Success(7))
 
-        repository.refreshCommunityRating(SHOW_ID, forceRefresh = true)
+        repository.refreshCommunityRating(TMDB_ID, forceRefresh = true)
 
         ratingsDao.observeShowRating(SHOW_ID).test {
             val entry = awaitItem()
@@ -248,12 +251,33 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         )
         remoteDataSource.setUserRatingResponse(ApiResponse.Success(7))
 
-        repository.refreshCommunityRating(SHOW_ID, forceRefresh = true)
+        repository.refreshCommunityRating(TMDB_ID, forceRefresh = true)
 
         ratingsDao.observeShowRating(SHOW_ID).test {
             val entry = awaitItem()
             entry?.userRating shouldBe 5L
             entry?.pendingAction shouldBe PendingAction.UPLOAD
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should persist show rating keyed by the local show id given rateShow receives the tmdb id`() = runTest {
+        val localShowId = seedShow(showId = THIRD_TMDB_ID)
+        tvShowsDao.setLocalShowIdForTmdbId(tmdbId = THIRD_TMDB_ID, showId = localShowId)
+        val repository = buildRepository(FakeSyncObserver())
+
+        repository.rateShow(showId = THIRD_TMDB_ID, rating = 8)
+
+        repository.observeShowRating(THIRD_TMDB_ID).test {
+            val rating = awaitItem()
+            rating.userRating shouldBe 8
+            cancelAndConsumeRemainingEvents()
+        }
+        ratingsDao.observeShowRating(localShowId).test {
+            val entry = awaitItem()
+            entry?.showId shouldBe localShowId
+            entry?.showId shouldNotBe THIRD_TMDB_ID
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -511,6 +535,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         private const val TMDB_ID = 555L
         private const val SECOND_TMDB_ID = 777L
         private const val DISTINCT_TMDB_ID = 909L
+        private const val THIRD_TMDB_ID = 1234L
         private const val SEASON_ID = 100L
         private const val EPISODE_ID = 200L
     }

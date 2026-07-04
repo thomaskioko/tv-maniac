@@ -11,6 +11,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     private val secondEpisodeTraktId = 73641L
     private val thirdEpisodeTraktId = 73484L
     private val seasonTwoFirstEpisodeTraktId = 73489L
+    private val ratedStarValue = 8
 
     @Test
     fun seasonUserJourney() = runAppFlowTest {
@@ -99,5 +100,32 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
             .clickUnwatchSeasonConfirm()
             .assertUnwatchSeasonDialogDoesNotExist()
             .assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
+    }
+
+    @Test
+    fun givenAuthenticatedUser_whenSeasonRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+        scenarios.stubAuthenticatedSync()
+        scenarios.ratings.stubRatingsSync()
+
+        rootRobot.dismissNotificationRationale()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickSeasonChip(seasonNumber = 1L)
+            .assertSeasonDetailsDisplayed()
+            .clickRateButton()
+
+        ratingSheetRobot
+            .assertSheetDisplayed()
+            .assertClearRatingButtonDoesNotExist()
+            .clickStar(ratedStarValue)
+            .assertClearRatingButtonDisplayed()
+            .clickClearRatingButton()
+            .assertClearRatingButtonDoesNotExist()
     }
 }

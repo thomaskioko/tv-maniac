@@ -6,6 +6,7 @@ public object SeasonDetailsTestTags {
     public const val BACK_BUTTON_TEST_TAG: String = "season_details_back_button"
     public const val EPISODE_HEADER_TEST_TAG: String = "season_details_episode_header"
     public const val SEASON_WATCHED_TOGGLE_TEST_TAG: String = "season_details_season_watched_toggle"
+    public const val RATE_BUTTON_TEST_TAG: String = "season_details_rate_button"
     public const val MARK_PREVIOUS_EPISODES_DIALOG_CONFIRM_BUTTON_TEST_TAG: String =
         "season_details_mark_previous_episodes_confirm"
     public const val MARK_PREVIOUS_EPISODES_DIALOG_DISMISS_BUTTON_TEST_TAG: String =

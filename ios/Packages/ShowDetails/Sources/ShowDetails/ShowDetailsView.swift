@@ -26,7 +26,9 @@ public struct ShowDetailsView: View {
                 status: headerState.status,
                 year: headerState.year,
                 language: headerState.language,
-                rating: headerState.rating,
+                communityRating: headerState.communityRating as? Double,
+                communityVotes: headerState.communityVotes as? Int64,
+                userRating: headerState.userRating as? Int,
                 numberOfSeasons: Int(seasonsEpisodesState.numberOfSeasons),
                 isRefreshing: hostState.isRefreshing
             ),
