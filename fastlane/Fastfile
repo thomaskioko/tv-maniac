@@ -1,6 +1,8 @@
 default_platform(:ios)
 
 TEST_DEVICE = "iPhone 16 Pro"
+TEST_OS = "26.5"
+TEST_DESTINATION = "platform=iOS Simulator,OS=#{TEST_OS},name=#{TEST_DEVICE}"
 PACKAGE_NAME = "com.thomaskioko.tvmaniac"
 PROJECT_DIR = File.expand_path('..', Dir.pwd)
 DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
@@ -28,7 +30,7 @@ platform :ios do
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "Snapshots",
-      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      destination: TEST_DESTINATION,
       skip_detect_devices: true,
       build_for_testing: true,
       xcargs: "-skipPackagePluginValidation",
@@ -39,7 +41,7 @@ platform :ios do
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "Snapshots",
-      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      destination: TEST_DESTINATION,
       skip_detect_devices: true,
       test_without_building: true,
       result_bundle: true,
@@ -55,7 +57,7 @@ platform :ios do
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "Snapshots",
-      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      destination: TEST_DESTINATION,
       skip_detect_devices: true,
       build_for_testing: true,
       xcargs: "SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) SNAPSHOT_RECORD' -skipPackagePluginValidation",
@@ -66,7 +68,7 @@ platform :ios do
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "Snapshots",
-      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      destination: TEST_DESTINATION,
       skip_detect_devices: true,
       test_without_building: true,
       result_bundle: true,
@@ -83,7 +85,7 @@ platform :ios do
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
       configuration: "Debug",
-      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      destination: TEST_DESTINATION,
       derived_data_path: DERIVED_DATA_PATH,
       cloned_source_packages_path: "ios/SourcePackages",
       xcargs: "COMPILER_INDEX_STORE_ENABLE=NO -skipPackagePluginValidation",
@@ -200,7 +202,7 @@ platform :ios do
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
       configuration: "Debug",
-      destination: "platform=iOS Simulator,OS=18.5,name=#{TEST_DEVICE}",
+      destination: TEST_DESTINATION,
       derived_data_path: DERIVED_DATA_PATH,
       cloned_source_packages_path: "ios/SourcePackages",
       xcargs: "-skipPackagePluginValidation -resolvePackageDependencies",
