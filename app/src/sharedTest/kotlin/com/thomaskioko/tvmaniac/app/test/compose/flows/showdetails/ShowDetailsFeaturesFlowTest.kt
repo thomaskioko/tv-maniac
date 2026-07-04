@@ -105,4 +105,28 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
             .assertShowDetailsDisplayed()
             .assertAddToListButtonDisabled()
     }
+
+    @Test
+    fun givenSimklSession_whenShowRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
+        scenarios.flags.enableSimklLogin()
+        scenarios.discover.stubBrowseGraph()
+        scenarios.stubAuthenticatedSimklProfile()
+        scenarios.simkl.stubRatingsSync()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickRateButton()
+
+        ratingSheetRobot
+            .assertSheetDisplayed()
+            .assertClearRatingButtonDoesNotExist()
+            .clickStar(ratedStarValue)
+            .assertClearRatingButtonDisplayed()
+            .clickClearRatingButton()
+            .assertClearRatingButtonDoesNotExist()
+    }
 }
