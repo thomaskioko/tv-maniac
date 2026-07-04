@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.app.test.TestAppComponent
 import com.thomaskioko.tvmaniac.app.test.compose.robot.RootRobot
 import com.thomaskioko.tvmaniac.testing.integration.EMPTY_ARRAY_FIXTURE
+import com.thomaskioko.tvmaniac.testing.integration.Endpoint
 import com.thomaskioko.tvmaniac.testing.integration.Endpoints
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.testing.integration.showFixtures
@@ -55,7 +56,7 @@ internal class Scenarios(
 
     fun signInAndDismissRationale() {
         stubLoggedInUser(AccountProvider.TRAKT)
-        profile.stubProfileSyncEndpoints()
+        stubProfileEndpoints(AccountProvider.TRAKT)
         rootRobot.dismissNotificationRationale()
     }
 
@@ -71,16 +72,23 @@ internal class Scenarios(
         }
     }
 
+    fun stubProfileEndpoints(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> profile.stubProfileSyncEndpoints()
+            AccountProvider.SIMKL -> simkl.stubProfileEndpoints()
+        }
+    }
+
     fun stubAuthenticatedSimklProfile() {
         stubLoggedInUser(AccountProvider.SIMKL)
-        simkl.stubProfileEndpoints()
+        stubProfileEndpoints(AccountProvider.SIMKL)
         simkl.stubWatchedHistoryEndpoints()
         simkl.stubActivities()
     }
 
     fun stubAuthenticatedSimklStartWatching() {
         stubLoggedInUser(AccountProvider.SIMKL)
-        simkl.stubProfileEndpoints()
+        stubProfileEndpoints(AccountProvider.SIMKL)
         simkl.stubPlanToWatchWatchlist()
         simkl.stubActivities()
     }
@@ -143,8 +151,15 @@ internal class Scenarios(
         }
     }
 
-    fun stubUsersMeUnauthorized() {
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
+    /** Fake authentication endpoint used to detect a signed-in account, per provider. */
+    private fun userEndpoint(provider: AccountProvider): Endpoint.Exact =
+        when (provider) {
+            AccountProvider.TRAKT -> Endpoints.Trakt.UsersMe
+            AccountProvider.SIMKL -> Endpoints.Simkl.UsersSettings
+        }
+
+    fun stubUsersMeUnauthorized(provider: AccountProvider = AccountProvider.TRAKT) {
+        mockHandler.stubEndpoint(userEndpoint(provider), HttpStatusCode.Unauthorized)
     }
 
     /**
@@ -169,9 +184,9 @@ internal class Scenarios(
         }
     }
 
-    fun stubUnauthenticatedState() {
-        discover.stubBrowseGraph()
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
+    fun stubUnauthenticatedState(provider: AccountProvider = AccountProvider.TRAKT) {
+        stubPublicCatalog()
+        mockHandler.stubEndpoint(userEndpoint(provider), HttpStatusCode.Unauthorized)
     }
 
     /**
