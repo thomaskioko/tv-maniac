@@ -79,17 +79,39 @@ internal class Scenarios(
         }
     }
 
+    /**
+     * Provider-aware watched-library sync: Trakt's watched-shows/activities set, or Simkl's
+     * watched-history (`sync/all-items`).
+     */
+    fun stubLibrarySyncEndpoints(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> library.stubLibrarySyncEndpoints()
+            AccountProvider.SIMKL -> simkl.stubWatchedHistoryEndpoints()
+        }
+    }
+
+    /**
+     * Provider-aware watchlist / up-next sync: Trakt's Continue Watching pipeline, or Simkl's
+     * plan-to-watch list.
+     */
+    fun stubWatchlistSyncEndpoints(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> watchlist.stubWatchlistSyncEndpoints()
+            AccountProvider.SIMKL -> simkl.stubPlanToWatchWatchlist()
+        }
+    }
+
     fun stubAuthenticatedSimklProfile() {
         stubLoggedInUser(AccountProvider.SIMKL)
         stubProfileEndpoints(AccountProvider.SIMKL)
-        simkl.stubWatchedHistoryEndpoints()
+        stubLibrarySyncEndpoints(AccountProvider.SIMKL)
         simkl.stubActivities()
     }
 
     fun stubAuthenticatedSimklStartWatching() {
         stubLoggedInUser(AccountProvider.SIMKL)
         stubProfileEndpoints(AccountProvider.SIMKL)
-        simkl.stubPlanToWatchWatchlist()
+        stubWatchlistSyncEndpoints(AccountProvider.SIMKL)
         simkl.stubActivities()
     }
 
