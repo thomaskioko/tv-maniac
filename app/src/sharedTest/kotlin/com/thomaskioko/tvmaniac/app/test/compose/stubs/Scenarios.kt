@@ -54,20 +54,32 @@ internal class Scenarios(
     val profile: Profile = Profile()
 
     fun signInAndDismissRationale() {
-        auth.stubLoggedInUser()
+        stubLoggedInUser(AccountProvider.TRAKT)
         profile.stubProfileSyncEndpoints()
         rootRobot.dismissNotificationRationale()
     }
 
+    /**
+     * Provider-aware sign-in: flips the given account provider's fake auth state to LOGGED_IN,
+     * dispatching to each provider's existing mechanism ([Auth.stubLoggedInUser] for Trakt via
+     * `FakeTraktAuthRepository`, [Simkl.stubLoggedInUser] for Simkl via `AuthStateHolder`).
+     */
+    fun stubLoggedInUser(provider: AccountProvider) {
+        when (provider) {
+            AccountProvider.TRAKT -> auth.stubLoggedInUser()
+            AccountProvider.SIMKL -> simkl.stubLoggedInUser()
+        }
+    }
+
     fun stubAuthenticatedSimklProfile() {
-        simkl.stubLoggedInUser()
+        stubLoggedInUser(AccountProvider.SIMKL)
         simkl.stubProfileEndpoints()
         simkl.stubWatchedHistoryEndpoints()
         simkl.stubActivities()
     }
 
     fun stubAuthenticatedSimklStartWatching() {
-        simkl.stubLoggedInUser()
+        stubLoggedInUser(AccountProvider.SIMKL)
         simkl.stubProfileEndpoints()
         simkl.stubPlanToWatchWatchlist()
         simkl.stubActivities()
@@ -100,7 +112,7 @@ internal class Scenarios(
     fun stubActiveProvider(provider: AccountProvider) {
         when (provider) {
             AccountProvider.TRAKT -> {
-                auth.stubLoggedInUser()
+                stubLoggedInUser(AccountProvider.TRAKT)
                 val endpoints = Endpoints.Trakt.authenticatedEndpoints + listOf(
                     Endpoints.Trakt.userStats(TEST_PROFILE_SLUG),
                     Endpoints.Trakt.userLists(TEST_PROFILE_SLUG),
@@ -126,7 +138,7 @@ internal class Scenarios(
                 flags.enableSimklLogin()
                 Endpoints.Simkl.authenticatedEndpoints.forEach { mockHandler.stubEndpoint(it) }
                 // Sign in LAST (see TRAKT note) so login-triggered sync finds its stubs.
-                simkl.stubLoggedInUser()
+                stubLoggedInUser(AccountProvider.SIMKL)
             }
         }
     }
@@ -178,23 +190,31 @@ internal class Scenarios(
      * [stubActiveProvider], which would also reset the auth/refresh state this test is verifying.
      */
     fun stubTokenRefresh(
+        provider: AccountProvider = AccountProvider.TRAKT,
         accessToken: String = "refreshed-access",
         refreshToken: String = "refreshed-refresh",
         tokenLifetimeSeconds: Long = 3600,
     ) {
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
-        val refreshedAuthState = AuthState(
-            accessToken = accessToken,
-            refreshToken = refreshToken,
-            isAuthorized = true,
-            expiresAt = Clock.System.now() + tokenLifetimeSeconds.seconds,
-            tokenLifetimeSeconds = tokenLifetimeSeconds,
-        )
-        graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(refreshedAuthState))
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)
-        mockHandler.stubEndpoint(Endpoints.Trakt.userStats(TEST_PROFILE_SLUG))
-        mockHandler.stubEndpoint(Endpoints.Trakt.userLists(TEST_PROFILE_SLUG))
-        mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
+        when (provider) {
+            AccountProvider.TRAKT -> {
+                mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
+                val refreshedAuthState = AuthState(
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    isAuthorized = true,
+                    expiresAt = Clock.System.now() + tokenLifetimeSeconds.seconds,
+                    tokenLifetimeSeconds = tokenLifetimeSeconds,
+                )
+                graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(refreshedAuthState))
+                mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)
+                mockHandler.stubEndpoint(Endpoints.Trakt.userStats(TEST_PROFILE_SLUG))
+                mockHandler.stubEndpoint(Endpoints.Trakt.userLists(TEST_PROFILE_SLUG))
+                mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
+            }
+            AccountProvider.SIMKL -> error(
+                "Simkl token refresh is not stubbed yet; add it when a Simkl refresh journey exists.",
+            )
+        }
     }
 
     inner class Auth {
