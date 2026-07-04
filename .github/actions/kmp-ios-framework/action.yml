@@ -8,7 +8,7 @@ inputs:
 
 outputs:
   sdk-name:
-    description: 'Resolved simulator SDK name, e.g. iphonesimulator18.5.'
+    description: 'Resolved simulator SDK name, e.g. iphonesimulator26.5.'
     value: ${{ steps.sdk.outputs.sdk_name }}
 
 runs:

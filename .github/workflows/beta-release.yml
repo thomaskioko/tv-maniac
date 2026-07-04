@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 env:
-  XCODE_VERSION: 16.4
+  XCODE_VERSION: 26.5
   TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
   TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
   TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
