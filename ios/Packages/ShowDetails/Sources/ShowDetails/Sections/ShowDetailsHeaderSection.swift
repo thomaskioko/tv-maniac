@@ -21,11 +21,15 @@ struct ShowDetailsHeaderSection: View {
             trackLabel: String(\.following),
             stopTrackingLabel: String(\.unfollow),
             addToListLabel: String(\.btn_add_to_list),
+            rateLabel: String(\.label_action_rate),
             onAddToLibrary: {
                 presenter.dispatch(action: ShowDetailsFollowClicked(isInLibrary: state.isInLibrary))
             },
             onAddToCustomList: {
                 presenter.dispatch(action: ShowDetailsOpenShowList())
+            },
+            onRate: {
+                presenter.dispatch(action: ShowRatingClicked())
             }
         )
     }

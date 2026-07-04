@@ -17,11 +17,14 @@ public struct SeasonDetailsScreen: View {
         public let seasonImages: [ShowPosterImage]
         public let episodes: [SwiftEpisode]
         public let casts: [SwiftCast]
+        public let userRating: Int?
         public let errorTitle: String
         public let errorRetryText: String
         public let overviewTitle: String
         public let episodesTitle: String
         public let tbdLabel: String
+        public let rateLabel: String
+        public let rateButtonTestTag: String
 
         public init(
             seasonName: String,
@@ -36,11 +39,14 @@ public struct SeasonDetailsScreen: View {
             seasonImages: [ShowPosterImage],
             episodes: [SwiftEpisode],
             casts: [SwiftCast],
+            userRating: Int? = nil,
             errorTitle: String,
             errorRetryText: String,
             overviewTitle: String,
             episodesTitle: String,
-            tbdLabel: String
+            tbdLabel: String,
+            rateLabel: String = "Rate",
+            rateButtonTestTag: String = "season_details_rate_button"
         ) {
             self.seasonName = seasonName
             self.imageUrl = imageUrl
@@ -54,11 +60,14 @@ public struct SeasonDetailsScreen: View {
             self.seasonImages = seasonImages
             self.episodes = episodes
             self.casts = casts
+            self.userRating = userRating
             self.errorTitle = errorTitle
             self.errorRetryText = errorRetryText
             self.overviewTitle = overviewTitle
             self.episodesTitle = episodesTitle
             self.tbdLabel = tbdLabel
+            self.rateLabel = rateLabel
+            self.rateButtonTestTag = rateButtonTestTag
         }
     }
 
@@ -74,6 +83,7 @@ public struct SeasonDetailsScreen: View {
     private let onGalleryTap: () -> Void
     private let onEpisodeHeaderClicked: () -> Void
     private let onWatchedStateClicked: () -> Void
+    private let onRateClicked: () -> Void
     private let onEpisodeWatchToggle: (SwiftEpisode) -> Void
     private let onEpisodeTapped: (SwiftEpisode) -> Void
 
@@ -88,6 +98,7 @@ public struct SeasonDetailsScreen: View {
         onGalleryTap: @escaping () -> Void,
         onEpisodeHeaderClicked: @escaping () -> Void,
         onWatchedStateClicked: @escaping () -> Void,
+        onRateClicked: @escaping () -> Void = {},
         onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void,
         onEpisodeTapped: @escaping (SwiftEpisode) -> Void = { _ in }
     ) {
@@ -101,6 +112,7 @@ public struct SeasonDetailsScreen: View {
         self.onGalleryTap = onGalleryTap
         self.onEpisodeHeaderClicked = onEpisodeHeaderClicked
         self.onWatchedStateClicked = onWatchedStateClicked
+        self.onRateClicked = onRateClicked
         self.onEpisodeWatchToggle = onEpisodeWatchToggle
         self.onEpisodeTapped = onEpisodeTapped
     }
@@ -238,32 +250,12 @@ public struct SeasonDetailsScreen: View {
                 VStack {
                     Spacer()
                     HStack(spacing: appTheme.spacing.medium) {
-                        Image(systemName: "photo.fill.on.rectangle.fill")
-                            .resizable()
-                            .frame(width: 28.0, height: 28.0)
-                            .fontDesign(.rounded)
-                            .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundStyle(.appOnSurfaceVariant)
-                            .alignmentGuide(.view) { d in
-                                d[HorizontalAlignment.leading]
-                            }
-
-                        Text(seasonImagesCountFormat(state.seasonImages.count))
-                            .textStyle(appTheme.typography.bodyMedium)
-                            .foregroundStyle(.appOnSurface)
-                            .lineLimit(1)
-                            .alignmentGuide(.view) { d in
-                                d[HorizontalAlignment.center]
-                            }
-
+                        galleryAffordance
+                        rateAffordance
                         Spacer()
                     }
                     .padding(.horizontal, appTheme.spacing.medium)
                     .padding(.vertical, appTheme.spacing.xLarge)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        onGalleryTap()
-                    }
                 }
                 .frame(height: headerHeight)
             }
@@ -271,6 +263,52 @@ public struct SeasonDetailsScreen: View {
         }
         .frame(height: headerHeight)
         .clipped()
+    }
+
+    private var galleryAffordance: some View {
+        HStack(spacing: appTheme.spacing.xSmall) {
+            Image(systemName: "photo.fill.on.rectangle.fill")
+                .textStyle(appTheme.typography.bodyMedium)
+                .foregroundStyle(.appOnSurface)
+
+            Text(seasonImagesCountFormat(state.seasonImages.count))
+                .textStyle(appTheme.typography.bodyMedium)
+                .foregroundStyle(.appOnSurface)
+                .lineLimit(1)
+        }
+        .padding(.horizontal, appTheme.spacing.medium)
+        .padding(.vertical, appTheme.spacing.xSmall)
+        .overlay(
+            Capsule()
+                .stroke(.appOnSurface, lineWidth: 1)
+        )
+        .contentShape(Capsule())
+        .onTapGesture {
+            onGalleryTap()
+        }
+    }
+
+    private var rateAffordance: some View {
+        Button(action: onRateClicked) {
+            HStack(spacing: appTheme.spacing.xSmall) {
+                Image(systemName: "star")
+                    .textStyle(appTheme.typography.bodyMedium)
+                    .foregroundStyle(.appOnSurface)
+
+                Text(state.rateLabel)
+                    .textStyle(appTheme.typography.bodyMedium)
+                    .foregroundStyle(.appOnSurface)
+            }
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.vertical, appTheme.spacing.xSmall)
+            .overlay(
+                Capsule()
+                    .stroke(.appOnSurface, lineWidth: 1)
+            )
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .testTag(state.rateButtonTestTag)
     }
 }
 

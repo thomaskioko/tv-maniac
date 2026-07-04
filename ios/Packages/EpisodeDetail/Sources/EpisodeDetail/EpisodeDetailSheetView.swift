@@ -35,6 +35,11 @@ public struct EpisodeDetailSheetView: View {
                         voteCount: state.voteCount as? Int64
                     )
                 ) {
+                    SheetActionItem(
+                        icon: "star",
+                        label: rateActionLabel,
+                        action: { presenter.dispatch(action: EpisodeSheetActionRatingClicked()) }
+                    )
                     ForEach(Array(state.availableActions), id: \.self) { action in
                         actionView(for: action)
                     }
@@ -52,6 +57,10 @@ public struct EpisodeDetailSheetView: View {
                 presenter.dispatch(action: EpisodeSheetActionMessageShown(id: message.id))
             }
         }
+    }
+
+    private var rateActionLabel: String {
+        String(\.label_action_rate_episode)
     }
 
     @ViewBuilder

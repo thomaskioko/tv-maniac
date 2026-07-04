@@ -30,12 +30,16 @@ internal val previewHeaderState = ShowDetailsHeaderState(
     status = "Returning Series",
     votes = 4958,
     rating = 8.1,
+    communityRating = 8.4,
+    communityVotes = 4958,
     isInLibrary = true,
     genres = persistentListOf("Horror", "Action"),
     canAddToList = true,
 )
 
 internal val previewHeaderStateSimkl = previewHeaderState.copy(canAddToList = false)
+
+internal val previewHeaderStateRated = previewHeaderState.copy(userRating = 9)
 
 internal val previewSeasonsEpisodesState = ShowDetailsSeasonsEpisodesState(
     seasonsList = persistentListOf(

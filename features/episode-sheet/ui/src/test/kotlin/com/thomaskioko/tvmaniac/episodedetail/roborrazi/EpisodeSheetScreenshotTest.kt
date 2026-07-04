@@ -54,6 +54,33 @@ class EpisodeSheetScreenshotTest {
     }
 
     @Test
+    fun episodeDetailRated() {
+        composeTestRule.captureMultiDevice("EpisodeDetailRated") {
+            TvManiacBackground {
+                EpisodeDetailContent(
+                    state = EpisodeDetailSheetState(
+                        isLoading = false,
+                        episodeTitle = "The Walking Dead: Daryl Dixon",
+                        showName = "The Walking Dead",
+                        seasonEpisodeNumber = "S02E01",
+                        overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                        rating = 8.5,
+                        voteCount = 1234,
+                        isWatched = true,
+                        userRating = 9,
+                        availableActions = persistentListOf(
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
+                        ),
+                    ),
+                )
+            }
+        }
+    }
+
+    @Test
     fun episodeDetailWatched() {
         composeTestRule.captureMultiDevice("EpisodeDetailWatched") {
             TvManiacBackground {

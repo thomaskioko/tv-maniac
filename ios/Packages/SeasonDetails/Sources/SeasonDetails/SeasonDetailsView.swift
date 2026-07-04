@@ -34,6 +34,7 @@ public struct SeasonDetailsView: View {
             },
             onEpisodeHeaderClicked: { presenter.dispatch(action: OnEpisodeHeaderClicked()) },
             onWatchedStateClicked: { presenter.dispatch(action: ToggleSeasonWatched()) },
+            onRateClicked: { presenter.dispatch(action: SeasonRatingClicked()) },
             onEpisodeWatchToggle: { episode in
                 presenter.dispatch(action: ToggleEpisodeWatched(episodeId: episode.episodeId))
             },
@@ -122,11 +123,14 @@ private extension SeasonDetailsModel {
                     profileUrl: cast.profileUrl
                 )
             },
+            userRating: userRating as? Int,
             errorTitle: String(\.generic_error_message),
             errorRetryText: String(\.button_error_retry),
             overviewTitle: String(\.title_season_overview),
             episodesTitle: String(\.title_episodes),
-            tbdLabel: String(\.label_tbd)
+            tbdLabel: String(\.label_tbd),
+            rateLabel: String(\.label_action_rate),
+            rateButtonTestTag: SeasonDetailsTestTags.shared.RATE_BUTTON_TEST_TAG
         )
     }
 }

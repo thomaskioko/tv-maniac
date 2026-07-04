@@ -15,8 +15,10 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
+            rateLabel: "Rate",
             onAddToLibrary: {},
-            onAddToCustomList: {}
+            onAddToCustomList: {},
+            onRate: {}
         )
         .padding()
         .appPreview()
@@ -31,8 +33,10 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
+            rateLabel: "Rate",
             onAddToLibrary: {},
-            onAddToCustomList: {}
+            onAddToCustomList: {},
+            onRate: {}
         )
         .padding()
         .appPreview()
@@ -47,8 +51,10 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             addToListLabel: "Add To List",
+            rateLabel: "Rate",
             onAddToLibrary: {},
-            onAddToCustomList: {}
+            onAddToCustomList: {},
+            onRate: {}
         )
         .padding()
         .appPreview()

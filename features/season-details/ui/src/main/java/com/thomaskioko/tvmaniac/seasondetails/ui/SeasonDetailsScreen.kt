@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.seasondetails.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -27,12 +26,14 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -58,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CastCard
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
+import com.thomaskioko.tvmaniac.compose.components.HorizontalOutlinedButton
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
@@ -93,6 +95,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_mark_previous_seaso
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_unwatched
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_title_watched
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_overview
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
@@ -107,6 +110,7 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsMessageShow
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDetailsPresenter
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonDialogState
+import com.thomaskioko.tvmaniac.seasondetails.presenter.SeasonRatingClicked
 import com.thomaskioko.tvmaniac.seasondetails.presenter.SecondaryDialogAction
 import com.thomaskioko.tvmaniac.seasondetails.presenter.ShowGallery
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.Cast
@@ -377,25 +381,43 @@ private fun HeaderContent(
         Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(horizontal = 16.dp, vertical = 32.dp)
-                .clickable { onAction(ShowGallery) },
+                .padding(horizontal = 16.dp, vertical = 32.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Icon(
-                imageVector = Icons.Filled.PhotoLibrary,
-                contentDescription = cd_navigate_back.resolve(LocalContext.current),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Text(
+            HorizontalOutlinedButton(
                 text = resources.getQuantityString(
                     season_images_count.resourceId,
                     imagesCount,
                     imagesCount,
                 ),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 8.dp),
+                onClick = { onAction(ShowGallery) },
+                shape = CircleShape,
+                borderColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.PhotoLibrary,
+                        contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                },
+            )
+
+            HorizontalOutlinedButton(
+                text = label_action_rate.resolve(LocalContext.current),
+                onClick = { onAction(SeasonRatingClicked) },
+                modifier = Modifier.testTag(SeasonDetailsTestTags.RATE_BUTTON_TEST_TAG),
+                shape = CircleShape,
+                borderColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.StarOutline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                },
             )
         }
 

@@ -14,7 +14,9 @@ class ShowDetailsScreenTest: SnapshotTestCase {
         status: "Returning Series",
         year: "2023",
         language: "en",
-        rating: 8.8,
+        communityRating: 8.8,
+        communityVotes: 15000,
+        userRating: 9,
         numberOfSeasons: 2,
         isRefreshing: false
     )
@@ -42,7 +44,9 @@ class ShowDetailsScreenTest: SnapshotTestCase {
                 status: "Returning Series",
                 year: "2023",
                 language: "en",
-                rating: 8.8,
+                communityRating: 8.8,
+                communityVotes: 15000,
+                userRating: 9,
                 numberOfSeasons: 2,
                 isRefreshing: true
             ),

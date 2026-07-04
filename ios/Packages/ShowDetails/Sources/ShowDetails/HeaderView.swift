@@ -12,7 +12,8 @@ public struct HeaderView: View {
     private let status: String?
     private let year: String
     private let language: String?
-    private let rating: Double
+    private let communityRating: Double?
+    private let communityVotes: Int64?
     private let seasonCount: Int
     private let seasonCountFormat: (_ count: Int) -> String
     private let progress: CGFloat
@@ -25,7 +26,8 @@ public struct HeaderView: View {
         status: String?,
         year: String,
         language: String?,
-        rating: Double,
+        communityRating: Double?,
+        communityVotes: Int64?,
         seasonCount: Int,
         seasonCountFormat: @escaping (_ count: Int) -> String,
         progress: CGFloat,
@@ -37,7 +39,8 @@ public struct HeaderView: View {
         self.status = status
         self.year = year
         self.language = language
-        self.rating = rating
+        self.communityRating = communityRating
+        self.communityVotes = communityVotes
         self.seasonCount = seasonCount
         self.seasonCountFormat = seasonCountFormat
         self.progress = progress
@@ -77,7 +80,8 @@ public struct HeaderView: View {
                     status: status,
                     year: year,
                     language: language,
-                    rating: rating,
+                    communityRating: communityRating,
+                    communityVotes: communityVotes,
                     seasonCount: seasonCount,
                     seasonCountFormat: seasonCountFormat
                 )
@@ -100,7 +104,8 @@ public struct HeaderView: View {
             status: "Continuing",
             year: "2024",
             language: "EN",
-            rating: 4.8,
+            communityRating: 4.8,
+            communityVotes: 12500,
             seasonCount: 2,
             seasonCountFormat: { count in count == 1 ? "\(count) Season" : "\(count) Seasons" },
             progress: 0
