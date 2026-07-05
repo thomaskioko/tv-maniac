@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.oauth.api.OAuthLauncher
 import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
@@ -23,6 +24,7 @@ public interface TestGraph {
     public val homeScreenGraphFactory: HomeScreenGraph.Factory
     public val syncObserver: SyncObserver
     public val featureFlags: Set<FeatureFlag<Boolean>>
+    public val subscriptionManager: SubscriptionManager
 
     @DependencyGraph.Factory
     public fun interface Factory {
