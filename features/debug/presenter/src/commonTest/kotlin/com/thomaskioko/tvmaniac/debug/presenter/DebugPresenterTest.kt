@@ -29,6 +29,7 @@ import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
@@ -199,6 +200,7 @@ class DebugPresenterTest {
             val state = expectMostRecentItem()
             val ids = state.items.map { it.id }
             ids shouldBe listOf(
+                "account_type",
                 "notifications",
                 "delayed-notification",
                 "library-sync",
@@ -242,6 +244,59 @@ class DebugPresenterTest {
             val message = expectMostRecentItem().message
             message shouldNotBe null
             message?.message shouldBe localizer.getString(StringResourceKey.LabelDebugSyncLoginRequired)
+        }
+    }
+
+    @Test
+    fun `should expose account type row with description subtitle and null action by default`() = runTest {
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.state.test {
+            val state = expectMostRecentItem()
+            val row = state.items.first { it.id == "account_type" }
+
+            state.accountType shouldBe AccountType.None
+            row.action shouldBe null
+            row.title shouldBe localizer.getString(StringResourceKey.LabelDebugAccountTypeTitle)
+            row.subtitle shouldBe localizer.getString(StringResourceKey.LabelDebugAccountTypeDescription)
+        }
+    }
+
+    @Test
+    fun `should persist and reflect the account type given SetAccountType dispatched`() = runTest {
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.dispatch(SetAccountType(AccountType.Premium))
+        advanceUntilIdle()
+
+        presenter.state.test {
+            val state = expectMostRecentItem()
+            state.accountType shouldBe AccountType.Premium
+            state.items.first { it.id == "account_type" }.subtitle shouldBe
+                localizer.getString(StringResourceKey.LabelDebugAccountTypePremium)
+        }
+        datastoreRepository.observeAccountType().test {
+            awaitItem() shouldBe "Premium"
+        }
+    }
+
+    @Test
+    fun `should clear the persisted account type given None dispatched`() = runTest {
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.dispatch(SetAccountType(AccountType.Free))
+        advanceUntilIdle()
+        presenter.dispatch(SetAccountType(AccountType.None))
+        advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().accountType shouldBe AccountType.None
+        }
+        datastoreRepository.observeAccountType().test {
+            awaitItem() shouldBe null
         }
     }
 

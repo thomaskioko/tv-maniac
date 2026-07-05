@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.featureflags.nav.FeatureFlagsRoute
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -72,18 +73,20 @@ public class DebugPresenter(
         datastoreRepository.observeLastSyncTimestamp(),
         datastoreRepository.observeLastUpNextSyncTimestamp(),
         datastoreRepository.observeLastTokenRefreshTimestamp(),
+        datastoreRepository.observeAccountType(),
         uiMessageManager.message,
         accountManager.isConnected,
         accountManager.activeAuthState,
     ) {
             isSchedulingDebugNotification, isSchedulingDelayedNotification, isSyncingLibrary, isSyncingUpNext,
-            lastLibrarySyncDate, lastUpNextSyncDate, lastTokenRefreshDate, message, isLoggedIn, authState,
+            lastLibrarySyncDate, lastUpNextSyncDate, lastTokenRefreshDate, accountTypeName, message, isLoggedIn, authState,
         ->
         val tokenSubtitle = formatTokenStatus(
             isLoggedIn = isLoggedIn,
             lastTokenRefreshTimestamp = lastTokenRefreshDate,
             authState = authState,
         )
+        val accountType = AccountType.fromName(accountTypeName)
 
         DebugState(
             title = localizer.getString(StringResourceKey.LabelDebugMenuTitle),
@@ -95,8 +98,10 @@ public class DebugPresenter(
                 lastLibrarySyncDate = lastLibrarySyncDate,
                 lastUpNextSyncDate = lastUpNextSyncDate,
                 tokenSubtitle = tokenSubtitle,
+                accountType = accountType,
             ),
             isLoggedIn = isLoggedIn,
+            accountType = accountType,
             message = message,
         )
     }.stateIn(
@@ -120,6 +125,11 @@ public class DebugPresenter(
             OpenFeatureFlags -> navigator.navigateTo(FeatureFlagsRoute)
             TriggerTestCrash -> throw RuntimeException("Test crash triggered from Debug Menu")
             is DismissSnackbar -> coroutineScope.launch { uiMessageManager.clearMessage(action.messageId) }
+            is SetAccountType -> coroutineScope.launch {
+                datastoreRepository.saveAccountType(
+                    action.accountType.takeUnless { it == AccountType.None }?.name,
+                )
+            }
         }
     }
 
@@ -141,8 +151,16 @@ public class DebugPresenter(
         lastLibrarySyncDate: Long?,
         lastUpNextSyncDate: Long?,
         tokenSubtitle: String?,
+        accountType: AccountType,
     ): ImmutableList<DebugItem> {
         val items = mutableListOf<DebugItem>()
+        items += DebugItem(
+            id = "account_type",
+            icon = DebugItemIcon.Account,
+            title = localizer.getString(StringResourceKey.LabelDebugAccountTypeTitle),
+            subtitle = accountTypeLabel(accountType),
+            action = null,
+        )
         items += DebugItem(
             id = "notifications",
             icon = DebugItemIcon.Notifications,
@@ -200,6 +218,12 @@ public class DebugPresenter(
             action = TriggerTestCrash,
         )
         return items.toImmutableList()
+    }
+
+    private fun accountTypeLabel(override: AccountType): String = when (override) {
+        AccountType.Premium -> localizer.getString(StringResourceKey.LabelDebugAccountTypePremium)
+        AccountType.Free -> localizer.getString(StringResourceKey.LabelDebugAccountTypeFree)
+        AccountType.None -> localizer.getString(StringResourceKey.LabelDebugAccountTypeDescription)
     }
 
     private fun syncSubtitle(timestamp: Long?): String =

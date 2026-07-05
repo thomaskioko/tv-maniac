@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.debug.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -8,6 +9,7 @@ public data class DebugState(
     val title: String = "",
     val items: ImmutableList<DebugItem> = persistentListOf(),
     val isLoggedIn: Boolean = false,
+    val accountType: AccountType = AccountType.None,
     val message: UiMessage? = null,
 ) {
     public companion object {
@@ -32,6 +34,7 @@ public enum class DebugItemIcon {
     UpNextSync,
     FeatureFlags,
     Key,
+    Account,
     Warning,
 }
 
