@@ -14,6 +14,7 @@ import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.app.di.ActivityGraph
 import com.thomaskioko.tvmaniac.app.test.compose.TvManiacTestActivity
 import com.thomaskioko.tvmaniac.app.test.compose.robot.CalendarRobot
+import com.thomaskioko.tvmaniac.app.test.compose.robot.DebugRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.DiscoverRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.EpisodeSheetRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.HomeRobot
@@ -131,6 +132,7 @@ internal class AppFlowScope(
     val progressRobot: ProgressRobot by lazy { ProgressRobot(composeUi) }
     val profileRobot: ProfileRobot by lazy { ProfileRobot(composeUi) }
     val settingsRobot: SettingsRobot by lazy { SettingsRobot(composeUi) }
+    val debugRobot: DebugRobot by lazy { DebugRobot(composeUi) }
     val searchRobot: SearchRobot by lazy { SearchRobot(composeUi) }
     val episodeSheetRobot: EpisodeSheetRobot by lazy { EpisodeSheetRobot(composeUi) }
     val watchlistRobot: MyShowsRobot by lazy { MyShowsRobot(composeUi) }

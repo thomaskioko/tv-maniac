@@ -5,13 +5,28 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
+import com.thomaskioko.tvmaniac.testtags.debug.DebugTestTags
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
+
+private const val DEBUG_MENU_VERSION_TAP_COUNT = 6
+private const val DEBUG_MENU_TAP_POLL_TIMEOUT_MILLIS = 200L
 
 @OptIn(ExperimentalTestApi::class)
 internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot>(composeUi) {
 
     fun assertSettingsScreenDisplayed() = apply {
         assertDisplayed(SettingsTestTags.SCREEN_TEST_TAG)
+    }
+
+    fun openDebugMenu() = apply {
+        openInfoPage()
+        scrollTo(SettingsTestTags.INFO_VERSION_TEXT_TEST_TAG)
+        repeat(DEBUG_MENU_VERSION_TAP_COUNT) {
+            if (!awaitTag(DebugTestTags.SCREEN_TEST_TAG, timeoutMillis = DEBUG_MENU_TAP_POLL_TIMEOUT_MILLIS)) {
+                click(SettingsTestTags.INFO_VERSION_TEXT_TEST_TAG)
+            }
+        }
+        assertDisplayed(DebugTestTags.SCREEN_TEST_TAG)
     }
 
     fun clickBackButton() = apply {

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.settings
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
@@ -92,5 +93,38 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
 
         profileRobot
             .assertSignInButtonDisplayed()
+    }
+
+    @Test
+    fun givenDebugMenu_whenAccountTypeSelected_thenRowSubtitleUpdates() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openDebugMenu()
+
+        debugRobot
+            .assertDebugMenuScreenDisplayed()
+            .scrollToAccountTypeRow()
+            .assertAccountTypeRowSubtitle("Update account type")
+            .clickAccountTypeRow()
+            .assertAccountTypeDialogDisplayed()
+            .assertAccountTypeOptionNotSelected(AccountType.Free)
+            .assertAccountTypeOptionNotSelected(AccountType.Premium)
+            .selectAccountType(AccountType.Premium)
+            .assertAccountTypeRowSubtitle("Premium")
     }
 }
