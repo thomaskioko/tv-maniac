@@ -178,6 +178,11 @@ graph TB
     :data:start-watching:api[api]:::multiplatform
     :data:start-watching:implementation[implementation]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+    :data:subscription:implementation[implementation]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -381,6 +386,8 @@ graph TB
   :core:integration:infra --> :data:shows:implementation
   :core:integration:infra --> :data:simklauth:implementation
   :core:integration:infra --> :data:start-watching:implementation
+  :core:integration:infra --> :data:subscription:api
+  :core:integration:infra --> :data:subscription:implementation
   :core:integration:infra --> :data:sync-activity:implementation
   :core:integration:infra --> :data:traktauth:implementation
   :core:integration:infra --> :data:user:api
@@ -588,6 +595,10 @@ graph TB
   :data:start-watching:implementation --> :data:request-manager:api
   :data:start-watching:implementation --> :data:shows:api
   :data:start-watching:implementation --> :data:start-watching:api
+  :data:subscription:implementation --> :core:appconfig:api
+  :data:subscription:implementation --> :core:feature-flags:api
+  :data:subscription:implementation --> :data:datastore:api
+  :data:subscription:implementation --> :data:subscription:api
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
   :data:sync-activity:implementation --> :core:base

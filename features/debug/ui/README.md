@@ -96,6 +96,10 @@ graph TB
     direction TB
     :data:similar:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -241,6 +245,7 @@ graph TB
   :features:debug:presenter --> :core:view
   :features:debug:presenter --> :data:account-manager:api
   :features:debug:presenter --> :data:datastore:api
+  :features:debug:presenter --> :data:subscription:api
   :features:debug:presenter --> :domain:continue-watching
   :features:debug:presenter --> :domain:library
   :features:debug:presenter --> :domain:notifications
@@ -251,7 +256,9 @@ graph TB
   :features:debug:presenter --> :navigation:api
   :features:debug:ui -.-> :android-designsystem
   :features:debug:ui --> :core:base
+  :features:debug:ui -.-> :core:test-tags
   :features:debug:ui -.-> :core:view
+  :features:debug:ui -.-> :data:subscription:api
   :features:debug:ui --> :features:debug:presenter
   :features:debug:ui -.-> :i18n:generator
   :features:debug:ui --> :navigation:api
