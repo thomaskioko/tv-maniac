@@ -306,4 +306,8 @@ public interface DatastoreRepository {
      * @return A Flow of Boolean, true once the debug menu has been unlocked. Defaults to false.
      */
     public fun observeDebugMenuEnabled(): Flow<Boolean>
+
+    public suspend fun saveAccountType(override: String?)
+
+    public fun observeAccountType(): Flow<String?>
 }
