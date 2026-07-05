@@ -93,8 +93,8 @@ io.ktor:ktor-websockets:3.5.0
 org.jetbrains.kotlin:kotlin-stdlib:2.4.0
 org.jetbrains.kotlinx:atomicfu-iosarm64:0.33.0
 org.jetbrains.kotlinx:atomicfu:0.33.0
-org.jetbrains.kotlinx:kotlinx-collections-immutable-iosarm64:0.5.0
-org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.0
+org.jetbrains.kotlinx:kotlinx-collections-immutable-iosarm64:0.5.1
+org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.1
 org.jetbrains.kotlinx:kotlinx-coroutines-core-iosarm64:1.11.0
 org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0
 org.jetbrains.kotlinx:kotlinx-datetime-iosarm64:0.8.0-0.6.x-compat
