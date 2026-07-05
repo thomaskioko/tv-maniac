@@ -63,6 +63,8 @@ kotlin {
             api(projects.data.database.sqldelight)
             api(projects.data.datastore.api)
             api(projects.data.datastore.implementation)
+            api(projects.data.subscription.api)
+            api(projects.data.subscription.implementation)
             api(projects.data.episode.implementation)
             api(projects.data.followedshows.implementation)
             api(projects.data.library.implementation)
@@ -112,6 +114,14 @@ kotlin {
             api(libs.kotest.assertions)
             api(libs.coroutines.test)
             api(libs.ktor.mock)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.turbine)
+        }
+
+        iosTest.dependencies {
+            implementation(libs.turbine)
         }
 
         jvmMain.dependencies {

@@ -120,4 +120,67 @@ class DebugScreenTest: SnapshotTestCase {
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_WithDisabledItem")
     }
+
+    func test_DebugScreen_AccountType_Premium() {
+        DebugScreen(
+            state: DebugScreen.State(
+                title: "Debug Menu",
+                items: accountTypeItems(selectedId: "premium", subtitle: "Premium")
+            ),
+            toast: .constant(nil),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Premium")
+    }
+
+    func test_DebugScreen_AccountType_Free() {
+        DebugScreen(
+            state: DebugScreen.State(
+                title: "Debug Menu",
+                items: accountTypeItems(selectedId: "free", subtitle: "Free")
+            ),
+            toast: .constant(nil),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Free")
+    }
+
+    func test_DebugScreen_AccountType_Default() {
+        DebugScreen(
+            state: DebugScreen.State(
+                title: "Debug Menu",
+                items: accountTypeItems(selectedId: "none", subtitle: "Update account type")
+            ),
+            toast: .constant(nil),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Default")
+    }
+
+    private func accountTypeItems(selectedId: String, subtitle: String) -> [DebugMenuItem] {
+        [
+            DebugMenuItem(
+                id: "account_type",
+                icon: "person.fill",
+                title: "Account Type",
+                subtitle: subtitle,
+                isEnabled: true,
+                menuOptions: [
+                    DebugMenuOption(id: "premium", label: "Premium", isSelected: selectedId == "premium", onSelect: {}),
+                    DebugMenuOption(id: "free", label: "Free", isSelected: selectedId == "free", onSelect: {}),
+                ],
+                onTap: {}
+            ),
+            DebugMenuItem(
+                id: "notification",
+                icon: "bell.fill",
+                title: "Episode Notifications",
+                subtitle: "Send a test notification",
+                onTap: {}
+            ),
+        ]
+    }
 }

@@ -293,6 +293,21 @@ public class DefaultDatastoreRepository(
             preferences[KEY_DEBUG_MENU_ENABLED] ?: false
         }
 
+    override suspend fun saveAccountType(override: String?) {
+        dataStore.edit { preferences ->
+            if (override != null) {
+                preferences[KEY_ACCOUNT_TYPE] = override
+            } else {
+                preferences.remove(KEY_ACCOUNT_TYPE)
+            }
+        }
+    }
+
+    override fun observeAccountType(): Flow<String?> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_ACCOUNT_TYPE]
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -315,5 +330,6 @@ public class DefaultDatastoreRepository(
         public val KEY_CRASH_REPORTING_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("crash_reporting_enabled")
         public val KEY_LAST_TOKEN_REFRESH_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_token_refresh_timestamp")
         public val KEY_DEBUG_MENU_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("debug_menu_enabled")
+        public val KEY_ACCOUNT_TYPE: Preferences.Key<String> = stringPreferencesKey("account_type")
     }
 }

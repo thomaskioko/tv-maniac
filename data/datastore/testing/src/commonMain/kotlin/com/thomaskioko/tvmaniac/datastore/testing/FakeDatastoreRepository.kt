@@ -144,6 +144,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val lastTokenRefreshTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val crashReportingEnabledFlow = MutableStateFlow(true)
     private val debugMenuEnabledFlow = MutableStateFlow(false)
+    private val accountTypeFlow: MutableStateFlow<String?> = MutableStateFlow(null)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -188,4 +189,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeDebugMenuEnabled(): Flow<Boolean> = debugMenuEnabledFlow.asStateFlow()
+
+    override suspend fun saveAccountType(override: String?) {
+        accountTypeFlow.value = override
+    }
+
+    override fun observeAccountType(): Flow<String?> = accountTypeFlow.asStateFlow()
 }

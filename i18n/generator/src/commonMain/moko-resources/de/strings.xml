@@ -377,6 +377,10 @@
     <string name="label_debug_sync_login_required">Melden Sie sich bei Trakt an, um Daten zu synchronisieren</string>
     <string name="label_debug_trigger_crash_title">Testabsturz</string>
     <string name="label_debug_trigger_crash_description">Einen Testabsturz für Crashlytics auslösen</string>
+    <string name="label_debug_account_type_title">Kontotyp</string>
+    <string name="label_debug_account_type_description">Kontotyp aktualisieren</string>
+    <string name="label_debug_account_type_premium">Premium</string>
+    <string name="label_debug_account_type_free">Kostenlos</string>
     <string name="label_debug_feature_flags_title">Feature-Flags</string>
     <string name="label_debug_feature_flags_description">Remote-Feature-Flags prüfen und anpassen</string>
     <string name="label_feature_flags_search_hint">Flags suchen</string>

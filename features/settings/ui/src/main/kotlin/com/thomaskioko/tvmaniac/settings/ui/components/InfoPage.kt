@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +37,7 @@ import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsNavigationRow
 import com.thomaskioko.tvmaniac.settings.ui.infoState
 import com.thomaskioko.tvmaniac.settings.ui.openInCustomTab
+import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 @Composable
 internal fun InfoPage(
@@ -76,7 +78,9 @@ internal fun InfoPage(
             text = state.labels.version,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.clickable(onClick = { onAction(VersionClicked) }),
+            modifier = Modifier
+                .testTag(SettingsTestTags.INFO_VERSION_TEXT_TEST_TAG)
+                .clickable(onClick = { onAction(VersionClicked) }),
         )
 
         Spacer(modifier = Modifier.height(24.dp))

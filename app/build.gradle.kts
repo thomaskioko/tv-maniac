@@ -23,6 +23,10 @@ scaffold {
     }
 
     optIn("androidx.compose.ui.test.ExperimentalTestApi")
+
+    ignoreUnusedDependencies(
+        ":data:subscription:implementation",
+    )
 }
 
 android {
@@ -113,6 +117,7 @@ dependencies {
     implementation(projects.data.database.sqldelight)
     implementation(projects.data.datastore.api)
     implementation(projects.data.datastore.implementation)
+    implementation(projects.data.subscription.implementation)
     implementation(projects.domain.theme)
     implementation(projects.domain.calendar)
     implementation(projects.domain.discover)
@@ -249,6 +254,7 @@ dependencies {
     testImplementation(projects.core.testTags)
     testImplementation(projects.data.oauth.api)
     testImplementation(projects.data.oauth.testing)
+    testImplementation(projects.data.subscription.api)
     testImplementation(projects.data.traktauth.testing)
     testImplementation(projects.core.locale.testing)
     testImplementation(projects.core.util.testing)
@@ -281,6 +287,7 @@ dependencies {
     androidTestImplementation(projects.core.testTags)
     androidTestImplementation(projects.data.oauth.api)
     androidTestImplementation(projects.data.oauth.testing)
+    androidTestImplementation(projects.data.subscription.api)
     androidTestImplementation(projects.data.traktauth.testing)
     androidTestImplementation(projects.core.locale.testing)
     androidTestImplementation(projects.core.util.testing)

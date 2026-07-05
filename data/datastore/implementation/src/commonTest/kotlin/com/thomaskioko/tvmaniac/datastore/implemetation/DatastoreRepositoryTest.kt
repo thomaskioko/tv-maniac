@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_ACCOUNT_TYPE
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_THEME
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +38,10 @@ internal class DatastoreRepositoryTest {
 
     @AfterTest
     fun clearDataStore() = runTest {
-        dataStore.edit { it.remove(KEY_THEME) }
+        dataStore.edit {
+            it.remove(KEY_THEME)
+            it.remove(KEY_ACCOUNT_TYPE)
+        }
         preferencesScope.cancel()
     }
 
@@ -70,6 +74,22 @@ internal class DatastoreRepositoryTest {
             repository.saveTheme(AppTheme.AQUA_THEME)
             awaitItem() shouldBe AppTheme.SYSTEM_THEME
             awaitItem() shouldBe AppTheme.AQUA_THEME
+        }
+    }
+
+    @Test
+    fun `should save overwrite and clear premium override given round trip`() = runTest {
+        repository.observeAccountType().test {
+            awaitItem() shouldBe null
+
+            repository.saveAccountType("Premium")
+            awaitItem() shouldBe "Premium"
+
+            repository.saveAccountType("Free")
+            awaitItem() shouldBe "Free"
+
+            repository.saveAccountType(null)
+            awaitItem() shouldBe null
         }
     }
 }

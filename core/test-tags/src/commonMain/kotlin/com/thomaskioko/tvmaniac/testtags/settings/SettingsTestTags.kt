@@ -11,6 +11,7 @@ public object SettingsTestTags {
     public const val ACCOUNT_TRAKT_ROW_TEST_TAG: String = "settings_account_trakt_row"
     public const val ABOUT_INFO_ROW_TEST_TAG: String = "settings_about_info_row"
     public const val ABOUT_LICENSES_ROW_TEST_TAG: String = "settings_about_licenses_row"
+    public const val INFO_VERSION_TEXT_TEST_TAG: String = "settings_info_version_text"
     public const val TRAKT_ACCOUNT_ROW_TEST_TAG: String = "settings_trakt_account_row"
     public const val LOGOUT_DIALOG_CONFIRM_BUTTON_TEST_TAG: String = "settings_logout_dialog_confirm"
     public const val LOGOUT_DIALOG_DISMISS_BUTTON_TEST_TAG: String = "settings_logout_dialog_dismiss"

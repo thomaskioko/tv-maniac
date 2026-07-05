@@ -94,6 +94,10 @@ graph TB
     direction TB
     :data:similar:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -232,6 +236,7 @@ graph TB
   :features:debug:presenter --> :core:view
   :features:debug:presenter --> :data:account-manager:api
   :features:debug:presenter --> :data:datastore:api
+  :features:debug:presenter --> :data:subscription:api
   :features:debug:presenter --> :domain:continue-watching
   :features:debug:presenter --> :domain:library
   :features:debug:presenter --> :domain:notifications

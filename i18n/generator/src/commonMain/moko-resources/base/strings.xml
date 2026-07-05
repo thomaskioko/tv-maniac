@@ -390,6 +390,10 @@
     <string name="label_debug_sync_login_required">Sign in to Trakt to sync data</string>
     <string name="label_debug_trigger_crash_title">Test Crash</string>
     <string name="label_debug_trigger_crash_description">Trigger a test crash for Crashlytics</string>
+    <string name="label_debug_account_type_title">Account Type</string>
+    <string name="label_debug_account_type_description">Update account type</string>
+    <string name="label_debug_account_type_premium">Premium</string>
+    <string name="label_debug_account_type_free">Free</string>
     <string name="label_debug_feature_flags_title">Feature Flags</string>
     <string name="label_debug_feature_flags_description">Inspect and adjust remote feature flags</string>
     <string name="label_feature_flags_search_hint">Search flags</string>
