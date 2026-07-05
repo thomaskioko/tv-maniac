@@ -18,7 +18,7 @@ public struct DebugMenuView: View {
         DebugScreen(
             state: DebugScreen.State(
                 title: uiState.title,
-                items: uiState.items.map { $0.toMenuItem(presenter: presenter) }
+                items: uiState.items.map { $0.toMenuItem(presenter: presenter, accountType: uiState.accountType) }
             ),
             toast: $toast,
             onBack: { presenter.dispatch(action: BackClicked()) }
@@ -32,8 +32,35 @@ public struct DebugMenuView: View {
     }
 }
 
+private let accountTypeItemId = "account_type"
+
 private extension DebugItem {
-    func toMenuItem(presenter: DebugPresenter) -> DebugMenuItem {
+    func toMenuItem(presenter: DebugPresenter, accountType: AccountType) -> DebugMenuItem {
+        if id == accountTypeItemId {
+            return DebugMenuItem(
+                id: id,
+                icon: icon.toSymbolName(),
+                role: role.toMenuItemRole(),
+                title: title,
+                subtitle: subtitle,
+                isLoading: isLoading,
+                isEnabled: true,
+                menuOptions: AccountType.entries
+                    .filter { $0 != AccountType.none }
+                    .map { type in
+                        DebugMenuOption(
+                            id: type.name,
+                            label: type.label,
+                            isSelected: type == accountType,
+                            onSelect: {
+                                presenter.dispatch(action: SetAccountType(accountType: type))
+                            }
+                        )
+                    },
+                onTap: {}
+            )
+        }
+
         let action = action
         return DebugMenuItem(
             id: id,
@@ -61,9 +88,17 @@ private extension DebugItemIcon {
         case "UpNextSync": "arrow.clockwise"
         case "FeatureFlags": "flag"
         case "Key": "key.fill"
+        case "Account": "person.fill"
         case "Warning": "exclamationmark.triangle"
         default: "questionmark.circle"
         }
+    }
+}
+
+private extension AccountType {
+    var label: String {
+        if self == AccountType.premium { return String(\.label_debug_account_type_premium) }
+        return String(\.label_debug_account_type_free)
     }
 }
 

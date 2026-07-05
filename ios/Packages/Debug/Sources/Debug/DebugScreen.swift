@@ -72,6 +72,38 @@ public struct DebugScreen: View {
     }
 
     private func debugRow(for item: DebugMenuItem) -> some View {
+        Group {
+            if item.menuOptions.isEmpty {
+                rowContent(for: item)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        guard item.isEnabled else { return }
+                        item.onTap()
+                    }
+            } else {
+                Menu {
+                    ForEach(item.menuOptions) { option in
+                        Button {
+                            option.onSelect()
+                        } label: {
+                            if option.isSelected {
+                                Label(option.label, systemImage: "checkmark")
+                            } else {
+                                Text(option.label)
+                            }
+                        }
+                    }
+                } label: {
+                    rowContent(for: item)
+                        .contentShape(Rectangle())
+                }
+                .disabled(!item.isEnabled)
+            }
+        }
+        .opacity(item.isEnabled ? 1.0 : 0.5)
+    }
+
+    private func rowContent(for item: DebugMenuItem) -> some View {
         HStack(spacing: theme.spacing.medium) {
             itemIcon(systemName: item.icon, role: item.role)
 
@@ -95,12 +127,6 @@ public struct DebugScreen: View {
             }
         }
         .padding(.vertical, theme.spacing.small)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            guard item.isEnabled else { return }
-            item.onTap()
-        }
-        .opacity(item.isEnabled ? 1.0 : 0.5)
     }
 
     private func itemIcon(systemName: String, role: DebugMenuItemRole) -> some View {
@@ -152,11 +178,73 @@ public struct DebugScreen: View {
                     onTap: {}
                 ),
                 DebugMenuItem(
+                    id: "account_type",
+                    icon: "person.fill",
+                    title: "Account Type",
+                    subtitle: "Premium",
+                    isEnabled: true,
+                    menuOptions: [
+                        DebugMenuOption(id: "premium", label: "Premium", isSelected: true, onSelect: {}),
+                        DebugMenuOption(id: "free", label: "Free", isSelected: false, onSelect: {}),
+                    ],
+                    onTap: {}
+                ),
+                DebugMenuItem(
                     id: "crash",
                     icon: "exclamationmark.triangle",
                     role: .destructive,
                     title: "Test Crash",
                     subtitle: "Trigger a fatal error",
+                    onTap: {}
+                ),
+            ]
+        ),
+        toast: .constant(nil),
+        onBack: {}
+    )
+    .appPreview()
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Premium Override Row") {
+    DebugScreen(
+        state: DebugScreen.State(
+            title: "Debug Menu",
+            items: [
+                DebugMenuItem(
+                    id: "account_type_premium",
+                    icon: "person.fill",
+                    title: "Account Type",
+                    subtitle: "Premium",
+                    isEnabled: true,
+                    menuOptions: [
+                        DebugMenuOption(id: "premium", label: "Premium", isSelected: true, onSelect: {}),
+                        DebugMenuOption(id: "free", label: "Free", isSelected: false, onSelect: {}),
+                    ],
+                    onTap: {}
+                ),
+                DebugMenuItem(
+                    id: "account_type_free",
+                    icon: "person.fill",
+                    title: "Account Type",
+                    subtitle: "Free",
+                    isEnabled: true,
+                    menuOptions: [
+                        DebugMenuOption(id: "premium", label: "Premium", isSelected: false, onSelect: {}),
+                        DebugMenuOption(id: "free", label: "Free", isSelected: true, onSelect: {}),
+                    ],
+                    onTap: {}
+                ),
+                DebugMenuItem(
+                    id: "account_type_default",
+                    icon: "person.fill",
+                    title: "Account Type",
+                    subtitle: "Update account type",
+                    isEnabled: true,
+                    menuOptions: [
+                        DebugMenuOption(id: "premium", label: "Premium", isSelected: false, onSelect: {}),
+                        DebugMenuOption(id: "free", label: "Free", isSelected: false, onSelect: {}),
+                    ],
                     onTap: {}
                 ),
             ]

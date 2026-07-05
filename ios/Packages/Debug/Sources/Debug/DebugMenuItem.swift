@@ -7,6 +7,29 @@ public enum DebugMenuItemRole: Equatable {
     case destructive
 }
 
+public struct DebugMenuOption: Identifiable, Equatable {
+    public let id: String
+    public let label: String
+    public let isSelected: Bool
+    public let onSelect: () -> Void
+
+    public init(
+        id: String,
+        label: String,
+        isSelected: Bool,
+        onSelect: @escaping () -> Void
+    ) {
+        self.id = id
+        self.label = label
+        self.isSelected = isSelected
+        self.onSelect = onSelect
+    }
+
+    public static func == (lhs: DebugMenuOption, rhs: DebugMenuOption) -> Bool {
+        lhs.id == rhs.id && lhs.label == rhs.label && lhs.isSelected == rhs.isSelected
+    }
+}
+
 public struct DebugMenuItem: Identifiable {
     public let id: String
     public let icon: String
@@ -15,6 +38,7 @@ public struct DebugMenuItem: Identifiable {
     public let subtitle: String
     public let isLoading: Bool
     public let isEnabled: Bool
+    public let menuOptions: [DebugMenuOption]
     public let onTap: () -> Void
 
     public init(
@@ -25,6 +49,7 @@ public struct DebugMenuItem: Identifiable {
         subtitle: String,
         isLoading: Bool = false,
         isEnabled: Bool = true,
+        menuOptions: [DebugMenuOption] = [],
         onTap: @escaping () -> Void
     ) {
         self.id = id
@@ -34,6 +59,7 @@ public struct DebugMenuItem: Identifiable {
         self.subtitle = subtitle
         self.isLoading = isLoading
         self.isEnabled = isEnabled
+        self.menuOptions = menuOptions
         self.onTap = onTap
     }
 }
@@ -47,5 +73,6 @@ extension DebugMenuItem: Equatable {
             && lhs.subtitle == rhs.subtitle
             && lhs.isLoading == rhs.isLoading
             && lhs.isEnabled == rhs.isEnabled
+            && lhs.menuOptions == rhs.menuOptions
     }
 }
