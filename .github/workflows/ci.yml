@@ -12,7 +12,7 @@ concurrency:
     cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-    XCODE_VERSION: 16.4
+    XCODE_VERSION: 26.5
     TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
     TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
     TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
@@ -211,7 +211,7 @@ jobs:
 
 #    ios-test:
 #        needs: [static-analysis]
-#        runs-on: macos-15
+#        runs-on: macos-26
 #        environment:
 #            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
 #        steps:
@@ -232,7 +232,7 @@ jobs:
 
     build-ios-framework:
         needs: [swift-lint]
-        runs-on: macos-15
+        runs-on: macos-26
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
@@ -254,7 +254,7 @@ jobs:
 
     build-ios:
         needs: [build-ios-framework]
-        runs-on: macos-15
+        runs-on: macos-26
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
@@ -301,7 +301,7 @@ jobs:
 
     ios-snapshot-test:
         needs: [build-ios-framework]
-        runs-on: macos-15
+        runs-on: macos-26
         timeout-minutes: 60
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
