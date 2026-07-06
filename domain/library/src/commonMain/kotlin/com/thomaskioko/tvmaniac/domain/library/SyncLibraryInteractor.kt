@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
@@ -28,6 +29,7 @@ public class SyncLibraryInteractor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val syncActivityInteractor: SyncActivityInteractor,
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
+    private val showMetadataSyncHelper: ShowMetadataSyncHelper,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
     private val syncRepository: ActivitySyncRepository,
     private val datastoreRepository: DatastoreRepository,
@@ -71,12 +73,17 @@ public class SyncLibraryInteractor(
             for (show in followedShows) {
                 ensureActive()
                 val result = runCatching {
-                    syncShowMetadataInteractor.executeSync(
-                        SyncShowMetadataInteractor.Param(
-                            showId = show.showId,
-                            forceRefresh = params.forceRefresh,
-                        ),
-                    )
+                    if (showMetadataSyncHelper.shouldSync(show.showId)) {
+                        syncShowMetadataInteractor.executeSync(
+                            SyncShowMetadataInteractor.Param(
+                                showId = show.showId,
+                                forceRefresh = params.forceRefresh,
+                                refreshLatestSeason = showMetadataSyncHelper.shouldRefreshLatestSeason(show.showId),
+                            ),
+                        )
+                    } else {
+                        logger.debug(TAG, "Skipping metadata sync for ended show ${show.showId}")
+                    }
                 }
                 val failure = result.exceptionOrNull() ?: continue
 

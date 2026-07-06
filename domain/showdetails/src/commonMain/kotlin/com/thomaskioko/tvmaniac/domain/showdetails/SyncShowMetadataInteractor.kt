@@ -18,13 +18,17 @@ public class SyncShowMetadataInteractor(
 
     override suspend fun doWork(params: Param) {
         withContext(dispatchers.io) {
+            val refreshLatestSeason = params.refreshLatestSeason &&
+                seasonDetailsRepository.isShowSeasonSyncExpired(params.showId)
+
             showDetailsRepository.fetchShowDetails(
                 id = params.showId,
-                forceRefresh = params.forceRefresh,
+                forceRefresh = params.forceRefresh || refreshLatestSeason,
             )
             seasonDetailsRepository.syncShowSeasonDetails(
                 showId = params.showId,
                 forceRefresh = params.forceRefresh,
+                refreshLatestSeason = refreshLatestSeason,
             )
             if (params.includeWatchProviders) {
                 watchProviderRepository.fetchWatchProviders(
@@ -39,5 +43,6 @@ public class SyncShowMetadataInteractor(
         val showId: Long,
         val forceRefresh: Boolean = false,
         val includeWatchProviders: Boolean = true,
+        val refreshLatestSeason: Boolean = false,
     )
 }

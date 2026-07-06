@@ -63,4 +63,30 @@ class SyncShowMetadataInteractorTest {
         seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(1388L)
         watchProviderRepository.fetchInvocations().shouldBeEmpty()
     }
+
+    @Test
+    fun `should force show details and latest season given refresh requested and season gate expired`() =
+        runTest(testDispatcher) {
+            seasonDetailsRepository.setShowSeasonSyncExpired(true)
+
+            interactor.executeSync(
+                SyncShowMetadataInteractor.Param(showId = 1388L, refreshLatestSeason = true),
+            )
+
+            showDetailsRepository.fetchInvocations().single().forceRefresh shouldBe true
+            seasonDetailsRepository.getLatestSeasonRefreshShowIds() shouldBe listOf(1388L)
+        }
+
+    @Test
+    fun `should keep cached show details given refresh requested but season gate still fresh`() =
+        runTest(testDispatcher) {
+            seasonDetailsRepository.setShowSeasonSyncExpired(false)
+
+            interactor.executeSync(
+                SyncShowMetadataInteractor.Param(showId = 1388L, refreshLatestSeason = true),
+            )
+
+            showDetailsRepository.fetchInvocations().single().forceRefresh shouldBe false
+            seasonDetailsRepository.getLatestSeasonRefreshShowIds().shouldBeEmpty()
+        }
 }
