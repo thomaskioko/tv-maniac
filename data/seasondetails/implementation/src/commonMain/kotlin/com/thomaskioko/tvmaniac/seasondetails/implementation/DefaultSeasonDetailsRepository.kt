@@ -134,23 +134,46 @@ public class DefaultSeasonDetailsRepository(
         datastoreRepository.observeIncludeSpecials()
             .flatMapLatest { includeSpecials ->
                 episodesDao.observeNextEpisodeForShow(showId, includeSpecials)
-            }
-            .flatMapLatest { nextEpisode ->
-                if (nextEpisode == null) return@flatMapLatest flowOf(null)
-
-                val param = SeasonDetailsParam(
-                    showId = showId,
-                    seasonId = nextEpisode.season_id.id,
-                    seasonNumber = nextEpisode.season_number,
-                )
-                observeSeasonDetails(param)
-                    .map { seasonDetails ->
-                        ContinueTrackingResult(
-                            episodes = seasonDetails.episodes.toImmutableList(),
-                            currentSeasonNumber = seasonDetails.seasonNumber,
-                            currentSeasonId = seasonDetails.seasonId,
-                        )
+                    .flatMapLatest { nextEpisode ->
+                        when {
+                            nextEpisode != null -> observeContinueTrackingSeason(
+                                SeasonDetailsParam(
+                                    showId = showId,
+                                    seasonId = nextEpisode.season_id.id,
+                                    seasonNumber = nextEpisode.season_number,
+                                ),
+                            )
+                            else -> observeLatestSeason(showId, includeSpecials)
+                        }
                     }
+            }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeLatestSeason(
+        showId: Long,
+        includeSpecials: Boolean,
+    ): Flow<ContinueTrackingResult?> =
+        episodesDao.observeLatestSeasonForShow(showId, includeSpecials)
+            .flatMapLatest { latestSeason ->
+                if (latestSeason == null) return@flatMapLatest flowOf(null)
+
+                observeContinueTrackingSeason(
+                    SeasonDetailsParam(
+                        showId = showId,
+                        seasonId = latestSeason.season_id.id,
+                        seasonNumber = latestSeason.season_number,
+                    ),
+                )
+            }
+
+    private fun observeContinueTrackingSeason(param: SeasonDetailsParam): Flow<ContinueTrackingResult> =
+        observeSeasonDetails(param)
+            .map { seasonDetails ->
+                ContinueTrackingResult(
+                    episodes = seasonDetails.episodes.toImmutableList(),
+                    currentSeasonNumber = seasonDetails.seasonNumber,
+                    currentSeasonId = seasonDetails.seasonId,
+                )
             }
 
     private fun mapToSeasonDetailsWithEpisodes(
