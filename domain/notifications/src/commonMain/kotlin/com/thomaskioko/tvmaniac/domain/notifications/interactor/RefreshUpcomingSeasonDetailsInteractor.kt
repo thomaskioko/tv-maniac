@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.ApiRateLimiter
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.withRateLimitTracking
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
@@ -19,12 +20,14 @@ private const val SEASON_REFRESH_CONCURRENCY = 2
 public class RefreshUpcomingSeasonDetailsInteractor(
     private val seasonsRepository: SeasonsRepository,
     private val seasonDetailsRepository: SeasonDetailsRepository,
+    private val showMetadataSyncHelper: ShowMetadataSyncHelper,
     private val apiRateLimiter: ApiRateLimiter,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<RefreshUpcomingSeasonDetailsInteractor.Params>() {
 
     override suspend fun doWork(params: Params) {
         val latestSeasons = seasonsRepository.getLatestSeasonsForFollowedShows()
+            .filter { showMetadataSyncHelper.shouldSync(it.showId) }
 
         if (latestSeasons.isEmpty()) return
 
