@@ -203,3 +203,27 @@ struct SystemThemeSwatch: View {
     .padding()
     .background(.appBackground)
 }
+
+#Preview("Free and Premium") {
+    HStack(spacing: 16) {
+        ThemePreviewSwatch(
+            backgroundColor: TvManiacColorScheme.light.background,
+            accentColor: TvManiacColorScheme.light.secondary,
+            onAccentColor: TvManiacColorScheme.light.onSecondary,
+            displayName: "Light",
+            isSelected: true,
+            onSelect: {}
+        )
+
+        ThemePreviewSwatch(
+            backgroundColor: TvManiacColorScheme.terminal.background,
+            accentColor: TvManiacColorScheme.terminal.secondary,
+            onAccentColor: TvManiacColorScheme.terminal.onSecondary,
+            displayName: "Terminal",
+            isSelected: false,
+            onSelect: {}
+        )
+    }
+    .padding()
+    .background(.appBackground)
+}

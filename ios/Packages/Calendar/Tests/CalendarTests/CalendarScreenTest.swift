@@ -66,6 +66,20 @@ class CalendarScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Empty")
     }
 
+    func test_CalendarScreen_Locked() {
+        makeScreen(
+            state: .locked(
+                underlying: .content(dateGroups: sampleDateGroups),
+                title: "Calendar is a Premium feature",
+                message: "Upgrade to see upcoming episodes for your shows"
+            ),
+            lockedBadgeText: "Premium",
+            lockedActionText: "Upgrade to Premium",
+            lockedAccessibilityLabel: "Locked"
+        )
+        .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Locked")
+    }
+
     func test_CalendarScreen_Content() {
         makeScreen(state: .content(dateGroups: sampleDateGroups))
             .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Content")
@@ -76,7 +90,10 @@ class CalendarScreenTest: SnapshotTestCase {
         weekLabel: String = "Jan 31, 2026 - Feb 6, 2026",
         canNavigatePrevious: Bool = false,
         canNavigateNext: Bool = true,
-        isRefreshing: Bool = false
+        isRefreshing: Bool = false,
+        lockedBadgeText: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = ""
     ) -> some View {
         NavigationStack {
             CalendarScreen(
@@ -87,6 +104,9 @@ class CalendarScreenTest: SnapshotTestCase {
                     canNavigateNext: canNavigateNext,
                     isRefreshing: isRefreshing
                 ),
+                lockedBadgeText: lockedBadgeText,
+                lockedActionText: lockedActionText,
+                lockedAccessibilityLabel: lockedAccessibilityLabel,
                 moreEpisodesFormat: { "+\($0) episodes" },
                 onPreviousWeek: {},
                 onNextWeek: {},

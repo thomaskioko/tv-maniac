@@ -26,6 +26,7 @@ public data class SettingsState(
     val currentPageTitle: String = "",
     val rootGroups: ImmutableList<SettingsCategoryGroup> = persistentListOf(),
     val labels: SettingsLabels = SettingsLabels(),
+    val locks: SettingsLocks = SettingsLocks(),
     val username: String? = null,
     val showLogoutConfirmation: Boolean,
     val message: UiMessage? = null,
@@ -65,3 +66,13 @@ public data class SettingsState(
         )
     }
 }
+
+public data class SettingsLocks(
+    val customThemesLocked: Boolean = false,
+    val episodeNotificationsLocked: Boolean = false,
+    val badgeText: String = "",
+    val themesLockedTitle: String = "",
+    val themesLockedMessage: String = "",
+    val upgradeText: String = "",
+    val lockedContentDescription: String = "",
+)

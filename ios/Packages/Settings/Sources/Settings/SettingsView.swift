@@ -120,6 +120,13 @@ public struct SettingsView: View {
             subtitle: uiState.labels.themeSubtitle,
             themes: DeviceAppTheme.sortedThemes,
             selectedTheme: store.appTheme,
+            isCustomThemesLocked: uiState.locks.customThemesLocked,
+            lockedBadgeText: uiState.locks.badgeText,
+            lockedTitle: uiState.locks.themesLockedTitle,
+            lockedMessage: uiState.locks.themesLockedMessage,
+            lockedActionText: uiState.locks.upgradeText,
+            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) },
             onThemeSelected: { selectedTheme in
                 store.appTheme = selectedTheme
                 let theme = selectedTheme.toTheme()
@@ -197,6 +204,9 @@ public struct SettingsView: View {
                 title: uiState.labels.episodeNotificationsTitle,
                 subtitle: uiState.labels.episodeNotificationsDescription,
                 isOn: uiState.episodeNotificationsEnabled,
+                isLocked: uiState.locks.episodeNotificationsLocked,
+                lockedBadgeText: uiState.locks.badgeText,
+                lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
                 onToggle: { handleNotificationToggle(enabled: $0) }
             ),
         ]
@@ -320,7 +330,8 @@ public struct SettingsView: View {
                     logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
                 )
             },
-            switchTargetLogoName: uiState.switchTargetProvider?.name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
+            switchTargetLogoName: uiState.switchTargetProvider?
+                .name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
             switchActionLabel: uiState.switchActionLabel,
             isSwitching: uiState.isSwitching,
             showSwitchConfirmation: showingSwitchAlert,

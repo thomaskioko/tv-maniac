@@ -32,4 +32,10 @@ struct SettingsTogglesPageView: View {
             .padding()
             .appPreview()
     }
+
+    #Preview("Notifications Locked") {
+        SettingsTogglesPageView(toggles: SettingsPreviewSamples.lockedNotificationToggles)
+            .padding()
+            .appPreview()
+    }
 #endif

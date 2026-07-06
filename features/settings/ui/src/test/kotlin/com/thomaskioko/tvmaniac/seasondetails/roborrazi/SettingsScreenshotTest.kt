@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.settings.ui.accountState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchDialogState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchingState
+import com.thomaskioko.tvmaniac.settings.ui.appearanceLockedState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
@@ -18,6 +19,7 @@ import com.thomaskioko.tvmaniac.settings.ui.infoState
 import com.thomaskioko.tvmaniac.settings.ui.licensesState
 import com.thomaskioko.tvmaniac.settings.ui.loadingState
 import com.thomaskioko.tvmaniac.settings.ui.loggedInState
+import com.thomaskioko.tvmaniac.settings.ui.notificationsLockedState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
 import org.junit.Rule
@@ -86,6 +88,18 @@ class SettingsScreenshotTest {
     }
 
     @Test
+    fun settingsScreenAppearancePageLocked() {
+        composeTestRule.captureMultiDevice("SettingsScreenAppearancePageLocked") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = appearanceLockedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
     fun settingsScreenBehaviorPage() {
         composeTestRule.captureMultiDevice("SettingsScreenBehaviorPage") {
             TvManiacBackground {
@@ -103,6 +117,18 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = notificationsState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenNotificationsPageLocked() {
+        composeTestRule.captureMultiDevice("SettingsScreenNotificationsPageLocked") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = notificationsLockedState,
                     onAction = {},
                 )
             }

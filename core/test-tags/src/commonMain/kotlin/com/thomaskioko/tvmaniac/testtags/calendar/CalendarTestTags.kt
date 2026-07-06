@@ -5,6 +5,7 @@ public object CalendarTestTags {
     public const val LOADING_INDICATOR: String = "calendar_loading_indicator"
     public const val EMPTY_STATE_TEST_TAG: String = "calendar_empty_state"
     public const val LOGGED_OUT_STATE_TEST_TAG: String = "calendar_logged_out_state"
+    public const val LOCKED_STATE_TEST_TAG: String = "calendar_locked_state"
     public const val PREVIOUS_WEEK_BUTTON: String = "calendar_previous_week_button"
     public const val NEXT_WEEK_BUTTON: String = "calendar_next_week_button"
     public const val WEEK_LABEL: String = "calendar_week_label"

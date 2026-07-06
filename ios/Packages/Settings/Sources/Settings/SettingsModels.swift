@@ -10,6 +10,9 @@ public struct SettingsToggleItem: Identifiable {
     public let subtitle: String
     public let secondarySubtitle: String?
     public let isOn: Bool
+    public let isLocked: Bool
+    public let lockedBadgeText: String
+    public let lockedAccessibilityLabel: String
     public let onToggle: (Bool) -> Void
 
     public init(
@@ -19,6 +22,9 @@ public struct SettingsToggleItem: Identifiable {
         subtitle: String,
         secondarySubtitle: String? = nil,
         isOn: Bool,
+        isLocked: Bool = false,
+        lockedBadgeText: String = "",
+        lockedAccessibilityLabel: String = "",
         onToggle: @escaping (Bool) -> Void
     ) {
         self.id = id
@@ -27,6 +33,9 @@ public struct SettingsToggleItem: Identifiable {
         self.subtitle = subtitle
         self.secondarySubtitle = secondarySubtitle
         self.isOn = isOn
+        self.isLocked = isLocked
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
         self.onToggle = onToggle
     }
 }
@@ -39,6 +48,7 @@ extension SettingsToggleItem: Equatable {
             && lhs.subtitle == rhs.subtitle
             && lhs.secondarySubtitle == rhs.secondarySubtitle
             && lhs.isOn == rhs.isOn
+            && lhs.isLocked == rhs.isLocked
     }
 }
 
@@ -117,6 +127,13 @@ public struct SettingsThemeItem<Theme: ThemeItem>: Equatable {
     public let subtitle: String
     public let themes: [Theme]
     public let selectedTheme: Theme
+    public let isCustomThemesLocked: Bool
+    public let lockedBadgeText: String
+    public let lockedTitle: String
+    public let lockedMessage: String
+    public let lockedActionText: String
+    public let lockedAccessibilityLabel: String
+    public let onUpgradeClick: () -> Void
     public let onThemeSelected: (Theme) -> Void
 
     public init(
@@ -125,6 +142,13 @@ public struct SettingsThemeItem<Theme: ThemeItem>: Equatable {
         subtitle: String,
         themes: [Theme],
         selectedTheme: Theme,
+        isCustomThemesLocked: Bool = false,
+        lockedBadgeText: String = "",
+        lockedTitle: String = "",
+        lockedMessage: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = "",
+        onUpgradeClick: @escaping () -> Void = {},
         onThemeSelected: @escaping (Theme) -> Void
     ) {
         self.icon = icon
@@ -132,6 +156,13 @@ public struct SettingsThemeItem<Theme: ThemeItem>: Equatable {
         self.subtitle = subtitle
         self.themes = themes
         self.selectedTheme = selectedTheme
+        self.isCustomThemesLocked = isCustomThemesLocked
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedTitle = lockedTitle
+        self.lockedMessage = lockedMessage
+        self.lockedActionText = lockedActionText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
+        self.onUpgradeClick = onUpgradeClick
         self.onThemeSelected = onThemeSelected
     }
 
@@ -140,6 +171,7 @@ public struct SettingsThemeItem<Theme: ThemeItem>: Equatable {
             && lhs.title == rhs.title
             && lhs.subtitle == rhs.subtitle
             && lhs.selectedTheme.id == rhs.selectedTheme.id
+            && lhs.isCustomThemesLocked == rhs.isCustomThemesLocked
     }
 }
 

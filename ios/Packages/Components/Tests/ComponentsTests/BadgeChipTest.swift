@@ -19,4 +19,11 @@ class BadgeChipTest: SnapshotTestCase {
             .appPreview()
             .assertSnapshot(testName: "NewBadge")
     }
+
+    func test_LockBadge() {
+        LockBadge(text: "Premium")
+            .padding()
+            .appPreview()
+            .assertSnapshot(testName: "LockBadge")
+    }
 }

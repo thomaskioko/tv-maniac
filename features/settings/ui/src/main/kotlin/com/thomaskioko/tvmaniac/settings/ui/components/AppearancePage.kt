@@ -24,9 +24,11 @@ import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
+import com.thomaskioko.tvmaniac.settings.presenter.UpgradeToPremiumClicked
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsSectionLabel
 import com.thomaskioko.tvmaniac.settings.ui.ThemeSelectorSection
+import com.thomaskioko.tvmaniac.settings.ui.appearanceLockedState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
@@ -46,6 +48,8 @@ internal fun AppearancePage(
                 ThemeSelectorSection(
                     selectedTheme = state.theme,
                     onThemeSelected = { onAction(ThemeSelected(it)) },
+                    onUpgradeClick = { onAction(UpgradeToPremiumClicked) },
+                    locks = state.locks,
                     modifier = Modifier.padding(vertical = 12.dp),
                 )
             }
@@ -139,6 +143,16 @@ private fun ImageQualityChip(
 private fun AppearancePagePreview() {
     AppearancePage(
         state = appearanceState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun AppearancePageLockedPreview() {
+    AppearancePage(
+        state = appearanceLockedState,
         onAction = {},
     )
 }

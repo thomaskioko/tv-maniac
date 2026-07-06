@@ -35,42 +35,48 @@ class SettingsScreenTest: SnapshotTestCase {
             displayName: "Autumn",
             backgroundColor: TvManiacColorScheme.autumn.background,
             accentColor: TvManiacColorScheme.autumn.secondary,
-            onAccentColor: TvManiacColorScheme.autumn.onSecondary
+            onAccentColor: TvManiacColorScheme.autumn.onSecondary,
+            isPremium: true
         ),
         ThemeItemModel(
             id: "aqua",
             displayName: "Aqua",
             backgroundColor: TvManiacColorScheme.aqua.background,
             accentColor: TvManiacColorScheme.aqua.secondary,
-            onAccentColor: TvManiacColorScheme.aqua.onSecondary
+            onAccentColor: TvManiacColorScheme.aqua.onSecondary,
+            isPremium: true
         ),
         ThemeItemModel(
             id: "amber",
             displayName: "Amber",
             backgroundColor: TvManiacColorScheme.amber.background,
             accentColor: TvManiacColorScheme.amber.secondary,
-            onAccentColor: TvManiacColorScheme.amber.onSecondary
+            onAccentColor: TvManiacColorScheme.amber.onSecondary,
+            isPremium: true
         ),
         ThemeItemModel(
             id: "snow",
             displayName: "Snow",
             backgroundColor: TvManiacColorScheme.snow.background,
             accentColor: TvManiacColorScheme.snow.secondary,
-            onAccentColor: TvManiacColorScheme.snow.onSecondary
+            onAccentColor: TvManiacColorScheme.snow.onSecondary,
+            isPremium: true
         ),
         ThemeItemModel(
             id: "terminal",
             displayName: "Terminal",
             backgroundColor: TvManiacColorScheme.terminal.background,
             accentColor: TvManiacColorScheme.terminal.secondary,
-            onAccentColor: TvManiacColorScheme.terminal.onSecondary
+            onAccentColor: TvManiacColorScheme.terminal.onSecondary,
+            isPremium: true
         ),
         ThemeItemModel(
             id: "crimson",
             displayName: "Crimson",
             backgroundColor: TvManiacColorScheme.crimson.background,
             accentColor: TvManiacColorScheme.crimson.secondary,
-            onAccentColor: TvManiacColorScheme.crimson.onSecondary
+            onAccentColor: TvManiacColorScheme.crimson.onSecondary,
+            isPremium: true
         ),
     ]
 
@@ -81,6 +87,23 @@ class SettingsScreenTest: SnapshotTestCase {
             subtitle: "Choose your preferred theme",
             themes: sampleThemes,
             selectedTheme: sampleThemes[0],
+            onThemeSelected: { _ in }
+        )
+    }
+
+    private var customThemeItem: SettingsThemeItem<ThemeItemModel> {
+        SettingsThemeItem(
+            icon: "paintpalette",
+            title: "Theme",
+            subtitle: "Choose your preferred theme",
+            themes: sampleThemes,
+            selectedTheme: sampleThemes[0],
+            isCustomThemesLocked: true,
+            lockedBadgeText: "Premium",
+            lockedTitle: "Custom themes are a Premium feature",
+            lockedMessage: "Upgrade to Premium to use custom themes.",
+            lockedActionText: "Upgrade to Premium",
+            lockedAccessibilityLabel: "Locked",
             onThemeSelected: { _ in }
         )
     }
@@ -137,6 +160,22 @@ class SettingsScreenTest: SnapshotTestCase {
                 title: "Episode Notifications",
                 subtitle: "Get notified when new episodes air",
                 isOn: true,
+                onToggle: { _ in }
+            ),
+        ]
+    }
+
+    private var lockedNotificationToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "notifications",
+                icon: "bell.fill",
+                title: "Episode Notifications",
+                subtitle: "Get notified when new episodes air",
+                isOn: false,
+                isLocked: true,
+                lockedBadgeText: "Premium",
+                lockedAccessibilityLabel: "Locked",
                 onToggle: { _ in }
             ),
         ]
@@ -288,17 +327,19 @@ class SettingsScreenTest: SnapshotTestCase {
         page: SettingsPageRoute,
         authenticated: Bool,
         isLoading: Bool = false,
-        customAccountContent: SettingsAccountContent? = nil
+        customAccountContent: SettingsAccountContent? = nil,
+        customThemeItem: SettingsThemeItem<ThemeItemModel>? = nil,
+        customNotificationToggles: [SettingsToggleItem]? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
             rootTitle: "Settings",
             currentPage: page,
             rootSections: rootSections(authenticated: authenticated),
-            themeItem: defaultThemeItem,
+            themeItem: customThemeItem ?? defaultThemeItem,
             imageQualityItem: defaultImageQualityItem,
             behaviorToggles: behaviorToggles,
-            notificationToggles: notificationToggles,
+            notificationToggles: customNotificationToggles ?? notificationToggles,
             privacyToggles: privacyToggles,
             privacyLinks: privacyLinks,
             infoContent: infoContent,
@@ -331,6 +372,19 @@ class SettingsScreenTest: SnapshotTestCase {
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Appearance")
     }
 
+    func test_SettingsScreen_Appearance_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .appearance,
+                authenticated: true,
+                customThemeItem: customThemeItem
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Appearance_Locked")
+    }
+
     func test_SettingsScreen_Behavior() {
         SettingsScreen(state: makeState(page: .behavior, authenticated: true), onBack: {})
             .appPreview()
@@ -341,6 +395,19 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .notifications, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Notifications")
+    }
+
+    func test_SettingsScreen_Notifications_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .notifications,
+                authenticated: true,
+                customNotificationToggles: lockedNotificationToggles
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Notifications_Locked")
     }
 
     func test_SettingsScreen_Privacy() {

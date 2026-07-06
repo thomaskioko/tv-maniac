@@ -1,3 +1,4 @@
+import Components
 import DesignSystem
 import SwiftUI
 
@@ -122,6 +123,13 @@ struct SettingsToggleRow: View {
                 Text(item.title)
                     .textStyle(appTheme.typography.bodyLarge)
                     .foregroundColor(appTheme.colors.onSurface)
+                    .lineLimit(1)
+                if item.isLocked {
+                    LockBadge(
+                        text: item.lockedBadgeText,
+                        accessibilityLabel: item.lockedAccessibilityLabel
+                    )
+                }
                 Text(item.subtitle)
                     .textStyle(appTheme.typography.bodySmall)
                     .foregroundColor(appTheme.colors.onSurfaceVariant)
@@ -140,6 +148,7 @@ struct SettingsToggleRow: View {
             ))
             .labelsHidden()
             .tint(appTheme.colors.secondary)
+            .disabled(item.isLocked)
         }
         .padding(.horizontal, appTheme.spacing.medium)
         .padding(.vertical, appTheme.spacing.small)

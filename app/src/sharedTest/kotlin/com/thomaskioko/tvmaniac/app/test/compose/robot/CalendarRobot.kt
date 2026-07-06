@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.testtags.calendar.CalendarTestTags
 internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot>(composeUi) {
 
     fun assertCalendarScreenDisplayed() = apply {
-        assertDisplayed(CalendarTestTags.SCREEN_TEST_TAG)
+        assertDisplayed(CalendarTestTags.SCREEN_TEST_TAG, timeoutMillis = 10_000)
     }
 
     fun assertLoadingIndicatorDisplayed() = apply {
@@ -23,6 +23,10 @@ internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot
 
     fun assertLoggedOutStateDisplayed() = apply {
         assertDisplayed(CalendarTestTags.LOGGED_OUT_STATE_TEST_TAG)
+    }
+
+    fun assertLockedStateDisplayed() = apply {
+        assertDisplayed(CalendarTestTags.LOCKED_STATE_TEST_TAG)
     }
 
     fun assertEmptyStateDisplayed() = apply {

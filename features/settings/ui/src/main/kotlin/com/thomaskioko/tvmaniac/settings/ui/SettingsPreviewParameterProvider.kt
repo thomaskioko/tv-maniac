@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryGroup
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryItem
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabels
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsLocks
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
@@ -131,8 +132,25 @@ internal val loggedInState = SettingsState(
 )
 
 internal val appearanceState = loggedInState.copy(currentPage = SettingsPage.APPEARANCE, currentPageTitle = "Appearance")
+internal val appearanceLockedState = appearanceState.copy(
+    locks = SettingsLocks(
+        customThemesLocked = true,
+        badgeText = "Premium",
+        themesLockedTitle = "Custom themes are a Premium feature",
+        themesLockedMessage = "Upgrade to Premium to use custom themes.",
+        upgradeText = "Upgrade to Premium",
+        lockedContentDescription = "Locked",
+    ),
+)
 internal val behaviorState = loggedInState.copy(currentPage = SettingsPage.BEHAVIOR, currentPageTitle = "Behavior")
 internal val notificationsState = loggedInState.copy(currentPage = SettingsPage.NOTIFICATIONS, currentPageTitle = "Notifications")
+internal val notificationsLockedState = notificationsState.copy(
+    locks = SettingsLocks(
+        episodeNotificationsLocked = true,
+        badgeText = "Premium",
+        lockedContentDescription = "Locked",
+    ),
+)
 internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVACY, currentPageTitle = "Privacy")
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")

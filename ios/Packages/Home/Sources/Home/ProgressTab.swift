@@ -55,6 +55,10 @@ struct ProgressTab: View {
     private var calendarContent: some View {
         CalendarPageContent(
             state: calendarState.toState(),
+            lockedBadgeText: calendarState.lockedBadgeText,
+            lockedActionText: calendarState.lockedActionText,
+            lockedAccessibilityLabel: calendarState.lockedContentDescription,
+            onUpgradeClicked: { presenter.calendarPresenter.dispatch(action: CalendarUpgradeClicked()) },
             moreEpisodesFormat: { count in
                 String(format: calendarState.moreEpisodesFormat, count)
             },
@@ -95,6 +99,15 @@ private extension CalendarState {
     }
 
     private func toScreenState() -> CalendarScreenState {
+        let underlying = toUnderlyingScreenState()
+        return if isLocked {
+            .locked(underlying: underlying, title: lockedTitle, message: lockedMessage)
+        } else {
+            underlying
+        }
+    }
+
+    private func toUnderlyingScreenState() -> CalendarScreenState {
         if showLoading {
             .loading
         } else if !isLoggedIn {

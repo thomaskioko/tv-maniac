@@ -96,6 +96,10 @@ graph TB
     direction TB
     :data:similar:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -244,6 +248,7 @@ graph TB
   :features:calendar:presenter --> :core:view
   :features:calendar:presenter --> :data:account-manager:api
   :features:calendar:presenter -.-> :data:calendar:api
+  :features:calendar:presenter --> :data:subscription:api
   :features:calendar:presenter --> :domain:calendar
   :features:calendar:presenter -.-> :features:episode-sheet:nav
   :features:calendar:presenter --> :features:progress:nav

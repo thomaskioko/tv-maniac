@@ -14,11 +14,13 @@ public fun TvManiacSwitch(
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Switch(
         checked = checked,
         onCheckedChange = onCheckedChange,
         modifier = modifier,
+        enabled = enabled,
         colors = SwitchDefaults.colors(
             checkedThumbColor = MaterialTheme.colorScheme.secondary,
             checkedTrackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),

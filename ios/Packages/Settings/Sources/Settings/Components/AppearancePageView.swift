@@ -20,6 +20,13 @@ struct AppearancePageView<Theme: ThemeItem>: View {
                     ThemeSelectorView(
                         themes: themeItem.themes,
                         selectedTheme: themeItem.selectedTheme,
+                        isCustomThemesLocked: themeItem.isCustomThemesLocked,
+                        lockedBadgeText: themeItem.lockedBadgeText,
+                        lockedTitle: themeItem.lockedTitle,
+                        lockedMessage: themeItem.lockedMessage,
+                        lockedActionText: themeItem.lockedActionText,
+                        lockedAccessibilityLabel: themeItem.lockedAccessibilityLabel,
+                        onUpgradeClick: themeItem.onUpgradeClick,
                         onThemeSelected: themeItem.onThemeSelected
                     )
                     .padding(appTheme.spacing.medium)
@@ -54,6 +61,15 @@ struct AppearancePageView<Theme: ThemeItem>: View {
     #Preview {
         AppearancePageView(
             themeItem: SettingsPreviewSamples.themeItem,
+            imageQualityItem: SettingsPreviewSamples.imageQualityItem
+        )
+        .padding()
+        .appPreview()
+    }
+
+    #Preview("Locked") {
+        AppearancePageView(
+            themeItem: SettingsPreviewSamples.customThemeItem,
             imageQualityItem: SettingsPreviewSamples.imageQualityItem
         )
         .padding()

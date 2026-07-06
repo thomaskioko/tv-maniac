@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -71,60 +72,65 @@ internal fun ThemePreviewSwatch(
             modifier = Modifier.size(64.dp),
             contentAlignment = Alignment.Center,
         ) {
-            if (theme == ThemeModel.SYSTEM) {
-                SystemThemeSwatch(
-                    isSelected = isSelected,
-                    modifier = Modifier.size(56.dp),
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(colors.background)
-                        .then(
-                            if (isSelected) {
-                                Modifier.border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                            } else {
-                                Modifier.border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), CircleShape)
-                            },
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (theme == ThemeModel.SYSTEM) {
+                    SystemThemeSwatch(
+                        isSelected = isSelected,
+                        modifier = Modifier.size(56.dp),
+                    )
+                } else {
                     Box(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(56.dp)
                             .clip(CircleShape)
-                            .background(colors.accent),
-                    )
+                            .background(colors.background)
+                            .then(
+                                if (isSelected) {
+                                    Modifier.border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                                } else {
+                                    Modifier.border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), CircleShape)
+                                },
+                            ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(colors.accent),
+                        )
+                    }
                 }
-            }
 
-            if (isSelected) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(
-                            color = if (theme == ThemeModel.SYSTEM) {
-                                MaterialTheme.colorScheme.primary
+                if (isSelected) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(
+                                color = if (theme == ThemeModel.SYSTEM) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    colors.accent
+                                },
+                            ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = if (theme == ThemeModel.SYSTEM) {
+                                Color.White
                             } else {
-                                colors.accent
+                                colors.onAccent
                             },
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null,
-                        tint = if (theme == ThemeModel.SYSTEM) {
-                            Color.White
-                        } else {
-                            colors.onAccent
-                        },
-                        modifier = Modifier.size(14.dp),
-                    )
+                            modifier = Modifier.size(14.dp),
+                        )
+                    }
                 }
             }
         }
@@ -256,27 +262,32 @@ private fun ThemeModel.getPreviewColors(): ThemePreviewColors {
     }
 }
 
-private class ThemeSwatchPreviewProvider : PreviewParameterProvider<Pair<ThemeModel, Boolean>> {
-    override val values: Sequence<Pair<ThemeModel, Boolean>>
+private data class ThemeSwatchPreviewState(
+    val theme: ThemeModel,
+    val isSelected: Boolean,
+)
+
+private class ThemeSwatchPreviewProvider : PreviewParameterProvider<ThemeSwatchPreviewState> {
+    override val values: Sequence<ThemeSwatchPreviewState>
         get() = sequenceOf(
-            ThemeModel.SYSTEM to false,
-            ThemeModel.SYSTEM to true,
-            ThemeModel.LIGHT to false,
-            ThemeModel.LIGHT to true,
-            ThemeModel.DARK to false,
-            ThemeModel.DARK to true,
-            ThemeModel.TERMINAL to false,
-            ThemeModel.TERMINAL to true,
-            ThemeModel.AUTUMN to false,
-            ThemeModel.AUTUMN to true,
-            ThemeModel.AQUA to false,
-            ThemeModel.AQUA to true,
-            ThemeModel.AMBER to false,
-            ThemeModel.AMBER to true,
-            ThemeModel.SNOW to false,
-            ThemeModel.SNOW to true,
-            ThemeModel.CRIMSON to false,
-            ThemeModel.CRIMSON to true,
+            ThemeSwatchPreviewState(ThemeModel.SYSTEM, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.SYSTEM, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.LIGHT, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.LIGHT, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.DARK, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.DARK, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.TERMINAL, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.TERMINAL, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.AUTUMN, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.AUTUMN, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.AQUA, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.AQUA, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.AMBER, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.AMBER, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.SNOW, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.SNOW, isSelected = true),
+            ThemeSwatchPreviewState(ThemeModel.CRIMSON, isSelected = false),
+            ThemeSwatchPreviewState(ThemeModel.CRIMSON, isSelected = true),
         )
 }
 
@@ -284,14 +295,13 @@ private class ThemeSwatchPreviewProvider : PreviewParameterProvider<Pair<ThemeMo
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ThemePreviewSwatchPreview(
-    @PreviewParameter(ThemeSwatchPreviewProvider::class) themeState: Pair<ThemeModel, Boolean>,
+    @PreviewParameter(ThemeSwatchPreviewProvider::class) themeState: ThemeSwatchPreviewState,
 ) {
-    val (theme, isSelected) = themeState
     ThemePreviewSwatch(
-        theme = theme,
-        displayName = theme.name.replace("_", " ").lowercase()
+        theme = themeState.theme,
+        displayName = themeState.theme.name.replace("_", " ").lowercase()
             .replaceFirstChar { it.uppercase() },
-        isSelected = isSelected,
+        isSelected = themeState.isSelected,
         onClick = {},
     )
 }

@@ -20,6 +20,10 @@ public class FakeCalendarRepository : CalendarRepository {
     override fun observeCalendarEntries(startDate: Long, endDate: Long): Flow<List<CalendarEntry>> =
         entriesFlow.asStateFlow()
 
+    public var fetchCalendarInvocations: Int = 0
+        private set
+
     override suspend fun fetchCalendar(startDate: String, days: Int, forceRefresh: Boolean) {
+        fetchCalendarInvocations += 1
     }
 }

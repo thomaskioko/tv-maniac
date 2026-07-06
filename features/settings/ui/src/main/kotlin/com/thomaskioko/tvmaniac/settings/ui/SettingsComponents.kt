@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,11 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.thomaskioko.tvmaniac.compose.components.PremiumBadge
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
 
 @Composable
@@ -133,12 +136,17 @@ internal fun SettingsSwitchRow(
     modifier: Modifier = Modifier,
     description: String? = null,
     icon: ImageVector? = null,
+    locked: Boolean = false,
+    lockedBadgeText: String = "",
 ) {
+    val context = LocalContext.current
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .toggleable(
                 value = checked,
+                enabled = !locked,
                 onValueChange = onCheckedChange,
                 role = Role.Switch,
             )
@@ -156,6 +164,11 @@ internal fun SettingsSwitchRow(
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium,
             )
+            if (locked) {
+                Spacer(modifier = Modifier.height(4.dp))
+                PremiumBadge(text = lockedBadgeText)
+                Spacer(modifier = Modifier.height(4.dp))
+            }
             if (description != null) {
                 Text(
                     text = description,
@@ -168,6 +181,7 @@ internal fun SettingsSwitchRow(
         TvManiacSwitch(
             checked = checked,
             onCheckedChange = onCheckedChange,
+            enabled = !locked,
         )
     }
 }
