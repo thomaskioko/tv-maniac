@@ -30,7 +30,9 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
 
     private val fetchedSeasons = mutableListOf<SeasonDetailsParam>()
     private val syncedShowIds = mutableListOf<Long>()
+    private val latestSeasonRefreshShowIds = mutableListOf<Long>()
     private var fetchError: Throwable? = null
+    private var showSeasonSyncExpired: Boolean = false
 
     public fun setSeasonsResult(result: SeasonDetailsWithEpisodes) {
         seasonsResult.value = result
@@ -56,6 +58,12 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
         continueTrackingResult.value = result
     }
 
+    public fun setShowSeasonSyncExpired(expired: Boolean) {
+        showSeasonSyncExpired = expired
+    }
+
+    public fun getLatestSeasonRefreshShowIds(): List<Long> = latestSeasonRefreshShowIds.toList()
+
     override suspend fun fetchSeasonDetails(
         param: SeasonDetailsParam,
         forceRefresh: Boolean,
@@ -67,9 +75,15 @@ public class FakeSeasonDetailsRepository : SeasonDetailsRepository {
     override suspend fun syncShowSeasonDetails(
         showId: Long,
         forceRefresh: Boolean,
+        refreshLatestSeason: Boolean,
     ) {
         syncedShowIds.add(showId)
+        if (refreshLatestSeason) {
+            latestSeasonRefreshShowIds.add(showId)
+        }
     }
+
+    override suspend fun isShowSeasonSyncExpired(showId: Long): Boolean = showSeasonSyncExpired
 
     override suspend fun syncPreviousSeasonsEpisodes(
         showId: Long,

@@ -14,7 +14,11 @@ public interface SeasonDetailsRepository {
     public suspend fun syncShowSeasonDetails(
         showId: Long,
         forceRefresh: Boolean = false,
+        refreshLatestSeason: Boolean = false,
     )
+
+    /** Whether the per-show season-details sync gate has expired for [showId]. */
+    public suspend fun isShowSeasonSyncExpired(showId: Long): Boolean
 
     public suspend fun syncPreviousSeasonsEpisodes(
         showId: Long,

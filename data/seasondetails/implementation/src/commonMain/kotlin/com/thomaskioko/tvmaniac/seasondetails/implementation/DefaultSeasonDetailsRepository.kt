@@ -61,6 +61,7 @@ public class DefaultSeasonDetailsRepository(
     override suspend fun syncShowSeasonDetails(
         showId: Long,
         forceRefresh: Boolean,
+        refreshLatestSeason: Boolean,
     ) {
         val isCacheValid = !requestManagerRepository.isRequestExpired(
             entityId = showId,
@@ -68,7 +69,7 @@ public class DefaultSeasonDetailsRepository(
             threshold = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.duration,
         )
 
-        if (!forceRefresh && isCacheValid) {
+        if (!forceRefresh && !refreshLatestSeason && isCacheValid) {
             return
         }
 
@@ -77,6 +78,7 @@ public class DefaultSeasonDetailsRepository(
 
         if (seasons.isEmpty()) return
 
+        val latestSeasonNumber = seasons.maxOf { it.season_number }
         seasons.forEach { season ->
             fetchSeasonDetails(
                 param = SeasonDetailsParam(
@@ -84,7 +86,8 @@ public class DefaultSeasonDetailsRepository(
                     seasonId = season.season_id.id,
                     seasonNumber = season.season_number,
                 ),
-                forceRefresh = forceRefresh,
+                forceRefresh = forceRefresh ||
+                    (refreshLatestSeason && season.season_number == latestSeasonNumber),
             )
         }
 
@@ -93,6 +96,13 @@ public class DefaultSeasonDetailsRepository(
             requestType = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.name,
         )
     }
+
+    override suspend fun isShowSeasonSyncExpired(showId: Long): Boolean =
+        requestManagerRepository.isRequestExpired(
+            entityId = showId,
+            requestType = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.name,
+            threshold = RequestTypeConfig.SHOW_SEASON_DETAILS_SYNC.duration,
+        )
 
     override suspend fun syncPreviousSeasonsEpisodes(
         showId: Long,
