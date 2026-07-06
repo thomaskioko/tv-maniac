@@ -44,6 +44,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.CustomThemes
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -56,6 +57,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarAction
 import com.thomaskioko.tvmaniac.presentation.calendar.CalendarState
+import com.thomaskioko.tvmaniac.presentation.calendar.CalendarUpgradeClicked
 import com.thomaskioko.tvmaniac.presentation.calendar.EpisodeCardClicked
 import com.thomaskioko.tvmaniac.presentation.calendar.MessageShown
 import com.thomaskioko.tvmaniac.presentation.calendar.NavigateToNextWeek
@@ -80,15 +82,17 @@ public fun CalendarScreen(
             .background(MaterialTheme.colorScheme.background),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            WeekNavigationHeader(
-                weekLabel = state.weekLabel,
-                canNavigatePrevious = state.canNavigatePrevious,
-                canNavigateNext = state.canNavigateNext,
-                isRefreshing = state.isRefreshing,
-                onPreviousClick = { onAction(NavigateToPreviousWeek) },
-                onNextClick = { onAction(NavigateToNextWeek) },
-                modifier = Modifier.padding(horizontal = 4.dp),
-            )
+            if (!state.isLocked) {
+                WeekNavigationHeader(
+                    weekLabel = state.weekLabel,
+                    canNavigatePrevious = state.canNavigatePrevious,
+                    canNavigateNext = state.canNavigateNext,
+                    isRefreshing = state.isRefreshing,
+                    onPreviousClick = { onAction(NavigateToPreviousWeek) },
+                    onNextClick = { onAction(NavigateToNextWeek) },
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                )
+            }
 
             CalendarBody(
                 state = state,
@@ -108,6 +112,44 @@ public fun CalendarScreen(
 
 @Composable
 private fun CalendarBody(
+    state: CalendarState,
+    contentPadding: PaddingValues,
+    scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
+    onAction: (CalendarAction) -> Unit,
+) {
+    val context = LocalContext.current
+
+    if (state.isLocked) {
+        CustomThemes(
+            locked = true,
+            badgeText = state.lockedBadgeText,
+            title = state.lockedTitle,
+            message = state.lockedMessage,
+            actionText = state.lockedActionText,
+            onActionClick = { onAction(CalendarUpgradeClicked) },
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag(CalendarTestTags.LOCKED_STATE_TEST_TAG),
+        ) {
+            CalendarPageBody(
+                state = state,
+                contentPadding = contentPadding,
+                scrollBehavior = scrollBehavior,
+                onAction = onAction,
+            )
+        }
+    } else {
+        CalendarPageBody(
+            state = state,
+            contentPadding = contentPadding,
+            scrollBehavior = scrollBehavior,
+            onAction = onAction,
+        )
+    }
+}
+
+@Composable
+private fun CalendarPageBody(
     state: CalendarState,
     contentPadding: PaddingValues,
     scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior,
@@ -399,48 +441,7 @@ private fun CalendarScreenPreview() {
             weekLabel = "Jan 31, 2026 - Feb 6, 2026",
             canNavigatePrevious = false,
             moreEpisodesFormat = "+%d episodes",
-            dateGroups = persistentListOf(
-                CalendarDateGroup(
-                    dateLabel = "Today, Jan 31, 2026",
-                    episodes = persistentListOf(
-                        CalendarEpisodeItem(
-                            showId = 1,
-                            episodeId = 100L,
-                            showTitle = "Severance",
-                            posterUrl = null,
-                            episodeInfo = "S02E01 · Hello, Ms. Cobel",
-                            airTime = "03:00",
-                            network = "Apple TV+",
-                            additionalEpisodesCount = 0,
-                            overview = "Mark leads the team on a new mission.",
-                            rating = 8.5,
-                            votes = 120,
-                            runtime = 50,
-                            formattedAirDate = "Friday, January 31, 2026 at 03:00",
-                        ),
-                    ),
-                ),
-                CalendarDateGroup(
-                    dateLabel = "Tomorrow, Feb 1, 2026",
-                    episodes = persistentListOf(
-                        CalendarEpisodeItem(
-                            showId = 2,
-                            episodeId = 200L,
-                            showTitle = "Hell's Paradise",
-                            posterUrl = null,
-                            episodeInfo = "S02E04 · The Battle Begins",
-                            airTime = "15:45",
-                            network = null,
-                            additionalEpisodesCount = 1,
-                            overview = null,
-                            rating = null,
-                            votes = null,
-                            runtime = 24,
-                            formattedAirDate = "Saturday, February 1, 2026 at 15:45",
-                        ),
-                    ),
-                ),
-            ),
+            dateGroups = previewDateGroups(),
         ),
         onAction = {},
     )
@@ -478,3 +479,67 @@ private fun CalendarScreenNotLoggedInPreview() {
         onAction = {},
     )
 }
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun CalendarScreenLockedPreview() {
+    CalendarScreen(
+        state = CalendarState(
+            isLoading = false,
+            isLoggedIn = true,
+            isLocked = true,
+            lockedTitle = "Calendar is a Premium feature",
+            lockedMessage = "Upgrade to Premium to see your upcoming episodes.",
+            lockedBadgeText = "Premium",
+            lockedActionText = "Upgrade to Premium",
+            weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+            moreEpisodesFormat = "+%d episodes",
+            dateGroups = previewDateGroups(),
+        ),
+        onAction = {},
+    )
+}
+
+private fun previewDateGroups(): ImmutableList<CalendarDateGroup> = persistentListOf(
+    CalendarDateGroup(
+        dateLabel = "Today, Jan 31, 2026",
+        episodes = persistentListOf(
+            CalendarEpisodeItem(
+                showId = 1,
+                episodeId = 100L,
+                showTitle = "Severance",
+                posterUrl = null,
+                episodeInfo = "S02E01 · Hello, Ms. Cobel",
+                airTime = "03:00",
+                network = "Apple TV+",
+                additionalEpisodesCount = 0,
+                overview = "Mark leads the team on a new mission.",
+                rating = 8.5,
+                votes = 120,
+                runtime = 50,
+                formattedAirDate = "Friday, January 31, 2026 at 03:00",
+            ),
+        ),
+    ),
+    CalendarDateGroup(
+        dateLabel = "Tomorrow, Feb 1, 2026",
+        episodes = persistentListOf(
+            CalendarEpisodeItem(
+                showId = 2,
+                episodeId = 200L,
+                showTitle = "Hell's Paradise",
+                posterUrl = null,
+                episodeInfo = "S02E04 · The Battle Begins",
+                airTime = "15:45",
+                network = null,
+                additionalEpisodesCount = 1,
+                overview = null,
+                rating = null,
+                votes = null,
+                runtime = 24,
+                formattedAirDate = "Saturday, February 1, 2026 at 15:45",
+            ),
+        ),
+    ),
+)

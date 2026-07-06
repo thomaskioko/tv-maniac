@@ -18,12 +18,15 @@ import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey.CdLocked
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarEmpty
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLockedMessage
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLockedTitle
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequired
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelPremiumBadge
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelUpgradeToPremium
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
@@ -81,6 +84,9 @@ public class CalendarPresenter(
             isLocked = !hasCalendarAccess,
             lockedTitle = calendarStateMapper.getString(LabelCalendarLockedTitle),
             lockedMessage = calendarStateMapper.getString(LabelCalendarLockedMessage),
+            lockedBadgeText = calendarStateMapper.getString(LabelPremiumBadge),
+            lockedActionText = calendarStateMapper.getString(LabelUpgradeToPremium),
+            lockedContentDescription = calendarStateMapper.getString(CdLocked),
             weekLabel = calendarWeekCalculator.formatWeekLabel(currentState.weekOffset),
             canNavigatePrevious = currentState.weekOffset > 0,
             canNavigateNext = isLoggedIn,

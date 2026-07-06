@@ -70,4 +70,9 @@ public data class SettingsState(
 public data class SettingsLocks(
     val customThemesLocked: Boolean = false,
     val episodeNotificationsLocked: Boolean = false,
+    val badgeText: String = "",
+    val themesLockedTitle: String = "",
+    val themesLockedMessage: String = "",
+    val upgradeText: String = "",
+    val lockedContentDescription: String = "",
 )

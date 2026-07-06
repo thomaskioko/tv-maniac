@@ -121,11 +121,11 @@ public struct SettingsView: View {
             themes: DeviceAppTheme.sortedThemes,
             selectedTheme: store.appTheme,
             isCustomThemesLocked: uiState.locks.customThemesLocked,
-            lockedBadgeText: String(\.label_premium_badge),
-            lockedTitle: String(\.label_themes_locked_title),
-            lockedMessage: String(\.label_themes_locked_message),
-            lockedActionText: String(\.label_upgrade_to_premium),
-            lockedAccessibilityLabel: String(\.cd_locked),
+            lockedBadgeText: uiState.locks.badgeText,
+            lockedTitle: uiState.locks.themesLockedTitle,
+            lockedMessage: uiState.locks.themesLockedMessage,
+            lockedActionText: uiState.locks.upgradeText,
+            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
             onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) },
             onThemeSelected: { selectedTheme in
                 store.appTheme = selectedTheme
@@ -205,8 +205,8 @@ public struct SettingsView: View {
                 subtitle: uiState.labels.episodeNotificationsDescription,
                 isOn: uiState.episodeNotificationsEnabled,
                 isLocked: uiState.locks.episodeNotificationsLocked,
-                lockedBadgeText: String(\.label_premium_badge),
-                lockedAccessibilityLabel: String(\.cd_locked),
+                lockedBadgeText: uiState.locks.badgeText,
+                lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
                 onToggle: { handleNotificationToggle(enabled: $0) }
             ),
         ]

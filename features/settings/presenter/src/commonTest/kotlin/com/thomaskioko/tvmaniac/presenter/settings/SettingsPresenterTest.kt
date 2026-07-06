@@ -36,7 +36,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsLocks
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
@@ -508,7 +507,9 @@ class SettingsPresenterTest {
     fun `should report unlocked locks given full access`() = runTest {
         presenter.state.test {
             testScheduler.advanceUntilIdle()
-            expectMostRecentItem().locks shouldBe SettingsLocks()
+            val locks = expectMostRecentItem().locks
+            locks.customThemesLocked shouldBe false
+            locks.episodeNotificationsLocked shouldBe false
         }
     }
 
@@ -519,7 +520,11 @@ class SettingsPresenterTest {
 
         presenter.state.test {
             testScheduler.advanceUntilIdle()
-            expectMostRecentItem().locks shouldBe SettingsLocks(customThemesLocked = true, episodeNotificationsLocked = true)
+            val locks = expectMostRecentItem().locks
+            locks.customThemesLocked shouldBe true
+            locks.episodeNotificationsLocked shouldBe true
+            locks.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
+            locks.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)
         }
     }
 

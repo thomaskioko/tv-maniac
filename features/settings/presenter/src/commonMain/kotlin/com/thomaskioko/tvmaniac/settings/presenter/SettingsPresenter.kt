@@ -101,6 +101,11 @@ public class SettingsPresenter(
         SettingsLocks(
             customThemesLocked = !customThemesAccess,
             episodeNotificationsLocked = !episodeNotificationsAccess,
+            badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
+            themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
+            themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
+            upgradeText = localizer.getString(StringResourceKey.LabelUpgradeToPremium),
+            lockedContentDescription = localizer.getString(StringResourceKey.CdLocked),
         )
     }
 
