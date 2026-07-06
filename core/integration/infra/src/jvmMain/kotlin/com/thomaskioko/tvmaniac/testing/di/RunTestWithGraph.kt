@@ -2,10 +2,12 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import dev.zacsweers.metro.createGraphFactory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -41,7 +43,13 @@ public fun runTestWithGraph(
     Dispatchers.setMain(testDispatcher)
     try {
         val graph = createGraphFactory<TestGraph.Factory>().create()
-        testBody(graph)
+        try {
+            testBody(graph)
+        } finally {
+            graph.ioCoroutineScope.cancel()
+            graph.mainCoroutineScope.cancel()
+            advanceUntilIdle()
+        }
     } finally {
         Dispatchers.resetMain()
     }
