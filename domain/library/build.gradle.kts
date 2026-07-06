@@ -39,6 +39,17 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.logger.testing)
+                implementation(projects.core.syncstate.testing)
+                implementation(projects.core.util.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.episode.testing)
+                implementation(projects.data.followedshows.testing)
+                implementation(projects.data.library.testing)
+                implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.showdetails.testing)
+                implementation(projects.data.syncActivity.testing)
+                implementation(projects.data.watchproviders.testing)
             }
         }
     }

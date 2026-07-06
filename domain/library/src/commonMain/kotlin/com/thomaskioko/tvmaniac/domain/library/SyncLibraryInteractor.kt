@@ -77,7 +77,7 @@ public class SyncLibraryInteractor(
                         syncShowMetadataInteractor.executeSync(
                             SyncShowMetadataInteractor.Param(
                                 showId = show.showId,
-                                forceRefresh = params.forceRefresh,
+                                forceRefresh = params.isUserInitiated,
                                 refreshLatestSeason = showMetadataSyncHelper.shouldRefreshLatestSeason(show.showId),
                             ),
                         )
@@ -104,6 +104,7 @@ public class SyncLibraryInteractor(
 
     public data class Param(
         val forceRefresh: Boolean = false,
+        val isUserInitiated: Boolean = false,
     )
 
     private companion object {

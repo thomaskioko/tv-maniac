@@ -126,7 +126,7 @@ public class LibraryPresenter(
             is ToggleStatusFilter -> toggleStatusFilter(action.status)
             is ClearFilters -> clearFilters()
             is MessageShown -> clearMessage(action.id)
-            is RefreshLibrary -> syncLibrary(forceRefresh = true)
+            is RefreshLibrary -> syncLibrary(isUserInitiated = true)
         }
     }
 
@@ -183,10 +183,14 @@ public class LibraryPresenter(
         }
     }
 
-    private fun syncLibrary(forceRefresh: Boolean = false) {
+    private fun syncLibrary(isUserInitiated: Boolean = false) {
         coroutineScope.launch {
-            syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = forceRefresh))
-                .collectStatus(loadingState, logger, uiMessageManager, "Library", errorToStringMapper)
+            syncLibraryInteractor(
+                SyncLibraryInteractor.Param(
+                    forceRefresh = isUserInitiated,
+                    isUserInitiated = isUserInitiated,
+                ),
+            ).collectStatus(loadingState, logger, uiMessageManager, "Library", errorToStringMapper)
         }
     }
 
