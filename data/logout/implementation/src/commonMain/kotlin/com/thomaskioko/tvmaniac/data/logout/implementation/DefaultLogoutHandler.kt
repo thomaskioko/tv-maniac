@@ -34,6 +34,7 @@ public class DefaultLogoutHandler(
 
         transactionRunner {
             database.watchedEpisodesQueries.deleteAll()
+            database.watchedShowSyncLogQueries.deleteAll()
             database.followedShowsQueries.deleteAll()
             database.continueWatchingQueries.deleteAll()
             database.favoritesQueries.deleteAll()
