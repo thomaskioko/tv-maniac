@@ -20,6 +20,11 @@ public enum class ThemeModel(public val theme: Theme) {
         get() = theme.displayNameKey
     public val displayOrder: Int
         get() = theme.displayOrder
+    public val isPremium: Boolean
+        get() = when (this) {
+            SYSTEM, LIGHT, DARK -> false
+            else -> true
+        }
 
     public companion object {
         public val sortedByDisplayOrder: List<ThemeModel> = entries.sortedBy { it.displayOrder }

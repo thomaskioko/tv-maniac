@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -18,22 +19,26 @@ import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarEmpty
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLockedMessage
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLockedTitle
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarLoginRequired
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarMoreEpisodes
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey.LabelCalendarNoData
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine as combineFlows
 
 @ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
@@ -43,6 +48,7 @@ public class CalendarPresenter(
     private val observeCalendarInteractor: ObserveCalendarInteractor,
     private val fetchCalendarInteractor: FetchCalendarInteractor,
     private val accountManager: AccountManager,
+    private val subscriptionManager: SubscriptionManager,
     private val calendarWeekCalculator: CalendarWeekCalculator,
     private val calendarStateMapper: CalendarStateMapper,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -64,13 +70,17 @@ public class CalendarPresenter(
         loadingState.observable,
         observeCalendarInteractor.flow,
         accountManager.isConnected,
+        subscriptionManager.observeAccess(SubscriptionFeature.Calendar),
         uiMessageManager.message,
         _state,
-    ) { isLoading, entries, isLoggedIn, message, currentState ->
+    ) { isLoading, entries, isLoggedIn, hasCalendarAccess, message, currentState ->
         currentState.copy(
             isLoading = isLoading && entries.isEmpty(),
             isRefreshing = isLoading,
             isLoggedIn = isLoggedIn,
+            isLocked = !hasCalendarAccess,
+            lockedTitle = calendarStateMapper.getString(LabelCalendarLockedTitle),
+            lockedMessage = calendarStateMapper.getString(LabelCalendarLockedMessage),
             weekLabel = calendarWeekCalculator.formatWeekLabel(currentState.weekOffset),
             canNavigatePrevious = currentState.weekOffset > 0,
             canNavigateNext = isLoggedIn,
@@ -91,7 +101,9 @@ public class CalendarPresenter(
     public val stateValue: Value<CalendarState> = state.asValue(coroutineScope)
 
     public fun dispatch(action: CalendarAction) {
+        if (state.value.isLocked && action !is MessageShown && action !is CalendarUpgradeClicked) return
         when (action) {
+            is CalendarUpgradeClicked -> Unit
             is RefreshCalendar -> fetchCalendar(
                 startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset),
                 forceRefresh = true,
@@ -108,10 +120,13 @@ public class CalendarPresenter(
 
     private fun observeAuthState() {
         coroutineScope.launch {
-            accountManager.isConnected
+            combineFlows(
+                accountManager.isConnected,
+                subscriptionManager.observeAccess(SubscriptionFeature.Calendar),
+            ) { isLoggedIn, hasCalendarAccess -> isLoggedIn && hasCalendarAccess }
                 .distinctUntilChanged()
-                .collect { isLoggedIn ->
-                    if (isLoggedIn) {
+                .collect { canLoad ->
+                    if (canLoad) {
                         fetchCalendar(startDate = calendarWeekCalculator.getStartDateForOffset(_state.value.weekOffset))
                     }
                 }

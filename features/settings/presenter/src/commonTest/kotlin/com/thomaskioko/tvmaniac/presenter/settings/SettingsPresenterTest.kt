@@ -33,15 +33,20 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
+import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsLocks
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.SwitchProviderClicked
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
+import com.thomaskioko.tvmaniac.settings.presenter.UpgradeToPremiumClicked
 import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -75,6 +80,7 @@ class SettingsPresenterTest {
     private val libraryRepository = FakeLibraryRepository()
     private val traktListRepository = FakeTraktListRepository()
     private val navigator = FakeNavigator()
+    private val subscriptionManager = FakeSubscriptionManager()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -86,6 +92,7 @@ class SettingsPresenterTest {
             datastoreRepository = datastoreRepository,
             userRepository = userRepository,
             accountManager = accountManager,
+            subscriptionManager = subscriptionManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             logger = fakeLogger,
@@ -495,5 +502,84 @@ class SettingsPresenterTest {
 
         navigator.lastNavigatedRoute shouldBe null
         datastoreRepository.observeDebugMenuEnabled().first() shouldBe false
+    }
+
+    @Test
+    fun `should report unlocked locks given full access`() = runTest {
+        presenter.state.test {
+            testScheduler.advanceUntilIdle()
+            expectMostRecentItem().locks shouldBe SettingsLocks()
+        }
+    }
+
+    @Test
+    fun `should surface locks given subscription access is revoked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.CustomThemes, false)
+        subscriptionManager.setAccess(SubscriptionFeature.EpisodeNotifications, false)
+
+        presenter.state.test {
+            testScheduler.advanceUntilIdle()
+            expectMostRecentItem().locks shouldBe SettingsLocks(customThemesLocked = true, episodeNotificationsLocked = true)
+        }
+    }
+
+    @Test
+    fun `should ignore ThemeSelected for a premium palette while locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.CustomThemes, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(ThemeSelected(ThemeModel.TERMINAL))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().theme shouldBe ThemeModel.SYSTEM
+        }
+    }
+
+    @Test
+    fun `should apply a free palette while custom themes are locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.CustomThemes, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(ThemeSelected(ThemeModel.DARK))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().theme shouldBe ThemeModel.DARK
+        }
+    }
+
+    @Test
+    fun `should ignore EpisodeNotificationsToggled while locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.EpisodeNotifications, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(EpisodeNotificationsToggled(true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().episodeNotificationsEnabled shouldBe false
+        }
+        datastoreRepository.observeEpisodeNotificationsEnabled().first() shouldBe false
+    }
+
+    @Test
+    fun `should apply a premium palette when custom themes are unlocked`() = runTest {
+        presenter.dispatch(ThemeSelected(ThemeModel.TERMINAL))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().theme shouldBe ThemeModel.TERMINAL
+        }
+    }
+
+    @Test
+    fun `should keep state unchanged given UpgradeToPremiumClicked is dispatched`() = runTest {
+        presenter.dispatch(UpgradeToPremiumClicked)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().theme shouldBe ThemeModel.SYSTEM
+        }
     }
 }

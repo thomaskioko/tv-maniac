@@ -36,6 +36,8 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -78,6 +80,7 @@ public class SettingsPresenter(
     @AccountSwitchFlagQualifier
     private val accountSwitchFlag: FeatureFlag<Boolean>,
     private val accountManager: AccountManager,
+    private val subscriptionManager: SubscriptionManager,
     private val pushPendingChangesInteractor: PushPendingChangesInteractor,
     private val countUnsavedChanges: CountUnsavedChanges,
     private val switchAccountInteractor: SwitchAccountInteractor,
@@ -90,6 +93,16 @@ public class SettingsPresenter(
 
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
+
+    private val locksFlow = kotlinx.coroutines.flow.combine(
+        subscriptionManager.observeAccess(SubscriptionFeature.CustomThemes),
+        subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
+    ) { customThemesAccess, episodeNotificationsAccess ->
+        SettingsLocks(
+            customThemesLocked = !customThemesAccess,
+            episodeNotificationsLocked = !episodeNotificationsAccess,
+        )
+    }
 
     init {
         observeSettingsPreferencesInteractor(Unit)
@@ -106,7 +119,8 @@ public class SettingsPresenter(
         userRepository.observeCurrentUser().onStart { emit(null) },
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
-    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled ->
+        locksFlow,
+    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, locks ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
@@ -133,6 +147,7 @@ public class SettingsPresenter(
             crashReportingEnabled = preferences.crashReportingEnabled,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
+            locks = locks,
             currentPageTitle = resolvePageTitle(currentState.currentPage),
             rootGroups = buildRootGroups(),
             username = username,
@@ -184,8 +199,11 @@ public class SettingsPresenter(
 
             DismissSwitchDialog -> dismissSwitchDialog()
 
+            is UpgradeToPremiumClicked -> Unit
             is ThemeSelected -> {
-                datastoreRepository.saveTheme(action.theme.toTheme().toAppTheme())
+                if (!(action.theme.isPremium && state.value.locks.customThemesLocked)) {
+                    datastoreRepository.saveTheme(action.theme.toTheme().toAppTheme())
+                }
             }
 
             is ImageQualitySelected -> {
@@ -214,6 +232,7 @@ public class SettingsPresenter(
                 }
             }
             is EpisodeNotificationsToggled -> {
+                if (state.value.locks.episodeNotificationsLocked) return
                 coroutineScope.launch {
                     toggleEpisodeNotificationsInteractor(
                         ToggleEpisodeNotificationsInteractor.Params(enabled = action.enabled),

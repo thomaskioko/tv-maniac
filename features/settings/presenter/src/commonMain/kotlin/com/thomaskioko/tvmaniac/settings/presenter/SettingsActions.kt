@@ -11,6 +11,8 @@ public data class ThemeSelected(
 
 public data object BackClicked : SettingsActions
 
+public data object UpgradeToPremiumClicked : SettingsActions
+
 public data class OpenSettingsPage(
     val page: SettingsPage,
 ) : SettingsActions

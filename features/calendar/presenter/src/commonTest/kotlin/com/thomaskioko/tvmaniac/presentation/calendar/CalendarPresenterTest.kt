@@ -14,7 +14,11 @@ import com.thomaskioko.tvmaniac.domain.calendar.CalendarWeekCalculator
 import com.thomaskioko.tvmaniac.domain.calendar.FetchCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.calendar.ObserveCalendarInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -35,6 +39,8 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 internal class CalendarPresenterTest {
+
+    private val subscriptionManager = FakeSubscriptionManager()
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
@@ -383,6 +389,56 @@ internal class CalendarPresenterTest {
         }
     }
 
+    @Test
+    fun `should expose locked state with resolved copy given calendar access is revoked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.Calendar, false)
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isLocked shouldBe true
+            state.lockedTitle shouldBe FakeLocalizer().getString(StringResourceKey.LabelCalendarLockedTitle)
+            state.lockedMessage shouldBe FakeLocalizer().getString(StringResourceKey.LabelCalendarLockedMessage)
+        }
+    }
+
+    @Test
+    fun `should ignore week navigation and refresh while locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.Calendar, false)
+        val navigator = FakeNavigator()
+        val presenter = createPresenter(navigator = navigator)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(NavigateToNextWeek)
+        presenter.dispatch(RefreshCalendar)
+        presenter.dispatch(EpisodeCardClicked(episodeId = 42L))
+        presenter.dispatch(CalendarUpgradeClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().weekOffset shouldBe 0
+        }
+        navigator.lastNavigatedRoute shouldBe null
+        calendarRepository.fetchCalendarInvocations shouldBe 0
+    }
+
+    @Test
+    fun `should clear the lock given access is granted`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.Calendar, false)
+        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        val presenter = createPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        subscriptionManager.setAccess(SubscriptionFeature.Calendar, true)
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().isLocked shouldBe false
+        }
+        calendarRepository.fetchCalendarInvocations shouldBe 1
+    }
+
     private fun createPresenter(
         navigator: FakeNavigator = FakeNavigator(),
     ): CalendarPresenter {
@@ -415,7 +471,7 @@ internal class CalendarPresenterTest {
         )
 
         val calendarStateMapper = CalendarStateMapper(
-            localizer = com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer(),
+            localizer = FakeLocalizer(),
         )
 
         return CalendarPresenter(
@@ -424,6 +480,7 @@ internal class CalendarPresenterTest {
             observeCalendarInteractor = observeCalendarInteractor,
             fetchCalendarInteractor = fetchCalendarInteractor,
             accountManager = accountManager,
+            subscriptionManager = subscriptionManager,
             calendarWeekCalculator = calendarWeekCalculator,
             calendarStateMapper = calendarStateMapper,
             errorToStringMapper = { it.message ?: "Test error" },

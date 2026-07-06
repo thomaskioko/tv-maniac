@@ -11,3 +11,5 @@ public data object NavigateToNextWeek : CalendarAction
 public data class EpisodeCardClicked(val episodeId: Long) : CalendarAction
 
 public data class MessageShown(val id: Long) : CalendarAction
+
+public data object CalendarUpgradeClicked : CalendarAction
