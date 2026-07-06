@@ -596,6 +596,7 @@ graph TB
   :data:start-watching:implementation --> :data:shows:api
   :data:start-watching:implementation --> :data:start-watching:api
   :data:subscription:implementation --> :core:appconfig:api
+  :data:subscription:implementation --> :core:base
   :data:subscription:implementation --> :core:feature-flags:api
   :data:subscription:implementation --> :data:datastore:api
   :data:subscription:implementation --> :data:subscription:api

@@ -5,6 +5,11 @@
 <!--region graph-->
 ```mermaid
 graph TB
+  subgraph :core
+    direction TB
+    :core:base[base]:::multiplatform
+    :core:view[view]:::multiplatform
+  end
   subgraph :core:appconfig
     direction TB
     :core:appconfig:api[api]:::multiplatform
@@ -12,6 +17,10 @@ graph TB
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
+  end
+  subgraph :core:logger
+    direction TB
+    :core:logger:api[api]:::multiplatform
   end
   subgraph :data:datastore
     direction TB
@@ -27,8 +36,12 @@ graph TB
     :i18n:generator[generator]:::multiplatform
   end
 
+  :core:base --> :core:logger:api
+  :core:base --> :core:view
+  :core:view --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:subscription:implementation --> :core:appconfig:api
+  :data:subscription:implementation --> :core:base
   :data:subscription:implementation --> :core:feature-flags:api
   :data:subscription:implementation --> :data:datastore:api
   :data:subscription:implementation --> :data:subscription:api
