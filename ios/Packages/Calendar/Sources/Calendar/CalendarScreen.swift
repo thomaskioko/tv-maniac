@@ -7,6 +7,7 @@ public enum CalendarScreenState: Equatable {
     case loading
     case loginRequired(title: String, message: String)
     case empty(title: String, message: String)
+    indirect case locked(underlying: CalendarScreenState, title: String, message: String)
     case content(dateGroups: [SwiftCalendarDateGroup])
 }
 
@@ -40,6 +41,10 @@ public struct CalendarPageContent: View {
     @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let state: State
+    private let lockedBadgeText: String
+    private let lockedActionText: String
+    private let lockedAccessibilityLabel: String
+    private let onUpgradeClicked: () -> Void
     private let moreEpisodesFormat: (Int32) -> String
     private let onPreviousWeek: () -> Void
     private let onNextWeek: () -> Void
@@ -47,16 +52,29 @@ public struct CalendarPageContent: View {
 
     public init(
         state: State,
+        lockedBadgeText: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = "",
+        onUpgradeClicked: @escaping () -> Void = {},
         moreEpisodesFormat: @escaping (Int32) -> String,
         onPreviousWeek: @escaping () -> Void,
         onNextWeek: @escaping () -> Void,
         onEpisodeCardClicked: @escaping (Int64) -> Void
     ) {
         self.state = state
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedActionText = lockedActionText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
+        self.onUpgradeClicked = onUpgradeClicked
         self.moreEpisodesFormat = moreEpisodesFormat
         self.onPreviousWeek = onPreviousWeek
         self.onNextWeek = onNextWeek
         self.onEpisodeCardClicked = onEpisodeCardClicked
+    }
+
+    private var isLocked: Bool {
+        if case .locked = state.screenState { return true }
+        return false
     }
 
     public var body: some View {
@@ -66,18 +84,23 @@ public struct CalendarPageContent: View {
                     contentView
                 }
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbar(isLocked ? .hidden : .automatic, for: .navigationBar)
                 .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        weekNavigationHeader
+                    if !isLocked {
+                        ToolbarItem(placement: .principal) {
+                            weekNavigationHeader
+                        }
                     }
                 }
                 .toolbarBackground(.appSurface, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
             } else {
                 VStack(spacing: 0) {
-                    weekNavigationHeader
-                        .padding(.horizontal, theme.spacing.small)
-                        .padding(.vertical, theme.spacing.xSmall)
+                    if !isLocked {
+                        weekNavigationHeader
+                            .padding(.horizontal, theme.spacing.small)
+                            .padding(.vertical, theme.spacing.xSmall)
+                    }
 
                     contentView
                 }
@@ -124,6 +147,25 @@ public struct CalendarPageContent: View {
     @ViewBuilder
     private var contentView: some View {
         switch state.screenState {
+        case let .locked(underlying, title, message):
+            stateBody(for: underlying)
+                .premiumOverlay(
+                    isLocked: true,
+                    badgeText: lockedBadgeText,
+                    title: title,
+                    message: message,
+                    actionText: lockedActionText,
+                    onActionClick: onUpgradeClicked,
+                    accessibilityLabel: lockedAccessibilityLabel.isEmpty ? nil : lockedAccessibilityLabel
+                )
+        default:
+            stateBody(for: state.screenState)
+        }
+    }
+
+    @ViewBuilder
+    private func stateBody(for screenState: CalendarScreenState) -> some View {
+        switch screenState {
         case .loading:
             CenteredFullScreenView {
                 ProgressView()
@@ -148,6 +190,8 @@ public struct CalendarPageContent: View {
                 )
                 .frame(maxWidth: .infinity)
             }
+        case .locked:
+            EmptyView()
         case let .content(dateGroups):
             calendarContent(dateGroups: dateGroups)
         }
@@ -258,6 +302,10 @@ public struct CalendarScreen: View {
     }
 
     private let state: State
+    private let lockedBadgeText: String
+    private let lockedActionText: String
+    private let lockedAccessibilityLabel: String
+    private let onUpgradeClicked: () -> Void
     private let moreEpisodesFormat: (Int32) -> String
     private let onPreviousWeek: () -> Void
     private let onNextWeek: () -> Void
@@ -265,12 +313,20 @@ public struct CalendarScreen: View {
 
     public init(
         state: State,
+        lockedBadgeText: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = "",
+        onUpgradeClicked: @escaping () -> Void = {},
         moreEpisodesFormat: @escaping (Int32) -> String,
         onPreviousWeek: @escaping () -> Void,
         onNextWeek: @escaping () -> Void,
         onEpisodeCardClicked: @escaping (Int64) -> Void
     ) {
         self.state = state
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedActionText = lockedActionText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
+        self.onUpgradeClicked = onUpgradeClicked
         self.moreEpisodesFormat = moreEpisodesFormat
         self.onPreviousWeek = onPreviousWeek
         self.onNextWeek = onNextWeek
@@ -287,6 +343,10 @@ public struct CalendarScreen: View {
                 isRefreshing: state.isRefreshing,
                 useToolbar: true
             ),
+            lockedBadgeText: lockedBadgeText,
+            lockedActionText: lockedActionText,
+            lockedAccessibilityLabel: lockedAccessibilityLabel,
+            onUpgradeClicked: onUpgradeClicked,
             moreEpisodesFormat: moreEpisodesFormat,
             onPreviousWeek: onPreviousWeek,
             onNextWeek: onNextWeek,
@@ -351,6 +411,49 @@ public struct CalendarScreen: View {
                 canNavigateNext: true,
                 isRefreshing: false
             ),
+            moreEpisodesFormat: { "+\($0) episodes" },
+            onPreviousWeek: {},
+            onNextWeek: {},
+            onEpisodeCardClicked: { _ in }
+        )
+    }
+    .appPreview()
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Locked") {
+    NavigationStack {
+        CalendarScreen(
+            state: CalendarScreen.State(
+                screenState: .locked(
+                    underlying: .content(dateGroups: [
+                        SwiftCalendarDateGroup(
+                            dateLabel: "Today, Jan 31, 2026",
+                            episodes: [
+                                SwiftCalendarEpisodeItem(
+                                    showId: 1,
+                                    episodeId: 100,
+                                    showTitle: "Severance",
+                                    posterUrl: nil,
+                                    episodeInfo: "S02E01 · Hello, Ms. Cobel",
+                                    airTime: "03:00",
+                                    network: "Apple TV+",
+                                    additionalEpisodesCount: 0
+                                ),
+                            ]
+                        ),
+                    ]),
+                    title: "Calendar is a Premium feature",
+                    message: "Upgrade to see upcoming episodes for your shows"
+                ),
+                weekLabel: "Jan 31, 2026 - Feb 6, 2026",
+                canNavigatePrevious: false,
+                canNavigateNext: true,
+                isRefreshing: false
+            ),
+            lockedBadgeText: "Premium",
+            lockedActionText: "Upgrade to Premium",
+            lockedAccessibilityLabel: "Locked",
             moreEpisodesFormat: { "+\($0) episodes" },
             onPreviousWeek: {},
             onNextWeek: {},
