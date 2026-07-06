@@ -80,6 +80,70 @@ class CalendarScreenshotTest {
     }
 
     @Test
+    fun calendarScreenLockedState() {
+        composeTestRule.captureMultiDevice("CalendarScreenLockedState") {
+            TvManiacBackground {
+                CalendarScreen(
+                    state = CalendarState(
+                        isLoading = false,
+                        isLoggedIn = true,
+                        isLocked = true,
+                        lockedTitle = "Calendar is a Premium feature",
+                        lockedMessage = "Upgrade to Premium to see your upcoming episodes.",
+                        lockedBadgeText = "Premium",
+                        lockedActionText = "Upgrade to Premium",
+                        weekLabel = "Jan 31, 2026 - Feb 6, 2026",
+                        moreEpisodesFormat = "+%d episodes",
+                        dateGroups = persistentListOf(
+                            CalendarDateGroup(
+                                dateLabel = "Today, Jan 31, 2026",
+                                episodes = persistentListOf(
+                                    CalendarEpisodeItem(
+                                        showId = 1,
+                                        episodeId = 100L,
+                                        showTitle = "Severance",
+                                        posterUrl = null,
+                                        episodeInfo = "S02E01 · Hello, Ms. Cobel",
+                                        airTime = "03:00",
+                                        network = "Apple TV+",
+                                        additionalEpisodesCount = 0,
+                                        overview = "Mark leads the team on a new mission.",
+                                        rating = 8.5,
+                                        votes = 120,
+                                        runtime = 50,
+                                        formattedAirDate = "Friday, January 31, 2026 at 03:00",
+                                    ),
+                                ),
+                            ),
+                            CalendarDateGroup(
+                                dateLabel = "Tomorrow, Feb 1, 2026",
+                                episodes = persistentListOf(
+                                    CalendarEpisodeItem(
+                                        showId = 2,
+                                        episodeId = 200L,
+                                        showTitle = "Hell's Paradise",
+                                        posterUrl = null,
+                                        episodeInfo = "S02E04 · The Battle Begins",
+                                        airTime = "15:45",
+                                        network = null,
+                                        additionalEpisodesCount = 1,
+                                        overview = null,
+                                        rating = null,
+                                        votes = null,
+                                        runtime = 24,
+                                        formattedAirDate = "Saturday, February 1, 2026 at 15:45",
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
     fun calendarScreenContentLoaded() {
         composeTestRule.captureMultiDevice("CalendarScreenContentLoaded") {
             TvManiacBackground {

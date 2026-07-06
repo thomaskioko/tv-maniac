@@ -83,4 +83,70 @@ class ThemeSelectorViewTest: SnapshotTestCase {
         .appPreview()
         .assertSnapshot(testName: "ThemeSelectorView")
     }
+
+    func test_ThemeSelectorView_Locked() {
+        let themes = [
+            ThemeItemModel(
+                id: "system",
+                displayName: "System",
+                backgroundColor: TvManiacColorScheme.light.background,
+                accentColor: TvManiacColorScheme.light.secondary,
+                onAccentColor: TvManiacColorScheme.light.onSecondary,
+                isSystemTheme: true
+            ),
+            ThemeItemModel(
+                id: "light",
+                displayName: "Light",
+                backgroundColor: TvManiacColorScheme.light.background,
+                accentColor: TvManiacColorScheme.light.secondary,
+                onAccentColor: TvManiacColorScheme.light.onSecondary
+            ),
+            ThemeItemModel(
+                id: "dark",
+                displayName: "Dark",
+                backgroundColor: TvManiacColorScheme.dark.background,
+                accentColor: TvManiacColorScheme.dark.secondary,
+                onAccentColor: TvManiacColorScheme.dark.onSecondary
+            ),
+            ThemeItemModel(
+                id: "terminal",
+                displayName: "Terminal",
+                backgroundColor: TvManiacColorScheme.terminal.background,
+                accentColor: TvManiacColorScheme.terminal.secondary,
+                onAccentColor: TvManiacColorScheme.terminal.onSecondary,
+                isPremium: true
+            ),
+            ThemeItemModel(
+                id: "autumn",
+                displayName: "Autumn",
+                backgroundColor: TvManiacColorScheme.autumn.background,
+                accentColor: TvManiacColorScheme.autumn.secondary,
+                onAccentColor: TvManiacColorScheme.autumn.onSecondary,
+                isPremium: true
+            ),
+            ThemeItemModel(
+                id: "aqua",
+                displayName: "Aqua",
+                backgroundColor: TvManiacColorScheme.aqua.background,
+                accentColor: TvManiacColorScheme.aqua.secondary,
+                onAccentColor: TvManiacColorScheme.aqua.onSecondary,
+                isPremium: true
+            ),
+        ]
+
+        ThemeSelectorView(
+            themes: themes,
+            selectedTheme: themes[0],
+            isCustomThemesLocked: true,
+            lockedBadgeText: "Premium",
+            lockedTitle: "Custom themes are a Premium feature",
+            lockedMessage: "Upgrade to Premium to use custom themes.",
+            lockedActionText: "Upgrade to Premium",
+            lockedAccessibilityLabel: "Locked",
+            onThemeSelected: { _ in }
+        )
+        .padding()
+        .appPreview()
+        .assertSnapshot(testName: "ThemeSelectorView_Locked")
+    }
 }
