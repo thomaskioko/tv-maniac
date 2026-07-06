@@ -23,6 +23,15 @@ INSERT OR REPLACE INTO show_metadata(
     status
 ) VALUES (?, ?, ?, ?);
 
+getShowMetadataSyncInfo:
+SELECT
+    COALESCE(tvshow.status, show_metadata.status) AS status,
+    COALESCE(show_metadata.episode_count, 0) AS metadata_episode_count,
+    (SELECT COUNT(*) FROM episode WHERE episode.show_id = tvshow.id) AS local_episode_count
+FROM tvshow
+LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
+WHERE tvshow.id = :showId;
+
 recalculateLastWatched:
 WITH last_watched_cte AS (
     SELECT we.episode_id, we.season_number, we.episode_number, we.watched_at
