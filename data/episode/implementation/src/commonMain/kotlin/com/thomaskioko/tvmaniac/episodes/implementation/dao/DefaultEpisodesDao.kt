@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
+import com.thomaskioko.tvmaniac.db.GetShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.LatestSeasonForShow
 import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
@@ -155,5 +156,14 @@ public class DefaultEpisodesDao(
             showId = internalShowId,
             includeSpecials = if (includeSpecials) 1L else 0L,
         ).asFlow().mapToOneOrNull(dispatchers.databaseRead)
+    }
+
+    override suspend fun getShowMetadataSyncInfo(showId: Long): GetShowMetadataSyncInfo? {
+        return withContext(dispatchers.databaseRead) {
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext null
+            database.showMetadataQueries
+                .getShowMetadataSyncInfo(internalShowId)
+                .executeAsOneOrNull()
+        }
     }
 }

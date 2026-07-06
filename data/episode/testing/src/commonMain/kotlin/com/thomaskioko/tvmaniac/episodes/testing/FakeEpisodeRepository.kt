@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -46,6 +47,7 @@ public class FakeEpisodeRepository : EpisodeRepository {
     private val unwatchedCountInPreviousSeasonsFlow = MutableStateFlow(0L)
     private val upcomingEpisodesFlow = MutableStateFlow<List<UpcomingEpisode>>(emptyList())
     private val recentlyWatchedFlow = MutableStateFlow<List<RecentlyWatchedEpisode>>(emptyList())
+    private val showMetadataSyncInfo = mutableMapOf<Long, ShowMetadataSyncInfo?>()
 
     public var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
         private set
@@ -82,6 +84,10 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     public fun setRecentlyWatched(episodes: List<RecentlyWatchedEpisode>) {
         recentlyWatchedFlow.value = episodes
+    }
+
+    public fun setShowMetadataSyncInfo(showId: Long, info: ShowMetadataSyncInfo?) {
+        showMetadataSyncInfo[showId] = info
     }
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
@@ -150,4 +156,7 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     override suspend fun syncUpcomingEpisodes(startDate: String, days: Int, forceRefresh: Boolean) {
     }
+
+    override suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo? =
+        showMetadataSyncInfo[showId]
 }

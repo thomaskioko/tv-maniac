@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
@@ -45,8 +46,10 @@ public class DefaultWatchedEpisodeSyncRepository(
     override suspend fun syncPendingEpisodes() {
         if (accountManager.getActiveProvider() == null) return
 
-        processPendingEpisodesToUploads()
-        processPendingEpisodesDeletes()
+        syncMutex.withLock {
+            processPendingEpisodesToUploads()
+            processPendingEpisodesDeletes()
+        }
     }
 
     override suspend fun syncAllWatchedEpisodes(forceRefresh: Boolean) {
@@ -176,6 +179,8 @@ public class DefaultWatchedEpisodeSyncRepository(
         val includeSpecials = datastoreRepository.getIncludeSpecials()
         var page = 1
         var totalShows = 0
+        var failedShows = 0
+        var firstFailure: Exception? = null
 
         while (true) {
             currentCoroutineContext().ensureActive()
@@ -184,7 +189,15 @@ public class DefaultWatchedEpisodeSyncRepository(
 
             batches.forEach { batch ->
                 currentCoroutineContext().ensureActive()
-                upsertBatch(batch, includeSpecials)
+                try {
+                    upsertBatch(batch, includeSpecials)
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
+                } catch (exception: Exception) {
+                    failedShows++
+                    if (firstFailure == null) firstFailure = exception
+                    logger.error(TAG, "Skipping watched-shows batch for ${batch.title ?: batch.tmdbId}: ${exception.message}")
+                }
                 totalShows++
             }
 
@@ -193,6 +206,11 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
 
         logger.debug(TAG, "Bulk watched-shows sync drained $totalShows shows across $page page(s)")
+
+        firstFailure?.let { failure ->
+            logger.error(TAG, "Bulk watched-shows sync failed for $failedShows of $totalShows shows")
+            throw failure
+        }
     }
 
     private suspend fun upsertBatch(batch: WatchedShowBatch, includeSpecials: Boolean) {
@@ -212,6 +230,14 @@ public class DefaultWatchedEpisodeSyncRepository(
             is ShowResolveOutcome.Skipped -> return
         }
 
+        val remoteUpdatedAt = batch.lastUpdatedAt?.toEpochMilliseconds()
+        if (remoteUpdatedAt != null &&
+            remoteUpdatedAt == dao.getShowSyncRemoteUpdatedAt(tmdbId, activeProvider.name)
+        ) {
+            logger.debug(TAG, "Skipping unchanged watched show $tmdbId")
+            return
+        }
+
         currentCoroutineContext().ensureActive()
         val resolved = batch.episodes.map { entry ->
             val episode = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
@@ -228,6 +254,14 @@ public class DefaultWatchedEpisodeSyncRepository(
         )
 
         watchStatusRepository.refresh(tmdbId)
+
+        if (remoteUpdatedAt != null) {
+            dao.upsertShowSyncLog(
+                showId = tmdbId,
+                provider = activeProvider.name,
+                remoteUpdatedAt = remoteUpdatedAt,
+            )
+        }
     }
 
     private suspend fun syncShowWatches(showId: Long) {

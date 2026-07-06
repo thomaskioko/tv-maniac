@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
@@ -193,6 +194,15 @@ public class DefaultEpisodeRepository(
             else -> upcomingEpisodesStore.get(params)
         }
     }
+
+    override suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo? =
+        episodesDao.getShowMetadataSyncInfo(showId)?.let { info ->
+            ShowMetadataSyncInfo(
+                status = info.status,
+                metadataEpisodeCount = info.metadata_episode_count,
+                localEpisodeCount = info.local_episode_count,
+            )
+        }
 
     private suspend fun getIncludeSpecials(): Boolean = datastoreRepository.getIncludeSpecials()
 

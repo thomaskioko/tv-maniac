@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
+import com.thomaskioko.tvmaniac.db.GetShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.db.LatestSeasonForShow
 import com.thomaskioko.tvmaniac.db.NextEpisodeForShow
 import com.thomaskioko.tvmaniac.db.UpcomingEpisodesFromFollowedShows
@@ -56,4 +57,6 @@ public interface EpisodesDao {
         showId: Long,
         includeSpecials: Boolean,
     ): Flow<LatestSeasonForShow?>
+
+    public suspend fun getShowMetadataSyncInfo(showId: Long): GetShowMetadataSyncInfo?
 }
