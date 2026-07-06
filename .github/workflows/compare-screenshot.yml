@@ -159,3 +159,7 @@ jobs:
               git push origin --delete "$branch"
             fi
           done
+
+      - name: Restore workspace for post steps
+        if: always() && steps.check-diffs.outputs.has_diffs == 'true'
+        run: git checkout -f ${{ github.sha }}
