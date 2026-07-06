@@ -14,6 +14,7 @@ kotlin {
                 api(projects.core.view)
                 api(projects.core.logger.api)
                 api(projects.data.accountManager.api)
+                api(projects.data.subscription.api)
                 api(projects.domain.calendar)
                 api(projects.features.progress.nav)
                 api(projects.i18n.api)
@@ -38,6 +39,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.calendar.testing)
                 implementation(projects.data.accountManager.testing)
+                implementation(projects.data.subscription.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
