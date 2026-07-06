@@ -90,9 +90,14 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
             .assertMarkUnwatchedDisplayed(seasonTwoFirstEpisodeTraktId)
             .clickBackButton()
 
-        // 7. Unwatch Season
+        // 7. Continue Tracking stays visible with every episode watched
         showDetailsRobot
             .assertShowDetailsDisplayed()
+            .assertContinueTrackingSectionDisplayed()
+            .assertContinueTrackingEpisodeDisplayed(seasonTwoFirstEpisodeTraktId)
+
+        // 8. Unwatch Season
+        showDetailsRobot
             .clickSeasonChip(seasonNumber = 2L)
 
         seasonDetailsRobot
