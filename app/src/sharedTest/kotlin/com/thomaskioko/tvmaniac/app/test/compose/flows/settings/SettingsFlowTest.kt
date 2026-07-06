@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.settings
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
+import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
@@ -126,5 +127,99 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .assertAccountTypeOptionNotSelected(AccountType.Premium)
             .selectAccountType(AccountType.Premium)
             .assertAccountTypeRowSubtitle("Premium")
+    }
+
+    @Test
+    fun givenPaywallEnabled_whenAccountTypeChanges_thenLockedSurfacesUpdate() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+        scenarios.flags.enablePaywall()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openDebugMenu()
+
+        debugRobot
+            .assertDebugMenuScreenDisplayed()
+            .scrollToAccountTypeRow()
+            .clickAccountTypeRow()
+            .assertAccountTypeDialogDisplayed()
+            .selectAccountType(AccountType.Free)
+            .pressBack()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .clickBackButton()
+            .openAppearancePage()
+            .scrollToThemesLocked()
+            .assertThemeSwatchDoesNotExist(ThemeModel.TERMINAL)
+            .clickBackButton()
+            .clickBackButton()
+
+        homeRobot
+            .clickProgressTab()
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
+
+        progressRobot
+            .assertProgressScreenDisplayed()
+            .clickCalendarTab()
+            .assertCalendarTabSelected()
+
+        calendarRobot
+            .assertLockedStateDisplayed()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openDebugMenu()
+
+        debugRobot
+            .assertDebugMenuScreenDisplayed()
+            .scrollToAccountTypeRow()
+            .clickAccountTypeRow()
+            .assertAccountTypeDialogDisplayed()
+            .selectAccountType(AccountType.Premium)
+            .pressBack()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .clickBackButton()
+            .openAppearancePage()
+            .scrollToThemeSwatch(ThemeModel.TERMINAL)
+            .clickThemeSwatch(ThemeModel.TERMINAL)
+            .assertThemeSwatchSelected(ThemeModel.TERMINAL)
+            .clickBackButton()
+            .clickBackButton()
+
+        homeRobot
+            .clickProgressTab()
+            .assertTabSelected(HomeTestTags.PROGRESS_TAB)
+
+        progressRobot
+            .assertProgressScreenDisplayed()
+            .clickCalendarTab()
+            .assertCalendarTabSelected()
+
+        calendarRobot
+            .assertLoggedOutStateDisplayed()
     }
 }

@@ -36,6 +36,7 @@ internal const val TEST_CREATED_LIST_NAME: String = "Watch Later"
 internal const val TEST_NEXT_WEEK: String = "2026-04-26"
 internal const val SIMKL_LOGIN_FLAG_KEY: String = "simkl_login_enabled"
 internal const val ACCOUNT_SWITCH_FLAG_KEY: String = "enable_account_switch"
+internal const val ENABLE_PAYWALL_FLAG_KEY: String = "enable_paywall"
 
 internal class Scenarios(
     private val mockHandler: MockEngineHandler,
@@ -502,6 +503,10 @@ internal class Scenarios(
 
         fun enableAccountSwitch() {
             graph.featureFlagsRemoteConfig.setBoolean(ACCOUNT_SWITCH_FLAG_KEY, true)
+        }
+
+        fun enablePaywall() {
+            graph.featureFlagsRemoteConfig.setBoolean(ENABLE_PAYWALL_FLAG_KEY, true)
         }
     }
 }

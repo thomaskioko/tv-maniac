@@ -22,5 +22,6 @@ public object SettingsTestTags {
     public const val SWITCHING_INDICATOR_TEST_TAG: String = "settings_switching_indicator"
     public const val AUTH_PROCESSING_INDICATOR_TEST_TAG: String = "settings_auth_processing_indicator"
     public fun imageQualityChip(name: String): String = "settings_image_quality_${name.lowercase()}"
+    public const val THEMES_LOCKED: String = "settings_themes_locked"
     public fun themeSwatch(name: String): String = "settings_theme_swatch_${name.lowercase()}"
 }

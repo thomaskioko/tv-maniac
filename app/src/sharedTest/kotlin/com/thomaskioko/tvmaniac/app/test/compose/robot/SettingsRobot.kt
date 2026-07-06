@@ -119,6 +119,14 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.themeSwatch(theme.name))
     }
 
+    fun scrollToThemesLocked() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.THEMES_LOCKED)
+    }
+
+    fun assertThemeSwatchDoesNotExist(theme: ThemeModel) = apply {
+        assertDoesNotExist(SettingsTestTags.themeSwatch(theme.name))
+    }
+
     fun assertThemeSwatchSelected(theme: ThemeModel) = apply {
         assertSelected(SettingsTestTags.themeSwatch(theme.name))
     }

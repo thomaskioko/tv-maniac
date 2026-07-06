@@ -25,6 +25,10 @@ internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot
         assertDisplayed(CalendarTestTags.LOGGED_OUT_STATE_TEST_TAG)
     }
 
+    fun assertLockedStateDisplayed() = apply {
+        assertDisplayed(CalendarTestTags.LOCKED_STATE_TEST_TAG)
+    }
+
     fun assertEmptyStateDisplayed() = apply {
         assertDisplayed(CalendarTestTags.EMPTY_STATE_TEST_TAG)
     }
