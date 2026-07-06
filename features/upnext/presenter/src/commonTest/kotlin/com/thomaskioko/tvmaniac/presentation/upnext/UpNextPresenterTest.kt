@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInte
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -508,6 +509,7 @@ internal class UpNextPresenterTest {
                 watchProviderRepository = FakeWatchProviderRepository(),
                 dispatchers = dispatchers,
             ),
+            showMetadataSyncHelper = ShowMetadataSyncHelper(episodeRepository),
             watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
             activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
