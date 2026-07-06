@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsSwitchRow
+import com.thomaskioko.tvmaniac.settings.ui.notificationsLockedState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
@@ -38,6 +39,8 @@ internal fun NotificationsPage(
                     description = state.labels.episodeNotificationsDescription,
                     checked = state.episodeNotificationsEnabled,
                     onCheckedChange = { onAction(EpisodeNotificationsToggled(it)) },
+                    locked = state.locks.episodeNotificationsLocked,
+                    lockedBadgeText = state.locks.badgeText,
                 )
             }
         }
@@ -52,6 +55,16 @@ internal fun NotificationsPage(
 private fun NotificationsPagePreview() {
     NotificationsPage(
         state = notificationsState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun NotificationsPageLockedPreview() {
+    NotificationsPage(
+        state = notificationsLockedState,
         onAction = {},
     )
 }

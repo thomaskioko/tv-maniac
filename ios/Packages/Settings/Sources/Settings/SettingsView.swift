@@ -120,6 +120,13 @@ public struct SettingsView: View {
             subtitle: uiState.labels.themeSubtitle,
             themes: DeviceAppTheme.sortedThemes,
             selectedTheme: store.appTheme,
+            isCustomThemesLocked: uiState.locks.customThemesLocked,
+            lockedBadgeText: String(\.label_premium_badge),
+            lockedTitle: String(\.label_themes_locked_title),
+            lockedMessage: String(\.label_themes_locked_message),
+            lockedActionText: String(\.label_upgrade_to_premium),
+            lockedAccessibilityLabel: String(\.cd_locked),
+            onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) },
             onThemeSelected: { selectedTheme in
                 store.appTheme = selectedTheme
                 let theme = selectedTheme.toTheme()
@@ -197,6 +204,9 @@ public struct SettingsView: View {
                 title: uiState.labels.episodeNotificationsTitle,
                 subtitle: uiState.labels.episodeNotificationsDescription,
                 isOn: uiState.episodeNotificationsEnabled,
+                isLocked: uiState.locks.episodeNotificationsLocked,
+                lockedBadgeText: String(\.label_premium_badge),
+                lockedAccessibilityLabel: String(\.cd_locked),
                 onToggle: { handleNotificationToggle(enabled: $0) }
             ),
         ]
@@ -320,7 +330,8 @@ public struct SettingsView: View {
                     logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
                 )
             },
-            switchTargetLogoName: uiState.switchTargetProvider?.name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
+            switchTargetLogoName: uiState.switchTargetProvider?
+                .name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
             switchActionLabel: uiState.switchActionLabel,
             isSwitching: uiState.isSwitching,
             showSwitchConfirmation: showingSwitchAlert,

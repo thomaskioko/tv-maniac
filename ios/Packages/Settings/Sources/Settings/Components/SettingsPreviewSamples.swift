@@ -33,7 +33,8 @@
                 displayName: "Aqua",
                 backgroundColor: TvManiacColorScheme.aqua.background,
                 accentColor: TvManiacColorScheme.aqua.secondary,
-                onAccentColor: TvManiacColorScheme.aqua.onSecondary
+                onAccentColor: TvManiacColorScheme.aqua.onSecondary,
+                isPremium: true
             ),
         ]
 
@@ -44,6 +45,23 @@
                 subtitle: "Choose your preferred theme",
                 themes: themes,
                 selectedTheme: themes[0],
+                onThemeSelected: { _ in }
+            )
+        }
+
+        static var customThemeItem: SettingsThemeItem<ThemeItemModel> {
+            SettingsThemeItem(
+                icon: "paintpalette",
+                title: "Theme",
+                subtitle: "Choose your preferred theme",
+                themes: themes,
+                selectedTheme: themes[0],
+                isCustomThemesLocked: true,
+                lockedBadgeText: "Premium",
+                lockedTitle: "Custom themes are a Premium feature",
+                lockedMessage: "Upgrade to Premium to use custom themes.",
+                lockedActionText: "Upgrade to Premium",
+                lockedAccessibilityLabel: "Locked",
                 onThemeSelected: { _ in }
             )
         }
@@ -100,6 +118,22 @@
                     title: "Episode Notifications",
                     subtitle: "Get notified when new episodes air",
                     isOn: true,
+                    onToggle: { _ in }
+                ),
+            ]
+        }
+
+        static var lockedNotificationToggles: [SettingsToggleItem] {
+            [
+                SettingsToggleItem(
+                    id: "notifications",
+                    icon: "bell.fill",
+                    title: "Episode Notifications",
+                    subtitle: "Get notified when new episodes air",
+                    isOn: false,
+                    isLocked: true,
+                    lockedBadgeText: "Premium",
+                    lockedAccessibilityLabel: "Locked",
                     onToggle: { _ in }
                 ),
             ]
@@ -194,7 +228,8 @@
                 connectedTitle: authenticated ? "Connected" : "Connect to Trakt",
                 connectedDescription: authenticated
                     ? "Your watch history, watchlist, and episode progress sync with Trakt."
-                    : "Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.",
+                    :
+                    "Sign in with Trakt to sync your watch history, watchlist, and episode progress across your devices.",
                 isAuthenticated: authenticated,
                 isProcessingAuth: isProcessingAuth,
                 logoutLabel: "Logout",
@@ -243,8 +278,16 @@
             return sections
         }
 
-        private static func navItem(_ route: SettingsPageRoute, _ title: String, _ subtitle: String) -> SettingsNavigationItem {
-            SettingsNavigationItem(id: route.rawValue, icon: route.iconName, title: title, subtitle: subtitle, onTap: {})
+        private static func navItem(_ route: SettingsPageRoute, _ title: String,
+                                    _ subtitle: String) -> SettingsNavigationItem
+        {
+            SettingsNavigationItem(
+                id: route.rawValue,
+                icon: route.iconName,
+                title: title,
+                subtitle: subtitle,
+                onTap: {}
+            )
         }
     }
 #endif

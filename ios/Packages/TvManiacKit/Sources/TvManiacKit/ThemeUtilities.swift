@@ -94,6 +94,10 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
         self == .system
     }
 
+    public var isPremium: Bool {
+        toThemeModel().isPremium
+    }
+
     private var colorScheme: TvManiacColorScheme {
         switch self {
         case .system:
