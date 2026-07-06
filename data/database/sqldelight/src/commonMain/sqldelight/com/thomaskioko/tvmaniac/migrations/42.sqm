@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS watched_show_sync_log(
+    show_id INTEGER NOT NULL,
+    provider TEXT NOT NULL,
+    remote_updated_at INTEGER NOT NULL,
+    PRIMARY KEY(show_id, provider),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
