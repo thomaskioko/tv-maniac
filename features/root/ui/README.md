@@ -104,6 +104,10 @@ graph TB
     direction TB
     :data:similar:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -381,6 +385,7 @@ graph TB
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
   :features:settings:presenter --> :data:datastore:api
+  :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
   :features:settings:presenter --> :domain:logout

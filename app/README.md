@@ -547,6 +547,7 @@ graph TB
   :app -.-> :data:simklauth:implementation
   :app -.-> :data:start-watching:api
   :app -.-> :data:start-watching:implementation
+  :app -.-> :data:subscription:api
   :app -.-> :data:subscription:implementation
   :app -.-> :data:sync-activity:api
   :app -.-> :data:sync-activity:implementation
@@ -1155,6 +1156,7 @@ graph TB
   :features:calendar:presenter --> :core:view
   :features:calendar:presenter --> :data:account-manager:api
   :features:calendar:presenter -.-> :data:calendar:api
+  :features:calendar:presenter --> :data:subscription:api
   :features:calendar:presenter --> :domain:calendar
   :features:calendar:presenter -.-> :features:episode-sheet:nav
   :features:calendar:presenter --> :features:progress:nav
@@ -1501,6 +1503,7 @@ graph TB
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
   :features:settings:presenter --> :data:datastore:api
+  :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
   :features:settings:presenter --> :domain:logout

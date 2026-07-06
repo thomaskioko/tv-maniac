@@ -768,6 +768,7 @@ graph TB
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
   :features:settings:presenter --> :data:datastore:api
+  :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
   :features:settings:presenter --> :domain:logout
