@@ -154,6 +154,7 @@
     <string name="cd_expand_collapse">Expand or collapse</string>
     <string name="cd_connectivity_icon">Connectivity icon</string>
     <string name="cd_dismiss">Dismiss</string>
+    <string name="cd_locked">Locked</string>
 
     <string name="details_episodes">Episodes</string>
     <string name="details_cast">Casts</string>
@@ -364,6 +365,8 @@
     <string name="label_calendar_more_episodes">+%d episodes</string>
     <string name="label_calendar_today">Today</string>
     <string name="label_calendar_tomorrow">Tomorrow</string>
+    <string name="label_calendar_locked_title">Calendar is a Premium feature</string>
+    <string name="label_calendar_locked_message">Upgrade to Premium to see your upcoming episodes.</string>
 
     <string name="label_upnext_empty">No shows in your watchlist</string>
     <string name="label_upnext_sort_last_watched">Last Watched</string>
@@ -374,6 +377,11 @@
     <string name="label_episode_action_open_show">Open show</string>
     <string name="label_episode_action_open_season">Open season</string>
     <string name="label_episode_action_unfollow_show">Unfollow show</string>
+
+    <string name="label_premium_badge">Premium</string>
+    <string name="label_themes_locked_title">Custom themes are a Premium feature</string>
+    <string name="label_upgrade_to_premium">Upgrade to Premium</string>
+    <string name="label_themes_locked_message">Upgrade to Premium to use custom themes.</string>
 
     <string name="label_debug_menu_title">Debug Menu</string>
     <string name="label_debug_section_developer">Developer</string>

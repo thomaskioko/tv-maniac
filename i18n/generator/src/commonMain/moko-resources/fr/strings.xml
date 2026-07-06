@@ -131,6 +131,7 @@
     <string name="cd_expand_collapse">Agrandir ou réduire</string>
     <string name="cd_connectivity_icon">Icône de connectivité</string>
     <string name="cd_dismiss">Fermer</string>
+    <string name="cd_locked">Verrouillé</string>
 
     <string name="details_episodes">Épisodes</string>
     <string name="details_cast">Distribution</string>
@@ -323,6 +324,8 @@
     <string name="label_calendar_more_episodes">+%d épisodes</string>
     <string name="label_calendar_today">Aujourd&#8217;hui</string>
     <string name="label_calendar_tomorrow">Demain</string>
+    <string name="label_calendar_locked_title">Le calendrier est une fonctionnalité Premium</string>
+    <string name="label_calendar_locked_message">Passez à Premium pour voir vos épisodes à venir.</string>
 
     <string name="label_library_title">Bibliothèque</string>
     <string name="label_library_filter_title">Filtrer</string>
@@ -358,6 +361,11 @@
     <string name="label_episode_action_open_show">Ouvrir la série</string>
     <string name="label_episode_action_open_season">Ouvrir la saison</string>
     <string name="label_episode_action_unfollow_show">Ne plus suivre la série</string>
+
+    <string name="label_premium_badge">Premium</string>
+    <string name="label_themes_locked_title">Les thèmes personnalisés sont une fonctionnalité Premium</string>
+    <string name="label_upgrade_to_premium">Passer à Premium</string>
+    <string name="label_themes_locked_message">Passez à Premium pour utiliser les thèmes personnalisés.</string>
 
     <string name="label_debug_menu_title">Menu de débogage</string>
     <string name="label_debug_section_developer">Développeur</string>
