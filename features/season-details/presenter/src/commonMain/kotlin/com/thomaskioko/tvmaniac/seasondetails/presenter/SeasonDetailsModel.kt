@@ -30,6 +30,10 @@ public sealed interface SeasonDialogState {
         public val secondaryOperation: WatchOperation? get() = null
     }
 
+    public data class WatchSeasonConfirmation(
+        override val primaryOperation: WatchOperation.MarkSeasonWatched,
+    ) : Confirmation
+
     public data class UnwatchSeasonConfirmation(
         override val primaryOperation: WatchOperation.MarkSeasonUnwatched,
     ) : Confirmation
