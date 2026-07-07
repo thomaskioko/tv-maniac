@@ -197,7 +197,6 @@ public struct SeasonDetailsScreen: View {
                     episodeCount: state.episodeCount,
                     watchProgress: state.watchProgress,
                     expandEpisodeItems: state.expandEpisodeItems,
-                    showSeasonWatchStateDialog: false,
                     isSeasonWatched: state.isSeasonWatched,
                     items: state.episodes,
                     dayLabelFormat: dayLabelFormat,

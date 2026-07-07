@@ -10,7 +10,6 @@ public struct EpisodeListView: View {
     private let episodeCount: Int64
     private let watchProgress: Float
     private let expandEpisodeItems: Bool
-    private let showSeasonWatchStateDialog: Bool
     private let isSeasonWatched: Bool
     private let items: [SwiftEpisode]
     private let dayLabelFormat: (_ count: Int) -> String
@@ -25,7 +24,6 @@ public struct EpisodeListView: View {
         episodeCount: Int64,
         watchProgress: Float,
         expandEpisodeItems: Bool,
-        showSeasonWatchStateDialog: Bool,
         isSeasonWatched: Bool,
         items: [SwiftEpisode],
         dayLabelFormat: @escaping (_ count: Int) -> String = { count in count == 1 ? "day" : "days" },
@@ -39,7 +37,6 @@ public struct EpisodeListView: View {
         self.episodeCount = episodeCount
         self.watchProgress = watchProgress
         self.expandEpisodeItems = expandEpisodeItems
-        self.showSeasonWatchStateDialog = showSeasonWatchStateDialog
         self.isSeasonWatched = isSeasonWatched
         self.items = items
         self.dayLabelFormat = dayLabelFormat
@@ -99,7 +96,6 @@ public struct EpisodeListView: View {
         episodeCount: 3,
         watchProgress: 0.4,
         expandEpisodeItems: false,
-        showSeasonWatchStateDialog: false,
         isSeasonWatched: false,
         items: [
             .init(

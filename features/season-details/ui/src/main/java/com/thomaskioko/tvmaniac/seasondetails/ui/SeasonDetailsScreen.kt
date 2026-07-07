@@ -266,6 +266,12 @@ internal fun LazyColumnContent(
     }
 
     when (seasonDetailsModel.dialogState) {
+        is SeasonDialogState.WatchSeasonConfirmation -> {
+            SeasonsWatchDialog(
+                isWatched = false,
+                onAction = onAction,
+            )
+        }
         is SeasonDialogState.UnwatchSeasonConfirmation -> {
             SeasonsWatchDialog(
                 isWatched = true,
@@ -565,8 +571,16 @@ private fun SeasonsWatchDialog(
         dismissButtonText = dialog_button_no.resolve(context),
         onConfirm = { onAction(ConfirmDialogAction) },
         onDismiss = { onAction(DismissDialog) },
-        confirmButtonTestTag = SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG,
-        dismissButtonTestTag = SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG,
+        confirmButtonTestTag = if (isWatched) {
+            SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG
+        } else {
+            SeasonDetailsTestTags.WATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG
+        },
+        dismissButtonTestTag = if (isWatched) {
+            SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG
+        } else {
+            SeasonDetailsTestTags.WATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG
+        },
     )
 }
 

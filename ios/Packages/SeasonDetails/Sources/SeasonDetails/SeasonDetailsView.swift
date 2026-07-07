@@ -14,6 +14,7 @@ public struct SeasonDetailsView: View {
     @State private var showUnwatchedConfirmAlert = false
     @State private var showMarkPreviousSeasonsAlert = false
     @State private var showSeasonUnwatchAlert = false
+    @State private var showSeasonWatchAlert = false
     public init(presenter: SeasonDetailsPresenter) {
         self.presenter = presenter
         _uiState = .init(presenter.stateValue)
@@ -54,6 +55,7 @@ public struct SeasonDetailsView: View {
             showUnwatchedConfirmAlert = dialogState is SeasonDialogStateUnwatchEpisodeConfirmation
             showMarkPreviousSeasonsAlert = dialogState is SeasonDialogStateMarkPreviousSeasonsConfirmation
             showSeasonUnwatchAlert = dialogState is SeasonDialogStateUnwatchSeasonConfirmation
+            showSeasonWatchAlert = dialogState is SeasonDialogStateWatchSeasonConfirmation
         }
         .onChange(of: uiState.isGalleryVisible) { _, isVisible in
             showGallery = isVisible
@@ -67,6 +69,16 @@ public struct SeasonDetailsView: View {
             }
         } message: {
             Text(String(\.dialog_message_unwatched))
+        }
+        .alert(String(\.dialog_title_watched), isPresented: $showSeasonWatchAlert) {
+            Button(String(\.dialog_button_yes)) {
+                presenter.dispatch(action: ConfirmDialogAction())
+            }
+            Button(String(\.dialog_button_no), role: .cancel) {
+                presenter.dispatch(action: DismissDialog())
+            }
+        } message: {
+            Text(String(\.dialog_message_watched))
         }
         .alert(String(\.dialog_title_mark_previous), isPresented: $showMarkPreviousAlert) {
             Button(String(\.dialog_button_mark_all)) {
