@@ -38,12 +38,19 @@ jobs:
           # Use --rerun-tasks to disable cache for test task
           ./gradlew recordRoborazziDebug --stacktrace --rerun-tasks
 
+      - name: Stage recorded goldens
+        if: ${{ always() }}
+        run: |
+          mkdir -p screenshot-goldens
+          find . -path '*/src/test/screenshots/*.png' -print0 \
+            | xargs -0 -r cp --parents -t screenshot-goldens
+
       - uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: screenshot
-          path: |
-            **/build/outputs/roborazzi
+          path: screenshot-goldens
+          if-no-files-found: warn
           retention-days: 30
 
       - uses: actions/upload-artifact@v7

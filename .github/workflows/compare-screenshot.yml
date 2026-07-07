@@ -46,6 +46,15 @@ jobs:
           name: screenshot
           workflow: store-screenshot.yml
           commit: ${{ steps.get-base-commit.outputs.base_sha }}
+          path: recorded-goldens
+          if_no_artifact_found: warn
+
+      - name: Restore recorded goldens as the compare baseline
+        run: |
+          if [ -d recorded-goldens ] && [ -n "$(find recorded-goldens -name '*.png' -print -quit)" ]; then
+            rsync -a recorded-goldens/ .
+            rm -rf recorded-goldens
+          fi
 
       - name: Compare screenshot test
         run: ./gradlew compareRoborazziDebug --stacktrace
