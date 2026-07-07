@@ -253,7 +253,7 @@ public class DebugPresenter(
 
     private fun triggerLibrarySync() {
         coroutineScope.launch {
-            syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true))
+            syncLibraryInteractor(SyncLibraryInteractor.Param(forceRefresh = true, isUserInitiated = true))
                 .collectStatus(librarySyncState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }

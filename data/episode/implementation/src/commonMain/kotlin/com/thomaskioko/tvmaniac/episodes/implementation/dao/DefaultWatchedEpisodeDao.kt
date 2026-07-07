@@ -543,4 +543,30 @@ public class DefaultWatchedEpisodeDao(
             }
         }
     }
+
+    override suspend fun getShowSyncRemoteUpdatedAt(showId: Long, provider: String): Long? {
+        return withContext(dispatchers.databaseRead) {
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext null
+            database.watchedShowSyncLogQueries
+                .getRemoteUpdatedAt(internalShowId, provider)
+                .executeAsOneOrNull()
+        }
+    }
+
+    override suspend fun upsertShowSyncLog(showId: Long, provider: String, remoteUpdatedAt: Long) {
+        withContext(dispatchers.databaseWrite) {
+            val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
+            database.watchedShowSyncLogQueries.upsert(
+                show_id = internalShowId,
+                provider = provider,
+                remote_updated_at = remoteUpdatedAt,
+            )
+        }
+    }
+
+    override suspend fun deleteAllShowSyncLogs() {
+        withContext(dispatchers.databaseWrite) {
+            database.watchedShowSyncLogQueries.deleteAll()
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.testing.di
 
+import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
@@ -12,6 +14,7 @@ import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
+import kotlinx.coroutines.CoroutineScope
 
 @DependencyGraph(AppScope::class)
 public interface TestGraph {
@@ -25,6 +28,12 @@ public interface TestGraph {
     public val workerFactory: WorkerFactory
     public val featureFlags: Set<FeatureFlag<Boolean>>
     public val subscriptionManager: SubscriptionManager
+
+    @IoCoroutineScope
+    public val ioCoroutineScope: CoroutineScope
+
+    @MainCoroutineScope
+    public val mainCoroutineScope: CoroutineScope
 
     @DependencyGraph.Factory
     public fun interface Factory {

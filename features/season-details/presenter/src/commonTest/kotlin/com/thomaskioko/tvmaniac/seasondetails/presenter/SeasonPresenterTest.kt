@@ -817,7 +817,7 @@ class SeasonPresenterTest {
     }
 
     @Test
-    fun `should mark season directly when no unwatched episodes in previous seasons`() = runTest {
+    fun `should mark season watched after confirming dialog when no unwatched previous seasons`() = runTest {
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
@@ -828,6 +828,11 @@ class SeasonPresenterTest {
             awaitItem()
 
             presenter.dispatch(MarkSeasonAsWatched(hasUnwatchedInPreviousSeasons = false))
+
+            awaitItem().dialogState.shouldBeInstanceOf<SeasonDialogState.WatchSeasonConfirmation>()
+            episodeRepository.lastMarkSeasonWatchedCall shouldBe null
+
+            presenter.dispatch(ConfirmDialogAction)
 
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -1156,7 +1161,7 @@ class SeasonPresenterTest {
     }
 
     @Test
-    fun `should mark season watched when ToggleSeasonWatched is dispatched for unwatched season`() = runTest {
+    fun `should show watch dialog when ToggleSeasonWatched is dispatched for unwatched season`() = runTest {
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
@@ -1174,6 +1179,13 @@ class SeasonPresenterTest {
 
             testDispatcher.scheduler.advanceUntilIdle()
 
+            val state = awaitItem()
+            state.dialogState.shouldBeInstanceOf<SeasonDialogState.WatchSeasonConfirmation>()
+
+            presenter.dispatch(ConfirmDialogAction)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
             cancelAndIgnoreRemainingEvents()
 
             episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
@@ -1181,6 +1193,39 @@ class SeasonPresenterTest {
                 seasonNumber = 1,
                 markPreviousSeasons = false,
             )
+        }
+    }
+
+    @Test
+    fun `should not mark season watched when watch dialog is dismissed`() = runTest {
+        val initialDetails = buildSeasonDetailsWithEpisodes()
+        seasonDetailsRepository.setSeasonsResult(initialDetails)
+        castRepository.setSeasonCast(emptyList())
+        episodeRepository.setSeasonWatchProgress(
+            SeasonWatchProgress(showId = 1, seasonNumber = 1, watchedCount = 0, totalCount = 10),
+        )
+        episodeRepository.setUnwatchedCountInPreviousSeasons(0L)
+
+        presenter.state.test {
+            awaitItem() shouldBe SeasonDetailsModel.Empty
+            val loadedState = awaitItem()
+            loadedState.isSeasonWatched shouldBe false
+
+            presenter.dispatch(ToggleSeasonWatched)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem().dialogState.shouldBeInstanceOf<SeasonDialogState.WatchSeasonConfirmation>()
+
+            presenter.dispatch(DismissDialog)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem().dialogState shouldBe SeasonDialogState.Hidden
+
+            cancelAndIgnoreRemainingEvents()
+
+            episodeRepository.lastMarkSeasonWatchedCall shouldBe null
         }
     }
 

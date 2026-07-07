@@ -1,0 +1,26 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+-- Per-show bulk-sync cursor: the provider's last_updated_at seen when this show's watched
+-- history was last ingested. Bulk pulls skip shows whose remote value still matches.
+CREATE TABLE IF NOT EXISTS watched_show_sync_log(
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    provider TEXT NOT NULL,
+    remote_updated_at INTEGER NOT NULL,
+    PRIMARY KEY(show_id, provider),
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON DELETE CASCADE
+);
+
+upsert:
+INSERT INTO watched_show_sync_log(show_id, provider, remote_updated_at)
+VALUES (?, ?, ?)
+ON CONFLICT(show_id, provider) DO UPDATE SET
+    remote_updated_at = excluded.remote_updated_at;
+
+getRemoteUpdatedAt:
+SELECT remote_updated_at
+FROM watched_show_sync_log
+WHERE show_id = ? AND provider = ?;
+
+deleteAll:
+DELETE FROM watched_show_sync_log;

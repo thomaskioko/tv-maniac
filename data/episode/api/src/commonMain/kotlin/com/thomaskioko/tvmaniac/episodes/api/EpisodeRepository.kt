@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.api
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import kotlinx.coroutines.flow.Flow
@@ -97,4 +98,6 @@ public interface EpisodeRepository {
         days: Int,
         forceRefresh: Boolean = false,
     )
+
+    public suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo?
 }

@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -94,6 +95,7 @@ private class CountingCalendarEpisodeRepository : EpisodeRepository {
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {}
     override fun observeUnwatchedCountInPreviousSeasons(showId: Long, seasonNumber: Long): Flow<Long> = flowOf(0L)
     override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> = emptyList()
+    override suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo? = null
     override suspend fun syncUpcomingEpisodes(startDate: String, days: Int, forceRefresh: Boolean) {
         syncUpcomingCount++
         lastForceRefresh = forceRefresh

@@ -10,7 +10,7 @@ import com.thomaskioko.tvmaniac.testtags.calendar.CalendarTestTags
 internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot>(composeUi) {
 
     fun assertCalendarScreenDisplayed() = apply {
-        assertDisplayed(CalendarTestTags.SCREEN_TEST_TAG, timeoutMillis = 10_000)
+        assertDisplayed(CalendarTestTags.SCREEN_TEST_TAG)
     }
 
     fun assertLoadingIndicatorDisplayed() = apply {

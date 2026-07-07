@@ -135,5 +135,6 @@ private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
         title = show.title,
         providerShowId = show.ids.trakt.toString(),
         episodes = episodes,
+        lastUpdatedAt = lastUpdatedAt?.let { runCatching { Instant.parse(it) }.getOrNull() },
     )
 }

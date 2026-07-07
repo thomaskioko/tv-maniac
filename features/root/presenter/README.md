@@ -290,6 +290,7 @@ graph TB
   :domain:notifications --> :data:episode:api
   :domain:notifications --> :data:seasondetails:api
   :domain:notifications --> :data:seasons:api
+  :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api

@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
@@ -31,6 +32,7 @@ public class SyncContinueWatchingInteractor(
     private val syncActivityInteractor: SyncActivityInteractor,
     private val continueWatchingRepository: ContinueWatchingRepository,
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
+    private val showMetadataSyncHelper: ShowMetadataSyncHelper,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
     private val activeProviderFeatures: () -> ProviderFeatures,
     private val requestManagerRepository: RequestManagerRepository,
@@ -99,13 +101,18 @@ public class SyncContinueWatchingInteractor(
                     semaphore.withPermit {
                         if (shouldStopMetadataSync.value) return@withPermit
                         val result = runCatching {
-                            syncShowMetadataInteractor.executeSync(
-                                params = SyncShowMetadataInteractor.Param(
-                                    showId = show.showId,
-                                    forceRefresh = false,
-                                    includeWatchProviders = false,
-                                ),
-                            )
+                            if (showMetadataSyncHelper.shouldSync(show.showId)) {
+                                syncShowMetadataInteractor.executeSync(
+                                    params = SyncShowMetadataInteractor.Param(
+                                        showId = show.showId,
+                                        forceRefresh = false,
+                                        includeWatchProviders = false,
+                                        refreshLatestSeason = showMetadataSyncHelper.shouldRefreshLatestSeason(show.showId),
+                                    ),
+                                )
+                            } else {
+                                logger.debug(TAG, "Skipping metadata sync for ended show ${show.showId}")
+                            }
                         }
                         val failure = result.exceptionOrNull() ?: return@withPermit
 

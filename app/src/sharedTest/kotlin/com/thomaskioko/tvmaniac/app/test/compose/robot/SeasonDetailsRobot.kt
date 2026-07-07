@@ -140,4 +140,20 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<SeasonDe
     fun clickUnwatchSeasonDismiss() = apply {
         click(SeasonDetailsTestTags.UNWATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG)
     }
+
+    fun assertWatchSeasonDialogDisplayed() = apply {
+        assertExists(SeasonDetailsTestTags.WATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    }
+
+    fun assertWatchSeasonDialogDoesNotExist() = apply {
+        assertDoesNotExist(SeasonDetailsTestTags.WATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    }
+
+    fun clickWatchSeasonConfirm() = apply {
+        click(SeasonDetailsTestTags.WATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG)
+    }
+
+    fun clickWatchSeasonDismiss() = apply {
+        click(SeasonDetailsTestTags.WATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG)
+    }
 }

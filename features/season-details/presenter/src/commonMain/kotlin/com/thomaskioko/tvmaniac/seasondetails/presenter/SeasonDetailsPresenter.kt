@@ -226,7 +226,13 @@ public class SeasonDetailsPresenter(
             }
             return
         }
-        execute(MarkSeasonWatched(param.showId, param.seasonNumber))
+        updateState {
+            copy(
+                dialogState = SeasonDialogState.WatchSeasonConfirmation(
+                    primaryOperation = MarkSeasonWatched(param.showId, param.seasonNumber),
+                ),
+            )
+        }
     }
 
     private suspend fun handleToggleEpisodeWatched(episodeId: Long) {

@@ -130,15 +130,14 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should hide next episode given lowest unwatched has not aired`() = runTest {
-        val realNow = kotlin.time.Clock.System.now().toEpochMilliseconds()
+    fun `should return unaired episode given all aired episodes watched`() = runTest {
         val futureShowId = 2L
         seedShowWithSecondEpisodeAt(
             showId = futureShowId,
             seasonId = 21L,
             airedEpisodeId = 201L,
             secondEpisodeId = 202L,
-            secondEpisodeFirstAired = realNow + 7L * 86_400_000L,
+            secondEpisodeFirstAired = now + 7L * 86_400_000L,
         )
         watchedEpisodeDao.markAsWatched(
             showId = futureShowId,
@@ -152,12 +151,12 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             showId = futureShowId,
             includeSpecials = false,
         ).test {
-            awaitItem() shouldBe null
+            awaitItem()?.episode_number shouldBe 2L
         }
     }
 
     @Test
-    fun `should hide next episode given lowest unwatched has null first_aired`() = runTest {
+    fun `should return episode without air date given all aired episodes watched`() = runTest {
         val tbdShowId = 3L
         seedShowWithSecondEpisodeAt(
             showId = tbdShowId,
@@ -178,7 +177,60 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
             showId = tbdShowId,
             includeSpecials = false,
         ).test {
+            awaitItem()?.episode_number shouldBe 2L
+        }
+    }
+
+    @Test
+    fun `should return null given all episodes watched`() = runTest {
+        val completedShowId = 5L
+        seedShowWithSecondEpisodeAt(
+            showId = completedShowId,
+            seasonId = 51L,
+            airedEpisodeId = 501L,
+            secondEpisodeId = 502L,
+            secondEpisodeFirstAired = now - 86_400_000L,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = completedShowId,
+            episodeId = 501L,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+        watchedEpisodeDao.markAsWatched(
+            showId = completedShowId,
+            episodeId = 502L,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            includeSpecials = false,
+        )
+
+        episodesDao.observeNextEpisodeForShow(
+            showId = completedShowId,
+            includeSpecials = false,
+        ).test {
             awaitItem() shouldBe null
+        }
+    }
+
+    @Test
+    fun `should return latest season with episodes given later season has no episodes`() = runTest {
+        database.seasonsQueries.upsert(
+            id = Id(12L),
+            show_id = showIdForTraktId(SHOW_ID),
+            season_number = 2L,
+            title = "Season 2",
+            overview = null,
+            episode_count = 0L,
+            image_url = null,
+        )
+
+        episodesDao.observeLatestSeasonForShow(
+            showId = SHOW_ID,
+            includeSpecials = false,
+        ).test {
+            awaitItem()?.season_number shouldBe 1L
         }
     }
 

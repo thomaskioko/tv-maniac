@@ -274,6 +274,45 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         result.shouldBeNull()
     }
 
+    @Test
+    fun `should return status and episode counts given show has metadata and local episodes`() = runTest {
+        insertShow(id = 1L, name = "Show A")
+        insertSeason(seasonId = 10L, showId = 1L, seasonNumber = 1L)
+        insertEpisode(episodeId = 100L, seasonId = 10L, showId = 1L, episodeNumber = 1L, title = "Ep 1")
+        insertEpisode(episodeId = 101L, seasonId = 10L, showId = 1L, episodeNumber = 2L, title = "Ep 2")
+        val _ = database.showMetadataQueries.upsert(
+            show_id = showIdByTraktId.getValue(1L),
+            season_count = 1L,
+            episode_count = 10L,
+            status = "ended",
+        )
+
+        val result = episodesDao.getShowMetadataSyncInfo(showId = 1L)
+
+        result.shouldNotBeNull()
+        result.status shouldBe "Returning Series"
+        result.metadata_episode_count shouldBe 10L
+        result.local_episode_count shouldBe 2L
+    }
+
+    @Test
+    fun `should return zero metadata count given show has no metadata row`() = runTest {
+        insertShow(id = 1L, name = "Show A")
+
+        val result = episodesDao.getShowMetadataSyncInfo(showId = 1L)
+
+        result.shouldNotBeNull()
+        result.metadata_episode_count shouldBe 0L
+        result.local_episode_count shouldBe 0L
+    }
+
+    @Test
+    fun `should return null given show is not in the catalog`() = runTest {
+        val result = episodesDao.getShowMetadataSyncInfo(showId = 404L)
+
+        result.shouldBeNull()
+    }
+
     private fun insertShow(id: Long, name: String) {
         val _ = database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(id),

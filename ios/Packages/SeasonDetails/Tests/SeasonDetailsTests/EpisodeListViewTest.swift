@@ -13,7 +13,6 @@ class EpisodeListViewTest: SnapshotTestCase {
             episodeCount: 3,
             watchProgress: 0.4,
             expandEpisodeItems: false,
-            showSeasonWatchStateDialog: false,
             isSeasonWatched: false,
             items: [
                 .init(

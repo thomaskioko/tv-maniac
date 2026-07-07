@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.subscription.api.SubscriptionStatus
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionStatusProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeDebugConfig
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
@@ -16,18 +17,19 @@ internal class DefaultSubscriptionManagerTest {
     private val enablePaywallFlag = FakeFeatureFlag(initial = false)
     private val subscriptionStatusProvider = FakeSubscriptionStatusProvider()
     private val datastoreRepository = FakeDatastoreRepository()
-    private val debugConfig = FakeDebugConfig(isDebug = true)
 
-    private val manager = DefaultSubscriptionManager(
+    private fun TestScope.createManager(isDebug: Boolean = true) = DefaultSubscriptionManager(
         enablePaywallFlag = enablePaywallFlag,
         subscriptionStatusProvider = subscriptionStatusProvider,
         datastoreRepository = datastoreRepository,
-        debugConfig = debugConfig,
+        debugConfig = FakeDebugConfig(isDebug = isDebug),
+        scope = backgroundScope,
     )
 
     @Test
     fun `should grant access to every feature given the paywall flag is off`() = runTest {
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Free)
+        val manager = createManager()
 
         SubscriptionFeature.entries.forEach { feature ->
             manager.observeAccess(feature).test {
@@ -40,6 +42,7 @@ internal class DefaultSubscriptionManagerTest {
     fun `should deny access given the paywall flag is on and the status is free`() = runTest {
         enablePaywallFlag.value = true
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Free)
+        val manager = createManager()
 
         manager.observeAccess(SubscriptionFeature.Calendar).test {
             awaitItem() shouldBe false
@@ -50,6 +53,7 @@ internal class DefaultSubscriptionManagerTest {
     fun `should grant access given the paywall flag is on and the status is premium`() = runTest {
         enablePaywallFlag.value = true
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Premium)
+        val manager = createManager()
 
         manager.observeAccess(SubscriptionFeature.Calendar).test {
             awaitItem() shouldBe true
@@ -61,6 +65,7 @@ internal class DefaultSubscriptionManagerTest {
         enablePaywallFlag.value = true
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Free)
         datastoreRepository.saveAccountType("Premium")
+        val manager = createManager()
 
         manager.observeAccess(SubscriptionFeature.Calendar).test {
             awaitItem() shouldBe true
@@ -72,6 +77,7 @@ internal class DefaultSubscriptionManagerTest {
         enablePaywallFlag.value = true
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Premium)
         datastoreRepository.saveAccountType("Free")
+        val manager = createManager()
 
         manager.observeAccess(SubscriptionFeature.Calendar).test {
             awaitItem() shouldBe false
@@ -80,17 +86,12 @@ internal class DefaultSubscriptionManagerTest {
 
     @Test
     fun `should ignore a premium override given debug is disabled`() = runTest {
-        val releaseManager = DefaultSubscriptionManager(
-            enablePaywallFlag = enablePaywallFlag,
-            subscriptionStatusProvider = subscriptionStatusProvider,
-            datastoreRepository = datastoreRepository,
-            debugConfig = FakeDebugConfig(isDebug = false),
-        )
         enablePaywallFlag.value = true
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Free)
         datastoreRepository.saveAccountType("Premium")
+        val manager = createManager(isDebug = false)
 
-        releaseManager.observeAccess(SubscriptionFeature.Calendar).test {
+        manager.observeAccess(SubscriptionFeature.Calendar).test {
             awaitItem() shouldBe false
         }
     }
@@ -99,6 +100,7 @@ internal class DefaultSubscriptionManagerTest {
     fun `should deny access given an unknown status`() = runTest {
         enablePaywallFlag.value = true
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Unknown)
+        val manager = createManager()
 
         manager.observeAccess(SubscriptionFeature.Calendar).test {
             awaitItem() shouldBe false
@@ -109,6 +111,7 @@ internal class DefaultSubscriptionManagerTest {
     fun `should reflect the provider status regardless of the paywall flag`() = runTest {
         enablePaywallFlag.value = false
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Premium)
+        val manager = createManager()
 
         manager.observeSubscriptionStatus().test {
             awaitItem() shouldBe SubscriptionStatus.Premium
@@ -119,6 +122,7 @@ internal class DefaultSubscriptionManagerTest {
     fun `should apply the debug override to the reported status`() = runTest {
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Free)
         datastoreRepository.saveAccountType("Premium")
+        val manager = createManager()
 
         manager.observeSubscriptionStatus().test {
             awaitItem() shouldBe SubscriptionStatus.Premium
@@ -128,6 +132,7 @@ internal class DefaultSubscriptionManagerTest {
     @Test
     fun `should pass an unknown status through unmapped`() = runTest {
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Unknown)
+        val manager = createManager()
 
         manager.observeSubscriptionStatus().test {
             awaitItem() shouldBe SubscriptionStatus.Unknown
@@ -138,7 +143,23 @@ internal class DefaultSubscriptionManagerTest {
     fun `should return the latest access value given a one shot check`() = runTest {
         enablePaywallFlag.value = true
         subscriptionStatusProvider.setStatus(SubscriptionStatus.Premium)
+        val manager = createManager()
 
         manager.hasAccess(SubscriptionFeature.Calendar) shouldBe true
+    }
+
+    @Test
+    fun `should emit an updated access value given the override changes after first read`() = runTest {
+        enablePaywallFlag.value = true
+        subscriptionStatusProvider.setStatus(SubscriptionStatus.Free)
+        val manager = createManager()
+
+        manager.observeAccess(SubscriptionFeature.Calendar).test {
+            awaitItem() shouldBe false
+
+            datastoreRepository.saveAccountType("Premium")
+
+            awaitItem() shouldBe true
+        }
     }
 }

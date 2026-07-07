@@ -32,6 +32,7 @@ kotlin {
                 api(projects.data.episode.api)
                 api(projects.data.seasondetails.api)
                 api(projects.data.seasons.api)
+                api(projects.domain.showdetails)
                 api(projects.i18n.api)
 
                 implementation(libs.kotlinx.datetime)
@@ -42,12 +43,15 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.networkUtil.testing)
                 implementation(projects.core.notifications.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.core.view)
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.seasons.testing)
                 implementation(projects.i18n.generator)
                 implementation(projects.i18n.testing)
             }

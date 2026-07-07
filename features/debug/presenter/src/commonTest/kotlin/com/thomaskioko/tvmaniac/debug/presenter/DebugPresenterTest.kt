@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpisodeNotificationInteractor
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -345,6 +346,7 @@ class DebugPresenterTest {
                     watchProviderRepository = FakeWatchProviderRepository(),
                     dispatchers = dispatchers,
                 ),
+                showMetadataSyncHelper = ShowMetadataSyncHelper(FakeEpisodeRepository()),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
                 syncRepository = FakeActivitySyncRepository(),
                 datastoreRepository = datastoreRepository,
@@ -365,6 +367,7 @@ class DebugPresenterTest {
                     watchProviderRepository = FakeWatchProviderRepository(),
                     dispatchers = dispatchers,
                 ),
+                showMetadataSyncHelper = ShowMetadataSyncHelper(FakeEpisodeRepository()),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
                 activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = true) },
                 requestManagerRepository = FakeRequestManagerRepository(),

@@ -94,4 +94,10 @@ public interface WatchedEpisodeDao {
         entries: List<WatchedEpisodeEntry>,
         includeSpecials: Boolean,
     )
+
+    public suspend fun getShowSyncRemoteUpdatedAt(showId: Long, provider: String): Long?
+
+    public suspend fun upsertShowSyncLog(showId: Long, provider: String, remoteUpdatedAt: Long)
+
+    public suspend fun deleteAllShowSyncLogs()
 }

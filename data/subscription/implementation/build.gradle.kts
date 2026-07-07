@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.data.subscription.api)
+                api(projects.core.base)
                 api(projects.core.featureFlags.api)
                 api(projects.data.datastore.api)
                 api(projects.core.appconfig.api)

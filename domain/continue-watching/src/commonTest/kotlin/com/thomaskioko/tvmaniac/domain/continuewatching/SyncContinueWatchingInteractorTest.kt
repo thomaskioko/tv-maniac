@@ -8,8 +8,11 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
+import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
+import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
@@ -40,6 +43,7 @@ class SyncContinueWatchingInteractorTest {
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val watchProviderRepository = FakeWatchProviderRepository()
     private val requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false)
+    private val episodeRepository = FakeEpisodeRepository()
 
     private val syncActivityInteractor = SyncActivityInteractor(
         traktActivityRepository = activityRepository,
@@ -57,6 +61,7 @@ class SyncContinueWatchingInteractorTest {
         syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
+        showMetadataSyncHelper = ShowMetadataSyncHelper(episodeRepository),
         watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
         activeProviderFeatures = { FakeProviderFeatures(supportsContinueWatchingFetch = supportsContinueWatchingFetch) },
         requestManagerRepository = requestManagerRepository,
@@ -138,6 +143,29 @@ class SyncContinueWatchingInteractorTest {
         showDetailsRepository.fetchInvocations().map { it.forceRefresh } shouldBe listOf(false)
         seasonDetailsRepository.getSyncedShowIds() shouldContainExactlyInAnyOrder listOf(7L)
         watchProviderRepository.fetchInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should skip metadata fan-out for ended show with complete episode data`() = runTest(testDispatcher) {
+        continueWatchingRepository.setEntries(
+            listOf(
+                watchedShow(showId = 42L),
+                watchedShow(showId = 99L),
+            ),
+        )
+        episodeRepository.setShowMetadataSyncInfo(
+            showId = 42L,
+            info = ShowMetadataSyncInfo(status = "Ended", metadataEpisodeCount = 10, localEpisodeCount = 10),
+        )
+        episodeRepository.setShowMetadataSyncInfo(
+            showId = 99L,
+            info = ShowMetadataSyncInfo(status = "Returning Series", metadataEpisodeCount = 10, localEpisodeCount = 8),
+        )
+
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = false))
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(99L)
+        seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(99L)
     }
 
     @Test

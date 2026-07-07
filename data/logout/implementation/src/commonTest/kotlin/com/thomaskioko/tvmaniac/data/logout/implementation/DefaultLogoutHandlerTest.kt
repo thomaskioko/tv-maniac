@@ -82,6 +82,16 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should empty watched_show_sync_log given clear called`() = runTest(testDispatcher) {
+        cleaner.clear()
+
+        database.watchedShowSyncLogQueries
+            .getRemoteUpdatedAt(showIdForBreakingBad, "TRAKT")
+            .executeAsOneOrNull()
+            .shouldBeNull()
+    }
+
+    @Test
     fun `should empty followed_shows given clear called`() = runTest(testDispatcher) {
         cleaner.clear()
 
@@ -192,6 +202,12 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             1L,
             now,
             PendingAction.NOTHING.value,
+        )
+
+        database.watchedShowSyncLogQueries.upsert(
+            show_id = showIdForBreakingBad,
+            provider = "TRAKT",
+            remote_updated_at = now,
         )
 
         database.followedShowsQueries.upsert(
