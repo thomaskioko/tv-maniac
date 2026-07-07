@@ -15,6 +15,10 @@ public object SeasonDetailsTestTags {
         "season_details_mark_previous_seasons_confirm"
     public const val MARK_PREVIOUS_SEASONS_DIALOG_DISMISS_BUTTON_TEST_TAG: String =
         "season_details_mark_previous_seasons_dismiss"
+    public const val WATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG: String =
+        "season_details_watch_season_confirm"
+    public const val WATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG: String =
+        "season_details_watch_season_dismiss"
     public const val UNWATCH_SEASON_DIALOG_CONFIRM_BUTTON_TEST_TAG: String =
         "season_details_unwatch_season_confirm"
     public const val UNWATCH_SEASON_DIALOG_DISMISS_BUTTON_TEST_TAG: String =

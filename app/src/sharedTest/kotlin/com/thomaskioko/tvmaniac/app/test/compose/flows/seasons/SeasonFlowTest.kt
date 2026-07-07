@@ -109,6 +109,37 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    fun givenNoUnwatchedPreviousSeasons_whenSeasonToggledWatched_thenConfirmationDialogGatesTheWrite() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+        trackShow()
+
+        showDetailsRobot
+            .clickSeasonChip(seasonNumber = 1L)
+            .assertSeasonDetailsDisplayed()
+            .assertDoesNotExist(HomeTestTags.NAVIGATION_BAR)
+
+        seasonDetailsRobot
+            .clickSeasonWatchedToggle()
+            .assertWatchSeasonDialogDisplayed()
+            .clickWatchSeasonDismiss()
+            .assertWatchSeasonDialogDoesNotExist()
+            .scrollToMarkWatchedButton(secondEpisodeTraktId)
+            .assertMarkWatchedDisplayed(secondEpisodeTraktId)
+
+        seasonDetailsRobot
+            .clickSeasonWatchedToggle()
+            .assertWatchSeasonDialogDisplayed()
+            .clickWatchSeasonConfirm()
+            .assertWatchSeasonDialogDoesNotExist()
+            .scrollToMarkUnwatchedButton(secondEpisodeTraktId)
+            .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+    }
+
+    @Test
     fun givenAuthenticatedUser_whenSeasonRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
         scenarios.stubTmdb()
         scenarios.stubActiveProvider(AccountProvider.TRAKT)
