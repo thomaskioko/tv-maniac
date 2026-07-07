@@ -42,6 +42,10 @@ graph TB
     direction TB
     :data:account-manager:api[api]:::multiplatform
   end
+  subgraph :data:cast
+    direction TB
+    :data:cast:api[api]:::multiplatform
+  end
   subgraph :data:database
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
@@ -58,6 +62,10 @@ graph TB
     direction TB
     :data:followedshows:api[api]:::multiplatform
   end
+  subgraph :data:library
+    direction TB
+    :data:library:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -66,13 +74,30 @@ graph TB
     direction TB
     :data:seasons:api[api]:::multiplatform
   end
+  subgraph :data:showdetails
+    direction TB
+    :data:showdetails:api[api]:::multiplatform
+  end
+  subgraph :data:similar
+    direction TB
+    :data:similar:api[api]:::multiplatform
+  end
+  subgraph :data:trailers
+    direction TB
+    :data:trailers:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
   end
+  subgraph :data:watchproviders
+    direction TB
+    :data:watchproviders:api[api]:::multiplatform
+  end
   subgraph :domain
     direction TB
     :domain:notifications[notifications]:::multiplatform
+    :domain:showdetails[showdetails]:::multiplatform
   end
   subgraph :i18n
     direction TB
@@ -85,14 +110,22 @@ graph TB
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
+  :data:cast:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:episode:api --> :data:account-manager:api
   :data:episode:api --> :data:database:sqldelight
   :data:episode:api --> :data:followedshows:api
   :data:episode:api --> :data:upnext:api
+  :data:library:api --> :core:network-util:api
+  :data:library:api --> :data:account-manager:api
+  :data:library:api --> :data:database:sqldelight
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
+  :data:showdetails:api --> :data:database:sqldelight
+  :data:similar:api --> :data:database:sqldelight
+  :data:trailers:api --> :data:database:sqldelight
+  :data:watchproviders:api --> :data:database:sqldelight
   :domain:notifications --> :core:base
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
@@ -105,7 +138,20 @@ graph TB
   :domain:notifications --> :data:episode:api
   :domain:notifications --> :data:seasondetails:api
   :domain:notifications --> :data:seasons:api
+  :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
+  :domain:showdetails --> :core:base
+  :domain:showdetails --> :core:util:api
+  :domain:showdetails --> :data:cast:api
+  :domain:showdetails --> :data:episode:api
+  :domain:showdetails --> :data:followedshows:api
+  :domain:showdetails --> :data:library:api
+  :domain:showdetails --> :data:seasondetails:api
+  :domain:showdetails --> :data:seasons:api
+  :domain:showdetails --> :data:showdetails:api
+  :domain:showdetails --> :data:similar:api
+  :domain:showdetails --> :data:trailers:api
+  :domain:showdetails --> :data:watchproviders:api
   :i18n:api --> :i18n:generator
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
