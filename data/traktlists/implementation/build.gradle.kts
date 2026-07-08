@@ -21,6 +21,7 @@ kotlin {
 
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.followedshows.api)
+                implementation(projects.data.shows.api)
                 implementation(libs.sqldelight.extensions)
             }
         }
@@ -31,6 +32,7 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.requestManager.testing)
+                implementation(projects.data.shows.testing)
             }
         }
     }
