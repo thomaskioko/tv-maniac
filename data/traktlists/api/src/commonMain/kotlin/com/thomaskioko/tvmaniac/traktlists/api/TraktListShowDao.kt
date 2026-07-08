@@ -8,15 +8,15 @@ public interface TraktListShowDao {
 
     public fun observeActiveCountByListId(): Flow<Map<Long, Long>>
 
-    public fun upsert(listId: Long, showId: Long, listedAt: String, pendingAction: String)
+    public fun upsert(listId: Long, traktId: Long, listedAt: String, pendingAction: String)
 
-    public fun upsertSynced(listId: Long, showId: Long, listedAt: String)
+    public fun upsertSynced(listId: Long, traktId: Long, listedAt: String)
 
     public fun deleteSyncedByListId(listId: Long)
 
-    public fun updatePendingAction(listId: Long, showId: Long, pendingAction: String)
+    public fun updatePendingAction(listId: Long, traktId: Long, pendingAction: String)
 
-    public fun deleteByListIdAndShowId(listId: Long, showId: Long)
+    public fun deleteByListIdAndTraktId(listId: Long, traktId: Long)
 
     public fun deleteAll()
 

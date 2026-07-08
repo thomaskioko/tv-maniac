@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.traktlists.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListShowDao
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListShowEntry
@@ -26,33 +28,33 @@ public class DefaultTraktListShowDao(
             .map { rows -> rows.associate { it.list_id to it.show_count } }
 
     override fun observeByShowId(showId: Long): Flow<List<TraktListShowEntry>> =
-        database.traktListShowsQueries.selectByTraktId(trakt_id = showId)
+        database.traktListShowsQueries.selectByShowId(show_id = Id<TmdbId>(showId))
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows ->
                 rows.map { row ->
                     TraktListShowEntry(
                         listId = row.list_id,
-                        showId = row.trakt_id,
+                        traktId = row.trakt_id,
                         listedAt = row.listed_at,
                         pendingAction = row.pending_action,
                     )
                 }
             }
 
-    override fun upsert(listId: Long, showId: Long, listedAt: String, pendingAction: String) {
+    override fun upsert(listId: Long, traktId: Long, listedAt: String, pendingAction: String) {
         database.traktListShowsQueries.upsert(
             list_id = listId,
-            trakt_id = showId,
+            trakt_id = traktId,
             listed_at = listedAt,
             pending_action = pendingAction,
         )
     }
 
-    override fun upsertSynced(listId: Long, showId: Long, listedAt: String) {
+    override fun upsertSynced(listId: Long, traktId: Long, listedAt: String) {
         database.traktListShowsQueries.upsertSynced(
             list_id = listId,
-            trakt_id = showId,
+            trakt_id = traktId,
             listed_at = listedAt,
         )
     }
@@ -61,18 +63,18 @@ public class DefaultTraktListShowDao(
         database.traktListShowsQueries.deleteSyncedByListId(list_id = listId)
     }
 
-    override fun updatePendingAction(listId: Long, showId: Long, pendingAction: String) {
+    override fun updatePendingAction(listId: Long, traktId: Long, pendingAction: String) {
         database.traktListShowsQueries.updatePendingAction(
             pending_action = pendingAction,
             list_id = listId,
-            trakt_id = showId,
+            trakt_id = traktId,
         )
     }
 
-    override fun deleteByListIdAndShowId(listId: Long, showId: Long) {
-        database.traktListShowsQueries.deleteByListIdAndShowId(
+    override fun deleteByListIdAndTraktId(listId: Long, traktId: Long) {
+        database.traktListShowsQueries.deleteByListIdAndTraktId(
             list_id = listId,
-            trakt_id = showId,
+            trakt_id = traktId,
         )
     }
 

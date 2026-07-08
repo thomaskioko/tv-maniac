@@ -46,7 +46,7 @@ public class TraktListItemsStore(
                     if (item.type == TYPE_SHOW && show != null) {
                         traktListShowDao.upsertSynced(
                             listId = key.listId,
-                            showId = show.ids.trakt,
+                            traktId = show.ids.trakt,
                             listedAt = item.listedAt,
                         )
                     }
