@@ -7,10 +7,15 @@ CREATE TABLE IF NOT EXISTS trakt_list_shows(
     PRIMARY KEY (list_id, trakt_id)
 );
 
-selectByTraktId:
+selectByShowId:
 SELECT list_id, trakt_id, listed_at, pending_action
 FROM trakt_list_shows
-WHERE trakt_id = :trakt_id;
+WHERE trakt_id IN (
+    SELECT show_trakt.trakt_id
+    FROM tvshow
+    INNER JOIN show_trakt ON show_trakt.show_id = tvshow.id
+    WHERE tvshow.tmdb_id = :show_id
+);
 
 upsert:
 INSERT OR REPLACE INTO trakt_list_shows(list_id, trakt_id, listed_at, pending_action)
@@ -21,7 +26,7 @@ UPDATE trakt_list_shows
 SET pending_action = ?
 WHERE list_id = ? AND trakt_id = ?;
 
-deleteByListIdAndShowId:
+deleteByListIdAndTraktId:
 DELETE FROM trakt_list_shows
 WHERE list_id = ? AND trakt_id = ?;
 
