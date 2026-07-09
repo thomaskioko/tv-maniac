@@ -120,6 +120,32 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should sync remaining lists given one list items request returns not found`() = runTest {
+        remoteDataSource.lists = listOf(
+            traktListResponse(id = 1L, slug = "watchlist", itemCount = 2),
+            traktListResponse(id = 2L, slug = "favorites", itemCount = 1),
+        )
+        remoteDataSource.itemsByListId = mapOf(
+            1L to listOf(
+                traktListItemResponse(traktId = 10L, tmdbId = 100L),
+                traktListItemResponse(traktId = 20L, tmdbId = 200L),
+            ),
+        )
+        remoteDataSource.itemsErrorByListId = mapOf(
+            2L to ApiResponse.Error.HttpError(
+                code = 404,
+                errorBody = null,
+                errorMessage = "Status: 404  Failure: Invalid Request",
+            ),
+        )
+
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+
+        val counts = showDao.observeActiveCountByListId().first()
+        counts[1L] shouldBe 2L
+    }
+
+    @Test
     fun `should preserve pending UPLOAD rows given items sync replaces synced rows`() = runTest {
         seedShow(tmdbId = 990L, traktId = 99L)
         remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 1))
@@ -371,6 +397,7 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 private class FakeRemoteDataSource : TraktListRemoteDataSource {
     var lists: List<TraktPersonalListsResponse> = emptyList()
     var itemsByListId: Map<Long, List<TraktListItemResponse>> = emptyMap()
+    var itemsErrorByListId: Map<Long, ApiResponse<List<TraktListItemResponse>>> = emptyMap()
     val itemsCalls: MutableList<Pair<String, Long>> = mutableListOf()
     val addToListCalls: MutableList<Triple<String, Long, Long>> = mutableListOf()
     val removeFromListCalls: MutableList<Triple<String, Long, Long>> = mutableListOf()
@@ -401,6 +428,7 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
         listId: Long,
     ): ApiResponse<List<TraktListItemResponse>> {
         itemsCalls += userSlug to listId
+        itemsErrorByListId[listId]?.let { return it }
         return ApiResponse.Success(itemsByListId[listId].orEmpty())
     }
 
