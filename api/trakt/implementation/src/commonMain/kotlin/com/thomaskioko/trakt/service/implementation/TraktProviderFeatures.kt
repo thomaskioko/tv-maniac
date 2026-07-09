@@ -17,7 +17,7 @@ import dev.zacsweers.metro.binding
         >(),
 )
 public class TraktProviderFeatures : ProviderFeatures {
-    override val supportsContinueWatchingFetch: Boolean = true
+    override val supportsContinueWatchingFetch: Boolean = false
     override val supportsFavorites: Boolean = true
     override val supportsLists: Boolean = true
     override val supportsCalendar: Boolean = true

@@ -55,7 +55,7 @@ public class TraktEpisodeWatchesDataSource(
         val response = syncRemoteDataSource.getWatchedShows(
             page = page,
             limit = limit,
-            extended = "full",
+            extended = "progress",
         )
         return when (response) {
             is ApiResponse.Success -> response.body.mapNotNull { it.toBatch() }
