@@ -22,8 +22,8 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
             .assertUpNextPageDisplayed()
             .scrollToUpNextEpisode(breakingBadTmdbId)
             .assertUpNextEpisodeDisplayed(breakingBadTmdbId)
-            .assertUpNextEpisodeMetaDisplayed(breakingBadTmdbId, "S01E01")
-            .assertUpNextProgressCountDisplayed(breakingBadTmdbId, "0/9")
+            .assertUpNextEpisodeMetaDisplayed(breakingBadTmdbId, "S01E02")
+            .assertUpNextProgressCountDisplayed(breakingBadTmdbId, "1/9")
             .clickUpNextEpisodeRow(breakingBadTmdbId)
             .assertSeasonDetailsDisplayed()
             .clickBackButton()
@@ -34,8 +34,8 @@ internal class UpNextFlowTests : BaseAppFlowTest() {
         progressRobot
             .scrollToUpNextEpisode(breakingBadTmdbId)
             .clickUpNextWatchedButton(breakingBadTmdbId)
-            .assertUpNextEpisodeMetaDisplayed(breakingBadTmdbId, "S01E02")
-            .assertUpNextProgressCountDisplayed(breakingBadTmdbId, "1/9")
+            .assertUpNextEpisodeMetaDisplayed(breakingBadTmdbId, "S01E03")
+            .assertUpNextProgressCountDisplayed(breakingBadTmdbId, "2/9")
             // 4. Verify in Season Details
             .clickUpNextEpisodeRow(breakingBadTmdbId)
             .assertSeasonDetailsDisplayed()
