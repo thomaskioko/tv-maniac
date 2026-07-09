@@ -152,7 +152,7 @@ essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = 
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-config = { module = "com.google.firebase:firebase-config", version = "23.1.0" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.0.6" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.0" }
 
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 
