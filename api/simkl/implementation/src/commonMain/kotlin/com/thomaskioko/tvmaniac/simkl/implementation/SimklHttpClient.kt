@@ -99,7 +99,7 @@ internal fun simklHttpClient(
                 if (!response.status.isSuccess() && response.status != HttpStatusCode.Unauthorized) {
                     val failureReason = when {
                         response.status == HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
-                        response.status == HttpStatusCode.NotFound -> "Invalid Request"
+                        response.status == HttpStatusCode.NotFound -> "Endpoint not found: ${response.call.request.url}"
                         response.status == HttpStatusCode.TooManyRequests ->
                             "Rate limited. Please try again in a moment."
                         response.status == HttpStatusCode.RequestTimeout -> "Network Timeout"

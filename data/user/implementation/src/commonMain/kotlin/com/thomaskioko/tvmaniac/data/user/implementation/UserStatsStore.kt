@@ -35,7 +35,12 @@ public class UserStatsStore(
                 else -> FetcherResult.Data(body)
             }
             is ApiResponse.Unauthenticated -> FetcherResult.Error.Exception(AuthenticationException("Not authenticated"))
-            is ApiResponse.Error -> FetcherResult.Error.Exception(SyncException(response.toSyncError()))
+            is ApiResponse.Error ->
+                if (response is ApiResponse.Error.HttpError && response.code == 404) {
+                    FetcherResult.Error.Exception(AuthenticationException("User stats unavailable (HTTP 404)"))
+                } else {
+                    FetcherResult.Error.Exception(SyncException(response.toSyncError()))
+                }
         }
     },
     sourceOfTruth = SourceOfTruth.of<String, RemoteUserStats, UserProfileStats>(

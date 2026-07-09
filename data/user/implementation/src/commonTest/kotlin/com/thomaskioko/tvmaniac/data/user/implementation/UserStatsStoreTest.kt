@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.user.implementation
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.user.api.UserRemoteDataSource
 import com.thomaskioko.tvmaniac.data.user.api.model.RemoteUserProfile
@@ -93,6 +94,26 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
             awaitItem()
             cancelAndConsumeRemainingEvents()
         }
+
+        userStatsDao.observeUserProfileStats("test-user").test {
+            awaitItem().shouldBeNull()
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should skip stats without persisting given provider returns 404`() = runTest(testDispatcher) {
+        val store = buildStore { traktSource }
+        traktSource.statsResponse = ApiResponse.Error.HttpError(
+            code = 404,
+            errorBody = null,
+            errorMessage = "Endpoint not found",
+        )
+
+        var skippedMessage: String? = null
+        store.get("test-user") { skippedMessage = it }
+
+        skippedMessage.shouldNotBeNull()
 
         userStatsDao.observeUserProfileStats("test-user").test {
             awaitItem().shouldBeNull()

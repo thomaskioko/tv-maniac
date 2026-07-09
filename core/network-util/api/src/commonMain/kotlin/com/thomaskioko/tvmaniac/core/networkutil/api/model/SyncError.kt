@@ -29,7 +29,7 @@ public sealed class SyncError {
         ) : Permanent()
 
         public data class NotFound(
-            override val message: String = "Resource not found.",
+            override val message: String = "Endpoint not found (HTTP 404).",
         ) : Permanent()
 
         public data class InvalidData(
