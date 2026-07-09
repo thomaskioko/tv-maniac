@@ -8,10 +8,11 @@ public struct ShowInfoView: View {
 
     private let isFollowed: Bool
     private let canAddToList: Bool
+    private let isInList: Bool
     private let genres: [SwiftGenres]
     private let trackLabel: String
     private let stopTrackingLabel: String
-    private let addToListLabel: String
+    private let listActionLabel: String
     private let rateLabel: String
     private let userRating: Int?
     private let onAddToLibrary: () -> Void
@@ -21,10 +22,11 @@ public struct ShowInfoView: View {
     public init(
         isFollowed: Bool,
         canAddToList: Bool,
+        isInList: Bool,
         genres: [SwiftGenres],
         trackLabel: String,
         stopTrackingLabel: String,
-        addToListLabel: String,
+        listActionLabel: String,
         rateLabel: String,
         userRating: Int? = nil,
         onAddToLibrary: @escaping () -> Void,
@@ -33,10 +35,11 @@ public struct ShowInfoView: View {
     ) {
         self.isFollowed = isFollowed
         self.canAddToList = canAddToList
+        self.isInList = isInList
         self.genres = genres
         self.trackLabel = trackLabel
         self.stopTrackingLabel = stopTrackingLabel
-        self.addToListLabel = addToListLabel
+        self.listActionLabel = listActionLabel
         self.rateLabel = rateLabel
         self.userRating = userRating
         self.onAddToLibrary = onAddToLibrary
@@ -76,8 +79,9 @@ public struct ShowInfoView: View {
                 action: onAddToLibrary
             )
             FilledVerticalIconButton(
-                text: addToListLabel,
-                systemImage: "rectangle.on.rectangle.angled",
+                text: listActionLabel,
+                systemImage: isInList ? "checklist" : "rectangle.on.rectangle.angled",
+                containerColor: isInList ? theme.colors.success : nil,
                 action: onAddToCustomList
             )
             .disabled(!canAddToList)
@@ -95,10 +99,11 @@ public struct ShowInfoView: View {
     ShowInfoView(
         isFollowed: true,
         canAddToList: true,
+        isInList: false,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
         stopTrackingLabel: "Stop Tracking",
-        addToListLabel: "Add To List",
+        listActionLabel: "Add To List",
         rateLabel: "Rate",
         onAddToLibrary: {},
         onAddToCustomList: {},
@@ -112,10 +117,11 @@ public struct ShowInfoView: View {
     ShowInfoView(
         isFollowed: true,
         canAddToList: false,
+        isInList: false,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
         stopTrackingLabel: "Stop Tracking",
-        addToListLabel: "Add To List",
+        listActionLabel: "Add To List",
         rateLabel: "Rate",
         onAddToLibrary: {},
         onAddToCustomList: {},
@@ -129,10 +135,11 @@ public struct ShowInfoView: View {
     ShowInfoView(
         isFollowed: false,
         canAddToList: true,
+        isInList: false,
         genres: [.init(name: "Drama"), .init(name: "Fantasy")],
         trackLabel: "Track",
         stopTrackingLabel: "Stop Tracking",
-        addToListLabel: "Add To List",
+        listActionLabel: "Add To List",
         rateLabel: "Rate",
         onAddToLibrary: {},
         onAddToCustomList: {},
@@ -146,12 +153,31 @@ public struct ShowInfoView: View {
     ShowInfoView(
         isFollowed: true,
         canAddToList: true,
+        isInList: false,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
         stopTrackingLabel: "Stop Tracking",
-        addToListLabel: "Add To List",
+        listActionLabel: "Add To List",
         rateLabel: "Rate",
         userRating: 9,
+        onAddToLibrary: {},
+        onAddToCustomList: {},
+        onRate: {}
+    )
+    .padding()
+    .appPreview(LightTheme())
+}
+
+#Preview("In a List") {
+    ShowInfoView(
+        isFollowed: true,
+        canAddToList: true,
+        isInList: true,
+        genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+        trackLabel: "Track",
+        stopTrackingLabel: "Stop Tracking",
+        listActionLabel: "In List",
+        rateLabel: "Rate",
         onAddToLibrary: {},
         onAddToCustomList: {},
         onRate: {}

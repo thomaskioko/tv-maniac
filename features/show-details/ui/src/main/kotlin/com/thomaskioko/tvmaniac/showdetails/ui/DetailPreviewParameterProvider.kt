@@ -35,11 +35,17 @@ internal val previewHeaderState = ShowDetailsHeaderState(
     isInLibrary = true,
     genres = persistentListOf("Horror", "Action"),
     canAddToList = true,
+    listActionLabel = "Add To List",
 )
 
 internal val previewHeaderStateSimkl = previewHeaderState.copy(canAddToList = false)
 
 internal val previewHeaderStateRated = previewHeaderState.copy(userRating = 9)
+
+internal val previewHeaderStateInList = previewHeaderState.copy(
+    isInList = true,
+    listActionLabel = "In List",
+)
 
 internal val previewSeasonsEpisodesState = ShowDetailsSeasonsEpisodesState(
     seasonsList = persistentListOf(
