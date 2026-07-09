@@ -8,10 +8,11 @@ import kotlinx.coroutines.Job
  *
  * Use this for follow-up sync work triggered by a user action (writing through to the
  * network, refreshing caches) that should still complete if the user navigates away
- * before the launched block finishes. The block runs on a process-scoped supervisor,
+ * before the launched block finishes. The block runs on a session-scoped supervisor,
  * so cancelling the caller does not cancel the launched job.
  *
- * Process-scoped, not OS-scheduled. The job dies with the process. For work that must
+ * Session-scoped, not OS-scheduled. Logout and account switch cancel any in-flight work
+ * (see [SyncCoroutineScope]); the scope otherwise dies with the process. For work that must
  * survive process death, use the OS-managed scheduler in `core/tasks` instead.
  *
  * The launcher catches any failure inside the block and logs it under the supplied

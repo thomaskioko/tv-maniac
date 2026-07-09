@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.core.base.coroutines
 
-import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.SyncScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultAppScopeLauncher(
-    @IoCoroutineScope private val appCoroutineScope: CoroutineScope,
+    @SyncScope private val appCoroutineScope: CoroutineScope,
     private val logger: Logger,
 ) : AppScopeLauncher {
 
