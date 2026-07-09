@@ -16,6 +16,8 @@ kotlin {
                 api(projects.data.requestManager.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.user.api)
+
+                implementation(projects.core.base)
             }
         }
 

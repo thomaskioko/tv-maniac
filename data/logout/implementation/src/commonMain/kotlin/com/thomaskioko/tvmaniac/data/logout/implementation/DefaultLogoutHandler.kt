@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.data.logout.implementation
 
+import com.thomaskioko.tvmaniac.core.base.coroutines.SyncCoroutineScope
 import com.thomaskioko.tvmaniac.data.logout.api.LogoutHandler
 import com.thomaskioko.tvmaniac.data.ratings.api.ProviderMetaDao
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsDao
@@ -16,6 +17,7 @@ import dev.zacsweers.metro.SingleIn
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultLogoutHandler(
+    private val syncCoroutineScope: SyncCoroutineScope,
     private val userRepository: UserRepository,
     private val traktActivityRepository: TraktActivityRepository,
     private val syncRepository: ActivitySyncRepository,
@@ -27,6 +29,8 @@ public class DefaultLogoutHandler(
 ) : LogoutHandler {
 
     override suspend fun clear() {
+        syncCoroutineScope.cancelActiveWork()
+
         userRepository.clearUserData()
         traktActivityRepository.clearAllActivities()
         syncRepository.clearAll()

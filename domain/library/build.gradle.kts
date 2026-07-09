@@ -42,6 +42,7 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)

@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.library
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -25,6 +26,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError as NetworkS
 
 @Inject
 public class SyncLibraryInteractor(
+    private val accountManager: AccountManager,
     private val libraryRepository: LibraryRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val syncActivityInteractor: SyncActivityInteractor,
@@ -40,6 +42,11 @@ public class SyncLibraryInteractor(
 ) : Interactor<SyncLibraryInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
+        if (accountManager.getActiveProvider() == null) {
+            logger.debug(TAG, "Library sync skipped - no active account")
+            return
+        }
+
         val needsSync = params.forceRefresh || libraryRepository.needsSync(LIBRARY_SYNC.duration)
         if (!needsSync) {
             logger.debug(TAG, "Library sync skipped - cache still valid")
@@ -72,6 +79,10 @@ public class SyncLibraryInteractor(
 
             for (show in followedShows) {
                 ensureActive()
+                if (accountManager.getActiveProvider() == null) {
+                    logger.debug(TAG, "Stopping metadata fan-out - account logged out")
+                    break
+                }
                 val result = runCatching {
                     if (showMetadataSyncHelper.shouldSync(show.showId)) {
                         syncShowMetadataInteractor.executeSync(

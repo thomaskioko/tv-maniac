@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.library
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
@@ -19,6 +21,7 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -41,8 +44,10 @@ class SyncLibraryInteractorTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val accountManager = FakeAccountManager().apply { setActiveProvider(AccountProvider.TRAKT) }
 
     private val interactor = SyncLibraryInteractor(
+        accountManager = accountManager,
         libraryRepository = FakeLibraryRepository(),
         followedShowsRepository = followedShowsRepository,
         syncActivityInteractor = SyncActivityInteractor(
@@ -83,6 +88,17 @@ class SyncLibraryInteractorTest {
 
         showDetailsRepository.fetchInvocations().map { it.forceRefresh } shouldBe listOf(true)
         seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(7L)
+    }
+
+    @Test
+    fun `should skip sync given no active account`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(null)
+        followedShowsRepository.setEntries(listOf(followedShow(showId = 7L)))
+
+        interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true, isUserInitiated = true))
+
+        showDetailsRepository.fetchInvocations().shouldBeEmpty()
+        seasonDetailsRepository.getSyncedShowIds().shouldBeEmpty()
     }
 
     @Test
