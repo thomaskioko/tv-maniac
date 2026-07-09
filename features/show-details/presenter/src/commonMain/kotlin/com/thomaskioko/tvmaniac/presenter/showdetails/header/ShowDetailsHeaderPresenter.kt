@@ -23,7 +23,9 @@ import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.toHeaderState
@@ -62,6 +64,7 @@ public class ShowDetailsHeaderPresenter(
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeRatingInteractor: ObserveRatingInteractor,
     observeCommunityRatingInteractor: ObserveCommunityRatingInteractor,
+    observeTraktListsInteractor: ObserveTraktListsInteractor,
     private val syncCalendarInteractor: SyncCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
@@ -83,6 +86,7 @@ public class ShowDetailsHeaderPresenter(
         observableShowDetailsInteractor(showId)
         observeRatingInteractor(ObserveRatingInteractor.Param(RatingEntityType.SHOW, showId))
         observeCommunityRatingInteractor(showId)
+        observeTraktListsInteractor(showId)
 
         fetchShowDetails(forceRefresh = forceRefresh)
         refreshCommunityRating(forceRefresh = forceRefresh)
@@ -94,10 +98,12 @@ public class ShowDetailsHeaderPresenter(
         observableShowDetailsInteractor.flow,
         observeRatingInteractor.flow,
         observeCommunityRatingInteractor.flow,
+        observeTraktListsInteractor.flow,
         loadingState.observable,
         uiMessageManager.message,
         _state,
-    ) { details, userRating, communityRating, isRefreshing, message, current ->
+    ) { details, userRating, communityRating, traktLists, isRefreshing, message, current ->
+        val isInList = traktLists.any { it.isShowInList }
         details.toHeaderState(localizer).copy(
             communityRating = communityRating?.rating,
             communityVotes = communityRating?.votes,
@@ -105,6 +111,10 @@ public class ShowDetailsHeaderPresenter(
             isRefreshing = isRefreshing,
             message = message,
             canAddToList = current.canAddToList,
+            isInList = isInList,
+            listActionLabel = localizer.getString(
+                if (isInList) StringResourceKey.BtnInList else StringResourceKey.BtnAddToList,
+            ),
         )
     }.stateIn(
         scope = coroutineScope,

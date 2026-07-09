@@ -28,6 +28,7 @@ import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
@@ -38,6 +39,8 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.tvShowDetails
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
+import com.thomaskioko.tvmaniac.traktlists.api.TraktList
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.collections.shouldContainExactly
@@ -77,6 +80,7 @@ internal class ShowDetailsHeaderPresenterTest {
     private val datastoreRepository = FakeDatastoreRepository()
     private val notificationManager = FakeNotificationManager()
     private val accountManager = FakeAccountManager()
+    private val traktListRepository = FakeTraktListRepository()
     private val localizer = FakeLocalizer()
     private val formatterUtil = FakeFormatterUtil()
     private val dateTimeProvider = FakeDateTimeProvider()
@@ -175,6 +179,38 @@ internal class ShowDetailsHeaderPresenterTest {
     }
 
     @Test
+    fun `should expose isInList true and listed label given show belongs to a list`() = runTest {
+        traktListRepository.setListsForShow(
+            listOf(traktList(isShowInList = true)),
+        )
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isInList shouldBe true
+            state.listActionLabel shouldBe localizer.getString(StringResourceKey.BtnInList)
+        }
+    }
+
+    @Test
+    fun `should expose isInList false and add label given show belongs to no list`() = runTest {
+        traktListRepository.setListsForShow(
+            listOf(traktList(isShowInList = false)),
+        )
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            val state = expectMostRecentItem()
+            state.isInList shouldBe false
+            state.listActionLabel shouldBe localizer.getString(StringResourceKey.BtnAddToList)
+        }
+    }
+
+    @Test
     fun `should refresh show details given auth state changes to logged in`() = runTest {
         val presenter = buildPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -249,6 +285,7 @@ internal class ShowDetailsHeaderPresenterTest {
             refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
+            observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,
@@ -305,5 +342,14 @@ internal class ShowDetailsHeaderPresenterTest {
 
     private companion object {
         private const val SHOW_ID = 84958L
+
+        private fun traktList(isShowInList: Boolean): TraktList = TraktList(
+            id = 1L,
+            slug = "watchlist",
+            name = "Watchlist",
+            description = null,
+            itemCount = if (isShowInList) 1L else 0L,
+            isShowInList = isShowInList,
+        )
     }
 }
