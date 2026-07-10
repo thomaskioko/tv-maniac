@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.library
 
+import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -45,6 +46,7 @@ class SyncLibraryInteractorTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val accountManager = FakeAccountManager().apply { setActiveProvider(SyncProviderSource.TRAKT) }
+    private val syncObserver = FakeSyncObserver()
 
     private val interactor = SyncLibraryInteractor(
         accountManager = accountManager,
@@ -66,7 +68,7 @@ class SyncLibraryInteractorTest {
         datastoreRepository = FakeDatastoreRepository(),
         dateTimeProvider = FakeDateTimeProvider(),
         dispatchers = dispatchers,
-        syncObserver = FakeSyncObserver(),
+        syncObserver = syncObserver,
         logger = FakeLogger(),
     )
 
@@ -122,6 +124,31 @@ class SyncLibraryInteractorTest {
 
         showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(99L)
         seasonDetailsRepository.getSyncedShowIds() shouldBe listOf(99L)
+    }
+
+    @Test
+    fun `should announce active sync given library sync runs`() = runTest(testDispatcher) {
+        followedShowsRepository.setEntries(listOf(followedShow(showId = 7L)))
+
+        syncObserver.syncStarted.test {
+            interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+
+            awaitItem() shouldBe Unit
+        }
+        syncObserver.isSyncing.value shouldBe false
+    }
+
+    @Test
+    fun `should not announce sync given no active account`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(null)
+        followedShowsRepository.setEntries(listOf(followedShow(showId = 7L)))
+
+        syncObserver.syncStarted.test {
+            interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+
+            expectNoEvents()
+        }
+        syncObserver.isSyncing.value shouldBe false
     }
 
     private fun followedShow(showId: Long): FollowedShowEntry = FollowedShowEntry(
