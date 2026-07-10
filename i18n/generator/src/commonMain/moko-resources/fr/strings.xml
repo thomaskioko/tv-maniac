@@ -69,6 +69,8 @@
     <string name="label_settings_account_description">Gérer votre compte connecté</string>
     <string name="settings_layout_title">Disposition</string>
     <string name="settings_layout_description">Personnalisez l\'apparence des séries et des épisodes</string>
+    <string name="settings_haptic_feedback_title">Retour haptique</string>
+    <string name="settings_haptic_feedback_description">Ressentez de subtiles vibrations lors des interactions</string>
     <string name="label_settings_trakt_authentication">Connectez et synchronisez votre contenu</string>
     <string name="label_settings_connect_title">Connexion</string>
     <string name="label_settings_account_sync_description">Enregistrez votre progression, découvrez de nouveaux titres et synchronisez votre contenu sur tous vos appareils.</string>
