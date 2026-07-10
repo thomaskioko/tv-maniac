@@ -53,61 +53,62 @@ public class SyncLibraryInteractor(
             return
         }
 
-        withContext(dispatchers.io) {
-            syncActivityInteractor.executeSync(
-                SyncActivityInteractor.Param(forceRefresh = params.forceRefresh),
-            )
-
-            logger.debug(TAG, "Syncing library watchlist")
-            libraryRepository.syncLibrary(params.forceRefresh)
-
-            watchedEpisodeSyncRepository.syncAllWatchedEpisodes(params.forceRefresh)
-
-            val watchlistChanged = params.forceRefresh ||
-                syncRepository.isAheadOf(
-                    consumerId = ActivitySyncTypes.LIBRARY_WATCHLIST,
-                    activityType = ActivityType.SHOWS_WATCHLISTED,
+        syncObserver.trackSync(operationId = TAG) {
+            withContext(dispatchers.io) {
+                syncActivityInteractor.executeSync(
+                    SyncActivityInteractor.Param(forceRefresh = params.forceRefresh),
                 )
-            if (!watchlistChanged) {
-                logger.debug(TAG, "Metadata fan-out skipped — watchlist activity unchanged")
-                datastoreRepository.setLastSyncTimestamp(dateTimeProvider.nowMillis())
-                return@withContext
-            }
 
-            val followedShows = followedShowsRepository.getFollowedShows()
-            logger.debug(TAG, "Syncing ${followedShows.size} followed shows")
+                logger.debug(TAG, "Syncing library watchlist")
+                libraryRepository.syncLibrary(params.forceRefresh)
 
-            for (show in followedShows) {
-                ensureActive()
-                if (accountManager.getActiveProvider() == null) {
-                    logger.debug(TAG, "Stopping metadata fan-out - account logged out")
-                    break
+                watchedEpisodeSyncRepository.syncAllWatchedEpisodes(params.forceRefresh)
+
+                val watchlistChanged = params.forceRefresh ||
+                    syncRepository.isAheadOf(
+                        consumerId = ActivitySyncTypes.LIBRARY_WATCHLIST,
+                        activityType = ActivityType.SHOWS_WATCHLISTED,
+                    )
+                if (!watchlistChanged) {
+                    logger.debug(TAG, "Metadata fan-out skipped — watchlist activity unchanged")
+                    return@withContext
                 }
-                val result = runCatching {
-                    if (showMetadataSyncHelper.shouldSync(show.showId)) {
-                        syncShowMetadataInteractor.executeSync(
-                            SyncShowMetadataInteractor.Param(
-                                showId = show.showId,
-                                forceRefresh = params.isUserInitiated,
-                                refreshLatestSeason = showMetadataSyncHelper.shouldRefreshLatestSeason(show.showId),
-                            ),
-                        )
-                    } else {
-                        logger.debug(TAG, "Skipping metadata sync for ended show ${show.showId}")
+
+                val followedShows = followedShowsRepository.getFollowedShows()
+                logger.debug(TAG, "Syncing ${followedShows.size} followed shows")
+
+                for (show in followedShows) {
+                    ensureActive()
+                    if (accountManager.getActiveProvider() == null) {
+                        logger.debug(TAG, "Stopping metadata fan-out - account logged out")
+                        break
+                    }
+                    val result = runCatching {
+                        if (showMetadataSyncHelper.shouldSync(show.showId)) {
+                            syncShowMetadataInteractor.executeSync(
+                                SyncShowMetadataInteractor.Param(
+                                    showId = show.showId,
+                                    forceRefresh = params.isUserInitiated,
+                                    refreshLatestSeason = showMetadataSyncHelper.shouldRefreshLatestSeason(show.showId),
+                                ),
+                            )
+                        } else {
+                            logger.debug(TAG, "Skipping metadata sync for ended show ${show.showId}")
+                        }
+                    }
+                    val failure = result.exceptionOrNull() ?: continue
+
+                    logger.warning(TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
+                    syncObserver.log(SyncError.BackgroundSyncFailed(TAG, failure))
+
+                    if (failure.toSyncError() is NetworkSyncError.Retryable) {
+                        logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.showId}")
+                        break
                     }
                 }
-                val failure = result.exceptionOrNull() ?: continue
 
-                logger.warning(TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
-                syncObserver.log(SyncError.BackgroundSyncFailed(TAG, failure))
-
-                if (failure.toSyncError() is NetworkSyncError.Retryable) {
-                    logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.showId}")
-                    break
-                }
+                logger.debug(TAG, "Library sync complete")
             }
-
-            logger.debug(TAG, "Library sync complete")
         }
 
         datastoreRepository.setLastSyncTimestamp(dateTimeProvider.nowMillis())
