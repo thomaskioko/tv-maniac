@@ -29,6 +29,7 @@ private fun previewRootGroups(): ImmutableList<SettingsCategoryGroup> = buildLis
             label = "General",
             items = persistentListOf(
                 SettingsCategoryItem(SettingsPage.APPEARANCE, "Appearance", "Theme and image quality"),
+                SettingsCategoryItem(SettingsPage.LAYOUT, "Layout", "Posters, sections, and display"),
                 SettingsCategoryItem(SettingsPage.BEHAVIOR, "Behavior", "Sync, specials, and trailers"),
                 SettingsCategoryItem(SettingsPage.NOTIFICATIONS, "Notifications", "Episode release alerts"),
                 SettingsCategoryItem(SettingsPage.PRIVACY, "Privacy", "Crash reporting and privacy policy"),
@@ -132,6 +133,7 @@ internal val loggedInState = SettingsState(
 )
 
 internal val appearanceState = loggedInState.copy(currentPage = SettingsPage.APPEARANCE, currentPageTitle = "Appearance")
+internal val layoutState = loggedInState.copy(currentPage = SettingsPage.LAYOUT, currentPageTitle = "Layout")
 internal val appearanceLockedState = appearanceState.copy(
     locks = SettingsLocks(
         customThemesLocked = true,
@@ -201,6 +203,7 @@ internal class SettingsPreviewParameterProvider : PreviewParameterProvider<Setti
                 defaultState,
                 loggedInState,
                 appearanceState,
+                layoutState,
                 behaviorState,
             )
         }

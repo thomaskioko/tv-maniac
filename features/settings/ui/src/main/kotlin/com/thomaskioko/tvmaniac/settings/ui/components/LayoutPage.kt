@@ -1,0 +1,37 @@
+package com.thomaskioko.tvmaniac.settings.ui.components
+
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.PreviewWrapper
+import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
+import com.thomaskioko.tvmaniac.settings.ui.layoutState
+import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
+
+@Composable
+internal fun LayoutPage(
+    state: SettingsState,
+    onAction: (SettingsActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+    }
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun LayoutPagePreview() {
+    LayoutPage(
+        state = layoutState,
+        onAction = {},
+    )
+}
