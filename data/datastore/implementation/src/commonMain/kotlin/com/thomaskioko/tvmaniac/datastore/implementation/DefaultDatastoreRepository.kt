@@ -308,6 +308,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_ACCOUNT_TYPE]
         }
 
+    override suspend fun saveHapticFeedbackEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_HAPTIC_FEEDBACK_ENABLED] = enabled
+        }
+    }
+
+    override fun observeHapticFeedbackEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_HAPTIC_FEEDBACK_ENABLED] ?: true
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -331,5 +342,6 @@ public class DefaultDatastoreRepository(
         public val KEY_LAST_TOKEN_REFRESH_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_token_refresh_timestamp")
         public val KEY_DEBUG_MENU_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("debug_menu_enabled")
         public val KEY_ACCOUNT_TYPE: Preferences.Key<String> = stringPreferencesKey("account_type")
+        public val KEY_HAPTIC_FEEDBACK_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("haptic_feedback_enabled")
     }
 }

@@ -145,6 +145,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val crashReportingEnabledFlow = MutableStateFlow(true)
     private val debugMenuEnabledFlow = MutableStateFlow(false)
     private val accountTypeFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val hapticFeedbackEnabledFlow = MutableStateFlow(true)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -195,4 +196,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeAccountType(): Flow<String?> = accountTypeFlow.asStateFlow()
+
+    override suspend fun saveHapticFeedbackEnabled(enabled: Boolean) {
+        hapticFeedbackEnabledFlow.value = enabled
+    }
+
+    override fun observeHapticFeedbackEnabled(): Flow<Boolean> = hapticFeedbackEnabledFlow.asStateFlow()
 }
