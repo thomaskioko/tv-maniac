@@ -6,15 +6,29 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountAuthRepository
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
 class DefaultAccountManagerTest {
 
+    private val dispatcher = UnconfinedTestDispatcher()
+    private val dispatchers = AppCoroutineDispatchers(
+        io = dispatcher,
+        computation = dispatcher,
+        databaseWrite = dispatcher,
+        databaseRead = dispatcher,
+        main = dispatcher,
+    )
+
     private val traktRepository = FakeAccountAuthRepository(SyncProviderSource.TRAKT)
-    private val accountManager = DefaultAccountManager(repositories = mapOf(SyncProviderSource.TRAKT to traktRepository))
+    private val accountManager = DefaultAccountManager(
+        repositories = mapOf(SyncProviderSource.TRAKT to traktRepository),
+        dispatchers = dispatchers,
+    )
 
     @Test
     fun `should expose TRAKT as the active provider when logged in`() = runTest {
@@ -50,6 +64,25 @@ class DefaultAccountManagerTest {
         traktRepository.setState(AccountAuthState.LOGGED_IN)
 
         accountManager.getActiveProvider() shouldBe SyncProviderSource.TRAKT
+    }
+
+    @Test
+    fun `should keep the last signed-in provider active given two providers are logged in`() = runTest {
+        val simklRepository = FakeAccountAuthRepository(SyncProviderSource.SIMKL)
+        val manager = DefaultAccountManager(
+            repositories = mapOf(
+                SyncProviderSource.SIMKL to simklRepository,
+                SyncProviderSource.TRAKT to traktRepository,
+            ),
+            dispatchers = dispatchers,
+        )
+
+        traktRepository.setState(AccountAuthState.LOGGED_IN)
+        traktRepository.triggerLogin()
+        simklRepository.setState(AccountAuthState.LOGGED_IN)
+        simklRepository.triggerLogin()
+
+        manager.getActiveProvider() shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
