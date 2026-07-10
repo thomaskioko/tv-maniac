@@ -5,6 +5,7 @@ public object SettingsTestTags {
     public const val LIST_TEST_TAG: String = "settings_list"
     public const val BACK_BUTTON_TEST_TAG: String = "settings_back_button"
     public const val GENERAL_APPEARANCE_ROW_TEST_TAG: String = "settings_general_appearance_row"
+    public const val GENERAL_LAYOUT_ROW_TEST_TAG: String = "settings_general_layout_row"
     public const val GENERAL_BEHAVIOR_ROW_TEST_TAG: String = "settings_general_behavior_row"
     public const val GENERAL_NOTIFICATIONS_ROW_TEST_TAG: String = "settings_general_notifications_row"
     public const val GENERAL_PRIVACY_ROW_TEST_TAG: String = "settings_general_privacy_row"

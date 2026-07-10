@@ -308,6 +308,7 @@ class SettingsScreenTest: SnapshotTestCase {
         }
         sections.append(SettingsRootSection(id: "general", label: "General", items: [
             navItem(.appearance, "Appearance", "Theme and image quality"),
+            navItem(.layout, "Layout", "Personalize how shows and episodes look"),
             navItem(.behavior, "Behavior", "Sync, specials, and trailers"),
             navItem(.notifications, "Notifications", "Episode release alerts"),
             navItem(.privacy, "Privacy", "Crash reporting and privacy policy"),
@@ -364,6 +365,12 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .root, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_RootAuthenticated")
+    }
+
+    func test_SettingsScreen_Layout() {
+        SettingsScreen(state: makeState(page: .layout, authenticated: true), onBack: {})
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Layout")
     }
 
     func test_SettingsScreen_Appearance() {

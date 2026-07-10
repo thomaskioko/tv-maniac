@@ -33,6 +33,11 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         click(SettingsTestTags.BACK_BUTTON_TEST_TAG)
     }
 
+    fun openLayoutPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.GENERAL_LAYOUT_ROW_TEST_TAG)
+        click(SettingsTestTags.GENERAL_LAYOUT_ROW_TEST_TAG)
+    }
+
     fun openAppearancePage() = apply {
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG)
         click(SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG)
