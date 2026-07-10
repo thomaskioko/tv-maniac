@@ -43,9 +43,6 @@ struct iOSApp: App {
                             message: toast.message,
                             loading: toast.loading,
                             onCancelTapped: {
-                                if toast.persistent {
-                                    holder.component.rootPresenter.dismissSyncStatus()
-                                }
                                 toastManager.dismiss()
                             }
                         )
@@ -58,9 +55,6 @@ struct iOSApp: App {
                                 }
                                 .onEnded { value in
                                     if value.translation.height < -50 || abs(value.translation.width) > 50 {
-                                        if toast.persistent {
-                                            holder.component.rootPresenter.dismissSyncStatus()
-                                        }
                                         toastManager.dismiss()
                                         dragOffsetX = 0
                                         dragOffsetY = 0
@@ -123,6 +117,7 @@ private struct RootToastForwarder: View {
     let registry: ScreenRegistry
 
     @StateValue private var toast: ToastState
+    @StateValue private var syncing: KotlinBoolean
     @Environment(ToastManager.self) private var toastManager
 
     init(rootPresenter: RootPresenter, navigator: Navigator, registry: ScreenRegistry) {
@@ -130,10 +125,18 @@ private struct RootToastForwarder: View {
         self.navigator = navigator
         self.registry = registry
         _toast = .init(rootPresenter.toastStateValue)
+        _syncing = .init(rootPresenter.syncIndicatorVisibleValue)
     }
 
     var body: some View {
         RootNavigationView(rootPresenter: rootPresenter, navigator: navigator, registry: registry)
+            .overlay(alignment: .top) {
+                if syncing.boolValue {
+                    SyncProgressBar()
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: syncing.boolValue)
             .onAppear { forward(toast) }
             .onChange(of: toast) { _, newState in
                 forward(newState)
@@ -145,13 +148,6 @@ private struct RootToastForwarder: View {
             toastManager.dismiss()
             return
         }
-        toastManager.show(
-            Toast(
-                type: state.type == .error ? .error : .syncing,
-                message: message,
-                persistent: state.persistent,
-                loading: state.type == .status
-            )
-        )
+        toastManager.show(Toast(type: .error, message: message))
     }
 }

@@ -31,6 +31,7 @@ import com.arkivanov.decompose.router.slot.ChildSlot
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.tvmaniac.compose.components.NotificationRationaleContent
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
+import com.thomaskioko.tvmaniac.compose.components.SyncProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
@@ -70,6 +71,7 @@ public fun RootScreen(
     val notificationPermissionState by rootPresenter.notificationPermissionState.collectAsStateWithLifecycle()
     val episodeSheetSlot by rootPresenter.episodeSheetSlot.collectAsStateWithLifecycle()
     val toastState by rootPresenter.toastState.collectAsStateWithLifecycle()
+    val syncIndicatorVisible by rootPresenter.syncIndicatorVisible.collectAsStateWithLifecycle()
     val accountLimitBannerVisible by rootPresenter.accountLimitBannerVisible.collectAsStateWithLifecycle()
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -92,12 +94,13 @@ public fun RootScreen(
         screenContents = screenContents,
         sheetContents = sheetContents,
         toastState = toastState,
+        syncIndicatorVisible = syncIndicatorVisible,
         notificationPermissionState = notificationPermissionState,
         episodeSheetSlot = episodeSheetSlot,
         accountLimitBannerVisible = accountLimitBannerVisible,
         onRationaleAccepted = { rootPresenter.onRationaleAccepted() },
         onRationaleDismissed = { rootPresenter.onRationaleDismissed() },
-        onDismissToast = { handleToastDismiss(rootPresenter, toastState) },
+        onDismissToast = { toastState.id?.let(rootPresenter::onToastShown) },
         onDismissAccountLimitBanner = { rootPresenter.onDismissAccountLimitBanner() },
         modifier = modifier,
     ) {
@@ -113,6 +116,7 @@ internal fun RootContent(
     screenContents: Set<ScreenContent>,
     sheetContents: Set<SheetContent>,
     toastState: ToastState,
+    syncIndicatorVisible: Boolean,
     notificationPermissionState: NotificationPermissionState,
     episodeSheetSlot: ChildSlot<*, SheetChild>,
     accountLimitBannerVisible: Boolean,
@@ -157,6 +161,11 @@ internal fun RootContent(
                     .fillMaxSize()
                     .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
             ) {
+                SyncProgressIndicator(
+                    visible = syncIndicatorVisible,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+
                 AccountLimitBanner(
                     onDismiss = onDismissAccountLimitBanner,
                     visible = accountLimitBannerVisible,
@@ -166,24 +175,11 @@ internal fun RootContent(
 
             TvManiacSnackBarHost(
                 message = toastState.message,
-                style = toastState.type.toSnackBarStyle(),
+                style = SnackBarStyle.Error,
                 persistent = toastState.persistent,
-                loading = toastState.type == ToastType.Status,
                 onDismiss = onDismissToast,
             )
         }
-    }
-}
-
-private fun ToastType.toSnackBarStyle(): SnackBarStyle = when (this) {
-    ToastType.Error -> SnackBarStyle.Error
-    ToastType.Status -> SnackBarStyle.Syncing
-}
-
-private fun handleToastDismiss(rootPresenter: RootPresenter, state: ToastState) {
-    when (state.type) {
-        ToastType.Status -> rootPresenter.dismissSyncStatus()
-        ToastType.Error -> state.id?.let(rootPresenter::onToastShown)
     }
 }
 
@@ -197,6 +193,7 @@ private fun RootScreenPreview(
         screenContents = emptySet(),
         sheetContents = emptySet(),
         toastState = state.toastState,
+        syncIndicatorVisible = state.syncIndicatorVisible,
         notificationPermissionState = state.notificationPermissionState,
         episodeSheetSlot = ChildSlot<Nothing, Nothing>(),
         accountLimitBannerVisible = state.accountLimitBannerVisible,
@@ -211,6 +208,7 @@ private fun RootScreenPreview(
 
 internal data class RootPreviewState(
     val toastState: ToastState = ToastState(),
+    val syncIndicatorVisible: Boolean = false,
     val notificationPermissionState: NotificationPermissionState = NotificationPermissionState(),
     val accountLimitBannerVisible: Boolean = false,
 )
@@ -228,6 +226,7 @@ internal class RootPreviewParameterProvider : PreviewParameterProvider<RootPrevi
                     type = ToastType.Error,
                 ),
             ),
+            RootPreviewState(syncIndicatorVisible = true),
             RootPreviewState(accountLimitBannerVisible = true),
         )
 }
