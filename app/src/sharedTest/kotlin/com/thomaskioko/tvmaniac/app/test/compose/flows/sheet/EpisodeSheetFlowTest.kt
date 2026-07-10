@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.sheet
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
@@ -85,7 +85,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     @Test
     fun givenEpisodeSheet_whenEpisodeRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
         scenarios.stubTmdb()
-        scenarios.stubActiveProvider(AccountProvider.TRAKT)
+        scenarios.stubActiveProvider(SyncProviderSource.TRAKT)
 
         openEpisodeSheetFromUpNextCard()
 

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
@@ -46,7 +46,7 @@ class SyncContinueWatchingInteractorTest {
     private val watchProviderRepository = FakeWatchProviderRepository()
     private val requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false)
     private val episodeRepository = FakeEpisodeRepository()
-    private val accountManager = FakeAccountManager().apply { setActiveProvider(AccountProvider.TRAKT) }
+    private val accountManager = FakeAccountManager().apply { setActiveProvider(SyncProviderSource.TRAKT) }
 
     private val syncActivityInteractor = SyncActivityInteractor(
         traktActivityRepository = activityRepository,

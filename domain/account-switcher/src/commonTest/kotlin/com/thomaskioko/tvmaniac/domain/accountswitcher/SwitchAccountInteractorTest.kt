@@ -1,10 +1,9 @@
 package com.thomaskioko.tvmaniac.domain.accountswitcher
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
-import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.data.logout.api.LogoutHandler
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import io.kotest.matchers.shouldBe
@@ -32,19 +31,19 @@ internal class SwitchAccountInteractorTest {
 
     @Test
     fun `should clear state and set new provider given switch`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
-        buildInteractor(backgroundScope).executeSync(AccountProvider.SIMKL)
+        buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
 
         logoutHandler.cleared shouldBe true
-        accountManager.getActiveProvider() shouldBe AccountProvider.SIMKL
+        accountManager.getActiveProvider() shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
     fun `should run all resync interactors given switch`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
-        buildInteractor(backgroundScope).executeSync(AccountProvider.SIMKL)
+        buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
         testScheduler.runCurrent()
 
         resyncProfileRan shouldBe true
@@ -54,26 +53,26 @@ internal class SwitchAccountInteractorTest {
 
     @Test
     fun `should logout old provider before clear given active provider exists`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
-        buildInteractor(backgroundScope).executeSync(AccountProvider.SIMKL)
+        buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
 
-        accountManager.lastLogoutProvider shouldBe AccountProvider.TRAKT
+        accountManager.lastLogoutProvider shouldBe SyncProviderSource.TRAKT
     }
 
     @Test
     fun `should not logout given no active provider on first activation`() = runTest {
         accountManager.setActiveProvider(null)
 
-        buildInteractor(backgroundScope).executeSync(AccountProvider.SIMKL)
+        buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
 
         accountManager.lastLogoutProvider shouldBe null
-        accountManager.getActiveProvider() shouldBe AccountProvider.SIMKL
+        accountManager.getActiveProvider() shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
     fun `should execute in order logout then clear then setActive then resync given switch`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val events = mutableListOf<String>()
 
         val interactor = SwitchAccountInteractor(
@@ -83,12 +82,12 @@ internal class SwitchAccountInteractorTest {
                 }
             },
             accountManager = object : AccountManager by accountManager {
-                override fun getActiveProvider(): AccountProvider? = accountManager.getActiveProvider()
-                override suspend fun logout(provider: AccountProvider) {
+                override fun getActiveProvider(): SyncProviderSource? = accountManager.getActiveProvider()
+                override suspend fun logout(provider: SyncProviderSource) {
                     events.add("logout:${provider.name}")
                     accountManager.logout(provider)
                 }
-                override suspend fun setActive(provider: AccountProvider) {
+                override suspend fun setActive(provider: SyncProviderSource) {
                     events.add("setActive:${provider.name}")
                     accountManager.setActive(provider)
                 }
@@ -99,7 +98,7 @@ internal class SwitchAccountInteractorTest {
             appScopeLauncher = FakeAppScopeLauncher(backgroundScope),
         )
 
-        interactor.executeSync(AccountProvider.SIMKL)
+        interactor.executeSync(SyncProviderSource.SIMKL)
         testScheduler.runCurrent()
 
         events shouldBe listOf(

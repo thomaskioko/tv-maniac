@@ -27,8 +27,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.android.designsystem.R
 import com.thomaskioko.tvmaniac.compose.components.ProviderButton
 import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
@@ -44,7 +44,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun UnauthenticatedContent(
     labels: ProfileLabels,
     authProviders: ImmutableList<AuthProviderOption>,
-    onProviderClick: (AccountProvider) -> Unit,
+    onProviderClick: (SyncProviderSource) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
@@ -105,7 +105,7 @@ internal fun UnauthenticatedContent(
                     text = option.label,
                     logo = providerLogo(option.provider),
                     onClick = { onProviderClick(option.provider) },
-                    modifier = if (option.provider == AccountProvider.TRAKT) {
+                    modifier = if (option.provider == SyncProviderSource.TRAKT) {
                         Modifier.testTag(ProfileTestTags.SIGN_IN_BUTTON_TEST_TAG)
                     } else {
                         Modifier
@@ -117,9 +117,9 @@ internal fun UnauthenticatedContent(
 }
 
 @DrawableRes
-private fun providerLogo(provider: AccountProvider): Int = when (provider) {
-    AccountProvider.TRAKT -> R.drawable.ic_trakt_mono
-    AccountProvider.SIMKL -> R.drawable.ic_simkl_mono
+private fun providerLogo(provider: SyncProviderSource): Int = when (provider) {
+    SyncProviderSource.TRAKT -> R.drawable.ic_trakt_mono
+    SyncProviderSource.SIMKL -> R.drawable.ic_simkl_mono
 }
 
 @Composable
@@ -166,8 +166,8 @@ private fun UnauthenticatedContentPreview() {
     UnauthenticatedContent(
         labels = sampleProfileLabels,
         authProviders = persistentListOf(
-            AuthProviderOption(AccountProvider.TRAKT, "Continue with Trakt"),
-            AuthProviderOption(AccountProvider.SIMKL, "Continue with Simkl"),
+            AuthProviderOption(SyncProviderSource.TRAKT, "Continue with Trakt"),
+            AuthProviderOption(SyncProviderSource.SIMKL, "Continue with Simkl"),
         ),
         onProviderClick = {},
         contentPadding = PaddingValues(),

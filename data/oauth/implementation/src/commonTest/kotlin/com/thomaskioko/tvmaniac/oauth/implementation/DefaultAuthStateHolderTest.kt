@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.oauth.implementation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -49,14 +49,14 @@ internal class DefaultAuthStateHolderTest {
             val holder = holder()
 
             holder.saveTokens(
-                provider = AccountProvider.TRAKT,
+                provider = SyncProviderSource.TRAKT,
                 accessToken = "trakt-access",
                 refreshToken = "trakt-refresh",
                 expiresAtSeconds = 9_999_999_999L,
             )
 
-            holder.isLoggedIn(AccountProvider.TRAKT) shouldBe true
-            holder.getAuthState(AccountProvider.TRAKT)
+            holder.isLoggedIn(SyncProviderSource.TRAKT) shouldBe true
+            holder.getAuthState(SyncProviderSource.TRAKT)
                 .shouldNotBeNull().accessToken shouldBe "trakt-access"
         }
 
@@ -64,9 +64,9 @@ internal class DefaultAuthStateHolderTest {
     fun `should emit a login event given tokens saved`() = runTest(testDispatcher) {
         val holder = holder()
 
-        holder.loginEvents(AccountProvider.TRAKT).test {
+        holder.loginEvents(SyncProviderSource.TRAKT).test {
             holder.saveTokens(
-                provider = AccountProvider.TRAKT,
+                provider = SyncProviderSource.TRAKT,
                 accessToken = "a",
                 refreshToken = "r",
                 expiresAtSeconds = 1L,
@@ -82,29 +82,29 @@ internal class DefaultAuthStateHolderTest {
             val holder = holder()
 
             holder.saveTokens(
-                provider = AccountProvider.TRAKT,
+                provider = SyncProviderSource.TRAKT,
                 accessToken = "trakt",
                 refreshToken = "tr",
                 expiresAtSeconds = 1L,
             )
             holder.saveTokens(
-                AccountProvider.SIMKL,
+                SyncProviderSource.SIMKL,
                 accessToken = "simkl",
                 refreshToken = "sr",
                 expiresAtSeconds = 1L,
             )
 
-            holder.getAuthState(AccountProvider.TRAKT)
+            holder.getAuthState(SyncProviderSource.TRAKT)
                 .shouldNotBeNull().accessToken shouldBe "trakt"
-            holder.getAuthState(AccountProvider.SIMKL)
+            holder.getAuthState(SyncProviderSource.SIMKL)
                 .shouldNotBeNull().accessToken shouldBe "simkl"
 
-            holder.logout(AccountProvider.TRAKT)
+            holder.logout(SyncProviderSource.TRAKT)
 
-            holder.isLoggedIn(AccountProvider.TRAKT) shouldBe false
-            holder.getAuthState(AccountProvider.TRAKT).shouldBeNull()
-            holder.isLoggedIn(AccountProvider.SIMKL) shouldBe true
-            holder.getAuthState(AccountProvider.SIMKL)
+            holder.isLoggedIn(SyncProviderSource.TRAKT) shouldBe false
+            holder.getAuthState(SyncProviderSource.TRAKT).shouldBeNull()
+            holder.isLoggedIn(SyncProviderSource.SIMKL) shouldBe true
+            holder.getAuthState(SyncProviderSource.SIMKL)
                 .shouldNotBeNull().accessToken shouldBe "simkl"
         }
 
@@ -112,14 +112,14 @@ internal class DefaultAuthStateHolderTest {
     fun `should not attempt refresh given a null action`() = runTest(testDispatcher) {
         val holder = holder()
         holder.saveTokens(
-            provider = AccountProvider.SIMKL,
+            provider = SyncProviderSource.SIMKL,
             accessToken = "s",
             refreshToken = "",
             expiresAtSeconds = 1L,
         )
 
         holder.refreshTokens(
-            AccountProvider.SIMKL,
+            SyncProviderSource.SIMKL,
             action = null,
         ) shouldBe TokenRefreshResult.NotLoggedIn
     }
@@ -129,7 +129,7 @@ internal class DefaultAuthStateHolderTest {
         runTest(testDispatcher) {
             val holder = holder()
             holder.saveTokens(
-                provider = AccountProvider.TRAKT,
+                provider = SyncProviderSource.TRAKT,
                 accessToken = "old",
                 refreshToken = "r",
                 expiresAtSeconds = 1L,
@@ -137,9 +137,9 @@ internal class DefaultAuthStateHolderTest {
             val refreshed = AuthState(accessToken = "new", refreshToken = "r2", isAuthorized = true)
             val action = FakeTokenRefreshAction(RefreshTokenResult.Success(refreshed))
 
-            val result = holder.refreshTokens(AccountProvider.TRAKT, action)
+            val result = holder.refreshTokens(SyncProviderSource.TRAKT, action)
 
             result.shouldBeInstanceOf<TokenRefreshResult.Success>()
-            holder.getAuthState(AccountProvider.TRAKT).shouldNotBeNull().accessToken shouldBe "new"
+            holder.getAuthState(SyncProviderSource.TRAKT).shouldNotBeNull().accessToken shouldBe "new"
         }
 }

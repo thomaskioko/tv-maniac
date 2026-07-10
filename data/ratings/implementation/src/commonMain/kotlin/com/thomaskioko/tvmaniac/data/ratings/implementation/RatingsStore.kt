@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.ratings.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
@@ -106,7 +106,7 @@ private data class FetchedProviderRating(
 
 private fun resolveProviderShowId(
     showId: Long,
-    provider: AccountProvider,
+    provider: SyncProviderSource,
     database: TvManiacDatabase,
 ): Long? = database.tvshowExternalIdQueries
     .externalIdForShow(showId = Id(showId), provider = provider.toDbProvider())

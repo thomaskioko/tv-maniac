@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
-import com.thomaskioko.tvmaniac.accountmanager.api.ProviderScoped
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProvider
 
-public interface EpisodeWatchesDataSource : ProviderScoped {
+public interface EpisodeWatchesDataSource : SyncProvider {
 
     public suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry>
 

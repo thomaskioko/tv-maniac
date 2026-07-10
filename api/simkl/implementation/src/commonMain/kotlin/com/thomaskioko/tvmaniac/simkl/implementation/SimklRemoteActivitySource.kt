@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.simkl.api.SimklSyncRemoteDataSource
@@ -18,7 +18,7 @@ public class SimklRemoteActivitySource(
     private val remoteDataSource: SimklSyncRemoteDataSource,
 ) : RemoteActivitySource {
 
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
     override suspend fun getLastActivities(): ApiResponse<Map<ActivityType, Instant>> =
         remoteDataSource.getLastActivities().map { it.toActivityMap() }

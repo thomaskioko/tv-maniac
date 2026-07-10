@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProviderKey
 import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.SingleIn
@@ -12,7 +12,7 @@ import dev.zacsweers.metro.binding
 @ContributesIntoMap(
     scope = AppScope::class,
     binding = binding<
-        @AccountProviderKey(AccountProvider.SIMKL)
+        @AccountProviderKey(SyncProviderSource.SIMKL)
         ProviderFeatures,
         >(),
 )

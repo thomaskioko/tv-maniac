@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.upnext
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
@@ -426,7 +426,7 @@ internal class UpNextPresenterTest {
             val state = awaitItem()
             state.episodes shouldHaveSize 1
 
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             cancelAndIgnoreRemainingEvents()

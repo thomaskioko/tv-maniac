@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.accountmanager.implementation.di
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Multibinds
@@ -10,5 +10,5 @@ import dev.zacsweers.metro.Multibinds
 public interface AuthClientConfigMultibindings {
 
     @Multibinds(allowEmpty = true)
-    public fun authClientConfigs(): Map<AccountProvider, AuthClientConfig>
+    public fun authClientConfigs(): Map<SyncProviderSource, AuthClientConfig>
 }

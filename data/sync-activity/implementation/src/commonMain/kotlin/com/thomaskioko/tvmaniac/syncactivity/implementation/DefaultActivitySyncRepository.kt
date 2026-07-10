@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.syncactivity.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -60,7 +60,7 @@ public class DefaultActivitySyncRepository(
         }
     }
 
-    private fun readCheckpoint(provider: AccountProvider, consumerId: String, activityType: ActivityType): Instant? =
+    private fun readCheckpoint(provider: SyncProviderSource, consumerId: String, activityType: ActivityType): Instant? =
         database.activitySyncQueries
             .getCheckpoint(
                 provider = provider.toDbProvider(),

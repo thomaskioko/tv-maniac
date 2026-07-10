@@ -43,8 +43,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.OutlinedVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -200,7 +200,7 @@ private fun ProfileContent(
     recentlyWatched: SectionState<ProfileRecentItem>,
     favorites: SectionState<ProfileShowItem>,
     authProviders: ImmutableList<AuthProviderOption>,
-    onProviderClick: (AccountProvider) -> Unit,
+    onProviderClick: (SyncProviderSource) -> Unit,
     onViewLists: () -> Unit,
     onListClick: (Long) -> Unit,
     onShowClick: (Long) -> Unit,

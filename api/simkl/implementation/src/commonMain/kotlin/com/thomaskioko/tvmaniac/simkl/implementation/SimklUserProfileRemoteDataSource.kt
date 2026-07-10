@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.user.api.UserRemoteDataSource
@@ -19,7 +19,7 @@ public class SimklUserProfileRemoteDataSource(
     private val remoteDataSource: SimklUserRemoteDataSource,
 ) : UserRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
     override suspend fun getUserProfile(userId: String): ApiResponse<RemoteUserProfile> =
         remoteDataSource.getUserSettings().map { response ->

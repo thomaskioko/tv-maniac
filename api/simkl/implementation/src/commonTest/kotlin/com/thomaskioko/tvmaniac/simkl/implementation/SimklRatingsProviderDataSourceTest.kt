@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
@@ -24,7 +24,7 @@ import kotlin.test.Test
 class SimklRatingsProviderDataSourceTest {
 
     private val remoteDataSource = FakeSimklRatingsRemoteDataSource()
-    private val source = SimklRatingsProviderDataSource(remoteDataSource)
+    private val source = SimklRatingsSyncProviderDataSource(remoteDataSource)
 
     @Test
     fun `should return the user rating for the matching simkl id`() = runTest {
@@ -59,7 +59,7 @@ class SimklRatingsProviderDataSourceTest {
 
     @Test
     fun `should report simkl as its provider`() {
-        source.provider shouldBe AccountProvider.SIMKL
+        source.provider shouldBe SyncProviderSource.SIMKL
     }
 
     @Test

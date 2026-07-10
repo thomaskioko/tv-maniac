@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.user
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.user.api.UserRemoteDataSource
@@ -19,7 +19,7 @@ public class TraktUserProfileRemoteDataSource(
     private val remoteDataSource: TraktUserRemoteDataSource,
 ) : UserRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getUserProfile(userId: String): ApiResponse<RemoteUserProfile> =
         remoteDataSource.getUser(userId).map { it.toRemoteUserProfile() }

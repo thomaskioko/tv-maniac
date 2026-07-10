@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.library
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -44,7 +44,7 @@ class SyncLibraryInteractorTest {
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val episodeRepository = FakeEpisodeRepository()
-    private val accountManager = FakeAccountManager().apply { setActiveProvider(AccountProvider.TRAKT) }
+    private val accountManager = FakeAccountManager().apply { setActiveProvider(SyncProviderSource.TRAKT) }
 
     private val interactor = SyncLibraryInteractor(
         accountManager = accountManager,

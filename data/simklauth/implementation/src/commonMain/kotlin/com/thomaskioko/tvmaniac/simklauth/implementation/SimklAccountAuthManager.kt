@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.simklauth.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProviderKey
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.oauth.api.OAuthLauncher
 import dev.zacsweers.metro.ContributesIntoMap
@@ -14,18 +14,18 @@ import dev.zacsweers.metro.binding
 @ContributesIntoMap(
     scope = ActivityScope::class,
     binding = binding<
-        @AccountProviderKey(AccountProvider.SIMKL)
+        @AccountProviderKey(SyncProviderSource.SIMKL)
         AuthManager,
         >(),
 )
 public class SimklAccountAuthManager(
     private val launcher: OAuthLauncher,
-    authClientConfigs: Map<AccountProvider, AuthClientConfig>,
+    authClientConfigs: Map<SyncProviderSource, AuthClientConfig>,
 ) : AuthManager {
 
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
-    private val config: AuthClientConfig = authClientConfigs.getValue(AccountProvider.SIMKL)
+    private val config: AuthClientConfig = authClientConfigs.getValue(SyncProviderSource.SIMKL)
 
     override fun launchWebView() {
         launcher.launch(config)
@@ -36,6 +36,6 @@ public class SimklAccountAuthManager(
     }
 
     override fun setAuthCallback(callback: () -> Unit) {
-        launcher.setCallback(AccountProvider.SIMKL, callback)
+        launcher.setCallback(SyncProviderSource.SIMKL, callback)
     }
 }

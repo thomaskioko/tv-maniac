@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProviderKey
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import dev.zacsweers.metro.AppScope
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.SharedFlow
 @ContributesIntoMap(
     scope = AppScope::class,
     binding = binding<
-        @AccountProviderKey(AccountProvider.TRAKT)
+        @AccountProviderKey(SyncProviderSource.TRAKT)
         AccountAuthRepository,
         >(),
 )
@@ -27,7 +27,7 @@ public class TraktAccountAuthRepository(
     private val traktAuthRepository: OAuthRepository,
 ) : AccountAuthRepository {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override val state: Flow<AccountAuthState> = traktAuthRepository.state
 

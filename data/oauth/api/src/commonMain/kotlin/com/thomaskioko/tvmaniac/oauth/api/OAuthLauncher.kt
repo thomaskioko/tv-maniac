@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.oauth.api
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 
 /**
  * Shared, provider-agnostic OAuth launcher. [launch] runs the authorization-code flow for the given
@@ -13,5 +13,5 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
 public interface OAuthLauncher {
     public fun register()
     public fun launch(config: AuthClientConfig)
-    public fun setCallback(provider: AccountProvider, callback: () -> Unit)
+    public fun setCallback(provider: SyncProviderSource, callback: () -> Unit)
 }

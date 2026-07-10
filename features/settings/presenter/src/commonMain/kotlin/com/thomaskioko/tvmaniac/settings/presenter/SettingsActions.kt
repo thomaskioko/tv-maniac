@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 
 public sealed interface SettingsActions
@@ -23,9 +23,9 @@ public data object DismissLogoutDialog : SettingsActions
 
 public data object AccountLogoutClicked : SettingsActions
 
-public data class AccountLoginClicked(val provider: AccountProvider) : SettingsActions
+public data class AccountLoginClicked(val provider: SyncProviderSource) : SettingsActions
 
-public data class SwitchProviderClicked(val provider: AccountProvider) : SettingsActions
+public data class SwitchProviderClicked(val provider: SyncProviderSource) : SettingsActions
 
 public data object ConfirmSwitchDiscard : SettingsActions
 

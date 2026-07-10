@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.root.nav.NotificationRationale
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
@@ -144,7 +144,7 @@ internal class ShowDetailsHeaderPresenterTest {
 
     @Test
     fun `should expose canAddToList true given the active provider supports lists`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         val presenter = buildPresenter(supportsLists = true)
 
@@ -156,7 +156,7 @@ internal class ShowDetailsHeaderPresenterTest {
 
     @Test
     fun `should expose canAddToList false given the active provider does not support lists`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
 
         val presenter = buildPresenter(supportsLists = false)
 
@@ -216,7 +216,7 @@ internal class ShowDetailsHeaderPresenterTest {
         testDispatcher.scheduler.advanceUntilIdle()
         showDetailsRepository.clearInvocations()
 
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         testDispatcher.scheduler.advanceUntilIdle()
 
         val invocation = showDetailsRepository.fetchInvocations().last()
@@ -238,7 +238,7 @@ internal class ShowDetailsHeaderPresenterTest {
 
     @Test
     fun `should not activate show list overlay given open show list dispatched and lists unsupported`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
 
         val presenter = buildPresenter(supportsLists = false)
         testDispatcher.scheduler.advanceUntilIdle()

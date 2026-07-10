@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.data.calendar.testing
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.calendar.CalendarRemoteDataSource
 import com.thomaskioko.tvmaniac.data.calendar.RemoteCalendarEntry
 
 public class FakeCalendarRemoteDataSource(
-    override val provider: AccountProvider = AccountProvider.TRAKT,
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT,
     private val calendarResponse: ApiResponse<List<RemoteCalendarEntry>> = ApiResponse.Success(emptyList()),
 ) : CalendarRemoteDataSource {
 

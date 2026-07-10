@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.calendar.CalendarRemoteDataSource
@@ -16,7 +16,7 @@ public class TraktCalendarRemoteDataSourceAdapter(
     private val traktCalendarDataSource: TraktCalendarRemoteDataSource,
 ) : CalendarRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getCalendarEntries(
         startDate: String,

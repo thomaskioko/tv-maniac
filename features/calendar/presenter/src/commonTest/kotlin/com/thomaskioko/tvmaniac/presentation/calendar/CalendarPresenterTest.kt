@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.calendar
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -200,7 +200,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigateNext to true given user is logged in`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -238,7 +238,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should set canNavigatePrevious to true given user navigated to next week`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -271,7 +271,7 @@ internal class CalendarPresenterTest {
 
     @Test
     fun `should decrement week offset given NavigateToPreviousWeek is dispatched after navigating forward`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -426,7 +426,7 @@ internal class CalendarPresenterTest {
     @Test
     fun `should clear the lock given access is granted`() = runTest {
         subscriptionManager.setAccess(SubscriptionFeature.Calendar, false)
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 

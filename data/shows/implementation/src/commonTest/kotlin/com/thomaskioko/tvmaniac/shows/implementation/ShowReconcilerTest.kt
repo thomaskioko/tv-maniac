@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -31,7 +31,7 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
             imdbId = null,
             title = SHOW_TITLE,
             providerShowId = SIMKL_ID,
-            provider = AccountProvider.SIMKL,
+            provider = SyncProviderSource.SIMKL,
         )
 
         val resolved = outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
@@ -59,7 +59,7 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
             imdbId = IMDB_ID,
             title = SHOW_TITLE,
             providerShowId = SIMKL_ID,
-            provider = AccountProvider.SIMKL,
+            provider = SyncProviderSource.SIMKL,
         )
 
         val resolved = outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()
@@ -81,7 +81,7 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
             imdbId = IMDB_ID,
             title = SHOW_TITLE,
             providerShowId = SIMKL_ID,
-            provider = AccountProvider.SIMKL,
+            provider = SyncProviderSource.SIMKL,
         )
 
         outcome shouldBe ShowResolveOutcome.Skipped
@@ -116,7 +116,7 @@ internal class ShowReconcilerTest : BaseDatabaseTest() {
             imdbId = null,
             title = "Stub Title",
             providerShowId = SIMKL_ID,
-            provider = AccountProvider.SIMKL,
+            provider = SyncProviderSource.SIMKL,
         )
 
         val resolved = outcome.shouldBeInstanceOf<ShowResolveOutcome.Resolved>()

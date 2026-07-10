@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.user.implementation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
@@ -50,7 +50,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
             formatterUtil = FakeFormatterUtil(),
             dispatchers = dispatchers,
         )
-        traktSource = FakeStatsSource(provider = AccountProvider.TRAKT)
+        traktSource = FakeStatsSource(provider = SyncProviderSource.TRAKT)
     }
 
     @AfterTest
@@ -138,7 +138,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should select simkl source given simkl provider is active`() = runTest(testDispatcher) {
-        val simklSource = FakeStatsSource(provider = AccountProvider.SIMKL)
+        val simklSource = FakeStatsSource(provider = SyncProviderSource.SIMKL)
         simklSource.statsResponse = ApiResponse.Success(
             RemoteUserStats(
                 showsWatched = 10L,
@@ -164,7 +164,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should not write stats given simkl source returns null stats`() = runTest(testDispatcher) {
-        val simklSource = FakeStatsSource(provider = AccountProvider.SIMKL)
+        val simklSource = FakeStatsSource(provider = SyncProviderSource.SIMKL)
         simklSource.statsResponse = ApiResponse.Success(null)
         val multiStore = buildStore { simklSource }
 
@@ -188,7 +188,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
 }
 
 private class FakeStatsSource(
-    override val provider: AccountProvider,
+    override val provider: SyncProviderSource,
 ) : UserRemoteDataSource {
     var statsResponse: ApiResponse<RemoteUserStats?> = ApiResponse.Unauthenticated
     var profileResponse: ApiResponse<RemoteUserProfile> = ApiResponse.Unauthenticated

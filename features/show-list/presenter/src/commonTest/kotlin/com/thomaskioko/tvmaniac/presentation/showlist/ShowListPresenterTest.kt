@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presentation.showlist
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
@@ -43,7 +43,7 @@ internal class ShowListPresenterTest {
     private val traktListRepository = FakeTraktListRepository()
     private val accountManager = FakeAccountManager()
     private val authManager = FakeAuthManager()
-    private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
+    private val simklAuthManager = FakeAuthManager(SyncProviderSource.SIMKL)
     private val simklFlag = FakeFeatureFlag(initial = false)
     private val userRepository = FakeUserRepository()
     private val localizer = FakeLocalizer()
@@ -80,7 +80,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should clear loading flag once combine emits`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -108,7 +108,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should emit lists given user is logged in and lists exist`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -139,7 +139,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should emit correct show counts given lists are synced`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -182,7 +182,7 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem()
 
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             traktListRepository.fetchUserListsInvocations shouldBe 1
@@ -201,7 +201,7 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem()
 
-            presenter.dispatch(ShowListAction.Login(AccountProvider.TRAKT))
+            presenter.dispatch(ShowListAction.Login(SyncProviderSource.TRAKT))
 
             launchCount shouldBe 1
             cancelAndIgnoreRemainingEvents()
@@ -220,7 +220,7 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem()
 
-            presenter.dispatch(ShowListAction.Login(AccountProvider.SIMKL))
+            presenter.dispatch(ShowListAction.Login(SyncProviderSource.SIMKL))
 
             simklLaunches shouldBe 1
             traktLaunches shouldBe 0
@@ -287,7 +287,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should close field and clear name given CreateListSubmitted succeeds`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -309,7 +309,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should surface error message given CreateListSubmitted is dispatched with blank name`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -346,7 +346,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should invoke toggle interactor given ToggleShowInList is dispatched`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -367,7 +367,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should mark list as toggling while interactor is running`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -408,7 +408,7 @@ internal class ShowListPresenterTest {
 
     @Test
     fun `should ignore duplicate ToggleShowInList given a toggle is already in flight`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         traktListRepository.setListsForShow(
             listOf(
                 TraktList(
@@ -483,7 +483,7 @@ internal class ShowListPresenterTest {
         val presenter = createPresenter()
         presenter.state.test {
             testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT)
+            expectMostRecentItem().authProviders.map { it.provider } shouldBe listOf(SyncProviderSource.TRAKT)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -495,7 +495,7 @@ internal class ShowListPresenterTest {
         presenter.state.test {
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem().authProviders.map { it.provider } shouldBe
-                listOf(AccountProvider.TRAKT, AccountProvider.SIMKL)
+                listOf(SyncProviderSource.TRAKT, SyncProviderSource.SIMKL)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -509,7 +509,7 @@ internal class ShowListPresenterTest {
         observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
         navigator = navigator,
         accountManager = accountManager,
-        authManagers = mapOf(AccountProvider.TRAKT to authManager, AccountProvider.SIMKL to simklAuthManager),
+        authManagers = mapOf(SyncProviderSource.TRAKT to authManager, SyncProviderSource.SIMKL to simklAuthManager),
         simklLoginFlag = simklFlag,
         syncTraktListsInteractor = SyncTraktListsInteractor(traktListRepository, userRepository),
         createTraktListInteractor = CreateTraktListInteractor(traktListRepository, userRepository),

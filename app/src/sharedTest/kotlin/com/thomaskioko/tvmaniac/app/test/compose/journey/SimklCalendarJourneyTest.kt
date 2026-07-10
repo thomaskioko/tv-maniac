@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.journey
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
@@ -12,7 +12,7 @@ internal class SimklCalendarJourneyTest : BaseAppFlowTest() {
     @Test
     fun givenSimklSession_whenCalendarOpened_thenShowsTrackedShowEpisode() = runAppFlowTest {
         scenarios.stubUnauthenticatedState()
-        scenarios.stubActiveProvider(AccountProvider.SIMKL)
+        scenarios.stubActiveProvider(SyncProviderSource.SIMKL)
         scenarios.simkl.stubPlanToWatchWatchlist()
 
         homeRobot

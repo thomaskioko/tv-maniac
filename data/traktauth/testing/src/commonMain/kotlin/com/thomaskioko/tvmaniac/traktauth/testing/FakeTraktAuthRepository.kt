@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.traktauth.testing
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import com.thomaskioko.tvmaniac.traktauth.implementation.TraktOAuthRepository
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 @ContributesBinding(AppScope::class, replaces = [TraktOAuthRepository::class])
 public class FakeTraktAuthRepository : OAuthRepository {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     private val _state = MutableStateFlow(AccountAuthState.LOGGED_OUT)
     private val _authState = MutableStateFlow<AuthState?>(null)

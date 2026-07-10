@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.startwatching.api.RemotePlanToWatchShow
@@ -18,7 +18,7 @@ public class TraktStartWatchingRemoteDataSource(
     private val remoteDataSource: TraktListRemoteDataSource,
 ) : StartWatchingRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getPlanToWatch(): ApiResponse<List<RemotePlanToWatchShow>> =
         remoteDataSource.getWatchList(sortBy = SORT_BY, sortHow = SORT_HOW)
@@ -35,7 +35,7 @@ private fun TraktFollowedShowResponse.toRemotePlanToWatchShow(): RemotePlanToWat
         tmdbId = show.ids.tmdb,
         imdbId = show.ids.imdb,
         providerShowId = show.ids.trakt.toString(),
-        provider = AccountProvider.TRAKT,
+        provider = SyncProviderSource.TRAKT,
         title = show.title,
         year = show.year,
         followedAt = Instant.parse(listedAt),

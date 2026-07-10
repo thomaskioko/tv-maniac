@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.oauth.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -52,8 +52,8 @@ public class DefaultAuthStateHolder(
         val refreshMutex = Mutex()
     }
 
-    private val states: Map<AccountProvider, ProviderState> =
-        AccountProvider.entries.associateWith { ProviderState() }
+    private val states: Map<SyncProviderSource, ProviderState> =
+        SyncProviderSource.entries.associateWith { ProviderState() }
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
     init {
@@ -64,7 +64,7 @@ public class DefaultAuthStateHolder(
         }
     }
 
-    override fun state(provider: AccountProvider): Flow<AccountAuthState> =
+    override fun state(provider: SyncProviderSource): Flow<AccountAuthState> =
         entry(provider).authState.map { state ->
             if (state?.isAuthorized == true) {
                 AccountAuthState.LOGGED_IN
@@ -73,15 +73,15 @@ public class DefaultAuthStateHolder(
             }
         }
 
-    override fun authState(provider: AccountProvider): Flow<AuthState?> = entry(provider).authState
+    override fun authState(provider: SyncProviderSource): Flow<AuthState?> = entry(provider).authState
 
-    override fun authError(provider: AccountProvider): Flow<AuthError?> = entry(provider).authError
+    override fun authError(provider: SyncProviderSource): Flow<AuthError?> = entry(provider).authError
 
-    override fun loginEvents(provider: AccountProvider): SharedFlow<Unit> = entry(provider).loginEvents.asSharedFlow()
+    override fun loginEvents(provider: SyncProviderSource): SharedFlow<Unit> = entry(provider).loginEvents.asSharedFlow()
 
-    override fun isLoggedIn(provider: AccountProvider): Boolean = entry(provider).authState.value?.isAuthorized == true
+    override fun isLoggedIn(provider: SyncProviderSource): Boolean = entry(provider).authState.value?.isAuthorized == true
 
-    override suspend fun getAuthState(provider: AccountProvider): AuthState? {
+    override suspend fun getAuthState(provider: SyncProviderSource): AuthState? {
         val entry = entry(provider)
         val cached = entry.authState.value
         if (cached != null && cached.isAuthorized && dateTimeProvider.now() < entry.expiry) {
@@ -93,7 +93,7 @@ public class DefaultAuthStateHolder(
     }
 
     override suspend fun saveTokens(
-        provider: AccountProvider,
+        provider: SyncProviderSource,
         accessToken: String,
         refreshToken: String,
         expiresAtSeconds: Long,
@@ -112,7 +112,7 @@ public class DefaultAuthStateHolder(
         entry(provider).loginEvents.tryEmit(Unit)
     }
 
-    override suspend fun refreshTokens(provider: AccountProvider, action: TokenRefreshAction?): TokenRefreshResult {
+    override suspend fun refreshTokens(provider: SyncProviderSource, action: TokenRefreshAction?): TokenRefreshResult {
         val entry = entry(provider)
         return entry.refreshMutex.withLock {
             val refresh = action ?: return@withLock TokenRefreshResult.NotLoggedIn
@@ -145,23 +145,23 @@ public class DefaultAuthStateHolder(
         }
     }
 
-    override suspend fun logout(provider: AccountProvider) {
+    override suspend fun logout(provider: SyncProviderSource) {
         updateAuthState(provider, AuthState.Empty)
     }
 
-    override suspend fun setAuthError(provider: AccountProvider, error: AuthError?) {
+    override suspend fun setAuthError(provider: SyncProviderSource, error: AuthError?) {
         entry(provider).authError.value = error
     }
 
-    private fun entry(provider: AccountProvider): ProviderState = states.getValue(provider)
+    private fun entry(provider: SyncProviderSource): ProviderState = states.getValue(provider)
 
-    private fun cache(provider: AccountProvider, authState: AuthState) {
+    private fun cache(provider: SyncProviderSource, authState: AuthState) {
         val entry = entry(provider)
         entry.authState.update { authState }
         entry.expiry = if (authState.isAuthorized) dateTimeProvider.now() + 1.hours else Instant.DISTANT_PAST
     }
 
-    private suspend fun updateAuthState(provider: AccountProvider, authState: AuthState, persist: Boolean = true) {
+    private suspend fun updateAuthState(provider: SyncProviderSource, authState: AuthState, persist: Boolean = true) {
         if (persist) {
             withContext(dispatchers.io) {
                 if (authState.isAuthorized) {

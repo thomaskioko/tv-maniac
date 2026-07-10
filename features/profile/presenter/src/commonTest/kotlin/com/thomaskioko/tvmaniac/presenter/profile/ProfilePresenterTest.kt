@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.profile
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
@@ -75,7 +75,7 @@ internal class ProfilePresenterTest {
     private val userRepository = FakeUserRepository()
     private val accountManager = FakeAccountManager()
     private val authManager = FakeAuthManager()
-    private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
+    private val simklAuthManager = FakeAuthManager(SyncProviderSource.SIMKL)
     private val simklFlag = FakeFeatureFlag(initial = false)
     private val traktListRepository = FakeTraktListRepository()
     private val upNextRepository = FakeUpNextRepository()
@@ -140,7 +140,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should load profile when user is authenticated`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile)
 
         presenter.state.test {
@@ -149,7 +149,7 @@ internal class ProfilePresenterTest {
             val loadedState = awaitItem()
             loadedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
             loadedState.authenticated shouldBe true
-            loadedState.activeProvider shouldBe AccountProvider.TRAKT
+            loadedState.activeProvider shouldBe SyncProviderSource.TRAKT
             loadedState.isLoading shouldBe false
         }
     }
@@ -164,7 +164,7 @@ internal class ProfilePresenterTest {
             state.authenticated shouldBe false
             state.showLoading shouldBe false
 
-            presenter.dispatch(ProfileAction.LoginClicked(AccountProvider.TRAKT))
+            presenter.dispatch(ProfileAction.LoginClicked(SyncProviderSource.TRAKT))
 
             var loading = awaitItem()
             while (!loading.showLoading) {
@@ -182,7 +182,7 @@ internal class ProfilePresenterTest {
             awaitItem() shouldBe ProfileState.DEFAULT_STATE
 
             userRepository.setUserProfile(testProfile)
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
             val loadedState = awaitItem()
             loadedState.userProfile shouldBe createExpectedProfileInfo(testProfile)
@@ -193,7 +193,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should update profile when user data changes`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile)
 
         presenter.state.test {
@@ -225,7 +225,7 @@ internal class ProfilePresenterTest {
         testPresenter.state.test {
             awaitItem() shouldBe ProfileState.DEFAULT_STATE
 
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
             userRepository.setUserProfile(testProfile)
 
             val loadedState = awaitItem()
@@ -237,7 +237,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should hide loading when user logs out`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile)
 
         presenter.state.test {
@@ -273,7 +273,7 @@ internal class ProfilePresenterTest {
         testPresenter.state.test {
             awaitItem() shouldBe ProfileState.DEFAULT_STATE
 
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
             userRepository.setUserProfile(testProfile)
 
             val authenticatedState = awaitItem()
@@ -286,7 +286,7 @@ internal class ProfilePresenterTest {
     @Test
     fun `should keep showing loading given profile present but stats not yet loaded`() = runTest {
         userRepository.holdStatsFetch()
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
 
         val testPresenter = createPresenter()
@@ -308,7 +308,7 @@ internal class ProfilePresenterTest {
     @Test
     fun `should expect and surface stats given simkl active`() = runTest {
         userRepository.holdStatsFetch()
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
         userRepository.setUserProfile(testProfile.copy(statsLoaded = false))
 
         val testPresenter = createPresenter()
@@ -378,7 +378,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should map each section to content when data is available`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile)
         traktListRepository.setLists(listOf(createListEntity()))
         upNextRepository.setNextEpisodesForWatchlist(listOf(createNextEpisode()))
@@ -432,7 +432,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should map sections to empty when no data is available`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile)
 
         presenter.state.test {
@@ -450,7 +450,7 @@ internal class ProfilePresenterTest {
 
     @Test
     fun `should map a single section to error without collapsing the others`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile)
         favoritesRepository.setObserveError(IllegalStateException("favorites boom"))
         libraryRepository.setLibraryItems(listOf(createLibraryItem()))
@@ -496,7 +496,7 @@ internal class ProfilePresenterTest {
         authManager.setOnLaunchWebView { traktLaunches += 1 }
         simklAuthManager.setOnLaunchWebView { simklLaunches += 1 }
 
-        presenter.dispatch(ProfileAction.LoginClicked(AccountProvider.SIMKL))
+        presenter.dispatch(ProfileAction.LoginClicked(SyncProviderSource.SIMKL))
         advanceUntilIdle()
 
         simklLaunches shouldBe 1
@@ -507,7 +507,7 @@ internal class ProfilePresenterTest {
     fun `should expose only the trakt option given the simkl flag is off`() = runTest {
         presenter.state.test {
             runCurrent()
-            expectMostRecentItem().authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT)
+            expectMostRecentItem().authProviders.map { it.provider } shouldBe listOf(SyncProviderSource.TRAKT)
         }
     }
 
@@ -518,7 +518,7 @@ internal class ProfilePresenterTest {
         presenter.state.test {
             runCurrent()
             expectMostRecentItem().authProviders.map { it.provider } shouldBe
-                listOf(AccountProvider.TRAKT, AccountProvider.SIMKL)
+                listOf(SyncProviderSource.TRAKT, SyncProviderSource.SIMKL)
         }
     }
 
@@ -615,8 +615,8 @@ internal class ProfilePresenterTest {
             navigator = navigator,
             localizer = FakeLocalizer(),
             authManagers = mapOf(
-                AccountProvider.TRAKT to authManager,
-                AccountProvider.SIMKL to simklAuthManager,
+                SyncProviderSource.TRAKT to authManager,
+                SyncProviderSource.SIMKL to simklAuthManager,
             ),
             simklLoginFlag = simklFlag,
             accountManager = accountManager,

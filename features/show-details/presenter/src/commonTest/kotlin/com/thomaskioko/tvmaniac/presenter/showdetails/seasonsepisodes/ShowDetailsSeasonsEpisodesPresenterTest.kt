@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -221,7 +221,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
             val seasonSyncCountBefore = seasonDetailsRepository.getSyncedShowIds().size
             val watchSyncCountBefore = watchedEpisodeSyncRepository.getSyncedShowIds().size
 
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             watchedEpisodeSyncRepository.getSyncedShowIds().size shouldBe watchSyncCountBefore + 1

@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails.similar
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -96,7 +96,7 @@ internal class ShowDetailsSimilarPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem().similarShows.size shouldBe 1
 
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val settled = expectMostRecentItem()

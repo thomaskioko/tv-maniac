@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.accountmanager.implementation
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountAuthRepository
 import io.kotest.matchers.nulls.shouldBeNull
@@ -13,8 +13,8 @@ import kotlin.test.Test
 
 class DefaultAccountManagerTest {
 
-    private val traktRepository = FakeAccountAuthRepository(AccountProvider.TRAKT)
-    private val accountManager = DefaultAccountManager(repositories = mapOf(AccountProvider.TRAKT to traktRepository))
+    private val traktRepository = FakeAccountAuthRepository(SyncProviderSource.TRAKT)
+    private val accountManager = DefaultAccountManager(repositories = mapOf(SyncProviderSource.TRAKT to traktRepository))
 
     @Test
     fun `should expose TRAKT as the active provider when logged in`() = runTest {
@@ -22,7 +22,7 @@ class DefaultAccountManagerTest {
             awaitItem().shouldBeNull()
 
             traktRepository.setState(AccountAuthState.LOGGED_IN)
-            awaitItem() shouldBe AccountProvider.TRAKT
+            awaitItem() shouldBe SyncProviderSource.TRAKT
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -49,14 +49,14 @@ class DefaultAccountManagerTest {
 
         traktRepository.setState(AccountAuthState.LOGGED_IN)
 
-        accountManager.getActiveProvider() shouldBe AccountProvider.TRAKT
+        accountManager.getActiveProvider() shouldBe SyncProviderSource.TRAKT
     }
 
     @Test
     fun `should emit a TRAKT connection event on sign in`() = runTest {
         accountManager.connectionEvents.test {
             traktRepository.triggerLogin()
-            awaitItem() shouldBe AccountProvider.TRAKT
+            awaitItem() shouldBe SyncProviderSource.TRAKT
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -65,9 +65,9 @@ class DefaultAccountManagerTest {
     @Test
     fun `should clear the active provider after logging out`() = runTest {
         traktRepository.setState(AccountAuthState.LOGGED_IN)
-        accountManager.getActiveProvider() shouldBe AccountProvider.TRAKT
+        accountManager.getActiveProvider() shouldBe SyncProviderSource.TRAKT
 
-        accountManager.logout(AccountProvider.TRAKT)
+        accountManager.logout(SyncProviderSource.TRAKT)
 
         accountManager.getActiveProvider().shouldBeNull()
     }
@@ -92,7 +92,7 @@ class DefaultAccountManagerTest {
 
             traktRepository.setState(AccountAuthState.LOGGED_IN)
             val account = awaitItem()
-            account?.provider shouldBe AccountProvider.TRAKT
+            account?.provider shouldBe SyncProviderSource.TRAKT
             account?.isConnected shouldBe true
             account?.isActive shouldBe true
 

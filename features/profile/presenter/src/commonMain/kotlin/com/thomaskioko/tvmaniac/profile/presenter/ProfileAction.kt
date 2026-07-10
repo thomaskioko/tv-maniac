@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.profile.presenter
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 
 public sealed interface ProfileAction {
-    public data class LoginClicked(val provider: AccountProvider) : ProfileAction
+    public data class LoginClicked(val provider: SyncProviderSource) : ProfileAction
 
     public data object SettingsClicked : ProfileAction
 

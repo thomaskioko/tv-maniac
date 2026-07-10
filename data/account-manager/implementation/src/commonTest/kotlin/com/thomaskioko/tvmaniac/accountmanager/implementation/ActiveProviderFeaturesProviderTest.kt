@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.accountmanager.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.NoProviderFeatures
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.implementation.di.ActiveProviderFeaturesBindingContainer
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
@@ -23,14 +23,14 @@ class ActiveProviderFeaturesProviderTest {
         supportsCalendar = false,
     )
     private val featuresMap = mapOf(
-        AccountProvider.TRAKT to traktFeatures,
-        AccountProvider.SIMKL to simklFeatures,
+        SyncProviderSource.TRAKT to traktFeatures,
+        SyncProviderSource.SIMKL to simklFeatures,
     )
     private val accountManager = FakeAccountManager()
 
     @Test
     fun `should return trakt features given trakt is the active provider`() {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         val result = ActiveProviderFeaturesBindingContainer.activeProviderFeatures(
             features = featuresMap,
@@ -45,7 +45,7 @@ class ActiveProviderFeaturesProviderTest {
 
     @Test
     fun `should return simkl features given simkl is the active provider`() {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
 
         val result = ActiveProviderFeaturesBindingContainer.activeProviderFeatures(
             features = featuresMap,
@@ -72,7 +72,7 @@ class ActiveProviderFeaturesProviderTest {
 
     @Test
     fun `should return NoProviderFeatures given active provider not in features map`() {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         val result = ActiveProviderFeaturesBindingContainer.activeProviderFeatures(
             features = emptyMap(),

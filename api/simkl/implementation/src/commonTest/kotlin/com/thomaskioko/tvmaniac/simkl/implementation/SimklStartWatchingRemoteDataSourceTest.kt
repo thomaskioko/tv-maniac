@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAllItemsResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowEntry
@@ -22,7 +22,7 @@ internal class SimklStartWatchingRemoteDataSourceTest {
 
     @Test
     fun `should report simkl as its provider`() {
-        source.provider shouldBe AccountProvider.SIMKL
+        source.provider shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
@@ -73,7 +73,7 @@ internal class SimklStartWatchingRemoteDataSourceTest {
         show.tmdbId shouldBe 62417L
         show.imdbId shouldBe "tt3579018"
         show.providerShowId shouldBe "583436"
-        show.provider shouldBe AccountProvider.SIMKL
+        show.provider shouldBe SyncProviderSource.SIMKL
         show.title shouldBe "Emerald City"
         show.year shouldBe 2017
         show.followedAt shouldBe Instant.parse("2025-01-15T10:00:00Z")

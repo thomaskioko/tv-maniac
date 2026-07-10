@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.data.user.testing
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.user.api.UserRemoteDataSource
 import com.thomaskioko.tvmaniac.data.user.api.model.RemoteUserProfile
@@ -19,7 +19,7 @@ public class FakeUserRemoteDataSource(
     private val statsResponse: ApiResponse<RemoteUserStats?> = ApiResponse.Success(null),
 ) : UserRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getUserProfile(userId: String): ApiResponse<RemoteUserProfile> = profileResponse
 
