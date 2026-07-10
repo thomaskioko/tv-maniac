@@ -44,6 +44,7 @@ import com.thomaskioko.tvmaniac.settings.ui.components.AccountPage
 import com.thomaskioko.tvmaniac.settings.ui.components.AppearancePage
 import com.thomaskioko.tvmaniac.settings.ui.components.BehaviorPage
 import com.thomaskioko.tvmaniac.settings.ui.components.InfoPage
+import com.thomaskioko.tvmaniac.settings.ui.components.LayoutPage
 import com.thomaskioko.tvmaniac.settings.ui.components.LicensesPage
 import com.thomaskioko.tvmaniac.settings.ui.components.NotificationsPage
 import com.thomaskioko.tvmaniac.settings.ui.components.PrivacyPage
@@ -144,6 +145,10 @@ internal fun SettingsScreen(
                     when (page) {
                         SettingsPage.ROOT -> SettingsRootContent(state = state, onAction = onAction)
                         SettingsPage.APPEARANCE -> AppearancePage(
+                            state = state,
+                            onAction = onAction,
+                        )
+                        SettingsPage.LAYOUT -> LayoutPage(
                             state = state,
                             onAction = onAction,
                         )

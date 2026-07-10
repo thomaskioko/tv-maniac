@@ -114,6 +114,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             LicensesPageView(sections: state.licenseSections)
         case .account:
             AccountPageView(content: state.accountContent)
+        case .layout:
+            LayoutPageView()
         }
     }
 

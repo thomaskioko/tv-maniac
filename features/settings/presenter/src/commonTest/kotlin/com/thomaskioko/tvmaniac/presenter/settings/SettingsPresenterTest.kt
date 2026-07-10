@@ -229,6 +229,41 @@ class SettingsPresenterTest {
     }
 
     @Test
+    fun `should open the layout page given the layout entry is selected`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(OpenSettingsPage(SettingsPage.LAYOUT))
+            awaitItem().currentPage shouldBe SettingsPage.LAYOUT
+        }
+    }
+
+    @Test
+    fun `should return to root when back is clicked from the layout page`() = runTest {
+        presenter.state.test {
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+
+            presenter.dispatch(OpenSettingsPage(SettingsPage.LAYOUT))
+            awaitItem().currentPage shouldBe SettingsPage.LAYOUT
+
+            presenter.dispatch(BackClicked)
+            awaitItem().currentPage shouldBe SettingsPage.ROOT
+        }
+    }
+
+    @Test
+    fun `should include the layout entry in the root groups`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.rootGroups.isEmpty()) {
+                state = awaitItem()
+            }
+            state.rootGroups.flatMap { it.items }.any { it.page == SettingsPage.LAYOUT } shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should resolve connect prompt labels when logged out`() = runTest {
         presenter.state.test {
             var state = awaitItem()

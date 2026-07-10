@@ -261,10 +261,23 @@ public class SettingsPresenter(
 
     private fun handleBackClicked() {
         if (_state.value.currentPage != SettingsPage.ROOT) {
-            _state.update { state -> state.copy(currentPage = SettingsPage.ROOT) }
+            _state.update { state -> state.copy(currentPage = parentOf(state.currentPage)) }
         } else {
             navigator.navigateBack()
         }
+    }
+
+    private fun parentOf(page: SettingsPage): SettingsPage = when (page) {
+        SettingsPage.ROOT,
+        SettingsPage.APPEARANCE,
+        SettingsPage.BEHAVIOR,
+        SettingsPage.NOTIFICATIONS,
+        SettingsPage.PRIVACY,
+        SettingsPage.INFO,
+        SettingsPage.LICENSES,
+        SettingsPage.ACCOUNT,
+        SettingsPage.LAYOUT,
+        -> SettingsPage.ROOT
     }
 
     private fun toggleLogoutConfirmation() {
@@ -392,6 +405,7 @@ public class SettingsPresenter(
             SettingsPage.INFO -> StringResourceKey.SettingsTitleInfo
             SettingsPage.LICENSES -> StringResourceKey.LabelSettingsSectionLicenses
             SettingsPage.ACCOUNT -> StringResourceKey.SettingsTitleAccount
+            SettingsPage.LAYOUT -> StringResourceKey.SettingsLayoutTitle
         },
     )
 
@@ -435,6 +449,11 @@ public class SettingsPresenter(
                             page = SettingsPage.APPEARANCE,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionAppearance),
                             summary = localizer.getString(StringResourceKey.LabelSettingsAppearanceDescription),
+                        ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.LAYOUT,
+                            title = localizer.getString(StringResourceKey.SettingsLayoutTitle),
+                            summary = localizer.getString(StringResourceKey.SettingsLayoutDescription),
                         ),
                         SettingsCategoryItem(
                             page = SettingsPage.BEHAVIOR,

@@ -267,6 +267,7 @@
             }
             sections.append(SettingsRootSection(id: "general", label: "General", items: [
                 navItem(.appearance, "Appearance", "Theme and image quality"),
+                navItem(.layout, "Layout", "Personalize how shows and episodes look"),
                 navItem(.behavior, "Behavior", "Sync, specials, and trailers"),
                 navItem(.notifications, "Notifications", "Episode release alerts"),
                 navItem(.privacy, "Privacy", "Crash reporting and privacy policy"),

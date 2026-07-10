@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
 import com.thomaskioko.tvmaniac.settings.ui.infoState
+import com.thomaskioko.tvmaniac.settings.ui.layoutState
 import com.thomaskioko.tvmaniac.settings.ui.licensesState
 import com.thomaskioko.tvmaniac.settings.ui.loadingState
 import com.thomaskioko.tvmaniac.settings.ui.loggedInState
@@ -69,6 +70,18 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = loggedInState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenLayoutPage() {
+        composeTestRule.captureMultiDevice("SettingsScreenLayoutPage") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = layoutState,
                     onAction = {},
                 )
             }
