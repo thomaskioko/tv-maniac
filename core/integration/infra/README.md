@@ -509,6 +509,7 @@ graph TB
   :data:library:implementation --> :data:shows:api
   :data:library:implementation --> :data:sync-activity:api
   :data:library:implementation --> :data:watchproviders:api
+  :data:logout:implementation -.-> :core:base
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api

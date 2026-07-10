@@ -605,6 +605,7 @@ graph TB
   :data:library:implementation --> :data:shows:api
   :data:library:implementation --> :data:sync-activity:api
   :data:library:implementation --> :data:watchproviders:api
+  :data:logout:implementation -.-> :core:base
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api
@@ -782,6 +783,7 @@ graph TB
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
+  :data:traktlists:implementation -.-> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
   :data:trendingshows:api --> :core:base
   :data:trendingshows:api --> :data:database:sqldelight
@@ -1201,6 +1203,7 @@ graph TB
   :features:show-details:presenter --> :domain:ratings
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
+  :features:show-details:presenter --> :domain:traktlists
   :features:show-details:presenter --> :features:rating-sheet:nav
   :features:show-details:presenter --> :features:root:nav
   :features:show-details:presenter -.-> :features:season-details:nav
