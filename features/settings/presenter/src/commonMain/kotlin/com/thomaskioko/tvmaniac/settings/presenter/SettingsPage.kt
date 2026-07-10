@@ -9,4 +9,5 @@ public enum class SettingsPage {
     INFO,
     LICENSES,
     ACCOUNT,
+    LAYOUT,
 }
