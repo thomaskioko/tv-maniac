@@ -515,6 +515,7 @@ internal class UpNextPresenterTest {
             requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false),
             dispatchers = dispatchers,
             logger = logger,
+            accountManager = accountManager,
         )
 
         val markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(

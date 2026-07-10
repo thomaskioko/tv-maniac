@@ -334,6 +334,7 @@ class DebugPresenterTest {
                 dispatchers = dispatchers,
             ),
             syncLibraryInteractor = SyncLibraryInteractor(
+                accountManager = accountManager,
                 libraryRepository = FakeLibraryRepository(),
                 followedShowsRepository = FakeFollowedShowsRepository(),
                 syncActivityInteractor = SyncActivityInteractor(
@@ -356,6 +357,7 @@ class DebugPresenterTest {
                 logger = logger,
             ),
             syncContinueWatchingInteractor = SyncContinueWatchingInteractor(
+                accountManager = accountManager,
                 syncActivityInteractor = SyncActivityInteractor(
                     traktActivityRepository = FakeTraktActivityRepository(),
                     dispatchers = dispatchers,
