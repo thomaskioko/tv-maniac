@@ -44,6 +44,13 @@
             ]
         },
         {
+            "groupName": "Firebase",
+            "matchPackageNames": [
+                "com.google.firebase:firebase-bom",
+                "com.google.firebase:firebase-crashlytics"
+            ]
+        },
+        {
             "groupName": "Roborazzi",
             "matchPackageNames": [
                 "/io.github.takahirom.roborazzi/"
