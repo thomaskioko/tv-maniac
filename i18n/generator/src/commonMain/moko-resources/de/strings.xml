@@ -68,6 +68,8 @@
     <string name="label_settings_info_description">App-Version und Quellcode</string>
     <string name="label_settings_licenses_description">Datenquellen und Danksagungen</string>
     <string name="label_settings_account_description">Verbundenes Konto verwalten</string>
+    <string name="settings_layout_title">Layout</string>
+    <string name="settings_layout_description">Anpassen, wie Serien und Episoden aussehen</string>
     <string name="label_settings_trakt_authentication">Verbinden &amp; Inhalte synchronisieren</string>
     <string name="label_settings_connect_title">Verbinden</string>
     <string name="label_settings_account_sync_description">Speichere deinen Fortschritt, entdecke neue Titel und synchronisiere deine Inhalte auf allen Geräten.</string>
