@@ -81,14 +81,7 @@ private fun EpisodeSheetActions(
 ) {
     val context = LocalContext.current
 
-    SheetActionItem(
-        modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem("rate")),
-        icon = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
-        label = label_action_rate_episode.resolve(context),
-        onClick = { onAction(EpisodeSheetAction.RatingClicked) },
-    )
-
-    state.availableActions.forEach { action ->
+    state.availableActions.forEachIndexed { index, action ->
         val isToggling = action.item == EpisodeSheetActionItem.TOGGLE_WATCHED && state.isTogglingWatched
         SheetActionItem(
             modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem(action.item.name)),
@@ -96,8 +89,19 @@ private fun EpisodeSheetActions(
             label = action.label,
             enabled = !isToggling,
             showProgress = isToggling,
-            onClick = { onAction(action.item.toAction()) },
+            onClick = {
+                onAction(action.item.toAction())
+            },
         )
+
+        if (index == 0) {
+            SheetActionItem(
+                modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem("rate")),
+                icon = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                label = label_action_rate_episode.resolve(context),
+                onClick = { onAction(EpisodeSheetAction.RatingClicked) },
+            )
+        }
     }
 }
 
