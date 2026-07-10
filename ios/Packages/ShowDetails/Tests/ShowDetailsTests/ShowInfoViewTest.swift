@@ -64,6 +64,25 @@ class ShowInfoViewTest: SnapshotTestCase {
         .assertSnapshot(testName: "ShowInfoView_SimklNoList")
     }
 
+    func test_ShowInfoView_InList() {
+        ShowInfoView(
+            isFollowed: true,
+            canAddToList: true,
+            isInList: true,
+            genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+            trackLabel: "Track",
+            stopTrackingLabel: "Stop Tracking",
+            listActionLabel: "In List",
+            rateLabel: "Rate",
+            onAddToLibrary: {},
+            onAddToCustomList: {},
+            onRate: {}
+        )
+        .padding()
+        .appPreview()
+        .assertSnapshot(testName: "ShowInfoView_InList")
+    }
+
     func test_ShowInfoView_AlreadyRated() {
         ShowInfoView(
             isFollowed: true,
