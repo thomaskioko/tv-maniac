@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.SimklDataApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.safeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
@@ -23,7 +23,7 @@ public class SimklCalendarRemoteDataSource(
     private val followedShowsDao: FollowedShowsDao,
 ) : CalendarRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
     override suspend fun getCalendarEntries(
         startDate: String,

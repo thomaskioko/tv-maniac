@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import dev.zacsweers.metro.Inject
@@ -22,7 +22,7 @@ public class TokenRefreshInitializer(
             accountManager.activeProvider
                 .distinctUntilChanged()
                 .collectLatest { provider ->
-                    if (provider == AccountProvider.TRAKT) {
+                    if (provider == SyncProviderSource.TRAKT) {
                         scheduler.scheduleAndExecute(TokenRefreshWorker.REQUEST)
                     } else {
                         scheduler.cancel(TokenRefreshWorker.WORKER_NAME)

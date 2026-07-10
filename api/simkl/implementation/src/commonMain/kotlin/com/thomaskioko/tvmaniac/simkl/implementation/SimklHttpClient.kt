@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
@@ -71,7 +71,7 @@ internal fun simklHttpClient(
         install(Auth) {
             bearer {
                 loadTokens {
-                    val state = authStateHolder.getAuthState(AccountProvider.SIMKL)
+                    val state = authStateHolder.getAuthState(SyncProviderSource.SIMKL)
                         ?.takeIf { it.isAuthorized && it.accessToken.isNotBlank() }
                         ?: return@loadTokens null
 
@@ -79,14 +79,14 @@ internal fun simklHttpClient(
                 }
 
                 refreshTokens {
-                    val currentState = authStateHolder.getAuthState(AccountProvider.SIMKL)
+                    val currentState = authStateHolder.getAuthState(SyncProviderSource.SIMKL)
                         ?: return@refreshTokens null
 
                     if (oldTokens?.accessToken != currentState.accessToken) {
                         return@refreshTokens BearerTokens(currentState.accessToken, currentState.refreshToken)
                     }
 
-                    authStateHolder.setAuthError(AccountProvider.SIMKL, AuthError.TokenExpired)
+                    authStateHolder.setAuthError(SyncProviderSource.SIMKL, AuthError.TokenExpired)
                     null
                 }
 
@@ -99,7 +99,7 @@ internal fun simklHttpClient(
                 if (!response.status.isSuccess() && response.status != HttpStatusCode.Unauthorized) {
                     val failureReason = when {
                         response.status == HttpStatusCode.Forbidden -> "${response.status.value} Missing API key."
-                        response.status == HttpStatusCode.NotFound -> "Invalid Request"
+                        response.status == HttpStatusCode.NotFound -> "Endpoint not found: ${response.call.request.url}"
                         response.status == HttpStatusCode.TooManyRequests ->
                             "Rate limited. Please try again in a moment."
                         response.status == HttpStatusCode.RequestTimeout -> "Network Timeout"
@@ -117,7 +117,7 @@ internal fun simklHttpClient(
         }
 
         install(SimklAuthGuard) {
-            isAuthenticated = { authStateHolder.isLoggedIn(AccountProvider.SIMKL) }
+            isAuthenticated = { authStateHolder.isLoggedIn(SyncProviderSource.SIMKL) }
         }
 
         install(HttpTimeout) {
@@ -139,6 +139,6 @@ internal fun simklHttpClient(
             }
         }
     }
-    client.attributes.put(IsAuthenticated) { authStateHolder.isLoggedIn(AccountProvider.SIMKL) }
+    client.attributes.put(IsAuthenticated) { authStateHolder.isLoggedIn(SyncProviderSource.SIMKL) }
     return client
 }

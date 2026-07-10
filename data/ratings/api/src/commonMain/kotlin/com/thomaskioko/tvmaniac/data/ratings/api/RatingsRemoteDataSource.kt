@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.ratings.api
 
-import com.thomaskioko.tvmaniac.accountmanager.api.ProviderScoped
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProvider
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 
-public interface RatingsRemoteDataSource : ProviderScoped {
+public interface RatingsRemoteDataSource : SyncProvider {
     public suspend fun addShowRating(tmdbId: Long, rating: Int): ApiResponse<Unit>
     public suspend fun removeShowRating(tmdbId: Long): ApiResponse<Unit>
     public suspend fun getShowCommunityRating(providerShowId: Long): ApiResponse<CommunityRating>

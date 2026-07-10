@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
@@ -28,7 +28,7 @@ public class DefaultShowReconciler(
         imdbId: String?,
         title: String?,
         providerShowId: String?,
-        provider: AccountProvider,
+        provider: SyncProviderSource,
         result: ReconciliationResult,
     ): Pair<ShowResolveOutcome, ReconciliationResult> {
         val resolvedTmdbId = when {
@@ -66,7 +66,7 @@ public class DefaultShowReconciler(
         tmdbId: Long,
         title: String?,
         providerShowId: String?,
-        provider: AccountProvider,
+        provider: SyncProviderSource,
     ) {
         val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(tmdbId)).executeAsOneOrNull()
             ?: run {

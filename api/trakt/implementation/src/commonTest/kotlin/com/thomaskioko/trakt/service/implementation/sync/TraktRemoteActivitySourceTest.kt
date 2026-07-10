@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodeActivities
@@ -21,7 +21,7 @@ class TraktRemoteActivitySourceTest {
 
     @Test
     fun `should report trakt as its provider`() {
-        source.provider shouldBe AccountProvider.TRAKT
+        source.provider shouldBe SyncProviderSource.TRAKT
     }
 
     @Test

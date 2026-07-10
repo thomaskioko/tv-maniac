@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.oauth.implementation
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.KeychainSettings
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import dev.zacsweers.metro.AppScope
@@ -36,7 +36,7 @@ public class IosAuthStore(
         )
     }
 
-    override suspend fun get(provider: AccountProvider): AuthState? = withContext(dispatchers.io) {
+    override suspend fun get(provider: SyncProviderSource): AuthState? = withContext(dispatchers.io) {
         val accessToken = settings.getStringOrNull(accessTokenKey(provider))
         val refreshToken = settings.getStringOrNull(refreshTokenKey(provider))
         val expiresAt = settings.getLongOrNull(expiresAtKey(provider))
@@ -55,7 +55,7 @@ public class IosAuthStore(
         }
     }
 
-    override suspend fun save(provider: AccountProvider, state: AuthState) {
+    override suspend fun save(provider: SyncProviderSource, state: AuthState) {
         withContext(dispatchers.io) {
             settings.putString(accessTokenKey(provider), state.accessToken)
             settings.putString(refreshTokenKey(provider), state.refreshToken)
@@ -64,7 +64,7 @@ public class IosAuthStore(
         }
     }
 
-    override suspend fun clear(provider: AccountProvider) {
+    override suspend fun clear(provider: SyncProviderSource) {
         withContext(dispatchers.io) {
             settings.remove(accessTokenKey(provider))
             settings.remove(refreshTokenKey(provider))
@@ -73,9 +73,9 @@ public class IosAuthStore(
         }
     }
 
-    private fun prefix(provider: AccountProvider): String = provider.name.lowercase()
-    private fun accessTokenKey(provider: AccountProvider) = "${prefix(provider)}_access_token"
-    private fun refreshTokenKey(provider: AccountProvider) = "${prefix(provider)}_refresh_token"
-    private fun expiresAtKey(provider: AccountProvider) = "${prefix(provider)}_expires_at"
-    private fun tokenLifetimeKey(provider: AccountProvider) = "${prefix(provider)}_token_lifetime"
+    private fun prefix(provider: SyncProviderSource): String = provider.name.lowercase()
+    private fun accessTokenKey(provider: SyncProviderSource) = "${prefix(provider)}_access_token"
+    private fun refreshTokenKey(provider: SyncProviderSource) = "${prefix(provider)}_refresh_token"
+    private fun expiresAtKey(provider: SyncProviderSource) = "${prefix(provider)}_expires_at"
+    private fun tokenLifetimeKey(provider: SyncProviderSource) = "${prefix(provider)}_token_lifetime"
 }

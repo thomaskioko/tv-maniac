@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.settings.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryGroup
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryItem
@@ -157,7 +157,7 @@ internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICEN
 internal val accountState = loggedInState.copy(
     currentPage = SettingsPage.ACCOUNT,
     currentPageTitle = "Account",
-    activeProvider = AccountProvider.TRAKT,
+    activeProvider = SyncProviderSource.TRAKT,
     accountConnectedDescription = "Your watch history, watchlist, and episode progress sync with Trakt.",
 )
 internal val accountLoggedOutState = defaultState.copy(
@@ -165,19 +165,19 @@ internal val accountLoggedOutState = defaultState.copy(
     currentPageTitle = "Account",
     labels = loggedOutAccountLabels,
     authProviders = persistentListOf(
-        AuthProviderOption(AccountProvider.TRAKT, "Continue with Trakt"),
-        AuthProviderOption(AccountProvider.SIMKL, "Continue with Simkl"),
+        AuthProviderOption(SyncProviderSource.TRAKT, "Continue with Trakt"),
+        AuthProviderOption(SyncProviderSource.SIMKL, "Continue with Simkl"),
     ),
 )
 
 internal val accountSwitchState = accountState.copy(
-    switchTargetProvider = AccountProvider.SIMKL,
+    switchTargetProvider = SyncProviderSource.SIMKL,
     switchActionLabel = "Switch to Simkl",
 )
 
 internal val accountSwitchDialogState = accountSwitchState.copy(
     showSwitchConfirmation = true,
-    pendingSwitchProvider = AccountProvider.SIMKL,
+    pendingSwitchProvider = SyncProviderSource.SIMKL,
     switchUnsavedCount = 3,
     switchDialogTitle = "Switch to Simkl?",
     switchDialogMessage = "You have 3 unsynced items. Switching providers may cause data loss.",

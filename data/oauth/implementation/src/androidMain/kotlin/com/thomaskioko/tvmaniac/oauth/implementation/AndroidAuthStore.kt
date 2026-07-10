@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import dev.zacsweers.metro.AppScope
@@ -21,7 +21,7 @@ public class AndroidAuthStore(
     @AppPreferencesDataStore private val dataStore: DataStore<Preferences>,
 ) : AuthStore {
 
-    override suspend fun get(provider: AccountProvider): AuthState? {
+    override suspend fun get(provider: SyncProviderSource): AuthState? {
         val prefs = dataStore.data.first()
 
         val accessToken = prefs[accessTokenKey(provider)]
@@ -42,7 +42,7 @@ public class AndroidAuthStore(
         }
     }
 
-    override suspend fun save(provider: AccountProvider, state: AuthState) {
+    override suspend fun save(provider: SyncProviderSource, state: AuthState) {
         dataStore.edit { prefs ->
             prefs[accessTokenKey(provider)] = state.accessToken
             prefs[refreshTokenKey(provider)] = state.refreshToken
@@ -51,7 +51,7 @@ public class AndroidAuthStore(
         }
     }
 
-    override suspend fun clear(provider: AccountProvider) {
+    override suspend fun clear(provider: SyncProviderSource) {
         dataStore.edit { prefs ->
             prefs.remove(accessTokenKey(provider))
             prefs.remove(refreshTokenKey(provider))
@@ -60,9 +60,9 @@ public class AndroidAuthStore(
         }
     }
 
-    private fun prefix(provider: AccountProvider): String = provider.name.lowercase()
-    private fun accessTokenKey(provider: AccountProvider) = stringPreferencesKey("${prefix(provider)}_access_token")
-    private fun refreshTokenKey(provider: AccountProvider) = stringPreferencesKey("${prefix(provider)}_refresh_token")
-    private fun expiresAtKey(provider: AccountProvider) = longPreferencesKey("${prefix(provider)}_expires_at")
-    private fun tokenLifetimeKey(provider: AccountProvider) = longPreferencesKey("${prefix(provider)}_token_lifetime")
+    private fun prefix(provider: SyncProviderSource): String = provider.name.lowercase()
+    private fun accessTokenKey(provider: SyncProviderSource) = stringPreferencesKey("${prefix(provider)}_access_token")
+    private fun refreshTokenKey(provider: SyncProviderSource) = stringPreferencesKey("${prefix(provider)}_refresh_token")
+    private fun expiresAtKey(provider: SyncProviderSource) = longPreferencesKey("${prefix(provider)}_expires_at")
+    private fun tokenLifetimeKey(provider: SyncProviderSource) = longPreferencesKey("${prefix(provider)}_token_lifetime")
 }

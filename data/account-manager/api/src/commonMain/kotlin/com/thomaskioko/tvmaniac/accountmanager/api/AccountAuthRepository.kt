@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
- * Auth state and account-level actions for a single [AccountProvider]. Each backend contributes one
+ * Auth state and account-level actions for a single [SyncProviderSource]. Each backend contributes one
  * implementation into a multibound set; [AccountManager] resolves the active one.
  */
-public interface AccountAuthRepository : ProviderScoped {
+public interface AccountAuthRepository : SyncProvider {
     public val state: Flow<AccountAuthState>
     public val authState: Flow<AuthState?>
     public val authError: Flow<AuthError?>

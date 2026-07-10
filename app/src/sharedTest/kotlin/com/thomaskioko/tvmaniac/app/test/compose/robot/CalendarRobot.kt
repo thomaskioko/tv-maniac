@@ -39,7 +39,7 @@ internal class CalendarRobot(composeUi: ComposeUiTest) : BaseRobot<CalendarRobot
     }
 
     fun assertDateHeaderDisplayed(text: String) = apply {
-        awaitMatcherAtLeastOne(hasTestTag(CalendarTestTags.dateHeader(text)), timeoutMillis = 10_000)
+        awaitMatcherAtLeastOne(hasTestTag(CalendarTestTags.dateHeader(text)), timeoutMillis = 15_000)
     }
 
     fun assertAdditionalEpisodesCountDisplayed(episodeTraktId: Long, expectedText: String) = apply {

@@ -155,7 +155,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
 
         val rows = database.recommendedShowsQueries.recommendedShows(Id(PARENT_TMDB_ID)).executeAsList()
         rows shouldHaveSize 1
-        rows[0].tmdb_id?.id shouldBe REC_TMDB_ID
+        rows[0].tmdb_id.id shouldBe REC_TMDB_ID
     }
 
     @Test
@@ -203,7 +203,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
 
     private fun seedParentShow(tmdbId: Long) {
         database.tvShowQueries.upsert(
-            tmdb_id = Id<TmdbId>(tmdbId),
+            tmdb_id = Id(tmdbId),
             name = "Parent Show",
             overview = "",
             language = null,

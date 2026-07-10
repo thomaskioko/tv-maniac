@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
@@ -26,7 +26,7 @@ public class SimklEpisodeWatchesDataSource(
     private val syncRemoteDataSource: SimklSyncRemoteDataSource,
 ) : EpisodeWatchesDataSource {
 
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
     override suspend fun getAllWatchedShows(page: Int, limit: Int): List<WatchedShowBatch> {
         return when (val response = syncRemoteDataSource.getAllWatchedShows()) {

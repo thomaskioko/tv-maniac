@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.logout
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
@@ -40,11 +40,11 @@ internal class LogoutInteractorTest {
 
     @Test
     fun `should logout active provider given active provider is set`() = runTest(testDispatcher) {
-        fakeAccountManager.setActiveProvider(AccountProvider.TRAKT)
+        fakeAccountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         interactor.executeSync(Unit)
 
-        fakeAccountManager.lastLogoutProvider shouldBe AccountProvider.TRAKT
+        fakeAccountManager.lastLogoutProvider shouldBe SyncProviderSource.TRAKT
     }
 
     @Test

@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -74,7 +74,7 @@ public class SettingsPresenter(
     private val errorToStringMapper: ErrorToStringMapper,
     private val localizer: Localizer,
     private val logger: Logger,
-    private val authManagers: Map<AccountProvider, AuthManager>,
+    private val authManagers: Map<SyncProviderSource, AuthManager>,
     @SimklLoginFlagQualifier
     private val simklLoginFlag: FeatureFlag<Boolean>,
     @AccountSwitchFlagQualifier
@@ -273,18 +273,18 @@ public class SettingsPresenter(
 
     private fun resolveSwitchTarget(
         isLoggedIn: Boolean,
-        activeProvider: AccountProvider?,
+        activeProvider: SyncProviderSource?,
         simklEnabled: Boolean,
         accountSwitchEnabled: Boolean,
-    ): AccountProvider? = when {
+    ): SyncProviderSource? = when {
         !accountSwitchEnabled -> null
         !isLoggedIn -> null
-        activeProvider == AccountProvider.TRAKT && simklEnabled -> AccountProvider.SIMKL
-        activeProvider == AccountProvider.SIMKL -> AccountProvider.TRAKT
+        activeProvider == SyncProviderSource.TRAKT && simklEnabled -> SyncProviderSource.SIMKL
+        activeProvider == SyncProviderSource.SIMKL -> SyncProviderSource.TRAKT
         else -> null
     }
 
-    private fun handleSwitchClicked(target: AccountProvider) {
+    private fun handleSwitchClicked(target: SyncProviderSource) {
         coroutineScope.launch {
             _state.update { it.copy(isSwitching = true) }
             runCatching { pushPendingChangesInteractor.executeSync() }
@@ -342,7 +342,7 @@ public class SettingsPresenter(
         }
     }
 
-    private suspend fun executeSwitch(target: AccountProvider) {
+    private suspend fun executeSwitch(target: SyncProviderSource) {
         _state.update { it.copy(isSwitching = true) }
         try {
             authManagers[target]?.launchWebView()
@@ -397,19 +397,19 @@ public class SettingsPresenter(
 
     private fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
         buildList {
-            add(providerOption(AccountProvider.TRAKT))
-            if (simklEnabled) add(providerOption(AccountProvider.SIMKL))
+            add(providerOption(SyncProviderSource.TRAKT))
+            if (simklEnabled) add(providerOption(SyncProviderSource.SIMKL))
         }.toImmutableList()
 
-    private fun providerOption(provider: AccountProvider): AuthProviderOption = AuthProviderOption(
+    private fun providerOption(provider: SyncProviderSource): AuthProviderOption = AuthProviderOption(
         provider = provider,
         label = localizer.getString(StringResourceKey.LabelAuthContinueWith, provider.displayName),
     )
 
-    private fun connectedDescription(provider: AccountProvider): String = localizer.getString(
+    private fun connectedDescription(provider: SyncProviderSource): String = localizer.getString(
         when (provider) {
-            AccountProvider.TRAKT -> StringResourceKey.LabelSettingsTraktConnectedDescription
-            AccountProvider.SIMKL -> StringResourceKey.LabelSettingsSimklConnectedDescription
+            SyncProviderSource.TRAKT -> StringResourceKey.LabelSettingsTraktConnectedDescription
+            SyncProviderSource.SIMKL -> StringResourceKey.LabelSettingsSimklConnectedDescription
         },
     )
 

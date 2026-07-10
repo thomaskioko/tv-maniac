@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.shows.api
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 
 public sealed class ShowResolveOutcome {
     public data class Resolved(public val tmdbId: Long) : ShowResolveOutcome()
@@ -18,7 +18,7 @@ public interface ShowReconciler {
         imdbId: String?,
         title: String?,
         providerShowId: String?,
-        provider: AccountProvider,
+        provider: SyncProviderSource,
         result: ReconciliationResult = ReconciliationResult(matched = 0, tmdbMissing = 0),
     ): Pair<ShowResolveOutcome, ReconciliationResult>
 }

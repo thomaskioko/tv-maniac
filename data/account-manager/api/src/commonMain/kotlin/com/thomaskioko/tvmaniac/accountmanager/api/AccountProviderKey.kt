@@ -4,4 +4,4 @@ import dev.zacsweers.metro.MapKey
 
 @MapKey
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE)
-public annotation class AccountProviderKey(val value: AccountProvider)
+public annotation class AccountProviderKey(val value: SyncProviderSource)

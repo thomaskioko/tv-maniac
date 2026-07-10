@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.calendar
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_NEXT_WEEK
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
@@ -36,8 +36,8 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
         discoverRobot
             .assertDiscoverScreenDisplayed()
 
-        scenarios.stubLibrarySyncEndpoints(AccountProvider.TRAKT)
-        scenarios.stubWatchlistSyncEndpoints(AccountProvider.TRAKT)
+        scenarios.stubLibrarySyncEndpoints(SyncProviderSource.TRAKT)
+        scenarios.stubWatchlistSyncEndpoints(SyncProviderSource.TRAKT)
         scenarios.signInAndDismissRationale()
 
         scenarios.calendar.stubWeek()

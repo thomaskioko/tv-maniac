@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.calendar.implementation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
@@ -68,7 +68,7 @@ internal class DefaultCalendarRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should emit entries given followed shows become non-empty after login`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
         val repository = buildRepository()
 
         repository.observeCalendarEntries(START_EPOCH, END_EPOCH).test {
@@ -101,11 +101,11 @@ internal class DefaultCalendarRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should report background sync error given fetch fails`() = runTest(testDispatcher) {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
         val repository = buildRepository(
             activeSource = {
                 FakeCalendarRemoteDataSource(
-                    provider = AccountProvider.SIMKL,
+                    provider = SyncProviderSource.SIMKL,
                     calendarResponse = ApiResponse.Error.NetworkFailure(
                         kind = ApiResponse.Error.NetworkFailure.Kind.Connectivity,
                     ),
@@ -143,7 +143,7 @@ internal class DefaultCalendarRepositoryTest : BaseDatabaseTest() {
     }
 
     private fun simklSource(): CalendarRemoteDataSource = FakeCalendarRemoteDataSource(
-        provider = AccountProvider.SIMKL,
+        provider = SyncProviderSource.SIMKL,
         calendarResponse = if (followedShowsDao.entries().isEmpty()) {
             ApiResponse.Success(emptyList())
         } else {

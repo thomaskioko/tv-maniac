@@ -92,9 +92,17 @@ graph TB
     direction TB
     :data:trailers:api[api]:::multiplatform
   end
+  subgraph :data:traktlists
+    direction TB
+    :data:traktlists:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
+  end
+  subgraph :data:user
+    direction TB
+    :data:user:api[api]:::multiplatform
   end
   subgraph :data:watchproviders
     direction TB
@@ -108,6 +116,7 @@ graph TB
     :domain:showdetails[showdetails]:::multiplatform
     :domain:similarshows[similarshows]:::multiplatform
     :domain:theme[theme]:::multiplatform
+    :domain:traktlists[traktlists]:::multiplatform
   end
   subgraph :features:rating-sheet
     direction TB
@@ -173,6 +182,9 @@ graph TB
   :data:showdetails:api --> :data:database:sqldelight
   :data:similar:api --> :data:database:sqldelight
   :data:trailers:api --> :data:database:sqldelight
+  :data:user:api --> :core:network-util:api
+  :data:user:api --> :data:account-manager:api
+  :data:user:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:episode --> :core:base
   :domain:episode --> :core:logger:api
@@ -214,6 +226,9 @@ graph TB
   :domain:similarshows --> :core:base
   :domain:similarshows --> :data:similar:api
   :domain:theme --> :i18n:generator
+  :domain:traktlists --> :core:base
+  :domain:traktlists --> :data:traktlists:api
+  :domain:traktlists --> :data:user:api
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
   :features:root:nav --> :domain:theme
@@ -232,6 +247,7 @@ graph TB
   :features:show-details:presenter --> :domain:ratings
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
+  :features:show-details:presenter --> :domain:traktlists
   :features:show-details:presenter --> :features:rating-sheet:nav
   :features:show-details:presenter --> :features:root:nav
   :features:show-details:presenter -.-> :features:season-details:nav

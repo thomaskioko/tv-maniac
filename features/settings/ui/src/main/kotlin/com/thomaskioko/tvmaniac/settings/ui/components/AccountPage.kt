@@ -29,7 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.android.designsystem.R
 import com.thomaskioko.tvmaniac.compose.components.ProviderButton
@@ -227,7 +227,7 @@ private fun ProviderSignIn(
                 logo = providerLogo(option.provider),
                 onClick = { onAction(AccountLoginClicked(option.provider)) },
                 enabled = !state.isProcessingAuth,
-                modifier = if (option.provider == AccountProvider.TRAKT) {
+                modifier = if (option.provider == SyncProviderSource.TRAKT) {
                     Modifier.testTag(SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
                 } else {
                     Modifier
@@ -239,7 +239,7 @@ private fun ProviderSignIn(
 
 @Composable
 private fun SwitchProviderRow(
-    provider: AccountProvider,
+    provider: SyncProviderSource,
     label: String,
     enabled: Boolean,
     isSwitching: Boolean,
@@ -305,9 +305,9 @@ private fun SwitchProviderDialog(
 }
 
 @DrawableRes
-private fun providerLogo(provider: AccountProvider): Int = when (provider) {
-    AccountProvider.TRAKT -> R.drawable.ic_trakt_mono
-    AccountProvider.SIMKL -> R.drawable.ic_simkl_mono
+private fun providerLogo(provider: SyncProviderSource): Int = when (provider) {
+    SyncProviderSource.TRAKT -> R.drawable.ic_trakt_mono
+    SyncProviderSource.SIMKL -> R.drawable.ic_simkl_mono
 }
 
 @Composable

@@ -191,6 +191,7 @@
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>
     <string name="btn_add_to_list">Add To List</string>
+    <string name="btn_in_list">In List</string>
     <string name="title_recommended">Recommendations</string>
     <string name="title_similar">Similar Shows</string>
     <string name="title_seasons">All Seasons</string>

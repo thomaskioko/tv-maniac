@@ -1,10 +1,10 @@
 package com.thomaskioko.tvmaniac.accountmanager.testing
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 
 public class FakeAuthManager(
-    override val provider: AccountProvider = AccountProvider.TRAKT,
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT,
 ) : AuthManager {
 
     private var onLaunchWebView: () -> Unit = { }

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.episodes.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -59,7 +59,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     private val recordingDataSource = RecordingEpisodeWatchesDataSource()
     private val fakeShowReconciler = PassthroughShowReconciler()
     private val accountManager = FakeAccountManager().apply {
-        setActiveProvider(AccountProvider.TRAKT)
+        setActiveProvider(SyncProviderSource.TRAKT)
     }
     private val syncRepository = FakeActivitySyncRepository()
 
@@ -493,7 +493,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should populate watched episodes and tvshow stub given simkl active sync with distinct ids`() = runTest {
         val simklSource = SimklEpisodeWatchesDataSourceStub()
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
         val simklReconciler = PassthroughShowReconciler()
         val simklRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
@@ -554,7 +554,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 }
 
 private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
     private val _removed = mutableListOf<Pair<Long, Long>>()
     val removed: List<Pair<Long, Long>> get() = _removed.toList()
 
@@ -596,7 +596,7 @@ private class ThrowingShowReconciler(private val failForTmdbId: Long) : ShowReco
         imdbId: String?,
         title: String?,
         providerShowId: String?,
-        provider: AccountProvider,
+        provider: SyncProviderSource,
         result: ReconciliationResult,
     ): Pair<ShowResolveOutcome, ReconciliationResult> {
         check(tmdbId != failForTmdbId) { "Reconciliation failed for show $tmdbId" }
@@ -611,7 +611,7 @@ private class PassthroughShowReconciler : ShowReconciler {
         imdbId: String?,
         title: String?,
         providerShowId: String?,
-        provider: AccountProvider,
+        provider: SyncProviderSource,
         result: ReconciliationResult,
     ): Pair<ShowResolveOutcome, ReconciliationResult> {
         if (tmdbId == null) return ShowResolveOutcome.Skipped to result.copy(tmdbMissing = result.tmdbMissing + 1)
@@ -620,7 +620,7 @@ private class PassthroughShowReconciler : ShowReconciler {
 }
 
 private class SimklEpisodeWatchesDataSourceStub : EpisodeWatchesDataSource {
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
     var batchesToReturn: List<WatchedShowBatch> = emptyList()
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> = emptyList()

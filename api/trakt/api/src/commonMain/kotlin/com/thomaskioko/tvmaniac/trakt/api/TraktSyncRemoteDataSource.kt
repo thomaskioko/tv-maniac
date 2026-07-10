@@ -31,7 +31,7 @@ public interface TraktSyncRemoteDataSource {
     /**
      * Fetches the authenticated user's full watched-shows feed.
      *
-     * With `extended = "noseasons"` Trakt returns one row per show; with `extended = "full"`
+     * With `extended = "noseasons"` Trakt returns one row per show; with `extended = "progress"`
      * each row carries the per-season per-episode `last_watched_at` breakdown the bulk
      * watched-episode sync needs to populate the local `watched_episodes` table.
      *

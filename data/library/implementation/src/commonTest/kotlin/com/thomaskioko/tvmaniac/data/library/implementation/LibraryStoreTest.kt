@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.library.implementation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
@@ -64,8 +64,8 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
     private lateinit var followedShowsDao: FollowedShowsDao
     private lateinit var showReconciler: DefaultShowReconciler
 
-    private val traktSource = FakeLibrarySource(provider = AccountProvider.TRAKT)
-    private val simklSource = FakeLibrarySource(provider = AccountProvider.SIMKL)
+    private val traktSource = FakeLibrarySource(provider = SyncProviderSource.TRAKT)
+    private val simklSource = FakeLibrarySource(provider = SyncProviderSource.SIMKL)
     private val transactionRunner = ImmediateTransactionRunner()
 
     @BeforeTest
@@ -112,7 +112,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
                     tmdbId = TMDB_ID,
                     imdbId = IMDB_ID,
                     providerShowId = TRAKT_ID.toString(),
-                    provider = AccountProvider.TRAKT,
+                    provider = SyncProviderSource.TRAKT,
                     title = SHOW_TITLE,
                     year = 2022,
                     followedAt = FOLLOWED_AT,
@@ -162,7 +162,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
                     tmdbId = null,
                     imdbId = IMDB_ID,
                     providerShowId = SIMKL_ID,
-                    provider = AccountProvider.SIMKL,
+                    provider = SyncProviderSource.SIMKL,
                     title = SHOW_TITLE,
                     year = 2021,
                     followedAt = FOLLOWED_AT,
@@ -217,7 +217,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
                     tmdbId = null,
                     imdbId = IMDB_ID,
                     providerShowId = SIMKL_ID,
-                    provider = AccountProvider.SIMKL,
+                    provider = SyncProviderSource.SIMKL,
                     title = SHOW_TITLE,
                     year = 2021,
                     followedAt = FOLLOWED_AT,
@@ -247,7 +247,7 @@ internal class LibraryStoreTest : BaseDatabaseTest() {
                     tmdbId = TMDB_ID,
                     imdbId = IMDB_ID,
                     providerShowId = SIMKL_ID,
-                    provider = AccountProvider.SIMKL,
+                    provider = SyncProviderSource.SIMKL,
                     title = SHOW_TITLE,
                     year = 2021,
                     followedAt = FOLLOWED_AT,
@@ -302,7 +302,7 @@ private class ImmediateTransactionRunner : DatabaseTransactionRunner {
 }
 
 private class FakeLibrarySource(
-    override val provider: AccountProvider,
+    override val provider: SyncProviderSource,
 ) : LibraryRemoteDataSource {
 
     private var watchlistShows: List<RemoteFollowedShow> = emptyList()

@@ -50,13 +50,19 @@ jobs:
           if_no_artifact_found: warn
 
       - name: Restore recorded goldens as the compare baseline
+        id: restore-goldens
         run: |
           if [ -d recorded-goldens ] && [ -n "$(find recorded-goldens -name '*.png' -print -quit)" ]; then
             rsync -a recorded-goldens/ .
             rm -rf recorded-goldens
+            echo "baseline_present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "baseline_present=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::No Ubuntu golden baseline for the merge-base (store-screenshot run still in progress or missing); skipping comparison to avoid platform false-positives."
           fi
 
       - name: Compare screenshot test
+        if: steps.restore-goldens.outputs.baseline_present == 'true'
         run: ./gradlew compareRoborazziDebug --stacktrace
 
       - name: Check for screenshot diffs

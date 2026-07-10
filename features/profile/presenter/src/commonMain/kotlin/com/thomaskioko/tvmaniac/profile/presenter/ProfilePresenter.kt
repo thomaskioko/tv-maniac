@@ -3,10 +3,10 @@ package com.thomaskioko.tvmaniac.profile.presenter
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
@@ -87,7 +87,7 @@ public class ProfilePresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val localizer: Localizer,
-    private val authManagers: Map<AccountProvider, AuthManager>,
+    private val authManagers: Map<SyncProviderSource, AuthManager>,
     @SimklLoginFlagQualifier private val simklLoginFlag: FeatureFlag<Boolean>,
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
@@ -172,7 +172,7 @@ public class ProfilePresenter(
     ) { userProfile, isConnected, activeProvider, authError, isLoading, uiMessage, sections, simklEnabled, isAuthenticating ->
         val errorMessage = authError?.toUiMessage(localizer) ?: uiMessage
         // TODO:: Remove hardcoded provider
-        val statsExpected = activeProvider == AccountProvider.TRAKT || activeProvider == AccountProvider.SIMKL
+        val statsExpected = activeProvider == SyncProviderSource.TRAKT || activeProvider == SyncProviderSource.SIMKL
         val profile = userProfile?.toPresentation(statsExpected = statsExpected)
         val displayName = profile?.fullName ?: profile?.username ?: ""
 
@@ -311,11 +311,11 @@ public class ProfilePresenter(
 
     private fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
         buildList {
-            add(providerOption(AccountProvider.TRAKT))
-            if (simklEnabled) add(providerOption(AccountProvider.SIMKL))
+            add(providerOption(SyncProviderSource.TRAKT))
+            if (simklEnabled) add(providerOption(SyncProviderSource.SIMKL))
         }.toImmutableList()
 
-    private fun providerOption(provider: AccountProvider): AuthProviderOption = AuthProviderOption(
+    private fun providerOption(provider: SyncProviderSource): AuthProviderOption = AuthProviderOption(
         provider = provider,
         label = localizer.getString(StringResourceKey.LabelAuthContinueWith, provider.displayName),
     )

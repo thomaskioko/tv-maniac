@@ -29,6 +29,10 @@ public annotation class ComputationCoroutineScope
 
 @Qualifier
 @Retention(BINARY)
+public annotation class SyncScope
+
+@Qualifier
+@Retention(BINARY)
 public annotation class TmdbApi
 
 @Qualifier

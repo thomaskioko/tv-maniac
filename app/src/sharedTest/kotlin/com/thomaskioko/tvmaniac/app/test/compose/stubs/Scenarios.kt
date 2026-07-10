@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.app.test.compose.stubs
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.app.test.TestAppComponent
 import com.thomaskioko.tvmaniac.app.test.compose.robot.RootRobot
@@ -56,8 +56,8 @@ internal class Scenarios(
     val profile: Profile = Profile()
 
     fun signInAndDismissRationale() {
-        stubLoggedInUser(AccountProvider.TRAKT)
-        stubProfileEndpoints(AccountProvider.TRAKT)
+        stubLoggedInUser(SyncProviderSource.TRAKT)
+        stubProfileEndpoints(SyncProviderSource.TRAKT)
         rootRobot.dismissNotificationRationale()
     }
 
@@ -66,17 +66,17 @@ internal class Scenarios(
      * dispatching to each provider's existing mechanism ([Auth.stubLoggedInUser] for Trakt via
      * `FakeTraktAuthRepository`, [Simkl.stubLoggedInUser] for Simkl via `AuthStateHolder`).
      */
-    fun stubLoggedInUser(provider: AccountProvider) {
+    fun stubLoggedInUser(provider: SyncProviderSource) {
         when (provider) {
-            AccountProvider.TRAKT -> auth.stubLoggedInUser()
-            AccountProvider.SIMKL -> simkl.stubLoggedInUser()
+            SyncProviderSource.TRAKT -> auth.stubLoggedInUser()
+            SyncProviderSource.SIMKL -> simkl.stubLoggedInUser()
         }
     }
 
-    fun stubProfileEndpoints(provider: AccountProvider) {
+    fun stubProfileEndpoints(provider: SyncProviderSource) {
         when (provider) {
-            AccountProvider.TRAKT -> profile.stubProfileSyncEndpoints()
-            AccountProvider.SIMKL -> simkl.stubProfileEndpoints()
+            SyncProviderSource.TRAKT -> profile.stubProfileSyncEndpoints()
+            SyncProviderSource.SIMKL -> simkl.stubProfileEndpoints()
         }
     }
 
@@ -84,10 +84,10 @@ internal class Scenarios(
      * Provider-aware watched-library sync: Trakt's watched-shows/activities set, or Simkl's
      * watched-history (`sync/all-items`).
      */
-    fun stubLibrarySyncEndpoints(provider: AccountProvider) {
+    fun stubLibrarySyncEndpoints(provider: SyncProviderSource) {
         when (provider) {
-            AccountProvider.TRAKT -> library.stubLibrarySyncEndpoints()
-            AccountProvider.SIMKL -> simkl.stubWatchedHistoryEndpoints()
+            SyncProviderSource.TRAKT -> library.stubLibrarySyncEndpoints()
+            SyncProviderSource.SIMKL -> simkl.stubWatchedHistoryEndpoints()
         }
     }
 
@@ -95,30 +95,30 @@ internal class Scenarios(
      * Provider-aware watchlist / up-next sync: Trakt's Continue Watching pipeline, or Simkl's
      * plan-to-watch list.
      */
-    fun stubWatchlistSyncEndpoints(provider: AccountProvider) {
+    fun stubWatchlistSyncEndpoints(provider: SyncProviderSource) {
         when (provider) {
-            AccountProvider.TRAKT -> watchlist.stubWatchlistSyncEndpoints()
-            AccountProvider.SIMKL -> simkl.stubPlanToWatchWatchlist()
+            SyncProviderSource.TRAKT -> watchlist.stubWatchlistSyncEndpoints()
+            SyncProviderSource.SIMKL -> simkl.stubPlanToWatchWatchlist()
         }
     }
 
     fun stubAuthenticatedSimklProfile() {
-        stubLoggedInUser(AccountProvider.SIMKL)
-        stubProfileEndpoints(AccountProvider.SIMKL)
-        stubLibrarySyncEndpoints(AccountProvider.SIMKL)
+        stubLoggedInUser(SyncProviderSource.SIMKL)
+        stubProfileEndpoints(SyncProviderSource.SIMKL)
+        stubLibrarySyncEndpoints(SyncProviderSource.SIMKL)
         simkl.stubActivities()
     }
 
     fun stubAuthenticatedSimklStartWatching() {
-        stubLoggedInUser(AccountProvider.SIMKL)
-        stubProfileEndpoints(AccountProvider.SIMKL)
-        stubWatchlistSyncEndpoints(AccountProvider.SIMKL)
+        stubLoggedInUser(SyncProviderSource.SIMKL)
+        stubProfileEndpoints(SyncProviderSource.SIMKL)
+        stubWatchlistSyncEndpoints(SyncProviderSource.SIMKL)
         simkl.stubActivities()
     }
 
     fun stubAuthenticatedSync() {
         stubPublicCatalog()
-        stubActiveProvider(AccountProvider.TRAKT)
+        stubActiveProvider(SyncProviderSource.TRAKT)
     }
 
     /**
@@ -140,7 +140,7 @@ internal class Scenarios(
     }
 
     /**
-     * Wires the given [AccountProvider]'s baseline authenticated session: sign-in state, plus its
+     * Wires the given [SyncProviderSource]'s baseline authenticated session: sign-in state, plus its
      * catalog-declared [Endpoints.Trakt.authenticatedEndpoints] / [Endpoints.Simkl.authenticatedEndpoints]
      * in one shared loop. Host-aware matching in [MockEngineHandler] means this is safe to call
      * once per test alongside [stubPublicCatalog]; call sites don't need to know which provider
@@ -150,10 +150,10 @@ internal class Scenarios(
      * Always pair this with [stubPublicCatalog]: it is the only source of TMDB/discover coverage
      * for either provider.
      */
-    fun stubActiveProvider(provider: AccountProvider) {
+    fun stubActiveProvider(provider: SyncProviderSource) {
         when (provider) {
-            AccountProvider.TRAKT -> {
-                stubLoggedInUser(AccountProvider.TRAKT)
+            SyncProviderSource.TRAKT -> {
+                stubLoggedInUser(SyncProviderSource.TRAKT)
                 val endpoints = Endpoints.Trakt.authenticatedEndpoints + listOf(
                     Endpoints.Trakt.userStats(TEST_PROFILE_SLUG),
                     Endpoints.Trakt.userLists(TEST_PROFILE_SLUG),
@@ -175,23 +175,23 @@ internal class Scenarios(
                 val nitroShows = FixtureLoader.load(Endpoints.Trakt.SyncProgressUpNextNitro.successFixture)
                 showFixtures(nitroShows).forEach { mockHandler.stubShow(it) }
             }
-            AccountProvider.SIMKL -> {
+            SyncProviderSource.SIMKL -> {
                 flags.enableSimklLogin()
                 Endpoints.Simkl.authenticatedEndpoints.forEach { mockHandler.stubEndpoint(it) }
                 // Sign in LAST (see TRAKT note) so login-triggered sync finds its stubs.
-                stubLoggedInUser(AccountProvider.SIMKL)
+                stubLoggedInUser(SyncProviderSource.SIMKL)
             }
         }
     }
 
     /** Fake authentication endpoint used to detect a signed-in account, per provider. */
-    private fun userEndpoint(provider: AccountProvider): Endpoint.Exact =
+    private fun userEndpoint(provider: SyncProviderSource): Endpoint.Exact =
         when (provider) {
-            AccountProvider.TRAKT -> Endpoints.Trakt.UsersMe
-            AccountProvider.SIMKL -> Endpoints.Simkl.UsersSettings
+            SyncProviderSource.TRAKT -> Endpoints.Trakt.UsersMe
+            SyncProviderSource.SIMKL -> Endpoints.Simkl.UsersSettings
         }
 
-    fun stubUsersMeUnauthorized(provider: AccountProvider = AccountProvider.TRAKT) {
+    fun stubUsersMeUnauthorized(provider: SyncProviderSource = SyncProviderSource.TRAKT) {
         mockHandler.stubEndpoint(userEndpoint(provider), HttpStatusCode.Unauthorized)
     }
 
@@ -202,7 +202,7 @@ internal class Scenarios(
      * auth-state collector still observes real LOGGED_OUT to LOGGED_IN transition.
      */
     fun stubAuthenticatedSyncOnSignIn() {
-        stubOnSignIn(AccountProvider.TRAKT)
+        stubOnSignIn(SyncProviderSource.TRAKT)
     }
 
     /**
@@ -210,7 +210,7 @@ internal class Scenarios(
      * authenticated Trakt session and flips fake auth state to LOGGED_IN.
      */
     fun stubProfileOnSignIn() {
-        stubOnSignIn(AccountProvider.TRAKT)
+        stubOnSignIn(SyncProviderSource.TRAKT)
     }
 
     /**
@@ -218,16 +218,16 @@ internal class Scenarios(
      * authenticated session, mirroring a live OAuth round-trip. Owns the only `graph.oAuthLauncher`
      * access so journey tests never reach into the launcher directly.
      */
-    fun stubOnSignIn(provider: AccountProvider) {
+    fun stubOnSignIn(provider: SyncProviderSource) {
         graph.oAuthLauncher.setOnLaunch {
             when (provider) {
-                AccountProvider.TRAKT -> stubActiveProvider(AccountProvider.TRAKT)
-                AccountProvider.SIMKL -> stubAuthenticatedSimklProfile()
+                SyncProviderSource.TRAKT -> stubActiveProvider(SyncProviderSource.TRAKT)
+                SyncProviderSource.SIMKL -> stubAuthenticatedSimklProfile()
             }
         }
     }
 
-    fun stubUnauthenticatedState(provider: AccountProvider = AccountProvider.TRAKT) {
+    fun stubUnauthenticatedState(provider: SyncProviderSource = SyncProviderSource.TRAKT) {
         stubPublicCatalog()
         mockHandler.stubEndpoint(userEndpoint(provider), HttpStatusCode.Unauthorized)
     }
@@ -248,13 +248,13 @@ internal class Scenarios(
      * [stubActiveProvider], which would also reset the auth/refresh state this test is verifying.
      */
     fun stubTokenRefresh(
-        provider: AccountProvider = AccountProvider.TRAKT,
+        provider: SyncProviderSource = SyncProviderSource.TRAKT,
         accessToken: String = "refreshed-access",
         refreshToken: String = "refreshed-refresh",
         tokenLifetimeSeconds: Long = 3600,
     ) {
         when (provider) {
-            AccountProvider.TRAKT -> {
+            SyncProviderSource.TRAKT -> {
                 mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
                 val refreshedAuthState = AuthState(
                     accessToken = accessToken,
@@ -269,7 +269,7 @@ internal class Scenarios(
                 mockHandler.stubEndpoint(Endpoints.Trakt.userLists(TEST_PROFILE_SLUG))
                 mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
             }
-            AccountProvider.SIMKL -> error(
+            SyncProviderSource.SIMKL -> error(
                 "Simkl token refresh is not stubbed yet; add it when a Simkl refresh journey exists.",
             )
         }
@@ -307,7 +307,7 @@ internal class Scenarios(
         ) {
             runBlocking {
                 graph.authStateHolder.saveTokens(
-                    provider = AccountProvider.SIMKL,
+                    provider = SyncProviderSource.SIMKL,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
                     expiresAtSeconds = (Clock.System.now() + tokenLifetimeSeconds.seconds).epochSeconds,
@@ -402,24 +402,24 @@ internal class Scenarios(
     inner class UpNext {
         fun stubProgressAfterPilotWatched(
             showTraktId: Long,
-            provider: AccountProvider = AccountProvider.TRAKT,
+            provider: SyncProviderSource = SyncProviderSource.TRAKT,
         ) {
             when (provider) {
-                AccountProvider.TRAKT -> mockHandler.stubEndpoint(Endpoints.Trakt.SyncHistory, method = HttpMethod.Post)
-                AccountProvider.SIMKL -> mockHandler.stubEndpoint(Endpoints.Simkl.SyncHistory, method = HttpMethod.Post)
+                SyncProviderSource.TRAKT -> mockHandler.stubEndpoint(Endpoints.Trakt.SyncHistory, method = HttpMethod.Post)
+                SyncProviderSource.SIMKL -> mockHandler.stubEndpoint(Endpoints.Simkl.SyncHistory, method = HttpMethod.Post)
             }
         }
     }
 
     inner class Calendar {
-        private fun endpoint(provider: AccountProvider, weekStart: String, days: Int): Endpoint.Exact =
+        private fun endpoint(provider: SyncProviderSource, weekStart: String, days: Int): Endpoint.Exact =
             when (provider) {
-                AccountProvider.TRAKT -> Endpoints.Trakt.calendar(weekStart, days)
-                AccountProvider.SIMKL -> Endpoints.Simkl.CalendarTvFeed
+                SyncProviderSource.TRAKT -> Endpoints.Trakt.calendar(weekStart, days)
+                SyncProviderSource.SIMKL -> Endpoints.Simkl.CalendarTvFeed
             }
 
         fun stubWeek(
-            provider: AccountProvider = AccountProvider.TRAKT,
+            provider: SyncProviderSource = SyncProviderSource.TRAKT,
             weekStart: String = TEST_TODAY,
             days: Int = 7,
         ) {
@@ -427,7 +427,7 @@ internal class Scenarios(
         }
 
         fun stubEmptyWeek(
-            provider: AccountProvider = AccountProvider.TRAKT,
+            provider: SyncProviderSource = SyncProviderSource.TRAKT,
             weekStart: String = TEST_TODAY,
             days: Int = 7,
         ) {
@@ -440,7 +440,7 @@ internal class Scenarios(
         }
 
         fun stubWeekError(
-            provider: AccountProvider = AccountProvider.TRAKT,
+            provider: SyncProviderSource = SyncProviderSource.TRAKT,
             weekStart: String = TEST_TODAY,
             days: Int = 7,
             status: Int = 404,

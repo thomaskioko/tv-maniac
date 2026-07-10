@@ -4,9 +4,9 @@ import android.content.ActivityNotFoundException
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.net.toUri
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -30,7 +30,7 @@ import kotlin.coroutines.suspendCoroutine
 public class AndroidOAuthLauncher(
     private val activity: ComponentActivity,
     private val authStateHolder: AuthStateHolder,
-    private val authClientConfigs: Map<AccountProvider, AuthClientConfig>,
+    private val authClientConfigs: Map<SyncProviderSource, AuthClientConfig>,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
 ) : OAuthLauncher {
@@ -39,7 +39,7 @@ public class AndroidOAuthLauncher(
     private lateinit var launcher: ActivityResultLauncher<AuthorizationRequest>
 
     @Volatile
-    private var pendingProvider: AccountProvider? = null
+    private var pendingProvider: SyncProviderSource? = null
 
     override fun register() {
         if (::launcher.isInitialized) return
@@ -63,7 +63,7 @@ public class AndroidOAuthLauncher(
         }
     }
 
-    override fun setCallback(provider: AccountProvider, callback: () -> Unit) {
+    override fun setCallback(provider: SyncProviderSource, callback: () -> Unit) {
         // Not used on Android - results arrive through the ActivityResultLauncher.
     }
 

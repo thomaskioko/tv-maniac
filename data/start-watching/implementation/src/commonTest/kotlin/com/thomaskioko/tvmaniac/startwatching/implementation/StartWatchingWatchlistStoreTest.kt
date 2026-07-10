@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.startwatching.implementation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -86,14 +86,14 @@ internal class StartWatchingWatchlistStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should write followed show given trakt plan-to-watch show with tmdb id`() = runTest(testDispatcher) {
-        val source = FakeStartWatchingSource(provider = AccountProvider.TRAKT)
+        val source = FakeStartWatchingSource(provider = SyncProviderSource.TRAKT)
         source.setPlanToWatch(
             listOf(
                 RemotePlanToWatchShow(
                     tmdbId = TMDB_ID,
                     imdbId = IMDB_ID,
                     providerShowId = TRAKT_ID.toString(),
-                    provider = AccountProvider.TRAKT,
+                    provider = SyncProviderSource.TRAKT,
                     title = SHOW_TITLE,
                     year = 2022,
                     followedAt = FOLLOWED_AT,
@@ -128,14 +128,14 @@ internal class StartWatchingWatchlistStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should write followed show given simkl plan-to-watch show with tmdb id`() = runTest(testDispatcher) {
-        val source = FakeStartWatchingSource(provider = AccountProvider.SIMKL)
+        val source = FakeStartWatchingSource(provider = SyncProviderSource.SIMKL)
         source.setPlanToWatch(
             listOf(
                 RemotePlanToWatchShow(
                     tmdbId = TMDB_ID,
                     imdbId = IMDB_ID,
                     providerShowId = SIMKL_ID,
-                    provider = AccountProvider.SIMKL,
+                    provider = SyncProviderSource.SIMKL,
                     title = SHOW_TITLE,
                     year = 2021,
                     followedAt = FOLLOWED_AT,
@@ -166,14 +166,14 @@ internal class StartWatchingWatchlistStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should skip show given plan-to-watch show has no tmdb id`() = runTest(testDispatcher) {
-        val source = FakeStartWatchingSource(provider = AccountProvider.SIMKL)
+        val source = FakeStartWatchingSource(provider = SyncProviderSource.SIMKL)
         source.setPlanToWatch(
             listOf(
                 RemotePlanToWatchShow(
                     tmdbId = null,
                     imdbId = IMDB_ID,
                     providerShowId = SIMKL_ID,
-                    provider = AccountProvider.SIMKL,
+                    provider = SyncProviderSource.SIMKL,
                     title = SHOW_TITLE,
                     year = 2021,
                     followedAt = FOLLOWED_AT,
@@ -194,14 +194,14 @@ internal class StartWatchingWatchlistStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should keep existing followed entries given show no longer in plan-to-watch`() = runTest(testDispatcher) {
-        val source = FakeStartWatchingSource(provider = AccountProvider.TRAKT)
+        val source = FakeStartWatchingSource(provider = SyncProviderSource.TRAKT)
         source.setPlanToWatch(
             listOf(
                 RemotePlanToWatchShow(
                     tmdbId = TMDB_ID,
                     imdbId = IMDB_ID,
                     providerShowId = TRAKT_ID.toString(),
-                    provider = AccountProvider.TRAKT,
+                    provider = SyncProviderSource.TRAKT,
                     title = SHOW_TITLE,
                     year = 2022,
                     followedAt = FOLLOWED_AT,
@@ -264,7 +264,7 @@ private class ImmediateTransactionRunner : DatabaseTransactionRunner {
 }
 
 private class FakeStartWatchingSource(
-    override val provider: AccountProvider,
+    override val provider: SyncProviderSource,
 ) : StartWatchingRemoteDataSource {
 
     private var shows: List<RemotePlanToWatchShow> = emptyList()

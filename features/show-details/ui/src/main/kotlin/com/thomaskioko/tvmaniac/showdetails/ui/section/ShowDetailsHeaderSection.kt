@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
@@ -50,7 +51,7 @@ import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
-import com.thomaskioko.tvmaniac.i18n.MR.strings.btn_add_to_list
+import com.thomaskioko.tvmaniac.compose.theme.green
 import com.thomaskioko.tvmaniac.i18n.MR.strings.following
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
@@ -162,6 +163,8 @@ private fun ShowBody(
             ShowDetailButtons(
                 isFollowed = state.isInLibrary,
                 canAddToList = state.canAddToList,
+                isInList = state.isInList,
+                listActionLabel = state.listActionLabel,
                 userRating = state.userRating,
                 onTrackShowClicked = { onAction(ShowDetailsFollowClicked(state.isInLibrary)) },
                 onAddToList = { onAction(ShowDetailsOpenShowList) },
@@ -336,6 +339,8 @@ private fun GenreText(
 internal fun ShowDetailButtons(
     isFollowed: Boolean,
     canAddToList: Boolean,
+    isInList: Boolean,
+    listActionLabel: String,
     userRating: Int?,
     onTrackShowClicked: (Boolean) -> Unit,
     onAddToList: () -> Unit,
@@ -376,9 +381,10 @@ internal fun ShowDetailButtons(
                 .weight(1f)
                 .testTag(ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG),
             shape = MaterialTheme.shapes.medium,
-            text = btn_add_to_list.resolve(context),
-            imageVector = Icons.Outlined.AutoAwesomeMotion,
-            containerColor = MaterialTheme.colorScheme.secondary,
+            text = listActionLabel,
+            imageVector = if (isInList) Icons.Filled.LibraryAddCheck else Icons.Outlined.AutoAwesomeMotion,
+            containerColor = if (isInList) green else MaterialTheme.colorScheme.secondary,
+            contentColor = if (isInList) Color.White else MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.labelMedium,
             enabled = canAddToList,
             onClick = onAddToList,

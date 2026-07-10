@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.showlist.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListCopy
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListState
 import com.thomaskioko.tvmaniac.presentation.showlist.model.TraktListModel
@@ -23,8 +23,8 @@ internal val loggedOutState = ShowListState(
     isLoggedIn = false,
     labels = previewCopy,
     authProviders = persistentListOf(
-        AuthProviderOption(AccountProvider.TRAKT, "Continue with Trakt"),
-        AuthProviderOption(AccountProvider.SIMKL, "Continue with Simkl"),
+        AuthProviderOption(SyncProviderSource.TRAKT, "Continue with Trakt"),
+        AuthProviderOption(SyncProviderSource.SIMKL, "Continue with Simkl"),
     ),
 )
 

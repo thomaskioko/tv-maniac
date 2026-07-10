@@ -30,6 +30,10 @@ graph TB
     direction TB
     :core:util:api[api]:::multiplatform
   end
+  subgraph :data:account-manager
+    direction TB
+    :data:account-manager:api[api]:::multiplatform
+  end
   subgraph :data:database
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
@@ -42,6 +46,10 @@ graph TB
     direction TB
     :data:request-manager:api[api]:::multiplatform
   end
+  subgraph :data:shows
+    direction TB
+    :data:shows:api[api]:::multiplatform
+  end
   subgraph :data:traktlists
     direction TB
     :data:traktlists:api[api]:::multiplatform
@@ -53,7 +61,10 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
+  :data:shows:api --> :data:account-manager:api
+  :data:shows:api --> :data:database:sqldelight
   :data:traktlists:implementation --> :api:trakt:api
   :data:traktlists:implementation --> :core:base
   :data:traktlists:implementation -.-> :core:network-util:api
@@ -61,6 +72,7 @@ graph TB
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
+  :data:traktlists:implementation -.-> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

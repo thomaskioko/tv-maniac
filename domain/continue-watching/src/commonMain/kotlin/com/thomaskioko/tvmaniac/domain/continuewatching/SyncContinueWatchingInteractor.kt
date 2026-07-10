@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
@@ -29,6 +30,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError as NetworkS
 @Inject
 @SingleIn(AppScope::class)
 public class SyncContinueWatchingInteractor(
+    private val accountManager: AccountManager,
     private val syncActivityInteractor: SyncActivityInteractor,
     private val continueWatchingRepository: ContinueWatchingRepository,
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
@@ -43,6 +45,11 @@ public class SyncContinueWatchingInteractor(
     private val syncMutex = Mutex()
 
     override suspend fun doWork(params: Param) {
+        if (accountManager.getActiveProvider() == null) {
+            logger.debug(TAG, "Continue Watching sync skipped — no active account")
+            return
+        }
+
         if (!params.forceRefresh && isCacheValid()) {
             logger.debug(TAG, "Continue Watching sync skipped — cache still valid")
             return
@@ -100,6 +107,11 @@ public class SyncContinueWatchingInteractor(
                     if (shouldStopMetadataSync.value) return@async
                     semaphore.withPermit {
                         if (shouldStopMetadataSync.value) return@withPermit
+                        if (accountManager.getActiveProvider() == null) {
+                            logger.debug(TAG, "Stopping metadata fan-out - account logged out")
+                            shouldStopMetadataSync.value = true
+                            return@withPermit
+                        }
                         val result = runCatching {
                             if (showMetadataSyncHelper.shouldSync(show.showId)) {
                                 syncShowMetadataInteractor.executeSync(

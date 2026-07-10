@@ -1,24 +1,24 @@
 package com.thomaskioko.tvmaniac.oauth.testing
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 
 public class FakeAuthStore : AuthStore {
-    private val savedStates: MutableMap<AccountProvider, AuthState> = mutableMapOf()
+    private val savedStates: MutableMap<SyncProviderSource, AuthState> = mutableMapOf()
     public var getCallCount: Int = 0
         private set
 
-    override suspend fun get(provider: AccountProvider): AuthState? {
+    override suspend fun get(provider: SyncProviderSource): AuthState? {
         getCallCount++
         return savedStates[provider]
     }
 
-    override suspend fun save(provider: AccountProvider, state: AuthState) {
+    override suspend fun save(provider: SyncProviderSource, state: AuthState) {
         savedStates[provider] = state
     }
 
-    override suspend fun clear(provider: AccountProvider) {
+    override suspend fun clear(provider: SyncProviderSource) {
         savedStates.remove(provider)
     }
 

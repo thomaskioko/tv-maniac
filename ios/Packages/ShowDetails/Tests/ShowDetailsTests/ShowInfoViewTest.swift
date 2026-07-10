@@ -11,10 +11,11 @@ class ShowInfoViewTest: SnapshotTestCase {
         ShowInfoView(
             isFollowed: true,
             canAddToList: true,
+            isInList: false,
             genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
-            addToListLabel: "Add To List",
+            listActionLabel: "Add To List",
             rateLabel: "Rate",
             onAddToLibrary: {},
             onAddToCustomList: {},
@@ -29,10 +30,11 @@ class ShowInfoViewTest: SnapshotTestCase {
         ShowInfoView(
             isFollowed: false,
             canAddToList: true,
+            isInList: false,
             genres: [.init(name: "Drama"), .init(name: "Fantasy"), .init(name: "Adventure")],
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
-            addToListLabel: "Add To List",
+            listActionLabel: "Add To List",
             rateLabel: "Rate",
             onAddToLibrary: {},
             onAddToCustomList: {},
@@ -47,10 +49,11 @@ class ShowInfoViewTest: SnapshotTestCase {
         ShowInfoView(
             isFollowed: true,
             canAddToList: false,
+            isInList: false,
             genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
-            addToListLabel: "Add To List",
+            listActionLabel: "Add To List",
             rateLabel: "Rate",
             onAddToLibrary: {},
             onAddToCustomList: {},
@@ -61,14 +64,34 @@ class ShowInfoViewTest: SnapshotTestCase {
         .assertSnapshot(testName: "ShowInfoView_SimklNoList")
     }
 
+    func test_ShowInfoView_InList() {
+        ShowInfoView(
+            isFollowed: true,
+            canAddToList: true,
+            isInList: true,
+            genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
+            trackLabel: "Track",
+            stopTrackingLabel: "Stop Tracking",
+            listActionLabel: "In List",
+            rateLabel: "Rate",
+            onAddToLibrary: {},
+            onAddToCustomList: {},
+            onRate: {}
+        )
+        .padding()
+        .appPreview()
+        .assertSnapshot(testName: "ShowInfoView_InList")
+    }
+
     func test_ShowInfoView_AlreadyRated() {
         ShowInfoView(
             isFollowed: true,
             canAddToList: true,
+            isInList: false,
             genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
-            addToListLabel: "Add To List",
+            listActionLabel: "Add To List",
             rateLabel: "Rate",
             userRating: 9,
             onAddToLibrary: {},

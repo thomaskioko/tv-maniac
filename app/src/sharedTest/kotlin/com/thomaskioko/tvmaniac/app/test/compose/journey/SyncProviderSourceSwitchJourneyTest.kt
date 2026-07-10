@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.app.test.compose.journey
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_SIMKL_ACCOUNT_ID
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
-internal class AccountProviderSwitchJourneyTest : BaseAppFlowTest() {
+internal class SyncProviderSourceSwitchJourneyTest : BaseAppFlowTest() {
 
     private val breakingBadTmdbId = 1396L
 
@@ -22,7 +22,7 @@ internal class AccountProviderSwitchJourneyTest : BaseAppFlowTest() {
             .scrollToShowCard(breakingBadTmdbId)
             .assertShowCardDisplayed(breakingBadTmdbId)
 
-        scenarios.stubOnSignIn(AccountProvider.SIMKL)
+        scenarios.stubOnSignIn(SyncProviderSource.SIMKL)
 
         homeRobot
             .clickProfileTab()

@@ -2,9 +2,9 @@ package com.thomaskioko.tvmaniac.accountmanager.testing
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 public class FakeAccountAuthRepository(
-    override val provider: AccountProvider,
+    override val provider: SyncProviderSource,
 ) : AccountAuthRepository {
 
     private val _state = MutableStateFlow(AccountAuthState.LOGGED_OUT)

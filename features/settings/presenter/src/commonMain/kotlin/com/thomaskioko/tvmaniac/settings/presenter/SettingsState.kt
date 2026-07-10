@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import kotlinx.collections.immutable.ImmutableList
@@ -9,15 +9,15 @@ import kotlinx.collections.immutable.persistentListOf
 
 public data class SettingsState(
     val isAuthenticated: Boolean,
-    val activeProvider: AccountProvider? = null,
+    val activeProvider: SyncProviderSource? = null,
     val authProviders: ImmutableList<AuthProviderOption> = persistentListOf(),
     val accountConnectedDescription: String? = null,
-    val switchTargetProvider: AccountProvider? = null,
+    val switchTargetProvider: SyncProviderSource? = null,
     val switchActionLabel: String? = null,
     val isSwitching: Boolean = false,
     val showSwitchConfirmation: Boolean = false,
     val switchUnsavedCount: Int = 0,
-    val pendingSwitchProvider: AccountProvider? = null,
+    val pendingSwitchProvider: SyncProviderSource? = null,
     val switchDialogTitle: String? = null,
     val switchDialogMessage: String? = null,
     val theme: ThemeModel,

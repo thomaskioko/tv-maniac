@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.app.di
 import androidx.activity.ComponentActivity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.defaultComponentContext
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.TvManicApplication
 import com.thomaskioko.tvmaniac.app.ui.di.AppRootProvider
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -24,7 +24,7 @@ import dev.zacsweers.metro.asContribution
 @GraphExtension(ActivityScope::class)
 @SingleIn(ActivityScope::class)
 public interface ActivityGraph : AppRootProvider {
-    public val authManagers: Map<AccountProvider, AuthManager>
+    public val authManagers: Map<SyncProviderSource, AuthManager>
     override val rootPresenter: RootPresenter
     public val navigator: Navigator
     override val screenContents: Set<ScreenContent>

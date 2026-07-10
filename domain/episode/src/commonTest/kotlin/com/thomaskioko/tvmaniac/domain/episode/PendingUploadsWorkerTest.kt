@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.episode
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
@@ -32,7 +32,7 @@ internal class PendingUploadsWorkerTest {
 
     @Test
     fun `should return Success when user is logged in and sync completes`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         syncRepository.setPendingEpisodesError(null)
 
         val result = worker.doWork()
@@ -53,7 +53,7 @@ internal class PendingUploadsWorkerTest {
 
     @Test
     fun `should flush pending followed shows when user is logged in`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         worker.doWork().shouldBeInstanceOf<WorkerResult.Success>()
 
@@ -62,7 +62,7 @@ internal class PendingUploadsWorkerTest {
 
     @Test
     fun `should return Retry when syncPendingEpisodes throws`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         syncRepository.setPendingEpisodesError(RuntimeException("network down"))
 
         val result = worker.doWork()
@@ -73,7 +73,7 @@ internal class PendingUploadsWorkerTest {
 
     @Test
     fun `should retry once and succeed when error cleared between attempts`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         syncRepository.setPendingEpisodesError(RuntimeException("flaky"))
         worker.doWork().shouldBeInstanceOf<WorkerResult.Retry>()
@@ -84,7 +84,7 @@ internal class PendingUploadsWorkerTest {
 
     @Test
     fun `should log BackgroundSyncFailed given syncPendingEpisodes throws`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         val cause = RuntimeException("rate limit 429")
         syncRepository.setPendingEpisodesError(cause)
 

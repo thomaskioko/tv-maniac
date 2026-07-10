@@ -21,6 +21,8 @@ public data class ShowDetailsHeaderState(
     val isInLibrary: Boolean = false,
     val genres: ImmutableList<String> = persistentListOf(),
     val canAddToList: Boolean = false,
+    val isInList: Boolean = false,
+    val listActionLabel: String = "",
     val isRefreshing: Boolean = false,
     val message: UiMessage? = null,
 )

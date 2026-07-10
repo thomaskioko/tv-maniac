@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
@@ -19,7 +19,7 @@ public class SimklLibraryRemoteDataSource(
     private val syncRemoteDataSource: SimklSyncRemoteDataSource,
 ) : LibraryRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
     override suspend fun getWatchlist(): ApiResponse<List<RemoteFollowedShow>> =
         syncRemoteDataSource.getAllWatchedShows()
@@ -44,7 +44,7 @@ private fun SimklWatchedShow.toRemoteFollowedShow(): RemoteFollowedShow = Remote
     tmdbId = show.ids.tmdb?.toLongOrNull(),
     imdbId = show.ids.imdb,
     providerShowId = show.ids.simkl?.toString(),
-    provider = AccountProvider.SIMKL,
+    provider = SyncProviderSource.SIMKL,
     title = show.title ?: "",
     year = show.year,
     followedAt = lastWatchedAt?.let { runCatching { Instant.parse(it) }.getOrNull() }

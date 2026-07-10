@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.startwatching.api.RemotePlanToWatchShow
 import com.thomaskioko.tvmaniac.trakt.api.model.IdsResponse
@@ -20,7 +20,7 @@ internal class TraktStartWatchingRemoteDataSourceTest {
 
     @Test
     fun `should report trakt as its provider`() {
-        source.provider shouldBe AccountProvider.TRAKT
+        source.provider shouldBe SyncProviderSource.TRAKT
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class TraktStartWatchingRemoteDataSourceTest {
                 tmdbId = 10,
                 imdbId = null,
                 providerShowId = "1",
-                provider = AccountProvider.TRAKT,
+                provider = SyncProviderSource.TRAKT,
                 title = "Severance",
                 year = 2022,
                 followedAt = Instant.parse("2025-01-01T00:00:00Z"),

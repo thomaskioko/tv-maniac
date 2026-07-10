@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.continuewatching
 
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.api.ContinueWatchingEntry
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
@@ -44,6 +46,7 @@ class SyncContinueWatchingInteractorTest {
     private val watchProviderRepository = FakeWatchProviderRepository()
     private val requestManagerRepository = FakeRequestManagerRepository(initialRequestValid = false)
     private val episodeRepository = FakeEpisodeRepository()
+    private val accountManager = FakeAccountManager().apply { setActiveProvider(SyncProviderSource.TRAKT) }
 
     private val syncActivityInteractor = SyncActivityInteractor(
         traktActivityRepository = activityRepository,
@@ -58,6 +61,7 @@ class SyncContinueWatchingInteractorTest {
     )
 
     private fun buildInteractor(supportsContinueWatchingFetch: Boolean = true) = SyncContinueWatchingInteractor(
+        accountManager = accountManager,
         syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
         syncShowMetadataInteractor = syncShowMetadataInteractor,
@@ -80,6 +84,19 @@ class SyncContinueWatchingInteractorTest {
         activityRepository.fetchInvocations().shouldBeEmpty()
         continueWatchingRepository.syncInvocations().shouldBeEmpty()
         watchedEpisodeSyncRepository.syncAllInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should skip sync given no active account`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(null)
+        continueWatchingRepository.setEntries(listOf(watchedShow(showId = 7L)))
+
+        interactor.executeSync(SyncContinueWatchingInteractor.Param(forceRefresh = true))
+
+        activityRepository.fetchInvocations().shouldBeEmpty()
+        continueWatchingRepository.syncInvocations().shouldBeEmpty()
+        watchedEpisodeSyncRepository.syncAllInvocations().shouldBeEmpty()
+        showDetailsRepository.fetchInvocations().shouldBeEmpty()
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.accountmanager.api
 
-public interface AuthClientConfig : ProviderScoped {
+public interface AuthClientConfig : SyncProvider {
     public val clientId: String
     public val clientSecret: String
     public val redirectUri: String

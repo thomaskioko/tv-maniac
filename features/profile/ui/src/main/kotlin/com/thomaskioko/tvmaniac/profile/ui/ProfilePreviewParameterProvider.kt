@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.profile.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
@@ -62,8 +62,8 @@ internal val unauthenticatedState = ProfileState(
     authenticated = false,
     labels = sampleProfileLabels,
     authProviders = persistentListOf(
-        AuthProviderOption(provider = AccountProvider.TRAKT, label = "Continue with Trakt"),
-        AuthProviderOption(provider = AccountProvider.SIMKL, label = "Continue with Simkl"),
+        AuthProviderOption(provider = SyncProviderSource.TRAKT, label = "Continue with Trakt"),
+        AuthProviderOption(provider = SyncProviderSource.SIMKL, label = "Continue with Simkl"),
     ),
 )
 

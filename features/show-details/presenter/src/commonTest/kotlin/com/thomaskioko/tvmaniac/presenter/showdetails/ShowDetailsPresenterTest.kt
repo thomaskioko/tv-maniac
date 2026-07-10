@@ -42,6 +42,7 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ObserveWatchProvidersInteract
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
+import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
@@ -64,6 +65,7 @@ import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
+import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.nulls.shouldBeNull
@@ -97,6 +99,7 @@ internal class ShowDetailsPresenterTest {
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val ratingsRepository = FakeRatingsRepository()
+    private val traktListRepository = FakeTraktListRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
     private val notificationManager = FakeNotificationManager()
@@ -286,6 +289,7 @@ internal class ShowDetailsPresenterTest {
             refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
+            observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,

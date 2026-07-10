@@ -2,10 +2,10 @@ package com.thomaskioko.tvmaniac.simklauth.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountProviderKey
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import dev.zacsweers.metro.AppScope
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.SharedFlow
 @ContributesIntoMap(
     scope = AppScope::class,
     binding = binding<
-        @AccountProviderKey(AccountProvider.SIMKL)
+        @AccountProviderKey(SyncProviderSource.SIMKL)
         AccountAuthRepository,
         >(),
 )
@@ -27,24 +27,24 @@ public class SimklAccountAuthRepository(
     private val authStateHolder: AuthStateHolder,
 ) : AccountAuthRepository {
 
-    override val provider: AccountProvider = AccountProvider.SIMKL
+    override val provider: SyncProviderSource = SyncProviderSource.SIMKL
 
-    override val state: Flow<AccountAuthState> = authStateHolder.state(AccountProvider.SIMKL)
+    override val state: Flow<AccountAuthState> = authStateHolder.state(SyncProviderSource.SIMKL)
 
-    override val authState: Flow<AuthState?> = authStateHolder.authState(AccountProvider.SIMKL)
+    override val authState: Flow<AuthState?> = authStateHolder.authState(SyncProviderSource.SIMKL)
 
-    override val authError: Flow<AuthError?> = authStateHolder.authError(AccountProvider.SIMKL)
+    override val authError: Flow<AuthError?> = authStateHolder.authError(SyncProviderSource.SIMKL)
 
-    override val loginEvents: SharedFlow<Unit> = authStateHolder.loginEvents(AccountProvider.SIMKL)
+    override val loginEvents: SharedFlow<Unit> = authStateHolder.loginEvents(SyncProviderSource.SIMKL)
 
-    override fun isLoggedIn(): Boolean = authStateHolder.isLoggedIn(AccountProvider.SIMKL)
+    override fun isLoggedIn(): Boolean = authStateHolder.isLoggedIn(SyncProviderSource.SIMKL)
 
     override suspend fun logout() {
-        authStateHolder.logout(AccountProvider.SIMKL)
+        authStateHolder.logout(SyncProviderSource.SIMKL)
     }
 
     override suspend fun refreshTokens(): TokenRefreshResult =
-        authStateHolder.refreshTokens(AccountProvider.SIMKL, action = null)
+        authStateHolder.refreshTokens(SyncProviderSource.SIMKL, action = null)
 
     override suspend fun saveTokens(
         accessToken: String,
@@ -52,7 +52,7 @@ public class SimklAccountAuthRepository(
         expiresAtSeconds: Long,
     ) {
         authStateHolder.saveTokens(
-            provider = AccountProvider.SIMKL,
+            provider = SyncProviderSource.SIMKL,
             accessToken = accessToken,
             refreshToken = refreshToken,
             expiresAtSeconds = expiresAtSeconds,
@@ -60,6 +60,6 @@ public class SimklAccountAuthRepository(
     }
 
     override suspend fun setAuthError(error: AuthError?) {
-        authStateHolder.setAuthError(AccountProvider.SIMKL, error)
+        authStateHolder.setAuthError(SyncProviderSource.SIMKL, error)
     }
 }

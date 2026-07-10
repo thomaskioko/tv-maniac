@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.calendar.RemoteCalendarEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
@@ -50,7 +50,7 @@ internal class SimklCalendarRemoteDataSourceTest {
         val source = buildSource(
             engine = MockEngine { respond("[]", HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) },
         )
-        source.provider shouldBe AccountProvider.SIMKL
+        source.provider shouldBe SyncProviderSource.SIMKL
     }
 
     @Test

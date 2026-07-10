@@ -1,13 +1,13 @@
 package com.thomaskioko.tvmaniac.data.ratings.testing
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRemoteDataSource
 
 public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
 
-    override var provider: AccountProvider = AccountProvider.TRAKT
+    override var provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     private var addShowRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
     private var removeShowRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)

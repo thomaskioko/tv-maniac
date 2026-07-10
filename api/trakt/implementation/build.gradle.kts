@@ -52,6 +52,7 @@ kotlin {
                 implementation(projects.api.trakt.testing)
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.calendar.api)
+                implementation(projects.data.followedshows.testing)
             }
         }
 

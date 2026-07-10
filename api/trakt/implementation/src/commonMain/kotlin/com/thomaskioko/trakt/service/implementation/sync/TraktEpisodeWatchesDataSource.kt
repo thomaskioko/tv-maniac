@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
@@ -28,7 +28,7 @@ public class TraktEpisodeWatchesDataSource(
     private val followedShowsDao: FollowedShowsDao,
 ) : EpisodeWatchesDataSource {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
         val traktShowId = followedShowsDao.traktIdForTmdbId(showId) ?: return emptyList()
@@ -55,7 +55,7 @@ public class TraktEpisodeWatchesDataSource(
         val response = syncRemoteDataSource.getWatchedShows(
             page = page,
             limit = limit,
-            extended = "full",
+            extended = "progress",
         )
         return when (response) {
             is ApiResponse.Success -> response.body.mapNotNull { it.toBatch() }

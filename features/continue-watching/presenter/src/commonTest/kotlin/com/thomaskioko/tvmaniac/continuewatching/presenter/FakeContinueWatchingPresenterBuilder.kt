@@ -100,6 +100,7 @@ class FakeContinueWatchingPresenterBuilder {
     )
 
     private val syncContinueWatchingInteractor = SyncContinueWatchingInteractor(
+        accountManager = fakeAccountManager,
         syncActivityInteractor = syncActivityInteractor,
         continueWatchingRepository = continueWatchingRepository,
         syncShowMetadataInteractor = syncShowMetadataInteractor,

@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.ratings.implementation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -169,7 +169,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should emit combined user and community rating given both are cached`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
-        remoteDataSource.provider = AccountProvider.TRAKT
+        remoteDataSource.provider = SyncProviderSource.TRAKT
         ratingsDao.upsertShowUserRating(
             showId = SHOW_ID,
             userRating = 9L,
@@ -216,7 +216,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should not throw given refreshCommunityRating cannot resolve a provider show id`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
-        remoteDataSource.provider = AccountProvider.TRAKT
+        remoteDataSource.provider = SyncProviderSource.TRAKT
 
         repository.refreshCommunityRating(TMDB_ID, forceRefresh = true)
     }
@@ -224,8 +224,8 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should save the provider user rating given refreshCommunityRating fetches it`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
-        remoteDataSource.provider = AccountProvider.TRAKT
-        seedProviderShowId(SHOW_ID, AccountProvider.TRAKT, externalId = 555L)
+        remoteDataSource.provider = SyncProviderSource.TRAKT
+        seedProviderShowId(SHOW_ID, SyncProviderSource.TRAKT, externalId = 555L)
         remoteDataSource.setUserRatingResponse(ApiResponse.Success(7))
 
         repository.refreshCommunityRating(TMDB_ID, forceRefresh = true)
@@ -241,8 +241,8 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should keep the pending local rating given a provider user rating is fetched`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
-        remoteDataSource.provider = AccountProvider.TRAKT
-        seedProviderShowId(SHOW_ID, AccountProvider.TRAKT, externalId = 555L)
+        remoteDataSource.provider = SyncProviderSource.TRAKT
+        seedProviderShowId(SHOW_ID, SyncProviderSource.TRAKT, externalId = 555L)
         ratingsDao.upsertShowUserRating(
             showId = SHOW_ID,
             userRating = 5L,
@@ -475,7 +475,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
             logger = FakeLogger(),
         )
 
-    private fun seedProviderShowId(showId: Long, provider: AccountProvider, externalId: Long) {
+    private fun seedProviderShowId(showId: Long, provider: SyncProviderSource, externalId: Long) {
         database.tvshowExternalIdQueries.insert(
             showId = Id(showId),
             provider = provider.toDbProvider(),

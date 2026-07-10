@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.syncactivity.implementation
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -42,7 +42,7 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         activityDao = DefaultTraktActivityDao(database, dispatchers)
         repository = DefaultActivitySyncRepository(
             database = database,
@@ -149,7 +149,7 @@ internal class DefaultActivitySyncRepositoryTest : BaseDatabaseTest() {
             ActivityType.EPISODES_WATCHED,
         ) shouldBe false
 
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
         repository.isAheadOf(
             ActivitySyncTypes.BULK_WATCHED_EPISODES,
             ActivityType.EPISODES_WATCHED,

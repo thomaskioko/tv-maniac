@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails.providers
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
@@ -88,7 +88,7 @@ internal class ShowDetailsProvidersPresenterTest {
         testDispatcher.scheduler.advanceUntilIdle()
         watchProvidersRepository.clearFetchInvocations()
 
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         testDispatcher.scheduler.advanceUntilIdle()
 
         val invocation = watchProvidersRepository.fetchInvocations().last()

@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.showdetails
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
@@ -70,7 +70,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     @Test
     fun givenAuthenticatedUser_whenShowRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
         scenarios.stubTmdb()
-        scenarios.stubActiveProvider(AccountProvider.TRAKT)
+        scenarios.stubActiveProvider(SyncProviderSource.TRAKT)
 
         rootRobot.dismissNotificationRationale()
 
@@ -109,7 +109,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     @Test
     fun givenSimklSession_whenShowRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
         scenarios.stubTmdb()
-        scenarios.stubActiveProvider(AccountProvider.SIMKL)
+        scenarios.stubActiveProvider(SyncProviderSource.SIMKL)
 
         discoverRobot
             .assertFeaturedPagerDisplayed()

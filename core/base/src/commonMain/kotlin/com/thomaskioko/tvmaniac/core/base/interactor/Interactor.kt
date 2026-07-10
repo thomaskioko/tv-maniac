@@ -13,31 +13,35 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 // https://github.com/chrisbanes/tivi/blob/main/domain/src/commonMain/kotlin/app/tivi/domain/Interactor.kt
 public abstract class Interactor<in P> {
     public operator fun invoke(
         params: P,
-        timeoutMs: Long = defaultTimeoutMs,
-    ): Flow<InvokeStatus> = flow {
-        try {
-            withTimeout(timeoutMs) {
-                emit(InvokeStarted)
-                doWork(params)
-                emit(InvokeSuccess)
+        timeoutMs: Duration = defaultTimeoutMs,
+    ): Flow<InvokeStatus> {
+        val source = this::class.simpleName
+        return flow {
+            try {
+                withTimeout(timeoutMs) {
+                    emit(InvokeStarted)
+                    doWork(params)
+                    emit(InvokeSuccess)
+                }
+            } catch (t: TimeoutCancellationException) {
+                emit(InvokeError(t, source))
             }
-        } catch (t: TimeoutCancellationException) {
-            emit(InvokeError(t))
-        }
-    }.catch { t -> emit(InvokeError(t)) }
+        }.catch { t -> emit(InvokeError(t, source)) }
+    }
 
     public suspend fun executeSync(params: P): Unit = doWork(params)
 
     protected abstract suspend fun doWork(params: P)
 
     public companion object {
-        private val defaultTimeoutMs = 5.minutes.inWholeMilliseconds
+        private val defaultTimeoutMs = 5.minutes
     }
 }
 

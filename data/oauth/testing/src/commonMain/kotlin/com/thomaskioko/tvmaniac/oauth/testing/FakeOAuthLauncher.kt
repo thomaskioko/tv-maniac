@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.oauth.testing
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.oauth.api.OAuthLauncher
 
 public class FakeOAuthLauncher : OAuthLauncher {
@@ -25,6 +25,6 @@ public class FakeOAuthLauncher : OAuthLauncher {
         onLaunch(config)
     }
 
-    override fun setCallback(provider: AccountProvider, callback: () -> Unit) {
+    override fun setCallback(provider: SyncProviderSource, callback: () -> Unit) {
     }
 }

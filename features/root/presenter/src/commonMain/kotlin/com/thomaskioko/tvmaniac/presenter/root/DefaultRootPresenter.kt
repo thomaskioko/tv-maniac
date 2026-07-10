@@ -119,10 +119,6 @@ public class DefaultRootPresenter(
         }
 
         coroutineScope.launch {
-            syncObserver.syncStarted.collect { uiState.update { it.copy(syncStatusDismissed = false) } }
-        }
-
-        coroutineScope.launch {
             syncObserver.errors.collect { error ->
                 if (error is SyncStateError.AccountLimitExceeded) {
                     uiState.update { it.copy(accountLimitErrorOccurred = true) }
@@ -130,7 +126,6 @@ public class DefaultRootPresenter(
                     syncErrorMessages.emitMessage(
                         UiMessage(message = localizer.getString(StringResourceKey.SyncFailedWillRetry)),
                     )
-                    uiState.update { it.copy(syncStatusDismissed = true) }
                 }
             }
         }
@@ -186,26 +181,32 @@ public class DefaultRootPresenter(
     override val notificationPermissionStateValue: Value<NotificationPermissionState> =
         notificationPermissionState.asValue(coroutineScope)
 
-    override val toastState: StateFlow<ToastState> = combine(
-        syncObserver.isSyncing.minTrueDuration(MIN_STATUS_DISPLAY),
-        uiState.map { it.syncStatusDismissed }.distinctUntilChanged(),
-        syncErrorMessages.message,
-    ) { syncing, dismissed, errorMessage ->
-        when {
-            errorMessage != null -> ToastState(
-                message = errorMessage.message,
-                type = ToastType.Error,
-                persistent = false,
-                id = errorMessage.id,
+    override val syncIndicatorVisible: StateFlow<Boolean> =
+        syncObserver.isSyncing
+            .minTrueDuration(MIN_STATUS_DISPLAY)
+            .distinctUntilChanged()
+            .stateIn(
+                scope = coroutineScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = false,
             )
-            syncing && !dismissed -> ToastState(
-                message = localizer.getString(StringResourceKey.SyncingLibrary),
-                type = ToastType.Status,
-                persistent = true,
-            )
-            else -> ToastState()
+
+    override val syncIndicatorVisibleValue: Value<Boolean> =
+        syncIndicatorVisible.asValue(coroutineScope)
+
+    override val toastState: StateFlow<ToastState> = syncErrorMessages.message
+        .map { errorMessage ->
+            if (errorMessage != null) {
+                ToastState(
+                    message = errorMessage.message,
+                    type = ToastType.Error,
+                    persistent = false,
+                    id = errorMessage.id,
+                )
+            } else {
+                ToastState()
+            }
         }
-    }
         .distinctUntilChanged()
         .stateIn(
             scope = coroutineScope,
@@ -303,10 +304,6 @@ public class DefaultRootPresenter(
         }
     }
 
-    override fun dismissSyncStatus() {
-        uiState.update { it.copy(syncStatusDismissed = true) }
-    }
-
     override fun onDismissAccountLimitBanner() {
         uiState.update { it.copy(accountLimitBannerDismissed = true) }
     }
@@ -324,5 +321,4 @@ public class DefaultRootPresenter(
 private data class RootUiState(
     val accountLimitErrorOccurred: Boolean = false,
     val accountLimitBannerDismissed: Boolean = false,
-    val syncStatusDismissed: Boolean = false,
 )

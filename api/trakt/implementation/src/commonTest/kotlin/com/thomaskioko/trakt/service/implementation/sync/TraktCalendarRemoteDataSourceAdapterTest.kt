@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.calendar.RemoteCalendarEntry
 import com.thomaskioko.tvmaniac.trakt.api.model.EpisodeIds
@@ -21,7 +21,7 @@ internal class TraktCalendarRemoteDataSourceAdapterTest {
 
     @Test
     fun `should report trakt as its provider`() {
-        adapter.provider shouldBe AccountProvider.TRAKT
+        adapter.provider shouldBe SyncProviderSource.TRAKT
     }
 
     @Test

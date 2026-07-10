@@ -1,6 +1,6 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
@@ -23,11 +23,11 @@ import dev.zacsweers.metro.SingleIn
 
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
-public class TraktRatingsProviderDataSource(
+public class TraktRatingsSyncProviderDataSource(
     private val remoteDataSource: TraktRatingsRemoteDataSource,
 ) : RatingsRemoteDataSource {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun addShowRating(tmdbId: Long, rating: Int): ApiResponse<Unit> =
         remoteDataSource.addRatings(

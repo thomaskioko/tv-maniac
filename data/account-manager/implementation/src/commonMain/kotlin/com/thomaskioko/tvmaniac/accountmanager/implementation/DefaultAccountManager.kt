@@ -3,47 +3,61 @@ package com.thomaskioko.tvmaniac.accountmanager.implementation
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 public class DefaultAccountManager(
-    private val repositories: Map<AccountProvider, AccountAuthRepository>,
+    private val repositories: Map<SyncProviderSource, AccountAuthRepository>,
+    dispatchers: AppCoroutineDispatchers,
 ) : AccountManager {
 
-    private val selectedProvider = MutableStateFlow<AccountProvider?>(null)
+    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
-    private val providerStates: Flow<List<Pair<AccountProvider, AccountAuthState>>> =
+    private val selectedProvider = MutableStateFlow<SyncProviderSource?>(null)
+
+    private val providerStates: Flow<List<Pair<SyncProviderSource, AccountAuthState>>> =
         if (repositories.isEmpty()) {
             flowOf(emptyList())
         } else {
             combine(repositories.values.map { repo -> repo.state.map { repo.provider to it } }) { it.toList() }
         }
 
-    override val activeProvider: Flow<AccountProvider?> =
+    override val activeProvider: Flow<SyncProviderSource?> =
         combine(providerStates, selectedProvider) { states, selected -> resolveActive(states, selected) }
             .distinctUntilChanged()
 
     override val isConnected: Flow<Boolean> = activeProvider.map { it != null }
 
-    override val connectionEvents: Flow<AccountProvider> =
+    override val connectionEvents: Flow<SyncProviderSource> =
         repositories.values.map { repo -> repo.loginEvents.map { repo.provider } }.merge()
+
+    init {
+        connectionEvents
+            .onEach { provider -> selectedProvider.value = provider }
+            .launchIn(scope)
+    }
 
     override val accounts: Flow<List<ConnectedAccount>> =
         combine(providerStates, selectedProvider) { states, selected ->
@@ -73,22 +87,22 @@ public class DefaultAccountManager(
             }
         }
 
-    override fun getActiveProvider(): AccountProvider? {
+    override fun getActiveProvider(): SyncProviderSource? {
         val selected = selectedProvider.value
         if (selected != null && repositories[selected]?.isLoggedIn() == true) {
             return selected
         }
-        return repositories.values.firstOrNull { it.isLoggedIn() }?.provider
+        return SyncProviderSource.entries.firstOrNull { repositories[it]?.isLoggedIn() == true }
     }
 
-    override suspend fun logout(provider: AccountProvider) {
+    override suspend fun logout(provider: SyncProviderSource) {
         repositories[provider]?.logout()
         if (selectedProvider.value == provider) {
             selectedProvider.value = null
         }
     }
 
-    override suspend fun setActive(provider: AccountProvider) {
+    override suspend fun setActive(provider: SyncProviderSource) {
         selectedProvider.value = provider
     }
 
@@ -103,13 +117,13 @@ public class DefaultAccountManager(
         getActiveProvider()?.let { provider -> repositories[provider] }
 
     private fun resolveActive(
-        states: List<Pair<AccountProvider, AccountAuthState>>,
-        selected: AccountProvider?,
-    ): AccountProvider? {
+        states: List<Pair<SyncProviderSource, AccountAuthState>>,
+        selected: SyncProviderSource?,
+    ): SyncProviderSource? {
         val loggedIn = states.filter { it.second == AccountAuthState.LOGGED_IN }.map { it.first }
         return when {
             selected != null && selected in loggedIn -> selected
-            else -> loggedIn.firstOrNull()
+            else -> loggedIn.minByOrNull { it.ordinal }
         }
     }
 }

@@ -309,25 +309,19 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should not crash given dismissSyncStatus called while toast is empty`() = runTest(testDispatcher) {
-        presenter.dismissSyncStatus()
-
-        presenter.toastState.value shouldBe ToastState()
+    fun `should hide sync indicator given idle observer`() = runTest(testDispatcher) {
+        presenter.syncIndicatorVisible.value shouldBe false
     }
 
     @Test
-    fun `should expose status toast given sync is running`() = runTest(testDispatcher) {
-        presenter.toastState.test {
-            awaitItem() shouldBe ToastState()
+    fun `should show sync indicator given sync is running`() = runTest(testDispatcher) {
+        presenter.syncIndicatorVisible.test {
+            awaitItem() shouldBe false
 
             val gate = CompletableDeferred<Unit>()
             val syncJob = launch { syncObserver.trackSync("test") { gate.await() } }
 
-            awaitItem() shouldBe ToastState(
-                message = StringResourceKey.SyncingLibrary.getString(),
-                type = ToastType.Status,
-                persistent = true,
-            )
+            awaitItem() shouldBe true
 
             gate.complete(Unit)
             syncJob.join()
@@ -335,83 +329,13 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should clear status toast given dismissSyncStatus while sync is running`() = runTest(testDispatcher) {
-        presenter.toastState.test {
-            awaitItem() shouldBe ToastState()
+    fun `should hold sync indicator for MIN_STATUS_DISPLAY given sync completes quickly`() = runTest(testDispatcher) {
+        presenter.syncIndicatorVisible.test {
+            awaitItem() shouldBe false
 
             val gate = CompletableDeferred<Unit>()
             val syncJob = launch { syncObserver.trackSync("test") { gate.await() } }
-            awaitItem().type shouldBe ToastType.Status
-
-            presenter.dismissSyncStatus()
-            awaitItem() shouldBe ToastState()
-
-            gate.complete(Unit)
-            syncJob.join()
-        }
-    }
-
-    @Test
-    fun `should re-emit status toast given sync restarts after dismiss`() = runTest(testDispatcher) {
-        presenter.toastState.test {
-            awaitItem() shouldBe ToastState()
-
-            val firstGate = CompletableDeferred<Unit>()
-            val firstJob = launch { syncObserver.trackSync("first") { firstGate.await() } }
-            awaitItem().type shouldBe ToastType.Status
-
-            presenter.dismissSyncStatus()
-            awaitItem() shouldBe ToastState()
-
-            firstGate.complete(Unit)
-            firstJob.join()
-            advanceTimeBy(1600.milliseconds)
-            runCurrent()
-
-            val secondGate = CompletableDeferred<Unit>()
-            val secondJob = launch { syncObserver.trackSync("second") { secondGate.await() } }
-            runCurrent()
-
-            expectMostRecentItem().type shouldBe ToastType.Status
-
-            secondGate.complete(Unit)
-            secondJob.join()
-        }
-    }
-
-    @Test
-    fun `should re-emit status toast given second sync starts while first sync is still running and user dismissed`() = runTest(testDispatcher) {
-        presenter.toastState.test {
-            awaitItem() shouldBe ToastState()
-
-            val firstGate = CompletableDeferred<Unit>()
-            val firstJob = launch { syncObserver.trackSync("first") { firstGate.await() } }
-            awaitItem().type shouldBe ToastType.Status
-
-            presenter.dismissSyncStatus()
-            awaitItem() shouldBe ToastState()
-
-            val secondGate = CompletableDeferred<Unit>()
-            val secondJob = launch { syncObserver.trackSync("second") { secondGate.await() } }
-            runCurrent()
-
-            expectMostRecentItem().type shouldBe ToastType.Status
-
-            firstGate.complete(Unit)
-            secondGate.complete(Unit)
-            firstJob.join()
-            secondJob.join()
-        }
-    }
-
-    @Test
-    fun `should hold status toast for MIN_STATUS_DISPLAY given sync completes quickly`() = runTest(testDispatcher) {
-        presenter.toastState.test {
-            awaitItem() shouldBe ToastState()
-
-            val gate = CompletableDeferred<Unit>()
-            val syncJob = launch { syncObserver.trackSync("test") { gate.await() } }
-            awaitItem().type shouldBe ToastType.Status
+            awaitItem() shouldBe true
 
             gate.complete(Unit)
             syncJob.join()
@@ -421,7 +345,24 @@ abstract class DefaultRootPresenterTest {
             advanceTimeBy(1600.milliseconds)
             runCurrent()
 
+            awaitItem() shouldBe false
+        }
+    }
+
+    @Test
+    fun `should not emit toast given sync is running without errors`() = runTest(testDispatcher) {
+        presenter.toastState.test {
             awaitItem() shouldBe ToastState()
+
+            val gate = CompletableDeferred<Unit>()
+            val syncJob = launch { syncObserver.trackSync("test") { gate.await() } }
+            runCurrent()
+
+            expectNoEvents()
+            presenter.toastState.value shouldBe ToastState()
+
+            gate.complete(Unit)
+            syncJob.join()
         }
     }
 
@@ -441,13 +382,12 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should let error preempt status toast given both sync and error are active`() = runTest(testDispatcher) {
+    fun `should expose error toast given error logged while sync is running`() = runTest(testDispatcher) {
         presenter.toastState.test {
             awaitItem() shouldBe ToastState()
 
             val gate = CompletableDeferred<Unit>()
             val syncJob = launch { syncObserver.trackSync("test") { gate.await() } }
-            awaitItem().type shouldBe ToastType.Status
 
             syncObserver.log(SyncError.MarkWatchedFailed(showId = 1L, cause = RuntimeException("boom")))
             awaitItem().type shouldBe ToastType.Error
@@ -458,13 +398,12 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should stay empty given onToastShown clears error while sync is running`() = runTest(testDispatcher) {
+    fun `should clear error toast given onToastShown while sync is running`() = runTest(testDispatcher) {
         presenter.toastState.test {
             awaitItem() shouldBe ToastState()
 
             val gate = CompletableDeferred<Unit>()
             val syncJob = launch { syncObserver.trackSync("test") { gate.await() } }
-            awaitItem().type shouldBe ToastType.Status
 
             syncObserver.log(SyncError.MarkWatchedFailed(showId = 1L, cause = RuntimeException("boom")))
             val errorToast = awaitItem()
@@ -479,39 +418,7 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
-    fun `should re-emit status toast given next sync starts after error dismissal`() = runTest(testDispatcher) {
-        presenter.toastState.test {
-            awaitItem() shouldBe ToastState()
-
-            val firstGate = CompletableDeferred<Unit>()
-            val firstJob = launch { syncObserver.trackSync("first") { firstGate.await() } }
-            awaitItem().type shouldBe ToastType.Status
-
-            syncObserver.log(SyncError.MarkWatchedFailed(showId = 1L, cause = RuntimeException("boom")))
-            val errorToast = awaitItem()
-            errorToast.type shouldBe ToastType.Error
-
-            presenter.onToastShown(errorToast.id!!)
-            awaitItem() shouldBe ToastState()
-
-            firstGate.complete(Unit)
-            firstJob.join()
-            advanceTimeBy(1600.milliseconds)
-            runCurrent()
-
-            val secondGate = CompletableDeferred<Unit>()
-            val secondJob = launch { syncObserver.trackSync("second") { secondGate.await() } }
-            runCurrent()
-
-            expectMostRecentItem().type shouldBe ToastType.Status
-
-            secondGate.complete(Unit)
-            secondJob.join()
-        }
-    }
-
-    @Test
-    fun `should preempt status toast with error toast given trackSync block throws while syncing`() = runTest(testDispatcher) {
+    fun `should expose error toast given trackSync block throws while syncing`() = runTest(testDispatcher) {
         presenter.toastState.test {
             awaitItem() shouldBe ToastState()
 
@@ -526,7 +433,6 @@ abstract class DefaultRootPresenterTest {
                     // expected; the rethrow surfaces the failure to the dispatcher in production
                 }
             }
-            awaitItem().type shouldBe ToastType.Status
 
             gate.complete(Unit)
             syncJob.join()

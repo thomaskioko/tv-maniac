@@ -36,8 +36,10 @@ public fun Flow<InvokeStatus>.onEachStatus(
         InvokeStarted -> counter.addLoader()
         InvokeSuccess -> counter.removeLoader()
         is InvokeError -> {
-            logger?.error("@InvokeError", status.throwable.message ?: "Unknown error")
-            logger?.recordException(status.throwable, sourceId ?: "Unknown")
+            val source = status.source ?: sourceId
+            val tag = source ?: "@InvokeError"
+            val message = status.throwable.message ?: "Unknown error"
+            logger?.error(tag, if (source == null) message else "@InvokeError $message", status.throwable)
             if (uiMessageManager != null) {
                 val message = errorToStringMapper?.mapError(status.throwable)
                     ?: status.throwable.message

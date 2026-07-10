@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.profile.presenter.model
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -12,7 +12,7 @@ public data class ProfileState(
     val errorMessage: UiMessage? = null,
     val authenticated: Boolean,
     val isAuthenticating: Boolean = false,
-    val activeProvider: AccountProvider? = null,
+    val activeProvider: SyncProviderSource? = null,
     val authProviders: ImmutableList<AuthProviderOption> = persistentListOf(),
     val userLists: SectionState<ProfileListItem> = SectionState.Loading,
     val inProgress: SectionState<ProfileShowItem> = SectionState.Loading,

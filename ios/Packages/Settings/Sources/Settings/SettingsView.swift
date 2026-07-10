@@ -354,7 +354,7 @@ public struct SettingsView: View {
         )
     }
 
-    private func providerDisplayName(_ provider: AccountProvider?) -> String {
+    private func providerDisplayName(_ provider: SyncProviderSource?) -> String {
         provider?.name == "SIMKL" ? "Simkl" : "Trakt"
     }
 

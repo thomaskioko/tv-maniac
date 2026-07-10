@@ -72,13 +72,8 @@ jobs:
 
     module-graph:
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
             -   uses: actions/checkout@v7
-                with:
-                    token: ${{ secrets.GH_COMMIT_PAT || github.token }}
-                    persist-credentials: true
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -86,33 +81,16 @@ jobs:
             -   name: Update Module Graphs
                 run: ./gradlew graphUpdate
 
-            -   name: Check Module Graphs
-                id: graphs_verify
-                continue-on-error: true
-                run: git add -- '**/README.md' && git diff --cached --quiet --exit-code -- '**/README.md'
-
-            -   name: Fail on stale graphs (no auto-commit available)
-                if: steps.graphs_verify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+            -   name: Fail on stale graphs
                 run: |
-                    echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files." && exit 1
-
-            -   name: Commit refreshed graphs
-                if: steps.graphs_verify.outcome == 'failure' && github.event_name == 'pull_request'
-                uses: stefanzweifel/git-auto-commit-action@v7
-                with:
-                    file_pattern: '**/README.md'
-                    disable_globbing: true
-                    commit_message: "🤖 Update module graphs"
+                    git add -- '**/README.md'
+                    git diff --cached --quiet --exit-code -- '**/README.md' \
+                      || { echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files."; exit 1; }
 
     dependency-guard:
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
             -   uses: actions/checkout@v7
-                with:
-                    token: ${{ secrets.GH_COMMIT_PAT || github.token }}
-                    persist-credentials: true
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -120,23 +98,11 @@ jobs:
             -   name: Update Dependency Guard Baselines
                 run: ./gradlew :app:dependencyGuardBaseline :ios-framework:dependencyGuardBaseline -Papp.debugOnly=false
 
-            -   name: Check Dependency Guard Baselines
-                id: guard_verify
-                continue-on-error: true
-                run: git add -- '**/dependencies/*.txt' && git diff --cached --quiet --exit-code -- '**/dependencies/*.txt'
-
-            -   name: Fail on stale baselines (no auto-commit available)
-                if: steps.guard_verify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+            -   name: Fail on stale baselines
                 run: |
-                    echo "::error::Dependency guard baselines are stale. Run ./gradlew dependencyGuardBaseline and commit the updated dependencies/*.txt files." && exit 1
-
-            -   name: Commit refreshed baselines
-                if: steps.guard_verify.outcome == 'failure' && github.event_name == 'pull_request'
-                uses: stefanzweifel/git-auto-commit-action@v7
-                with:
-                    file_pattern: '**/dependencies/*.txt'
-                    disable_globbing: true
-                    commit_message: "🤖 Update dependency guard baselines"
+                    git add -- '**/dependencies/*.txt'
+                    git diff --cached --quiet --exit-code -- '**/dependencies/*.txt' \
+                      || { echo "::error::Dependency guard baselines are stale. Run ./gradlew dependencyGuardBaseline and commit the updated dependencies/*.txt files."; exit 1; }
 
     swift-lint:
         runs-on: ubuntu-latest

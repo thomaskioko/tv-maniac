@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.debug.presenter
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
@@ -89,7 +89,7 @@ class DebugPresenterTest {
     fun `should expose expires-in subtitle on token status item given logged in with future expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -117,7 +117,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should expose expired subtitle on token status item given logged in with unauthorized auth state`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -145,7 +145,7 @@ class DebugPresenterTest {
     fun `should expose expired subtitle on token status item given logged in with past expiry`() = runTest {
         val now = Instant.fromEpochMilliseconds(1_700_000_000_000L)
         dateTimeProvider.setCurrentTime(now)
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -172,7 +172,7 @@ class DebugPresenterTest {
 
     @Test
     fun `should expose never refreshed subtitle on token status item given logged in with no refresh timestamp`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         accountManager.setActiveAuthState(
             AuthState(
                 accessToken = "test-token",
@@ -334,6 +334,7 @@ class DebugPresenterTest {
                 dispatchers = dispatchers,
             ),
             syncLibraryInteractor = SyncLibraryInteractor(
+                accountManager = accountManager,
                 libraryRepository = FakeLibraryRepository(),
                 followedShowsRepository = FakeFollowedShowsRepository(),
                 syncActivityInteractor = SyncActivityInteractor(
@@ -356,6 +357,7 @@ class DebugPresenterTest {
                 logger = logger,
             ),
             syncContinueWatchingInteractor = SyncContinueWatchingInteractor(
+                accountManager = accountManager,
                 syncActivityInteractor = SyncActivityInteractor(
                     traktActivityRepository = FakeTraktActivityRepository(),
                     dispatchers = dispatchers,

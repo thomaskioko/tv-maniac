@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.presenter.settings
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
@@ -72,7 +72,7 @@ class SettingsPresenterTest {
     private val fakeLogger = FakeLogger()
     private val localizer = FakeLocalizer()
     private val authManager = FakeAuthManager()
-    private val simklAuthManager = FakeAuthManager(AccountProvider.SIMKL)
+    private val simklAuthManager = FakeAuthManager(SyncProviderSource.SIMKL)
     private val simklFlag = FakeFeatureFlag(initial = false)
     private val accountSwitchFlag = FakeFeatureFlag(initial = false)
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
@@ -96,8 +96,8 @@ class SettingsPresenterTest {
             localizer = localizer,
             logger = fakeLogger,
             authManagers = mapOf(
-                AccountProvider.TRAKT to authManager,
-                AccountProvider.SIMKL to simklAuthManager,
+                SyncProviderSource.TRAKT to authManager,
+                SyncProviderSource.SIMKL to simklAuthManager,
             ),
             simklLoginFlag = simklFlag,
             accountSwitchFlag = accountSwitchFlag,
@@ -251,14 +251,14 @@ class SettingsPresenterTest {
     fun `should resolve connected labels when logged in`() = runTest {
         presenter.state.test {
             awaitItem()
-            accountManager.setActiveProvider(AccountProvider.TRAKT)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
             var state = awaitItem()
             while (!state.isAuthenticated) {
                 state = awaitItem()
             }
 
-            state.activeProvider shouldBe AccountProvider.TRAKT
+            state.activeProvider shouldBe SyncProviderSource.TRAKT
             state.labels.traktConnected shouldBe
                 localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, "Test User")
             state.labels.traktConnectedDescription shouldBe
@@ -274,7 +274,7 @@ class SettingsPresenterTest {
         var launched = false
         authManager.setOnLaunchWebView { launched = true }
 
-        presenter.dispatch(AccountLoginClicked(AccountProvider.TRAKT))
+        presenter.dispatch(AccountLoginClicked(SyncProviderSource.TRAKT))
         testScheduler.advanceUntilIdle()
 
         launched shouldBe true
@@ -287,7 +287,7 @@ class SettingsPresenterTest {
         authManager.setOnLaunchWebView { traktLaunched = true }
         simklAuthManager.setOnLaunchWebView { simklLaunched = true }
 
-        presenter.dispatch(AccountLoginClicked(AccountProvider.SIMKL))
+        presenter.dispatch(AccountLoginClicked(SyncProviderSource.SIMKL))
         testScheduler.advanceUntilIdle()
 
         simklLaunched shouldBe true
@@ -296,12 +296,12 @@ class SettingsPresenterTest {
 
     @Test
     fun `should log out the active provider given logout is clicked`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
 
         presenter.dispatch(AccountLogoutClicked)
         testScheduler.advanceUntilIdle()
 
-        accountManager.lastLogoutProvider shouldBe AccountProvider.SIMKL
+        accountManager.lastLogoutProvider shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
@@ -311,7 +311,7 @@ class SettingsPresenterTest {
             while (state.authProviders.isEmpty()) {
                 state = awaitItem()
             }
-            state.authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT)
+            state.authProviders.map { it.provider } shouldBe listOf(SyncProviderSource.TRAKT)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -324,7 +324,7 @@ class SettingsPresenterTest {
             while (state.authProviders.size < 2) {
                 state = awaitItem()
             }
-            state.authProviders.map { it.provider } shouldBe listOf(AccountProvider.TRAKT, AccountProvider.SIMKL)
+            state.authProviders.map { it.provider } shouldBe listOf(SyncProviderSource.TRAKT, SyncProviderSource.SIMKL)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -344,7 +344,7 @@ class SettingsPresenterTest {
 
     @Test
     fun `should resolve the connected description for the active provider`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.SIMKL)
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
         presenter.state.test {
             var state = awaitItem()
             while (state.accountConnectedDescription == null) {
@@ -358,35 +358,38 @@ class SettingsPresenterTest {
 
     @Test
     fun `should switch to the new provider given no unsaved changes`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
-        presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+        presenter.dispatch(SwitchProviderClicked(SyncProviderSource.SIMKL))
         testScheduler.runCurrent()
 
         accountManager.setAccounts(
-            listOf(ConnectedAccount(provider = AccountProvider.SIMKL, isConnected = true)),
+            listOf(
+                ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true),
+                ConnectedAccount(provider = SyncProviderSource.SIMKL, isConnected = true),
+            ),
         )
         testScheduler.runCurrent()
 
-        accountManager.lastLogoutProvider shouldBe AccountProvider.TRAKT
-        accountManager.getActiveProvider() shouldBe AccountProvider.SIMKL
+        accountManager.lastLogoutProvider shouldBe SyncProviderSource.TRAKT
+        accountManager.getActiveProvider() shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
     fun `should park at confirmation given unsaved changes remain`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         libraryRepository.setPendingFollowedShowsCount(3L)
 
         presenter.state.test {
             awaitItem()
-            presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+            presenter.dispatch(SwitchProviderClicked(SyncProviderSource.SIMKL))
 
             var state = awaitItem()
             while (!state.showSwitchConfirmation) {
                 state = awaitItem()
             }
             state.switchUnsavedCount shouldBe 3
-            state.pendingSwitchProvider shouldBe AccountProvider.SIMKL
+            state.pendingSwitchProvider shouldBe SyncProviderSource.SIMKL
             cancelAndIgnoreRemainingEvents()
         }
         accountManager.lastLogoutProvider shouldBe null
@@ -394,12 +397,12 @@ class SettingsPresenterTest {
 
     @Test
     fun `should abort the switch given the confirmation is dismissed`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         libraryRepository.setPendingFollowedShowsCount(2L)
 
         presenter.state.test {
             awaitItem()
-            presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+            presenter.dispatch(SwitchProviderClicked(SyncProviderSource.SIMKL))
             var state = awaitItem()
             while (!state.showSwitchConfirmation) {
                 state = awaitItem()
@@ -413,41 +416,44 @@ class SettingsPresenterTest {
             cancelAndIgnoreRemainingEvents()
         }
         accountManager.lastLogoutProvider shouldBe null
-        accountManager.getActiveProvider() shouldBe AccountProvider.TRAKT
+        accountManager.getActiveProvider() shouldBe SyncProviderSource.TRAKT
     }
 
     @Test
     fun `should proceed with the switch given the user confirms discard`() = runTest {
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         libraryRepository.setPendingFollowedShowsCount(1L)
 
-        presenter.dispatch(SwitchProviderClicked(AccountProvider.SIMKL))
+        presenter.dispatch(SwitchProviderClicked(SyncProviderSource.SIMKL))
         testScheduler.runCurrent()
 
         presenter.dispatch(ConfirmSwitchDiscard)
         testScheduler.runCurrent()
 
         accountManager.setAccounts(
-            listOf(ConnectedAccount(provider = AccountProvider.SIMKL, isConnected = true)),
+            listOf(
+                ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true),
+                ConnectedAccount(provider = SyncProviderSource.SIMKL, isConnected = true),
+            ),
         )
         testScheduler.runCurrent()
 
-        accountManager.lastLogoutProvider shouldBe AccountProvider.TRAKT
-        accountManager.getActiveProvider() shouldBe AccountProvider.SIMKL
+        accountManager.lastLogoutProvider shouldBe SyncProviderSource.TRAKT
+        accountManager.getActiveProvider() shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
     fun `should expose the switch target given the account switch flag is on`() = runTest {
         simklFlag.value = true
         accountSwitchFlag.value = true
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         presenter.state.test {
             var state = awaitItem()
             while (state.switchTargetProvider == null) {
                 state = awaitItem()
             }
-            state.switchTargetProvider shouldBe AccountProvider.SIMKL
+            state.switchTargetProvider shouldBe SyncProviderSource.SIMKL
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -455,7 +461,7 @@ class SettingsPresenterTest {
     @Test
     fun `should hide the switch target given the account switch flag is off`() = runTest {
         simklFlag.value = true
-        accountManager.setActiveProvider(AccountProvider.TRAKT)
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         presenter.state.test {
             var state = awaitItem()

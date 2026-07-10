@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.iosframework
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthRepository
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthClientConfig
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
@@ -18,8 +18,8 @@ import dev.zacsweers.metro.Provides
 public interface IosApplicationGraph {
     public val initializers: AppInitializers
     public val viewPresenterGraphFactory: IosViewPresenterGraph.Factory
-    public val accountAuthRepositories: Map<AccountProvider, AccountAuthRepository>
-    public val authClientConfigs: Map<AccountProvider, AuthClientConfig>
+    public val accountAuthRepositories: Map<SyncProviderSource, AccountAuthRepository>
+    public val authClientConfigs: Map<SyncProviderSource, AuthClientConfig>
     public val backgroundTaskScheduler: BackgroundTaskScheduler
     public val appMetadata: AppMetadata
     public val debugConfig: DebugConfig

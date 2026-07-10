@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.traktauth.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
-import com.thomaskioko.tvmaniac.accountmanager.api.AccountProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
@@ -20,25 +20,25 @@ public class TraktOAuthRepository(
     private val refreshAction: Lazy<DefaultTraktRefreshTokenAction>,
 ) : OAuthRepository {
 
-    override val provider: AccountProvider = AccountProvider.TRAKT
+    override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
-    override val state: Flow<AccountAuthState> = authStateHolder.state(AccountProvider.TRAKT)
+    override val state: Flow<AccountAuthState> = authStateHolder.state(SyncProviderSource.TRAKT)
 
-    override val authState: Flow<AuthState?> = authStateHolder.authState(AccountProvider.TRAKT)
+    override val authState: Flow<AuthState?> = authStateHolder.authState(SyncProviderSource.TRAKT)
 
-    override val authError: Flow<AuthError?> = authStateHolder.authError(AccountProvider.TRAKT)
+    override val authError: Flow<AuthError?> = authStateHolder.authError(SyncProviderSource.TRAKT)
 
-    override val loginEvents: SharedFlow<Unit> = authStateHolder.loginEvents(AccountProvider.TRAKT)
+    override val loginEvents: SharedFlow<Unit> = authStateHolder.loginEvents(SyncProviderSource.TRAKT)
 
-    override fun isLoggedIn(): Boolean = authStateHolder.isLoggedIn(AccountProvider.TRAKT)
+    override fun isLoggedIn(): Boolean = authStateHolder.isLoggedIn(SyncProviderSource.TRAKT)
 
-    override suspend fun getAuthState(): AuthState? = authStateHolder.getAuthState(AccountProvider.TRAKT)
+    override suspend fun getAuthState(): AuthState? = authStateHolder.getAuthState(SyncProviderSource.TRAKT)
 
     override suspend fun refreshTokens(): TokenRefreshResult =
-        authStateHolder.refreshTokens(AccountProvider.TRAKT, refreshAction.value)
+        authStateHolder.refreshTokens(SyncProviderSource.TRAKT, refreshAction.value)
 
     override suspend fun logout() {
-        authStateHolder.logout(AccountProvider.TRAKT)
+        authStateHolder.logout(SyncProviderSource.TRAKT)
     }
 
     override suspend fun saveTokens(
@@ -46,10 +46,10 @@ public class TraktOAuthRepository(
         refreshToken: String,
         expiresAtSeconds: Long,
     ) {
-        authStateHolder.saveTokens(AccountProvider.TRAKT, accessToken, refreshToken, expiresAtSeconds)
+        authStateHolder.saveTokens(SyncProviderSource.TRAKT, accessToken, refreshToken, expiresAtSeconds)
     }
 
     override suspend fun setAuthError(error: AuthError?) {
-        authStateHolder.setAuthError(AccountProvider.TRAKT, error)
+        authStateHolder.setAuthError(SyncProviderSource.TRAKT, error)
     }
 }

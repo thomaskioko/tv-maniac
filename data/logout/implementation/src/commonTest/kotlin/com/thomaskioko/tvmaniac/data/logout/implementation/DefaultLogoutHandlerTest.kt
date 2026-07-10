@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.data.logout.implementation
 
+import com.thomaskioko.tvmaniac.core.base.coroutines.SyncCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.ratings.implementation.DefaultProviderMetaDao
 import com.thomaskioko.tvmaniac.data.ratings.implementation.DefaultRatingsDao
@@ -19,6 +20,8 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -42,6 +45,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     private val fakeTraktActivityRepository = FakeTraktActivityRepository()
     private val fakeActivitySyncRepository = FakeActivitySyncRepository()
     private val fakeRequestManagerRepository = FakeRequestManagerRepository()
+    private val syncCoroutineScope = SyncCoroutineScope(dispatchers)
 
     private lateinit var cleaner: DefaultLogoutHandler
     private lateinit var ratingsDao: DefaultRatingsDao
@@ -54,6 +58,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
         ratingsDao = DefaultRatingsDao(database, dispatchers)
         providerMetaDao = DefaultProviderMetaDao(database, dispatchers)
         cleaner = DefaultLogoutHandler(
+            syncCoroutineScope = syncCoroutineScope,
             userRepository = fakeUserRepository,
             traktActivityRepository = fakeTraktActivityRepository,
             syncRepository = fakeActivitySyncRepository,
@@ -169,6 +174,16 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
 
         database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOneOrNull() shouldBe showIdForBreakingBad
         database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(THE_WIRE_TMDB_ID)).executeAsOneOrNull() shouldBe showIdForTheWire
+    }
+
+    @Test
+    fun `should cancel in-flight sync work given clear called`() = runTest(testDispatcher) {
+        val job = syncCoroutineScope.scope.launch { awaitCancellation() }
+        job.isActive shouldBe true
+
+        cleaner.clear()
+
+        job.isCancelled shouldBe true
     }
 
     @Test
