@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.data.logout.api.LogoutHandler
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.flow.first
 
 @Inject
 public class SwitchAccountInteractor(
@@ -18,8 +19,9 @@ public class SwitchAccountInteractor(
 ) : Interactor<SyncProviderSource>() {
 
     override suspend fun doWork(params: SyncProviderSource) {
-        val old = accountManager.getActiveProvider()
-        old?.let { accountManager.logout(it) }
+        accountManager.accounts.first()
+            .filter { it.isConnected && it.provider != params }
+            .forEach { accountManager.logout(it.provider) }
         logoutHandler.clear()
         accountManager.setActive(params)
         appScopeLauncher.launch(RESYNC_TAG) {

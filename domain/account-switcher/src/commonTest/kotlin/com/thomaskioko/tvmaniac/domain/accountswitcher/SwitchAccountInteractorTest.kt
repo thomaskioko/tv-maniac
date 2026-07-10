@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.accountswitcher
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
@@ -54,6 +55,9 @@ internal class SwitchAccountInteractorTest {
     @Test
     fun `should logout old provider before clear given active provider exists`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        accountManager.setAccounts(
+            listOf(ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true, isActive = true)),
+        )
 
         buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
 
@@ -73,6 +77,9 @@ internal class SwitchAccountInteractorTest {
     @Test
     fun `should execute in order logout then clear then setActive then resync given switch`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        accountManager.setAccounts(
+            listOf(ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true, isActive = true)),
+        )
         val events = mutableListOf<String>()
 
         val interactor = SwitchAccountInteractor(
@@ -92,9 +99,9 @@ internal class SwitchAccountInteractorTest {
                     accountManager.setActive(provider)
                 }
             },
-            resyncProfile = ResyncProfile { events.add("resyncProfile") },
-            resyncLibrary = ResyncLibrary { events.add("resyncLibrary") },
-            resyncContinueWatching = ResyncContinueWatching { events.add("resyncContinueWatching") },
+            resyncProfile = { events.add("resyncProfile") },
+            resyncLibrary = { events.add("resyncLibrary") },
+            resyncContinueWatching = { events.add("resyncContinueWatching") },
             appScopeLauncher = FakeAppScopeLauncher(backgroundScope),
         )
 

@@ -364,7 +364,10 @@ class SettingsPresenterTest {
         testScheduler.runCurrent()
 
         accountManager.setAccounts(
-            listOf(ConnectedAccount(provider = SyncProviderSource.SIMKL, isConnected = true)),
+            listOf(
+                ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true),
+                ConnectedAccount(provider = SyncProviderSource.SIMKL, isConnected = true),
+            ),
         )
         testScheduler.runCurrent()
 
@@ -428,7 +431,10 @@ class SettingsPresenterTest {
         testScheduler.runCurrent()
 
         accountManager.setAccounts(
-            listOf(ConnectedAccount(provider = SyncProviderSource.SIMKL, isConnected = true)),
+            listOf(
+                ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true),
+                ConnectedAccount(provider = SyncProviderSource.SIMKL, isConnected = true),
+            ),
         )
         testScheduler.runCurrent()
 
