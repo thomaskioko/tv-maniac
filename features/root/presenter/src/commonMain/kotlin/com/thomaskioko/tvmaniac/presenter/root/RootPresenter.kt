@@ -30,6 +30,10 @@ public interface RootPresenter {
 
     public val notificationPermissionStateValue: Value<NotificationPermissionState>
 
+    public val syncIndicatorVisible: StateFlow<Boolean>
+
+    public val syncIndicatorVisibleValue: Value<Boolean>
+
     public val toastState: StateFlow<ToastState>
 
     public val toastStateValue: Value<ToastState>
@@ -47,8 +51,6 @@ public interface RootPresenter {
     public fun onDeepLink(destination: DeepLinkDestination)
 
     public fun onToastShown(id: Long)
-
-    public fun dismissSyncStatus()
 
     public fun onDismissAccountLimitBanner()
 }
