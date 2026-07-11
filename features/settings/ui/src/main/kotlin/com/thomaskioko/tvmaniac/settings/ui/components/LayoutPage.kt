@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.Vibration
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
@@ -49,6 +51,15 @@ internal fun LayoutPage(
                     description = state.labels.seasonOrderDescription,
                     checked = state.newestSeasonFirst,
                     onCheckedChange = { onAction(SeasonOrderToggled(it)) },
+                )
+
+                SwitchRow(
+                    modifier = Modifier.testTag(SettingsTestTags.BLUR_UNWATCHED_TOGGLE_TEST_TAG),
+                    icon = Icons.Filled.VisibilityOff,
+                    title = state.labels.blurUnwatchedTitle,
+                    description = state.labels.blurUnwatchedDescription,
+                    checked = state.blurImage,
+                    onCheckedChange = { onAction(BlurUnwatchedToggled(it)) },
                 )
             }
         }

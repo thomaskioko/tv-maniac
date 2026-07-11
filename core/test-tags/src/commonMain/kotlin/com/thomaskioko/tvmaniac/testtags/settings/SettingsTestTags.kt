@@ -19,6 +19,7 @@ public object SettingsTestTags {
     public const val EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG: String = "settings_episode_notifications_toggle"
     public const val HAPTIC_FEEDBACK_TOGGLE_TEST_TAG: String = "settings_haptic_feedback_toggle"
     public const val SEASON_ORDER_TOGGLE_TEST_TAG: String = "settings_season_order_toggle"
+    public const val BLUR_UNWATCHED_TOGGLE_TEST_TAG: String = "settings_blur_unwatched_toggle"
     public const val SWITCH_PROVIDER_BUTTON_TEST_TAG: String = "settings_switch_provider_button"
     public const val SWITCH_DIALOG_CONFIRM_BUTTON_TEST_TAG: String = "settings_switch_dialog_confirm"
     public const val SWITCH_DIALOG_DISMISS_BUTTON_TEST_TAG: String = "settings_switch_dialog_dismiss"

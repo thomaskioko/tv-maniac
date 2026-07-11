@@ -141,6 +141,14 @@ class SettingsScreenTest: SnapshotTestCase {
                 isOn: false,
                 onToggle: { _ in }
             ),
+            SettingsToggleItem(
+                id: "blur-unwatched",
+                icon: "eye.slash",
+                title: "Hide Spoilers",
+                subtitle: "Hide spoilers for unwatched episodes",
+                isOn: false,
+                onToggle: { _ in }
+            ),
         ]
     }
 

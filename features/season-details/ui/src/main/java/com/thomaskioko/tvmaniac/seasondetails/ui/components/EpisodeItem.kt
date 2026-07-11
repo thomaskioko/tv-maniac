@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.compose.components.MarkWatchedButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
@@ -55,6 +56,7 @@ internal fun EpisodeItem(
         ) {
             PosterCard(
                 imageUrl = imageUrl,
+                blurContent = LocalBlurUnwatchedEnabled.current,
                 modifier = Modifier
                     .width(100.dp)
                     .aspectRatio(0.8f),

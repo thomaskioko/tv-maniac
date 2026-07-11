@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.outlined.Person
@@ -50,6 +51,7 @@ public fun PosterCard(
     shape: Shape = RectangleShape,
     isInLibrary: Boolean = false,
     libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
+    blurContent: Boolean = false,
 ) {
     PosterCard(
         onClick = onClick,
@@ -77,6 +79,7 @@ public fun PosterCard(
                     },
                     aspectRatio = aspectRatio,
                     modifier = Modifier.fillMaxWidth(),
+                    blurContent = blurContent,
                 )
 
                 if (isInLibrary) {
@@ -346,7 +349,6 @@ private fun PosterCardPreview() {
     PosterCard(
         imageUrl = "",
         title = "Loki",
-
         modifier = Modifier
             .width(100.dp)
             .aspectRatio(0.8f),
@@ -361,7 +363,6 @@ private fun PosterCardWithLibraryOverlayPreview() {
         imageUrl = "",
         title = "Loki",
         isInLibrary = true,
-
         modifier = Modifier
             .width(100.dp)
             .aspectRatio(0.8f),
@@ -387,6 +388,7 @@ private fun PosterBackdropPreview() {
 @Composable
 private fun AvatarComponentPreview() {
     AvatarComponent(
+        modifier = Modifier.wrapContentSize(),
         imageUrl = "",
         size = 38.dp,
         contentDescription = "Profile",

@@ -87,6 +87,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                 size: CGSize(width: UIScreen.main.bounds.width, height: 280)
             )
             .frame(maxWidth: .infinity, maxHeight: 280)
+            .blurEffect()
             .clipped()
 
             RoundedRectangle(cornerRadius: 2)

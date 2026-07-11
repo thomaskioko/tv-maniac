@@ -45,6 +45,7 @@ public struct RootNavigationView: View {
         }
         .appTheme()
         .hapticFeedbackEnabled(appUiState.hapticFeedbackEnabled)
+        .blurImage(appUiState.blurImage)
         .sheet(
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },

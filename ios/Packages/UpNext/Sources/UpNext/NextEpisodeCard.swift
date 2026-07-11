@@ -26,6 +26,7 @@ public struct NextEpisodeCard: View {
             )
             .scaledToFill()
             .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+            .blurEffect()
             .clipped()
 
             LinearGradient(

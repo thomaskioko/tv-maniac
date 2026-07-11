@@ -96,7 +96,7 @@ public class MainActivity : ComponentActivity() {
             ) {
                 CompositionLocalProvider(
                     LocalHapticFeedbackEnabled provides appUiState.hapticFeedbackEnabled,
-                    LocalBlurUnwatchedEnabled provides appUiState.blurUnwatchedEpisodeImages,
+                    LocalBlurUnwatchedEnabled provides appUiState.blurImage,
                 ) {
                     graph.AppRootContent()
                 }

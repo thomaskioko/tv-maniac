@@ -48,6 +48,7 @@ import coil.request.ImageRequest
 import com.flaviofaria.kenburnsview.KenBurnsView
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.util.blurEffect
 import kotlin.math.absoluteValue
 
 @Composable
@@ -66,6 +67,7 @@ public fun AsyncImageComposable(
     alpha: Float = DefaultAlpha,
     colorFilter: ColorFilter? = null,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+    blurContent: Boolean = false,
 ) {
     AsyncImage(
         model = requestBuilder?.let { builder ->
@@ -79,6 +81,7 @@ public fun AsyncImageComposable(
         contentDescription = contentDescription,
         modifier = modifier
             .then(if (aspectRatio != null) Modifier.aspectRatio(aspectRatio) else Modifier)
+            .blurEffect(blurContent)
             .clip(shape)
             .then(if (border != null) Modifier.border(border, shape) else Modifier),
         transform = transform,

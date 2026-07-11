@@ -59,6 +59,7 @@ public struct WatchListItemView: View {
             posterRadius: 0
         )
         .frame(width: WatchListItemViewConstants.imageWidth, height: WatchListItemViewConstants.height)
+        .blurEffect()
         .clipped()
     }
 

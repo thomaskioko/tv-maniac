@@ -183,6 +183,14 @@ public struct SettingsView: View {
                 isOn: uiState.newestSeasonFirst,
                 onToggle: { presenter.dispatch(action: SeasonOrderToggled(enabled: $0)) }
             ),
+            SettingsToggleItem(
+                id: "blur-unwatched",
+                icon: "eye.slash",
+                title: uiState.labels.blurUnwatchedTitle,
+                subtitle: uiState.labels.blurUnwatchedDescription,
+                isOn: uiState.blurUnwatchedEpisodeImages,
+                onToggle: { presenter.dispatch(action: BlurUnwatchedToggled(enabled: $0)) }
+            ),
         ]
     }
 
