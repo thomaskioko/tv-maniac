@@ -74,6 +74,8 @@
     <string name="settings_haptic_feedback_description">Spüre subtile Vibrationen bei Interaktionen</string>
     <string name="settings_season_order_title">Staffelreihenfolge</string>
     <string name="settings_season_order_description">Neueste Staffel zuerst anordnen</string>
+    <string name="settings_blur_unwatched_title">Spoiler verbergen</string>
+    <string name="settings_blur_unwatched_description">Spoiler für ungesehene Episoden verbergen</string>
     <string name="label_settings_trakt_authentication">Verbinden &amp; Inhalte synchronisieren</string>
     <string name="label_settings_connect_title">Verbinden</string>
     <string name="label_settings_account_sync_description">Speichere deinen Fortschritt, entdecke neue Titel und synchronisiere deine Inhalte auf allen Geräten.</string>
