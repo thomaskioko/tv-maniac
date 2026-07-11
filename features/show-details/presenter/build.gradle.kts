@@ -24,6 +24,7 @@ kotlin {
                 api(projects.core.notifications.api)
                 api(projects.core.view)
                 api(projects.data.accountManager.api)
+                api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.followedshows.api)
                 api(projects.data.seasondetails.api)

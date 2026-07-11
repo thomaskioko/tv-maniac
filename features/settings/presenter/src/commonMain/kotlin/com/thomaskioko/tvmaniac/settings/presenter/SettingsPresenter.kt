@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
@@ -151,6 +152,7 @@ public class SettingsPresenter(
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
             hapticFeedbackEnabled = preferences.layout.hapticFeedbackEnabled,
+            newestSeasonFirst = preferences.layout.seasonSortOrder == SeasonSortOrder.NEWEST_FIRST,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
@@ -255,6 +257,14 @@ public class SettingsPresenter(
             is HapticFeedbackToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.saveHapticFeedbackEnabled(action.enabled)
+                }
+            }
+
+            is SeasonOrderToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveSeasonSortOrder(
+                        if (action.enabled) SeasonSortOrder.NEWEST_FIRST else SeasonSortOrder.OLDEST_FIRST,
+                    )
                 }
             }
 
@@ -540,6 +550,8 @@ public class SettingsPresenter(
         crashReportingDescription = localizer.getString(StringResourceKey.LabelSettingsCrashReportingDescription),
         hapticFeedbackTitle = localizer.getString(StringResourceKey.SettingsHapticFeedbackTitle),
         hapticFeedbackDescription = localizer.getString(StringResourceKey.SettingsHapticFeedbackDescription),
+        seasonOrderTitle = localizer.getString(StringResourceKey.SettingsSeasonOrderTitle),
+        seasonOrderDescription = localizer.getString(StringResourceKey.SettingsSeasonOrderDescription),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),

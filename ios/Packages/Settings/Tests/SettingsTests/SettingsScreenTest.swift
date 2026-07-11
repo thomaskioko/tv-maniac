@@ -133,6 +133,14 @@ class SettingsScreenTest: SnapshotTestCase {
                 isOn: true,
                 onToggle: { _ in }
             ),
+            SettingsToggleItem(
+                id: "season-order",
+                icon: "arrow.up.arrow.down",
+                title: "Season Order",
+                subtitle: "Order the latest season first",
+                isOn: false,
+                onToggle: { _ in }
+            ),
         ]
     }
 
