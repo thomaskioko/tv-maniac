@@ -38,6 +38,7 @@ public data class SettingsState(
     val versionName: String,
     val episodeNotificationsEnabled: Boolean = false,
     val crashReportingEnabled: Boolean = true,
+    val hapticFeedbackEnabled: Boolean = true,
     val isLoading: Boolean = true,
     val isUpdating: Boolean = false,
     val isProcessingAuth: Boolean = false,

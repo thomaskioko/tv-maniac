@@ -25,6 +25,8 @@ public data class SettingsLabels(
     val episodeNotificationsDescription: String = "",
     val crashReportingTitle: String = "",
     val crashReportingDescription: String = "",
+    val hapticFeedbackTitle: String = "",
+    val hapticFeedbackDescription: String = "",
     val privacyPolicy: String = "",
     val appName: String = "",
     val version: String = "",

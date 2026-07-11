@@ -34,6 +34,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
+import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
@@ -158,6 +159,18 @@ class SettingsPresenterTest {
             presenter.dispatch(ThemeSelected(ThemeModel.DARK))
 
             awaitItem().theme shouldBe ThemeModel.DARK
+        }
+    }
+
+    @Test
+    fun `should persist and reflect haptic feedback given the toggle is flipped`() = runTest {
+        presenter.state.test {
+            awaitItem().hapticFeedbackEnabled shouldBe true
+
+            presenter.dispatch(HapticFeedbackToggled(false))
+
+            awaitItem().hapticFeedbackEnabled shouldBe false
+            datastoreRepository.observeHapticFeedbackEnabled().first() shouldBe false
         }
     }
 
