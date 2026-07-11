@@ -1195,6 +1195,7 @@ graph TB
   :features:show-details:presenter --> :core:notifications:api
   :features:show-details:presenter --> :core:view
   :features:show-details:presenter --> :data:account-manager:api
+  :features:show-details:presenter --> :data:datastore:api
   :features:show-details:presenter --> :data:episode:api
   :features:show-details:presenter --> :data:followedshows:api
   :features:show-details:presenter --> :data:seasondetails:api

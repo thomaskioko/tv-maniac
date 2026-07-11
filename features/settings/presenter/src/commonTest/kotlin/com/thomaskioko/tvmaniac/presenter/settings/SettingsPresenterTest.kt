@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
@@ -37,6 +38,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
+import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
@@ -171,6 +173,18 @@ class SettingsPresenterTest {
 
             awaitItem().hapticFeedbackEnabled shouldBe false
             datastoreRepository.observeHapticFeedbackEnabled().first() shouldBe false
+        }
+    }
+
+    @Test
+    fun `should persist and reflect season order given the toggle is flipped`() = runTest {
+        presenter.state.test {
+            awaitItem().newestSeasonFirst shouldBe false
+
+            presenter.dispatch(SeasonOrderToggled(true))
+
+            awaitItem().newestSeasonFirst shouldBe true
+            datastoreRepository.observeSeasonSortOrder().first() shouldBe SeasonSortOrder.NEWEST_FIRST
         }
     }
 

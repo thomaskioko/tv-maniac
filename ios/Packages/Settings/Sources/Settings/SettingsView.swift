@@ -175,6 +175,14 @@ public struct SettingsView: View {
                 isOn: uiState.hapticFeedbackEnabled,
                 onToggle: { presenter.dispatch(action: HapticFeedbackToggled(enabled: $0)) }
             ),
+            SettingsToggleItem(
+                id: "season-order",
+                icon: "arrow.up.arrow.down",
+                title: uiState.labels.seasonOrderTitle,
+                subtitle: uiState.labels.seasonOrderDescription,
+                isOn: uiState.newestSeasonFirst,
+                onToggle: { presenter.dispatch(action: SeasonOrderToggled(enabled: $0)) }
+            ),
         ]
     }
 

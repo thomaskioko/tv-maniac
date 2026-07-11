@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -146,6 +147,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val debugMenuEnabledFlow = MutableStateFlow(false)
     private val accountTypeFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     private val hapticFeedbackEnabledFlow = MutableStateFlow(true)
+    private val seasonSortOrderFlow = MutableStateFlow(SeasonSortOrder.OLDEST_FIRST)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -202,4 +204,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeHapticFeedbackEnabled(): Flow<Boolean> = hapticFeedbackEnabledFlow.asStateFlow()
+
+    override suspend fun saveSeasonSortOrder(sortOrder: SeasonSortOrder) {
+        seasonSortOrderFlow.value = sortOrder
+    }
+
+    override fun observeSeasonSortOrder(): Flow<SeasonSortOrder> = seasonSortOrderFlow.asStateFlow()
 }
