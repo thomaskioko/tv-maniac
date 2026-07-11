@@ -8,4 +8,5 @@ public data class AppUiState(
     val isFetching: Boolean = true,
     val appTheme: Theme = Theme.SYSTEM_THEME,
     val hapticFeedbackEnabled: Boolean = true,
+    val blurUnwatchedEpisodeImages: Boolean = false,
 )

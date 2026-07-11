@@ -29,6 +29,8 @@ public data class SettingsLabels(
     val hapticFeedbackDescription: String = "",
     val seasonOrderTitle: String = "",
     val seasonOrderDescription: String = "",
+    val blurUnwatchedTitle: String = "",
+    val blurUnwatchedDescription: String = "",
     val privacyPolicy: String = "",
     val appName: String = "",
     val version: String = "",

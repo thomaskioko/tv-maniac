@@ -153,6 +153,7 @@ public class SettingsPresenter(
             crashReportingEnabled = preferences.crashReportingEnabled,
             hapticFeedbackEnabled = preferences.layout.hapticFeedbackEnabled,
             newestSeasonFirst = preferences.layout.seasonSortOrder == SeasonSortOrder.NEWEST_FIRST,
+            blurUnwatchedEpisodeImages = preferences.layout.blurUnwatchedEpisodeImages,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
@@ -265,6 +266,12 @@ public class SettingsPresenter(
                     datastoreRepository.saveSeasonSortOrder(
                         if (action.enabled) SeasonSortOrder.NEWEST_FIRST else SeasonSortOrder.OLDEST_FIRST,
                     )
+                }
+            }
+
+            is BlurUnwatchedToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveBlurUnwatchedEpisodeImages(action.enabled)
                 }
             }
 
@@ -552,6 +559,8 @@ public class SettingsPresenter(
         hapticFeedbackDescription = localizer.getString(StringResourceKey.SettingsHapticFeedbackDescription),
         seasonOrderTitle = localizer.getString(StringResourceKey.SettingsSeasonOrderTitle),
         seasonOrderDescription = localizer.getString(StringResourceKey.SettingsSeasonOrderDescription),
+        blurUnwatchedTitle = localizer.getString(StringResourceKey.SettingsBlurUnwatchedTitle),
+        blurUnwatchedDescription = localizer.getString(StringResourceKey.SettingsBlurUnwatchedDescription),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),

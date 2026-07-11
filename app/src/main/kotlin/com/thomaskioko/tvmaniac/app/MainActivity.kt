@@ -25,6 +25,7 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.tvmaniac.app.di.ActivityGraph
 import com.thomaskioko.tvmaniac.app.ui.di.AppRootContent
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
@@ -95,6 +96,7 @@ public class MainActivity : ComponentActivity() {
             ) {
                 CompositionLocalProvider(
                     LocalHapticFeedbackEnabled provides appUiState.hapticFeedbackEnabled,
+                    LocalBlurUnwatchedEnabled provides appUiState.blurUnwatchedEpisodeImages,
                 ) {
                     graph.AppRootContent()
                 }
