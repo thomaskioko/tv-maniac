@@ -123,6 +123,19 @@ class SettingsScreenTest: SnapshotTestCase {
         )
     }
 
+    private var layoutToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "haptic",
+                icon: "iphone.radiowaves.left.and.right",
+                title: "Haptic feedback",
+                subtitle: "Feel subtle vibrations during interactions",
+                isOn: true,
+                onToggle: { _ in }
+            ),
+        ]
+    }
+
     private var behaviorToggles: [SettingsToggleItem] {
         [
             SettingsToggleItem(
@@ -339,6 +352,7 @@ class SettingsScreenTest: SnapshotTestCase {
             rootSections: rootSections(authenticated: authenticated),
             themeItem: customThemeItem ?? defaultThemeItem,
             imageQualityItem: defaultImageQualityItem,
+            layoutToggles: layoutToggles,
             behaviorToggles: behaviorToggles,
             notificationToggles: customNotificationToggles ?? notificationToggles,
             privacyToggles: privacyToggles,
