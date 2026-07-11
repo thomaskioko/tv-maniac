@@ -34,4 +34,28 @@ internal class ObserveLayoutPreferencesInteractorTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `should emit blur unwatched episode images disabled by default`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            awaitItem().blurUnwatchedEpisodeImages shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit saved blur value given the preference changes`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            awaitItem().blurUnwatchedEpisodeImages shouldBe false
+
+            datastoreRepository.saveBlurUnwatchedEpisodeImages(true)
+
+            awaitItem().blurUnwatchedEpisodeImages shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
