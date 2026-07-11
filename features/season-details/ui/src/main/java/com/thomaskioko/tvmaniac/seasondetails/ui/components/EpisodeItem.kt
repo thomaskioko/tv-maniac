@@ -1,21 +1,13 @@
 package com.thomaskioko.tvmaniac.seasondetails.ui.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,11 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.MarkWatchedButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.green
-import com.thomaskioko.tvmaniac.compose.theme.grey
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
 import com.thomaskioko.tvmaniac.testtags.seasondetails.SeasonDetailsTestTags
@@ -102,33 +93,14 @@ internal fun EpisodeItem(
                     }
                 }
 
-                Surface(
-                    onClick = onWatchedToggle,
-                    enabled = !isProcessing,
+                MarkWatchedButton(
+                    isWatched = isWatched,
+                    isUpdating = isProcessing,
+                    onToggle = onWatchedToggle,
                     modifier = Modifier
                         .padding(12.dp)
-                        .size(28.dp)
                         .let { if (toggleTag != null) it.testTag(toggleTag) else it },
-                    shape = CircleShape,
-                    color = if (isWatched) green else grey,
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        if (isProcessing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        } else {
-                            Icon(
-                                modifier = Modifier.size(16.dp),
-                                imageVector = Icons.Rounded.Check,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                    }
-                }
+                )
             } else if (daysUntilAir != null && daysUntilAir > 0) {
                 Column(
                     modifier = Modifier.padding(12.dp),

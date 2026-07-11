@@ -150,6 +150,7 @@ public class SettingsPresenter(
             versionName = appMetadata.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
+            hapticFeedbackEnabled = preferences.layout.hapticFeedbackEnabled,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
@@ -248,6 +249,12 @@ public class SettingsPresenter(
             is CrashReportingToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.setCrashReportingEnabled(action.enabled)
+                }
+            }
+
+            is HapticFeedbackToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveHapticFeedbackEnabled(action.enabled)
                 }
             }
 
@@ -531,6 +538,8 @@ public class SettingsPresenter(
         episodeNotificationsDescription = localizer.getString(StringResourceKey.LabelSettingsEpisodeNotificationsDescription),
         crashReportingTitle = localizer.getString(StringResourceKey.LabelSettingsCrashReporting),
         crashReportingDescription = localizer.getString(StringResourceKey.LabelSettingsCrashReportingDescription),
+        hapticFeedbackTitle = localizer.getString(StringResourceKey.SettingsHapticFeedbackTitle),
+        hapticFeedbackDescription = localizer.getString(StringResourceKey.SettingsHapticFeedbackDescription),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),

@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.presenter.root
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.root.model.AppUiState
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
-import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
@@ -149,17 +149,24 @@ public class DefaultRootPresenter(
     override val episodeSheetSlotValue: Value<ChildSlot<*, SheetChild>> =
         episodeSheetSlot.asValue(coroutineScope)
 
-    override val themeState: StateFlow<ThemeState> =
-        datastoreRepository
-            .observeTheme()
-            .map { theme -> ThemeState(isFetching = false, appTheme = theme.toTheme()) }
+    override val appUiState: StateFlow<AppUiState> =
+        combine(
+            datastoreRepository.observeTheme(),
+            datastoreRepository.observeHapticFeedbackEnabled(),
+        ) { theme, hapticFeedbackEnabled ->
+            AppUiState(
+                isFetching = false,
+                appTheme = theme.toTheme(),
+                hapticFeedbackEnabled = hapticFeedbackEnabled,
+            )
+        }
             .stateIn(
                 scope = coroutineScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = ThemeState(),
+                initialValue = AppUiState(),
             )
 
-    override val themeStateValue: Value<ThemeState> = themeState.asValue(coroutineScope)
+    override val appUiStateValue: Value<AppUiState> = appUiState.asValue(coroutineScope)
 
     // TODO:: Move notification rationale to it's own feature.
     override val notificationPermissionState: StateFlow<NotificationPermissionState> =

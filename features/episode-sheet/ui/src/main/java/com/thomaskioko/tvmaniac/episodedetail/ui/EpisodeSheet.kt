@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate_episode
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -80,15 +81,9 @@ private fun EpisodeSheetActions(
     onAction: (EpisodeSheetAction) -> Unit,
 ) {
     val context = LocalContext.current
+    val performHaptic = rememberHapticFeedback()
 
-    SheetActionItem(
-        modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem("rate")),
-        icon = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
-        label = label_action_rate_episode.resolve(context),
-        onClick = { onAction(EpisodeSheetAction.RatingClicked) },
-    )
-
-    state.availableActions.forEach { action ->
+    state.availableActions.forEachIndexed { index, action ->
         val isToggling = action.item == EpisodeSheetActionItem.TOGGLE_WATCHED && state.isTogglingWatched
         SheetActionItem(
             modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem(action.item.name)),
@@ -96,8 +91,20 @@ private fun EpisodeSheetActions(
             label = action.label,
             enabled = !isToggling,
             showProgress = isToggling,
-            onClick = { onAction(action.item.toAction()) },
+            onClick = {
+                if (action.item == EpisodeSheetActionItem.TOGGLE_WATCHED) performHaptic()
+                onAction(action.item.toAction())
+            },
         )
+
+        if (index == 0) {
+            SheetActionItem(
+                modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem("rate")),
+                icon = if (state.userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                label = label_action_rate_episode.resolve(context),
+                onClick = { onAction(EpisodeSheetAction.RatingClicked) },
+            )
+        }
     }
 }
 

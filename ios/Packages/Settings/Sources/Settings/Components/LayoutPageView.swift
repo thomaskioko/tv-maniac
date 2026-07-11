@@ -2,16 +2,20 @@ import DesignSystem
 import SwiftUI
 
 struct LayoutPageView: View {
-    @Environment(\.appTheme) private var appTheme
+    private let toggles: [SettingsToggleItem]
+
+    init(toggles: [SettingsToggleItem]) {
+        self.toggles = toggles
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: appTheme.spacing.large) {}
+        SettingsTogglesPageView(toggles: toggles)
     }
 }
 
 #if DEBUG
     #Preview {
-        LayoutPageView()
+        LayoutPageView(toggles: SettingsPreviewSamples.layoutToggles)
             .padding()
             .appPreview()
     }

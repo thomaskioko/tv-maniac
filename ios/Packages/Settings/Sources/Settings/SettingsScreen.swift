@@ -11,6 +11,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let rootSections: [SettingsRootSection]
         public let themeItem: SettingsThemeItem<Theme>
         public let imageQualityItem: SettingsImageQualityItem
+        public let layoutToggles: [SettingsToggleItem]
         public let behaviorToggles: [SettingsToggleItem]
         public let notificationToggles: [SettingsToggleItem]
         public let privacyToggles: [SettingsToggleItem]
@@ -26,6 +27,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             rootSections: [SettingsRootSection],
             themeItem: SettingsThemeItem<Theme>,
             imageQualityItem: SettingsImageQualityItem,
+            layoutToggles: [SettingsToggleItem],
             behaviorToggles: [SettingsToggleItem],
             notificationToggles: [SettingsToggleItem],
             privacyToggles: [SettingsToggleItem],
@@ -40,6 +42,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             self.rootSections = rootSections
             self.themeItem = themeItem
             self.imageQualityItem = imageQualityItem
+            self.layoutToggles = layoutToggles
             self.behaviorToggles = behaviorToggles
             self.notificationToggles = notificationToggles
             self.privacyToggles = privacyToggles
@@ -115,7 +118,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         case .account:
             AccountPageView(content: state.accountContent)
         case .layout:
-            LayoutPageView()
+            LayoutPageView(toggles: state.layoutToggles)
         }
     }
 

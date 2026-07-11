@@ -25,8 +25,8 @@ internal class TvManiacTestActivity : ComponentActivity() {
             .createGraph(this)
 
         setContent {
-            val themeState by activityGraph.rootPresenter.themeState.collectAsState()
-            TvManiacTheme(appTheme = themeState.appTheme) {
+            val appUiState by activityGraph.rootPresenter.appUiState.collectAsState()
+            TvManiacTheme(appTheme = appUiState.appTheme) {
                 CompositionLocalProvider(LocalAutoAdvanceEnabled provides false) {
                     activityGraph.AppRootContent()
                 }

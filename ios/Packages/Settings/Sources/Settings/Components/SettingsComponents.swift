@@ -109,6 +109,7 @@ struct SettingsNavigationRow: View {
 
 struct SettingsToggleRow: View {
     @Environment(\.appTheme) private var appTheme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
     private let item: SettingsToggleItem
 
     init(_ item: SettingsToggleItem) {
@@ -144,7 +145,10 @@ struct SettingsToggleRow: View {
 
             Toggle("", isOn: Binding(
                 get: { item.isOn },
-                set: { item.onToggle($0) }
+                set: {
+                    Haptics.impact(isEnabled: hapticFeedbackEnabled)
+                    item.onToggle($0)
+                }
             ))
             .labelsHidden()
             .tint(appTheme.colors.secondary)

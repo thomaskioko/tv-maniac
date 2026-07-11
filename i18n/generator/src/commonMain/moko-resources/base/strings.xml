@@ -73,6 +73,8 @@
     <string name="label_settings_account_description">Manage your connected account</string>
     <string name="settings_layout_title">Layout</string>
     <string name="settings_layout_description">Personalize how shows and episodes look</string>
+    <string name="settings_haptic_feedback_title">Haptic feedback</string>
+    <string name="settings_haptic_feedback_description">Feel subtle vibrations during interactions</string>
     <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
     <string name="label_settings_connect_title">Connect</string>
     <string name="label_settings_account_sync_description">Save your progress, discover new titles, and sync your content across all devices.</string>

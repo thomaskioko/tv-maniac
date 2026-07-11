@@ -310,4 +310,18 @@ public interface DatastoreRepository {
     public suspend fun saveAccountType(override: String?)
 
     public fun observeAccountType(): Flow<String?>
+
+    /**
+     * Saves whether haptic feedback fires on supported interactions.
+     *
+     * @param enabled Whether haptic feedback is enabled.
+     */
+    public suspend fun saveHapticFeedbackEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether haptic feedback fires on supported interactions.
+     *
+     * @return A Flow of Boolean, true if haptic feedback is enabled. Defaults to true.
+     */
+    public fun observeHapticFeedbackEnabled(): Flow<Boolean>
 }

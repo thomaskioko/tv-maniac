@@ -10,7 +10,7 @@ public struct RootNavigationView: View {
     private let rootPresenter: RootPresenter
     private let navigator: Navigator
     private let registry: ScreenRegistry
-    @StateValue private var themeState: ThemeState
+    @StateValue private var appUiState: AppUiState
     @StateValue private var notificationPermissionState: NotificationPermissionState
     @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, SheetChild>
     @StateValue private var accountLimitBannerVisible: KotlinBoolean
@@ -22,7 +22,7 @@ public struct RootNavigationView: View {
         self.rootPresenter = rootPresenter
         self.navigator = navigator
         self.registry = registry
-        _themeState = .init(rootPresenter.themeStateValue)
+        _appUiState = .init(rootPresenter.appUiStateValue)
         _notificationPermissionState = .init(rootPresenter.notificationPermissionStateValue)
         _episodeSheetSlot = .init(rootPresenter.episodeSheetSlotValue)
         _accountLimitBannerVisible = .init(rootPresenter.accountLimitBannerVisibleValue)
@@ -44,6 +44,7 @@ public struct RootNavigationView: View {
             .animation(.spring(), value: accountLimitBannerVisible.boolValue)
         }
         .appTheme()
+        .hapticFeedbackEnabled(appUiState.hapticFeedbackEnabled)
         .sheet(
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
@@ -58,7 +59,7 @@ public struct RootNavigationView: View {
                 registry.sheet(for: child)
             }
         }
-        .onChange(of: themeState.appTheme) { _, newTheme in
+        .onChange(of: appUiState.appTheme) { _, newTheme in
             store.appTheme = newTheme.toDeviceAppTheme()
         }
         .sheet(

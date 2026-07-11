@@ -81,6 +81,19 @@
             )
         }
 
+        static var layoutToggles: [SettingsToggleItem] {
+            [
+                SettingsToggleItem(
+                    id: "haptic",
+                    icon: "iphone.radiowaves.left.and.right",
+                    title: "Haptic feedback",
+                    subtitle: "Feel subtle vibrations during interactions",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+            ]
+        }
+
         static var behaviorToggles: [SettingsToggleItem] {
             [
                 SettingsToggleItem(
