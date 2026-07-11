@@ -324,4 +324,18 @@ public interface DatastoreRepository {
      * @return A Flow of Boolean, true if haptic feedback is enabled. Defaults to true.
      */
     public fun observeHapticFeedbackEnabled(): Flow<Boolean>
+
+    /**
+     * Saves the order in which seasons are listed on the show details page.
+     *
+     * @param sortOrder Whether the oldest or newest season is listed first.
+     */
+    public suspend fun saveSeasonSortOrder(sortOrder: SeasonSortOrder)
+
+    /**
+     * Observes the order in which seasons are listed on the show details page.
+     *
+     * @return A Flow of SeasonSortOrder. Defaults to [SeasonSortOrder.OLDEST_FIRST].
+     */
+    public fun observeSeasonSortOrder(): Flow<SeasonSortOrder>
 }

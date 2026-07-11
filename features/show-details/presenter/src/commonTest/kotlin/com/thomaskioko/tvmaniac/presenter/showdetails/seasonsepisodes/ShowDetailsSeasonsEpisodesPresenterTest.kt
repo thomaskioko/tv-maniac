@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
@@ -61,6 +63,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     private val accountManager = FakeAccountManager()
     private val navigator = FakeNavigator()
     private val followedShowsRepository = FakeFollowedShowsRepository()
+    private val datastoreRepository = FakeDatastoreRepository()
 
     @BeforeTest
     fun setUp() {
@@ -91,6 +94,36 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
             state.seasonsList[0].totalCount shouldBe 10
             state.seasonsList[1].watchedCount shouldBe 3
             state.seasonsList[1].totalCount shouldBe 12
+        }
+    }
+
+    @Test
+    fun `should reverse seasons given newest season first order`() = runTest {
+        seasonsRepository.setSeasonsResult(testSeasonsWithProgress)
+        datastoreRepository.saveSeasonSortOrder(SeasonSortOrder.NEWEST_FIRST)
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.seasonsList.size shouldBe 2
+            state.seasonsList[0].seasonNumber shouldBe 2
+            state.seasonsList[1].seasonNumber shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should keep seasons oldest first given default order`() = runTest {
+        seasonsRepository.setSeasonsResult(testSeasonsWithProgress)
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.seasonsList[0].seasonNumber shouldBe 1
+            state.seasonsList[1].seasonNumber shouldBe 2
         }
     }
 
@@ -266,6 +299,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
+            datastoreRepository = datastoreRepository,
             navigator = navigator,
             accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },

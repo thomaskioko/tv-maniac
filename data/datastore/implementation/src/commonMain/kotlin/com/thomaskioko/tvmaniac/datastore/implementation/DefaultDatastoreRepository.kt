@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -319,6 +320,20 @@ public class DefaultDatastoreRepository(
             preferences[KEY_HAPTIC_FEEDBACK_ENABLED] ?: true
         }
 
+    override suspend fun saveSeasonSortOrder(sortOrder: SeasonSortOrder) {
+        dataStore.edit { preferences ->
+            preferences[KEY_SEASON_SORT_ORDER] = sortOrder.name
+        }
+    }
+
+    override fun observeSeasonSortOrder(): Flow<SeasonSortOrder> =
+        dataStore.data.map { preferences ->
+            when (preferences[KEY_SEASON_SORT_ORDER]) {
+                SeasonSortOrder.NEWEST_FIRST.name -> SeasonSortOrder.NEWEST_FIRST
+                else -> SeasonSortOrder.OLDEST_FIRST
+            }
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -343,5 +358,6 @@ public class DefaultDatastoreRepository(
         public val KEY_DEBUG_MENU_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("debug_menu_enabled")
         public val KEY_ACCOUNT_TYPE: Preferences.Key<String> = stringPreferencesKey("account_type")
         public val KEY_HAPTIC_FEEDBACK_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("haptic_feedback_enabled")
+        public val KEY_SEASON_SORT_ORDER: Preferences.Key<String> = stringPreferencesKey("season_sort_order")
     }
 }
