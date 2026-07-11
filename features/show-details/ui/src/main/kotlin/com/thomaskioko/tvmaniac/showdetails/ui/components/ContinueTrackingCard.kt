@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.compose.components.MarkWatchedButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
@@ -51,6 +52,7 @@ internal fun ContinueTrackingCard(
             PosterCard(
                 imageUrl = episode.imageUrl,
                 imageWidth = 100.dp,
+                blurContent = LocalBlurUnwatchedEnabled.current,
             )
 
             Column(

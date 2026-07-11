@@ -148,6 +148,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val accountTypeFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     private val hapticFeedbackEnabledFlow = MutableStateFlow(true)
     private val seasonSortOrderFlow = MutableStateFlow(SeasonSortOrder.OLDEST_FIRST)
+    private val blurUnwatchedEpisodeImagesFlow = MutableStateFlow(false)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -210,4 +211,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeSeasonSortOrder(): Flow<SeasonSortOrder> = seasonSortOrderFlow.asStateFlow()
+
+    override suspend fun saveBlurUnwatchedEpisodeImages(enabled: Boolean) {
+        blurUnwatchedEpisodeImagesFlow.value = enabled
+    }
+
+    override fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean> = blurUnwatchedEpisodeImagesFlow.asStateFlow()
 }

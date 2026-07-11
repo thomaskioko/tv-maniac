@@ -74,6 +74,7 @@ public struct UpNextListItemView: View {
             posterRadius: 0
         )
         .frame(width: UpNextListItemViewConstants.imageWidth, height: UpNextListItemViewConstants.height)
+        .blurEffect()
         .clipped()
     }
 

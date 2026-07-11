@@ -65,4 +65,8 @@ public data class SeasonOrderToggled(
     val enabled: Boolean,
 ) : SettingsActions
 
+public data class BlurUnwatchedToggled(
+    val enabled: Boolean,
+) : SettingsActions
+
 public data class SettingsMessageShown(val id: Long) : SettingsActions

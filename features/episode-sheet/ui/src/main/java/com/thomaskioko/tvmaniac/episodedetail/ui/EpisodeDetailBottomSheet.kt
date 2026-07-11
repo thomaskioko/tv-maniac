@@ -36,6 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.testtags.episodesheet.EpisodeSheetTestTags
 
 internal data class EpisodeDetailInfo(
@@ -131,6 +132,7 @@ private fun EpisodeDetailHeader(
             contentDescription = contentDescription,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
+            blurContent = LocalBlurUnwatchedEnabled.current,
         )
 
         Box(

@@ -45,6 +45,7 @@ public struct RootNavigationView: View {
         }
         .appTheme()
         .hapticFeedbackEnabled(appUiState.hapticFeedbackEnabled)
+        .blurImage(appUiState.blurImage)
         .sheet(
             isPresented: Binding(
                 get: { episodeSheetSlot.child != nil },
@@ -57,6 +58,7 @@ public struct RootNavigationView: View {
         ) {
             if let child = episodeSheetSlot.child?.instance {
                 registry.sheet(for: child)
+                    .blurImage(appUiState.blurImage)
             }
         }
         .onChange(of: appUiState.appTheme) { _, newTheme in

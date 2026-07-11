@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.ui.upnext
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +33,7 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextEpisodePreviewParameterProvider
@@ -67,6 +70,7 @@ internal fun UpNextListItem(
                 onClick = { onItemClicked(item.showId) },
                 title = item.showName,
                 aspectRatio = 100f / 140f,
+                blurContent = LocalBlurUnwatchedEnabled.current,
             )
 
             Column(
@@ -161,10 +165,15 @@ internal fun UpNextListItem(
 private fun UpNextListItemPreview(
     @PreviewParameter(UpNextEpisodePreviewParameterProvider::class) item: UpNextEpisodeUiModel,
 ) {
-    UpNextListItem(
-        item = item,
-        onItemClicked = {},
-        onShowTitleClicked = {},
-        onMarkWatched = {},
-    )
+    Box(
+        modifier = Modifier.wrapContentSize(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        UpNextListItem(
+            item = item,
+            onItemClicked = {},
+            onShowTitleClicked = {},
+            onMarkWatched = {},
+        )
+    }
 }

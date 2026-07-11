@@ -31,6 +31,7 @@ import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
@@ -185,6 +186,18 @@ class SettingsPresenterTest {
 
             awaitItem().newestSeasonFirst shouldBe true
             datastoreRepository.observeSeasonSortOrder().first() shouldBe SeasonSortOrder.NEWEST_FIRST
+        }
+    }
+
+    @Test
+    fun `should persist and reflect blur unwatched given the toggle is flipped`() = runTest {
+        presenter.state.test {
+            awaitItem().blurImage shouldBe false
+
+            presenter.dispatch(BlurUnwatchedToggled(true))
+
+            awaitItem().blurImage shouldBe true
+            datastoreRepository.observeBlurUnwatchedEpisodeImages().first() shouldBe true
         }
     }
 

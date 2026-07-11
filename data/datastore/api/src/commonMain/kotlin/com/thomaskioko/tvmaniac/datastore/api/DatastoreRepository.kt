@@ -338,4 +338,18 @@ public interface DatastoreRepository {
      * @return A Flow of SeasonSortOrder. Defaults to [SeasonSortOrder.OLDEST_FIRST].
      */
     public fun observeSeasonSortOrder(): Flow<SeasonSortOrder>
+
+    /**
+     * Saves whether unwatched episode still images are blurred to avoid spoilers.
+     *
+     * @param enabled Whether unwatched episode images are blurred.
+     */
+    public suspend fun saveBlurUnwatchedEpisodeImages(enabled: Boolean)
+
+    /**
+     * Observes whether unwatched episode still images are blurred to avoid spoilers.
+     *
+     * @return A Flow of Boolean, true if unwatched episode images are blurred. Defaults to false.
+     */
+    public fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean>
 }
