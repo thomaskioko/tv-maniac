@@ -192,11 +192,11 @@ class SettingsPresenterTest {
     @Test
     fun `should persist and reflect blur unwatched given the toggle is flipped`() = runTest {
         presenter.state.test {
-            awaitItem().blurUnwatchedEpisodeImages shouldBe false
+            awaitItem().blurImage shouldBe false
 
             presenter.dispatch(BlurUnwatchedToggled(true))
 
-            awaitItem().blurUnwatchedEpisodeImages shouldBe true
+            awaitItem().blurImage shouldBe true
             datastoreRepository.observeBlurUnwatchedEpisodeImages().first() shouldBe true
         }
     }

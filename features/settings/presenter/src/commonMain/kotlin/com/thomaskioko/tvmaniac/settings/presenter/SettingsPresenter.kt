@@ -153,7 +153,7 @@ public class SettingsPresenter(
             crashReportingEnabled = preferences.crashReportingEnabled,
             hapticFeedbackEnabled = preferences.layout.hapticFeedbackEnabled,
             newestSeasonFirst = preferences.layout.seasonSortOrder == SeasonSortOrder.NEWEST_FIRST,
-            blurUnwatchedEpisodeImages = preferences.layout.blurUnwatchedEpisodeImages,
+            blurImage = preferences.layout.blurImage,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
