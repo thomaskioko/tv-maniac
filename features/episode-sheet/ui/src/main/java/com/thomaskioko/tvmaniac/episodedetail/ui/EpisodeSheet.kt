@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate_episode
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -80,6 +81,7 @@ private fun EpisodeSheetActions(
     onAction: (EpisodeSheetAction) -> Unit,
 ) {
     val context = LocalContext.current
+    val performHaptic = rememberHapticFeedback()
 
     state.availableActions.forEachIndexed { index, action ->
         val isToggling = action.item == EpisodeSheetActionItem.TOGGLE_WATCHED && state.isTogglingWatched
@@ -90,6 +92,7 @@ private fun EpisodeSheetActions(
             enabled = !isToggling,
             showProgress = isToggling,
             onClick = {
+                if (action.item == EpisodeSheetActionItem.TOGGLE_WATCHED) performHaptic()
                 onAction(action.item.toAction())
             },
         )

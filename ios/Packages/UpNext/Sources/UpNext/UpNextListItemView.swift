@@ -5,6 +5,7 @@ import SwiftUI
 
 public struct UpNextListItemView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
 
     let episode: SwiftNextEpisode
     let onItemClicked: (Int64, Int64) -> Void
@@ -58,6 +59,7 @@ public struct UpNextListItemView: View {
             onItemClicked(episode.showId, episode.episodeId)
         }
         .onLongPressGesture {
+            Haptics.impact(isEnabled: hapticFeedbackEnabled)
             onLongPress()
         }
         .padding(.horizontal, theme.spacing.xSmall)
@@ -123,7 +125,10 @@ public struct UpNextListItemView: View {
     }
 
     private var watchedButton: some View {
-        Button(action: onMarkWatched) {
+        Button(action: {
+            Haptics.impact(isEnabled: hapticFeedbackEnabled)
+            onMarkWatched()
+        }) {
             ZStack {
                 Circle()
                     .fill(.appGrey)

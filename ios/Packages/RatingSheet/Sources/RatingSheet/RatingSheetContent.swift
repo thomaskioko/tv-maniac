@@ -4,6 +4,7 @@ import SwiftUI
 
 public struct RatingSheetContent: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
 
     private let title: String
     private let removeLabel: String
@@ -66,7 +67,10 @@ public struct RatingSheetContent: View {
     }
 
     private func starButton(value: Int) -> some View {
-        Button(action: { onRatingSelected(value) }, label: {
+        Button(action: {
+            Haptics.impact(isEnabled: hapticFeedbackEnabled)
+            onRatingSelected(value)
+        }, label: {
             Image(systemName: symbol(for: value))
                 .textStyle(theme.typography.displaySmall)
                 .foregroundStyle(.appAccent)

@@ -34,6 +34,7 @@ public struct SettingsView: View {
             rootSections: rootSections,
             themeItem: themeItem,
             imageQualityItem: imageQualityItem,
+            layoutToggles: layoutToggles,
             behaviorToggles: behaviorToggles,
             notificationToggles: notificationToggles,
             privacyToggles: privacyToggles,
@@ -87,6 +88,10 @@ public struct SettingsView: View {
         }
         .onAppear {
             store.imageQuality = uiState.imageQuality.toSwift()
+            store.hapticFeedbackEnabled = uiState.hapticFeedbackEnabled
+        }
+        .onChange(of: uiState.hapticFeedbackEnabled) { _, newValue in
+            store.hapticFeedbackEnabled = newValue
         }
     }
 
@@ -156,6 +161,21 @@ public struct SettingsView: View {
             },
             selectedOptionId: currentQuality.rawValue
         )
+    }
+
+    // MARK: - Layout Toggles
+
+    private var layoutToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "haptic",
+                icon: "iphone.radiowaves.left.and.right",
+                title: uiState.labels.hapticFeedbackTitle,
+                subtitle: uiState.labels.hapticFeedbackDescription,
+                isOn: uiState.hapticFeedbackEnabled,
+                onToggle: { presenter.dispatch(action: HapticFeedbackToggled(enabled: $0)) }
+            ),
+        ]
     }
 
     // MARK: - Behavior Toggles

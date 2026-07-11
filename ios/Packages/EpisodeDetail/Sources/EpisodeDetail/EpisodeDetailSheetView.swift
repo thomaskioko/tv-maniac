@@ -6,6 +6,7 @@ import TvManiacKit
 public struct EpisodeDetailSheetView: View {
     private let presenter: EpisodeSheetPresenter
     @StateValue private var state: EpisodeDetailSheetState
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
     @State private var selectedDetent: PresentationDetent = .large
     @State private var toast: Toast?
 
@@ -35,12 +36,16 @@ public struct EpisodeDetailSheetView: View {
                         voteCount: state.voteCount as? Int64
                     )
                 ) {
+                    let actions = Array(state.availableActions)
+                    if let markWatchedAction = actions.first {
+                        actionView(for: markWatchedAction)
+                    }
                     SheetActionItem(
                         icon: (state.userRating as? Int) != nil ? "star.fill" : "star",
                         label: rateActionLabel,
                         action: { presenter.dispatch(action: EpisodeSheetActionRatingClicked()) }
                     )
-                    ForEach(Array(state.availableActions), id: \.self) { action in
+                    ForEach(Array(actions.dropFirst()), id: \.self) { action in
                         actionView(for: action)
                     }
                 }
@@ -72,7 +77,10 @@ public struct EpisodeDetailSheetView: View {
                 label: action.label,
                 isEnabled: !state.isTogglingWatched,
                 showProgress: state.isTogglingWatched,
-                action: { presenter.dispatch(action: EpisodeSheetActionToggleWatched()) }
+                action: {
+                    Haptics.impact(isEnabled: hapticFeedbackEnabled)
+                    presenter.dispatch(action: EpisodeSheetActionToggleWatched())
+                }
             )
         case .openShow:
             SheetActionItem(

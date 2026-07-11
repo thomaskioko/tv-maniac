@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.ratingsheet.presenter.RatingSheetAction
 import com.thomaskioko.tvmaniac.ratingsheet.presenter.RatingSheetPresenter
@@ -135,11 +136,15 @@ private fun RatingStar(
 ) {
     val filled = userRating != null && userRating >= value
     val half = userRating != null && userRating == value - 1
+    val performHaptic = rememberHapticFeedback()
     Box(
         modifier = modifier
             .size(40.dp)
             .testTag(RatingSheetTestTags.starRating(value))
-            .clickable(onClick = onClick),
+            .clickable {
+                performHaptic()
+                onClick()
+            },
         contentAlignment = Alignment.Center,
     ) {
         Icon(
