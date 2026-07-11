@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.combine
 public data class LayoutPreferences(
     val hapticFeedbackEnabled: Boolean,
     val seasonSortOrder: SeasonSortOrder,
-    val blurUnwatchedEpisodeImages: Boolean,
+    val blurImage: Boolean,
 )
 
 internal fun DatastoreRepository.observeLayoutPreferences(): Flow<LayoutPreferences> =
@@ -16,10 +16,10 @@ internal fun DatastoreRepository.observeLayoutPreferences(): Flow<LayoutPreferen
         observeHapticFeedbackEnabled(),
         observeSeasonSortOrder(),
         observeBlurUnwatchedEpisodeImages(),
-    ) { hapticFeedbackEnabled, seasonSortOrder, blurUnwatchedEpisodeImages ->
+    ) { hapticFeedbackEnabled, seasonSortOrder, blurImage ->
         LayoutPreferences(
             hapticFeedbackEnabled = hapticFeedbackEnabled,
             seasonSortOrder = seasonSortOrder,
-            blurUnwatchedEpisodeImages = blurUnwatchedEpisodeImages,
+            blurImage = blurImage,
         )
     }

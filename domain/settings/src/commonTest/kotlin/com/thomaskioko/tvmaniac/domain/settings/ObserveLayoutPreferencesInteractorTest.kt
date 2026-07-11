@@ -40,7 +40,7 @@ internal class ObserveLayoutPreferencesInteractorTest {
         interactor(Unit)
 
         interactor.flow.test {
-            awaitItem().blurUnwatchedEpisodeImages shouldBe false
+            awaitItem().blurImage shouldBe false
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -50,11 +50,11 @@ internal class ObserveLayoutPreferencesInteractorTest {
         interactor(Unit)
 
         interactor.flow.test {
-            awaitItem().blurUnwatchedEpisodeImages shouldBe false
+            awaitItem().blurImage shouldBe false
 
             datastoreRepository.saveBlurUnwatchedEpisodeImages(true)
 
-            awaitItem().blurUnwatchedEpisodeImages shouldBe true
+            awaitItem().blurImage shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
