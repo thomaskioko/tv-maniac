@@ -334,6 +334,17 @@ public class DefaultDatastoreRepository(
             }
         }
 
+    override suspend fun saveBlurUnwatchedEpisodeImages(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_BLUR_UNWATCHED_EPISODE_IMAGES] = enabled
+        }
+    }
+
+    override fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_BLUR_UNWATCHED_EPISODE_IMAGES] ?: false
+        }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -359,5 +370,7 @@ public class DefaultDatastoreRepository(
         public val KEY_ACCOUNT_TYPE: Preferences.Key<String> = stringPreferencesKey("account_type")
         public val KEY_HAPTIC_FEEDBACK_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("haptic_feedback_enabled")
         public val KEY_SEASON_SORT_ORDER: Preferences.Key<String> = stringPreferencesKey("season_sort_order")
+        public val KEY_BLUR_UNWATCHED_EPISODE_IMAGES: Preferences.Key<Boolean> =
+            booleanPreferencesKey("blur_unwatched_episode_images")
     }
 }
