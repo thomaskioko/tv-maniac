@@ -58,6 +58,7 @@ public struct RootNavigationView: View {
         ) {
             if let child = episodeSheetSlot.child?.instance {
                 registry.sheet(for: child)
+                    .blurImage(appUiState.blurImage)
             }
         }
         .onChange(of: appUiState.appTheme) { _, newTheme in

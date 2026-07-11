@@ -188,7 +188,7 @@ public struct SettingsView: View {
                 icon: "eye.slash",
                 title: uiState.labels.blurUnwatchedTitle,
                 subtitle: uiState.labels.blurUnwatchedDescription,
-                isOn: uiState.blurUnwatchedEpisodeImages,
+                isOn: uiState.blurImage,
                 onToggle: { presenter.dispatch(action: BlurUnwatchedToggled(enabled: $0)) }
             ),
         ]
