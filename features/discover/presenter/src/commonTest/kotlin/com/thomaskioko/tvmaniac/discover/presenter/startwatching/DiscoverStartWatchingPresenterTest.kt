@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.domain.startwatching.ObserveStartWatchingInteractor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
@@ -33,6 +35,7 @@ class DiscoverStartWatchingPresenterTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val startWatchingRepository = FakeStartWatchingRepository()
+    private val datastoreRepository = FakeDatastoreRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val observeStartWatchingInteractor = ObserveStartWatchingInteractor(startWatchingRepository)
 
@@ -59,6 +62,24 @@ class DiscoverStartWatchingPresenterTest {
             }
             state.startWatchingShows shouldBe expectedShows()
             state.startWatchingTitle shouldBe fakeLocalizer.getString(StringResourceKey.LabelStartWatching)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should report start watching not visible given it is hidden while keeping its data`() = runTest {
+        datastoreRepository.saveHiddenDiscoverSections(setOf(DiscoverSection.START_WATCHING))
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            startWatchingRepository.setStartWatchingShows(startWatchingShows())
+
+            var state = awaitItem()
+            while (state.startWatchingShows.isEmpty()) {
+                state = awaitItem()
+            }
+            state.startWatchingShows shouldBe expectedShows()
+            state.startWatchingVisible shouldBe false
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -94,6 +115,7 @@ class DiscoverStartWatchingPresenterTest {
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         navigator = navigator,
         observeStartWatchingInteractor = observeStartWatchingInteractor,
+        datastoreRepository = datastoreRepository,
         localizer = fakeLocalizer,
     ).also { lifecycle.resume() }
 

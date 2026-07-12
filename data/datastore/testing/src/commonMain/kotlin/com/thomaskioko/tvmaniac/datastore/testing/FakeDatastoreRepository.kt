@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.datastore.testing
 
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
@@ -149,6 +150,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val hapticFeedbackEnabledFlow = MutableStateFlow(true)
     private val seasonSortOrderFlow = MutableStateFlow(SeasonSortOrder.OLDEST_FIRST)
     private val blurUnwatchedEpisodeImagesFlow = MutableStateFlow(false)
+    private val hiddenDiscoverSectionsFlow = MutableStateFlow<Set<DiscoverSection>>(emptySet())
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -217,4 +219,15 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean> = blurUnwatchedEpisodeImagesFlow.asStateFlow()
+
+    override suspend fun saveHiddenDiscoverSections(sections: Set<DiscoverSection>) {
+        hiddenDiscoverSectionsFlow.value = sections
+    }
+
+    override fun observeHiddenDiscoverSections(): Flow<Set<DiscoverSection>> = hiddenDiscoverSectionsFlow.asStateFlow()
+
+    override suspend fun updateDiscoverSectionVisibility(section: DiscoverSection, visible: Boolean) {
+        val current = hiddenDiscoverSectionsFlow.value
+        hiddenDiscoverSectionsFlow.value = if (visible) current - section else current + section
+    }
 }

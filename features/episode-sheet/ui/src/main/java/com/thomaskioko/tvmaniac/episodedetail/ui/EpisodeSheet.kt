@@ -118,6 +118,7 @@ internal fun EpisodeDetailSheetState.toEpisodeDetailInfo() = EpisodeDetailInfo(
     overview = overview,
     rating = rating,
     voteCount = voteCount,
+    isWatched = isWatched,
 )
 
 private val EpisodeSheetActionItem.icon: ImageVector

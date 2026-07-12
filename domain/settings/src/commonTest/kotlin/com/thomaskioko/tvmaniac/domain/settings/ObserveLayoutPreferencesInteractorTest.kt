@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.settings
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -55,6 +56,32 @@ internal class ObserveLayoutPreferencesInteractorTest {
             datastoreRepository.saveBlurUnwatchedEpisodeImages(true)
 
             awaitItem().blurImage shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit an empty hidden discover sections set by default`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            awaitItem().hiddenDiscoverSections shouldBe emptySet()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit saved hidden discover sections given the preference changes`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            awaitItem().hiddenDiscoverSections shouldBe emptySet()
+
+            datastoreRepository.saveHiddenDiscoverSections(
+                setOf(DiscoverSection.UPCOMING, DiscoverSection.POPULAR),
+            )
+
+            awaitItem().hiddenDiscoverSections shouldBe setOf(DiscoverSection.UPCOMING, DiscoverSection.POPULAR)
             cancelAndIgnoreRemainingEvents()
         }
     }

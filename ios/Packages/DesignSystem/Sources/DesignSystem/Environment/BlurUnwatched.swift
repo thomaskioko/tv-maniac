@@ -9,17 +9,19 @@ public extension View {
         environment(\.blurImage, enabled)
     }
 
-    func blurEffect() -> some View {
-        modifier(BlurEffectModifier())
+    func blurEffect(isWatched: Bool = false) -> some View {
+        modifier(BlurEffectModifier(isWatched: isWatched))
     }
 }
 
 private struct BlurEffectModifier: ViewModifier {
     @Environment(\.blurImage) private var blurEnabled
 
+    let isWatched: Bool
+
     private static let blurRadius: CGFloat = 16
 
     func body(content: Content) -> some View {
-        content.blur(radius: blurEnabled ? Self.blurRadius : 0)
+        content.blur(radius: blurEnabled && !isWatched ? Self.blurRadius : 0)
     }
 }

@@ -1221,6 +1221,7 @@ graph TB
   :features:discover:presenter --> :core:logger:api
   :features:discover:presenter --> :core:view
   :features:discover:presenter --> :data:account-manager:api
+  :features:discover:presenter -.-> :data:datastore:api
   :features:discover:presenter -.-> :data:start-watching:api
   :features:discover:presenter --> :domain:continue-watching
   :features:discover:presenter --> :domain:discover
@@ -1524,6 +1525,7 @@ graph TB
   :features:settings:ui -.-> :core:test-tags
   :features:settings:ui -.-> :core:view
   :features:settings:ui -.-> :data:account-manager:api
+  :features:settings:ui -.-> :data:datastore:api
   :features:settings:ui -.-> :domain:theme
   :features:settings:ui --> :features:settings:presenter
   :features:settings:ui -.-> :i18n:generator

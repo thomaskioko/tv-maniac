@@ -6,10 +6,12 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
@@ -345,6 +347,28 @@ public class DefaultDatastoreRepository(
             preferences[KEY_BLUR_UNWATCHED_EPISODE_IMAGES] ?: false
         }
 
+    override suspend fun saveHiddenDiscoverSections(sections: Set<DiscoverSection>) {
+        dataStore.edit { preferences ->
+            preferences[KEY_HIDDEN_DISCOVER_SECTIONS] = sections.map { it.name }.toSet()
+        }
+    }
+
+    override fun observeHiddenDiscoverSections(): Flow<Set<DiscoverSection>> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_HIDDEN_DISCOVER_SECTIONS]
+                ?.mapNotNull { name -> DiscoverSection.entries.firstOrNull { it.name == name } }
+                ?.toSet()
+                ?: emptySet()
+        }
+
+    override suspend fun updateDiscoverSectionVisibility(section: DiscoverSection, visible: Boolean) {
+        dataStore.edit { preferences ->
+            val current = preferences[KEY_HIDDEN_DISCOVER_SECTIONS].orEmpty()
+            preferences[KEY_HIDDEN_DISCOVER_SECTIONS] =
+                if (visible) current - section.name else current + section.name
+        }
+    }
+
     public companion object {
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
@@ -372,5 +396,7 @@ public class DefaultDatastoreRepository(
         public val KEY_SEASON_SORT_ORDER: Preferences.Key<String> = stringPreferencesKey("season_sort_order")
         public val KEY_BLUR_UNWATCHED_EPISODE_IMAGES: Preferences.Key<Boolean> =
             booleanPreferencesKey("blur_unwatched_episode_images")
+        public val KEY_HIDDEN_DISCOVER_SECTIONS: Preferences.Key<Set<String>> =
+            stringSetPreferencesKey("hidden_discover_sections")
     }
 }

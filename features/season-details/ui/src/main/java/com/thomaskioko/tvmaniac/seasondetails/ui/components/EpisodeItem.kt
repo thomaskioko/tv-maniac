@@ -56,7 +56,7 @@ internal fun EpisodeItem(
         ) {
             PosterCard(
                 imageUrl = imageUrl,
-                blurContent = LocalBlurUnwatchedEnabled.current,
+                blurContent = LocalBlurUnwatchedEnabled.current && !isWatched,
                 modifier = Modifier
                     .width(100.dp)
                     .aspectRatio(0.8f),

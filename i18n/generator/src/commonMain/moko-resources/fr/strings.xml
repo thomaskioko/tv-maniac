@@ -75,6 +75,8 @@
     <string name="settings_season_order_description">Afficher la dernière saison en premier</string>
     <string name="settings_blur_unwatched_title">Masquer les spoilers</string>
     <string name="settings_blur_unwatched_description">Masquer les spoilers des épisodes non vus</string>
+    <string name="settings_discover_sections_title">Sections Découvrir</string>
+    <string name="settings_discover_sections_description">Choisissez les sections affichées dans l'onglet Découvrir</string>
     <string name="label_settings_trakt_authentication">Connectez et synchronisez votre contenu</string>
     <string name="label_settings_connect_title">Connexion</string>
     <string name="label_settings_account_sync_description">Enregistrez votre progression, découvrez de nouveaux titres et synchronisez votre contenu sur tous vos appareils.</string>

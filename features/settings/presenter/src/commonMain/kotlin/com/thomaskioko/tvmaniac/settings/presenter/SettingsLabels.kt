@@ -31,6 +31,8 @@ public data class SettingsLabels(
     val seasonOrderDescription: String = "",
     val blurUnwatchedTitle: String = "",
     val blurUnwatchedDescription: String = "",
+    val discoverSectionsTitle: String = "",
+    val discoverSectionsDescription: String = "",
     val privacyPolicy: String = "",
     val appName: String = "",
     val version: String = "",

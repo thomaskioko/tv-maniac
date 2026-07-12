@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
@@ -33,6 +34,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
+import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggled
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
@@ -198,6 +200,26 @@ class SettingsPresenterTest {
 
             awaitItem().blurImage shouldBe true
             datastoreRepository.observeBlurUnwatchedEpisodeImages().first() shouldBe true
+        }
+    }
+
+    @Test
+    fun `should persist and hide discover section given the toggle is flipped`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.discoverSectionToggles.isEmpty()) {
+                state = awaitItem()
+            }
+            state.discoverSectionToggles.single { it.section == DiscoverSection.POPULAR }.visible shouldBe true
+
+            presenter.dispatch(DiscoverSectionToggled(DiscoverSection.POPULAR, visible = false))
+
+            var updated = awaitItem()
+            while (updated.discoverSectionToggles.single { it.section == DiscoverSection.POPULAR }.visible) {
+                updated = awaitItem()
+            }
+            datastoreRepository.observeHiddenDiscoverSections().first() shouldBe setOf(DiscoverSection.POPULAR)
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

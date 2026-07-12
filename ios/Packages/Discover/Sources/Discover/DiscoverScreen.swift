@@ -203,11 +203,19 @@ public struct DiscoverScreen: View {
 private struct DiscoverSectionsContent: View {
     @Environment(\.appTheme) private var appTheme
     let presenter: DiscoverShowsPresenter
+    @StateValue private var startWatchingState: DiscoverStartWatchingState
+
+    init(presenter: DiscoverShowsPresenter) {
+        self.presenter = presenter
+        _startWatchingState = .init(presenter.startWatchingPresenter.stateValue)
+    }
 
     var body: some View {
         VStack {
             DiscoverUpNextSection(presenter: presenter.upNextPresenter)
-            DiscoverStartWatchingSection(presenter: presenter.startWatchingPresenter)
+            if startWatchingState.startWatchingVisible {
+                DiscoverStartWatchingSection(presenter: presenter.startWatchingPresenter)
+            }
             DiscoverCatalogSection(presenter: presenter.catalogPresenter)
         }
         .padding(.top, appTheme.spacing.medium)

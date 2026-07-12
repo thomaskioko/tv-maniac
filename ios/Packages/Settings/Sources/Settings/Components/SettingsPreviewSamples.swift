@@ -110,6 +110,61 @@
             ]
         }
 
+        static var discoverSectionsNavItem: SettingsNavigationItem {
+            SettingsNavigationItem(
+                id: SettingsPageRoute.discoverSections.rawValue,
+                icon: SettingsPageRoute.discoverSections.iconName,
+                title: "Discover Sections",
+                subtitle: "Choose which sections appear on the Discover tab",
+                onTap: {}
+            )
+        }
+
+        static var discoverSectionToggles: [SettingsToggleItem] {
+            [
+                SettingsToggleItem(
+                    id: "START_WATCHING",
+                    icon: "play.circle",
+                    title: "Start Watching",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "TRENDING_TODAY",
+                    icon: "flame",
+                    title: "Trending Today",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "UPCOMING",
+                    icon: "calendar",
+                    title: "Upcoming",
+                    subtitle: "",
+                    isOn: false,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "POPULAR",
+                    icon: "star",
+                    title: "Popular",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "TOP_RATED",
+                    icon: "trophy",
+                    title: "Top Rated",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+            ]
+        }
+
         static var behaviorToggles: [SettingsToggleItem] {
             [
                 SettingsToggleItem(

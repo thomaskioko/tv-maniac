@@ -52,7 +52,7 @@ internal fun ContinueTrackingCard(
             PosterCard(
                 imageUrl = episode.imageUrl,
                 imageWidth = 100.dp,
-                blurContent = LocalBlurUnwatchedEnabled.current,
+                blurContent = LocalBlurUnwatchedEnabled.current && !episode.isWatched,
             )
 
             Column(
