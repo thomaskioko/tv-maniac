@@ -36,6 +36,7 @@ public data class SettingsLabels(
     val fontSizeTitle: String = "",
     val fontSizeDescription: String = "",
     val fontSizePreview: String = "",
+    val fontSizeReset: String = "",
     val privacyPolicy: String = "",
     val appName: String = "",
     val version: String = "",

@@ -601,6 +601,7 @@ public class SettingsPresenter(
         fontSizeTitle = localizer.getString(StringResourceKey.SettingsFontSizeTitle),
         fontSizeDescription = localizer.getString(StringResourceKey.SettingsFontSizeDescription),
         fontSizePreview = localizer.getString(StringResourceKey.SettingsFontSizePreview),
+        fontSizeReset = localizer.getString(StringResourceKey.SettingsFontSizeReset),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),
