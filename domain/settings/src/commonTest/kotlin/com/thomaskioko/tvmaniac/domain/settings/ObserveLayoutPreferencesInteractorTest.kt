@@ -113,14 +113,14 @@ internal class ObserveLayoutPreferencesInteractorTest {
     }
 
     @Test
-    fun `should emit standard poster widths and rounded corners by default`() = runTest {
+    fun `should emit standard poster widths and sharp corners by default`() = runTest {
         interactor(Unit)
 
         interactor.flow.test {
             val preferences = awaitItem()
-            preferences.rowPosterWidth shouldBe PosterWidth.STANDARD
-            preferences.gridPosterWidth shouldBe PosterWidth.STANDARD
-            preferences.posterCornerStyle shouldBe PosterCornerStyle.ROUNDED
+            preferences.posterWidth shouldBe PosterWidth.STANDARD
+            preferences.landscapeWidth shouldBe PosterWidth.STANDARD
+            preferences.posterCornerStyle shouldBe PosterCornerStyle.SHARP
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -132,14 +132,14 @@ internal class ObserveLayoutPreferencesInteractorTest {
         interactor.flow.test {
             awaitItem()
 
-            datastoreRepository.saveRowPosterWidth(PosterWidth.LARGE)
-            awaitItem().rowPosterWidth shouldBe PosterWidth.LARGE
+            datastoreRepository.savePosterWidth(PosterWidth.LARGE)
+            awaitItem().posterWidth shouldBe PosterWidth.LARGE
 
-            datastoreRepository.saveGridPosterWidth(PosterWidth.COMPACT)
-            awaitItem().gridPosterWidth shouldBe PosterWidth.COMPACT
+            datastoreRepository.saveLandscapeWidth(PosterWidth.COMPACT)
+            awaitItem().landscapeWidth shouldBe PosterWidth.COMPACT
 
-            datastoreRepository.savePosterCornerStyle(PosterCornerStyle.SHARP)
-            awaitItem().posterCornerStyle shouldBe PosterCornerStyle.SHARP
+            datastoreRepository.savePosterCornerStyle(PosterCornerStyle.PILL)
+            awaitItem().posterCornerStyle shouldBe PosterCornerStyle.PILL
             cancelAndIgnoreRemainingEvents()
         }
     }

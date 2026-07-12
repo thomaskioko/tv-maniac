@@ -383,26 +383,26 @@ public class DefaultDatastoreRepository(
             (preferences[KEY_FONT_SIZE_PERCENT] ?: FONT_SIZE_DEFAULT).coerceIn(FONT_SIZE_MIN, FONT_SIZE_MAX)
         }
 
-    override suspend fun saveRowPosterWidth(width: PosterWidth) {
+    override suspend fun savePosterWidth(width: PosterWidth) {
         dataStore.edit { preferences ->
-            preferences[KEY_ROW_POSTER_WIDTH] = width.name
+            preferences[KEY_POSTER_WIDTH] = width.name
         }
     }
 
-    override fun observeRowPosterWidth(): Flow<PosterWidth> =
+    override fun observePosterWidth(): Flow<PosterWidth> =
         dataStore.data.map { preferences ->
-            preferences[KEY_ROW_POSTER_WIDTH].toPosterWidth()
+            preferences[KEY_POSTER_WIDTH].toPosterWidth()
         }
 
-    override suspend fun saveGridPosterWidth(width: PosterWidth) {
+    override suspend fun saveLandscapeWidth(width: PosterWidth) {
         dataStore.edit { preferences ->
-            preferences[KEY_GRID_POSTER_WIDTH] = width.name
+            preferences[KEY_LANDSCAPE_WIDTH] = width.name
         }
     }
 
-    override fun observeGridPosterWidth(): Flow<PosterWidth> =
+    override fun observeLandscapeWidth(): Flow<PosterWidth> =
         dataStore.data.map { preferences ->
-            preferences[KEY_GRID_POSTER_WIDTH].toPosterWidth()
+            preferences[KEY_LANDSCAPE_WIDTH].toPosterWidth()
         }
 
     override suspend fun savePosterCornerStyle(style: PosterCornerStyle) {
@@ -414,10 +414,10 @@ public class DefaultDatastoreRepository(
     override fun observePosterCornerStyle(): Flow<PosterCornerStyle> =
         dataStore.data.map { preferences ->
             when (preferences[KEY_POSTER_CORNER_STYLE]) {
-                PosterCornerStyle.SHARP.name -> PosterCornerStyle.SHARP
                 PosterCornerStyle.CLASSIC.name -> PosterCornerStyle.CLASSIC
+                PosterCornerStyle.ROUNDED.name -> PosterCornerStyle.ROUNDED
                 PosterCornerStyle.PILL.name -> PosterCornerStyle.PILL
-                else -> PosterCornerStyle.ROUNDED
+                else -> PosterCornerStyle.SHARP
             }
         }
 
@@ -463,8 +463,8 @@ public class DefaultDatastoreRepository(
         public val KEY_HIDDEN_DISCOVER_SECTIONS: Preferences.Key<Set<String>> =
             stringSetPreferencesKey("hidden_discover_sections")
         public val KEY_FONT_SIZE_PERCENT: Preferences.Key<Int> = intPreferencesKey("font_size_percent")
-        public val KEY_ROW_POSTER_WIDTH: Preferences.Key<String> = stringPreferencesKey("row_poster_width")
-        public val KEY_GRID_POSTER_WIDTH: Preferences.Key<String> = stringPreferencesKey("grid_poster_width")
+        public val KEY_POSTER_WIDTH: Preferences.Key<String> = stringPreferencesKey("poster_width")
+        public val KEY_LANDSCAPE_WIDTH: Preferences.Key<String> = stringPreferencesKey("landscape_width")
         public val KEY_POSTER_CORNER_STYLE: Preferences.Key<String> = stringPreferencesKey("poster_corner_style")
     }
 }

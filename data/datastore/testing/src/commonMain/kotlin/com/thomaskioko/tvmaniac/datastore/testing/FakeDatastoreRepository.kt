@@ -154,9 +154,9 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val blurUnwatchedEpisodeImagesFlow = MutableStateFlow(false)
     private val hiddenDiscoverSectionsFlow = MutableStateFlow<Set<DiscoverSection>>(emptySet())
     private val fontSizePercentFlow = MutableStateFlow(100)
-    private val rowPosterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
-    private val gridPosterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
-    private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.ROUNDED)
+    private val posterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
+    private val landscapeWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
+    private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.SHARP)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -243,17 +243,17 @@ public class FakeDatastoreRepository : DatastoreRepository {
 
     override fun observeFontSizePercent(): Flow<Int> = fontSizePercentFlow.asStateFlow()
 
-    override suspend fun saveRowPosterWidth(width: PosterWidth) {
-        rowPosterWidthFlow.value = width
+    override suspend fun savePosterWidth(width: PosterWidth) {
+        posterWidthFlow.value = width
     }
 
-    override fun observeRowPosterWidth(): Flow<PosterWidth> = rowPosterWidthFlow.asStateFlow()
+    override fun observePosterWidth(): Flow<PosterWidth> = posterWidthFlow.asStateFlow()
 
-    override suspend fun saveGridPosterWidth(width: PosterWidth) {
-        gridPosterWidthFlow.value = width
+    override suspend fun saveLandscapeWidth(width: PosterWidth) {
+        landscapeWidthFlow.value = width
     }
 
-    override fun observeGridPosterWidth(): Flow<PosterWidth> = gridPosterWidthFlow.asStateFlow()
+    override fun observeLandscapeWidth(): Flow<PosterWidth> = landscapeWidthFlow.asStateFlow()
 
     override suspend fun savePosterCornerStyle(style: PosterCornerStyle) {
         posterCornerStyleFlow.value = style

@@ -14,8 +14,8 @@ public data class LayoutPreferences(
     val blurImage: Boolean,
     val hiddenDiscoverSections: Set<DiscoverSection>,
     val fontSizePercent: Int,
-    val rowPosterWidth: PosterWidth,
-    val gridPosterWidth: PosterWidth,
+    val posterWidth: PosterWidth,
+    val landscapeWidth: PosterWidth,
     val posterCornerStyle: PosterCornerStyle,
 )
 
@@ -26,18 +26,18 @@ internal fun DatastoreRepository.observeLayoutPreferences(): Flow<LayoutPreferen
         observeBlurUnwatchedEpisodeImages(),
         observeHiddenDiscoverSections(),
         observeFontSizePercent(),
-        observeRowPosterWidth(),
-        observeGridPosterWidth(),
+        observePosterWidth(),
+        observeLandscapeWidth(),
         observePosterCornerStyle(),
-    ) { hapticFeedbackEnabled, seasonSortOrder, blurImage, hiddenDiscoverSections, fontSizePercent, rowPosterWidth, gridPosterWidth, posterCornerStyle ->
+    ) { hapticFeedbackEnabled, seasonSortOrder, blurImage, hiddenDiscoverSections, fontSizePercent, posterWidth, landscapeWidth, posterCornerStyle ->
         LayoutPreferences(
             hapticFeedbackEnabled = hapticFeedbackEnabled,
             seasonSortOrder = seasonSortOrder,
             blurImage = blurImage,
             hiddenDiscoverSections = hiddenDiscoverSections,
             fontSizePercent = fontSizePercent,
-            rowPosterWidth = rowPosterWidth,
-            gridPosterWidth = gridPosterWidth,
+            posterWidth = posterWidth,
+            landscapeWidth = landscapeWidth,
             posterCornerStyle = posterCornerStyle,
         )
     }
