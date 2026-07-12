@@ -115,7 +115,7 @@
                 id: SettingsPageRoute.discoverSections.rawValue,
                 icon: SettingsPageRoute.discoverSections.iconName,
                 title: "Discover Sections",
-                subtitle: "Choose which sections appear on Discover",
+                subtitle: "Choose which sections appear on the Discover tab",
                 onTap: {}
             )
         }
