@@ -388,4 +388,46 @@ public interface DatastoreRepository {
      * @return A Flow of the scale percentage, defaulting to 100 and clamped into 85 to 130.
      */
     public fun observeFontSizePercent(): Flow<Int>
+
+    /**
+     * Saves the poster width used by horizontal carousel rows.
+     *
+     * @param width Poster width preset for carousel rows.
+     */
+    public suspend fun saveRowPosterWidth(width: PosterWidth)
+
+    /**
+     * Observes the poster width used by horizontal carousel rows.
+     *
+     * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
+     */
+    public fun observeRowPosterWidth(): Flow<PosterWidth>
+
+    /**
+     * Saves the poster width used by grids.
+     *
+     * @param width Poster width preset for grids.
+     */
+    public suspend fun saveGridPosterWidth(width: PosterWidth)
+
+    /**
+     * Observes the poster width used by grids.
+     *
+     * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
+     */
+    public fun observeGridPosterWidth(): Flow<PosterWidth>
+
+    /**
+     * Saves the corner style applied to every poster.
+     *
+     * @param style Corner style preset.
+     */
+    public suspend fun savePosterCornerStyle(style: PosterCornerStyle)
+
+    /**
+     * Observes the corner style applied to every poster.
+     *
+     * @return A Flow of [PosterCornerStyle]. Defaults to [PosterCornerStyle.ROUNDED]; unknown stored names fall back to the default.
+     */
+    public fun observePosterCornerStyle(): Flow<PosterCornerStyle>
 }

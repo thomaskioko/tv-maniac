@@ -14,6 +14,8 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
@@ -39,9 +41,12 @@ import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.FontSizeChanged
+import com.thomaskioko.tvmaniac.settings.presenter.GridPosterWidthSelected
 import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
+import com.thomaskioko.tvmaniac.settings.presenter.PosterCornerStyleSelected
+import com.thomaskioko.tvmaniac.settings.presenter.RowPosterWidthSelected
 import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
@@ -234,6 +239,44 @@ class SettingsPresenterTest {
             awaitItem().fontSizePercent shouldBe 120
             datastoreRepository.observeFontSizePercent().first() shouldBe 120
         }
+    }
+
+    @Test
+    fun `should persist and reflect poster style selections while unlocked`() = runTest {
+        presenter.state.test {
+            val initial = awaitItem()
+            initial.rowPosterWidth shouldBe PosterWidth.STANDARD
+            initial.gridPosterWidth shouldBe PosterWidth.STANDARD
+            initial.posterCornerStyle shouldBe PosterCornerStyle.ROUNDED
+
+            presenter.dispatch(RowPosterWidthSelected(PosterWidth.LARGE))
+            awaitItem().rowPosterWidth shouldBe PosterWidth.LARGE
+
+            presenter.dispatch(GridPosterWidthSelected(PosterWidth.COMPACT))
+            awaitItem().gridPosterWidth shouldBe PosterWidth.COMPACT
+
+            presenter.dispatch(PosterCornerStyleSelected(PosterCornerStyle.SHARP))
+            awaitItem().posterCornerStyle shouldBe PosterCornerStyle.SHARP
+
+            datastoreRepository.observeRowPosterWidth().first() shouldBe PosterWidth.LARGE
+            datastoreRepository.observeGridPosterWidth().first() shouldBe PosterWidth.COMPACT
+            datastoreRepository.observePosterCornerStyle().first() shouldBe PosterCornerStyle.SHARP
+        }
+    }
+
+    @Test
+    fun `should ignore poster style selections while locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.CustomThemes, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(RowPosterWidthSelected(PosterWidth.LARGE))
+        presenter.dispatch(GridPosterWidthSelected(PosterWidth.COMPACT))
+        presenter.dispatch(PosterCornerStyleSelected(PosterCornerStyle.SHARP))
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.observeRowPosterWidth().first() shouldBe PosterWidth.STANDARD
+        datastoreRepository.observeGridPosterWidth().first() shouldBe PosterWidth.STANDARD
+        datastoreRepository.observePosterCornerStyle().first() shouldBe PosterCornerStyle.ROUNDED
     }
 
     @Test
@@ -625,6 +668,7 @@ class SettingsPresenterTest {
             testScheduler.advanceUntilIdle()
             val locks = expectMostRecentItem().locks
             locks.customThemesLocked shouldBe false
+            locks.posterStyleLocked shouldBe false
             locks.episodeNotificationsLocked shouldBe false
         }
     }
@@ -638,6 +682,7 @@ class SettingsPresenterTest {
             testScheduler.advanceUntilIdle()
             val locks = expectMostRecentItem().locks
             locks.customThemesLocked shouldBe true
+            locks.posterStyleLocked shouldBe true
             locks.episodeNotificationsLocked shouldBe true
             locks.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
             locks.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)

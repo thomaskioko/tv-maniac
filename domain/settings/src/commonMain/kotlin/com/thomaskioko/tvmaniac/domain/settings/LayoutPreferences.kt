@@ -1,10 +1,12 @@
 package com.thomaskioko.tvmaniac.domain.settings
 
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 
 public data class LayoutPreferences(
     val hapticFeedbackEnabled: Boolean,
@@ -12,6 +14,9 @@ public data class LayoutPreferences(
     val blurImage: Boolean,
     val hiddenDiscoverSections: Set<DiscoverSection>,
     val fontSizePercent: Int,
+    val rowPosterWidth: PosterWidth,
+    val gridPosterWidth: PosterWidth,
+    val posterCornerStyle: PosterCornerStyle,
 )
 
 internal fun DatastoreRepository.observeLayoutPreferences(): Flow<LayoutPreferences> =
@@ -21,12 +26,18 @@ internal fun DatastoreRepository.observeLayoutPreferences(): Flow<LayoutPreferen
         observeBlurUnwatchedEpisodeImages(),
         observeHiddenDiscoverSections(),
         observeFontSizePercent(),
-    ) { hapticFeedbackEnabled, seasonSortOrder, blurImage, hiddenDiscoverSections, fontSizePercent ->
+        observeRowPosterWidth(),
+        observeGridPosterWidth(),
+        observePosterCornerStyle(),
+    ) { hapticFeedbackEnabled, seasonSortOrder, blurImage, hiddenDiscoverSections, fontSizePercent, rowPosterWidth, gridPosterWidth, posterCornerStyle ->
         LayoutPreferences(
             hapticFeedbackEnabled = hapticFeedbackEnabled,
             seasonSortOrder = seasonSortOrder,
             blurImage = blurImage,
             hiddenDiscoverSections = hiddenDiscoverSections,
             fontSizePercent = fontSizePercent,
+            rowPosterWidth = rowPosterWidth,
+            gridPosterWidth = gridPosterWidth,
+            posterCornerStyle = posterCornerStyle,
         )
     }

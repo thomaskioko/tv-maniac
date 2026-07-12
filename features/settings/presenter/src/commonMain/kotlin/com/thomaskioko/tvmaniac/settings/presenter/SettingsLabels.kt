@@ -37,6 +37,7 @@ public data class SettingsLabels(
     val fontSizeDescription: String = "",
     val fontSizePreview: String = "",
     val fontSizeReset: String = "",
+    val posterStyle: PosterStyleLabels = PosterStyleLabels(),
     val privacyPolicy: String = "",
     val appName: String = "",
     val version: String = "",
@@ -61,4 +62,20 @@ public data class SettingsLabels(
     val switchConfirm: String = "",
     val switchCancel: String = "",
     val switching: String = "",
+)
+
+public data class PosterStyleLabels(
+    val title: String = "",
+    val description: String = "",
+    val rowWidthLabel: String = "",
+    val gridWidthLabel: String = "",
+    val cornerLabel: String = "",
+    val widthCompact: String = "",
+    val widthStandard: String = "",
+    val widthComfortable: String = "",
+    val widthLarge: String = "",
+    val cornerSharp: String = "",
+    val cornerClassic: String = "",
+    val cornerRounded: String = "",
+    val cornerPill: String = "",
 )

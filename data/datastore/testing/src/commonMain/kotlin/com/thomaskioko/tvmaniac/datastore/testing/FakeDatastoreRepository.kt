@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -152,6 +154,9 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val blurUnwatchedEpisodeImagesFlow = MutableStateFlow(false)
     private val hiddenDiscoverSectionsFlow = MutableStateFlow<Set<DiscoverSection>>(emptySet())
     private val fontSizePercentFlow = MutableStateFlow(100)
+    private val rowPosterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
+    private val gridPosterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
+    private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.ROUNDED)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -237,4 +242,22 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeFontSizePercent(): Flow<Int> = fontSizePercentFlow.asStateFlow()
+
+    override suspend fun saveRowPosterWidth(width: PosterWidth) {
+        rowPosterWidthFlow.value = width
+    }
+
+    override fun observeRowPosterWidth(): Flow<PosterWidth> = rowPosterWidthFlow.asStateFlow()
+
+    override suspend fun saveGridPosterWidth(width: PosterWidth) {
+        gridPosterWidthFlow.value = width
+    }
+
+    override fun observeGridPosterWidth(): Flow<PosterWidth> = gridPosterWidthFlow.asStateFlow()
+
+    override suspend fun savePosterCornerStyle(style: PosterCornerStyle) {
+        posterCornerStyleFlow.value = style
+    }
+
+    override fun observePosterCornerStyle(): Flow<PosterCornerStyle> = posterCornerStyleFlow.asStateFlow()
 }

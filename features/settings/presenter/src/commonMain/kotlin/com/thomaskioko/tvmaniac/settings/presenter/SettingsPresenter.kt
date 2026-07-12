@@ -102,6 +102,7 @@ public class SettingsPresenter(
     ) { customThemesAccess, episodeNotificationsAccess ->
         SettingsLocks(
             customThemesLocked = !customThemesAccess,
+            posterStyleLocked = !customThemesAccess,
             episodeNotificationsLocked = !episodeNotificationsAccess,
             badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
             themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
@@ -157,6 +158,9 @@ public class SettingsPresenter(
             blurImage = preferences.layout.blurImage,
             discoverSectionToggles = buildDiscoverSectionToggles(preferences.layout.hiddenDiscoverSections),
             fontSizePercent = preferences.layout.fontSizePercent,
+            rowPosterWidth = preferences.layout.rowPosterWidth,
+            gridPosterWidth = preferences.layout.gridPosterWidth,
+            posterCornerStyle = preferences.layout.posterCornerStyle,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
@@ -290,6 +294,27 @@ public class SettingsPresenter(
                 }
             }
 
+            is RowPosterWidthSelected -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.saveRowPosterWidth(action.width)
+                }
+            }
+
+            is GridPosterWidthSelected -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.saveGridPosterWidth(action.width)
+                }
+            }
+
+            is PosterCornerStyleSelected -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.savePosterCornerStyle(action.style)
+                }
+            }
+
             is SettingsMessageShown -> {
                 coroutineScope.launch {
                     uiMessageManager.clearMessage(action.id)
@@ -318,7 +343,9 @@ public class SettingsPresenter(
         SettingsPage.LAYOUT,
         -> SettingsPage.ROOT
 
-        SettingsPage.DISCOVER_SECTIONS -> SettingsPage.LAYOUT
+        SettingsPage.DISCOVER_SECTIONS,
+        SettingsPage.POSTER_STYLE,
+        -> SettingsPage.LAYOUT
     }
 
     private fun toggleLogoutConfirmation() {
@@ -448,6 +475,7 @@ public class SettingsPresenter(
             SettingsPage.ACCOUNT -> StringResourceKey.SettingsTitleAccount
             SettingsPage.LAYOUT -> StringResourceKey.SettingsLayoutTitle
             SettingsPage.DISCOVER_SECTIONS -> StringResourceKey.SettingsDiscoverSectionsTitle
+            SettingsPage.POSTER_STYLE -> StringResourceKey.SettingsPosterStyleTitle
         },
     )
 
@@ -602,6 +630,21 @@ public class SettingsPresenter(
         fontSizeDescription = localizer.getString(StringResourceKey.SettingsFontSizeDescription),
         fontSizePreview = localizer.getString(StringResourceKey.SettingsFontSizePreview),
         fontSizeReset = localizer.getString(StringResourceKey.SettingsFontSizeReset),
+        posterStyle = PosterStyleLabels(
+            title = localizer.getString(StringResourceKey.SettingsPosterStyleTitle),
+            description = localizer.getString(StringResourceKey.SettingsPosterStyleDescription),
+            rowWidthLabel = localizer.getString(StringResourceKey.SettingsPosterRowWidthLabel),
+            gridWidthLabel = localizer.getString(StringResourceKey.SettingsPosterGridWidthLabel),
+            cornerLabel = localizer.getString(StringResourceKey.SettingsPosterCornerLabel),
+            widthCompact = localizer.getString(StringResourceKey.SettingsPosterWidthCompact),
+            widthStandard = localizer.getString(StringResourceKey.SettingsPosterWidthStandard),
+            widthComfortable = localizer.getString(StringResourceKey.SettingsPosterWidthComfortable),
+            widthLarge = localizer.getString(StringResourceKey.SettingsPosterWidthLarge),
+            cornerSharp = localizer.getString(StringResourceKey.SettingsPosterCornerSharp),
+            cornerClassic = localizer.getString(StringResourceKey.SettingsPosterCornerClassic),
+            cornerRounded = localizer.getString(StringResourceKey.SettingsPosterCornerRounded),
+            cornerPill = localizer.getString(StringResourceKey.SettingsPosterCornerPill),
+        ),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),
