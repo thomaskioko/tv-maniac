@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.PhotoSizeSelectLarge
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -96,6 +97,16 @@ internal fun LayoutPage(
                     title = state.labels.discoverSectionsTitle,
                     description = state.labels.discoverSectionsDescription,
                     onClick = { onAction(OpenSettingsPage(SettingsPage.DISCOVER_SECTIONS)) },
+                )
+
+                SettingsGroupDivider()
+
+                SettingsNavigationRow(
+                    modifier = Modifier.testTag(SettingsTestTags.POSTER_STYLE_ROW_TEST_TAG),
+                    icon = Icons.Filled.PhotoSizeSelectLarge,
+                    title = state.labels.posterStyle.title,
+                    description = state.labels.posterStyle.description,
+                    onClick = { onAction(OpenSettingsPage(SettingsPage.POSTER_STYLE)) },
                 )
             }
         }

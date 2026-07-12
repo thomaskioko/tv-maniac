@@ -7,6 +7,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 
 /**
  * Current window width size class, provided once at the root from `calculateWindowSizeClass`.
@@ -14,6 +15,28 @@ import androidx.compose.ui.unit.dp
  */
 public val LocalWindowWidthSizeClass: ProvidableCompositionLocal<WindowWidthSizeClass> =
     staticCompositionLocalOf { WindowWidthSizeClass.Compact }
+
+/**
+ * Size multiplier for portrait poster cards, provided from the user's poster style preference.
+ * Scales [Layout.posterWidth] and derives [Layout.posterColumns]. Defaults to 1.0 (Standard),
+ * which reproduces the responsive base sizes exactly.
+ */
+public val LocalPosterWidthScale: ProvidableCompositionLocal<Float> =
+    staticCompositionLocalOf { 1f }
+
+/**
+ * Size multiplier for landscape (16:9 backdrop) cards, provided from the user's poster style
+ * preference. Scales [Layout.backdropCardWidth]. Defaults to 1.0 (Standard).
+ */
+public val LocalLandscapeWidthScale: ProvidableCompositionLocal<Float> =
+    staticCompositionLocalOf { 1f }
+
+/**
+ * Corner radius applied to every poster, provided from the user's poster style preference.
+ * Defaults to 0.dp (Sharp), reproducing the current square-cornered posters.
+ */
+public val LocalPosterCornerRadius: ProvidableCompositionLocal<Dp> =
+    staticCompositionLocalOf { 0.dp }
 
 /**
  * Responsive layout tokens keyed on the window width size class. Single source of truth for page
@@ -39,13 +62,20 @@ public object Layout {
 
     public val posterColumns: Int
         @Composable @ReadOnlyComposable
-        get() = when (LocalWindowWidthSizeClass.current) {
-            WindowWidthSizeClass.Medium -> 5
-            WindowWidthSizeClass.Expanded -> 7
-            else -> 3
+        get() {
+            val base = when (LocalWindowWidthSizeClass.current) {
+                WindowWidthSizeClass.Medium -> 5
+                WindowWidthSizeClass.Expanded -> 7
+                else -> 3
+            }
+            return (base / LocalPosterWidthScale.current).roundToInt().coerceAtLeast(1)
         }
 
-    public val posterWidth: Dp
+    /**
+     * Responsive poster width that ignores the user's poster size preference. Used by list-row
+     * thumbnails and other fixed-layout surfaces that should not resize with the preference.
+     */
+    public val posterWidthFixed: Dp
         @Composable @ReadOnlyComposable
         get() = when (LocalWindowWidthSizeClass.current) {
             WindowWidthSizeClass.Medium -> 140.dp
@@ -53,12 +83,19 @@ public object Layout {
             else -> 112.dp
         }
 
+    public val posterWidth: Dp
+        @Composable @ReadOnlyComposable
+        get() = posterWidthFixed * LocalPosterWidthScale.current
+
     public val backdropCardWidth: Dp
         @Composable @ReadOnlyComposable
-        get() = when (LocalWindowWidthSizeClass.current) {
-            WindowWidthSizeClass.Medium -> 300.dp
-            WindowWidthSizeClass.Expanded -> 360.dp
-            else -> 240.dp
+        get() {
+            val base = when (LocalWindowWidthSizeClass.current) {
+                WindowWidthSizeClass.Medium -> 300.dp
+                WindowWidthSizeClass.Expanded -> 360.dp
+                else -> 240.dp
+            }
+            return base * LocalLandscapeWidthScale.current
         }
 
     public val castCardWidth: Dp

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material3.Card
@@ -26,6 +27,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
+import com.thomaskioko.tvmaniac.compose.theme.LocalPosterCornerRadius
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
@@ -37,7 +39,7 @@ public fun PosterCard(
     imageWidth: Dp = ImageType.Poster.width,
     aspectRatio: Float = ImageType.Poster.aspect,
     contentScale: ContentScale = ContentScale.Crop,
-    shape: Shape = RectangleShape,
+    shape: Shape = RoundedCornerShape(LocalPosterCornerRadius.current),
     isInLibrary: Boolean = false,
     libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
     blurContent: Boolean = false,

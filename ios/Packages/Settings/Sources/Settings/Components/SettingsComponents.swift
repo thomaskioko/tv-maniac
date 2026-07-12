@@ -268,7 +268,7 @@ private struct SteppedSlider: View {
                     Circle()
                         .fill(stop <= value ? appTheme.colors.onSecondary : appTheme.colors.onSurfaceVariant)
                         .frame(width: tickSize, height: tickSize)
-                        .offset(x: width * tickFraction - tickSize / 2)
+                        .offset(x: (width - tickSize) * tickFraction)
                 }
 
                 Capsule()

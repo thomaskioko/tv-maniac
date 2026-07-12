@@ -10,6 +10,15 @@ public enum ImageDimens {
 
     public static let gridItemSpacing: CGFloat = 4
 
+    public private(set) static var posterWidthScale: CGFloat = 1
+    public private(set) static var landscapeWidthScale: CGFloat = 1
+    public private(set) static var posterCornerRadius: CGFloat = 0
+    public static func updatePosterStyle(posterScale: CGFloat, landscapeScale: CGFloat, cornerRadius: CGFloat) {
+        posterWidthScale = posterScale
+        landscapeWidthScale = landscapeScale
+        posterCornerRadius = cornerRadius
+    }
+
     public static func bodyMargin(_ sizeClass: WidthSizeClass) -> CGFloat {
         switch sizeClass {
         case .compact: 16
@@ -27,11 +36,12 @@ public enum ImageDimens {
     }
 
     public static func posterColumns(_ sizeClass: WidthSizeClass) -> Int {
-        switch sizeClass {
+        let base: CGFloat = switch sizeClass {
         case .compact: 3
         case .medium: 5
         case .expanded: 7
         }
+        return max(1, Int((base / posterWidthScale).rounded()))
     }
 
     /// Flexible `LazyVGrid` columns for a poster grid, count derived from the width size class so the
@@ -40,7 +50,9 @@ public enum ImageDimens {
         Array(repeating: GridItem(.flexible(), spacing: spacing), count: posterColumns(sizeClass))
     }
 
-    public static func posterWidth(_ sizeClass: WidthSizeClass) -> CGFloat {
+    /// Responsive poster width that ignores the user's poster size preference. Used by list-row
+    /// thumbnails and other fixed-layout surfaces that should not resize with the preference.
+    public static func posterWidthFixed(_ sizeClass: WidthSizeClass) -> CGFloat {
         switch sizeClass {
         case .compact: 112
         case .medium: 140
@@ -48,12 +60,17 @@ public enum ImageDimens {
         }
     }
 
+    public static func posterWidth(_ sizeClass: WidthSizeClass) -> CGFloat {
+        posterWidthFixed(sizeClass) * posterWidthScale
+    }
+
     public static func backdropCardWidth(_ sizeClass: WidthSizeClass) -> CGFloat {
-        switch sizeClass {
+        let base: CGFloat = switch sizeClass {
         case .compact: 240
         case .medium: 300
         case .expanded: 360
         }
+        return base * landscapeWidthScale
     }
 
     public static func castCardWidth(_ sizeClass: WidthSizeClass) -> CGFloat {

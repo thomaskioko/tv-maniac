@@ -32,4 +32,13 @@ public object SettingsTestTags {
     public fun discoverSectionToggleTag(section: String): String = "settings_discover_section_toggle_${section.lowercase()}"
     public const val THEMES_LOCKED: String = "settings_themes_locked"
     public fun themeSwatch(name: String): String = "settings_theme_swatch_${name.lowercase()}"
+    public const val POSTER_STYLE_ROW_TEST_TAG: String = "settings_poster_style_row"
+    public const val POSTER_STYLE_PREVIEW_TEST_TAG: String = "settings_poster_style_preview"
+    public const val POSTER_STYLE_PREVIEW_ROW_TEST_TAG: String = "settings_poster_style_preview_row"
+    public const val POSTER_STYLE_PREVIEW_GRID_TEST_TAG: String = "settings_poster_style_preview_grid"
+    public const val POSTER_STYLE_LOCKED_TEST_TAG: String = "settings_poster_style_locked"
+    public const val POSTER_STYLE_RESET_BUTTON_TEST_TAG: String = "settings_poster_style_reset_button"
+    public fun posterWidthChip(name: String): String = "settings_poster_width_chip_${name.lowercase()}"
+    public fun landscapeWidthChip(name: String): String = "settings_landscape_width_chip_${name.lowercase()}"
+    public fun posterCornerStyleChip(name: String): String = "settings_poster_corner_style_chip_${name.lowercase()}"
 }

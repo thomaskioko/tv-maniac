@@ -17,6 +17,11 @@ struct AppThemeModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         TvManiacTypographyScheme.updateFontScale(percent: store.fontSizePercent)
+        ImageDimens.updatePosterStyle(
+            posterScale: CGFloat(store.posterWidthScale),
+            landscapeScale: CGFloat(store.landscapeWidthScale),
+            cornerRadius: CGFloat(store.posterCornerRadius)
+        )
         return content
             .environment(\.colorScheme, appTheme.overrideTheme ?? colorScheme)
             .appTheme(resolvedTheme)

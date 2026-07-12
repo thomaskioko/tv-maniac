@@ -76,7 +76,7 @@ private fun rootRowTestTag(page: SettingsPage): String = when (page) {
     SettingsPage.INFO -> SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG
     SettingsPage.LICENSES -> SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG
     SettingsPage.ACCOUNT -> SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG
-    SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS -> ""
+    SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS, SettingsPage.POSTER_STYLE -> ""
 }
 
 private fun rootRowIcon(page: SettingsPage): ImageVector = when (page) {
@@ -88,7 +88,7 @@ private fun rootRowIcon(page: SettingsPage): ImageVector = when (page) {
     SettingsPage.INFO -> Icons.Filled.Info
     SettingsPage.LICENSES -> Icons.Filled.Description
     SettingsPage.ACCOUNT -> Icons.Filled.Person
-    SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS -> Icons.Filled.Info
+    SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS, SettingsPage.POSTER_STYLE -> Icons.Filled.Info
 }
 
 @ThemePreviews
