@@ -95,14 +95,20 @@ struct PosterStylePageView: View {
     private func previewCard(label: String, baseWidth: CGFloat, scale: CGFloat, aspectRatio: CGFloat) -> some View {
         let width = baseWidth * scale
         return VStack(alignment: .center, spacing: appTheme.spacing.xSmall) {
-            PosterItemView(
-                title: nil,
-                posterUrl: nil,
-                posterWidth: width,
-                aspectRatio: aspectRatio,
-                posterRadius: item.cornerRadius
-            )
-            .frame(width: width, height: width / aspectRatio)
+            RoundedRectangle(cornerRadius: item.cornerRadius)
+                .fill(appTheme.colors.surfaceVariant)
+                .frame(width: width, height: width / aspectRatio)
+                .overlay(
+                    Image(systemName: "movieclapper")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 28, height: 28)
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: item.cornerRadius)
+                        .stroke(appTheme.colors.outline.opacity(0.3), lineWidth: 1)
+                )
 
             Text(label)
                 .textStyle(appTheme.typography.labelMedium)
