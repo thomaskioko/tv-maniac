@@ -153,6 +153,7 @@ public struct SeasonDetailsScreen: View {
                 ProgressView(value: state.watchProgress, total: 1)
                     .progressViewStyle(RoundedRectProgressViewStyle())
                     .offset(y: progressViewOffset)
+                    .opacity(showGlass)
             },
             alignment: .top
         )
@@ -192,20 +193,22 @@ public struct SeasonDetailsScreen: View {
                         .padding()
                 }
 
-                EpisodeListView(
-                    title: state.episodesTitle,
-                    episodeCount: state.episodeCount,
-                    watchProgress: state.watchProgress,
-                    expandEpisodeItems: state.expandEpisodeItems,
-                    isSeasonWatched: state.isSeasonWatched,
-                    items: state.episodes,
-                    dayLabelFormat: dayLabelFormat,
-                    tbdLabel: state.tbdLabel,
-                    onEpisodeHeaderClicked: onEpisodeHeaderClicked,
-                    onWatchedStateClicked: onWatchedStateClicked,
-                    onEpisodeWatchToggle: onEpisodeWatchToggle,
-                    onEpisodeTapped: onEpisodeTapped
-                )
+                if !state.episodes.isEmpty {
+                    EpisodeListView(
+                        title: state.episodesTitle,
+                        episodeCount: state.episodeCount,
+                        watchProgress: state.watchProgress,
+                        expandEpisodeItems: state.expandEpisodeItems,
+                        isSeasonWatched: state.isSeasonWatched,
+                        items: state.episodes,
+                        dayLabelFormat: dayLabelFormat,
+                        tbdLabel: state.tbdLabel,
+                        onEpisodeHeaderClicked: onEpisodeHeaderClicked,
+                        onWatchedStateClicked: onWatchedStateClicked,
+                        onEpisodeWatchToggle: onEpisodeWatchToggle,
+                        onEpisodeTapped: onEpisodeTapped
+                    )
+                }
 
                 Spacer().frame(height: appTheme.spacing.large)
 
