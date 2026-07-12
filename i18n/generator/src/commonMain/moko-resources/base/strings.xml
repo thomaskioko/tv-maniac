@@ -84,6 +84,7 @@
     <string name="settings_font_size_title">Font size</string>
     <string name="settings_font_size_description">Scale text across the app</string>
     <string name="settings_font_size_preview">The quick brown fox jumps over the lazy dog</string>
+    <string name="settings_font_size_reset">Reset</string>
     <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
     <string name="label_settings_connect_title">Connect</string>
     <string name="label_settings_account_sync_description">Save your progress, discover new titles, and sync your content across all devices.</string>

@@ -80,6 +80,7 @@
     <string name="settings_font_size_title">Taille de police</string>
     <string name="settings_font_size_description">Ajuster la taille du texte dans toute l'application</string>
     <string name="settings_font_size_preview">Le vif renard brun saute par-dessus le chien paresseux</string>
+    <string name="settings_font_size_reset">Réinitialiser</string>
     <string name="label_settings_trakt_authentication">Connectez et synchronisez votre contenu</string>
     <string name="label_settings_connect_title">Connexion</string>
     <string name="label_settings_account_sync_description">Enregistrez votre progression, découvrez de nouveaux titres et synchronisez votre contenu sur tous vos appareils.</string>

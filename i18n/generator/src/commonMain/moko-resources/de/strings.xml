@@ -81,6 +81,7 @@
     <string name="settings_font_size_title">Schriftgröße</string>
     <string name="settings_font_size_description">Textgröße in der gesamten App anpassen</string>
     <string name="settings_font_size_preview">Der schnelle braune Fuchs springt über den faulen Hund</string>
+    <string name="settings_font_size_reset">Zurücksetzen</string>
     <string name="label_settings_trakt_authentication">Verbinden &amp; Inhalte synchronisieren</string>
     <string name="label_settings_connect_title">Verbinden</string>
     <string name="label_settings_account_sync_description">Speichere deinen Fortschritt, entdecke neue Titel und synchronisiere deine Inhalte auf allen Geräten.</string>
