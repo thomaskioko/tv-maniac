@@ -81,16 +81,18 @@ public data class FontSizeChanged(
     val percent: Int,
 ) : SettingsActions
 
-public data class RowPosterWidthSelected(
+public data class PosterWidthSelected(
     val width: PosterWidth,
 ) : SettingsActions
 
-public data class GridPosterWidthSelected(
+public data class LandscapeWidthSelected(
     val width: PosterWidth,
 ) : SettingsActions
 
 public data class PosterCornerStyleSelected(
     val style: PosterCornerStyle,
 ) : SettingsActions
+
+public data object PosterStyleReset : SettingsActions
 
 public data class SettingsMessageShown(val id: Long) : SettingsActions

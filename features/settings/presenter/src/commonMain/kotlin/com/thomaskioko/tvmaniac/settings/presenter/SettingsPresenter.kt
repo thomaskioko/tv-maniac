@@ -22,6 +22,8 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
@@ -158,8 +160,8 @@ public class SettingsPresenter(
             blurImage = preferences.layout.blurImage,
             discoverSectionToggles = buildDiscoverSectionToggles(preferences.layout.hiddenDiscoverSections),
             fontSizePercent = preferences.layout.fontSizePercent,
-            rowPosterWidth = preferences.layout.rowPosterWidth,
-            gridPosterWidth = preferences.layout.gridPosterWidth,
+            posterWidth = preferences.layout.posterWidth,
+            landscapeWidth = preferences.layout.landscapeWidth,
             posterCornerStyle = preferences.layout.posterCornerStyle,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
@@ -294,17 +296,17 @@ public class SettingsPresenter(
                 }
             }
 
-            is RowPosterWidthSelected -> {
+            is PosterWidthSelected -> {
                 if (state.value.locks.posterStyleLocked) return
                 coroutineScope.launch {
-                    datastoreRepository.saveRowPosterWidth(action.width)
+                    datastoreRepository.savePosterWidth(action.width)
                 }
             }
 
-            is GridPosterWidthSelected -> {
+            is LandscapeWidthSelected -> {
                 if (state.value.locks.posterStyleLocked) return
                 coroutineScope.launch {
-                    datastoreRepository.saveGridPosterWidth(action.width)
+                    datastoreRepository.saveLandscapeWidth(action.width)
                 }
             }
 
@@ -312,6 +314,15 @@ public class SettingsPresenter(
                 if (state.value.locks.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.savePosterCornerStyle(action.style)
+                }
+            }
+
+            is PosterStyleReset -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.savePosterWidth(PosterWidth.STANDARD)
+                    datastoreRepository.saveLandscapeWidth(PosterWidth.STANDARD)
+                    datastoreRepository.savePosterCornerStyle(PosterCornerStyle.SHARP)
                 }
             }
 
@@ -633,8 +644,10 @@ public class SettingsPresenter(
         posterStyle = PosterStyleLabels(
             title = localizer.getString(StringResourceKey.SettingsPosterStyleTitle),
             description = localizer.getString(StringResourceKey.SettingsPosterStyleDescription),
-            rowWidthLabel = localizer.getString(StringResourceKey.SettingsPosterRowWidthLabel),
-            gridWidthLabel = localizer.getString(StringResourceKey.SettingsPosterGridWidthLabel),
+            livePreview = localizer.getString(StringResourceKey.SettingsPosterLivePreview),
+            reset = localizer.getString(StringResourceKey.SettingsPosterReset),
+            postersLabel = localizer.getString(StringResourceKey.SettingsPosterPostersLabel),
+            landscapeLabel = localizer.getString(StringResourceKey.SettingsPosterLandscapeLabel),
             cornerLabel = localizer.getString(StringResourceKey.SettingsPosterCornerLabel),
             widthCompact = localizer.getString(StringResourceKey.SettingsPosterWidthCompact),
             widthStandard = localizer.getString(StringResourceKey.SettingsPosterWidthStandard),

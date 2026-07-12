@@ -67,8 +67,10 @@ public data class SettingsLabels(
 public data class PosterStyleLabels(
     val title: String = "",
     val description: String = "",
-    val rowWidthLabel: String = "",
-    val gridWidthLabel: String = "",
+    val livePreview: String = "",
+    val reset: String = "",
+    val postersLabel: String = "",
+    val landscapeLabel: String = "",
     val cornerLabel: String = "",
     val widthCompact: String = "",
     val widthStandard: String = "",
