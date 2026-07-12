@@ -16,7 +16,8 @@ struct AppThemeModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content
+        TvManiacTypographyScheme.updateFontScale(percent: store.fontSizePercent)
+        return content
             .environment(\.colorScheme, appTheme.overrideTheme ?? colorScheme)
             .appTheme(resolvedTheme)
             .overlay(

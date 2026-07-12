@@ -38,6 +38,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggled
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
+import com.thomaskioko.tvmaniac.settings.presenter.FontSizeChanged
 import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
@@ -220,6 +221,18 @@ class SettingsPresenterTest {
             }
             datastoreRepository.observeHiddenDiscoverSections().first() shouldBe setOf(DiscoverSection.POPULAR)
             cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should persist and reflect font size given the slider changes`() = runTest {
+        presenter.state.test {
+            awaitItem().fontSizePercent shouldBe 100
+
+            presenter.dispatch(FontSizeChanged(120))
+
+            awaitItem().fontSizePercent shouldBe 120
+            datastoreRepository.observeFontSizePercent().first() shouldBe 120
         }
     }
 

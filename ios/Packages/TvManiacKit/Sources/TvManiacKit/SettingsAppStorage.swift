@@ -12,4 +12,5 @@ public final class SettingsAppStorage: ObservableObject {
     @AppStorage("discover.carousel.index") public var savedIndex = 1
     @AppStorage("image.quality") public var imageQuality: SwiftImageQuality = .auto
     @AppStorage("haptic.feedback.enabled") public var hapticFeedbackEnabled = true
+    @AppStorage("font.size.percent") public var fontSizePercent = 100
 }

@@ -93,6 +93,7 @@ public class MainActivity : ComponentActivity() {
             TvManiacTheme(
                 appTheme = appTheme,
                 windowWidthSizeClass = windowSizeClass.widthSizeClass,
+                fontSizePercent = appUiState.fontSizePercent,
             ) {
                 CompositionLocalProvider(
                     LocalHapticFeedbackEnabled provides appUiState.hapticFeedbackEnabled,

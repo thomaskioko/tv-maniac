@@ -9,4 +9,5 @@ public data class AppUiState(
     val appTheme: Theme = Theme.SYSTEM_THEME,
     val hapticFeedbackEnabled: Boolean = true,
     val blurImage: Boolean = false,
+    val fontSizePercent: Int = 100,
 )

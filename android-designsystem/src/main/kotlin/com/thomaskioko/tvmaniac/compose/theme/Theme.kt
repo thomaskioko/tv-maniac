@@ -9,6 +9,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ScanlineOverlay
 import com.thomaskioko.tvmaniac.compose.components.toScanlineConfiguration
@@ -151,6 +153,7 @@ internal fun Theme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = wh
 public fun TvManiacTheme(
     appTheme: Theme = Theme.SYSTEM_THEME,
     windowWidthSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.Compact,
+    fontSizePercent: Int = 100,
     content: @Composable () -> Unit,
 ) {
     val isSystemDark = isSystemInDarkTheme()
@@ -160,10 +163,16 @@ public fun TvManiacTheme(
         tonalElevation = 2.dp,
     )
     val scanlineConfig = appTheme.toScanlineConfiguration()
+    val density = LocalDensity.current
+    val scaledDensity = Density(
+        density = density.density,
+        fontScale = density.fontScale * fontSizePercent / 100f,
+    )
 
     CompositionLocalProvider(
         LocalBackgroundTheme provides backgroundTheme,
         LocalWindowWidthSizeClass provides windowWidthSizeClass,
+        LocalDensity provides scaledDensity,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

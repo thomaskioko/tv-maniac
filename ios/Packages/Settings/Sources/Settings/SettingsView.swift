@@ -35,6 +35,7 @@ public struct SettingsView: View {
             themeItem: themeItem,
             imageQualityItem: imageQualityItem,
             layoutToggles: layoutToggles,
+            fontSizeItem: fontSizeItem,
             discoverSectionsNavItem: discoverSectionsNavItem,
             discoverSectionToggles: discoverSectionToggles,
             behaviorToggles: behaviorToggles,
@@ -48,10 +49,12 @@ public struct SettingsView: View {
     }
 
     public var body: some View {
-        SettingsScreen(
+        TvManiacTypographyScheme.updateFontScale(percent: store.fontSizePercent)
+        return SettingsScreen(
             state: screenState,
             onBack: { presenter.dispatch(action: BackClicked___()) }
         )
+        .id(store.fontSizePercent)
         .settingsObservers(
             uiState: uiState,
             store: store,
@@ -91,9 +94,13 @@ public struct SettingsView: View {
         .onAppear {
             store.imageQuality = uiState.imageQuality.toSwift()
             store.hapticFeedbackEnabled = uiState.hapticFeedbackEnabled
+            store.fontSizePercent = Int(uiState.fontSizePercent)
         }
         .onChange(of: uiState.hapticFeedbackEnabled) { _, newValue in
             store.hapticFeedbackEnabled = newValue
+        }
+        .onChange(of: uiState.fontSizePercent) { _, newValue in
+            store.fontSizePercent = Int(newValue)
         }
     }
 
@@ -194,6 +201,22 @@ public struct SettingsView: View {
                 onToggle: { presenter.dispatch(action: BlurUnwatchedToggled(enabled: $0)) }
             ),
         ]
+    }
+
+    // MARK: - Font Size
+
+    private var fontSizeItem: SettingsFontSizeItem {
+        SettingsFontSizeItem(
+            title: uiState.labels.fontSizeTitle,
+            description: uiState.labels.fontSizeDescription,
+            previewText: uiState.labels.fontSizePreview,
+            resetLabel: uiState.labels.fontSizeReset,
+            percent: store.fontSizePercent,
+            onPercentChange: { newPercent in
+                presenter.dispatch(action: FontSizeChanged(percent: Int32(newPercent)))
+                store.fontSizePercent = newPercent
+            }
+        )
     }
 
     // MARK: - Discover Sections

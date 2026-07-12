@@ -5,10 +5,16 @@ struct LayoutPageView: View {
     @Environment(\.appTheme) private var appTheme
     private let toggles: [SettingsToggleItem]
     private let discoverSectionsItem: SettingsNavigationItem
+    private let fontSizeItem: SettingsFontSizeItem
 
-    init(toggles: [SettingsToggleItem], discoverSectionsItem: SettingsNavigationItem) {
+    init(
+        toggles: [SettingsToggleItem],
+        discoverSectionsItem: SettingsNavigationItem,
+        fontSizeItem: SettingsFontSizeItem
+    ) {
         self.toggles = toggles
         self.discoverSectionsItem = discoverSectionsItem
+        self.fontSizeItem = fontSizeItem
     }
 
     var body: some View {
@@ -16,6 +22,9 @@ struct LayoutPageView: View {
             SettingsTogglesPageView(toggles: toggles)
             SettingsCard {
                 SettingsNavigationRow(discoverSectionsItem)
+            }
+            SettingsCard {
+                SettingsFontSizeRow(fontSizeItem)
             }
         }
     }
@@ -25,7 +34,8 @@ struct LayoutPageView: View {
     #Preview {
         LayoutPageView(
             toggles: SettingsPreviewSamples.layoutToggles,
-            discoverSectionsItem: SettingsPreviewSamples.discoverSectionsNavItem
+            discoverSectionsItem: SettingsPreviewSamples.discoverSectionsNavItem,
+            fontSizeItem: SettingsPreviewSamples.fontSizeItem
         )
         .padding()
         .appPreview()

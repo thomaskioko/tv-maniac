@@ -156,6 +156,7 @@ public class SettingsPresenter(
             newestSeasonFirst = preferences.layout.seasonSortOrder == SeasonSortOrder.NEWEST_FIRST,
             blurImage = preferences.layout.blurImage,
             discoverSectionToggles = buildDiscoverSectionToggles(preferences.layout.hiddenDiscoverSections),
+            fontSizePercent = preferences.layout.fontSizePercent,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
@@ -280,6 +281,12 @@ public class SettingsPresenter(
             is DiscoverSectionToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.updateDiscoverSectionVisibility(action.section, action.visible)
+                }
+            }
+
+            is FontSizeChanged -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveFontSizePercent(action.percent)
                 }
             }
 
@@ -591,6 +598,10 @@ public class SettingsPresenter(
         blurUnwatchedDescription = localizer.getString(StringResourceKey.SettingsBlurUnwatchedDescription),
         discoverSectionsTitle = localizer.getString(StringResourceKey.SettingsDiscoverSectionsTitle),
         discoverSectionsDescription = localizer.getString(StringResourceKey.SettingsDiscoverSectionsDescription),
+        fontSizeTitle = localizer.getString(StringResourceKey.SettingsFontSizeTitle),
+        fontSizeDescription = localizer.getString(StringResourceKey.SettingsFontSizeDescription),
+        fontSizePreview = localizer.getString(StringResourceKey.SettingsFontSizePreview),
+        fontSizeReset = localizer.getString(StringResourceKey.SettingsFontSizeReset),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),

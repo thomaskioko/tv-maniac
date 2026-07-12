@@ -154,12 +154,14 @@ public class DefaultRootPresenter(
             datastoreRepository.observeTheme(),
             datastoreRepository.observeHapticFeedbackEnabled(),
             datastoreRepository.observeBlurUnwatchedEpisodeImages(),
-        ) { theme, hapticFeedbackEnabled, blurImage ->
+            datastoreRepository.observeFontSizePercent(),
+        ) { theme, hapticFeedbackEnabled, blurImage, fontSizePercent ->
             AppUiState(
                 isFetching = false,
                 appTheme = theme.toTheme(),
                 hapticFeedbackEnabled = hapticFeedbackEnabled,
                 blurImage = blurImage,
+                fontSizePercent = fontSizePercent,
             )
         }
             .stateIn(
