@@ -390,32 +390,32 @@ public interface DatastoreRepository {
     public fun observeFontSizePercent(): Flow<Int>
 
     /**
-     * Saves the poster width used by horizontal carousel rows.
+     * Saves the size preset for portrait poster cards, applied to every poster across the app.
      *
-     * @param width Poster width preset for carousel rows.
+     * @param width Poster size preset.
      */
-    public suspend fun saveRowPosterWidth(width: PosterWidth)
+    public suspend fun savePosterWidth(width: PosterWidth)
 
     /**
-     * Observes the poster width used by horizontal carousel rows.
+     * Observes the size preset for portrait poster cards.
      *
      * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
      */
-    public fun observeRowPosterWidth(): Flow<PosterWidth>
+    public fun observePosterWidth(): Flow<PosterWidth>
 
     /**
-     * Saves the poster width used by grids.
+     * Saves the size preset for landscape (16:9 backdrop) cards.
      *
-     * @param width Poster width preset for grids.
+     * @param width Landscape card size preset.
      */
-    public suspend fun saveGridPosterWidth(width: PosterWidth)
+    public suspend fun saveLandscapeWidth(width: PosterWidth)
 
     /**
-     * Observes the poster width used by grids.
+     * Observes the size preset for landscape (16:9 backdrop) cards.
      *
      * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
      */
-    public fun observeGridPosterWidth(): Flow<PosterWidth>
+    public fun observeLandscapeWidth(): Flow<PosterWidth>
 
     /**
      * Saves the corner style applied to every poster.
@@ -427,7 +427,7 @@ public interface DatastoreRepository {
     /**
      * Observes the corner style applied to every poster.
      *
-     * @return A Flow of [PosterCornerStyle]. Defaults to [PosterCornerStyle.ROUNDED]; unknown stored names fall back to the default.
+     * @return A Flow of [PosterCornerStyle]. Defaults to [PosterCornerStyle.SHARP]; unknown stored names fall back to the default.
      */
     public fun observePosterCornerStyle(): Flow<PosterCornerStyle>
 }
