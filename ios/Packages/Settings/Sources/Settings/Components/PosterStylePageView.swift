@@ -11,29 +11,28 @@ struct PosterStylePageView: View {
     }
 
     var body: some View {
-        SettingsCard {
-            VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-                header
-                description
-                livePreview
-                selector(
-                    label: item.postersLabel,
-                    options: item.postersOptions,
-                    selectedId: item.selectedPostersId
-                )
-                selector(
-                    label: item.landscapeLabel,
-                    options: item.landscapeOptions,
-                    selectedId: item.selectedLandscapeId
-                )
-                selector(
-                    label: item.cornerLabel,
-                    options: item.cornerOptions,
-                    selectedId: item.selectedCornerId
-                )
-            }
-            .padding(appTheme.spacing.medium)
+        VStack(alignment: .leading, spacing: appTheme.spacing.large) {
+            header
+            description
+            livePreview
+            selector(
+                label: item.postersLabel,
+                options: item.postersOptions,
+                selectedId: item.selectedPostersId
+            )
+            selector(
+                label: item.landscapeLabel,
+                options: item.landscapeOptions,
+                selectedId: item.selectedLandscapeId
+            )
+            selector(
+                label: item.cornerLabel,
+                options: item.cornerOptions,
+                selectedId: item.selectedCornerId
+            )
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(appTheme.spacing.medium)
         .premiumOverlay(
             isLocked: item.isLocked,
             badgeText: item.lockedBadgeText,
@@ -41,6 +40,12 @@ struct PosterStylePageView: View {
             onActionClick: item.onUpgradeClick,
             accessibilityLabel: item.lockedAccessibilityLabel
         )
+    }
+
+    private func sectionTitle(_ text: String) -> some View {
+        Text(text)
+            .textStyle(appTheme.typography.titleSmall)
+            .foregroundColor(appTheme.colors.onSurface)
     }
 
     private var header: some View {
@@ -69,7 +74,7 @@ struct PosterStylePageView: View {
 
     private var livePreview: some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.small) {
-            SettingsSectionLabel(item.livePreviewLabel)
+            sectionTitle(item.livePreviewLabel)
 
             HStack(alignment: .bottom, spacing: appTheme.spacing.large) {
                 previewCard(
@@ -118,9 +123,9 @@ struct PosterStylePageView: View {
 
     private func selector(label: String, options: [SettingsPosterStyleOption], selectedId: String) -> some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
-            SettingsSectionLabel(label)
+            sectionTitle(label)
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: appTheme.spacing.small) {
+                HStack(spacing: appTheme.spacing.xSmall) {
                     ForEach(options) { option in
                         SelectionChip(
                             label: option.label,
