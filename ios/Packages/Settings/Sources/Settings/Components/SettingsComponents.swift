@@ -239,7 +239,7 @@ private struct SteppedSlider: View {
     let step: Double
     let onEditingChanged: (Bool) -> Void
 
-    private let trackHeight: CGFloat = 12
+    private let trackHeight: CGFloat = 16
     private let thumbWidth: CGFloat = 4
     private let thumbHeight: CGFloat = 28
     private let thumbGap: CGFloat = 6
