@@ -14,6 +14,8 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.domain.discover.ObservePopularShowsInteractor
 import com.thomaskioko.tvmaniac.domain.discover.ObserveTopRatedShowsInteractor
@@ -53,6 +55,7 @@ class DiscoverCatalogPresenterTest {
     private val topRatedShowsRepository = FakeTopRatedShowsRepository()
     private val genreRepository = FakeGenreRepository()
     private val accountManager = FakeAccountManager()
+    private val datastoreRepository = FakeDatastoreRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val dispatchers = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -96,6 +99,32 @@ class DiscoverCatalogPresenterTest {
             state.upcomingTitle shouldBe fakeLocalizer.getString(StringResourceKey.LabelDiscoverUpcoming)
             state.popularTitle shouldBe fakeLocalizer.getString(StringResourceKey.LabelDiscoverPopular)
             state.topRatedTitle shouldBe fakeLocalizer.getString(StringResourceKey.LabelDiscoverTopRated)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should report section not visible given it is hidden while keeping its data`() = runTest {
+        datastoreRepository.saveHiddenDiscoverSections(setOf(DiscoverSection.POPULAR))
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            genreRepository.setGenreResult(emptyList())
+            trendingShowsRepository.setTrendingShows(showList())
+            upcomingShowsRepository.setUpcomingShows(showList())
+            popularShowsRepository.setPopularShows(showList())
+            topRatedShowsRepository.setTopRatedShows(showList())
+
+            var state = awaitItem()
+            while (state.popularShows.isEmpty()) {
+                state = awaitItem()
+            }
+
+            state.popularShows shouldBe expectedShows()
+            state.popularVisible shouldBe false
+            state.trendingVisible shouldBe true
+            state.upcomingVisible shouldBe true
+            state.topRatedVisible shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -148,6 +177,7 @@ class DiscoverCatalogPresenterTest {
         topRatedShowsInteractor = TopRatedShowsInteractor(topRatedShowsRepository, dispatchers),
         genreShowsInteractor = GenreShowsInteractor(genreRepository, dispatchers),
         accountManager = accountManager,
+        datastoreRepository = datastoreRepository,
         localizer = fakeLocalizer,
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         logger = FakeLogger(),
