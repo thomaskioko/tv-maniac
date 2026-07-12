@@ -84,9 +84,11 @@
     <string name="settings_font_size_reset">Zurücksetzen</string>
     <string name="settings_poster_style_title">Poster-Stil</string>
     <string name="settings_poster_style_description">Postergröße und Eckenstil wählen</string>
-    <string name="settings_poster_row_width_label">Karussellgröße</string>
-    <string name="settings_poster_grid_width_label">Rastergröße</string>
+    <string name="settings_poster_posters_label">Poster</string>
+    <string name="settings_poster_landscape_label">Querformat</string>
     <string name="settings_poster_corner_label">Eckenstil</string>
+    <string name="settings_poster_reset">Zurücksetzen</string>
+    <string name="settings_poster_live_preview">Live-Vorschau</string>
     <string name="settings_poster_width_compact">Kompakt</string>
     <string name="settings_poster_width_standard">Standard</string>
     <string name="settings_poster_width_comfortable">Komfortabel</string>

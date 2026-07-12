@@ -83,9 +83,11 @@
     <string name="settings_font_size_reset">Réinitialiser</string>
     <string name="settings_poster_style_title">Style d'affiche</string>
     <string name="settings_poster_style_description">Choisir la taille et les coins des affiches</string>
-    <string name="settings_poster_row_width_label">Taille du carrousel</string>
-    <string name="settings_poster_grid_width_label">Taille de la grille</string>
+    <string name="settings_poster_posters_label">Affiches</string>
+    <string name="settings_poster_landscape_label">Paysage</string>
     <string name="settings_poster_corner_label">Style des coins</string>
+    <string name="settings_poster_reset">Réinitialiser</string>
+    <string name="settings_poster_live_preview">Aperçu en direct</string>
     <string name="settings_poster_width_compact">Compact</string>
     <string name="settings_poster_width_standard">Standard</string>
     <string name="settings_poster_width_comfortable">Confortable</string>
