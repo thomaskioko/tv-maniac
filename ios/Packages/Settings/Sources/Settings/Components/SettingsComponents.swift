@@ -210,9 +210,9 @@ struct SettingsFontSizeRow: View {
                 .background(appTheme.colors.background)
                 .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
 
-            Slider(
+            SteppedSlider(
                 value: $sliderPercent,
-                in: Self.range,
+                range: Self.range,
                 step: Self.step,
                 onEditingChanged: { isEditing in
                     guard !isEditing else { return }
@@ -220,9 +220,7 @@ struct SettingsFontSizeRow: View {
                     item.onPercentChange(Int(sliderPercent))
                 }
             )
-            .tint(appTheme.colors.secondary)
             .accessibilityLabel(item.title)
-            .accessibilityValue("\(Int(sliderPercent))%")
         }
         .padding(appTheme.spacing.medium)
     }
@@ -231,6 +229,83 @@ struct SettingsFontSizeRow: View {
         Haptics.impact(isEnabled: hapticFeedbackEnabled)
         sliderPercent = Double(Self.defaultPercent)
         item.onPercentChange(Self.defaultPercent)
+    }
+}
+
+private struct SteppedSlider: View {
+    @Environment(\.appTheme) private var appTheme
+    @Binding var value: Double
+    let range: ClosedRange<Double>
+    let step: Double
+    let onEditingChanged: (Bool) -> Void
+
+    private let trackHeight: CGFloat = 12
+    private let thumbWidth: CGFloat = 4
+    private let thumbHeight: CGFloat = 28
+    private let thumbGap: CGFloat = 6
+    private let tickSize: CGFloat = 4
+
+    private var stops: [Double] {
+        stride(from: range.lowerBound, through: range.upperBound, by: step).map { $0 }
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            let width = geo.size.width
+            let fraction = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(appTheme.colors.surfaceVariant)
+                    .frame(width: width, height: trackHeight)
+
+                Capsule()
+                    .fill(appTheme.colors.secondary)
+                    .frame(width: max(width * fraction - thumbGap, 0), height: trackHeight)
+
+                ForEach(Array(stops.enumerated()), id: \.offset) { _, stop in
+                    let tickFraction = CGFloat((stop - range.lowerBound) / (range.upperBound - range.lowerBound))
+                    Circle()
+                        .fill(stop <= value ? appTheme.colors.onSecondary : appTheme.colors.onSurfaceVariant)
+                        .frame(width: tickSize, height: tickSize)
+                        .offset(x: width * tickFraction - tickSize / 2)
+                }
+
+                Capsule()
+                    .fill(appTheme.colors.secondary)
+                    .frame(width: thumbWidth, height: thumbHeight)
+                    .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+                    .offset(x: width * fraction - thumbWidth / 2)
+            }
+            .frame(height: thumbHeight)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { gesture in
+                        onEditingChanged(true)
+                        updateValue(at: gesture.location.x, width: width)
+                    }
+                    .onEnded { _ in onEditingChanged(false) }
+            )
+        }
+        .frame(height: thumbHeight)
+        .accessibilityElement()
+        .accessibilityValue("\(Int(value))%")
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment: value = min(value + step, range.upperBound)
+            case .decrement: value = max(value - step, range.lowerBound)
+            default: break
+            }
+            onEditingChanged(false)
+        }
+    }
+
+    private func updateValue(at x: CGFloat, width: CGFloat) {
+        let clampedFraction = min(max(x / width, 0), 1)
+        let raw = range.lowerBound + Double(clampedFraction) * (range.upperBound - range.lowerBound)
+        let snapped = (raw / step).rounded() * step
+        value = min(max(snapped, range.lowerBound), range.upperBound)
     }
 }
 

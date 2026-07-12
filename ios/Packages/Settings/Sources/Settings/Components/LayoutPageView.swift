@@ -21,10 +21,10 @@ struct LayoutPageView: View {
         VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
             SettingsTogglesPageView(toggles: toggles)
             SettingsCard {
-                SettingsFontSizeRow(fontSizeItem)
+                SettingsNavigationRow(discoverSectionsItem)
             }
             SettingsCard {
-                SettingsNavigationRow(discoverSectionsItem)
+                SettingsFontSizeRow(fontSizeItem)
             }
         }
     }
