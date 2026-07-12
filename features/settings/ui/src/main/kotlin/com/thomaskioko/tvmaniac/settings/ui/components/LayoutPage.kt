@@ -105,7 +105,7 @@ internal fun LayoutPage(
                     modifier = Modifier.testTag(SettingsTestTags.POSTER_STYLE_ROW_TEST_TAG),
                     icon = Icons.Filled.PhotoSizeSelectLarge,
                     title = state.labels.posterStyle.title,
-                    description = state.labels.posterStyle.description,
+                    description = state.labels.posterStyle.subtitle,
                     onClick = { onAction(OpenSettingsPage(SettingsPage.POSTER_STYLE)) },
                 )
             }

@@ -66,7 +66,7 @@ public data class SettingsLabels(
 
 public data class PosterStyleLabels(
     val title: String = "",
-    val description: String = "",
+    val subtitle: String = "",
     val livePreview: String = "",
     val reset: String = "",
     val postersLabel: String = "",

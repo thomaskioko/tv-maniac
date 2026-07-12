@@ -268,7 +268,7 @@ public struct SettingsView: View {
             id: SettingsPageRoute.posterStyle.rawValue,
             icon: SettingsPageRoute.posterStyle.iconName,
             title: uiState.labels.posterStyle.title,
-            subtitle: uiState.labels.posterStyle.description,
+            subtitle: uiState.labels.posterStyle.subtitle,
             onTap: { presenter.dispatch(action: OpenSettingsPage(page: SettingsPage.posterStyle)) }
         )
     }
@@ -277,7 +277,7 @@ public struct SettingsView: View {
         let labels = uiState.labels.posterStyle
         return SettingsPosterStyleItem(
             title: labels.title,
-            description: labels.description,
+            description: labels.subtitle,
             livePreviewLabel: labels.livePreview,
             resetLabel: labels.reset,
             postersLabel: labels.postersLabel,

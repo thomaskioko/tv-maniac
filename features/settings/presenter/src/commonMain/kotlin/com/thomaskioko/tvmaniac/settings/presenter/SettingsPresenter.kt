@@ -643,7 +643,7 @@ public class SettingsPresenter(
         fontSizeReset = localizer.getString(StringResourceKey.SettingsFontSizeReset),
         posterStyle = PosterStyleLabels(
             title = localizer.getString(StringResourceKey.SettingsPosterStyleTitle),
-            description = localizer.getString(StringResourceKey.SettingsPosterStyleDescription),
+            subtitle = localizer.getString(StringResourceKey.SettingsPosterStyleDescription),
             livePreview = localizer.getString(StringResourceKey.SettingsPosterLivePreview),
             reset = localizer.getString(StringResourceKey.SettingsPosterReset),
             postersLabel = localizer.getString(StringResourceKey.SettingsPosterPostersLabel),

@@ -83,7 +83,7 @@ internal fun PosterStylePage(
                     )
 
                     Text(
-                        text = labels.description,
+                        text = labels.subtitle,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
