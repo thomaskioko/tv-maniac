@@ -113,13 +113,15 @@ struct PosterStylePageView: View {
     private func selector(label: String, options: [SettingsPosterStyleOption], selectedId: String) -> some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
             SettingsSectionLabel(label)
-            HStack(spacing: appTheme.spacing.small) {
-                ForEach(options) { option in
-                    SelectionChip(
-                        label: option.label,
-                        isSelected: option.id == selectedId,
-                        action: option.onSelect
-                    )
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: appTheme.spacing.small) {
+                    ForEach(options) { option in
+                        SelectionChip(
+                            label: option.label,
+                            isSelected: option.id == selectedId,
+                            action: option.onSelect
+                        )
+                    }
                 }
             }
         }
