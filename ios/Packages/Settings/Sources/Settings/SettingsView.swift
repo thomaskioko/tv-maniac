@@ -283,11 +283,12 @@ public struct SettingsView: View {
             postersLabel: labels.postersLabel,
             landscapeLabel: labels.landscapeLabel,
             cornerLabel: labels.cornerLabel,
-            postersOptions: posterWidthOptions { width in
+
+            postersOptions: posterWidthOptions(keyPrefix: "posters") { width in
                 presenter.dispatch(action: PosterWidthSelected(width: width))
                 store.posterWidthScale = Double(width.scale)
             },
-            landscapeOptions: posterWidthOptions { width in
+            landscapeOptions: posterWidthOptions(keyPrefix: "landscape") { width in
                 presenter.dispatch(action: LandscapeWidthSelected(width: width))
                 store.landscapeWidthScale = Double(width.scale)
             },
@@ -301,8 +302,8 @@ public struct SettingsView: View {
                     }
                 )
             },
-            selectedPostersId: uiState.posterWidth.name,
-            selectedLandscapeId: uiState.landscapeWidth.name,
+            selectedPostersId: "posters-\(uiState.posterWidth.name)",
+            selectedLandscapeId: "landscape-\(uiState.landscapeWidth.name)",
             selectedCornerId: uiState.posterCornerStyle.name,
             posterScale: CGFloat(uiState.posterWidth.scale),
             landscapeScale: CGFloat(uiState.landscapeWidth.scale),
@@ -321,10 +322,10 @@ public struct SettingsView: View {
         )
     }
 
-    private func posterWidthOptions(onSelect: @escaping (ApiPosterWidth) -> Void) -> [SettingsPosterStyleOption] {
+    private func posterWidthOptions(keyPrefix: String, onSelect: @escaping (ApiPosterWidth) -> Void) -> [SettingsPosterStyleOption] {
         ApiPosterWidth.entries.map { width in
             SettingsPosterStyleOption(
-                id: width.name,
+                id: "\(keyPrefix)-\(width.name)",
                 label: widthLabel(width),
                 onSelect: { onSelect(width) }
             )
