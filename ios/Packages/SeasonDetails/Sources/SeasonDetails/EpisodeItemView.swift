@@ -87,7 +87,7 @@ public struct EpisodeItemView: View {
             posterRadius: posterRadius
         )
         .frame(width: episodeWidth, height: episodeHeight)
-        .blurEffect()
+        .blurEffect(isWatched: isWatched)
         .clipped()
     }
 

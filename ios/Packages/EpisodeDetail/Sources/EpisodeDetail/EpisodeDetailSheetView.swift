@@ -33,7 +33,8 @@ public struct EpisodeDetailSheetView: View {
                         }(),
                         overview: state.overview,
                         rating: state.rating as? Double,
-                        voteCount: state.voteCount as? Int64
+                        voteCount: state.voteCount as? Int64,
+                        isWatched: state.isWatched
                     )
                 ) {
                     let actions = Array(state.availableActions)
