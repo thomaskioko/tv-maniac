@@ -75,4 +75,8 @@ public data class DiscoverSectionToggled(
     val visible: Boolean,
 ) : SettingsActions
 
+public data class FontSizeChanged(
+    val percent: Int,
+) : SettingsActions
+
 public data class SettingsMessageShown(val id: Long) : SettingsActions

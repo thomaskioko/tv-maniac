@@ -304,6 +304,23 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
+    fun `should carry font size percent in theme state when the preference changes`() = runTest(testDispatcher) {
+        presenter.appUiState.test {
+            awaitItem() shouldBe AppUiState()
+            awaitItem() shouldBe AppUiState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
+
+            datastoreRepository.saveFontSizePercent(120)
+
+            awaitItem() shouldBe
+                AppUiState(
+                    isFetching = false,
+                    appTheme = Theme.SYSTEM_THEME,
+                    fontSizePercent = 120,
+                )
+        }
+    }
+
+    @Test
     fun `should expose empty ToastState given idle observer`() = runTest(testDispatcher) {
         presenter.toastState.value shouldBe ToastState()
     }

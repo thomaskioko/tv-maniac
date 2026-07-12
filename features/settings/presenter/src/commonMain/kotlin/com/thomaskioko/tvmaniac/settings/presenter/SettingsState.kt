@@ -43,6 +43,7 @@ public data class SettingsState(
     val newestSeasonFirst: Boolean = false,
     val blurImage: Boolean = false,
     val discoverSectionToggles: ImmutableList<DiscoverSectionToggle> = persistentListOf(),
+    val fontSizePercent: Int = 100,
     val isLoading: Boolean = true,
     val isUpdating: Boolean = false,
     val isProcessingAuth: Boolean = false,

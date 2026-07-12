@@ -81,6 +81,9 @@
     <string name="settings_blur_unwatched_description">Hide spoilers for unwatched episodes</string>
     <string name="settings_discover_sections_title">Discover Sections</string>
     <string name="settings_discover_sections_description">Choose which sections appear on the Discover tab</string>
+    <string name="settings_font_size_title">Font size</string>
+    <string name="settings_font_size_description">Scale text across the app</string>
+    <string name="settings_font_size_preview">The quick brown fox jumps over the lazy dog</string>
     <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
     <string name="label_settings_connect_title">Connect</string>
     <string name="label_settings_account_sync_description">Save your progress, discover new titles, and sync your content across all devices.</string>
