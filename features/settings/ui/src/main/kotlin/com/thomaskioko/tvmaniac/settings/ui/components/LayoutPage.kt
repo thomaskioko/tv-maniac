@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -17,10 +18,14 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
+import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
+import com.thomaskioko.tvmaniac.settings.ui.SettingsGroupDivider
+import com.thomaskioko.tvmaniac.settings.ui.SettingsNavigationRow
 import com.thomaskioko.tvmaniac.settings.ui.layoutState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
@@ -60,6 +65,16 @@ internal fun LayoutPage(
                     description = state.labels.blurUnwatchedDescription,
                     checked = state.blurImage,
                     onCheckedChange = { onAction(BlurUnwatchedToggled(it)) },
+                )
+
+                SettingsGroupDivider()
+
+                SettingsNavigationRow(
+                    modifier = Modifier.testTag(SettingsTestTags.DISCOVER_SECTIONS_ROW_TEST_TAG),
+                    icon = Icons.Filled.GridView,
+                    title = state.labels.discoverSectionsTitle,
+                    description = state.labels.discoverSectionsDescription,
+                    onClick = { onAction(OpenSettingsPage(SettingsPage.DISCOVER_SECTIONS)) },
                 )
             }
         }

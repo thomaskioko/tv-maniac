@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 
 public sealed interface SettingsActions
@@ -67,6 +68,11 @@ public data class SeasonOrderToggled(
 
 public data class BlurUnwatchedToggled(
     val enabled: Boolean,
+) : SettingsActions
+
+public data class DiscoverSectionToggled(
+    val section: DiscoverSection,
+    val visible: Boolean,
 ) : SettingsActions
 
 public data class SettingsMessageShown(val id: Long) : SettingsActions

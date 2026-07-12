@@ -87,6 +87,56 @@ class DiscoverScreenshotTest {
     }
 
     @Test
+    fun discoverScreenDataLoadedHiddenSection() {
+        composeTestRule.captureMultiDevice("DiscoverScreenDataLoadedHiddenSection") {
+            TvManiacBackground {
+                DiscoverScaffold(
+                    hostState = DiscoverViewState(),
+                    snackBarHostState = remember { SnackbarHostState() },
+                    dismissSnackbarState = rememberDismissState { true },
+                    onHostAction = {},
+                ) {
+                    DiscoverLazyColumn(
+                        isRefreshing = false,
+                        onSearch = {},
+                        onRefresh = {},
+                    ) {
+                        item(key = DiscoverTestTags.FEATURED_PAGER_TEST_TAG) {
+                            val pagerState = rememberPagerState(
+                                pageCount = { discoverFeaturedContentSuccess.featuredShows.size },
+                            )
+                            DiscoverFeaturedSection(
+                                state = discoverFeaturedContentSuccess,
+                                pagerState = pagerState,
+                                onAction = {},
+                            )
+                        }
+                        item(key = DiscoverTestTags.UP_NEXT_SECTION_TEST_TAG) {
+                            DiscoverUpNextSection(
+                                state = discoverUpNextContentSuccess,
+                                title = "Up Next",
+                                onAction = {},
+                            )
+                        }
+                        item(key = DiscoverTestTags.ROW_KEY_START_WATCHING) {
+                            DiscoverStartWatchingSection(
+                                state = discoverStartWatchingContentSuccess.copy(startWatchingVisible = false),
+                                onAction = {},
+                            )
+                        }
+                        item(key = DiscoverTestTags.CATALOG_SECTION_TEST_TAG) {
+                            DiscoverCatalogSection(
+                                state = discoverCatalogContentSuccess.copy(topRatedVisible = false),
+                                onAction = {},
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     fun discoverScreenDataLoaded() {
         composeTestRule.captureMultiDevice("DiscoverScreenDataLoaded") {
             TvManiacBackground {

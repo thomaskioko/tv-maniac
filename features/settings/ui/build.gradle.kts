@@ -31,6 +31,7 @@ dependencies {
     api(libs.androidx.compose.runtime)
     implementation(libs.androidx.annotation)
     implementation(projects.data.accountManager.api)
+    implementation(projects.data.datastore.api)
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
     implementation(projects.core.view)

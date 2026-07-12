@@ -10,4 +10,5 @@ public enum class SettingsPage {
     LICENSES,
     ACCOUNT,
     LAYOUT,
+    DISCOVER_SECTIONS,
 }

@@ -42,9 +42,10 @@ internal fun HorizontalRowContent(
     onItemClicked: (Long) -> Unit,
     onMoreClicked: () -> Unit,
     libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
+    visible: Boolean = true,
 ) {
     Box(modifier = modifier) {
-        AnimatedVisibility(visible = tvShows.isNotEmpty()) {
+        AnimatedVisibility(visible = visible && tvShows.isNotEmpty()) {
             Column {
                 BoxTextItems(
                     modifier = Modifier

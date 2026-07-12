@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
@@ -154,6 +155,7 @@ public class SettingsPresenter(
             hapticFeedbackEnabled = preferences.layout.hapticFeedbackEnabled,
             newestSeasonFirst = preferences.layout.seasonSortOrder == SeasonSortOrder.NEWEST_FIRST,
             blurImage = preferences.layout.blurImage,
+            discoverSectionToggles = buildDiscoverSectionToggles(preferences.layout.hiddenDiscoverSections),
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
@@ -275,6 +277,12 @@ public class SettingsPresenter(
                 }
             }
 
+            is DiscoverSectionToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.updateDiscoverSectionVisibility(action.section, action.visible)
+                }
+            }
+
             is SettingsMessageShown -> {
                 coroutineScope.launch {
                     uiMessageManager.clearMessage(action.id)
@@ -302,6 +310,8 @@ public class SettingsPresenter(
         SettingsPage.ACCOUNT,
         SettingsPage.LAYOUT,
         -> SettingsPage.ROOT
+
+        SettingsPage.DISCOVER_SECTIONS -> SettingsPage.LAYOUT
     }
 
     private fun toggleLogoutConfirmation() {
@@ -430,8 +440,26 @@ public class SettingsPresenter(
             SettingsPage.LICENSES -> StringResourceKey.LabelSettingsSectionLicenses
             SettingsPage.ACCOUNT -> StringResourceKey.SettingsTitleAccount
             SettingsPage.LAYOUT -> StringResourceKey.SettingsLayoutTitle
+            SettingsPage.DISCOVER_SECTIONS -> StringResourceKey.SettingsDiscoverSectionsTitle
         },
     )
+
+    private fun buildDiscoverSectionToggles(hidden: Set<DiscoverSection>): ImmutableList<DiscoverSectionToggle> =
+        DiscoverSection.entries.map { section ->
+            DiscoverSectionToggle(
+                section = section,
+                label = localizer.getString(discoverSectionLabelKey(section)),
+                visible = section !in hidden,
+            )
+        }.toImmutableList()
+
+    private fun discoverSectionLabelKey(section: DiscoverSection): StringResourceKey = when (section) {
+        DiscoverSection.START_WATCHING -> StringResourceKey.LabelStartWatching
+        DiscoverSection.TRENDING_TODAY -> StringResourceKey.LabelDiscoverTrendingToday
+        DiscoverSection.UPCOMING -> StringResourceKey.LabelDiscoverUpcoming
+        DiscoverSection.POPULAR -> StringResourceKey.LabelDiscoverPopular
+        DiscoverSection.TOP_RATED -> StringResourceKey.LabelDiscoverTopRated
+    }
 
     private fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
         buildList {
@@ -561,6 +589,8 @@ public class SettingsPresenter(
         seasonOrderDescription = localizer.getString(StringResourceKey.SettingsSeasonOrderDescription),
         blurUnwatchedTitle = localizer.getString(StringResourceKey.SettingsBlurUnwatchedTitle),
         blurUnwatchedDescription = localizer.getString(StringResourceKey.SettingsBlurUnwatchedDescription),
+        discoverSectionsTitle = localizer.getString(StringResourceKey.SettingsDiscoverSectionsTitle),
+        discoverSectionsDescription = localizer.getString(StringResourceKey.SettingsDiscoverSectionsDescription),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),

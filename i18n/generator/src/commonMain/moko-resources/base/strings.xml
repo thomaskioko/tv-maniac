@@ -79,6 +79,8 @@
     <string name="settings_season_order_description">Order the latest season first</string>
     <string name="settings_blur_unwatched_title">Hide Spoilers</string>
     <string name="settings_blur_unwatched_description">Hide spoilers for unwatched episodes</string>
+    <string name="settings_discover_sections_title">Discover Sections</string>
+    <string name="settings_discover_sections_description">Choose which sections appear on the Discover tab</string>
     <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
     <string name="label_settings_connect_title">Connect</string>
     <string name="label_settings_account_sync_description">Save your progress, discover new titles, and sync your content across all devices.</string>

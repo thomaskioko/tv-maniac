@@ -33,15 +33,17 @@ internal fun DiscoverStartWatchingSection(
     state: DiscoverStartWatchingState,
     onAction: (DiscoverStartWatchingAction) -> Unit,
 ) {
-    HorizontalRowContent(
-        modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_START_WATCHING),
-        category = state.startWatchingTitle,
-        rowKey = DiscoverTestTags.ROW_KEY_START_WATCHING,
-        tvShows = state.startWatchingShows,
-        onItemClicked = { onAction(StartWatchingItemClicked(it)) },
-        onMoreClicked = { onAction(StartWatchingMoreClicked) },
-        libraryImageOverlay = Icons.Filled.WatchLater,
-    )
+    if (state.startWatchingVisible) {
+        HorizontalRowContent(
+            modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_START_WATCHING),
+            category = state.startWatchingTitle,
+            rowKey = DiscoverTestTags.ROW_KEY_START_WATCHING,
+            tvShows = state.startWatchingShows,
+            onItemClicked = { onAction(StartWatchingItemClicked(it)) },
+            onMoreClicked = { onAction(StartWatchingMoreClicked) },
+            libraryImageOverlay = Icons.Filled.WatchLater,
+        )
+    }
 }
 
 @ThemePreviews

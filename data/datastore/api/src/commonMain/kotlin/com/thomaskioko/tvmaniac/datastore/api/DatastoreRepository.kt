@@ -352,4 +352,26 @@ public interface DatastoreRepository {
      * @return A Flow of Boolean, true if unwatched episode images are blurred. Defaults to false.
      */
     public fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean>
+
+    /**
+     * Saves the Discover sections hidden from the Discover screen.
+     *
+     * @param sections Sections the user has chosen to hide.
+     */
+    public suspend fun saveHiddenDiscoverSections(sections: Set<DiscoverSection>)
+
+    /**
+     * Observes the Discover sections hidden from the Discover screen.
+     *
+     * @return A Flow of hidden sections. Defaults to an empty set. Unknown stored names are ignored.
+     */
+    public fun observeHiddenDiscoverSections(): Flow<Set<DiscoverSection>>
+
+    /**
+     * Atomically shows or hides a single Discover section within one write transaction.
+     *
+     * @param section Section whose visibility changes.
+     * @param visible Whether the section is shown; false hides it.
+     */
+    public suspend fun updateDiscoverSectionVisibility(section: DiscoverSection, visible: Boolean)
 }

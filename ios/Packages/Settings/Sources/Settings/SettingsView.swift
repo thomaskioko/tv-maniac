@@ -35,6 +35,8 @@ public struct SettingsView: View {
             themeItem: themeItem,
             imageQualityItem: imageQualityItem,
             layoutToggles: layoutToggles,
+            discoverSectionsNavItem: discoverSectionsNavItem,
+            discoverSectionToggles: discoverSectionToggles,
             behaviorToggles: behaviorToggles,
             notificationToggles: notificationToggles,
             privacyToggles: privacyToggles,
@@ -192,6 +194,42 @@ public struct SettingsView: View {
                 onToggle: { presenter.dispatch(action: BlurUnwatchedToggled(enabled: $0)) }
             ),
         ]
+    }
+
+    // MARK: - Discover Sections
+
+    private var discoverSectionsNavItem: SettingsNavigationItem {
+        SettingsNavigationItem(
+            id: SettingsPageRoute.discoverSections.rawValue,
+            icon: SettingsPageRoute.discoverSections.iconName,
+            title: uiState.labels.discoverSectionsTitle,
+            subtitle: uiState.labels.discoverSectionsDescription,
+            onTap: { presenter.dispatch(action: OpenSettingsPage(page: SettingsPage.discoverSections)) }
+        )
+    }
+
+    private var discoverSectionToggles: [SettingsToggleItem] {
+        uiState.discoverSectionToggles.map { toggle in
+            SettingsToggleItem(
+                id: toggle.section.name,
+                icon: discoverSectionIcon(for: toggle.section),
+                title: toggle.label,
+                subtitle: "",
+                isOn: toggle.visible,
+                onToggle: { presenter.dispatch(action: DiscoverSectionToggled(section: toggle.section, visible: $0)) }
+            )
+        }
+    }
+
+    private func discoverSectionIcon(for section: ApiDiscoverSection) -> String {
+        switch section.name {
+        case "START_WATCHING": "play.circle"
+        case "TRENDING_TODAY": "flame"
+        case "UPCOMING": "calendar"
+        case "POPULAR": "star"
+        case "TOP_RATED": "trophy"
+        default: "square.grid.2x2"
+        }
     }
 
     // MARK: - Behavior Toggles

@@ -12,6 +12,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let themeItem: SettingsThemeItem<Theme>
         public let imageQualityItem: SettingsImageQualityItem
         public let layoutToggles: [SettingsToggleItem]
+        public let discoverSectionsNavItem: SettingsNavigationItem
+        public let discoverSectionToggles: [SettingsToggleItem]
         public let behaviorToggles: [SettingsToggleItem]
         public let notificationToggles: [SettingsToggleItem]
         public let privacyToggles: [SettingsToggleItem]
@@ -28,6 +30,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             themeItem: SettingsThemeItem<Theme>,
             imageQualityItem: SettingsImageQualityItem,
             layoutToggles: [SettingsToggleItem],
+            discoverSectionsNavItem: SettingsNavigationItem,
+            discoverSectionToggles: [SettingsToggleItem],
             behaviorToggles: [SettingsToggleItem],
             notificationToggles: [SettingsToggleItem],
             privacyToggles: [SettingsToggleItem],
@@ -43,6 +47,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             self.themeItem = themeItem
             self.imageQualityItem = imageQualityItem
             self.layoutToggles = layoutToggles
+            self.discoverSectionsNavItem = discoverSectionsNavItem
+            self.discoverSectionToggles = discoverSectionToggles
             self.behaviorToggles = behaviorToggles
             self.notificationToggles = notificationToggles
             self.privacyToggles = privacyToggles
@@ -118,7 +124,9 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         case .account:
             AccountPageView(content: state.accountContent)
         case .layout:
-            LayoutPageView(toggles: state.layoutToggles)
+            LayoutPageView(toggles: state.layoutToggles, discoverSectionsItem: state.discoverSectionsNavItem)
+        case .discoverSections:
+            DiscoverSectionsPageView(toggles: state.discoverSectionToggles)
         }
     }
 
@@ -127,6 +135,9 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     }
 
     private func title(for route: SettingsPageRoute) -> String {
+        if route == .discoverSections {
+            return state.discoverSectionsNavItem.title
+        }
         for section in state.rootSections {
             if let item = section.items.first(where: { $0.id == route.rawValue }) {
                 return item.title
