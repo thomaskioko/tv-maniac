@@ -21,6 +21,8 @@ public object SettingsTestTags {
     public const val SEASON_ORDER_TOGGLE_TEST_TAG: String = "settings_season_order_toggle"
     public const val BLUR_UNWATCHED_TOGGLE_TEST_TAG: String = "settings_blur_unwatched_toggle"
     public const val DISCOVER_SECTIONS_ROW_TEST_TAG: String = "settings_discover_sections_row"
+    public const val FONT_SIZE_SLIDER_TEST_TAG: String = "settings_font_size_slider"
+    public const val FONT_SIZE_RESET_BUTTON_TEST_TAG: String = "settings_font_size_reset_button"
     public const val SWITCH_PROVIDER_BUTTON_TEST_TAG: String = "settings_switch_provider_button"
     public const val SWITCH_DIALOG_CONFIRM_BUTTON_TEST_TAG: String = "settings_switch_dialog_confirm"
     public const val SWITCH_DIALOG_DISMISS_BUTTON_TEST_TAG: String = "settings_switch_dialog_dismiss"

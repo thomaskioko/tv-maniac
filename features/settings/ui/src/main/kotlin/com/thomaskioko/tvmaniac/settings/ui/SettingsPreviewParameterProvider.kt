@@ -78,6 +78,10 @@ private val previewLabels = SettingsLabels(
     blurUnwatchedDescription = "Hide spoilers for unwatched episodes",
     discoverSectionsTitle = "Discover Sections",
     discoverSectionsDescription = "Choose which sections appear on the Discover tab",
+    fontSizeTitle = "Font size",
+    fontSizeDescription = "Scale text across the app",
+    fontSizePreview = "The quick brown fox jumps over the lazy dog",
+    fontSizeReset = "Reset",
     privacyPolicy = "Privacy Policy",
     appName = "TvManiac",
     version = "Version 1.0.0",
@@ -153,6 +157,7 @@ internal val loggedInState = SettingsState(
 
 internal val appearanceState = loggedInState.copy(currentPage = SettingsPage.APPEARANCE, currentPageTitle = "Appearance")
 internal val layoutState = loggedInState.copy(currentPage = SettingsPage.LAYOUT, currentPageTitle = "Layout")
+internal val fontSizeScaledLayoutState = layoutState.copy(fontSizePercent = 118)
 internal val discoverSectionsState = loggedInState.copy(
     currentPage = SettingsPage.DISCOVER_SECTIONS,
     currentPageTitle = "Discover Sections",

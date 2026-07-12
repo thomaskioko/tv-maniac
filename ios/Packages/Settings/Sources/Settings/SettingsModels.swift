@@ -175,6 +175,39 @@ public struct SettingsThemeItem<Theme: ThemeItem>: Equatable {
     }
 }
 
+public struct SettingsFontSizeItem: Equatable {
+    public let title: String
+    public let description: String
+    public let previewText: String
+    public let resetLabel: String
+    public let percent: Int
+    public let onPercentChange: (Int) -> Void
+
+    public init(
+        title: String,
+        description: String,
+        previewText: String,
+        resetLabel: String,
+        percent: Int,
+        onPercentChange: @escaping (Int) -> Void
+    ) {
+        self.title = title
+        self.description = description
+        self.previewText = previewText
+        self.resetLabel = resetLabel
+        self.percent = percent
+        self.onPercentChange = onPercentChange
+    }
+
+    public static func == (lhs: SettingsFontSizeItem, rhs: SettingsFontSizeItem) -> Bool {
+        lhs.title == rhs.title
+            && lhs.description == rhs.description
+            && lhs.previewText == rhs.previewText
+            && lhs.resetLabel == rhs.resetLabel
+            && lhs.percent == rhs.percent
+    }
+}
+
 public struct SettingsRootSection: Identifiable {
     public let id: String
     public let label: String

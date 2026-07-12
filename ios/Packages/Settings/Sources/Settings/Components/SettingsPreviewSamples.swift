@@ -110,6 +110,17 @@
             ]
         }
 
+        static var fontSizeItem: SettingsFontSizeItem {
+            SettingsFontSizeItem(
+                title: "Font Size",
+                description: "Adjust text size across the app",
+                previewText: "The quick brown fox jumps over the lazy dog",
+                resetLabel: "Reset",
+                percent: 100,
+                onPercentChange: { _ in }
+            )
+        }
+
         static var discoverSectionsNavItem: SettingsNavigationItem {
             SettingsNavigationItem(
                 id: SettingsPageRoute.discoverSections.rawValue,

@@ -152,6 +152,17 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
     }
 
+    private func fontSizeItem(percent: Int = 100) -> SettingsFontSizeItem {
+        SettingsFontSizeItem(
+            title: "Font Size",
+            description: "Adjust text size across the app",
+            previewText: "The quick brown fox jumps over the lazy dog",
+            resetLabel: "Reset",
+            percent: percent,
+            onPercentChange: { _ in }
+        )
+    }
+
     private var discoverSectionsNavItem: SettingsNavigationItem {
         SettingsNavigationItem(
             id: SettingsPageRoute.discoverSections.rawValue,
@@ -414,7 +425,8 @@ class SettingsScreenTest: SnapshotTestCase {
         isLoading: Bool = false,
         customAccountContent: SettingsAccountContent? = nil,
         customThemeItem: SettingsThemeItem<ThemeItemModel>? = nil,
-        customNotificationToggles: [SettingsToggleItem]? = nil
+        customNotificationToggles: [SettingsToggleItem]? = nil,
+        fontSizePercent: Int = 100
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
@@ -424,6 +436,7 @@ class SettingsScreenTest: SnapshotTestCase {
             themeItem: customThemeItem ?? defaultThemeItem,
             imageQualityItem: defaultImageQualityItem,
             layoutToggles: layoutToggles,
+            fontSizeItem: fontSizeItem(percent: fontSizePercent),
             discoverSectionsNavItem: discoverSectionsNavItem,
             discoverSectionToggles: discoverSectionToggles,
             behaviorToggles: behaviorToggles,
@@ -458,6 +471,18 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .layout, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Layout")
+    }
+
+    func test_SettingsScreen_Layout_FontScaled() {
+        TvManiacTypographyScheme.updateFontScale(percent: 130)
+        defer { TvManiacTypographyScheme.updateFontScale(percent: 100) }
+
+        SettingsScreen(
+            state: makeState(page: .layout, authenticated: true, fontSizePercent: 130),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Layout_FontScaled")
     }
 
     func test_SettingsScreen_DiscoverSections() {

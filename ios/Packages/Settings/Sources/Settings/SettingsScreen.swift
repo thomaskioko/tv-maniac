@@ -12,6 +12,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let themeItem: SettingsThemeItem<Theme>
         public let imageQualityItem: SettingsImageQualityItem
         public let layoutToggles: [SettingsToggleItem]
+        public let fontSizeItem: SettingsFontSizeItem
         public let discoverSectionsNavItem: SettingsNavigationItem
         public let discoverSectionToggles: [SettingsToggleItem]
         public let behaviorToggles: [SettingsToggleItem]
@@ -30,6 +31,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             themeItem: SettingsThemeItem<Theme>,
             imageQualityItem: SettingsImageQualityItem,
             layoutToggles: [SettingsToggleItem],
+            fontSizeItem: SettingsFontSizeItem,
             discoverSectionsNavItem: SettingsNavigationItem,
             discoverSectionToggles: [SettingsToggleItem],
             behaviorToggles: [SettingsToggleItem],
@@ -47,6 +49,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             self.themeItem = themeItem
             self.imageQualityItem = imageQualityItem
             self.layoutToggles = layoutToggles
+            self.fontSizeItem = fontSizeItem
             self.discoverSectionsNavItem = discoverSectionsNavItem
             self.discoverSectionToggles = discoverSectionToggles
             self.behaviorToggles = behaviorToggles
@@ -124,7 +127,11 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         case .account:
             AccountPageView(content: state.accountContent)
         case .layout:
-            LayoutPageView(toggles: state.layoutToggles, discoverSectionsItem: state.discoverSectionsNavItem)
+            LayoutPageView(
+                toggles: state.layoutToggles,
+                discoverSectionsItem: state.discoverSectionsNavItem,
+                fontSizeItem: state.fontSizeItem
+            )
         case .discoverSections:
             DiscoverSectionsPageView(toggles: state.discoverSectionToggles)
         }

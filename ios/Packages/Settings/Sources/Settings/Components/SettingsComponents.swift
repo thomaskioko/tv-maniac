@@ -159,6 +159,81 @@ struct SettingsToggleRow: View {
     }
 }
 
+struct SettingsFontSizeRow: View {
+    @Environment(\.appTheme) private var appTheme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
+    private let item: SettingsFontSizeItem
+    @State private var sliderPercent: Double
+
+    private static let range: ClosedRange<Double> = 85 ... 130
+    private static let step: Double = 5
+    private static let defaultPercent = 100
+
+    init(_ item: SettingsFontSizeItem) {
+        self.item = item
+        _sliderPercent = State(initialValue: Double(item.percent))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: appTheme.spacing.small) {
+            HStack(alignment: .top, spacing: appTheme.spacing.small) {
+                VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                    Text(item.title)
+                        .textStyle(appTheme.typography.bodyLarge)
+                        .foregroundColor(appTheme.colors.onSurface)
+                    Text(item.description)
+                        .textStyle(appTheme.typography.bodySmall)
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                if Int(sliderPercent) != Self.defaultPercent {
+                    Button(action: resetToDefault) {
+                        Text(item.resetLabel)
+                            .textStyle(appTheme.typography.labelLarge)
+                            .foregroundColor(appTheme.colors.secondary)
+                    }
+                }
+
+                Text("\(Int(sliderPercent))%")
+                    .textStyle(appTheme.typography.labelLarge)
+                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+                    .monospacedDigit()
+            }
+
+            Text(item.previewText)
+                .textStyle(appTheme.typography.bodyMedium)
+                .foregroundColor(appTheme.colors.onSurface)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(appTheme.spacing.small)
+                .background(appTheme.colors.background)
+                .clipShape(RoundedRectangle(cornerRadius: appTheme.shapes.medium))
+
+            Slider(
+                value: $sliderPercent,
+                in: Self.range,
+                step: Self.step,
+                onEditingChanged: { isEditing in
+                    guard !isEditing else { return }
+                    Haptics.impact(isEnabled: hapticFeedbackEnabled)
+                    item.onPercentChange(Int(sliderPercent))
+                }
+            )
+            .tint(appTheme.colors.secondary)
+            .accessibilityLabel(item.title)
+            .accessibilityValue("\(Int(sliderPercent))%")
+        }
+        .padding(appTheme.spacing.medium)
+    }
+
+    private func resetToDefault() {
+        Haptics.impact(isEnabled: hapticFeedbackEnabled)
+        sliderPercent = Double(Self.defaultPercent)
+        item.onPercentChange(Self.defaultPercent)
+    }
+}
+
 struct SettingsLinkRow: View {
     @Environment(\.appTheme) private var appTheme
     private let item: SettingsLinkItem

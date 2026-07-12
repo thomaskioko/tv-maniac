@@ -1,7 +1,10 @@
 package com.thomaskioko.tvmaniac.seasondetails.roborrazi
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.unit.Density
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
@@ -16,6 +19,7 @@ import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
 import com.thomaskioko.tvmaniac.settings.ui.discoverSectionsState
+import com.thomaskioko.tvmaniac.settings.ui.fontSizeScaledLayoutState
 import com.thomaskioko.tvmaniac.settings.ui.infoState
 import com.thomaskioko.tvmaniac.settings.ui.layoutState
 import com.thomaskioko.tvmaniac.settings.ui.licensesState
@@ -85,6 +89,26 @@ class SettingsScreenshotTest {
                     state = layoutState,
                     onAction = {},
                 )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenLayoutPageFontSizeScaled() {
+        composeTestRule.captureMultiDevice("SettingsScreenLayoutPageFontSizeScaled") {
+            val density = LocalDensity.current
+            CompositionLocalProvider(
+                LocalDensity provides Density(
+                    density = density.density,
+                    fontScale = density.fontScale * FONT_SIZE_SCALE_PERCENT / 100f,
+                ),
+            ) {
+                TvManiacBackground {
+                    SettingsScreen(
+                        state = fontSizeScaledLayoutState,
+                        onAction = {},
+                    )
+                }
             }
         }
     }
@@ -269,3 +293,5 @@ class SettingsScreenshotTest {
         }
     }
 }
+
+private const val FONT_SIZE_SCALE_PERCENT = 130
