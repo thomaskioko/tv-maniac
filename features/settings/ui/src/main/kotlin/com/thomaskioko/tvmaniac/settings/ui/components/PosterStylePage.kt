@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.settings.ui.components
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,13 +21,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Movie
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -164,19 +163,14 @@ private fun PosterStyleHeader(
             color = MaterialTheme.colorScheme.onSurface,
         )
 
-        TextButton(
-            modifier = Modifier.testTag(SettingsTestTags.POSTER_STYLE_RESET_BUTTON_TEST_TAG),
-            enabled = enabled,
-            onClick = onReset,
-            colors = ButtonDefaults.textButtonColors(
-                contentColor = MaterialTheme.colorScheme.secondary,
-            ),
-        ) {
-            Text(
-                text = resetLabel,
-                style = MaterialTheme.typography.labelLarge,
-            )
-        }
+        Text(
+            text = resetLabel,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier
+                .testTag(SettingsTestTags.POSTER_STYLE_RESET_BUTTON_TEST_TAG)
+                .clickable(enabled = enabled, onClick = onReset),
+        )
     }
 }
 
