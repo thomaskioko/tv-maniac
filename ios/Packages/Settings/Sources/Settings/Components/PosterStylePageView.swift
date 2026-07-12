@@ -12,8 +12,10 @@ struct PosterStylePageView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: appTheme.spacing.large) {
-            header
-            description
+            VStack(alignment: .leading, spacing: appTheme.spacing.xxxSmall) {
+                header
+                description
+            }
             livePreview
             selector(
                 label: item.postersLabel,

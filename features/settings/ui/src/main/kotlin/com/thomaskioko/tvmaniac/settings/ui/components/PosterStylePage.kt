@@ -84,18 +84,20 @@ internal fun PosterStylePage(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-                    PosterStyleHeader(
-                        title = labels.title,
-                        resetLabel = labels.reset,
-                        enabled = !locked,
-                        onReset = { onAction(PosterStyleReset) },
-                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        PosterStyleHeader(
+                            title = labels.title,
+                            resetLabel = labels.reset,
+                            enabled = !locked,
+                            onReset = { onAction(PosterStyleReset) },
+                        )
 
-                    Text(
-                        text = labels.subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                        Text(
+                            text = labels.subtitle,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
 
                     PosterStyleLivePreview(
                         title = labels.livePreview,
