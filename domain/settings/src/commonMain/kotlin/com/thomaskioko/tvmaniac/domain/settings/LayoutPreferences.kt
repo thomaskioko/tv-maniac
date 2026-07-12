@@ -11,6 +11,7 @@ public data class LayoutPreferences(
     val seasonSortOrder: SeasonSortOrder,
     val blurImage: Boolean,
     val hiddenDiscoverSections: Set<DiscoverSection>,
+    val fontSizePercent: Int,
 )
 
 internal fun DatastoreRepository.observeLayoutPreferences(): Flow<LayoutPreferences> =
@@ -19,11 +20,13 @@ internal fun DatastoreRepository.observeLayoutPreferences(): Flow<LayoutPreferen
         observeSeasonSortOrder(),
         observeBlurUnwatchedEpisodeImages(),
         observeHiddenDiscoverSections(),
-    ) { hapticFeedbackEnabled, seasonSortOrder, blurImage, hiddenDiscoverSections ->
+        observeFontSizePercent(),
+    ) { hapticFeedbackEnabled, seasonSortOrder, blurImage, hiddenDiscoverSections, fontSizePercent ->
         LayoutPreferences(
             hapticFeedbackEnabled = hapticFeedbackEnabled,
             seasonSortOrder = seasonSortOrder,
             blurImage = blurImage,
             hiddenDiscoverSections = hiddenDiscoverSections,
+            fontSizePercent = fontSizePercent,
         )
     }

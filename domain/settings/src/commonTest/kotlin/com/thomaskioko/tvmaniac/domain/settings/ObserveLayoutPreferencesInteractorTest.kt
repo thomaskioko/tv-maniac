@@ -85,4 +85,28 @@ internal class ObserveLayoutPreferencesInteractorTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `should emit a font size of 100 percent by default`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            awaitItem().fontSizePercent shouldBe 100
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit saved font size given the preference changes`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            awaitItem().fontSizePercent shouldBe 100
+
+            datastoreRepository.saveFontSizePercent(120)
+
+            awaitItem().fontSizePercent shouldBe 120
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }

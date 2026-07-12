@@ -374,4 +374,18 @@ public interface DatastoreRepository {
      * @param visible Whether the section is shown; false hides it.
      */
     public suspend fun updateDiscoverSectionVisibility(section: DiscoverSection, visible: Boolean)
+
+    /**
+     * Saves the app font size as a percentage of the default.
+     *
+     * @param percent The scale percentage, clamped into 85 to 130 on read.
+     */
+    public suspend fun saveFontSizePercent(percent: Int)
+
+    /**
+     * Observes the app font size percentage.
+     *
+     * @return A Flow of the scale percentage, defaulting to 100 and clamped into 85 to 130.
+     */
+    public fun observeFontSizePercent(): Flow<Int>
 }

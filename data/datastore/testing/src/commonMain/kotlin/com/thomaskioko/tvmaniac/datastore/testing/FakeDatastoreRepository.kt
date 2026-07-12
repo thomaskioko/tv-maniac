@@ -151,6 +151,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val seasonSortOrderFlow = MutableStateFlow(SeasonSortOrder.OLDEST_FIRST)
     private val blurUnwatchedEpisodeImagesFlow = MutableStateFlow(false)
     private val hiddenDiscoverSectionsFlow = MutableStateFlow<Set<DiscoverSection>>(emptySet())
+    private val fontSizePercentFlow = MutableStateFlow(100)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -230,4 +231,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
         val current = hiddenDiscoverSectionsFlow.value
         hiddenDiscoverSectionsFlow.value = if (visible) current - section else current + section
     }
+
+    override suspend fun saveFontSizePercent(percent: Int) {
+        fontSizePercentFlow.value = percent
+    }
+
+    override fun observeFontSizePercent(): Flow<Int> = fontSizePercentFlow.asStateFlow()
 }

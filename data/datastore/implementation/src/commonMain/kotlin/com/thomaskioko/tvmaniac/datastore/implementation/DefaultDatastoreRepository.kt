@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -369,7 +370,22 @@ public class DefaultDatastoreRepository(
         }
     }
 
+    override suspend fun saveFontSizePercent(percent: Int) {
+        dataStore.edit { preferences ->
+            preferences[KEY_FONT_SIZE_PERCENT] = percent
+        }
+    }
+
+    override fun observeFontSizePercent(): Flow<Int> =
+        dataStore.data.map { preferences ->
+            (preferences[KEY_FONT_SIZE_PERCENT] ?: FONT_SIZE_DEFAULT).coerceIn(FONT_SIZE_MIN, FONT_SIZE_MAX)
+        }
+
     public companion object {
+        private const val FONT_SIZE_DEFAULT = 100
+        private const val FONT_SIZE_MIN = 85
+        private const val FONT_SIZE_MAX = 130
+
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
         public val KEY_LIST_STYLE: Preferences.Key<String> = stringPreferencesKey("list_style")
@@ -398,5 +414,6 @@ public class DefaultDatastoreRepository(
             booleanPreferencesKey("blur_unwatched_episode_images")
         public val KEY_HIDDEN_DISCOVER_SECTIONS: Preferences.Key<Set<String>> =
             stringSetPreferencesKey("hidden_discover_sections")
+        public val KEY_FONT_SIZE_PERCENT: Preferences.Key<Int> = intPreferencesKey("font_size_percent")
     }
 }
