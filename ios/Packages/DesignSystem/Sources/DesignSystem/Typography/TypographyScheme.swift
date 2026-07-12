@@ -38,6 +38,14 @@ public struct TvManiacTypographyScheme {
         shared = .workSans
     }
 
+    private static var scalePercent = 100
+
+    public static func updateFontScale(percent: Int) {
+        guard percent != scalePercent else { return }
+        scalePercent = percent
+        shared = percent == 100 ? .workSans : scaledWorkSans(scale: CGFloat(percent) / 100)
+    }
+
     static let preview = TvManiacTypographyScheme(
         displayLarge: style(size: 57, weight: .medium, tracking: -0.25, lineHeight: 64),
         displayMedium: style(size: 45, weight: .medium, tracking: 0, lineHeight: 52),
@@ -59,26 +67,30 @@ public struct TvManiacTypographyScheme {
         labelSmall: style(size: 11, weight: .medium, tracking: 0.5, lineHeight: 16)
     )
 
-    static let workSans = TvManiacTypographyScheme(
-        displayLarge: workSansStyle(.medium, size: 57, relativeTo: .largeTitle, tracking: -0.25, lineHeight: 64),
-        displayMedium: workSansStyle(.medium, size: 45, relativeTo: .largeTitle, tracking: 0, lineHeight: 52),
-        displaySmall: workSansStyle(.extrabold, size: 36, relativeTo: .largeTitle, tracking: 0, lineHeight: 44),
-        headlineLarge: workSansStyle(.bold, size: 32, relativeTo: .title, tracking: 0, lineHeight: 40),
-        headlineLargeEmphasized: workSansStyle(.extrabold, size: 32, relativeTo: .title, tracking: 0, lineHeight: 40),
-        headlineMedium: workSansStyle(.bold, size: 28, relativeTo: .title, tracking: 0, lineHeight: 36),
-        headlineSmall: workSansStyle(.bold, size: 24, relativeTo: .title2, tracking: 0, lineHeight: 32),
-        titleLarge: workSansStyle(.bold, size: 22, relativeTo: .title2, tracking: 0, lineHeight: 28),
-        titleLargeEmphasized: workSansStyle(.extrabold, size: 22, relativeTo: .title2, tracking: 0, lineHeight: 28),
-        titleMedium: workSansStyle(.bold, size: 16, relativeTo: .subheadline, tracking: 0.15, lineHeight: 24),
-        titleSmall: workSansStyle(.extrabold, size: 14, relativeTo: .subheadline, tracking: 0.1, lineHeight: 20),
-        bodyLarge: workSansStyle(.medium, size: 16, relativeTo: .body, tracking: 0.15, lineHeight: 24),
-        bodyLargeEmphasized: workSansStyle(.extrabold, size: 16, relativeTo: .body, tracking: 0.15, lineHeight: 24),
-        bodyMedium: workSansStyle(.medium, size: 14, relativeTo: .subheadline, tracking: 0.25, lineHeight: 20),
-        bodySmall: workSansStyle(.medium, size: 12, relativeTo: .caption, tracking: 0.4, lineHeight: 16),
-        labelLarge: workSansStyle(.semibold, size: 14, relativeTo: .footnote, tracking: 0.1, lineHeight: 20),
-        labelMedium: workSansStyle(.semibold, size: 12, relativeTo: .caption, tracking: 0.5, lineHeight: 16),
-        labelSmall: workSansStyle(.semibold, size: 11, relativeTo: .caption2, tracking: 0.5, lineHeight: 16)
-    )
+    static let workSans = scaledWorkSans(scale: 1)
+
+    private static func scaledWorkSans(scale: CGFloat) -> TvManiacTypographyScheme {
+        TvManiacTypographyScheme(
+            displayLarge: workSansStyle(.medium, size: 57 * scale, relativeTo: .largeTitle, tracking: -0.25, lineHeight: 64 * scale),
+            displayMedium: workSansStyle(.medium, size: 45 * scale, relativeTo: .largeTitle, tracking: 0, lineHeight: 52 * scale),
+            displaySmall: workSansStyle(.extrabold, size: 36 * scale, relativeTo: .largeTitle, tracking: 0, lineHeight: 44 * scale),
+            headlineLarge: workSansStyle(.bold, size: 32 * scale, relativeTo: .title, tracking: 0, lineHeight: 40 * scale),
+            headlineLargeEmphasized: workSansStyle(.extrabold, size: 32 * scale, relativeTo: .title, tracking: 0, lineHeight: 40 * scale),
+            headlineMedium: workSansStyle(.bold, size: 28 * scale, relativeTo: .title, tracking: 0, lineHeight: 36 * scale),
+            headlineSmall: workSansStyle(.bold, size: 24 * scale, relativeTo: .title2, tracking: 0, lineHeight: 32 * scale),
+            titleLarge: workSansStyle(.bold, size: 22 * scale, relativeTo: .title2, tracking: 0, lineHeight: 28 * scale),
+            titleLargeEmphasized: workSansStyle(.extrabold, size: 22 * scale, relativeTo: .title2, tracking: 0, lineHeight: 28 * scale),
+            titleMedium: workSansStyle(.bold, size: 16 * scale, relativeTo: .subheadline, tracking: 0.15, lineHeight: 24 * scale),
+            titleSmall: workSansStyle(.extrabold, size: 14 * scale, relativeTo: .subheadline, tracking: 0.1, lineHeight: 20 * scale),
+            bodyLarge: workSansStyle(.medium, size: 16 * scale, relativeTo: .body, tracking: 0.15, lineHeight: 24 * scale),
+            bodyLargeEmphasized: workSansStyle(.extrabold, size: 16 * scale, relativeTo: .body, tracking: 0.15, lineHeight: 24 * scale),
+            bodyMedium: workSansStyle(.medium, size: 14 * scale, relativeTo: .subheadline, tracking: 0.25, lineHeight: 20 * scale),
+            bodySmall: workSansStyle(.medium, size: 12 * scale, relativeTo: .caption, tracking: 0.4, lineHeight: 16 * scale),
+            labelLarge: workSansStyle(.semibold, size: 14 * scale, relativeTo: .footnote, tracking: 0.1, lineHeight: 20 * scale),
+            labelMedium: workSansStyle(.semibold, size: 12 * scale, relativeTo: .caption, tracking: 0.5, lineHeight: 16 * scale),
+            labelSmall: workSansStyle(.semibold, size: 11 * scale, relativeTo: .caption2, tracking: 0.5, lineHeight: 16 * scale)
+        )
+    }
 
     public let displayLarge: TvManiacTextStyle
     public let displayMedium: TvManiacTextStyle
