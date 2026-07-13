@@ -94,12 +94,8 @@ private fun PremiumOverlay(
     }
 }
 
-/**
- * [PremiumOverlay] with the standard centered card (badge, title, and message) floating on the
- * covered content, used for full-surface locks such as the Calendar page.
- */
 @Composable
-public fun CustomThemes(
+public fun PremiumOverlay(
     locked: Boolean,
     badgeText: String,
     modifier: Modifier = Modifier,
@@ -168,8 +164,8 @@ public fun CustomThemes(
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun CustomThemesPreview() {
-    CustomThemes(
+private fun PremiumOverlayPreview() {
+    PremiumOverlay(
         locked = true,
         badgeText = "Premium",
         title = "Calendar is a Premium feature",
@@ -189,8 +185,8 @@ private fun CustomThemesPreview() {
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun CustomThemesUnlockedPreview() {
-    CustomThemes(
+private fun PremiumOverlayUnlockedPreview() {
+    PremiumOverlay(
         locked = false,
         badgeText = "Premium",
         modifier = Modifier.size(width = 320.dp, height = 240.dp),

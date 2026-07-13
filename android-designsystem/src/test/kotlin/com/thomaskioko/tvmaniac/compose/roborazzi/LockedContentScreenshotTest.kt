@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.CustomThemes
 import com.thomaskioko.tvmaniac.compose.components.PremiumBadge
+import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import org.junit.Rule
 import org.junit.Test
@@ -47,7 +47,7 @@ internal class LockedContentScreenshotTest {
     fun lockedContent() {
         composeTestRule.captureMultiDevice("LockedContent_Locked") {
             Surface {
-                CustomThemes(
+                PremiumOverlay(
                     locked = true,
                     badgeText = "Premium",
                     title = "Calendar is a Premium feature",
@@ -66,7 +66,7 @@ internal class LockedContentScreenshotTest {
     fun lockedContentUnlocked() {
         composeTestRule.captureMultiDevice("LockedContent_Unlocked") {
             Surface {
-                CustomThemes(
+                PremiumOverlay(
                     locked = false,
                     badgeText = "Premium",
                     modifier = Modifier.size(width = 320.dp, height = 240.dp),
