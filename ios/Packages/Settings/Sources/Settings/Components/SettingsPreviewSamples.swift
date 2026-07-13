@@ -81,6 +81,175 @@
             )
         }
 
+        static var layoutToggles: [SettingsToggleItem] {
+            [
+                SettingsToggleItem(
+                    id: "haptic",
+                    icon: "iphone.radiowaves.left.and.right",
+                    title: "Haptic feedback",
+                    subtitle: "Feel subtle vibrations during interactions",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "season-order",
+                    icon: "arrow.up.arrow.down",
+                    title: "Season Order",
+                    subtitle: "Order the latest season first",
+                    isOn: false,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "blur-unwatched",
+                    icon: "eye.slash",
+                    title: "Hide Spoilers",
+                    subtitle: "Hide spoilers for unwatched episodes",
+                    isOn: false,
+                    onToggle: { _ in }
+                ),
+            ]
+        }
+
+        static var fontSizeItem: SettingsFontSizeItem {
+            SettingsFontSizeItem(
+                title: "Font Size",
+                description: "Adjust text size across the app",
+                previewText: "The quick brown fox jumps over the lazy dog",
+                resetLabel: "Reset",
+                percent: 100,
+                onPercentChange: { _ in }
+            )
+        }
+
+        static var posterStyleNavItem: SettingsNavigationItem {
+            SettingsNavigationItem(
+                id: SettingsPageRoute.posterStyle.rawValue,
+                icon: SettingsPageRoute.posterStyle.iconName,
+                title: "Poster style",
+                subtitle: "Choose poster size and corner style",
+                onTap: {}
+            )
+        }
+
+        static var posterStyleItem: SettingsPosterStyleItem {
+            SettingsPosterStyleItem(
+                title: "Poster style",
+                description: "Choose poster size and corner style",
+                livePreviewLabel: "Live preview",
+                resetLabel: "Reset",
+                postersLabel: "Posters",
+                landscapeLabel: "Landscape",
+                cornerLabel: "Corner style",
+                postersOptions: posterWidthOptions,
+                landscapeOptions: posterWidthOptions,
+                cornerOptions: posterCornerOptions,
+                selectedPostersId: "STANDARD",
+                selectedLandscapeId: "STANDARD",
+                selectedCornerId: "SHARP",
+                posterScale: 1,
+                landscapeScale: 1,
+                cornerRadius: 0
+            )
+        }
+
+        static var lockedPosterStyleItem: SettingsPosterStyleItem {
+            SettingsPosterStyleItem(
+                title: "Poster style",
+                description: "Choose poster size and corner style",
+                livePreviewLabel: "Live preview",
+                resetLabel: "Reset",
+                postersLabel: "Posters",
+                landscapeLabel: "Landscape",
+                cornerLabel: "Corner style",
+                postersOptions: posterWidthOptions,
+                landscapeOptions: posterWidthOptions,
+                cornerOptions: posterCornerOptions,
+                selectedPostersId: "STANDARD",
+                selectedLandscapeId: "STANDARD",
+                selectedCornerId: "SHARP",
+                posterScale: 1,
+                landscapeScale: 1,
+                cornerRadius: 0,
+                isLocked: true,
+                lockedBadgeText: "Premium",
+                lockedActionText: "Upgrade to Premium",
+                lockedAccessibilityLabel: "Locked"
+            )
+        }
+
+        private static var posterWidthOptions: [SettingsPosterStyleOption] {
+            [
+                SettingsPosterStyleOption(id: "COMPACT", label: "Compact", onSelect: {}),
+                SettingsPosterStyleOption(id: "STANDARD", label: "Standard", onSelect: {}),
+                SettingsPosterStyleOption(id: "COMFORTABLE", label: "Comfortable", onSelect: {}),
+                SettingsPosterStyleOption(id: "LARGE", label: "Large", onSelect: {}),
+            ]
+        }
+
+        private static var posterCornerOptions: [SettingsPosterStyleOption] {
+            [
+                SettingsPosterStyleOption(id: "SHARP", label: "Sharp", onSelect: {}),
+                SettingsPosterStyleOption(id: "CLASSIC", label: "Classic", onSelect: {}),
+                SettingsPosterStyleOption(id: "ROUNDED", label: "Rounded", onSelect: {}),
+                SettingsPosterStyleOption(id: "PILL", label: "Pill", onSelect: {}),
+            ]
+        }
+
+        static var discoverSectionsNavItem: SettingsNavigationItem {
+            SettingsNavigationItem(
+                id: SettingsPageRoute.discoverSections.rawValue,
+                icon: SettingsPageRoute.discoverSections.iconName,
+                title: "Discover Sections",
+                subtitle: "Choose which sections appear on the Discover tab",
+                onTap: {}
+            )
+        }
+
+        static var discoverSectionToggles: [SettingsToggleItem] {
+            [
+                SettingsToggleItem(
+                    id: "START_WATCHING",
+                    icon: "play.circle",
+                    title: "Start Watching",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "TRENDING_TODAY",
+                    icon: "flame",
+                    title: "Trending Today",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "UPCOMING",
+                    icon: "calendar",
+                    title: "Upcoming",
+                    subtitle: "",
+                    isOn: false,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "POPULAR",
+                    icon: "star",
+                    title: "Popular",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+                SettingsToggleItem(
+                    id: "TOP_RATED",
+                    icon: "trophy",
+                    title: "Top Rated",
+                    subtitle: "",
+                    isOn: true,
+                    onToggle: { _ in }
+                ),
+            ]
+        }
+
         static var behaviorToggles: [SettingsToggleItem] {
             [
                 SettingsToggleItem(

@@ -3,7 +3,12 @@ package com.thomaskioko.tvmaniac.settings.ui
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggle
+import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleLabels
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryGroup
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryItem
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabels
@@ -68,6 +73,35 @@ private val previewLabels = SettingsLabels(
     episodeNotificationsDescription = "Get notified when new episodes air",
     crashReportingTitle = "Crash Reporting",
     crashReportingDescription = "Send anonymous crash reports to help improve the app",
+    hapticFeedbackTitle = "Haptic feedback",
+    hapticFeedbackDescription = "Feel subtle vibrations during interactions",
+    seasonOrderTitle = "Season Order",
+    seasonOrderDescription = "Order the latest season first",
+    blurUnwatchedTitle = "Hide Spoilers",
+    blurUnwatchedDescription = "Hide spoilers for unwatched episodes",
+    discoverSectionsTitle = "Discover Sections",
+    discoverSectionsDescription = "Choose which sections appear on the Discover tab",
+    fontSizeTitle = "Font size",
+    fontSizeDescription = "Scale text across the app",
+    fontSizePreview = "The quick brown fox jumps over the lazy dog",
+    fontSizeReset = "Reset",
+    posterStyle = PosterStyleLabels(
+        title = "Poster style",
+        subtitle = "Choose poster size and corner style",
+        livePreview = "Live preview",
+        reset = "Reset",
+        postersLabel = "Posters",
+        landscapeLabel = "Landscape",
+        cornerLabel = "Corner style",
+        widthCompact = "Compact",
+        widthStandard = "Standard",
+        widthComfortable = "Comfortable",
+        widthLarge = "Large",
+        cornerSharp = "Sharp",
+        cornerClassic = "Classic",
+        cornerRounded = "Rounded",
+        cornerPill = "Pill",
+    ),
     privacyPolicy = "Privacy Policy",
     appName = "TvManiac",
     version = "Version 1.0.0",
@@ -117,6 +151,14 @@ internal val defaultState = SettingsState(
     versionName = "1.0.0",
 )
 
+internal val previewDiscoverSectionToggles: ImmutableList<DiscoverSectionToggle> = persistentListOf(
+    DiscoverSectionToggle(DiscoverSection.START_WATCHING, "Start Watching", visible = true),
+    DiscoverSectionToggle(DiscoverSection.TRENDING_TODAY, "Trending Today", visible = true),
+    DiscoverSectionToggle(DiscoverSection.UPCOMING, "Upcoming", visible = false),
+    DiscoverSectionToggle(DiscoverSection.POPULAR, "Popular", visible = true),
+    DiscoverSectionToggle(DiscoverSection.TOP_RATED, "Top Rated", visible = true),
+)
+
 internal val loggedInState = SettingsState(
     theme = ThemeModel.DARK,
     imageQuality = ImageQuality.MEDIUM,
@@ -130,10 +172,35 @@ internal val loggedInState = SettingsState(
     openTrailersInYoutube = true,
     includeSpecials = true,
     versionName = "1.0.0",
+    discoverSectionToggles = previewDiscoverSectionToggles,
 )
 
 internal val appearanceState = loggedInState.copy(currentPage = SettingsPage.APPEARANCE, currentPageTitle = "Appearance")
 internal val layoutState = loggedInState.copy(currentPage = SettingsPage.LAYOUT, currentPageTitle = "Layout")
+internal val fontSizeScaledLayoutState = layoutState.copy(fontSizePercent = 118)
+internal val discoverSectionsState = loggedInState.copy(
+    currentPage = SettingsPage.DISCOVER_SECTIONS,
+    currentPageTitle = "Discover Sections",
+)
+internal val posterStyleState = loggedInState.copy(
+    currentPage = SettingsPage.POSTER_STYLE,
+    currentPageTitle = "Poster Style",
+)
+internal val posterStyleLockedState = posterStyleState.copy(
+    locks = SettingsLocks(
+        posterStyleLocked = true,
+        badgeText = "Premium",
+        themesLockedTitle = "Poster styles are a Premium feature",
+        themesLockedMessage = "Upgrade to Premium to customize poster size and shape.",
+        upgradeText = "Upgrade to Premium",
+        lockedContentDescription = "Locked",
+    ),
+)
+internal val posterStyleMixedState = posterStyleState.copy(
+    posterWidth = PosterWidth.LARGE,
+    landscapeWidth = PosterWidth.COMPACT,
+    posterCornerStyle = PosterCornerStyle.ROUNDED,
+)
 internal val appearanceLockedState = appearanceState.copy(
     locks = SettingsLocks(
         customThemesLocked = true,
@@ -204,6 +271,8 @@ internal class SettingsPreviewParameterProvider : PreviewParameterProvider<Setti
                 loggedInState,
                 appearanceState,
                 layoutState,
+                discoverSectionsState,
+                posterStyleState,
                 behaviorState,
             )
         }

@@ -13,6 +13,8 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.discover.nav.scope.DiscoverChildScope
@@ -56,6 +58,7 @@ public class DiscoverCatalogPresenter(
     private val topRatedShowsInteractor: TopRatedShowsInteractor,
     private val genreShowsInteractor: GenreShowsInteractor,
     private val accountManager: AccountManager,
+    private val datastoreRepository: DatastoreRepository,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -90,8 +93,9 @@ public class DiscoverCatalogPresenter(
         observeTopRatedShowsInteractor.flow,
         uiMessageManager.message,
         _state,
+        datastoreRepository.observeHiddenDiscoverSections(),
     ) { trendingUpdating, upcomingUpdating, popularUpdating, topRatedUpdating,
-        trending, upcoming, popular, topRated, message, currentState,
+        trending, upcoming, popular, topRated, message, currentState, hiddenSections,
         ->
         val isLoading = trendingUpdating || upcomingUpdating || popularUpdating || topRatedUpdating
         val hasData = trending.isNotEmpty() || upcoming.isNotEmpty() ||
@@ -107,6 +111,10 @@ public class DiscoverCatalogPresenter(
             upcomingTitle = localizer.getString(StringResourceKey.LabelDiscoverUpcoming),
             popularTitle = localizer.getString(StringResourceKey.LabelDiscoverPopular),
             topRatedTitle = localizer.getString(StringResourceKey.LabelDiscoverTopRated),
+            trendingVisible = DiscoverSection.TRENDING_TODAY !in hiddenSections,
+            upcomingVisible = DiscoverSection.UPCOMING !in hiddenSections,
+            popularVisible = DiscoverSection.POPULAR !in hiddenSections,
+            topRatedVisible = DiscoverSection.TOP_RATED !in hiddenSections,
             message = message,
         )
     }.stateIn(

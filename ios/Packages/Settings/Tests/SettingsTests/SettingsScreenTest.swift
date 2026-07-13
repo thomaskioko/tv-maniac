@@ -123,6 +123,148 @@ class SettingsScreenTest: SnapshotTestCase {
         )
     }
 
+    private var layoutToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "haptic",
+                icon: "iphone.radiowaves.left.and.right",
+                title: "Haptic feedback",
+                subtitle: "Feel subtle vibrations during interactions",
+                isOn: true,
+                onToggle: { _ in }
+            ),
+            SettingsToggleItem(
+                id: "season-order",
+                icon: "arrow.up.arrow.down",
+                title: "Season Order",
+                subtitle: "Order the latest season first",
+                isOn: false,
+                onToggle: { _ in }
+            ),
+            SettingsToggleItem(
+                id: "blur-unwatched",
+                icon: "eye.slash",
+                title: "Hide Spoilers",
+                subtitle: "Hide spoilers for unwatched episodes",
+                isOn: false,
+                onToggle: { _ in }
+            ),
+        ]
+    }
+
+    private func fontSizeItem(percent: Int = 100) -> SettingsFontSizeItem {
+        SettingsFontSizeItem(
+            title: "Font Size",
+            description: "Adjust text size across the app",
+            previewText: "The quick brown fox jumps over the lazy dog",
+            resetLabel: "Reset",
+            percent: percent,
+            onPercentChange: { _ in }
+        )
+    }
+
+    private var discoverSectionsNavItem: SettingsNavigationItem {
+        SettingsNavigationItem(
+            id: SettingsPageRoute.discoverSections.rawValue,
+            icon: SettingsPageRoute.discoverSections.iconName,
+            title: "Discover Sections",
+            subtitle: "Choose which sections appear on Discover",
+            onTap: {}
+        )
+    }
+
+    private var discoverSectionToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "START_WATCHING",
+                icon: "play.circle",
+                title: "Start Watching",
+                subtitle: "",
+                isOn: true,
+                onToggle: { _ in }
+            ),
+            SettingsToggleItem(
+                id: "TRENDING_TODAY",
+                icon: "flame",
+                title: "Trending Today",
+                subtitle: "",
+                isOn: true,
+                onToggle: { _ in }
+            ),
+            SettingsToggleItem(
+                id: "UPCOMING",
+                icon: "calendar",
+                title: "Upcoming",
+                subtitle: "",
+                isOn: false,
+                onToggle: { _ in }
+            ),
+            SettingsToggleItem(
+                id: "POPULAR",
+                icon: "star",
+                title: "Popular",
+                subtitle: "",
+                isOn: true,
+                onToggle: { _ in }
+            ),
+            SettingsToggleItem(
+                id: "TOP_RATED",
+                icon: "trophy",
+                title: "Top Rated",
+                subtitle: "",
+                isOn: true,
+                onToggle: { _ in }
+            ),
+        ]
+    }
+
+    private func posterStyleItem(locked: Bool = false) -> SettingsPosterStyleItem {
+        let widthOptions: [SettingsPosterStyleOption] = [
+            SettingsPosterStyleOption(id: "COMPACT", label: "Compact", onSelect: {}),
+            SettingsPosterStyleOption(id: "STANDARD", label: "Standard", onSelect: {}),
+            SettingsPosterStyleOption(id: "COMFORTABLE", label: "Comfortable", onSelect: {}),
+            SettingsPosterStyleOption(id: "LARGE", label: "Large", onSelect: {}),
+        ]
+        let cornerOptions: [SettingsPosterStyleOption] = [
+            SettingsPosterStyleOption(id: "SHARP", label: "Sharp", onSelect: {}),
+            SettingsPosterStyleOption(id: "CLASSIC", label: "Classic", onSelect: {}),
+            SettingsPosterStyleOption(id: "ROUNDED", label: "Rounded", onSelect: {}),
+            SettingsPosterStyleOption(id: "PILL", label: "Pill", onSelect: {}),
+        ]
+        return SettingsPosterStyleItem(
+            title: "Poster style",
+            description: "Choose poster size and corner style",
+            livePreviewLabel: "Live preview",
+            resetLabel: "Reset",
+            postersLabel: "Posters",
+            landscapeLabel: "Landscape",
+            cornerLabel: "Corner style",
+            postersOptions: widthOptions,
+            landscapeOptions: widthOptions,
+            cornerOptions: cornerOptions,
+            selectedPostersId: "STANDARD",
+            selectedLandscapeId: "STANDARD",
+            selectedCornerId: "SHARP",
+            posterScale: 1,
+            landscapeScale: 1,
+            cornerRadius: 0,
+            isLocked: locked,
+            lockedBadgeText: locked ? "Premium" : "",
+            lockedActionText: locked ? "Upgrade to Premium" : "",
+            lockedAccessibilityLabel: locked ? "Locked" : ""
+        )
+    }
+
+    private var posterStyleNavItem: SettingsNavigationItem {
+        SettingsNavigationItem(
+            id: SettingsPageRoute.posterStyle.rawValue,
+            icon: SettingsPageRoute.posterStyle.iconName,
+            title: "Poster style",
+            subtitle: "Choose poster size and corner style",
+            onTap: {}
+        )
+    }
+
     private var behaviorToggles: [SettingsToggleItem] {
         [
             SettingsToggleItem(
@@ -330,7 +472,9 @@ class SettingsScreenTest: SnapshotTestCase {
         isLoading: Bool = false,
         customAccountContent: SettingsAccountContent? = nil,
         customThemeItem: SettingsThemeItem<ThemeItemModel>? = nil,
-        customNotificationToggles: [SettingsToggleItem]? = nil
+        customNotificationToggles: [SettingsToggleItem]? = nil,
+        fontSizePercent: Int = 100,
+        customPosterStyleItem: SettingsPosterStyleItem? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
@@ -339,6 +483,12 @@ class SettingsScreenTest: SnapshotTestCase {
             rootSections: rootSections(authenticated: authenticated),
             themeItem: customThemeItem ?? defaultThemeItem,
             imageQualityItem: defaultImageQualityItem,
+            layoutToggles: layoutToggles,
+            fontSizeItem: fontSizeItem(percent: fontSizePercent),
+            discoverSectionsNavItem: discoverSectionsNavItem,
+            discoverSectionToggles: discoverSectionToggles,
+            posterStyleNavItem: posterStyleNavItem,
+            posterStyleItem: customPosterStyleItem ?? posterStyleItem(),
             behaviorToggles: behaviorToggles,
             notificationToggles: customNotificationToggles ?? notificationToggles,
             privacyToggles: privacyToggles,
@@ -371,6 +521,43 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .layout, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Layout")
+    }
+
+    func test_SettingsScreen_Layout_FontScaled() {
+        TvManiacTypographyScheme.updateFontScale(percent: 130)
+        defer { TvManiacTypographyScheme.updateFontScale(percent: 100) }
+
+        SettingsScreen(
+            state: makeState(page: .layout, authenticated: true, fontSizePercent: 130),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Layout_FontScaled")
+    }
+
+    func test_SettingsScreen_DiscoverSections() {
+        SettingsScreen(state: makeState(page: .discoverSections, authenticated: true), onBack: {})
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_DiscoverSections")
+    }
+
+    func test_SettingsScreen_PosterStyle() {
+        SettingsScreen(state: makeState(page: .posterStyle, authenticated: true), onBack: {})
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_PosterStyle")
+    }
+
+    func test_SettingsScreen_PosterStyle_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .posterStyle,
+                authenticated: true,
+                customPosterStyleItem: posterStyleItem(locked: true)
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_PosterStyle_Locked")
     }
 
     func test_SettingsScreen_Appearance() {

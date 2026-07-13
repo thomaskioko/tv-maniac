@@ -40,7 +40,7 @@ public struct PosterItemView: View {
     }
 
     public var body: some View {
-        let resolvedRadius = posterRadius ?? 0
+        let resolvedRadius = posterRadius ?? ImageDimens.posterCornerRadius
         let resolvedHeight = aspectRatio.map { posterWidth / $0 } ?? posterHeight
         let imageHeight = processorHeight ?? resolvedHeight
 

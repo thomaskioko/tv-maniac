@@ -36,6 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.testtags.episodesheet.EpisodeSheetTestTags
 
 internal data class EpisodeDetailInfo(
@@ -45,6 +46,7 @@ internal data class EpisodeDetailInfo(
     val overview: String? = null,
     val rating: Double? = null,
     val voteCount: Long? = null,
+    val isWatched: Boolean = false,
 )
 
 internal data class SheetAction(
@@ -69,6 +71,7 @@ internal fun EpisodeDetailSheetContent(
         EpisodeDetailHeader(
             imageUrl = episode.imageUrl,
             contentDescription = episode.title,
+            isWatched = episode.isWatched,
         )
 
         EpisodeDetailContentLayout(
@@ -98,6 +101,7 @@ internal fun EpisodeDetailSheetContent(
 private fun EpisodeDetailHeader(
     imageUrl: String?,
     contentDescription: String,
+    isWatched: Boolean,
 ) {
     Box(
         modifier = Modifier
@@ -131,6 +135,7 @@ private fun EpisodeDetailHeader(
             contentDescription = contentDescription,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
+            blurContent = LocalBlurUnwatchedEnabled.current && !isWatched,
         )
 
         Box(

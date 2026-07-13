@@ -1,7 +1,10 @@
 package com.thomaskioko.tvmaniac.seasondetails.roborrazi
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.unit.Density
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.settings.ui.SettingsScreen
@@ -15,6 +18,8 @@ import com.thomaskioko.tvmaniac.settings.ui.appearanceLockedState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
+import com.thomaskioko.tvmaniac.settings.ui.discoverSectionsState
+import com.thomaskioko.tvmaniac.settings.ui.fontSizeScaledLayoutState
 import com.thomaskioko.tvmaniac.settings.ui.infoState
 import com.thomaskioko.tvmaniac.settings.ui.layoutState
 import com.thomaskioko.tvmaniac.settings.ui.licensesState
@@ -22,6 +27,9 @@ import com.thomaskioko.tvmaniac.settings.ui.loadingState
 import com.thomaskioko.tvmaniac.settings.ui.loggedInState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsLockedState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
+import com.thomaskioko.tvmaniac.settings.ui.posterStyleLockedState
+import com.thomaskioko.tvmaniac.settings.ui.posterStyleMixedState
+import com.thomaskioko.tvmaniac.settings.ui.posterStyleState
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
 import org.junit.Rule
 import org.junit.Test
@@ -82,6 +90,74 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = layoutState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenLayoutPageFontSizeScaled() {
+        composeTestRule.captureMultiDevice("SettingsScreenLayoutPageFontSizeScaled") {
+            val density = LocalDensity.current
+            CompositionLocalProvider(
+                LocalDensity provides Density(
+                    density = density.density,
+                    fontScale = density.fontScale * FONT_SIZE_SCALE_PERCENT / 100f,
+                ),
+            ) {
+                TvManiacBackground {
+                    SettingsScreen(
+                        state = fontSizeScaledLayoutState,
+                        onAction = {},
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenDiscoverSectionsPage() {
+        composeTestRule.captureMultiDevice("SettingsScreenDiscoverSectionsPage") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = discoverSectionsState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenPosterStylePage() {
+        composeTestRule.captureMultiDevice("SettingsScreenPosterStylePage") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = posterStyleState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenPosterStylePageLocked() {
+        composeTestRule.captureMultiDevice("SettingsScreenPosterStylePageLocked") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = posterStyleLockedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenPosterStylePageMixed() {
+        composeTestRule.captureMultiDevice("SettingsScreenPosterStylePageMixed") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = posterStyleMixedState,
                     onAction = {},
                 )
             }
@@ -256,3 +332,5 @@ class SettingsScreenshotTest {
         }
     }
 }
+
+private const val FONT_SIZE_SCALE_PERCENT = 130

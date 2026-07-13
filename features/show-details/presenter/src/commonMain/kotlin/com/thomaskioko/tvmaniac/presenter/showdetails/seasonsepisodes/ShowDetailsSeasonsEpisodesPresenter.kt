@@ -12,6 +12,8 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -34,6 +36,7 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -61,6 +64,7 @@ public class ShowDetailsSeasonsEpisodesPresenter(
     private val accountManager: AccountManager,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
+    datastoreRepository: DatastoreRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -87,9 +91,13 @@ public class ShowDetailsSeasonsEpisodesPresenter(
         loadingState.observable,
         updatingEpisodeIdsState,
         episodeActionLoadingState.observable,
-    ) { seasons, progress, continueEpisodes, message, currentState, isRefreshing, updatingEpisodeIds, isUpdating ->
+        datastoreRepository.observeSeasonSortOrder(),
+    ) { seasons, progress, continueEpisodes, message, currentState, isRefreshing, updatingEpisodeIds, isUpdating, sortOrder ->
+        val seasonModels = seasons.toSeasonModels().let {
+            if (sortOrder == SeasonSortOrder.NEWEST_FIRST) it.reversed().toImmutableList() else it
+        }
         currentState.copy(
-            seasonsList = seasons.toSeasonModels(),
+            seasonsList = seasonModels,
             numberOfSeasons = seasons.size,
             watchedEpisodesCount = progress.watchedCount,
             totalEpisodesCount = progress.totalCount,

@@ -14,9 +14,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.dp
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -24,6 +26,8 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.tvmaniac.app.di.ActivityGraph
 import com.thomaskioko.tvmaniac.app.ui.di.AppRootContent
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
+import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
 import com.thomaskioko.tvmaniac.domain.theme.Theme
@@ -61,11 +65,11 @@ public class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val themeState by graph.rootPresenter.themeState.collectAsState()
-            val appTheme = themeState.appTheme
+            val appUiState by graph.rootPresenter.appUiState.collectAsState()
+            val appTheme = appUiState.appTheme
             val useDarkTheme = shouldUseDarkTheme(appTheme)
 
-            splashScreen.setKeepOnScreenCondition { themeState.isFetching }
+            splashScreen.setKeepOnScreenCondition { appUiState.isFetching }
 
             DisposableEffect(useDarkTheme) {
                 enableEdgeToEdge(
@@ -90,8 +94,17 @@ public class MainActivity : ComponentActivity() {
             TvManiacTheme(
                 appTheme = appTheme,
                 windowWidthSizeClass = windowSizeClass.widthSizeClass,
+                fontSizePercent = appUiState.fontSizePercent,
+                posterWidthScale = appUiState.posterWidthScale,
+                landscapeWidthScale = appUiState.landscapeWidthScale,
+                posterCornerRadius = appUiState.posterCornerRadius.dp,
             ) {
-                graph.AppRootContent()
+                CompositionLocalProvider(
+                    LocalHapticFeedbackEnabled provides appUiState.hapticFeedbackEnabled,
+                    LocalBlurUnwatchedEnabled provides appUiState.blurImage,
+                ) {
+                    graph.AppRootContent()
+                }
             }
         }
 

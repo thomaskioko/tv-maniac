@@ -26,10 +26,10 @@ public struct SelectionChip: View {
                 .padding(.vertical, theme.spacing.small)
                 .background(isSelected ? AnyShapeStyle(.appSecondary) : AnyShapeStyle(Color.clear))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: theme.shapes.small)
                         .stroke(isSelected ? AnyShapeStyle(Color.clear) : AnyShapeStyle(.appOutline), lineWidth: 1)
                 )
-                .cornerRadius(20)
+                .cornerRadius(theme.shapes.small)
         }
         .buttonStyle(.plain)
     }

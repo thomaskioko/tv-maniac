@@ -31,6 +31,7 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_count
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
@@ -56,6 +57,7 @@ internal fun LibraryListItem(
             PosterCard(
                 imageUrl = item.posterImageUrl,
                 title = item.title,
+                imageWidth = Layout.posterWidthFixed,
                 aspectRatio = 120f / 200f,
             )
 

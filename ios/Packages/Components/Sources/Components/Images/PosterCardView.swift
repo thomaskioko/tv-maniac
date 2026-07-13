@@ -34,7 +34,7 @@ public struct PosterCardView: View {
             isInLibrary: isInLibrary,
             posterWidth: posterWidth,
             posterHeight: posterHeight,
-            posterRadius: posterRadius ?? 0
+            posterRadius: posterRadius
         )
         .overlay {
             ZStack {

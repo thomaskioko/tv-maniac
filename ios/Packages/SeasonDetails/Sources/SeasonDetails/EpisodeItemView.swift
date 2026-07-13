@@ -13,6 +13,7 @@ import SwiftUI
 
 public struct EpisodeItemView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
 
     private let imageUrl: String?
     private let episodeTitle: String
@@ -86,6 +87,7 @@ public struct EpisodeItemView: View {
             posterRadius: posterRadius
         )
         .frame(width: episodeWidth, height: episodeHeight)
+        .blurEffect(isWatched: isWatched)
         .clipped()
     }
 
@@ -118,7 +120,10 @@ public struct EpisodeItemView: View {
                 .frame(width: DimensionConstants.checkmarkSize, height: DimensionConstants.checkmarkSize)
                 .padding(.trailing, theme.spacing.medium)
         } else if hasAired {
-            Button(action: onWatchedToggle) {
+            Button(action: {
+                Haptics.impact(isEnabled: hapticFeedbackEnabled)
+                onWatchedToggle()
+            }) {
                 ZStack {
                     Circle()
                         .fill(isWatched ? .appSuccess : .appGrey)

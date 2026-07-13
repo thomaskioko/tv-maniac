@@ -42,6 +42,7 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.LocalLandscapeWidthScale
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
@@ -112,7 +113,7 @@ private fun TrailersContent(
                                 model = trailer.youtubeThumbnailUrl,
                                 contentDescription = trailer.name,
                                 modifier = Modifier
-                                    .height(140.dp)
+                                    .height(140.dp * LocalLandscapeWidthScale.current)
                                     .aspectRatio(3 / 1.5f)
                                     .drawWithCache {
                                         val gradient = Brush.verticalGradient(

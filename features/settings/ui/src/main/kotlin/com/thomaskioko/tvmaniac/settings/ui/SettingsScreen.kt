@@ -43,10 +43,12 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.ui.components.AccountPage
 import com.thomaskioko.tvmaniac.settings.ui.components.AppearancePage
 import com.thomaskioko.tvmaniac.settings.ui.components.BehaviorPage
+import com.thomaskioko.tvmaniac.settings.ui.components.DiscoverSectionsPage
 import com.thomaskioko.tvmaniac.settings.ui.components.InfoPage
 import com.thomaskioko.tvmaniac.settings.ui.components.LayoutPage
 import com.thomaskioko.tvmaniac.settings.ui.components.LicensesPage
 import com.thomaskioko.tvmaniac.settings.ui.components.NotificationsPage
+import com.thomaskioko.tvmaniac.settings.ui.components.PosterStylePage
 import com.thomaskioko.tvmaniac.settings.ui.components.PrivacyPage
 import com.thomaskioko.tvmaniac.settings.ui.components.SettingsRootContent
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
@@ -149,6 +151,14 @@ internal fun SettingsScreen(
                             onAction = onAction,
                         )
                         SettingsPage.LAYOUT -> LayoutPage(
+                            state = state,
+                            onAction = onAction,
+                        )
+                        SettingsPage.DISCOVER_SECTIONS -> DiscoverSectionsPage(
+                            state = state,
+                            onAction = onAction,
+                        )
+                        SettingsPage.POSTER_STYLE -> PosterStylePage(
                             state = state,
                             onAction = onAction,
                         )

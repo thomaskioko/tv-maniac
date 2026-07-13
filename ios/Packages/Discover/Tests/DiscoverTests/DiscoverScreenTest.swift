@@ -134,6 +134,27 @@ class DiscoverScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog")
     }
 
+    func test_DiscoverCatalogSection_HiddenSection() {
+        DiscoverCatalogContent(
+            trendingTitle: "Trending Today",
+            upcomingTitle: "Upcoming",
+            popularTitle: "Popular",
+            topRatedTitle: "Top Rated",
+            trendingShows: samplePosters,
+            upcomingShows: samplePosters,
+            popularShows: samplePosters,
+            topRatedShows: samplePosters,
+            upcomingVisible: false,
+            onShowClicked: { _ in },
+            onTrendingMoreClicked: {},
+            onUpcomingMoreClicked: {},
+            onPopularMoreClicked: {},
+            onTopRatedMoreClicked: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog_HiddenSection")
+    }
+
     func test_DiscoverFeaturedSection_Empty() {
         DiscoverFeaturedContent(
             shows: [],

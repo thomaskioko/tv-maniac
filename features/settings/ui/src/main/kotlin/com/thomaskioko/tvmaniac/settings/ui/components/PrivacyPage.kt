@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.settings.presenter.CrashReportingToggled
@@ -20,7 +21,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroupDivider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsNavigationRow
-import com.thomaskioko.tvmaniac.settings.ui.SettingsSwitchRow
 import com.thomaskioko.tvmaniac.settings.ui.openInCustomTab
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
@@ -38,7 +38,7 @@ internal fun PrivacyPage(
 
         item {
             SettingsGroup {
-                SettingsSwitchRow(
+                SwitchRow(
                     icon = Icons.Filled.BugReport,
                     title = state.labels.crashReportingTitle,
                     description = state.labels.crashReportingDescription,

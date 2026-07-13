@@ -36,6 +36,7 @@ import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.grey
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
 
@@ -64,6 +65,7 @@ internal fun ContinueWatchingUpNextListItem(
         ) {
             PosterCard(
                 imageUrl = item.stillImage ?: item.showPoster,
+                blurContent = LocalBlurUnwatchedEnabled.current,
                 modifier = Modifier
                     .width(100.dp)
                     .aspectRatio(0.8f),

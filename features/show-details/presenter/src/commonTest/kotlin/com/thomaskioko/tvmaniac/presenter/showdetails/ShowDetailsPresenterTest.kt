@@ -353,6 +353,7 @@ internal class ShowDetailsPresenterTest {
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
             ),
+            datastoreRepository = datastoreRepository,
             navigator = navigator,
             accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },

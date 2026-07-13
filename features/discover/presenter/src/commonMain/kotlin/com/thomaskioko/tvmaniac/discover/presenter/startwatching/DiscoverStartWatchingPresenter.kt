@@ -4,6 +4,8 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.discover.nav.scope.DiscoverChildScope
 import com.thomaskioko.tvmaniac.discover.presenter.toStartWatchingShowList
@@ -19,7 +21,7 @@ import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 @ChildPresenter(scope = DiscoverChildScope::class, parentScope = DiscoverRoot::class)
@@ -28,6 +30,7 @@ public class DiscoverStartWatchingPresenter(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,
+    private val datastoreRepository: DatastoreRepository,
     private val localizer: Localizer,
 ) : ComponentContext by componentContext {
 
@@ -37,13 +40,16 @@ public class DiscoverStartWatchingPresenter(
         observeStartWatchingInteractor(Unit)
     }
 
-    public val state: StateFlow<DiscoverStartWatchingState> = observeStartWatchingInteractor.flow
-        .map { shows ->
-            DiscoverStartWatchingState(
-                startWatchingShows = shows.toStartWatchingShowList(),
-                startWatchingTitle = localizer.getString(StringResourceKey.LabelStartWatching),
-            )
-        }
+    public val state: StateFlow<DiscoverStartWatchingState> = combine(
+        observeStartWatchingInteractor.flow,
+        datastoreRepository.observeHiddenDiscoverSections(),
+    ) { shows, hiddenSections ->
+        DiscoverStartWatchingState(
+            startWatchingShows = shows.toStartWatchingShowList(),
+            startWatchingTitle = localizer.getString(StringResourceKey.LabelStartWatching),
+            startWatchingVisible = DiscoverSection.START_WATCHING !in hiddenSections,
+        )
+    }
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(),

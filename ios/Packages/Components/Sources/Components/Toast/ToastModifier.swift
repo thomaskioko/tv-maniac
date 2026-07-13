@@ -3,6 +3,7 @@ import SwiftUI
 
 public struct ToastModifier: ViewModifier {
     @Binding var toast: Toast?
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
     @State private var workItem: DispatchWorkItem?
     @State private var dragOffsetX: CGFloat = 0
     @State private var dragOffsetY: CGFloat = 0
@@ -71,7 +72,7 @@ public struct ToastModifier: ViewModifier {
 
         dragOffsetX = 0
         dragOffsetY = 0
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        Haptics.impact(isEnabled: hapticFeedbackEnabled, style: .light)
 
         if let duration = toast.duration, duration > 0 {
             workItem?.cancel()

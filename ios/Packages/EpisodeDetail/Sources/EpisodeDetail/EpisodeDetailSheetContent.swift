@@ -9,6 +9,7 @@ public struct EpisodeDetailSheetInfo: Equatable {
     public let overview: String?
     public let rating: Double?
     public let voteCount: Int64?
+    public let isWatched: Bool
 
     public init(
         title: String,
@@ -16,7 +17,8 @@ public struct EpisodeDetailSheetInfo: Equatable {
         episodeInfo: String,
         overview: String? = nil,
         rating: Double? = nil,
-        voteCount: Int64? = nil
+        voteCount: Int64? = nil,
+        isWatched: Bool = false
     ) {
         self.title = title
         self.imageUrl = imageUrl
@@ -24,6 +26,7 @@ public struct EpisodeDetailSheetInfo: Equatable {
         self.overview = overview
         self.rating = rating
         self.voteCount = voteCount
+        self.isWatched = isWatched
     }
 }
 
@@ -87,6 +90,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                 size: CGSize(width: UIScreen.main.bounds.width, height: 280)
             )
             .frame(maxWidth: .infinity, maxHeight: 280)
+            .blurEffect(isWatched: episode.isWatched)
             .clipped()
 
             RoundedRectangle(cornerRadius: 2)

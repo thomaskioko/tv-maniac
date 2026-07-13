@@ -310,4 +310,124 @@ public interface DatastoreRepository {
     public suspend fun saveAccountType(override: String?)
 
     public fun observeAccountType(): Flow<String?>
+
+    /**
+     * Saves whether haptic feedback fires on supported interactions.
+     *
+     * @param enabled Whether haptic feedback is enabled.
+     */
+    public suspend fun saveHapticFeedbackEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether haptic feedback fires on supported interactions.
+     *
+     * @return A Flow of Boolean, true if haptic feedback is enabled. Defaults to true.
+     */
+    public fun observeHapticFeedbackEnabled(): Flow<Boolean>
+
+    /**
+     * Saves the order in which seasons are listed on the show details page.
+     *
+     * @param sortOrder Whether the oldest or newest season is listed first.
+     */
+    public suspend fun saveSeasonSortOrder(sortOrder: SeasonSortOrder)
+
+    /**
+     * Observes the order in which seasons are listed on the show details page.
+     *
+     * @return A Flow of SeasonSortOrder. Defaults to [SeasonSortOrder.OLDEST_FIRST].
+     */
+    public fun observeSeasonSortOrder(): Flow<SeasonSortOrder>
+
+    /**
+     * Saves whether unwatched episode still images are blurred to avoid spoilers.
+     *
+     * @param enabled Whether unwatched episode images are blurred.
+     */
+    public suspend fun saveBlurUnwatchedEpisodeImages(enabled: Boolean)
+
+    /**
+     * Observes whether unwatched episode still images are blurred to avoid spoilers.
+     *
+     * @return A Flow of Boolean, true if unwatched episode images are blurred. Defaults to false.
+     */
+    public fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean>
+
+    /**
+     * Saves the Discover sections hidden from the Discover screen.
+     *
+     * @param sections Sections the user has chosen to hide.
+     */
+    public suspend fun saveHiddenDiscoverSections(sections: Set<DiscoverSection>)
+
+    /**
+     * Observes the Discover sections hidden from the Discover screen.
+     *
+     * @return A Flow of hidden sections. Defaults to an empty set. Unknown stored names are ignored.
+     */
+    public fun observeHiddenDiscoverSections(): Flow<Set<DiscoverSection>>
+
+    /**
+     * Atomically shows or hides a single Discover section within one write transaction.
+     *
+     * @param section Section whose visibility changes.
+     * @param visible Whether the section is shown; false hides it.
+     */
+    public suspend fun updateDiscoverSectionVisibility(section: DiscoverSection, visible: Boolean)
+
+    /**
+     * Saves the app font size as a percentage of the default.
+     *
+     * @param percent The scale percentage, clamped into 85 to 130 on read.
+     */
+    public suspend fun saveFontSizePercent(percent: Int)
+
+    /**
+     * Observes the app font size percentage.
+     *
+     * @return A Flow of the scale percentage, defaulting to 100 and clamped into 85 to 130.
+     */
+    public fun observeFontSizePercent(): Flow<Int>
+
+    /**
+     * Saves the size preset for portrait poster cards, applied to every poster across the app.
+     *
+     * @param width Poster size preset.
+     */
+    public suspend fun savePosterWidth(width: PosterWidth)
+
+    /**
+     * Observes the size preset for portrait poster cards.
+     *
+     * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
+     */
+    public fun observePosterWidth(): Flow<PosterWidth>
+
+    /**
+     * Saves the size preset for landscape (16:9 backdrop) cards.
+     *
+     * @param width Landscape card size preset.
+     */
+    public suspend fun saveLandscapeWidth(width: PosterWidth)
+
+    /**
+     * Observes the size preset for landscape (16:9 backdrop) cards.
+     *
+     * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
+     */
+    public fun observeLandscapeWidth(): Flow<PosterWidth>
+
+    /**
+     * Saves the corner style applied to every poster.
+     *
+     * @param style Corner style preset.
+     */
+    public suspend fun savePosterCornerStyle(style: PosterCornerStyle)
+
+    /**
+     * Observes the corner style applied to every poster.
+     *
+     * @return A Flow of [PosterCornerStyle]. Defaults to [PosterCornerStyle.SHARP]; unknown stored names fall back to the default.
+     */
+    public fun observePosterCornerStyle(): Flow<PosterCornerStyle>
 }

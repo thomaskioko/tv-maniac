@@ -4,14 +4,20 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -308,7 +314,126 @@ public class DefaultDatastoreRepository(
             preferences[KEY_ACCOUNT_TYPE]
         }
 
+    override suspend fun saveHapticFeedbackEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_HAPTIC_FEEDBACK_ENABLED] = enabled
+        }
+    }
+
+    override fun observeHapticFeedbackEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_HAPTIC_FEEDBACK_ENABLED] ?: true
+        }
+
+    override suspend fun saveSeasonSortOrder(sortOrder: SeasonSortOrder) {
+        dataStore.edit { preferences ->
+            preferences[KEY_SEASON_SORT_ORDER] = sortOrder.name
+        }
+    }
+
+    override fun observeSeasonSortOrder(): Flow<SeasonSortOrder> =
+        dataStore.data.map { preferences ->
+            when (preferences[KEY_SEASON_SORT_ORDER]) {
+                SeasonSortOrder.NEWEST_FIRST.name -> SeasonSortOrder.NEWEST_FIRST
+                else -> SeasonSortOrder.OLDEST_FIRST
+            }
+        }
+
+    override suspend fun saveBlurUnwatchedEpisodeImages(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_BLUR_UNWATCHED_EPISODE_IMAGES] = enabled
+        }
+    }
+
+    override fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_BLUR_UNWATCHED_EPISODE_IMAGES] ?: false
+        }
+
+    override suspend fun saveHiddenDiscoverSections(sections: Set<DiscoverSection>) {
+        dataStore.edit { preferences ->
+            preferences[KEY_HIDDEN_DISCOVER_SECTIONS] = sections.map { it.name }.toSet()
+        }
+    }
+
+    override fun observeHiddenDiscoverSections(): Flow<Set<DiscoverSection>> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_HIDDEN_DISCOVER_SECTIONS]
+                ?.mapNotNull { name -> DiscoverSection.entries.firstOrNull { it.name == name } }
+                ?.toSet()
+                ?: emptySet()
+        }
+
+    override suspend fun updateDiscoverSectionVisibility(section: DiscoverSection, visible: Boolean) {
+        dataStore.edit { preferences ->
+            val current = preferences[KEY_HIDDEN_DISCOVER_SECTIONS].orEmpty()
+            preferences[KEY_HIDDEN_DISCOVER_SECTIONS] =
+                if (visible) current - section.name else current + section.name
+        }
+    }
+
+    override suspend fun saveFontSizePercent(percent: Int) {
+        dataStore.edit { preferences ->
+            preferences[KEY_FONT_SIZE_PERCENT] = percent
+        }
+    }
+
+    override fun observeFontSizePercent(): Flow<Int> =
+        dataStore.data.map { preferences ->
+            (preferences[KEY_FONT_SIZE_PERCENT] ?: FONT_SIZE_DEFAULT).coerceIn(FONT_SIZE_MIN, FONT_SIZE_MAX)
+        }
+
+    override suspend fun savePosterWidth(width: PosterWidth) {
+        dataStore.edit { preferences ->
+            preferences[KEY_POSTER_WIDTH] = width.name
+        }
+    }
+
+    override fun observePosterWidth(): Flow<PosterWidth> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_POSTER_WIDTH].toPosterWidth()
+        }
+
+    override suspend fun saveLandscapeWidth(width: PosterWidth) {
+        dataStore.edit { preferences ->
+            preferences[KEY_LANDSCAPE_WIDTH] = width.name
+        }
+    }
+
+    override fun observeLandscapeWidth(): Flow<PosterWidth> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_LANDSCAPE_WIDTH].toPosterWidth()
+        }
+
+    override suspend fun savePosterCornerStyle(style: PosterCornerStyle) {
+        dataStore.edit { preferences ->
+            preferences[KEY_POSTER_CORNER_STYLE] = style.name
+        }
+    }
+
+    override fun observePosterCornerStyle(): Flow<PosterCornerStyle> =
+        dataStore.data.map { preferences ->
+            when (preferences[KEY_POSTER_CORNER_STYLE]) {
+                PosterCornerStyle.CLASSIC.name -> PosterCornerStyle.CLASSIC
+                PosterCornerStyle.ROUNDED.name -> PosterCornerStyle.ROUNDED
+                PosterCornerStyle.PILL.name -> PosterCornerStyle.PILL
+                else -> PosterCornerStyle.SHARP
+            }
+        }
+
+    private fun String?.toPosterWidth(): PosterWidth =
+        when (this) {
+            PosterWidth.COMPACT.name -> PosterWidth.COMPACT
+            PosterWidth.COMFORTABLE.name -> PosterWidth.COMFORTABLE
+            PosterWidth.LARGE.name -> PosterWidth.LARGE
+            else -> PosterWidth.STANDARD
+        }
+
     public companion object {
+        private const val FONT_SIZE_DEFAULT = 100
+        private const val FONT_SIZE_MIN = 85
+        private const val FONT_SIZE_MAX = 130
+
         public val KEY_THEME: Preferences.Key<String> = stringPreferencesKey("app_theme")
         public val KEY_LANGUAGE: Preferences.Key<String> = stringPreferencesKey("app_language")
         public val KEY_LIST_STYLE: Preferences.Key<String> = stringPreferencesKey("list_style")
@@ -331,5 +456,15 @@ public class DefaultDatastoreRepository(
         public val KEY_LAST_TOKEN_REFRESH_TIMESTAMP: Preferences.Key<Long> = longPreferencesKey("last_token_refresh_timestamp")
         public val KEY_DEBUG_MENU_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("debug_menu_enabled")
         public val KEY_ACCOUNT_TYPE: Preferences.Key<String> = stringPreferencesKey("account_type")
+        public val KEY_HAPTIC_FEEDBACK_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("haptic_feedback_enabled")
+        public val KEY_SEASON_SORT_ORDER: Preferences.Key<String> = stringPreferencesKey("season_sort_order")
+        public val KEY_BLUR_UNWATCHED_EPISODE_IMAGES: Preferences.Key<Boolean> =
+            booleanPreferencesKey("blur_unwatched_episode_images")
+        public val KEY_HIDDEN_DISCOVER_SECTIONS: Preferences.Key<Set<String>> =
+            stringSetPreferencesKey("hidden_discover_sections")
+        public val KEY_FONT_SIZE_PERCENT: Preferences.Key<Int> = intPreferencesKey("font_size_percent")
+        public val KEY_POSTER_WIDTH: Preferences.Key<String> = stringPreferencesKey("poster_width")
+        public val KEY_LANDSCAPE_WIDTH: Preferences.Key<String> = stringPreferencesKey("landscape_width")
+        public val KEY_POSTER_CORNER_STYLE: Preferences.Key<String> = stringPreferencesKey("poster_corner_style")
     }
 }

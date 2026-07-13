@@ -21,6 +21,10 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
@@ -100,6 +104,7 @@ public class SettingsPresenter(
     ) { customThemesAccess, episodeNotificationsAccess ->
         SettingsLocks(
             customThemesLocked = !customThemesAccess,
+            posterStyleLocked = !customThemesAccess,
             episodeNotificationsLocked = !episodeNotificationsAccess,
             badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
             themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
@@ -150,6 +155,14 @@ public class SettingsPresenter(
             versionName = appMetadata.versionName,
             episodeNotificationsEnabled = preferences.episodeNotificationsEnabled,
             crashReportingEnabled = preferences.crashReportingEnabled,
+            hapticFeedbackEnabled = preferences.layout.hapticFeedbackEnabled,
+            newestSeasonFirst = preferences.layout.seasonSortOrder == SeasonSortOrder.NEWEST_FIRST,
+            blurImage = preferences.layout.blurImage,
+            discoverSectionToggles = buildDiscoverSectionToggles(preferences.layout.hiddenDiscoverSections),
+            fontSizePercent = preferences.layout.fontSizePercent,
+            posterWidth = preferences.layout.posterWidth,
+            landscapeWidth = preferences.layout.landscapeWidth,
+            posterCornerStyle = preferences.layout.posterCornerStyle,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
@@ -251,6 +264,68 @@ public class SettingsPresenter(
                 }
             }
 
+            is HapticFeedbackToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveHapticFeedbackEnabled(action.enabled)
+                }
+            }
+
+            is SeasonOrderToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveSeasonSortOrder(
+                        if (action.enabled) SeasonSortOrder.NEWEST_FIRST else SeasonSortOrder.OLDEST_FIRST,
+                    )
+                }
+            }
+
+            is BlurUnwatchedToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveBlurUnwatchedEpisodeImages(action.enabled)
+                }
+            }
+
+            is DiscoverSectionToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.updateDiscoverSectionVisibility(action.section, action.visible)
+                }
+            }
+
+            is FontSizeChanged -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveFontSizePercent(action.percent)
+                }
+            }
+
+            is PosterWidthSelected -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.savePosterWidth(action.width)
+                }
+            }
+
+            is LandscapeWidthSelected -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.saveLandscapeWidth(action.width)
+                }
+            }
+
+            is PosterCornerStyleSelected -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.savePosterCornerStyle(action.style)
+                }
+            }
+
+            is PosterStyleReset -> {
+                if (state.value.locks.posterStyleLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.savePosterWidth(PosterWidth.STANDARD)
+                    datastoreRepository.saveLandscapeWidth(PosterWidth.STANDARD)
+                    datastoreRepository.savePosterCornerStyle(PosterCornerStyle.SHARP)
+                }
+            }
+
             is SettingsMessageShown -> {
                 coroutineScope.launch {
                     uiMessageManager.clearMessage(action.id)
@@ -278,6 +353,10 @@ public class SettingsPresenter(
         SettingsPage.ACCOUNT,
         SettingsPage.LAYOUT,
         -> SettingsPage.ROOT
+
+        SettingsPage.DISCOVER_SECTIONS,
+        SettingsPage.POSTER_STYLE,
+        -> SettingsPage.LAYOUT
     }
 
     private fun toggleLogoutConfirmation() {
@@ -406,8 +485,27 @@ public class SettingsPresenter(
             SettingsPage.LICENSES -> StringResourceKey.LabelSettingsSectionLicenses
             SettingsPage.ACCOUNT -> StringResourceKey.SettingsTitleAccount
             SettingsPage.LAYOUT -> StringResourceKey.SettingsLayoutTitle
+            SettingsPage.DISCOVER_SECTIONS -> StringResourceKey.SettingsDiscoverSectionsTitle
+            SettingsPage.POSTER_STYLE -> StringResourceKey.SettingsPosterStyleTitle
         },
     )
+
+    private fun buildDiscoverSectionToggles(hidden: Set<DiscoverSection>): ImmutableList<DiscoverSectionToggle> =
+        DiscoverSection.entries.map { section ->
+            DiscoverSectionToggle(
+                section = section,
+                label = localizer.getString(discoverSectionLabelKey(section)),
+                visible = section !in hidden,
+            )
+        }.toImmutableList()
+
+    private fun discoverSectionLabelKey(section: DiscoverSection): StringResourceKey = when (section) {
+        DiscoverSection.START_WATCHING -> StringResourceKey.LabelStartWatching
+        DiscoverSection.TRENDING_TODAY -> StringResourceKey.LabelDiscoverTrendingToday
+        DiscoverSection.UPCOMING -> StringResourceKey.LabelDiscoverUpcoming
+        DiscoverSection.POPULAR -> StringResourceKey.LabelDiscoverPopular
+        DiscoverSection.TOP_RATED -> StringResourceKey.LabelDiscoverTopRated
+    }
 
     private fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
         buildList {
@@ -531,6 +629,35 @@ public class SettingsPresenter(
         episodeNotificationsDescription = localizer.getString(StringResourceKey.LabelSettingsEpisodeNotificationsDescription),
         crashReportingTitle = localizer.getString(StringResourceKey.LabelSettingsCrashReporting),
         crashReportingDescription = localizer.getString(StringResourceKey.LabelSettingsCrashReportingDescription),
+        hapticFeedbackTitle = localizer.getString(StringResourceKey.SettingsHapticFeedbackTitle),
+        hapticFeedbackDescription = localizer.getString(StringResourceKey.SettingsHapticFeedbackDescription),
+        seasonOrderTitle = localizer.getString(StringResourceKey.SettingsSeasonOrderTitle),
+        seasonOrderDescription = localizer.getString(StringResourceKey.SettingsSeasonOrderDescription),
+        blurUnwatchedTitle = localizer.getString(StringResourceKey.SettingsBlurUnwatchedTitle),
+        blurUnwatchedDescription = localizer.getString(StringResourceKey.SettingsBlurUnwatchedDescription),
+        discoverSectionsTitle = localizer.getString(StringResourceKey.SettingsDiscoverSectionsTitle),
+        discoverSectionsDescription = localizer.getString(StringResourceKey.SettingsDiscoverSectionsDescription),
+        fontSizeTitle = localizer.getString(StringResourceKey.SettingsFontSizeTitle),
+        fontSizeDescription = localizer.getString(StringResourceKey.SettingsFontSizeDescription),
+        fontSizePreview = localizer.getString(StringResourceKey.SettingsFontSizePreview),
+        fontSizeReset = localizer.getString(StringResourceKey.SettingsFontSizeReset),
+        posterStyle = PosterStyleLabels(
+            title = localizer.getString(StringResourceKey.SettingsPosterStyleTitle),
+            subtitle = localizer.getString(StringResourceKey.SettingsPosterStyleDescription),
+            livePreview = localizer.getString(StringResourceKey.SettingsPosterLivePreview),
+            reset = localizer.getString(StringResourceKey.SettingsPosterReset),
+            postersLabel = localizer.getString(StringResourceKey.SettingsPosterPostersLabel),
+            landscapeLabel = localizer.getString(StringResourceKey.SettingsPosterLandscapeLabel),
+            cornerLabel = localizer.getString(StringResourceKey.SettingsPosterCornerLabel),
+            widthCompact = localizer.getString(StringResourceKey.SettingsPosterWidthCompact),
+            widthStandard = localizer.getString(StringResourceKey.SettingsPosterWidthStandard),
+            widthComfortable = localizer.getString(StringResourceKey.SettingsPosterWidthComfortable),
+            widthLarge = localizer.getString(StringResourceKey.SettingsPosterWidthLarge),
+            cornerSharp = localizer.getString(StringResourceKey.SettingsPosterCornerSharp),
+            cornerClassic = localizer.getString(StringResourceKey.SettingsPosterCornerClassic),
+            cornerRounded = localizer.getString(StringResourceKey.SettingsPosterCornerRounded),
+            cornerPill = localizer.getString(StringResourceKey.SettingsPosterCornerPill),
+        ),
         privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
         appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
         version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),

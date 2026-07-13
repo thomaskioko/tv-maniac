@@ -5,9 +5,9 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.destroy
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.root.model.AppUiState
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
-import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.theme.Theme
@@ -268,19 +268,19 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should return initial theme state`() = runTest(testDispatcher) {
-        presenter.themeState.value shouldBe ThemeState()
+        presenter.appUiState.value shouldBe AppUiState()
     }
 
     @Test
     fun `should update theme to Dark when DarkTheme is set`() = runTest(testDispatcher) {
-        presenter.themeState.test {
-            awaitItem() shouldBe ThemeState()
-            awaitItem() shouldBe ThemeState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
+        presenter.appUiState.test {
+            awaitItem() shouldBe AppUiState()
+            awaitItem() shouldBe AppUiState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
 
             datastoreRepository.saveTheme(AppTheme.DARK_THEME)
 
             awaitItem() shouldBe
-                ThemeState(
+                AppUiState(
                     isFetching = false,
                     appTheme = Theme.DARK_THEME,
                 )
@@ -289,16 +289,33 @@ abstract class DefaultRootPresenterTest {
 
     @Test
     fun `should update theme to Light when LightTheme is set`() = runTest(testDispatcher) {
-        presenter.themeState.test {
-            awaitItem() shouldBe ThemeState()
-            awaitItem() shouldBe ThemeState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
+        presenter.appUiState.test {
+            awaitItem() shouldBe AppUiState()
+            awaitItem() shouldBe AppUiState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
 
             datastoreRepository.saveTheme(AppTheme.LIGHT_THEME)
 
             awaitItem() shouldBe
-                ThemeState(
+                AppUiState(
                     isFetching = false,
                     appTheme = Theme.LIGHT_THEME,
+                )
+        }
+    }
+
+    @Test
+    fun `should carry font size percent in theme state when the preference changes`() = runTest(testDispatcher) {
+        presenter.appUiState.test {
+            awaitItem() shouldBe AppUiState()
+            awaitItem() shouldBe AppUiState(isFetching = false, appTheme = Theme.SYSTEM_THEME)
+
+            datastoreRepository.saveFontSizePercent(120)
+
+            awaitItem() shouldBe
+                AppUiState(
+                    isFetching = false,
+                    appTheme = Theme.SYSTEM_THEME,
+                    fontSizePercent = 120,
                 )
         }
     }

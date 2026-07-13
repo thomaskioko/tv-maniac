@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.data.topratedshows.testing.FakeTopRatedShowsRepo
 import com.thomaskioko.tvmaniac.data.trendingshows.testing.FakeTrendingShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsInteractor
 import com.thomaskioko.tvmaniac.data.upcomingshows.testing.FakeUpcomingShowsRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsInteractor
 import com.thomaskioko.tvmaniac.discover.presenter.catalog.DiscoverCatalogPresenter
 import com.thomaskioko.tvmaniac.discover.presenter.catalog.di.DiscoverCatalogChildGraph
@@ -68,6 +69,7 @@ class DiscoverShowsPresenterTest {
     private val startWatchingRepository = FakeStartWatchingRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val accountManager = FakeAccountManager()
+    private val datastoreRepository = FakeDatastoreRepository()
     private val fakeLocalizer = FakeLocalizer()
     private val dispatchers = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -192,6 +194,7 @@ class DiscoverShowsPresenterTest {
                     topRatedShowsInteractor = TopRatedShowsInteractor(topRatedShowsRepository, dispatchers),
                     genreShowsInteractor = GenreShowsInteractor(genreRepository, dispatchers),
                     accountManager = accountManager,
+                    datastoreRepository = datastoreRepository,
                     localizer = fakeLocalizer,
                     errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
                     logger = FakeLogger(),
@@ -217,6 +220,7 @@ class DiscoverShowsPresenterTest {
                     componentContext = componentContext,
                     navigator = navigator,
                     observeStartWatchingInteractor = ObserveStartWatchingInteractor(startWatchingRepository),
+                    datastoreRepository = datastoreRepository,
                     localizer = fakeLocalizer,
                 )
             }

@@ -9,6 +9,14 @@ public struct NextEpisodeCard: View {
     private let episode: SwiftNextEpisode
     private let onEpisodeClick: () -> Void
 
+    private var scaledImageWidth: CGFloat {
+        DimensionConstants.imageWidth * ImageDimens.landscapeWidthScale
+    }
+
+    private var scaledImageHeight: CGFloat {
+        DimensionConstants.imageHeight * ImageDimens.landscapeWidthScale
+    }
+
     public init(
         episode: SwiftNextEpisode,
         onEpisodeClick: @escaping () -> Void
@@ -22,10 +30,11 @@ public struct NextEpisodeCard: View {
             LazyResizableImage(
                 url: episode.imageUrl,
                 imageType: .backdrop,
-                size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+                size: CGSize(width: scaledImageWidth, height: scaledImageHeight)
             )
             .scaledToFill()
-            .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+            .frame(width: scaledImageWidth, height: scaledImageHeight)
+            .blurEffect()
             .clipped()
 
             LinearGradient(
@@ -35,8 +44,8 @@ public struct NextEpisodeCard: View {
             )
             .frame(height: DimensionConstants.scrimHeight)
             .frame(
-                width: DimensionConstants.imageWidth,
-                height: DimensionConstants.imageHeight,
+                width: scaledImageWidth,
+                height: scaledImageHeight,
                 alignment: .bottom
             )
 
@@ -76,7 +85,7 @@ public struct NextEpisodeCard: View {
                 .padding(theme.spacing.small)
             }
         }
-        .frame(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight)
+        .frame(width: scaledImageWidth, height: scaledImageHeight)
         .cornerRadius(theme.shapes.small)
         .appShadow(theme.shadows.medium)
         .onTapGesture {

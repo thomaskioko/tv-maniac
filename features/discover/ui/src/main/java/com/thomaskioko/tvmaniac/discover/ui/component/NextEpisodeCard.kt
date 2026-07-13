@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.LocalLandscapeWidthScale
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 
 @Composable
@@ -37,8 +40,8 @@ internal fun NextEpisodeCard(
     Card(
         onClick = onClick,
         modifier = modifier
-            .width(300.dp)
-            .height(160.dp),
+            .width(300.dp * LocalLandscapeWidthScale.current)
+            .height(160.dp * LocalLandscapeWidthScale.current),
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -53,6 +56,7 @@ internal fun NextEpisodeCard(
                     .fillMaxSize()
                     .clip(MaterialTheme.shapes.small),
                 contentScale = ContentScale.Crop,
+                blurContent = LocalBlurUnwatchedEnabled.current,
             )
 
             val brush = remember {
@@ -120,6 +124,7 @@ internal fun NextEpisodeCard(
 @Composable
 private fun NextEpisodeCardPreview() {
     NextEpisodeCard(
+        modifier = Modifier.wrapContentSize(),
         episode = NextEpisodeUiModel(
             showId = 1L,
             showName = "The Walking Dead: Daryl Dixon",

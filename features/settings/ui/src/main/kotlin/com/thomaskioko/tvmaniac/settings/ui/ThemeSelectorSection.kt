@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.CustomThemes
+import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsLocks
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
@@ -45,7 +45,7 @@ internal fun ThemeSelectorSection(
             onThemeSelected = onThemeSelected,
         )
 
-        CustomThemes(
+        PremiumOverlay(
             locked = locks.customThemesLocked,
             badgeText = locks.badgeText,
             title = locks.themesLockedTitle,
