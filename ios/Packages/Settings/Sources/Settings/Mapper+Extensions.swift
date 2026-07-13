@@ -11,6 +11,9 @@ public extension SettingsPage {
         if self == SettingsPage.info { return .info }
         if self == SettingsPage.licenses { return .licenses }
         if self == SettingsPage.account { return .account }
+        if self == SettingsPage.layout { return .layout }
+        if self == SettingsPage.discoverSections { return .discoverSections }
+        if self == SettingsPage.posterStyle { return .posterStyle }
         return .root
     }
 }

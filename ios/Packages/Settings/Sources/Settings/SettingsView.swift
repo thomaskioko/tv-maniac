@@ -34,6 +34,12 @@ public struct SettingsView: View {
             rootSections: rootSections,
             themeItem: themeItem,
             imageQualityItem: imageQualityItem,
+            layoutToggles: layoutToggles,
+            fontSizeItem: fontSizeItem,
+            discoverSectionsNavItem: discoverSectionsNavItem,
+            discoverSectionToggles: discoverSectionToggles,
+            posterStyleNavItem: posterStyleNavItem,
+            posterStyleItem: posterStyleItem,
             behaviorToggles: behaviorToggles,
             notificationToggles: notificationToggles,
             privacyToggles: privacyToggles,
@@ -45,10 +51,12 @@ public struct SettingsView: View {
     }
 
     public var body: some View {
-        SettingsScreen(
+        TvManiacTypographyScheme.updateFontScale(percent: store.fontSizePercent)
+        return SettingsScreen(
             state: screenState,
             onBack: { presenter.dispatch(action: BackClicked___()) }
         )
+        .id(store.fontSizePercent)
         .settingsObservers(
             uiState: uiState,
             store: store,
@@ -87,7 +95,19 @@ public struct SettingsView: View {
         }
         .onAppear {
             store.imageQuality = uiState.imageQuality.toSwift()
+            store.hapticFeedbackEnabled = uiState.hapticFeedbackEnabled
+            store.fontSizePercent = Int(uiState.fontSizePercent)
+            store.posterWidthScale = Double(uiState.posterWidth.scale)
+            store.landscapeWidthScale = Double(uiState.landscapeWidth.scale)
+            store.posterCornerRadius = Double(uiState.posterCornerStyle.cornerRadius)
         }
+        .onChange(of: uiState.hapticFeedbackEnabled) { _, newValue in
+            store.hapticFeedbackEnabled = newValue
+        }
+        .onChange(of: uiState.fontSizePercent) { _, newValue in
+            store.fontSizePercent = Int(newValue)
+        }
+        .settingsPosterStyleObservers(uiState: uiState, store: store)
     }
 
     // MARK: - Root Sections
@@ -156,6 +176,182 @@ public struct SettingsView: View {
             },
             selectedOptionId: currentQuality.rawValue
         )
+    }
+
+    // MARK: - Layout Toggles
+
+    private var layoutToggles: [SettingsToggleItem] {
+        [
+            SettingsToggleItem(
+                id: "haptic",
+                icon: "iphone.radiowaves.left.and.right",
+                title: uiState.labels.hapticFeedbackTitle,
+                subtitle: uiState.labels.hapticFeedbackDescription,
+                isOn: uiState.hapticFeedbackEnabled,
+                onToggle: { presenter.dispatch(action: HapticFeedbackToggled(enabled: $0)) }
+            ),
+            SettingsToggleItem(
+                id: "season-order",
+                icon: "arrow.up.arrow.down",
+                title: uiState.labels.seasonOrderTitle,
+                subtitle: uiState.labels.seasonOrderDescription,
+                isOn: uiState.newestSeasonFirst,
+                onToggle: { presenter.dispatch(action: SeasonOrderToggled(enabled: $0)) }
+            ),
+            SettingsToggleItem(
+                id: "blur-unwatched",
+                icon: "eye.slash",
+                title: uiState.labels.blurUnwatchedTitle,
+                subtitle: uiState.labels.blurUnwatchedDescription,
+                isOn: uiState.blurImage,
+                onToggle: { presenter.dispatch(action: BlurUnwatchedToggled(enabled: $0)) }
+            ),
+        ]
+    }
+
+    // MARK: - Font Size
+
+    private var fontSizeItem: SettingsFontSizeItem {
+        SettingsFontSizeItem(
+            title: uiState.labels.fontSizeTitle,
+            description: uiState.labels.fontSizeDescription,
+            previewText: uiState.labels.fontSizePreview,
+            resetLabel: uiState.labels.fontSizeReset,
+            percent: store.fontSizePercent,
+            onPercentChange: { newPercent in
+                presenter.dispatch(action: FontSizeChanged(percent: Int32(newPercent)))
+                store.fontSizePercent = newPercent
+            }
+        )
+    }
+
+    // MARK: - Discover Sections
+
+    private var discoverSectionsNavItem: SettingsNavigationItem {
+        SettingsNavigationItem(
+            id: SettingsPageRoute.discoverSections.rawValue,
+            icon: SettingsPageRoute.discoverSections.iconName,
+            title: uiState.labels.discoverSectionsTitle,
+            subtitle: uiState.labels.discoverSectionsDescription,
+            onTap: { presenter.dispatch(action: OpenSettingsPage(page: SettingsPage.discoverSections)) }
+        )
+    }
+
+    private var discoverSectionToggles: [SettingsToggleItem] {
+        uiState.discoverSectionToggles.map { toggle in
+            SettingsToggleItem(
+                id: toggle.section.name,
+                icon: discoverSectionIcon(for: toggle.section),
+                title: toggle.label,
+                subtitle: "",
+                isOn: toggle.visible,
+                onToggle: { presenter.dispatch(action: DiscoverSectionToggled(section: toggle.section, visible: $0)) }
+            )
+        }
+    }
+
+    private func discoverSectionIcon(for section: ApiDiscoverSection) -> String {
+        switch section.name {
+        case "START_WATCHING": "play.circle"
+        case "TRENDING_TODAY": "flame"
+        case "UPCOMING": "calendar"
+        case "POPULAR": "star"
+        case "TOP_RATED": "trophy"
+        default: "square.grid.2x2"
+        }
+    }
+
+    // MARK: - Poster Style
+
+    private var posterStyleNavItem: SettingsNavigationItem {
+        SettingsNavigationItem(
+            id: SettingsPageRoute.posterStyle.rawValue,
+            icon: SettingsPageRoute.posterStyle.iconName,
+            title: uiState.labels.posterStyle.title,
+            subtitle: uiState.labels.posterStyle.subtitle,
+            onTap: { presenter.dispatch(action: OpenSettingsPage(page: SettingsPage.posterStyle)) }
+        )
+    }
+
+    private var posterStyleItem: SettingsPosterStyleItem {
+        let labels = uiState.labels.posterStyle
+        return SettingsPosterStyleItem(
+            title: labels.title,
+            description: labels.subtitle,
+            livePreviewLabel: labels.livePreview,
+            resetLabel: labels.reset,
+            postersLabel: labels.postersLabel,
+            landscapeLabel: labels.landscapeLabel,
+            cornerLabel: labels.cornerLabel,
+
+            postersOptions: posterWidthOptions(keyPrefix: "posters") { width in
+                presenter.dispatch(action: PosterWidthSelected(width: width))
+                store.posterWidthScale = Double(width.scale)
+            },
+            landscapeOptions: posterWidthOptions(keyPrefix: "landscape") { width in
+                presenter.dispatch(action: LandscapeWidthSelected(width: width))
+                store.landscapeWidthScale = Double(width.scale)
+            },
+            cornerOptions: ApiPosterCornerStyle.entries.map { style in
+                SettingsPosterStyleOption(
+                    id: style.name,
+                    label: cornerStyleLabel(style),
+                    onSelect: {
+                        presenter.dispatch(action: PosterCornerStyleSelected(style: style))
+                        store.posterCornerRadius = Double(style.cornerRadius)
+                    }
+                )
+            },
+            selectedPostersId: "posters-\(uiState.posterWidth.name)",
+            selectedLandscapeId: "landscape-\(uiState.landscapeWidth.name)",
+            selectedCornerId: uiState.posterCornerStyle.name,
+            posterScale: CGFloat(uiState.posterWidth.scale),
+            landscapeScale: CGFloat(uiState.landscapeWidth.scale),
+            cornerRadius: CGFloat(uiState.posterCornerStyle.cornerRadius),
+            isLocked: uiState.locks.posterStyleLocked,
+            lockedBadgeText: uiState.locks.badgeText,
+            lockedActionText: uiState.locks.upgradeText,
+            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) },
+            onReset: {
+                presenter.dispatch(action: PosterStyleReset())
+                store.posterWidthScale = 1
+                store.landscapeWidthScale = 1
+                store.posterCornerRadius = 0
+            }
+        )
+    }
+
+    private func posterWidthOptions(keyPrefix: String, onSelect: @escaping (ApiPosterWidth) -> Void) -> [SettingsPosterStyleOption] {
+        ApiPosterWidth.entries.map { width in
+            SettingsPosterStyleOption(
+                id: "\(keyPrefix)-\(width.name)",
+                label: widthLabel(width),
+                onSelect: { onSelect(width) }
+            )
+        }
+    }
+
+    private func widthLabel(_ width: ApiPosterWidth) -> String {
+        let labels = uiState.labels.posterStyle
+        return switch width.name {
+        case "COMPACT": labels.widthCompact
+        case "STANDARD": labels.widthStandard
+        case "COMFORTABLE": labels.widthComfortable
+        case "LARGE": labels.widthLarge
+        default: width.name
+        }
+    }
+
+    private func cornerStyleLabel(_ style: ApiPosterCornerStyle) -> String {
+        let labels = uiState.labels.posterStyle
+        return switch style.name {
+        case "SHARP": labels.cornerSharp
+        case "CLASSIC": labels.cornerClassic
+        case "ROUNDED": labels.cornerRounded
+        case "PILL": labels.cornerPill
+        default: style.name
+        }
     }
 
     // MARK: - Behavior Toggles
@@ -412,6 +608,18 @@ private extension View {
         }
         .onChange(of: uiState.showSwitchConfirmation) { _, show in
             showingSwitchAlert.wrappedValue = show
+        }
+    }
+
+    func settingsPosterStyleObservers(uiState: SettingsState, store: SettingsAppStorage) -> some View {
+        onChange(of: uiState.posterWidth) { _, newValue in
+            store.posterWidthScale = Double(newValue.scale)
+        }
+        .onChange(of: uiState.landscapeWidth) { _, newValue in
+            store.landscapeWidthScale = Double(newValue.scale)
+        }
+        .onChange(of: uiState.posterCornerStyle) { _, newValue in
+            store.posterCornerRadius = Double(newValue.cornerRadius)
         }
     }
 

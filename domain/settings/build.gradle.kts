@@ -23,5 +23,12 @@ kotlin {
                 api(projects.domain.theme)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.data.datastore.testing)
+            }
+        }
     }
 }

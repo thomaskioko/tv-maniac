@@ -1,23 +1,14 @@
 package com.thomaskioko.tvmaniac.showdetails.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +19,11 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.MarkWatchedButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.green
-import com.thomaskioko.tvmaniac.compose.theme.grey
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
@@ -61,6 +52,7 @@ internal fun ContinueTrackingCard(
             PosterCard(
                 imageUrl = episode.imageUrl,
                 imageWidth = 100.dp,
+                blurContent = LocalBlurUnwatchedEnabled.current && !episode.isWatched,
             )
 
             Column(
@@ -88,33 +80,14 @@ internal fun ContinueTrackingCard(
             }
 
             if (episode.hasAired) {
-                Box(
+                MarkWatchedButton(
+                    isWatched = episode.isWatched,
+                    isUpdating = isUpdating,
+                    onToggle = onMarkWatched,
                     modifier = Modifier
                         .padding(end = 12.dp)
-                        .size(28.dp)
-                        .testTag(ShowDetailsTestTags.continueTrackingMarkWatchedButton(episode.episodeId))
-                        .background(
-                            color = if (episode.isWatched) green else grey,
-                            shape = CircleShape,
-                        )
-                        .clickable(enabled = !isUpdating) { onMarkWatched() },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (isUpdating) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    } else {
-                        Icon(
-                            modifier = Modifier.size(16.dp),
-                            imageVector = Icons.Rounded.Check,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                }
+                        .testTag(ShowDetailsTestTags.continueTrackingMarkWatchedButton(episode.episodeId)),
+                )
             } else {
                 val daysUntilAir = episode.daysUntilAir
                 if (daysUntilAir != null && daysUntilAir > 0) {

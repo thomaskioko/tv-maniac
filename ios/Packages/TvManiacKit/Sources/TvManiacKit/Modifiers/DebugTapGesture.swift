@@ -61,8 +61,7 @@ struct DebugTapGestureView: UIViewRepresentable {
         }
 
         @objc func handleTap() {
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
+            Haptics.notification(isEnabled: SettingsAppStorage.shared.hapticFeedbackEnabled, type: .success)
             onTripleTap()
         }
 

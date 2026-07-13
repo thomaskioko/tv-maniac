@@ -43,6 +43,7 @@ internal fun DiscoverCatalogSection(
             tvShows = state.trendingShows,
             onItemClicked = { onAction(CatalogShowClicked(it)) },
             onMoreClicked = { onAction(TrendingMoreClicked) },
+            visible = state.trendingVisible,
         )
         HorizontalRowContent(
             modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_UPCOMING),
@@ -51,6 +52,7 @@ internal fun DiscoverCatalogSection(
             tvShows = state.upcomingShows,
             onItemClicked = { onAction(CatalogShowClicked(it)) },
             onMoreClicked = { onAction(UpcomingMoreClicked) },
+            visible = state.upcomingVisible,
         )
         HorizontalRowContent(
             modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_POPULAR),
@@ -59,6 +61,7 @@ internal fun DiscoverCatalogSection(
             tvShows = state.popularShows,
             onItemClicked = { onAction(CatalogShowClicked(it)) },
             onMoreClicked = { onAction(PopularMoreClicked) },
+            visible = state.popularVisible,
         )
         HorizontalRowContent(
             modifier = Modifier.testTag(DiscoverTestTags.ROW_KEY_TOP_RATED),
@@ -67,6 +70,7 @@ internal fun DiscoverCatalogSection(
             tvShows = state.topRatedShows,
             onItemClicked = { onAction(CatalogShowClicked(it)) },
             onMoreClicked = { onAction(TopRatedMoreClicked) },
+            visible = state.topRatedVisible,
         )
     }
 }

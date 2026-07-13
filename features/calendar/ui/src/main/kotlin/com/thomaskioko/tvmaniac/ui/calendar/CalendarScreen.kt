@@ -44,14 +44,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.CustomThemes
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
+import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -120,7 +121,7 @@ private fun CalendarBody(
     val context = LocalContext.current
 
     if (state.isLocked) {
-        CustomThemes(
+        PremiumOverlay(
             locked = true,
             badgeText = state.lockedBadgeText,
             title = state.lockedTitle,
@@ -366,6 +367,7 @@ private fun CalendarEpisodeCard(
                 PosterCard(
                     imageUrl = episode.posterUrl,
                     onClick = onClick,
+                    imageWidth = Layout.posterWidthFixed,
                     modifier = Modifier.fillMaxHeight(),
                 )
 

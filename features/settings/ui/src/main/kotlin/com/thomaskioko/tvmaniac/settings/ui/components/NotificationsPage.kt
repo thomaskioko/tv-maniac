@@ -10,13 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
-import com.thomaskioko.tvmaniac.settings.ui.SettingsSwitchRow
 import com.thomaskioko.tvmaniac.settings.ui.notificationsLockedState
 import com.thomaskioko.tvmaniac.settings.ui.notificationsState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
@@ -32,7 +32,7 @@ internal fun NotificationsPage(
 
         item {
             SettingsGroup {
-                SettingsSwitchRow(
+                SwitchRow(
                     modifier = Modifier.testTag(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG),
                     icon = Icons.Filled.Notifications,
                     title = state.labels.episodeNotificationsTitle,

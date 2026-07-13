@@ -3,18 +3,18 @@ package com.thomaskioko.tvmaniac.compose.components
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LibraryAddCheck
 import androidx.compose.material3.ButtonColors
@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
+import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
 import com.thomaskioko.tvmaniac.domain.theme.Theme
 
 @Composable
@@ -74,9 +77,14 @@ public fun FilledVerticalIconButton(
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     containerColor: Color = MaterialTheme.colorScheme.secondary,
     contentColor: Color = MaterialTheme.colorScheme.onSecondary,
+    hapticEnabled: Boolean = LocalHapticFeedbackEnabled.current,
 ) {
+    val haptics = LocalHapticFeedback.current
     TextButtonContent(
-        onClick = onClick,
+        onClick = {
+            if (hapticEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            onClick()
+        },
         modifier = modifier,
         enabled = enabled,
         containerColor = containerColor,
@@ -247,7 +255,7 @@ public fun OutlinedVerticalIconButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.widthIn(min = 140.dp),
+        modifier = modifier.widthIn(min = 54.dp),
         enabled = enabled,
         shape = shape,
         content = {
@@ -371,23 +379,24 @@ public fun RefreshButton(
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun FilledTextButtonPreview() {
-    FilledTextButton(
-        onClick = {},
-        enabled = false,
-        buttonColors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            containerColor = MaterialTheme.colorScheme.secondary,
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(2.dp)
-            .background(color = MaterialTheme.colorScheme.secondary),
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        Text(
-            text = "Horror",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSecondary,
-        )
+        FilledTextButton(
+            onClick = {},
+            enabled = true,
+            buttonColors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                containerColor = MaterialTheme.colorScheme.secondary,
+            ),
+        ) {
+            Text(
+                text = "Horror",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondary,
+            )
+        }
     }
 }
 
@@ -395,42 +404,15 @@ private fun FilledTextButtonPreview() {
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun FilledIconButtonPreview(@PreviewParameter(ButtonPreviewParamProvider::class) isEnable: Boolean) {
-    FilledVerticalIconButton(
-        onClick = {},
-        enabled = isEnable,
-        text = "Track",
-        imageVector = Icons.Default.LibraryAddCheck,
-    )
-}
-
-@ThemePreviews
-@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
-@Composable
-private fun FilledHorizontalIconButtonPreview(@PreviewParameter(ButtonPreviewParamProvider::class) isEnable: Boolean) {
-    FilledHorizontalIconButton(
-        onClick = {},
-        enabled = isEnable,
-        text = "Add To Library",
-        imageVector = Icons.Default.LibraryAddCheck,
-    )
-}
-
-@ThemePreviews
-@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
-@Composable
-private fun TvManiacAlphaTextButtonPreview() {
-    FilledTextButton(
-        onClick = {},
-        enabled = false,
-        buttonColors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
-        ),
+    Box(
+        modifier = Modifier.wrapContentSize(),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        Text(
-            text = "Horror",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.secondary,
+        FilledVerticalIconButton(
+            onClick = {},
+            enabled = isEnable,
+            text = "Track",
+            imageVector = Icons.Default.LibraryAddCheck,
         )
     }
 }
@@ -438,23 +420,70 @@ private fun TvManiacAlphaTextButtonPreview() {
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun TvManiacOutlinedButtonPreview() {
-    OutlinedVerticalIconButton(
-        onClick = {},
-        enabled = true,
-        leadingIcon = {
-            Image(
-                imageVector = Icons.Filled.LibraryAddCheck,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(
-                    MaterialTheme.colorScheme.secondary.copy(
-                        alpha = 0.8F,
-                    ),
-                ),
+private fun FilledHorizontalIconButtonPreview(@PreviewParameter(ButtonPreviewParamProvider::class) isEnable: Boolean) {
+    Box(
+        modifier = Modifier.wrapContentSize(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        FilledHorizontalIconButton(
+            onClick = {},
+            enabled = isEnable,
+            text = "Add To Library",
+            imageVector = Icons.Default.LibraryAddCheck,
+        )
+    }
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun TvManiacAlphaTextButtonPreview() {
+    Box(
+        modifier = Modifier.wrapContentSize(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        FilledTextButton(
+            onClick = {},
+            enabled = false,
+            buttonColors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+            ),
+        ) {
+            Text(
+                text = "Horror",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
             )
-        },
-        text = "Following",
-    )
+        }
+    }
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun TvManiacOutlinedButtonPreview() {
+    Box(
+        modifier = Modifier.wrapContentSize(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        OutlinedVerticalIconButton(
+            onClick = {},
+            enabled = true,
+            leadingIcon = {
+                Image(
+                    imageVector = Icons.Filled.LibraryAddCheck,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(
+                        MaterialTheme.colorScheme.secondary.copy(
+                            alpha = 0.8F,
+                        ),
+                    ),
+                )
+            },
+            text = "Following",
+        )
+    }
 }
 
 private class ButtonPreviewParamProvider : PreviewParameterProvider<Boolean> {

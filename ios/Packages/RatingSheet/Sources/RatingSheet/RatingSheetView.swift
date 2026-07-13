@@ -6,6 +6,8 @@ import TvManiacKit
 public struct RatingSheetView: View {
     private let presenter: RatingSheetPresenter
     @StateValue private var state: RatingSheetState
+    @ObservedObject private var store = SettingsAppStorage.shared
+    @State private var sheetHeight: CGFloat = 200
 
     public init(presenter: RatingSheetPresenter) {
         self.presenter = presenter
@@ -24,8 +26,16 @@ public struct RatingSheetView: View {
                 presenter.dispatch(action: RatingSheetActionRatingCleared())
             }
         )
-        .presentationDetents([.medium])
+        .background {
+            GeometryReader { proxy in
+                Color.clear.onChange(of: proxy.size.height, initial: true) { _, height in
+                    sheetHeight = height + proxy.safeAreaInsets.bottom
+                }
+            }
+        }
+        .presentationDetents([.height(sheetHeight)])
         .presentationDragIndicator(.hidden)
+        .presentationBackground(store.appTheme.designSystemTheme.colors.surface)
         .presentationCornerRadius(16)
         .appTheme()
     }

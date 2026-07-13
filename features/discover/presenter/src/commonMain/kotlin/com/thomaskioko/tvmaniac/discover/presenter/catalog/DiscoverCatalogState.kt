@@ -16,6 +16,10 @@ public data class DiscoverCatalogState(
     val upcomingTitle: String = "",
     val popularTitle: String = "",
     val topRatedTitle: String = "",
+    val trendingVisible: Boolean = true,
+    val upcomingVisible: Boolean = true,
+    val popularVisible: Boolean = true,
+    val topRatedVisible: Boolean = true,
     val message: UiMessage? = null,
 ) {
     val isRefreshing: Boolean

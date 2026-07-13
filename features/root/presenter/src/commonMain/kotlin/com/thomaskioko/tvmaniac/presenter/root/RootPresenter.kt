@@ -3,9 +3,9 @@ package com.thomaskioko.tvmaniac.presenter.root
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.root.model.AppUiState
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
-import com.thomaskioko.root.model.ThemeState
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
@@ -22,9 +22,9 @@ public interface RootPresenter {
 
     public val episodeSheetSlotValue: Value<ChildSlot<*, SheetChild>>
 
-    public val themeState: StateFlow<ThemeState>
+    public val appUiState: StateFlow<AppUiState>
 
-    public val themeStateValue: Value<ThemeState>
+    public val appUiStateValue: Value<AppUiState>
 
     public val notificationPermissionState: StateFlow<NotificationPermissionState>
 

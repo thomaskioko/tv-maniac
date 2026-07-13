@@ -3,6 +3,7 @@ import SwiftUI
 
 public struct FilledVerticalIconButton: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
 
     private let text: String
     private let systemImage: String
@@ -34,7 +35,10 @@ public struct FilledVerticalIconButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            Haptics.impact(isEnabled: hapticFeedbackEnabled)
+            action()
+        }) {
             VStack(spacing: theme.spacing.xxxSmall) {
                 iconImage
 

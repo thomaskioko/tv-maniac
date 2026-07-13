@@ -2,8 +2,12 @@ package com.thomaskioko.tvmaniac.datastore.testing
 
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
+import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -145,6 +149,14 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val crashReportingEnabledFlow = MutableStateFlow(true)
     private val debugMenuEnabledFlow = MutableStateFlow(false)
     private val accountTypeFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val hapticFeedbackEnabledFlow = MutableStateFlow(true)
+    private val seasonSortOrderFlow = MutableStateFlow(SeasonSortOrder.OLDEST_FIRST)
+    private val blurUnwatchedEpisodeImagesFlow = MutableStateFlow(false)
+    private val hiddenDiscoverSectionsFlow = MutableStateFlow<Set<DiscoverSection>>(emptySet())
+    private val fontSizePercentFlow = MutableStateFlow(100)
+    private val posterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
+    private val landscapeWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
+    private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.SHARP)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -195,4 +207,57 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeAccountType(): Flow<String?> = accountTypeFlow.asStateFlow()
+
+    override suspend fun saveHapticFeedbackEnabled(enabled: Boolean) {
+        hapticFeedbackEnabledFlow.value = enabled
+    }
+
+    override fun observeHapticFeedbackEnabled(): Flow<Boolean> = hapticFeedbackEnabledFlow.asStateFlow()
+
+    override suspend fun saveSeasonSortOrder(sortOrder: SeasonSortOrder) {
+        seasonSortOrderFlow.value = sortOrder
+    }
+
+    override fun observeSeasonSortOrder(): Flow<SeasonSortOrder> = seasonSortOrderFlow.asStateFlow()
+
+    override suspend fun saveBlurUnwatchedEpisodeImages(enabled: Boolean) {
+        blurUnwatchedEpisodeImagesFlow.value = enabled
+    }
+
+    override fun observeBlurUnwatchedEpisodeImages(): Flow<Boolean> = blurUnwatchedEpisodeImagesFlow.asStateFlow()
+
+    override suspend fun saveHiddenDiscoverSections(sections: Set<DiscoverSection>) {
+        hiddenDiscoverSectionsFlow.value = sections
+    }
+
+    override fun observeHiddenDiscoverSections(): Flow<Set<DiscoverSection>> = hiddenDiscoverSectionsFlow.asStateFlow()
+
+    override suspend fun updateDiscoverSectionVisibility(section: DiscoverSection, visible: Boolean) {
+        val current = hiddenDiscoverSectionsFlow.value
+        hiddenDiscoverSectionsFlow.value = if (visible) current - section else current + section
+    }
+
+    override suspend fun saveFontSizePercent(percent: Int) {
+        fontSizePercentFlow.value = percent
+    }
+
+    override fun observeFontSizePercent(): Flow<Int> = fontSizePercentFlow.asStateFlow()
+
+    override suspend fun savePosterWidth(width: PosterWidth) {
+        posterWidthFlow.value = width
+    }
+
+    override fun observePosterWidth(): Flow<PosterWidth> = posterWidthFlow.asStateFlow()
+
+    override suspend fun saveLandscapeWidth(width: PosterWidth) {
+        landscapeWidthFlow.value = width
+    }
+
+    override fun observeLandscapeWidth(): Flow<PosterWidth> = landscapeWidthFlow.asStateFlow()
+
+    override suspend fun savePosterCornerStyle(style: PosterCornerStyle) {
+        posterCornerStyleFlow.value = style
+    }
+
+    override fun observePosterCornerStyle(): Flow<PosterCornerStyle> = posterCornerStyleFlow.asStateFlow()
 }

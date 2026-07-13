@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.ui.upnext
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,18 +10,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,16 +27,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.HapticRow
+import com.thomaskioko.tvmaniac.compose.components.MarkWatchedButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.grey
+import com.thomaskioko.tvmaniac.compose.theme.Layout
+import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextEpisodePreviewParameterProvider
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun UpNextListItem(
     item: UpNextEpisodeUiModel,
@@ -66,20 +60,19 @@ internal fun UpNextListItem(
         ),
         shape = RoundedCornerShape(12.dp),
     ) {
-        Row(
-            modifier = Modifier
-                .testTag(UpNextTestTags.episodeRow(item.showId))
-                .combinedClickable(
-                    onClick = { onItemClicked(item.showId) },
-                    onLongClick = onLongPress,
-                ),
+        HapticRow(
+            modifier = Modifier.testTag(UpNextTestTags.episodeRow(item.showId)),
+            onClick = { onItemClicked(item.showId) },
+            onLongClick = onLongPress,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PosterCard(
                 imageUrl = item.imageUrl,
                 onClick = { onItemClicked(item.showId) },
                 title = item.showName,
+                imageWidth = Layout.posterWidthFixed,
                 aspectRatio = 100f / 140f,
+                blurContent = LocalBlurUnwatchedEnabled.current,
             )
 
             Column(
@@ -156,33 +149,14 @@ internal fun UpNextListItem(
                 }
             }
 
-            Surface(
-                onClick = onMarkWatched,
-                enabled = !isUpdating,
+            MarkWatchedButton(
+                isWatched = false,
+                isUpdating = isUpdating,
+                onToggle = onMarkWatched,
                 modifier = Modifier
                     .padding(12.dp)
-                    .size(28.dp)
                     .testTag(UpNextTestTags.watchedButton(item.showId)),
-                shape = CircleShape,
-                color = grey,
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    if (isUpdating) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    } else {
-                        Icon(
-                            modifier = Modifier.size(16.dp),
-                            imageVector = Icons.Rounded.Check,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                }
-            }
+            )
         }
     }
 }
@@ -193,10 +167,15 @@ internal fun UpNextListItem(
 private fun UpNextListItemPreview(
     @PreviewParameter(UpNextEpisodePreviewParameterProvider::class) item: UpNextEpisodeUiModel,
 ) {
-    UpNextListItem(
-        item = item,
-        onItemClicked = {},
-        onShowTitleClicked = {},
-        onMarkWatched = {},
-    )
+    Box(
+        modifier = Modifier.wrapContentSize(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        UpNextListItem(
+            item = item,
+            onItemClicked = {},
+            onShowTitleClicked = {},
+            onMarkWatched = {},
+        )
+    }
 }

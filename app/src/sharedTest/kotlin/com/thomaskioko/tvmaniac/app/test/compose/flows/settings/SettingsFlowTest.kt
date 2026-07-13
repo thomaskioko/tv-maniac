@@ -5,9 +5,35 @@ import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 import org.junit.Test
 
 internal class SettingsFlowTest : BaseAppFlowTest() {
+
+    @Test
+    fun givenSettings_whenLayoutRowClicked_thenPageOpensAndBackReturnsToRoot() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openLayoutPage()
+            .assertDoesNotExist(SettingsTestTags.GENERAL_LAYOUT_ROW_TEST_TAG)
+            .clickBackButton()
+            .assertDisplayed(SettingsTestTags.GENERAL_LAYOUT_ROW_TEST_TAG)
+    }
 
     @Test
     fun givenSettings_whenImageQualitySelected_thenSelectionIsPersisted() = runAppFlowTest {

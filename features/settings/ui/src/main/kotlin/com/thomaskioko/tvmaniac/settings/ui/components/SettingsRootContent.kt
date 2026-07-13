@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
@@ -68,24 +69,26 @@ internal fun SettingsRootContent(
 
 private fun rootRowTestTag(page: SettingsPage): String = when (page) {
     SettingsPage.APPEARANCE -> SettingsTestTags.GENERAL_APPEARANCE_ROW_TEST_TAG
+    SettingsPage.LAYOUT -> SettingsTestTags.GENERAL_LAYOUT_ROW_TEST_TAG
     SettingsPage.BEHAVIOR -> SettingsTestTags.GENERAL_BEHAVIOR_ROW_TEST_TAG
     SettingsPage.NOTIFICATIONS -> SettingsTestTags.GENERAL_NOTIFICATIONS_ROW_TEST_TAG
     SettingsPage.PRIVACY -> SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG
     SettingsPage.INFO -> SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG
     SettingsPage.LICENSES -> SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG
     SettingsPage.ACCOUNT -> SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG
-    SettingsPage.ROOT -> ""
+    SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS, SettingsPage.POSTER_STYLE -> ""
 }
 
 private fun rootRowIcon(page: SettingsPage): ImageVector = when (page) {
     SettingsPage.APPEARANCE -> Icons.Filled.Palette
+    SettingsPage.LAYOUT -> Icons.Filled.Dashboard
     SettingsPage.BEHAVIOR -> Icons.Filled.Tune
     SettingsPage.NOTIFICATIONS -> Icons.Filled.Notifications
     SettingsPage.PRIVACY -> Icons.Filled.Security
     SettingsPage.INFO -> Icons.Filled.Info
     SettingsPage.LICENSES -> Icons.Filled.Description
     SettingsPage.ACCOUNT -> Icons.Filled.Person
-    SettingsPage.ROOT -> Icons.Filled.Info
+    SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS, SettingsPage.POSTER_STYLE -> Icons.Filled.Info
 }
 
 @ThemePreviews
