@@ -15,6 +15,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let fontSizeItem: SettingsFontSizeItem
         public let discoverSectionsNavItem: SettingsNavigationItem
         public let discoverSectionToggles: [SettingsToggleItem]
+        public let posterStyleNavItem: SettingsNavigationItem
+        public let posterStyleItem: SettingsPosterStyleItem
         public let behaviorToggles: [SettingsToggleItem]
         public let notificationToggles: [SettingsToggleItem]
         public let privacyToggles: [SettingsToggleItem]
@@ -34,6 +36,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             fontSizeItem: SettingsFontSizeItem,
             discoverSectionsNavItem: SettingsNavigationItem,
             discoverSectionToggles: [SettingsToggleItem],
+            posterStyleNavItem: SettingsNavigationItem,
+            posterStyleItem: SettingsPosterStyleItem,
             behaviorToggles: [SettingsToggleItem],
             notificationToggles: [SettingsToggleItem],
             privacyToggles: [SettingsToggleItem],
@@ -52,6 +56,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             self.fontSizeItem = fontSizeItem
             self.discoverSectionsNavItem = discoverSectionsNavItem
             self.discoverSectionToggles = discoverSectionToggles
+            self.posterStyleNavItem = posterStyleNavItem
+            self.posterStyleItem = posterStyleItem
             self.behaviorToggles = behaviorToggles
             self.notificationToggles = notificationToggles
             self.privacyToggles = privacyToggles
@@ -130,10 +136,13 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             LayoutPageView(
                 toggles: state.layoutToggles,
                 discoverSectionsItem: state.discoverSectionsNavItem,
-                fontSizeItem: state.fontSizeItem
+                fontSizeItem: state.fontSizeItem,
+                posterStyleItem: state.posterStyleNavItem
             )
         case .discoverSections:
             DiscoverSectionsPageView(toggles: state.discoverSectionToggles)
+        case .posterStyle:
+            PosterStylePageView(item: state.posterStyleItem)
         }
     }
 
@@ -144,6 +153,9 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     private func title(for route: SettingsPageRoute) -> String {
         if route == .discoverSections {
             return state.discoverSectionsNavItem.title
+        }
+        if route == .posterStyle {
+            return state.posterStyleNavItem.title
         }
         for section in state.rootSections {
             if let item = section.items.first(where: { $0.id == route.rawValue }) {

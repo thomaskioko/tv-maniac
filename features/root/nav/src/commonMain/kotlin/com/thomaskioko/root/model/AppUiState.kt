@@ -10,4 +10,7 @@ public data class AppUiState(
     val hapticFeedbackEnabled: Boolean = true,
     val blurImage: Boolean = false,
     val fontSizePercent: Int = 100,
+    val posterWidthScale: Float = 1f,
+    val landscapeWidthScale: Float = 1f,
+    val posterCornerRadius: Float = 0f,
 )

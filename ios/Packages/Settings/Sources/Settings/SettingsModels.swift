@@ -208,6 +208,107 @@ public struct SettingsFontSizeItem: Equatable {
     }
 }
 
+public struct SettingsPosterStyleOption: Identifiable, Equatable {
+    public let id: String
+    public let label: String
+    public let onSelect: () -> Void
+
+    public init(id: String, label: String, onSelect: @escaping () -> Void) {
+        self.id = id
+        self.label = label
+        self.onSelect = onSelect
+    }
+
+    public static func == (lhs: SettingsPosterStyleOption, rhs: SettingsPosterStyleOption) -> Bool {
+        lhs.id == rhs.id && lhs.label == rhs.label
+    }
+}
+
+public struct SettingsPosterStyleItem: Equatable {
+    public let title: String
+    public let description: String
+    public let livePreviewLabel: String
+    public let resetLabel: String
+    public let postersLabel: String
+    public let landscapeLabel: String
+    public let cornerLabel: String
+    public let postersOptions: [SettingsPosterStyleOption]
+    public let landscapeOptions: [SettingsPosterStyleOption]
+    public let cornerOptions: [SettingsPosterStyleOption]
+    public let selectedPostersId: String
+    public let selectedLandscapeId: String
+    public let selectedCornerId: String
+    public let posterScale: CGFloat
+    public let landscapeScale: CGFloat
+    public let cornerRadius: CGFloat
+    public let isLocked: Bool
+    public let lockedBadgeText: String
+    public let lockedActionText: String
+    public let lockedAccessibilityLabel: String
+    public let onUpgradeClick: () -> Void
+    public let onReset: () -> Void
+
+    public init(
+        title: String,
+        description: String,
+        livePreviewLabel: String,
+        resetLabel: String,
+        postersLabel: String,
+        landscapeLabel: String,
+        cornerLabel: String,
+        postersOptions: [SettingsPosterStyleOption],
+        landscapeOptions: [SettingsPosterStyleOption],
+        cornerOptions: [SettingsPosterStyleOption],
+        selectedPostersId: String,
+        selectedLandscapeId: String,
+        selectedCornerId: String,
+        posterScale: CGFloat,
+        landscapeScale: CGFloat,
+        cornerRadius: CGFloat,
+        isLocked: Bool = false,
+        lockedBadgeText: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = "",
+        onUpgradeClick: @escaping () -> Void = {},
+        onReset: @escaping () -> Void = {}
+    ) {
+        self.title = title
+        self.description = description
+        self.livePreviewLabel = livePreviewLabel
+        self.resetLabel = resetLabel
+        self.postersLabel = postersLabel
+        self.landscapeLabel = landscapeLabel
+        self.cornerLabel = cornerLabel
+        self.postersOptions = postersOptions
+        self.landscapeOptions = landscapeOptions
+        self.cornerOptions = cornerOptions
+        self.selectedPostersId = selectedPostersId
+        self.selectedLandscapeId = selectedLandscapeId
+        self.selectedCornerId = selectedCornerId
+        self.posterScale = posterScale
+        self.landscapeScale = landscapeScale
+        self.cornerRadius = cornerRadius
+        self.isLocked = isLocked
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedActionText = lockedActionText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
+        self.onUpgradeClick = onUpgradeClick
+        self.onReset = onReset
+    }
+
+    public static func == (lhs: SettingsPosterStyleItem, rhs: SettingsPosterStyleItem) -> Bool {
+        lhs.title == rhs.title
+            && lhs.description == rhs.description
+            && lhs.selectedPostersId == rhs.selectedPostersId
+            && lhs.selectedLandscapeId == rhs.selectedLandscapeId
+            && lhs.selectedCornerId == rhs.selectedCornerId
+            && lhs.posterScale == rhs.posterScale
+            && lhs.landscapeScale == rhs.landscapeScale
+            && lhs.cornerRadius == rhs.cornerRadius
+            && lhs.isLocked == rhs.isLocked
+    }
+}
+
 public struct SettingsRootSection: Identifiable {
     public let id: String
     public let label: String

@@ -218,6 +218,53 @@ class SettingsScreenTest: SnapshotTestCase {
         ]
     }
 
+    private func posterStyleItem(locked: Bool = false) -> SettingsPosterStyleItem {
+        let widthOptions: [SettingsPosterStyleOption] = [
+            SettingsPosterStyleOption(id: "COMPACT", label: "Compact", onSelect: {}),
+            SettingsPosterStyleOption(id: "STANDARD", label: "Standard", onSelect: {}),
+            SettingsPosterStyleOption(id: "COMFORTABLE", label: "Comfortable", onSelect: {}),
+            SettingsPosterStyleOption(id: "LARGE", label: "Large", onSelect: {}),
+        ]
+        let cornerOptions: [SettingsPosterStyleOption] = [
+            SettingsPosterStyleOption(id: "SHARP", label: "Sharp", onSelect: {}),
+            SettingsPosterStyleOption(id: "CLASSIC", label: "Classic", onSelect: {}),
+            SettingsPosterStyleOption(id: "ROUNDED", label: "Rounded", onSelect: {}),
+            SettingsPosterStyleOption(id: "PILL", label: "Pill", onSelect: {}),
+        ]
+        return SettingsPosterStyleItem(
+            title: "Poster style",
+            description: "Choose poster size and corner style",
+            livePreviewLabel: "Live preview",
+            resetLabel: "Reset",
+            postersLabel: "Posters",
+            landscapeLabel: "Landscape",
+            cornerLabel: "Corner style",
+            postersOptions: widthOptions,
+            landscapeOptions: widthOptions,
+            cornerOptions: cornerOptions,
+            selectedPostersId: "STANDARD",
+            selectedLandscapeId: "STANDARD",
+            selectedCornerId: "SHARP",
+            posterScale: 1,
+            landscapeScale: 1,
+            cornerRadius: 0,
+            isLocked: locked,
+            lockedBadgeText: locked ? "Premium" : "",
+            lockedActionText: locked ? "Upgrade to Premium" : "",
+            lockedAccessibilityLabel: locked ? "Locked" : ""
+        )
+    }
+
+    private var posterStyleNavItem: SettingsNavigationItem {
+        SettingsNavigationItem(
+            id: SettingsPageRoute.posterStyle.rawValue,
+            icon: SettingsPageRoute.posterStyle.iconName,
+            title: "Poster style",
+            subtitle: "Choose poster size and corner style",
+            onTap: {}
+        )
+    }
+
     private var behaviorToggles: [SettingsToggleItem] {
         [
             SettingsToggleItem(
@@ -426,7 +473,8 @@ class SettingsScreenTest: SnapshotTestCase {
         customAccountContent: SettingsAccountContent? = nil,
         customThemeItem: SettingsThemeItem<ThemeItemModel>? = nil,
         customNotificationToggles: [SettingsToggleItem]? = nil,
-        fontSizePercent: Int = 100
+        fontSizePercent: Int = 100,
+        customPosterStyleItem: SettingsPosterStyleItem? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
@@ -439,6 +487,8 @@ class SettingsScreenTest: SnapshotTestCase {
             fontSizeItem: fontSizeItem(percent: fontSizePercent),
             discoverSectionsNavItem: discoverSectionsNavItem,
             discoverSectionToggles: discoverSectionToggles,
+            posterStyleNavItem: posterStyleNavItem,
+            posterStyleItem: customPosterStyleItem ?? posterStyleItem(),
             behaviorToggles: behaviorToggles,
             notificationToggles: customNotificationToggles ?? notificationToggles,
             privacyToggles: privacyToggles,
@@ -489,6 +539,25 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .discoverSections, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_DiscoverSections")
+    }
+
+    func test_SettingsScreen_PosterStyle() {
+        SettingsScreen(state: makeState(page: .posterStyle, authenticated: true), onBack: {})
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_PosterStyle")
+    }
+
+    func test_SettingsScreen_PosterStyle_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .posterStyle,
+                authenticated: true,
+                customPosterStyleItem: posterStyleItem(locked: true)
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_PosterStyle_Locked")
     }
 
     func test_SettingsScreen_Appearance() {

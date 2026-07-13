@@ -15,6 +15,8 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -381,6 +383,52 @@ public class DefaultDatastoreRepository(
             (preferences[KEY_FONT_SIZE_PERCENT] ?: FONT_SIZE_DEFAULT).coerceIn(FONT_SIZE_MIN, FONT_SIZE_MAX)
         }
 
+    override suspend fun savePosterWidth(width: PosterWidth) {
+        dataStore.edit { preferences ->
+            preferences[KEY_POSTER_WIDTH] = width.name
+        }
+    }
+
+    override fun observePosterWidth(): Flow<PosterWidth> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_POSTER_WIDTH].toPosterWidth()
+        }
+
+    override suspend fun saveLandscapeWidth(width: PosterWidth) {
+        dataStore.edit { preferences ->
+            preferences[KEY_LANDSCAPE_WIDTH] = width.name
+        }
+    }
+
+    override fun observeLandscapeWidth(): Flow<PosterWidth> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_LANDSCAPE_WIDTH].toPosterWidth()
+        }
+
+    override suspend fun savePosterCornerStyle(style: PosterCornerStyle) {
+        dataStore.edit { preferences ->
+            preferences[KEY_POSTER_CORNER_STYLE] = style.name
+        }
+    }
+
+    override fun observePosterCornerStyle(): Flow<PosterCornerStyle> =
+        dataStore.data.map { preferences ->
+            when (preferences[KEY_POSTER_CORNER_STYLE]) {
+                PosterCornerStyle.CLASSIC.name -> PosterCornerStyle.CLASSIC
+                PosterCornerStyle.ROUNDED.name -> PosterCornerStyle.ROUNDED
+                PosterCornerStyle.PILL.name -> PosterCornerStyle.PILL
+                else -> PosterCornerStyle.SHARP
+            }
+        }
+
+    private fun String?.toPosterWidth(): PosterWidth =
+        when (this) {
+            PosterWidth.COMPACT.name -> PosterWidth.COMPACT
+            PosterWidth.COMFORTABLE.name -> PosterWidth.COMFORTABLE
+            PosterWidth.LARGE.name -> PosterWidth.LARGE
+            else -> PosterWidth.STANDARD
+        }
+
     public companion object {
         private const val FONT_SIZE_DEFAULT = 100
         private const val FONT_SIZE_MIN = 85
@@ -415,5 +463,8 @@ public class DefaultDatastoreRepository(
         public val KEY_HIDDEN_DISCOVER_SECTIONS: Preferences.Key<Set<String>> =
             stringSetPreferencesKey("hidden_discover_sections")
         public val KEY_FONT_SIZE_PERCENT: Preferences.Key<Int> = intPreferencesKey("font_size_percent")
+        public val KEY_POSTER_WIDTH: Preferences.Key<String> = stringPreferencesKey("poster_width")
+        public val KEY_LANDSCAPE_WIDTH: Preferences.Key<String> = stringPreferencesKey("landscape_width")
+        public val KEY_POSTER_CORNER_STYLE: Preferences.Key<String> = stringPreferencesKey("poster_corner_style")
     }
 }

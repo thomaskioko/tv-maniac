@@ -6,15 +6,18 @@ struct LayoutPageView: View {
     private let toggles: [SettingsToggleItem]
     private let discoverSectionsItem: SettingsNavigationItem
     private let fontSizeItem: SettingsFontSizeItem
+    private let posterStyleItem: SettingsNavigationItem
 
     init(
         toggles: [SettingsToggleItem],
         discoverSectionsItem: SettingsNavigationItem,
-        fontSizeItem: SettingsFontSizeItem
+        fontSizeItem: SettingsFontSizeItem,
+        posterStyleItem: SettingsNavigationItem
     ) {
         self.toggles = toggles
         self.discoverSectionsItem = discoverSectionsItem
         self.fontSizeItem = fontSizeItem
+        self.posterStyleItem = posterStyleItem
     }
 
     var body: some View {
@@ -22,6 +25,8 @@ struct LayoutPageView: View {
             SettingsTogglesPageView(toggles: toggles)
             SettingsCard {
                 SettingsNavigationRow(discoverSectionsItem)
+                SettingsRowDivider()
+                SettingsNavigationRow(posterStyleItem)
             }
             SettingsCard {
                 SettingsFontSizeRow(fontSizeItem)
@@ -35,7 +40,8 @@ struct LayoutPageView: View {
         LayoutPageView(
             toggles: SettingsPreviewSamples.layoutToggles,
             discoverSectionsItem: SettingsPreviewSamples.discoverSectionsNavItem,
-            fontSizeItem: SettingsPreviewSamples.fontSizeItem
+            fontSizeItem: SettingsPreviewSamples.fontSizeItem,
+            posterStyleItem: SettingsPreviewSamples.posterStyleNavItem
         )
         .padding()
         .appPreview()

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.LocalLandscapeWidthScale
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 
@@ -39,8 +40,8 @@ internal fun NextEpisodeCard(
     Card(
         onClick = onClick,
         modifier = modifier
-            .width(300.dp)
-            .height(160.dp),
+            .width(300.dp * LocalLandscapeWidthScale.current)
+            .height(160.dp * LocalLandscapeWidthScale.current),
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,

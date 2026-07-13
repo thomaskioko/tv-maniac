@@ -18,6 +18,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.dp
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -94,6 +95,9 @@ public class MainActivity : ComponentActivity() {
                 appTheme = appTheme,
                 windowWidthSizeClass = windowSizeClass.widthSizeClass,
                 fontSizePercent = appUiState.fontSizePercent,
+                posterWidthScale = appUiState.posterWidthScale,
+                landscapeWidthScale = appUiState.landscapeWidthScale,
+                posterCornerRadius = appUiState.posterCornerRadius.dp,
             ) {
                 CompositionLocalProvider(
                     LocalHapticFeedbackEnabled provides appUiState.hapticFeedbackEnabled,

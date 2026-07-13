@@ -388,4 +388,46 @@ public interface DatastoreRepository {
      * @return A Flow of the scale percentage, defaulting to 100 and clamped into 85 to 130.
      */
     public fun observeFontSizePercent(): Flow<Int>
+
+    /**
+     * Saves the size preset for portrait poster cards, applied to every poster across the app.
+     *
+     * @param width Poster size preset.
+     */
+    public suspend fun savePosterWidth(width: PosterWidth)
+
+    /**
+     * Observes the size preset for portrait poster cards.
+     *
+     * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
+     */
+    public fun observePosterWidth(): Flow<PosterWidth>
+
+    /**
+     * Saves the size preset for landscape (16:9 backdrop) cards.
+     *
+     * @param width Landscape card size preset.
+     */
+    public suspend fun saveLandscapeWidth(width: PosterWidth)
+
+    /**
+     * Observes the size preset for landscape (16:9 backdrop) cards.
+     *
+     * @return A Flow of [PosterWidth]. Defaults to [PosterWidth.STANDARD]; unknown stored names fall back to the default.
+     */
+    public fun observeLandscapeWidth(): Flow<PosterWidth>
+
+    /**
+     * Saves the corner style applied to every poster.
+     *
+     * @param style Corner style preset.
+     */
+    public suspend fun savePosterCornerStyle(style: PosterCornerStyle)
+
+    /**
+     * Observes the corner style applied to every poster.
+     *
+     * @return A Flow of [PosterCornerStyle]. Defaults to [PosterCornerStyle.SHARP]; unknown stored names fall back to the default.
+     */
+    public fun observePosterCornerStyle(): Flow<PosterCornerStyle>
 }

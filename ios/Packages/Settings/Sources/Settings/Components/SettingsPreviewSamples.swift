@@ -121,6 +121,80 @@
             )
         }
 
+        static var posterStyleNavItem: SettingsNavigationItem {
+            SettingsNavigationItem(
+                id: SettingsPageRoute.posterStyle.rawValue,
+                icon: SettingsPageRoute.posterStyle.iconName,
+                title: "Poster style",
+                subtitle: "Choose poster size and corner style",
+                onTap: {}
+            )
+        }
+
+        static var posterStyleItem: SettingsPosterStyleItem {
+            SettingsPosterStyleItem(
+                title: "Poster style",
+                description: "Choose poster size and corner style",
+                livePreviewLabel: "Live preview",
+                resetLabel: "Reset",
+                postersLabel: "Posters",
+                landscapeLabel: "Landscape",
+                cornerLabel: "Corner style",
+                postersOptions: posterWidthOptions,
+                landscapeOptions: posterWidthOptions,
+                cornerOptions: posterCornerOptions,
+                selectedPostersId: "STANDARD",
+                selectedLandscapeId: "STANDARD",
+                selectedCornerId: "SHARP",
+                posterScale: 1,
+                landscapeScale: 1,
+                cornerRadius: 0
+            )
+        }
+
+        static var lockedPosterStyleItem: SettingsPosterStyleItem {
+            SettingsPosterStyleItem(
+                title: "Poster style",
+                description: "Choose poster size and corner style",
+                livePreviewLabel: "Live preview",
+                resetLabel: "Reset",
+                postersLabel: "Posters",
+                landscapeLabel: "Landscape",
+                cornerLabel: "Corner style",
+                postersOptions: posterWidthOptions,
+                landscapeOptions: posterWidthOptions,
+                cornerOptions: posterCornerOptions,
+                selectedPostersId: "STANDARD",
+                selectedLandscapeId: "STANDARD",
+                selectedCornerId: "SHARP",
+                posterScale: 1,
+                landscapeScale: 1,
+                cornerRadius: 0,
+                isLocked: true,
+                lockedBadgeText: "Premium",
+                lockedActionText: "Upgrade to Premium",
+                lockedAccessibilityLabel: "Locked"
+            )
+        }
+
+        private static var posterWidthOptions: [SettingsPosterStyleOption] {
+            [
+                SettingsPosterStyleOption(id: "COMPACT", label: "Compact", onSelect: {}),
+                SettingsPosterStyleOption(id: "STANDARD", label: "Standard", onSelect: {}),
+                SettingsPosterStyleOption(id: "COMFORTABLE", label: "Comfortable", onSelect: {}),
+                SettingsPosterStyleOption(id: "LARGE", label: "Large", onSelect: {}),
+            ]
+        }
+
+        private static var posterCornerOptions: [SettingsPosterStyleOption] {
+            [
+                SettingsPosterStyleOption(id: "SHARP", label: "Sharp", onSelect: {}),
+                SettingsPosterStyleOption(id: "CLASSIC", label: "Classic", onSelect: {}),
+                SettingsPosterStyleOption(id: "ROUNDED", label: "Rounded", onSelect: {}),
+                SettingsPosterStyleOption(id: "PILL", label: "Pill", onSelect: {}),
+            ]
+        }
+
         static var discoverSectionsNavItem: SettingsNavigationItem {
             SettingsNavigationItem(
                 id: SettingsPageRoute.discoverSections.rawValue,

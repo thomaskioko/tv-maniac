@@ -4,6 +4,8 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -44,6 +46,9 @@ public data class SettingsState(
     val blurImage: Boolean = false,
     val discoverSectionToggles: ImmutableList<DiscoverSectionToggle> = persistentListOf(),
     val fontSizePercent: Int = 100,
+    val posterWidth: PosterWidth = PosterWidth.STANDARD,
+    val landscapeWidth: PosterWidth = PosterWidth.STANDARD,
+    val posterCornerStyle: PosterCornerStyle = PosterCornerStyle.SHARP,
     val isLoading: Boolean = true,
     val isUpdating: Boolean = false,
     val isProcessingAuth: Boolean = false,
@@ -81,6 +86,7 @@ public data class DiscoverSectionToggle(
 
 public data class SettingsLocks(
     val customThemesLocked: Boolean = false,
+    val posterStyleLocked: Boolean = false,
     val episodeNotificationsLocked: Boolean = false,
     val badgeText: String = "",
     val themesLockedTitle: String = "",

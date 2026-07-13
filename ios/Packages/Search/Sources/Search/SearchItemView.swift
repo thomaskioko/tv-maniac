@@ -39,7 +39,7 @@ public struct SearchItemView: View {
                 title: nil,
                 posterUrl: imageUrl,
                 isInLibrary: inLibrary,
-                posterWidth: ImageType.poster.width(widthSizeClass),
+                posterWidth: ImageDimens.posterWidthFixed(widthSizeClass),
                 aspectRatio: ImageType.poster.aspect,
                 posterRadius: 0
             )

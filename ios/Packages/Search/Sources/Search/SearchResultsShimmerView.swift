@@ -9,7 +9,7 @@ struct SearchResultsShimmerView: View {
     var itemCount: Int = 6
 
     var body: some View {
-        let posterWidth = ImageType.poster.width(widthSizeClass)
+        let posterWidth = ImageDimens.posterWidthFixed(widthSizeClass)
         let posterHeight = posterWidth / ImageType.poster.aspect
 
         VStack(spacing: theme.spacing.small) {

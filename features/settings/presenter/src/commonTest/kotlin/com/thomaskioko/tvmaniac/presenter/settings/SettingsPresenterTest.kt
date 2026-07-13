@@ -14,6 +14,8 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
@@ -41,7 +43,11 @@ import com.thomaskioko.tvmaniac.settings.presenter.EpisodeNotificationsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.FontSizeChanged
 import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
+import com.thomaskioko.tvmaniac.settings.presenter.LandscapeWidthSelected
 import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
+import com.thomaskioko.tvmaniac.settings.presenter.PosterCornerStyleSelected
+import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleReset
+import com.thomaskioko.tvmaniac.settings.presenter.PosterWidthSelected
 import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
@@ -234,6 +240,63 @@ class SettingsPresenterTest {
             awaitItem().fontSizePercent shouldBe 120
             datastoreRepository.observeFontSizePercent().first() shouldBe 120
         }
+    }
+
+    @Test
+    fun `should persist and reflect poster style selections while unlocked`() = runTest {
+        presenter.state.test {
+            val initial = awaitItem()
+            initial.posterWidth shouldBe PosterWidth.STANDARD
+            initial.landscapeWidth shouldBe PosterWidth.STANDARD
+            initial.posterCornerStyle shouldBe PosterCornerStyle.SHARP
+
+            presenter.dispatch(PosterWidthSelected(PosterWidth.LARGE))
+            awaitItem().posterWidth shouldBe PosterWidth.LARGE
+
+            presenter.dispatch(LandscapeWidthSelected(PosterWidth.COMPACT))
+            awaitItem().landscapeWidth shouldBe PosterWidth.COMPACT
+
+            presenter.dispatch(PosterCornerStyleSelected(PosterCornerStyle.PILL))
+            awaitItem().posterCornerStyle shouldBe PosterCornerStyle.PILL
+
+            datastoreRepository.observePosterWidth().first() shouldBe PosterWidth.LARGE
+            datastoreRepository.observeLandscapeWidth().first() shouldBe PosterWidth.COMPACT
+            datastoreRepository.observePosterCornerStyle().first() shouldBe PosterCornerStyle.PILL
+        }
+    }
+
+    @Test
+    fun `should restore poster style defaults given reset`() = runTest {
+        datastoreRepository.savePosterWidth(PosterWidth.LARGE)
+        datastoreRepository.saveLandscapeWidth(PosterWidth.COMPACT)
+        datastoreRepository.savePosterCornerStyle(PosterCornerStyle.PILL)
+
+        presenter.state.test {
+            awaitItem()
+
+            presenter.dispatch(PosterStyleReset)
+            testScheduler.advanceUntilIdle()
+
+            datastoreRepository.observePosterWidth().first() shouldBe PosterWidth.STANDARD
+            datastoreRepository.observeLandscapeWidth().first() shouldBe PosterWidth.STANDARD
+            datastoreRepository.observePosterCornerStyle().first() shouldBe PosterCornerStyle.SHARP
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should ignore poster style selections while locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.CustomThemes, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(PosterWidthSelected(PosterWidth.LARGE))
+        presenter.dispatch(LandscapeWidthSelected(PosterWidth.COMPACT))
+        presenter.dispatch(PosterCornerStyleSelected(PosterCornerStyle.SHARP))
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.observePosterWidth().first() shouldBe PosterWidth.STANDARD
+        datastoreRepository.observeLandscapeWidth().first() shouldBe PosterWidth.STANDARD
+        datastoreRepository.observePosterCornerStyle().first() shouldBe PosterCornerStyle.SHARP
     }
 
     @Test
@@ -625,6 +688,7 @@ class SettingsPresenterTest {
             testScheduler.advanceUntilIdle()
             val locks = expectMostRecentItem().locks
             locks.customThemesLocked shouldBe false
+            locks.posterStyleLocked shouldBe false
             locks.episodeNotificationsLocked shouldBe false
         }
     }
@@ -638,6 +702,7 @@ class SettingsPresenterTest {
             testScheduler.advanceUntilIdle()
             val locks = expectMostRecentItem().locks
             locks.customThemesLocked shouldBe true
+            locks.posterStyleLocked shouldBe true
             locks.episodeNotificationsLocked shouldBe true
             locks.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
             locks.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)

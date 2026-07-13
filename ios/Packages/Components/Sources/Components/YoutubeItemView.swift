@@ -13,6 +13,14 @@ public struct YoutubeItemView: View {
     private let thumbnailUrl: String
     private let onError: ((Error) -> Void)?
 
+    private var scaledImageWidth: CGFloat {
+        DimensionConstants.imageWidth * ImageDimens.landscapeWidthScale
+    }
+
+    private var scaledImageHeight: CGFloat {
+        DimensionConstants.imageHeight * ImageDimens.landscapeWidthScale
+    }
+
     public init(
         openInYouTube: Bool,
         key: String,
@@ -32,21 +40,21 @@ public struct YoutubeItemView: View {
             if let player {
                 YouTubePlayerView(player)
                     .frame(
-                        width: DimensionConstants.imageWidth,
-                        height: DimensionConstants.imageHeight
+                        width: scaledImageWidth,
+                        height: scaledImageHeight
                     )
             }
 
             VStack {
                 LazyResizableImage(
                     url: thumbnailUrl,
-                    size: CGSize(width: DimensionConstants.imageWidth, height: DimensionConstants.imageHeight),
+                    size: CGSize(width: scaledImageWidth, height: scaledImageHeight),
                     placeholderIcon: "play.fill"
                 )
                 .aspectRatio(contentMode: .fill)
                 .frame(
-                    width: DimensionConstants.imageWidth,
-                    height: DimensionConstants.imageHeight
+                    width: scaledImageWidth,
+                    height: scaledImageHeight
                 )
                 .clipShape(
                     RoundedRectangle(
@@ -69,9 +77,9 @@ public struct YoutubeItemView: View {
                     Spacer()
                 }
             }
-            .frame(width: DimensionConstants.imageWidth)
+            .frame(width: scaledImageWidth)
         }
-        .frame(width: DimensionConstants.imageWidth)
+        .frame(width: scaledImageWidth)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(name)
         .onTapGesture(perform: openVideo)
@@ -112,8 +120,8 @@ public struct YoutubeItemView: View {
             }
         }
         .frame(
-            width: DimensionConstants.imageWidth,
-            height: DimensionConstants.imageHeight
+            width: scaledImageWidth,
+            height: scaledImageHeight
         )
         .clipShape(
             RoundedRectangle(

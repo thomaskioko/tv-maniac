@@ -11,4 +11,5 @@ public enum class SettingsPage {
     ACCOUNT,
     LAYOUT,
     DISCOVER_SECTIONS,
+    POSTER_STYLE,
 }

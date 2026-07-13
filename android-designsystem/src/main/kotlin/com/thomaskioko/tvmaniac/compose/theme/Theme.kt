@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ScanlineOverlay
 import com.thomaskioko.tvmaniac.compose.components.toScanlineConfiguration
@@ -154,6 +155,9 @@ public fun TvManiacTheme(
     appTheme: Theme = Theme.SYSTEM_THEME,
     windowWidthSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.Compact,
     fontSizePercent: Int = 100,
+    posterWidthScale: Float = 1f,
+    landscapeWidthScale: Float = 1f,
+    posterCornerRadius: Dp = 0.dp,
     content: @Composable () -> Unit,
 ) {
     val isSystemDark = isSystemInDarkTheme()
@@ -173,6 +177,9 @@ public fun TvManiacTheme(
         LocalBackgroundTheme provides backgroundTheme,
         LocalWindowWidthSizeClass provides windowWidthSizeClass,
         LocalDensity provides scaledDensity,
+        LocalPosterWidthScale provides posterWidthScale,
+        LocalLandscapeWidthScale provides landscapeWidthScale,
+        LocalPosterCornerRadius provides posterCornerRadius,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

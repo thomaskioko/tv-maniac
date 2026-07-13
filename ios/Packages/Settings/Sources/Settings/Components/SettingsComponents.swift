@@ -239,11 +239,12 @@ private struct SteppedSlider: View {
     let step: Double
     let onEditingChanged: (Bool) -> Void
 
-    private let trackHeight: CGFloat = 12
+    private let trackHeight: CGFloat = 16
     private let thumbWidth: CGFloat = 4
     private let thumbHeight: CGFloat = 28
     private let thumbGap: CGFloat = 6
     private let tickSize: CGFloat = 4
+    private let railPadding: CGFloat = 12
 
     private var stops: [Double] {
         stride(from: range.lowerBound, through: range.upperBound, by: step).map { $0 }
@@ -253,6 +254,8 @@ private struct SteppedSlider: View {
         GeometryReader { geo in
             let width = geo.size.width
             let fraction = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+            let usableWidth = width - railPadding * 2
+            let thumbCenter = railPadding + usableWidth * fraction
 
             ZStack(alignment: .leading) {
                 Capsule()
@@ -261,21 +264,21 @@ private struct SteppedSlider: View {
 
                 Capsule()
                     .fill(appTheme.colors.secondary)
-                    .frame(width: max(width * fraction - thumbGap, 0), height: trackHeight)
+                    .frame(width: max(thumbCenter - thumbGap, 0), height: trackHeight)
 
                 ForEach(Array(stops.enumerated()), id: \.offset) { _, stop in
                     let tickFraction = CGFloat((stop - range.lowerBound) / (range.upperBound - range.lowerBound))
                     Circle()
                         .fill(stop <= value ? appTheme.colors.onSecondary : appTheme.colors.onSurfaceVariant)
                         .frame(width: tickSize, height: tickSize)
-                        .offset(x: width * tickFraction - tickSize / 2)
+                        .offset(x: railPadding + usableWidth * tickFraction - tickSize / 2)
                 }
 
                 Capsule()
                     .fill(appTheme.colors.secondary)
                     .frame(width: thumbWidth, height: thumbHeight)
                     .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
-                    .offset(x: width * fraction - thumbWidth / 2)
+                    .offset(x: thumbCenter - thumbWidth / 2)
             }
             .frame(height: thumbHeight)
             .contentShape(Rectangle())
@@ -302,7 +305,8 @@ private struct SteppedSlider: View {
     }
 
     private func updateValue(at x: CGFloat, width: CGFloat) {
-        let clampedFraction = min(max(x / width, 0), 1)
+        let usableWidth = width - railPadding * 2
+        let clampedFraction = min(max((x - railPadding) / usableWidth, 0), 1)
         let raw = range.lowerBound + Double(clampedFraction) * (range.upperBound - range.lowerBound)
         let snapped = (raw / step).rounded() * step
         value = min(max(snapped, range.lowerBound), range.upperBound)

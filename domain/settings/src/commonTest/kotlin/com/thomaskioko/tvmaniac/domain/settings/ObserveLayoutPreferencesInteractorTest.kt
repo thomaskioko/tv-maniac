@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.domain.settings
 
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -106,6 +108,38 @@ internal class ObserveLayoutPreferencesInteractorTest {
             datastoreRepository.saveFontSizePercent(120)
 
             awaitItem().fontSizePercent shouldBe 120
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit standard poster widths and sharp corners by default`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            val preferences = awaitItem()
+            preferences.posterWidth shouldBe PosterWidth.STANDARD
+            preferences.landscapeWidth shouldBe PosterWidth.STANDARD
+            preferences.posterCornerStyle shouldBe PosterCornerStyle.SHARP
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit saved poster style values given the preferences change`() = runTest {
+        interactor(Unit)
+
+        interactor.flow.test {
+            awaitItem()
+
+            datastoreRepository.savePosterWidth(PosterWidth.LARGE)
+            awaitItem().posterWidth shouldBe PosterWidth.LARGE
+
+            datastoreRepository.saveLandscapeWidth(PosterWidth.COMPACT)
+            awaitItem().landscapeWidth shouldBe PosterWidth.COMPACT
+
+            datastoreRepository.savePosterCornerStyle(PosterCornerStyle.PILL)
+            awaitItem().posterCornerStyle shouldBe PosterCornerStyle.PILL
             cancelAndIgnoreRemainingEvents()
         }
     }

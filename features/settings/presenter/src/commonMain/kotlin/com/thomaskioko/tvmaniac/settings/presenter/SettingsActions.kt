@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
+import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
+import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 
 public sealed interface SettingsActions
@@ -78,5 +80,19 @@ public data class DiscoverSectionToggled(
 public data class FontSizeChanged(
     val percent: Int,
 ) : SettingsActions
+
+public data class PosterWidthSelected(
+    val width: PosterWidth,
+) : SettingsActions
+
+public data class LandscapeWidthSelected(
+    val width: PosterWidth,
+) : SettingsActions
+
+public data class PosterCornerStyleSelected(
+    val style: PosterCornerStyle,
+) : SettingsActions
+
+public data object PosterStyleReset : SettingsActions
 
 public data class SettingsMessageShown(val id: Long) : SettingsActions

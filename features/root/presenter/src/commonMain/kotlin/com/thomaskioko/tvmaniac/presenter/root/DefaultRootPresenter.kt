@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asStateFlow
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.minTrueDuration
@@ -51,7 +52,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -155,13 +155,19 @@ public class DefaultRootPresenter(
             datastoreRepository.observeHapticFeedbackEnabled(),
             datastoreRepository.observeBlurUnwatchedEpisodeImages(),
             datastoreRepository.observeFontSizePercent(),
-        ) { theme, hapticFeedbackEnabled, blurImage, fontSizePercent ->
+            datastoreRepository.observePosterWidth(),
+            datastoreRepository.observeLandscapeWidth(),
+            datastoreRepository.observePosterCornerStyle(),
+        ) { theme, hapticFeedbackEnabled, blurImage, fontSizePercent, posterWidth, landscapeWidth, posterCornerStyle ->
             AppUiState(
                 isFetching = false,
                 appTheme = theme.toTheme(),
                 hapticFeedbackEnabled = hapticFeedbackEnabled,
                 blurImage = blurImage,
                 fontSizePercent = fontSizePercent,
+                posterWidthScale = posterWidth.scale,
+                landscapeWidthScale = landscapeWidth.scale,
+                posterCornerRadius = posterCornerStyle.cornerRadius,
             )
         }
             .stateIn(
@@ -174,7 +180,7 @@ public class DefaultRootPresenter(
 
     // TODO:: Move notification rationale to it's own feature.
     override val notificationPermissionState: StateFlow<NotificationPermissionState> =
-        combine(
+        kotlinx.coroutines.flow.combine(
             datastoreRepository.observeShowNotificationRationale(),
             datastoreRepository.observeRequestNotificationPermission(),
         ) { showRationale, requestPermission ->
