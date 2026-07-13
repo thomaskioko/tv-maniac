@@ -35,6 +35,7 @@ struct PosterStylePageView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(appTheme.spacing.medium)
+        .containerRelativeFrame(.vertical, alignment: .top)
         .premiumOverlay(
             isLocked: item.isLocked,
             badgeText: item.lockedBadgeText,

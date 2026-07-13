@@ -10,15 +10,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material3.FilterChip
@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.components.CustomThemes
+import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
@@ -66,81 +66,80 @@ internal fun PosterStylePage(
     val locked = state.locks.posterStyleLocked
     val labels = state.labels.posterStyle
 
-    LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
-        item { Spacer(modifier = Modifier.height(16.dp)) }
+    PremiumOverlay(
+        locked = locked,
+        badgeText = state.locks.badgeText,
+        title = state.locks.themesLockedTitle,
+        message = state.locks.themesLockedMessage,
+        actionText = state.locks.upgradeText,
+        onActionClick = { onAction(UpgradeToPremiumClicked) },
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(SettingsTestTags.POSTER_STYLE_LOCKED_TEST_TAG),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .testTag(SettingsTestTags.LIST_TEST_TAG)
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                PosterStyleHeader(
+                    title = labels.title,
+                    resetLabel = labels.reset,
+                    enabled = !locked,
+                    onReset = { onAction(PosterStyleReset) },
+                )
 
-        item {
-            CustomThemes(
-                locked = locked,
-                badgeText = state.locks.badgeText,
-                title = state.locks.themesLockedTitle,
-                message = state.locks.themesLockedMessage,
-                actionText = state.locks.upgradeText,
-                onActionClick = { onAction(UpgradeToPremiumClicked) },
-                modifier = Modifier.testTag(SettingsTestTags.POSTER_STYLE_LOCKED_TEST_TAG),
-            ) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        PosterStyleHeader(
-                            title = labels.title,
-                            resetLabel = labels.reset,
-                            enabled = !locked,
-                            onReset = { onAction(PosterStyleReset) },
-                        )
-
-                        Text(
-                            text = labels.subtitle,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-
-                    PosterStyleLivePreview(
-                        title = labels.livePreview,
-                        postersLabel = labels.postersLabel,
-                        landscapeLabel = labels.landscapeLabel,
-                        posterWidth = state.posterWidth,
-                        landscapeWidth = state.landscapeWidth,
-                        cornerStyle = state.posterCornerStyle,
-                    )
-
-                    PosterStyleControl(
-                        title = labels.postersLabel,
-                        options = PosterWidth.entries,
-                        selected = state.posterWidth,
-                        enabled = !locked,
-                        label = labels::widthLabel,
-                        testTagFor = { SettingsTestTags.posterWidthChip(it.name) },
-                        onSelected = { onAction(PosterWidthSelected(it)) },
-                    )
-
-                    PosterStyleControl(
-                        title = labels.landscapeLabel,
-                        options = PosterWidth.entries,
-                        selected = state.landscapeWidth,
-                        enabled = !locked,
-                        label = labels::widthLabel,
-                        testTagFor = { SettingsTestTags.landscapeWidthChip(it.name) },
-                        onSelected = { onAction(LandscapeWidthSelected(it)) },
-                    )
-
-                    PosterStyleControl(
-                        title = labels.cornerLabel,
-                        options = PosterCornerStyle.entries,
-                        selected = state.posterCornerStyle,
-                        enabled = !locked,
-                        label = labels::cornerStyleLabel,
-                        testTagFor = { SettingsTestTags.posterCornerStyleChip(it.name) },
-                        onSelected = { onAction(PosterCornerStyleSelected(it)) },
-                    )
-                }
+                Text(
+                    text = labels.subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
-        }
 
-        item { Spacer(modifier = Modifier.height(24.dp)) }
+            PosterStyleLivePreview(
+                title = labels.livePreview,
+                postersLabel = labels.postersLabel,
+                landscapeLabel = labels.landscapeLabel,
+                posterWidth = state.posterWidth,
+                landscapeWidth = state.landscapeWidth,
+                cornerStyle = state.posterCornerStyle,
+            )
+
+            PosterStyleControl(
+                title = labels.postersLabel,
+                options = PosterWidth.entries,
+                selected = state.posterWidth,
+                enabled = !locked,
+                label = labels::widthLabel,
+                testTagFor = { SettingsTestTags.posterWidthChip(it.name) },
+                onSelected = { onAction(PosterWidthSelected(it)) },
+            )
+
+            PosterStyleControl(
+                title = labels.landscapeLabel,
+                options = PosterWidth.entries,
+                selected = state.landscapeWidth,
+                enabled = !locked,
+                label = labels::widthLabel,
+                testTagFor = { SettingsTestTags.landscapeWidthChip(it.name) },
+                onSelected = { onAction(LandscapeWidthSelected(it)) },
+            )
+
+            PosterStyleControl(
+                title = labels.cornerLabel,
+                options = PosterCornerStyle.entries,
+                selected = state.posterCornerStyle,
+                enabled = !locked,
+                label = labels::cornerStyleLabel,
+                testTagFor = { SettingsTestTags.posterCornerStyleChip(it.name) },
+                onSelected = { onAction(PosterCornerStyleSelected(it)) },
+            )
+        }
     }
 }
 
