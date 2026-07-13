@@ -547,6 +547,19 @@ class SettingsScreenTest: SnapshotTestCase {
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_PosterStyle")
     }
 
+    func test_SettingsScreen_PosterStyle_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .posterStyle,
+                authenticated: true,
+                customPosterStyleItem: posterStyleItem(locked: true)
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_PosterStyle_Locked")
+    }
+
     func test_SettingsScreen_Appearance() {
         SettingsScreen(state: makeState(page: .appearance, authenticated: true), onBack: {})
             .appPreview()
