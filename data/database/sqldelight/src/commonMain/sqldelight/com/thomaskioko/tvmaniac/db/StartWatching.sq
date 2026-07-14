@@ -2,40 +2,60 @@ import com.thomaskioko.tvmaniac.db.Id;
 import com.thomaskioko.tvmaniac.db.TraktId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 
+-- Eligible shows have zero live watched rows, so the shows_next_to_watch view's
+-- watched-exclusion machinery is a no-op for them: the next episode is simply the first
+-- aired regular-season episode. Scanning episodes of eligible shows directly avoids
+-- materializing the view (and the whole-database show_watch_progress aggregate) on every
+-- watched_episodes write.
 startWatchingShows:
+WITH eligible AS (
+    SELECT followed_shows.show_id, followed_shows.followed_at
+    FROM followed_shows
+    WHERE followed_shows.pending_action != 'DELETE'
+      AND NOT EXISTS (
+        SELECT 1 FROM watched_episodes
+        WHERE watched_episodes.show_id = followed_shows.show_id
+          AND watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE'))
+      AND NOT EXISTS (
+        SELECT 1 FROM continue_watching
+        WHERE continue_watching.show_id = followed_shows.show_id)
+),
+next_abs AS (
+    SELECT
+        episode.show_id,
+        MIN((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number
+    FROM eligible
+    INNER JOIN episode ON episode.show_id = eligible.show_id
+    INNER JOIN season ON season.id = episode.season_id
+    WHERE season.season_number > 0
+      AND episode.first_aired IS NOT NULL
+      AND episode.first_aired <= strftime('%s', 'now') * 1000
+    GROUP BY episode.show_id
+)
 SELECT
     tvshow.tmdb_id AS show_id,
     tvshow.tmdb_id AS tmdb_id,
     tvshow.name AS title,
     tvshow.poster_path,
     tvshow.year,
-    CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS in_library,
-    next_episode.episode_id,
-    next_episode.episode_name,
-    next_episode.season_id,
-    next_episode.season_number,
+    CASE WHEN eligible.show_id IS NOT NULL THEN 1 ELSE 0 END AS in_library,
+    next_episode.id AS episode_id,
+    next_episode.title AS episode_name,
+    next_season.id AS season_id,
+    next_season.season_number,
     next_episode.episode_number,
     next_episode.runtime,
-    next_episode.still_path,
+    next_episode.image_url AS still_path,
     next_episode.overview AS episode_overview,
     next_episode.first_aired
-FROM followed_shows
-INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
-LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
-LEFT JOIN continue_watching ON continue_watching.show_id = tvshow.id
-LEFT JOIN (
-    SELECT
-        show_id,
-        MIN(next_ep_abs_number) AS min_abs_number
-    FROM shows_next_to_watch
-    WHERE season_number > 0
-    GROUP BY show_id
-) AS min_next_episode ON min_next_episode.show_id = tvshow.id
-LEFT JOIN shows_next_to_watch AS next_episode
-    ON next_episode.show_id = tvshow.id
-    AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
-WHERE followed_shows.pending_action != 'DELETE'
-  AND COALESCE(show_watch_progress.watched_count, 0) = 0
-  AND (tvshow.year IS NULL OR CAST(tvshow.year AS INTEGER) <= CAST(strftime('%Y', 'now') AS INTEGER))
-  AND continue_watching.show_id IS NULL
-ORDER BY followed_shows.followed_at DESC;
+FROM eligible
+INNER JOIN tvshow ON tvshow.id = eligible.show_id
+LEFT JOIN next_abs ON next_abs.show_id = eligible.show_id
+LEFT JOIN season AS next_season
+    ON next_season.show_id = eligible.show_id
+    AND next_season.season_number = next_abs.next_ep_abs_number / 1000
+LEFT JOIN episode AS next_episode
+    ON next_episode.season_id = next_season.id
+    AND next_episode.episode_number = next_abs.next_ep_abs_number % 1000
+WHERE (tvshow.year IS NULL OR CAST(tvshow.year AS INTEGER) <= CAST(strftime('%Y', 'now') AS INTEGER))
+ORDER BY eligible.followed_at DESC;
