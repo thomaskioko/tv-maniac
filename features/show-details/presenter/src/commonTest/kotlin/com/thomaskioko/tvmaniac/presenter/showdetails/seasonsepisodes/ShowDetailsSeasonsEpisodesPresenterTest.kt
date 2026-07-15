@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -267,7 +268,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
 
     private fun buildPresenter(): ShowDetailsSeasonsEpisodesPresenter =
         ShowDetailsSeasonsEpisodesPresenter(
-            componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
+            componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry().apply { resume() }),
             showId = SHOW_ID,
             forceRefresh = false,
             observeSeasonsInteractor = ObserveSeasonsInteractor(
