@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.seasondetails.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ScrollState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -40,13 +39,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
@@ -55,7 +55,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CastCard
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
@@ -73,6 +72,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomSheetScaffold
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
+import com.thomaskioko.tvmaniac.compose.components.rememberShowAppBarBackground
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -180,37 +180,56 @@ internal fun SeasonDetailsScreen(
                     )
                 }
 
-                RefreshCollapsableTopAppBar(
-                    listState = listState,
-                    title = {
-                        Text(
-                            text = state.seasonName,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                color = MaterialTheme.colorScheme.onSurface,
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                var appBarHeight by remember { mutableIntStateOf(0) }
+                val showPinnedProgress by rememberShowAppBarBackground(listState) { appBarHeight }
+
+                Column {
+                    RefreshCollapsableTopAppBar(
+                        modifier = Modifier.onSizeChanged { appBarHeight = it.height },
+                        listState = listState,
+                        title = {
+                            Text(
+                                text = state.seasonName,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        navigationIcon = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = cd_navigate_back.resolve(LocalContext.current),
+                                tint = MaterialTheme.colorScheme.onBackground,
+                            )
+                        },
+                        navIconModifier = Modifier.testTag(SeasonDetailsTestTags.BACK_BUTTON_TEST_TAG),
+                        actionIcon = actionIconWhen(state.message != null) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground,
+                            )
+                        },
+                        isRefreshing = state.isRefreshing,
+                        onNavIconClicked = { onAction(SeasonDetailsBackClicked) },
+                        onActionIconClicked = { onAction(ReloadSeasonDetails) },
+                    )
+
+                    AnimatedVisibility(
+                        visible = showPinnedProgress,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        ShowLinearProgressIndicator(
+                            progress = state.watchProgress,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp),
                         )
-                    },
-                    navigationIcon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = cd_navigate_back.resolve(LocalContext.current),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    },
-                    navIconModifier = Modifier.testTag(SeasonDetailsTestTags.BACK_BUTTON_TEST_TAG),
-                    actionIcon = actionIconWhen(state.message != null) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    },
-                    isRefreshing = state.isRefreshing,
-                    onNavIconClicked = { onAction(SeasonDetailsBackClicked) },
-                    onActionIconClicked = { onAction(ReloadSeasonDetails) },
-                )
+                    }
+                }
 
                 TvManiacSnackBarHost(
                     message = if (!state.showError) state.message?.message else null,
@@ -232,8 +251,6 @@ internal fun LazyColumnContent(
     onAction: (SeasonDetailsAction) -> Unit,
     onEpisodeLongPress: (EpisodeDetailsModel) -> Unit = {},
 ) {
-    val scrollState = rememberScrollState()
-
     LazyColumn(
         modifier = modifier
             .testTag(SeasonDetailsTestTags.SEASON_DETAILS_LIST_TEST_TAG),
@@ -242,7 +259,6 @@ internal fun LazyColumnContent(
     ) {
         item(key = "header") {
             HeaderContent(
-                scrollState = scrollState,
                 imageUrl = seasonDetailsModel.imageUrl,
                 title = seasonDetailsModel.seasonName,
                 imagesCount = seasonDetailsModel.seasonImages.size,
@@ -250,7 +266,6 @@ internal fun LazyColumnContent(
                 userRating = seasonDetailsModel.userRating,
                 isLoading = isLoading,
                 onAction = onAction,
-                listState = listState,
             )
         }
 
@@ -333,52 +348,28 @@ internal fun ImageGalleryContent(
 
 @Composable
 private fun HeaderContent(
-    scrollState: ScrollState,
     imageUrl: String?,
     title: String,
     watchProgress: Float,
     imagesCount: Int,
     userRating: Int?,
     isLoading: Boolean,
-    listState: LazyListState,
     onAction: (SeasonDetailsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val resources = LocalResources.current
 
-    val headerOffset by remember {
-        derivedStateOf {
-            IntOffset(
-                x = 0,
-                y = if (listState.firstVisibleItemIndex == 0) {
-                    listState.firstVisibleItemScrollOffset / 2
-                } else {
-                    0
-                },
-            )
-        }
-    }
-
-    val posterOffset by remember {
-        derivedStateOf {
-            IntOffset(0, scrollState.value / 2)
-        }
-    }
-
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(350.dp)
-            .clipToBounds()
-            .offset { headerOffset },
+            .clipToBounds(),
         contentAlignment = Alignment.BottomCenter,
     ) {
         PosterCard(
             imageUrl = imageUrl,
             title = title,
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset { posterOffset },
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Box(

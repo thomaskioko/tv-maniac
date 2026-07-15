@@ -810,6 +810,7 @@ graph TB
   :data:upcomingshows:implementation --> :data:database:sqldelight
   :data:upcomingshows:implementation --> :data:request-manager:api
   :data:upcomingshows:implementation --> :data:upcomingshows:api
+  :data:upnext:implementation -.-> :core:base
   :data:upnext:implementation --> :data:datastore:api
   :data:upnext:implementation --> :data:episode:api
   :data:upnext:implementation --> :data:upnext:api

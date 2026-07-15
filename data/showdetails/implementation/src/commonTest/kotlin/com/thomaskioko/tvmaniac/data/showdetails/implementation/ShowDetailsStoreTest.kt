@@ -210,6 +210,47 @@ internal class ShowDetailsStoreTest : BaseDatabaseTest() {
         seasons.size shouldBe 2
     }
 
+    @Test
+    fun `should persist season poster given tmdb response includes it`() = runTest(testDispatcher) {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id<TmdbId>(TMDB_ID),
+            name = SHOW_NAME,
+            overview = "",
+            language = null,
+            year = null,
+            ratings = 0.0,
+            vote_count = 0L,
+            genres = null,
+            status = null,
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+
+        tmdbSource.setShowDetails(
+            ApiResponse.Success(
+                buildTmdbShowDetailsResponse(
+                    id = TMDB_ID.toInt(),
+                    name = SHOW_NAME,
+                    seasons = arrayListOf(
+                        buildSeasonsResponse(id = 1, seasonNumber = 1, episodeCount = 10).copy(posterPath = "/season1.jpg"),
+                    ),
+                ),
+            ),
+        )
+
+        store.stream(StoreReadRequest.fresh(TMDB_ID)).test {
+            awaitItem()
+            awaitItem()
+            cancelAndConsumeRemainingEvents()
+        }
+
+        val internalShowId = showIdResolver.showIdForTmdbId(TMDB_ID).shouldNotBeNull()
+        val season = database.seasonsQueries.getSeasonByShowAndNumber(showId = internalShowId, seasonNumber = 1L).executeAsOne()
+        season.image_url.shouldNotBeNull()
+    }
+
     private fun buildStore(): ShowDetailsStore = ShowDetailsStore(
         traktRemoteDataSource = traktSource,
         tmdbRemoteDataSource = tmdbSource,

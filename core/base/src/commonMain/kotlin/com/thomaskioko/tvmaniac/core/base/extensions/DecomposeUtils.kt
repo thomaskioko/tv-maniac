@@ -3,10 +3,14 @@ package com.thomaskioko.tvmaniac.core.base.extensions
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
+import com.arkivanov.essenty.lifecycle.doOnStart
+import com.arkivanov.essenty.lifecycle.doOnStop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -27,11 +31,21 @@ import kotlin.coroutines.CoroutineContext
 public fun LifecycleOwner.coroutineScope(
     context: CoroutineContext = Dispatchers.Main.immediate,
 ): CoroutineScope {
-    val scope = CoroutineScope(context + SupervisorJob())
+    val scope = LifecycleAwareCoroutineScope(CoroutineScope(context + SupervisorJob()), lifecycle)
     lifecycle.doOnDestroy(scope::cancel)
 
     return scope
 }
+
+/**
+ * [CoroutineScope] that remembers the [Lifecycle] of the component it belongs to, letting
+ * [asValue] pause collection while the component is stopped (inactive bottom-nav tab,
+ * back-stack entry, backgrounded app).
+ */
+internal class LifecycleAwareCoroutineScope(
+    delegate: CoroutineScope,
+    internal val lifecycle: Lifecycle,
+) : CoroutineScope by delegate
 
 /**
  * Creates a Main [CoroutineScope] instance tied to the lifecycle of this [ComponentContext].
@@ -44,11 +58,31 @@ public fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
 /**
  * Converts this Kotlin [StateFlow] to a Decompose [Value].
  * Collects on [Dispatchers.Main.immediate] to ensure thread-safe [MutableValue] updates.
+ *
+ * When [scope] comes from [LifecycleOwner.coroutineScope], collection runs only while the
+ * owning component is started. This keeps `SharingStarted.WhileSubscribed` state flows
+ * unsubscribed for stopped components (inactive tabs are parked at CREATED by the navigation
+ * layer), so their upstream database and network flows stay idle until the component is shown
+ * again. A plain scope collects for its whole life.
  */
 public fun <T : Any> StateFlow<T>.asValue(scope: CoroutineScope): Value<T> {
     val mutableValue = MutableValue(value)
-    scope.launch(Dispatchers.Main.immediate) {
-        collect { mutableValue.value = it }
+    val lifecycle = (scope as? LifecycleAwareCoroutineScope)?.lifecycle
+    if (lifecycle == null) {
+        scope.launch(Dispatchers.Main.immediate) {
+            collect { mutableValue.value = it }
+        }
+    } else {
+        var job: Job? = null
+        lifecycle.doOnStart(isOneTime = false) {
+            job = scope.launch(Dispatchers.Main.immediate) {
+                collect { mutableValue.value = it }
+            }
+        }
+        lifecycle.doOnStop(isOneTime = false) {
+            job?.cancel()
+            job = null
+        }
     }
     return mutableValue
 }

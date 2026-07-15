@@ -130,7 +130,7 @@ public class ShowDetailsStore(
                             episode_count = season.episodeCount.toLong(),
                             title = season.name,
                             overview = season.overview ?: "",
-                            image_url = null,
+                            image_url = season.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
                         ),
                     )
                 }

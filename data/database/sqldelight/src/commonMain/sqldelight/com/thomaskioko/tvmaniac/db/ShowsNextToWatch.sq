@@ -88,17 +88,79 @@ WHERE tvshow.id = :showId
 ORDER BY season.season_number DESC
 LIMIT 1;
 
+-- Single-pass rewrite of the old double `shows_next_to_watch` materialization: the view's
+-- OR-join caps index use at show_id (cost ~ episodes x watched per show), so re-running it
+-- on every watched_episodes write took seconds on provider-synced libraries. CTEs scan each
+-- table once, scoped to continue_watching shows, with the OR split into two indexed
+-- NOT EXISTS probes. Result set and ordering are identical to the view-based query.
 nextEpisodesForWatchlist:
+WITH last_watched AS (
+    SELECT
+        watched_episode.show_id,
+        MAX((1000 * season.season_number) + episode.episode_number) AS last_watched_abs_number,
+        MAX(watched_episode.watched_at) AS last_watched_at
+    FROM watched_episodes AS watched_episode
+    INNER JOIN episode ON episode.id = watched_episode.episode_id AND episode.show_id = watched_episode.show_id
+    INNER JOIN season ON season.id = episode.season_id
+    INNER JOIN continue_watching ON continue_watching.show_id = watched_episode.show_id
+    WHERE watched_episode.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+      AND (season.season_number > 0 OR season.title != 'Specials')
+    GROUP BY watched_episode.show_id
+),
+next_abs AS (
+    SELECT
+        episode.show_id,
+        MIN((1000 * season.season_number) + episode.episode_number) AS next_ep_abs_number
+    FROM continue_watching
+    INNER JOIN episode ON episode.show_id = continue_watching.show_id
+    INNER JOIN season ON season.id = episode.season_id
+    LEFT JOIN last_watched ON last_watched.show_id = continue_watching.show_id
+    WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
+      AND (:includeSpecials = 1 OR season.season_number > 0)
+      AND episode.first_aired IS NOT NULL
+      AND episode.first_aired <= strftime('%s', 'now') * 1000
+      AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
+      AND NOT EXISTS (
+        SELECT 1 FROM watched_episodes
+        WHERE watched_episodes.show_id = episode.show_id
+          AND watched_episodes.episode_id = episode.id
+          AND watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE'))
+      AND NOT EXISTS (
+        SELECT 1 FROM watched_episodes
+        WHERE watched_episodes.show_id = episode.show_id
+          AND watched_episodes.episode_id IS NULL
+          AND watched_episodes.season_number = season.season_number
+          AND watched_episodes.episode_number = episode.episode_number
+          AND watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE'))
+    GROUP BY episode.show_id
+),
+watched_counts AS (
+    SELECT watched_episodes.show_id, COUNT(*) AS watched_count
+    FROM watched_episodes
+    INNER JOIN continue_watching ON continue_watching.show_id = watched_episodes.show_id
+    WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY watched_episodes.show_id
+),
+total_counts AS (
+    SELECT episode.show_id, COUNT(*) AS total_count
+    FROM episode
+    INNER JOIN season ON episode.season_id = season.id
+    INNER JOIN continue_watching ON continue_watching.show_id = episode.show_id
+    WHERE season.season_number > 0
+      AND episode.first_aired IS NOT NULL
+      AND episode.first_aired <= strftime('%s', 'now') * 1000
+    GROUP BY episode.show_id
+)
 SELECT
     tvshow.tmdb_id AS show_id,
     COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS tmdb_id,
-    next_episode.episode_id,
-    next_episode.episode_name,
-    next_episode.season_id,
-    next_episode.season_number,
+    next_episode.id AS episode_id,
+    next_episode.title AS episode_name,
+    next_season.id AS season_id,
+    next_season.season_number,
     next_episode.episode_number,
     next_episode.runtime,
-    next_episode.still_path,
+    next_episode.image_url AS still_path,
     next_episode.overview,
     COALESCE(tvshow.name, watched_show.title) AS show_name,
     tvshow.poster_path AS show_poster,
@@ -108,41 +170,58 @@ SELECT
     watched_show.last_watched_at AS last_watched_at,
     COALESCE(show_metadata.season_count, 0) AS season_count,
     COALESCE(show_metadata.episode_count, 0) AS episode_count,
-    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
-    COALESCE(show_watch_progress.total_count, 0) AS total_count,
+    COALESCE(watched_counts.watched_count, 0) AS watched_count,
+    COALESCE(total_counts.total_count, 0) AS total_count,
     next_episode.ratings,
     next_episode.vote_count
 FROM continue_watching AS watched_show
 INNER JOIN tvshow ON tvshow.id = watched_show.show_id
-LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
-LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
-LEFT JOIN (
-    SELECT
-        show_id,
-        MIN(next_ep_abs_number) AS min_abs_number
-    FROM shows_next_to_watch
-    WHERE (:includeSpecials = 1 OR (season_number > 0))
-    GROUP BY show_id
-) AS min_next_episode ON min_next_episode.show_id = watched_show.show_id
-LEFT JOIN shows_next_to_watch AS next_episode
-    ON next_episode.show_id = watched_show.show_id
-    AND next_episode.next_ep_abs_number = min_next_episode.min_abs_number
-ORDER BY COALESCE(next_episode.last_watched_at, watched_show.last_watched_at) DESC,
-         next_episode.season_number ASC,
+LEFT JOIN show_metadata ON show_metadata.show_id = watched_show.show_id
+LEFT JOIN watched_counts ON watched_counts.show_id = watched_show.show_id
+LEFT JOIN total_counts ON total_counts.show_id = watched_show.show_id
+LEFT JOIN next_abs ON next_abs.show_id = watched_show.show_id
+LEFT JOIN last_watched ON last_watched.show_id = watched_show.show_id
+LEFT JOIN season AS next_season
+    ON next_season.show_id = watched_show.show_id
+    AND next_season.season_number = next_abs.next_ep_abs_number / 1000
+LEFT JOIN episode AS next_episode
+    ON next_episode.season_id = next_season.id
+    AND next_episode.episode_number = next_abs.next_ep_abs_number % 1000
+ORDER BY COALESCE(CASE WHEN next_abs.next_ep_abs_number IS NOT NULL THEN last_watched.last_watched_at END,
+                  watched_show.last_watched_at) DESC,
+         next_season.season_number ASC,
          next_episode.episode_number ASC;
 
 completedShowsForWatchlist:
+WITH watched_counts AS (
+    SELECT watched_episodes.show_id, COUNT(*) AS watched_count
+    FROM watched_episodes
+    INNER JOIN continue_watching ON continue_watching.show_id = watched_episodes.show_id
+    WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY watched_episodes.show_id
+),
+total_counts AS (
+    SELECT episode.show_id, COUNT(*) AS total_count
+    FROM episode
+    INNER JOIN season ON episode.season_id = season.id
+    INNER JOIN continue_watching ON continue_watching.show_id = episode.show_id
+    WHERE season.season_number > 0
+      AND episode.first_aired IS NOT NULL
+      AND episode.first_aired <= strftime('%s', 'now') * 1000
+    GROUP BY episode.show_id
+)
 SELECT
     tvshow.tmdb_id AS show_id,
     COALESCE(tvshow.tmdb_id, watched_show.tmdb_id) AS tmdb_id,
     COALESCE(tvshow.name, watched_show.title) AS show_name,
     tvshow.poster_path AS show_poster,
     watched_show.last_watched_at AS last_watched_at,
-    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
-    COALESCE(show_watch_progress.total_count, 0) AS total_count
+    COALESCE(watched_counts.watched_count, 0) AS watched_count,
+    COALESCE(total_counts.total_count, 0) AS total_count
 FROM continue_watching AS watched_show
 INNER JOIN tvshow ON tvshow.id = watched_show.show_id
-LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
-WHERE COALESCE(show_watch_progress.total_count, 0) > 0
-  AND COALESCE(show_watch_progress.watched_count, 0) >= COALESCE(show_watch_progress.total_count, 0)
+LEFT JOIN watched_counts ON watched_counts.show_id = watched_show.show_id
+LEFT JOIN total_counts ON total_counts.show_id = watched_show.show_id
+WHERE COALESCE(total_counts.total_count, 0) > 0
+  AND COALESCE(watched_counts.watched_count, 0) >= COALESCE(total_counts.total_count, 0)
 ORDER BY watched_show.last_watched_at DESC;
