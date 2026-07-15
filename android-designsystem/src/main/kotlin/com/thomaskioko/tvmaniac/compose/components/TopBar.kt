@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -70,6 +71,28 @@ public fun TvManiacTopBar(
 }
 
 @Composable
+public fun rememberShowAppBarBackground(
+    listState: LazyListState,
+    appBarHeight: () -> Int,
+): State<Boolean> = remember(listState) {
+    derivedStateOf {
+        val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+        val height = appBarHeight()
+        when {
+            visibleItemsInfo.isEmpty() -> false
+            height <= 0 -> false
+            else -> {
+                val firstVisibleItem = visibleItemsInfo[0]
+                when {
+                    firstVisibleItem.index > 0 -> true
+                    else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= height
+                }
+            }
+        }
+    }
+}
+
+@Composable
 public fun RefreshCollapsableTopAppBar(
     listState: LazyListState,
     modifier: Modifier = Modifier,
@@ -83,22 +106,7 @@ public fun RefreshCollapsableTopAppBar(
     navIconModifier: Modifier = Modifier,
 ) {
     var appBarHeight by remember { mutableIntStateOf(0) }
-    val showAppBarBackground by remember {
-        derivedStateOf {
-            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-            when {
-                visibleItemsInfo.isEmpty() -> false
-                appBarHeight <= 0 -> false
-                else -> {
-                    val firstVisibleItem = visibleItemsInfo[0]
-                    when {
-                        firstVisibleItem.index > 0 -> true
-                        else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
-                    }
-                }
-            }
-        }
-    }
+    val showAppBarBackground by rememberShowAppBarBackground(listState) { appBarHeight }
 
     RefreshCollapsableTopAppBar(
         modifier = modifier
@@ -127,22 +135,7 @@ public fun RefreshCollapsableTopAppBar(
     centeredTitle: Boolean = false,
 ) {
     var appBarHeight by remember { mutableIntStateOf(0) }
-    val showAppBarBackground by remember {
-        derivedStateOf {
-            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-            when {
-                visibleItemsInfo.isEmpty() -> false
-                appBarHeight <= 0 -> false
-                else -> {
-                    val firstVisibleItem = visibleItemsInfo[0]
-                    when {
-                        firstVisibleItem.index > 0 -> true
-                        else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
-                    }
-                }
-            }
-        }
-    }
+    val showAppBarBackground by rememberShowAppBarBackground(listState) { appBarHeight }
 
     RefreshCollapsableTopAppBar(
         modifier = modifier
