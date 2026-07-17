@@ -46,24 +46,6 @@ public struct TvManiacTypographyScheme {
         shared = percent == 100 ? .workSans : scaledWorkSans(scale: CGFloat(percent) / 100)
     }
 
-    static let preview = TvManiacTypographyScheme(
-        displayLarge: style(size: 57, weight: .medium, tracking: -0.25, lineHeight: 64),
-        displayMedium: style(size: 45, weight: .medium, tracking: 0, lineHeight: 52),
-        displaySmall: style(size: 36, weight: .heavy, tracking: 0, lineHeight: 44),
-        headlineLarge: style(size: 32, weight: .bold, tracking: 0, lineHeight: 40),
-        headlineMedium: style(size: 28, weight: .bold, tracking: 0, lineHeight: 36),
-        headlineSmall: style(size: 24, weight: .bold, tracking: 0, lineHeight: 32),
-        titleLarge: style(size: 22, weight: .bold, tracking: 0, lineHeight: 28),
-        titleMedium: style(size: 16, weight: .bold, tracking: 0.15, lineHeight: 24),
-        titleSmall: style(size: 14, weight: .heavy, tracking: 0.1, lineHeight: 20),
-        bodyLarge: style(size: 16, weight: .medium, tracking: 0.15, lineHeight: 24),
-        bodyMedium: style(size: 14, weight: .medium, tracking: 0.25, lineHeight: 20),
-        bodySmall: style(size: 12, weight: .medium, tracking: 0.4, lineHeight: 16),
-        labelLarge: style(size: 14, weight: .semibold, tracking: 0.1, lineHeight: 20),
-        labelMedium: style(size: 12, weight: .semibold, tracking: 0.5, lineHeight: 16),
-        labelSmall: style(size: 11, weight: .semibold, tracking: 0.5, lineHeight: 16)
-    )
-
     static let workSans = scaledWorkSans(scale: 1)
 
     private static func scaledWorkSans(scale: CGFloat) -> TvManiacTypographyScheme {
@@ -134,19 +116,6 @@ public struct TvManiacTypographyScheme {
         self.labelLarge = labelLarge
         self.labelMedium = labelMedium
         self.labelSmall = labelSmall
-    }
-
-    private static func style(
-        size: CGFloat,
-        weight: Font.Weight,
-        tracking: CGFloat,
-        lineHeight: CGFloat
-    ) -> TvManiacTextStyle {
-        TvManiacTextStyle(
-            font: .system(size: size, weight: weight),
-            tracking: tracking,
-            lineSpacing: max(0, lineHeight - size * 1.2)
-        )
     }
 
     private static func workSansStyle(
