@@ -42,8 +42,8 @@ import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.green
-import com.thomaskioko.tvmaniac.compose.theme.grey
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_episodes
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.seasondetails.presenter.OnEpisodeHeaderClicked
@@ -69,7 +69,7 @@ internal fun CollapsableContent(
     Column(
         modifier = modifier,
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         SeasonTitleHeader(
             episodesCount = episodesCount,
@@ -79,11 +79,11 @@ internal fun CollapsableContent(
             onAction = onAction,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         if (!collapsed) {
             episodeDetailsModelList.forEach { episode ->
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
                 EpisodeItem(
                     modifier = Modifier
@@ -102,7 +102,7 @@ internal fun CollapsableContent(
                     onEpisodeClicked = { onEpisodeLongPress(episode) },
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
             }
         }
     }
@@ -151,7 +151,7 @@ private fun SeasonTitleHeader(
                 modifier = Modifier
                     .rotate(arrowRotationDegree)
                     .constrainAs(image) {
-                        start.linkTo(parent.start, 8.dp)
+                        start.linkTo(parent.start, TvManiacSpacing.xSmall)
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
 
@@ -167,7 +167,7 @@ private fun SeasonTitleHeader(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(episodeTitle) {
-                    start.linkTo(image.end, 8.dp)
+                    start.linkTo(image.end, TvManiacSpacing.xSmall)
                     end.linkTo(count.start)
                     top.linkTo(image.top)
                     bottom.linkTo(image.bottom)
@@ -181,7 +181,7 @@ private fun SeasonTitleHeader(
                 maxLines = 1,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.constrainAs(count) {
-                    end.linkTo(watchedStatusIcon.start, 8.dp)
+                    end.linkTo(watchedStatusIcon.start, TvManiacSpacing.xSmall)
                     top.linkTo(watchedStatusIcon.top)
                     bottom.linkTo(watchedStatusIcon.bottom)
 
@@ -201,7 +201,7 @@ private fun SeasonTitleHeader(
                     }
                     .testTag(SeasonDetailsTestTags.SEASON_WATCHED_TOGGLE_TEST_TAG),
                 shape = CircleShape,
-                color = if (isSeasonWatched) green else grey,
+                color = if (isSeasonWatched) TvManiacTheme.colorScheme.success else TvManiacTheme.colorScheme.grey,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -221,7 +221,7 @@ private fun SeasonTitleHeader(
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         top.linkTo(image.bottom)
-                        bottom.linkTo(parent.bottom, 12.dp)
+                        bottom.linkTo(parent.bottom, TvManiacSpacing.small)
 
                         width = Dimension.fillToConstraints
                     },
