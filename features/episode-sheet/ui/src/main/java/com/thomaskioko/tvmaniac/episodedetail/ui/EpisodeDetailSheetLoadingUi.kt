@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 internal fun EpisodeDetailSheetLoadingUi(
@@ -32,7 +32,7 @@ internal fun EpisodeDetailSheetLoadingUi(
         modifier = modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-            .padding(bottom = 24.dp),
+            .padding(bottom = TvManiacSpacing.large),
     ) {
         ShimmerBox(
             modifier = Modifier
@@ -42,64 +42,64 @@ internal fun EpisodeDetailSheetLoadingUi(
         )
 
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
             ShimmerBox(
                 modifier = Modifier
                     .width(220.dp)
                     .height(28.dp),
-                shape = RoundedCornerShape(4.dp),
+                shape = MaterialTheme.shapes.small,
             )
 
             ShimmerBox(
                 modifier = Modifier
                     .width(140.dp)
                     .height(18.dp),
-                shape = RoundedCornerShape(4.dp),
+                shape = MaterialTheme.shapes.small,
             )
 
             ShimmerBox(
                 modifier = Modifier
                     .width(90.dp)
                     .height(16.dp),
-                shape = RoundedCornerShape(4.dp),
+                shape = MaterialTheme.shapes.small,
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
             ) {
                 ShimmerBox(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(14.dp),
-                    shape = RoundedCornerShape(4.dp),
+                    shape = MaterialTheme.shapes.small,
                 )
                 ShimmerBox(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(14.dp),
-                    shape = RoundedCornerShape(4.dp),
+                    shape = MaterialTheme.shapes.small,
                 )
                 ShimmerBox(
                     modifier = Modifier
                         .width(200.dp)
                         .height(14.dp),
-                    shape = RoundedCornerShape(4.dp),
+                    shape = MaterialTheme.shapes.small,
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
             color = MaterialTheme.colorScheme.outlineVariant,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         repeat(3) {
             EpisodeDetailLoadingActionRow()
@@ -114,19 +114,19 @@ private fun EpisodeDetailLoadingActionRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium),
     ) {
         ShimmerBox(
             modifier = Modifier.size(24.dp),
-            shape = RoundedCornerShape(8.dp),
+            shape = MaterialTheme.shapes.medium,
         )
         ShimmerBox(
             modifier = Modifier
                 .width(160.dp)
                 .height(18.dp),
-            shape = RoundedCornerShape(4.dp),
+            shape = MaterialTheme.shapes.small,
         )
     }
 }
