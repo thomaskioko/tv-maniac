@@ -21,8 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListAction
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListPresenter
@@ -56,7 +56,7 @@ public fun ShowList(
             state = state,
             onAction = presenter::dispatch,
         )
-        Spacer(modifier = Modifier.size(24.dp))
+        Spacer(modifier = Modifier.size(TvManiacSpacing.large))
     }
 }
 
@@ -69,7 +69,7 @@ internal fun ShowListSheetTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .padding(horizontal = TvManiacSpacing.xSmall, vertical = TvManiacSpacing.xSmall),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -105,7 +105,7 @@ internal fun ShowListSheetTopBar(
                 )
             }
         } else {
-            Spacer(modifier = Modifier.size(48.dp))
+            Spacer(modifier = Modifier.size(TvManiacSpacing.xxLarge))
         }
     }
 }

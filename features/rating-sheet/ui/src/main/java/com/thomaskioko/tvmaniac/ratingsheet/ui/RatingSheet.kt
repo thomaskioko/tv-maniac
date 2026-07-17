@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.ratingsheet.presenter.RatingSheetAction
@@ -89,10 +90,10 @@ internal fun RatingSheetContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp),
+                .padding(horizontal = TvManiacSpacing.medium)
+                .padding(top = TvManiacSpacing.xSmall),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.large),
         ) {
             Text(
                 text = state.title,
@@ -100,7 +101,7 @@ internal fun RatingSheetContent(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall)) {
                 for (star in 1..STAR_COUNT) {
                     val value = star * POINTS_PER_STAR
                     RatingStar(
@@ -123,7 +124,7 @@ internal fun RatingSheetContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
     }
 }
 
@@ -165,7 +166,7 @@ private fun SheetGrabber(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(vertical = TvManiacSpacing.small),
         contentAlignment = Alignment.Center,
     ) {
         Box(

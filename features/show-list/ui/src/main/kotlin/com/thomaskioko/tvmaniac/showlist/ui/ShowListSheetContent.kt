@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,6 +35,7 @@ import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListAction
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListState
 import com.thomaskioko.tvmaniac.testtags.showlist.ShowListTestTags
@@ -50,7 +50,7 @@ internal fun ShowListSheetContent(
         modifier = modifier
             .fillMaxWidth()
             .testTag(ShowListTestTags.SHEET_TEST_TAG)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = TvManiacSpacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (!state.isLoggedIn) {
@@ -58,7 +58,7 @@ internal fun ShowListSheetContent(
             return@Column
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         Text(
             text = state.labels.listsHeaderText,
@@ -66,10 +66,10 @@ internal fun ShowListSheetContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = TvManiacSpacing.xSmall),
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         when {
             state.isLoading -> LoadingContent()
@@ -77,7 +77,7 @@ internal fun ShowListSheetContent(
             else -> TraktListItems(state, onAction)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         CreateListInlineField(state, onAction)
     }
@@ -93,8 +93,8 @@ private fun TraktListItems(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(ShowListTestTags.traktListItem(list.id))
-                .padding(vertical = 4.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(vertical = TvManiacSpacing.xxSmall),
+            shape = MaterialTheme.shapes.large,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
@@ -106,7 +106,7 @@ private fun TraktListItems(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 10.dp),
+                    .padding(horizontal = TvManiacSpacing.xSmall, vertical = TvManiacSpacing.small),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -158,7 +158,7 @@ private fun LoadingContent() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 24.dp),
+            .padding(vertical = TvManiacSpacing.large),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CircularProgressIndicator(
@@ -176,7 +176,7 @@ private fun EmptyListContent(state: ShowListState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(vertical = TvManiacSpacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -196,7 +196,7 @@ private fun CreateListInlineField(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             OutlinedTextField(
                 value = state.createListName,
@@ -263,7 +263,7 @@ private fun LoginRequiredContent(
     ProviderSignInCard(
         title = state.labels.loginRequiredTitle,
         description = state.labels.loginRequiredMessage,
-        modifier = Modifier.padding(vertical = 24.dp),
+        modifier = Modifier.padding(vertical = TvManiacSpacing.large),
     ) {
         state.authProviders.forEach { option ->
             ProviderButton(

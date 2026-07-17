@@ -42,6 +42,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_empty
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_air_date
@@ -166,8 +167,8 @@ private fun UpNextLoadedContent(
 ) {
     LazyColumn(
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+        contentPadding = PaddingValues(horizontal = TvManiacSpacing.xSmall, vertical = TvManiacSpacing.xSmall),
         modifier = Modifier
             .testTag(UpNextTestTags.PAGE_LIST_TEST_TAG)
             .fillMaxSize(),
@@ -217,7 +218,7 @@ private fun TopBarContent(
         if (state.isLoading) {
             LoadingIndicator(
                 modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = TvManiacSpacing.xSmall)
                     .size(20.dp),
             )
         }
@@ -235,8 +236,8 @@ private fun SortChipsRow(
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = TvManiacSpacing.xSmall, vertical = TvManiacSpacing.xxSmall),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         SelectableFilterChip(
             label = label_upnext_sort_last_watched.resolve(context),
