@@ -12,7 +12,7 @@ public struct PremiumOverlayModifier: ViewModifier {
     private let accessibilityLabel: String?
 
     private static let blurRadius: CGFloat = 16
-    private static let lineSpacing: CGFloat = 12
+    private static let lineSpacing: CGFloat = TvManiacSpacingScheme.default.small
     private static let washOpacity: CGFloat = 0.67
     private static let cardOpacity: CGFloat = 0.65
 
@@ -161,7 +161,7 @@ public extension View {
 }
 
 #Preview {
-    VStack(spacing: 24) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         Text("Custom Theme")
             .textStyle(TvManiacTypographyScheme.shared.titleMedium)
             .frame(width: 220, height: 120)
@@ -202,11 +202,11 @@ private struct PremiumUpgradeButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(theme.typography.labelLarge)
-            .foregroundStyle(.appOnSecondary)
+            .foregroundStyle(.appOnButtonBackground)
             .padding(.horizontal, theme.spacing.large)
             .padding(.vertical, theme.spacing.small)
             .background(
-                .appSecondary,
+                .appButtonBackground,
                 in: RoundedRectangle(cornerRadius: theme.shapes.medium)
             )
             .opacity(configuration.isPressed ? 0.8 : 1)

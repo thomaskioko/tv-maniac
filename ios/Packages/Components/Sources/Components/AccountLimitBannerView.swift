@@ -35,7 +35,7 @@ public struct AccountLimitBannerView: View {
             Button(action: onUpgrade) {
                 Text(upgradeTitle)
                     .textStyle(theme.typography.labelLarge)
-                    .foregroundStyle(BannerStyle.error.backgroundColor)
+                    .foregroundStyle(BannerStyle.error.backgroundColor(theme: theme))
                     .padding(.horizontal, theme.spacing.medium)
                     .padding(.vertical, theme.spacing.xSmall)
                     .background(Color.white, in: Capsule())

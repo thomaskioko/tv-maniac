@@ -49,7 +49,7 @@ public struct ThemedProgressView: View {
 }
 
 #Preview {
-    HStack(spacing: 10) {
+    HStack(spacing: TvManiacSpacingScheme.default.xSmall) {
         ThemedProgressView()
     }
 }

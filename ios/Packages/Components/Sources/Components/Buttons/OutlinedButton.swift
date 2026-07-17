@@ -28,8 +28,8 @@ public struct OutlinedButton: View {
     }
 
     public var body: some View {
-        let resolvedColor = color ?? theme.colors.accent
-        let resolvedBorderColor = borderColor ?? theme.colors.accent
+        let resolvedColor = color ?? theme.colors.buttonBackground
+        let resolvedBorderColor = borderColor ?? theme.colors.buttonBackground
 
         TvManiacButton(
             text: text,

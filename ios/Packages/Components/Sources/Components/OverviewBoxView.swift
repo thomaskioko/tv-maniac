@@ -28,19 +28,16 @@ public struct OverviewBoxView: View {
                     .textStyle(theme.typography.bodyMedium)
                     .foregroundStyle(.appOnSurface)
                     .lineLimit(showFullText ? nil : lineLimit)
-                    .lineSpacing(4)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
                         Text(overview)
                             .lineLimit(lineLimit)
                             .textStyle(theme.typography.bodyMedium)
-                            .lineSpacing(4)
                             .background(GeometryReader { displayedGeometry in
                                 ZStack {
                                     Text(overview)
                                         .textStyle(theme.typography.bodyMedium)
-                                        .lineSpacing(4)
                                         .background(GeometryReader { fullGeometry in
                                             Color.clear.onAppear {
                                                 isTruncated = fullGeometry.size.height > displayedGeometry.size.height
@@ -83,7 +80,7 @@ struct CustomContainer<Content: View>: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         // Long Text
         OverviewBoxView(
             overview: "Set in the utopian region of Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League champions-and the power that will tear them apart."

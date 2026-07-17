@@ -87,7 +87,7 @@ public struct SnapCarousel<Content: View>: View {
 #Preview {
     VStack {
         SnapCarousel(
-            spacing: 10,
+            spacing: TvManiacSpacingScheme.default.xSmall,
             trailingSpace: 120,
             index: .constant(2),
             items: [
