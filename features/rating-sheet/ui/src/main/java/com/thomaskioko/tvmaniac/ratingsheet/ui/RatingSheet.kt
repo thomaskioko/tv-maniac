@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
@@ -60,7 +62,7 @@ public fun RatingSheet(
         onDismissRequest = { presenter.dispatch(RatingSheetAction.Dismissed) },
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(topStart = SHEET_CORNER_RADIUS, topEnd = SHEET_CORNER_RADIUS),
+        shape = sheetShape,
         dragHandle = null,
         modifier = modifier,
     ) {
@@ -81,7 +83,7 @@ internal fun RatingSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(topStart = SHEET_CORNER_RADIUS, topEnd = SHEET_CORNER_RADIUS))
+            .clip(sheetShape)
             .background(MaterialTheme.colorScheme.surface)
             .testTag(RatingSheetTestTags.SHEET_TEST_TAG),
     ) {
@@ -209,6 +211,8 @@ private fun RatingSheetContentHalfRatedPreview() {
     )
 }
 
+private val sheetShape: CornerBasedShape
+    @Composable get() = MaterialTheme.shapes.large.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
+
 private const val STAR_COUNT = 5
 private const val POINTS_PER_STAR = 2
-private val SHEET_CORNER_RADIUS = 16.dp
