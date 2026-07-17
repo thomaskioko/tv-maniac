@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_locked
 import com.thomaskioko.tvmaniac.i18n.resolve
 
@@ -32,9 +33,9 @@ public fun PremiumBadge(
         color = MaterialTheme.colorScheme.onSurface,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = TvManiacSpacing.xSmall, vertical = TvManiacSpacing.xxSmall),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
         ) {
             Icon(
                 imageVector = Icons.Filled.Lock,

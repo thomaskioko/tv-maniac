@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +34,7 @@ public fun TvManiacBottomSheetScaffold(
     skipHiddenState: Boolean = false,
     sheetShadowElevation: Dp = 0.dp,
     initialSheetState: SheetValue = SheetValue.Hidden,
-    sheetShape: Shape = RoundedCornerShape(5.dp),
+    sheetShape: Shape = MaterialTheme.shapes.small,
     containerColor: Color = MaterialTheme.colorScheme.background,
     sheetContainerColor: Color = MaterialTheme.colorScheme.background,
     snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },

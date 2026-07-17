@@ -7,6 +7,7 @@ scaffold {
 
     android {
         useCompose()
+        useRoborazzi()
     }
 
     optIn(
@@ -32,4 +33,7 @@ dependencies {
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.material3)
     implementation(libs.kotlinx.collections)
+
+    testImplementation(libs.robolectric.annotations)
+    testImplementation(projects.core.screenshotTests)
 }

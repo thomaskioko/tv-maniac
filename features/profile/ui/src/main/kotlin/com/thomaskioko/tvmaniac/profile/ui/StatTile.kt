@@ -26,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AnimatedCountText
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 internal fun StatTile(
@@ -37,7 +39,7 @@ internal fun StatTile(
     Card(
         modifier = modifier.height(138.dp),
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.medium),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
@@ -45,7 +47,7 @@ internal fun StatTile(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
+                .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium),
         ) {
             IconBadge(imageVector = imageVector)
 
@@ -59,7 +61,7 @@ internal fun StatTile(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
             content()
         }

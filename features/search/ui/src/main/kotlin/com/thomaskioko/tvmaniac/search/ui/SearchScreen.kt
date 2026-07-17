@@ -58,6 +58,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
@@ -156,7 +157,7 @@ internal fun SearchScreen(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp),
+                            .padding(start = TvManiacSpacing.medium),
                     )
                 },
                 navigationIcon = {
@@ -210,7 +211,7 @@ internal fun SearchScreen(
             sheetState = sheetState,
         ) {
             FilterChipSection(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(TvManiacSpacing.medium),
                 title = state.categoryTitle,
                 items = state.categories,
                 selectedItems = state.categories
@@ -246,7 +247,7 @@ private fun SearchScreenContent(
         when (val uiState = state.uiState) {
             InitialLoading -> LoadingIndicator()
             SearchLoading -> SearchResultsShimmer(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
             )
             SearchEmpty -> {
                 EmptyStateView(
@@ -257,7 +258,7 @@ private fun SearchScreenContent(
             }
 
             is SearchResults -> SearchResultsContent(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
                 onAction = onAction,
                 results = uiState.results,
                 scrollState = lazyListState,
@@ -324,7 +325,7 @@ private fun SearchResultsContent(
             LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = TvManiacSpacing.medium),
                 color = MaterialTheme.colorScheme.secondary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
@@ -339,7 +340,7 @@ private fun SearchResultsContent(
                 contentType = { "SearchResult" },
             ) { item ->
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
                 SearchResultItem(
                     modifier = Modifier.testTag(SearchTestTags.resultItem(item.showId)),
@@ -366,7 +367,7 @@ private fun GenreRowsContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 32.dp),
+            .padding(top = TvManiacSpacing.xLarge),
     ) {
         if (genreRows.isEmpty()) return
 
@@ -383,7 +384,7 @@ private fun GenreRowsContent(
                     onItemClicked = onShowClicked,
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
             }
         }
     }

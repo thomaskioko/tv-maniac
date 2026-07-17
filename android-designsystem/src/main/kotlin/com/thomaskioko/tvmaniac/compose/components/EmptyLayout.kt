@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun EmptyStateView(
@@ -36,7 +37,7 @@ public fun EmptyStateView(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = TvManiacSpacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -47,7 +48,7 @@ public fun EmptyStateView(
             contentDescription = null,
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
         Text(
             text = title,
@@ -57,7 +58,7 @@ public fun EmptyStateView(
         )
 
         message?.let {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
             Text(
                 text = it,
@@ -68,7 +69,7 @@ public fun EmptyStateView(
         }
 
         buttonText?.let {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
             HorizontalOutlinedButton(
                 modifier = buttonTestTag?.let { Modifier.testTag(it) } ?: Modifier,

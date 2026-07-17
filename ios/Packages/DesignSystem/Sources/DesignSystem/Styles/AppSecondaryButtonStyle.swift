@@ -9,12 +9,12 @@ public struct AppSecondaryButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(theme.typography.labelLarge)
-            .foregroundStyle(.appAccent)
+            .foregroundStyle(.appButtonBackground)
             .padding(.horizontal, theme.spacing.large)
             .padding(.vertical, theme.spacing.small)
             .overlay(
                 RoundedRectangle(cornerRadius: theme.shapes.medium)
-                    .stroke(.appAccent, lineWidth: 1)
+                    .stroke(.appButtonBackground, lineWidth: 1)
             )
             .opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : 0.5)
     }

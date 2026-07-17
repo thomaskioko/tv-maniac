@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.SegmentedProgressBar
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_season_details
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -65,33 +67,33 @@ internal fun WatchProgressSection(
             .fillMaxWidth()
             .heightIn(min = 1.dp),
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
         if (showHeader) {
             Text(
                 text = title_season_details.resolve(context),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
         }
 
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = TvManiacSpacing.medium),
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.small),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(TvManiacSpacing.medium),
             ) {
                 val headerText = buildAnnotatedString {
                     val tagStyle = SpanStyle(
@@ -123,7 +125,7 @@ internal fun WatchProgressSection(
                     style = MaterialTheme.typography.titleMedium,
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
 
                 Text(
                     text = pluralStringResource(
@@ -150,14 +152,14 @@ internal fun WatchProgressSection(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.small))
 
                 SegmentedProgressBar(
                     segmentProgress = seasonsList.map { it.progressPercentage }.toImmutableList(),
                     modifier = Modifier.fillMaxWidth(),
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
                 val lazyListState = rememberLazyListState()
 
@@ -173,8 +175,8 @@ internal fun WatchProgressSection(
                 LazyRow(
                     state = lazyListState,
                     modifier = Modifier.testTag(ShowDetailsTestTags.WATCH_PROGRESS_LIST_TEST_TAG),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 0.dp),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+                    contentPadding = PaddingValues(horizontal = TvManiacSpacing.none),
                 ) {
                     itemsIndexed(
                         items = seasonsList,
@@ -221,7 +223,7 @@ private fun WatchProgressSectionPreview() {
         selectedSeasonIndex = 0,
         showHeader = true,
         onSeasonClicked = { _, _ -> },
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }
 
@@ -278,7 +280,7 @@ private fun WatchProgressSectionUpToDatePreview() {
         selectedSeasonIndex = 0,
         showHeader = true,
         onSeasonClicked = { _, _ -> },
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }
 
@@ -311,6 +313,6 @@ private fun WatchProgressSectionUntrackedPreview() {
         selectedSeasonIndex = 0,
         showHeader = true,
         onSeasonClicked = { _, _ -> },
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }

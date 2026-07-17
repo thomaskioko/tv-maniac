@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Inbox
@@ -51,6 +50,8 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingAction
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingMessageShown
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingShowClicked
@@ -81,7 +82,7 @@ public fun ContinueWatchingScreen(
             .testTag(MyShowsTestTags.SCREEN_TEST_TAG),
     ) {
         PullToRefreshBox(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = TvManiacSpacing.xSmall),
             isRefreshing = state.isRefreshing,
             onRefresh = { onAction(RefreshContinueWatching(forceRefresh = true)) },
         ) {
@@ -191,11 +192,11 @@ private fun SectionedContinueWatchingGridContent(
     }
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
         modifier = Modifier
             .testTag(MyShowsTestTags.MY_SHOWS_GRID_TEST_TAG)
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = ImageDimens.GridItemSpacing),
     ) {
         if (chunkedWatchNext.isNotEmpty()) {
             stickyHeader(key = "grid_header_watch_next") {
@@ -243,7 +244,7 @@ private fun GridRow(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
     ) {
         items.forEach { show ->
             ContinueWatchingGridItem(
@@ -303,7 +304,7 @@ private fun SectionedUpNextListContent(
     onMarkWatched: (UpNextEpisodeItem) -> Unit,
 ) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         modifier = Modifier
             .testTag(MyShowsTestTags.MY_SHOWS_LIST_TEST_TAG)
             .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -372,11 +373,11 @@ private fun SectionHeader(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(vertical = TvManiacSpacing.small),
         contentAlignment = Alignment.Center,
     ) {
         Surface(
-            shape = RoundedCornerShape(20.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
         ) {
             Text(
@@ -385,7 +386,7 @@ private fun SectionHeader(
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall),
             )
         }
     }

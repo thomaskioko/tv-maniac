@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun CollapsibleSection(
@@ -46,7 +47,7 @@ public fun CollapsibleSection(
     moreContentDescription: String? = null,
     onMoreClick: () -> Unit = {},
     toggleTestTag: String? = null,
-    contentSpacing: Dp = 12.dp,
+    contentSpacing: Dp = TvManiacSpacing.small,
     content: @Composable () -> Unit,
 ) {
     var collapsed by rememberSaveable(title) { mutableStateOf(false) }
@@ -89,7 +90,7 @@ private fun SectionHeaderRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = TvManiacSpacing.medium),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -99,7 +100,7 @@ private fun SectionHeaderRow(
                 .clip(MaterialTheme.shapes.small)
                 .clickable(enabled = showMore, onClick = onMoreClick),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             Text(
                 text = title,
@@ -161,8 +162,8 @@ private fun CollapsibleSectionPreview() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(horizontal = TvManiacSpacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
         ) {
             repeat(2) {
                 Box(

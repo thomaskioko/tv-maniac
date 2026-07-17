@@ -31,11 +31,13 @@ public struct InlineSectionError: View {
                     Text(retryLabel)
                         .textStyle(theme.typography.labelLarge)
                         .foregroundStyle(theme.colors.secondary)
+                        .padding(.vertical, theme.spacing.xxSmall)
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, theme.spacing.medium)
+        .padding(.vertical, theme.spacing.xSmall)
     }
 }
 

@@ -33,7 +33,7 @@ public struct CastListView: View {
                                 name: cast.name,
                                 characterName: cast.characterName
                             )
-                            .padding([.leading, .trailing], theme.spacing.xxSmall)
+                            .padding([.leading, .trailing], theme.spacing.xSmall)
                             .padding(.leading, cast.id == casts.first?.id ? theme.spacing.medium : 0)
                         }
                     }

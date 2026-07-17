@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 
 @Composable
 public fun ShowLinearProgressIndicator(
@@ -18,7 +18,7 @@ public fun ShowLinearProgressIndicator(
         progress = { progress },
         color = MaterialTheme.colorScheme.secondary,
         trackColor = if (progress == 1f) {
-            green.copy(alpha = 0.5F)
+            TvManiacTheme.colorScheme.success.copy(alpha = 0.5F)
         } else {
             MaterialTheme.colorScheme.secondary.copy(
                 alpha = 0.5F,
@@ -26,7 +26,7 @@ public fun ShowLinearProgressIndicator(
         },
         strokeCap = StrokeCap.Butt,
         drawStopIndicator = {},
-        gapSize = 0.dp,
+        gapSize = TvManiacSpacing.none,
         modifier = modifier,
     )
 }

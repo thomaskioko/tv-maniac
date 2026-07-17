@@ -40,7 +40,7 @@ public struct AvatarView: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         AvatarView(avatarUrl: nil)
 
         AvatarView(

@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
@@ -25,7 +25,7 @@ internal fun DiscoverSectionsPage(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
-        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.medium)) }
 
         item {
             SettingsGroup {
@@ -40,7 +40,7 @@ internal fun DiscoverSectionsPage(
             }
         }
 
-        item { Spacer(modifier = Modifier.height(24.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
     }
 }
 

@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 internal fun ProfileLoadingSkeleton(
@@ -30,9 +31,9 @@ internal fun ProfileLoadingSkeleton(
     ) {
         ProfileHeaderSkeleton()
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
-        ProfileStatsSkeleton(modifier = Modifier.padding(horizontal = 16.dp))
+        ProfileStatsSkeleton(modifier = Modifier.padding(horizontal = TvManiacSpacing.medium))
     }
 }
 
@@ -59,17 +60,17 @@ private fun ProfileStatsSkeleton(
                 .height(28.dp),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         repeat(2) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
             ) {
                 StatTileSkeleton(modifier = Modifier.weight(1f))
                 StatTileSkeleton(modifier = Modifier.weight(1f))
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.small))
         }
     }
 }

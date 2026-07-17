@@ -4,8 +4,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
@@ -49,7 +49,7 @@ internal class ProgressSectionTest {
                     retryLabel = "Retry",
                     onShowClick = {},
                     onRetry = {},
-                    modifier = Modifier.padding(vertical = 16.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.medium),
                 )
             }
         }
@@ -69,7 +69,7 @@ internal class ProgressSectionTest {
                     retryLabel = "Retry",
                     onShowClick = {},
                     onRetry = {},
-                    modifier = Modifier.padding(vertical = 16.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.medium),
                 )
             }
         }
@@ -89,7 +89,7 @@ internal class ProgressSectionTest {
                     retryLabel = "Retry",
                     onShowClick = {},
                     onRetry = {},
-                    modifier = Modifier.padding(vertical = 16.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.medium),
                 )
             }
         }
@@ -109,7 +109,7 @@ internal class ProgressSectionTest {
                     retryLabel = "Retry",
                     onShowClick = {},
                     onRetry = {},
-                    modifier = Modifier.padding(vertical = 16.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.medium),
                 )
             }
         }

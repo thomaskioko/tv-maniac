@@ -16,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CastCard
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_casts
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.ShowDetailsCastPresenter
@@ -62,8 +62,8 @@ private fun CastContent(
                 modifier = Modifier,
                 state = lazyListState,
                 flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
             ) {
                 items(
                     items = castsList,

@@ -20,7 +20,7 @@ public struct TextTitlePill: View {
 
     public var body: some View {
         Button(action: onTap) {
-            HStack(spacing: theme.spacing.xxxSmall) {
+            HStack(spacing: theme.spacing.none) {
                 Text(title)
                     .textStyle(titleStyle ?? theme.typography.titleSmall)
                     .lineLimit(1)
@@ -29,9 +29,14 @@ public struct TextTitlePill: View {
                     .textStyle(theme.typography.labelSmall)
                     .foregroundStyle(.appOnSurface)
             }
-            .padding(.horizontal, theme.spacing.xSmall)
+            .padding(.leading, theme.spacing.xSmall)
+            .padding(.trailing, theme.spacing.xxSmall)
             .padding(.vertical, theme.spacing.xxSmall)
             .background(
+                RoundedRectangle(cornerRadius: theme.shapes.large)
+                    .fill(.appSurface)
+            )
+            .overlay(
                 RoundedRectangle(cornerRadius: theme.shapes.large)
                     .stroke(.appOnSurface, lineWidth: 1)
             )
