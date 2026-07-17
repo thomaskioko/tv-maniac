@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 internal fun SearchResultsShimmer(
@@ -25,7 +26,7 @@ internal fun SearchResultsShimmer(
 ) {
     Column(modifier = modifier) {
         repeat(itemCount) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 ShimmerBox(
                     modifier = Modifier
@@ -36,8 +37,8 @@ internal fun SearchResultsShimmer(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                        .padding(horizontal = TvManiacSpacing.xSmall),
+                    verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
                 ) {
                     ShimmerBox(modifier = Modifier.fillMaxWidth(0.6f).height(16.dp))
                     ShimmerBox(modifier = Modifier.fillMaxWidth(0.4f).height(12.dp))
@@ -53,5 +54,5 @@ internal fun SearchResultsShimmer(
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun SearchResultsShimmerPreview() {
-    SearchResultsShimmer(modifier = Modifier.padding(horizontal = 16.dp))
+    SearchResultsShimmer(modifier = Modifier.padding(horizontal = TvManiacSpacing.medium))
 }

@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterBackdropCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.search.presenter.model.ShowItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -44,7 +45,7 @@ internal fun HorizontalShowContentRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -64,8 +65,8 @@ internal fun HorizontalShowContentRow(
         LazyRow(
             state = lazyListState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-            contentPadding = PaddingValues(start = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(start = TvManiacSpacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             items(
                 items = tvShows,
