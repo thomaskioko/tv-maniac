@@ -40,6 +40,7 @@ import com.thomaskioko.tvmaniac.compose.components.ExpandingText
 import com.thomaskioko.tvmaniac.compose.components.ParallaxCarouselImage
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.LocalAutoAdvanceEnabled
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverFeaturedContentSuccess
@@ -183,8 +184,8 @@ private fun ShowCardOverlay(
 
         Column(
             modifier = Modifier
-                .offset(y = -(20).dp)
-                .padding(16.dp),
+                .offset(y = -TvManiacSpacing.large)
+                .padding(TvManiacSpacing.medium),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -195,7 +196,7 @@ private fun ShowCardOverlay(
                 maxLines = 1,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
             overview?.let {
                 ExpandingText(
