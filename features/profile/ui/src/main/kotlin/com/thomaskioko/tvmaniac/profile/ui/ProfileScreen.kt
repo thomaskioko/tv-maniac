@@ -58,6 +58,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
@@ -391,11 +392,12 @@ private fun HeaderContent(
                 .offset { posterOffset },
         )
 
-        val brush = remember {
+        val scrimColor = TvManiacTheme.colorScheme.scrim
+        val brush = remember(scrimColor) {
             Brush.verticalGradient(
                 listOf(
                     Color.Transparent,
-                    Color.Black.copy(alpha = 0.8f),
+                    scrimColor.copy(alpha = 0.8f),
                 ),
                 startY = 100f,
                 endY = 700f,

@@ -43,6 +43,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
@@ -140,11 +141,12 @@ private fun ListCollageCard(
                     .height(CollageHeight),
             )
 
-            val scrim = remember {
+            val scrimColor = TvManiacTheme.colorScheme.scrim
+            val scrim = remember(scrimColor) {
                 Brush.verticalGradient(
                     listOf(
                         Color.Transparent,
-                        Color.Black.copy(alpha = 0.85f),
+                        scrimColor.copy(alpha = 0.85f),
                     ),
                 )
             }
