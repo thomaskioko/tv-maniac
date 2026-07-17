@@ -384,7 +384,7 @@ internal fun ShowDetailButtons(
             text = listActionLabel,
             imageVector = if (isInList) Icons.Filled.LibraryAddCheck else Icons.Outlined.AutoAwesomeMotion,
             containerColor = if (isInList) TvManiacTheme.colorScheme.success else MaterialTheme.colorScheme.secondary,
-            contentColor = if (isInList) Color.White else MaterialTheme.colorScheme.onSecondary,
+            contentColor = if (isInList) TvManiacTheme.colorScheme.onSuccess else MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.labelMedium,
             enabled = canAddToList,
             onClick = onAddToList,

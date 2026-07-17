@@ -208,7 +208,7 @@ private fun SeasonTitleHeader(
                         modifier = Modifier.size(16.dp),
                         imageVector = Icons.Rounded.Check,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
+                        tint = TvManiacTheme.colorScheme.onSuccess,
                     )
                 }
             }

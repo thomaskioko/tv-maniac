@@ -40,9 +40,10 @@ internal class TvManiacColorSchemeTest {
     }
 
     @Test
-    fun `should share the same success, syncing, grey, scrim and onScrim across every theme`() {
+    fun `should share the same success, onSuccess, syncing, grey, scrim and onScrim across every theme`() {
         allThemes.forEach { scheme ->
             scheme.success shouldBe green
+            scheme.onSuccess shouldBe Color.White
             scheme.syncing shouldBe syncing
             scheme.grey shouldBe grey
             scheme.scrim shouldBe Color.Black
