@@ -131,3 +131,9 @@ public object TvManiacSpacing {
     public val xxLarge: Dp = 48.dp
     public val xxxLarge: Dp = 64.dp
 }
+
+public object TvManiacElevation {
+    public val small: Dp = 2.dp
+    public val medium: Dp = 4.dp
+    public val large: Dp = 8.dp
+}
