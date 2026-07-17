@@ -38,11 +38,6 @@ public val LocalLandscapeWidthScale: ProvidableCompositionLocal<Float> =
 public val LocalPosterCornerRadius: ProvidableCompositionLocal<Dp> =
     staticCompositionLocalOf { 0.dp }
 
-/**
- * Responsive layout tokens keyed on the window width size class. Single source of truth for page
- * margins, item spacing, grid column counts, and poster/backdrop/cast widths so every screen scales
- * consistently across phones, foldables, and tablets.
- */
 public object Layout {
     public val bodyMargin: Dp
         @Composable @ReadOnlyComposable
@@ -122,4 +117,17 @@ public object ImageDimens {
     public val HeroShowDetailsHeight: Dp = 500.dp
     public val HeroProfileHeight: Dp = 350.dp
     public val HeroCollapsedHeight: Dp = 120.dp
+}
+
+public object TvManiacSpacing {
+    public val none: Dp = 0.dp
+    public val xxxSmall: Dp = 2.dp
+    public val xxSmall: Dp = 4.dp
+    public val xSmall: Dp = 8.dp
+    public val small: Dp = 12.dp
+    public val medium: Dp = 16.dp
+    public val large: Dp = 24.dp
+    public val xLarge: Dp = 32.dp
+    public val xxLarge: Dp = 48.dp
+    public val xxxLarge: Dp = 64.dp
 }
