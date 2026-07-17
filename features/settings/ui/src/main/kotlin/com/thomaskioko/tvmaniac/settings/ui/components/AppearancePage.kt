@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -16,9 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
@@ -39,7 +38,7 @@ internal fun AppearancePage(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
-        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.medium)) }
 
         item { SettingsSectionLabel(text = state.labels.themeTitle) }
 
@@ -50,19 +49,19 @@ internal fun AppearancePage(
                     onThemeSelected = { onAction(ThemeSelected(it)) },
                     onUpgradeClick = { onAction(UpgradeToPremiumClicked) },
                     locks = state.locks,
-                    modifier = Modifier.padding(vertical = 12.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.small),
                 )
             }
         }
 
-        item { Spacer(modifier = Modifier.height(20.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
 
         item { SettingsSectionLabel(text = state.labels.imageQualityTitle) }
 
         item {
             SettingsGroup {
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(modifier = Modifier.padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall)) {
                         ImageQualityChip(
                             label = state.labels.imageQualityAuto,
                             quality = ImageQuality.AUTO,
@@ -92,13 +91,13 @@ internal fun AppearancePage(
                         text = state.labels.imageQualityDescription,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = TvManiacSpacing.xSmall),
                     )
                 }
             }
         }
 
-        item { Spacer(modifier = Modifier.height(24.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
     }
 }
 
@@ -133,7 +132,7 @@ private fun ImageQualityChip(
             enabled = true,
             selected = isSelected,
         ),
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.extraLarge,
     )
 }
 
