@@ -34,6 +34,7 @@ import com.thomaskioko.tvmaniac.compose.components.ProviderButton
 import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.ui.sampleProfileLabels
 import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
@@ -54,9 +55,9 @@ internal fun UnauthenticatedContent(
             .padding(contentPadding.calculateTopPadding())
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp)
-            .padding(top = 54.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(32.dp),
+            .padding(horizontal = TvManiacSpacing.large)
+            .padding(top = TvManiacSpacing.xxLarge, bottom = TvManiacSpacing.large),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xLarge),
     ) {
         Text(
             text = labels.unauthenticatedTitle,
@@ -67,7 +68,7 @@ internal fun UnauthenticatedContent(
         )
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.large),
             modifier = Modifier.fillMaxWidth(),
         ) {
             FeatureItem(
@@ -131,7 +132,7 @@ private fun FeatureItem(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium),
     ) {
         Icon(
             imageVector = icon,
@@ -140,7 +141,7 @@ private fun FeatureItem(
             modifier = Modifier.size(44.dp),
         )
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
             modifier = Modifier.weight(1f),
         ) {
             Text(
