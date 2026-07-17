@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -32,6 +31,8 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.Layout
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_count
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
@@ -50,7 +51,7 @@ internal fun LibraryListItem(
             .fillMaxWidth()
             .height(200.dp),
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 4.dp,
+        shadowElevation = TvManiacElevation.medium,
         onClick = { onItemClicked(item.showId) },
     ) {
         Row {
@@ -66,10 +67,10 @@ internal fun LibraryListItem(
                     .weight(1f)
                     .fillMaxHeight()
                     .padding(
-                        start = 16.dp,
-                        end = 12.dp,
-                        top = 12.dp,
-                        bottom = 12.dp,
+                        start = TvManiacSpacing.medium,
+                        end = TvManiacSpacing.small,
+                        top = TvManiacSpacing.small,
+                        bottom = TvManiacSpacing.small,
                     ),
             ) {
                 Text(
@@ -80,12 +81,12 @@ internal fun LibraryListItem(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
 
                 item.rating?.let { rating ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Star,
@@ -101,7 +102,7 @@ internal fun LibraryListItem(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
 
                 val metadata = buildMetadataString(item)
                 if (metadata.isNotEmpty()) {
@@ -118,8 +119,8 @@ internal fun LibraryListItem(
 
                 if (item.watchProviders.isNotEmpty()) {
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
+                        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
                     ) {
                         item.watchProviders.take(6).forEach { provider ->
                             AsyncImageComposable(
@@ -127,7 +128,7 @@ internal fun LibraryListItem(
                                 contentDescription = provider.name,
                                 modifier = Modifier
                                     .size(32.dp)
-                                    .clip(RoundedCornerShape(6.dp)),
+                                    .clip(MaterialTheme.shapes.small),
                             )
                         }
                     }

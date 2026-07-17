@@ -28,9 +28,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
@@ -55,7 +55,7 @@ internal fun LibrarySearchbar(
 
     OutlinedTextField(
         modifier = modifier
-            .padding(end = 8.dp)
+            .padding(end = TvManiacSpacing.xSmall)
             .fillMaxWidth()
             .focusRequester(focusRequester)
             .testTag(LibraryTestTags.SEARCH_BAR_TEST_TAG),
