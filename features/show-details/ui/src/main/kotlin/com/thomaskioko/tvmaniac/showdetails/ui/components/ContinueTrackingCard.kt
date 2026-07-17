@@ -23,6 +23,8 @@ import com.thomaskioko.tvmaniac.compose.components.MarkWatchedButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
@@ -43,7 +45,7 @@ internal fun ContinueTrackingCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.medium),
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -58,7 +60,7 @@ internal fun ContinueTrackingCard(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = TvManiacSpacing.small),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
@@ -75,7 +77,7 @@ internal fun ContinueTrackingCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 4.dp),
+                    modifier = Modifier.padding(top = TvManiacSpacing.xxSmall),
                 )
             }
 
@@ -85,14 +87,14 @@ internal fun ContinueTrackingCard(
                     isUpdating = isUpdating,
                     onToggle = onMarkWatched,
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = TvManiacSpacing.small)
                         .testTag(ShowDetailsTestTags.continueTrackingMarkWatchedButton(episode.episodeId)),
                 )
             } else {
                 val daysUntilAir = episode.daysUntilAir
                 if (daysUntilAir != null && daysUntilAir > 0) {
                     Column(
-                        modifier = Modifier.padding(end = 12.dp),
+                        modifier = Modifier.padding(end = TvManiacSpacing.small),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
@@ -112,7 +114,7 @@ internal fun ContinueTrackingCard(
                 } else {
                     Text(
                         text = "TBD",
-                        modifier = Modifier.padding(end = 12.dp),
+                        modifier = Modifier.padding(end = TvManiacSpacing.small),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
