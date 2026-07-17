@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_search
@@ -37,7 +38,7 @@ public fun TvManiacNavigationBar(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
         contentColor = NavigationDefaultColors.navigationContentColor(),
-        tonalElevation = 8.dp,
+        tonalElevation = TvManiacElevation.large,
         content = content,
     )
 }

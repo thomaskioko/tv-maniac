@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.min
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import kotlin.math.roundToInt
 
 @Composable
@@ -171,7 +173,7 @@ internal fun RefreshCollapsableTopAppBar(
 
     val elevation by animateDpAsState(
         targetValue = when {
-            showAppBarBackground -> 4.dp
+            showAppBarBackground -> TvManiacElevation.medium
             else -> 0.dp
         },
         animationSpec = spring(),
@@ -234,7 +236,7 @@ internal fun RefreshCollapsableTopAppBar(
 
     val elevation by animateDpAsState(
         targetValue = when {
-            showAppBarBackground -> 4.dp
+            showAppBarBackground -> TvManiacElevation.medium
             else -> 0.dp
         },
         animationSpec = spring(),
@@ -274,7 +276,7 @@ internal fun RefreshCollapsableTopAppBar(
                     RefreshButton(
                         modifier = Modifier
                             .size(20.dp)
-                            .padding(2.dp),
+                            .padding(TvManiacSpacing.xxxSmall),
                         isRefreshing = isRefreshing,
                         content = actionIcon ?: {},
                     )
@@ -386,7 +388,7 @@ private fun TopBarScrimPreview() {
                 colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
                 modifier = Modifier
                     .clickable(onClick = {})
-                    .padding(16.dp),
+                    .padding(TvManiacSpacing.medium),
             )
         },
         modifier = Modifier.iconButtonBackgroundScrim(enabled = true, alpha = 0.4f),

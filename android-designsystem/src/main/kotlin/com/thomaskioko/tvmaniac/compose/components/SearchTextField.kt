@@ -34,9 +34,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
 import kotlinx.coroutines.launch
@@ -124,7 +124,7 @@ private fun SearchTextFieldContent(
     Column(modifier = modifier) {
         SearchTextField(
             modifier = textFieldModifier
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = TvManiacSpacing.medium),
             onFocusChanged = onFocusChanged,
             textFieldValue = textFieldValue,
             onTextChanged = onTextChanged,

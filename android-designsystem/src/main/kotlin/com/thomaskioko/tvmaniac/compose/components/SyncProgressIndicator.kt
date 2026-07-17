@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 private const val SYNC_INDICATOR_HEIGHT_DP = 4
 
@@ -36,7 +37,7 @@ public fun SyncProgressIndicator(
             color = MaterialTheme.colorScheme.secondary,
             trackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.25F),
             strokeCap = StrokeCap.Butt,
-            gapSize = 0.dp,
+            gapSize = TvManiacSpacing.none,
             modifier = Modifier
                 .statusBarsPadding()
                 .fillMaxWidth()
