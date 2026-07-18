@@ -283,10 +283,10 @@ org.jetbrains.compose.ui:ui-text:1.9.3
 org.jetbrains.compose.ui:ui-unit:1.9.3
 org.jetbrains.compose.ui:ui-util:1.9.3
 org.jetbrains.compose.ui:ui:1.9.3
-org.jetbrains.kotlin:kotlin-stdlib-common:2.4.0
+org.jetbrains.kotlin:kotlin-stdlib-common:2.4.10
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0
-org.jetbrains.kotlin:kotlin-stdlib:2.4.0
+org.jetbrains.kotlin:kotlin-stdlib:2.4.10
 org.jetbrains.kotlinx:atomicfu-jvm:0.33.0
 org.jetbrains.kotlinx:atomicfu:0.33.0
 org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.5.1

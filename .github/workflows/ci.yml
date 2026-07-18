@@ -89,8 +89,13 @@ jobs:
 
     dependency-guard:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             -   uses: actions/checkout@v7
+                with:
+                    ref: ${{ github.event.pull_request.user.login == 'renovate[bot]' && github.head_ref || '' }}
+                    token: ${{ secrets.BOT_PAT || github.token }}
 
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
@@ -98,7 +103,18 @@ jobs:
             -   name: Update Dependency Guard Baselines
                 run: ./gradlew :app:dependencyGuardBaseline :ios-framework:dependencyGuardBaseline -Papp.debugOnly=false
 
+            -   name: Commit updated baselines (Renovate)
+                if: github.event.pull_request.user.login == 'renovate[bot]'
+                run: |
+                    git add -- '**/dependencies/*.txt'
+                    git diff --cached --quiet && exit 0
+                    git config user.name "github-actions[bot]"
+                    git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                    git commit -m "chore: Update dependency guard baselines"
+                    git push
+
             -   name: Fail on stale baselines
+                if: github.event.pull_request.user.login != 'renovate[bot]'
                 run: |
                     git add -- '**/dependencies/*.txt'
                     git diff --cached --quiet --exit-code -- '**/dependencies/*.txt' \

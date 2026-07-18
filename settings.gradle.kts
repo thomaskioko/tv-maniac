@@ -44,7 +44,7 @@ buildscript {
         // DAGP (applied via the app-gradle-plugins root convention) bundles a kotlin-metadata-jvm
         // that maxes out at metadata 2.3.0. Force it to match the project's Kotlin 2.4.0 so its
         // metadata-reading tasks (explodeJar) can parse 2.4.0 class metadata.
-        classpath("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.0")
+        classpath("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.10")
     }
 }
 

@@ -90,7 +90,7 @@ io.ktor:ktor-websocket-serialization-iosarm64:3.5.1
 io.ktor:ktor-websocket-serialization:3.5.1
 io.ktor:ktor-websockets-iosarm64:3.5.1
 io.ktor:ktor-websockets:3.5.1
-org.jetbrains.kotlin:kotlin-stdlib:2.4.0
+org.jetbrains.kotlin:kotlin-stdlib:2.4.10
 org.jetbrains.kotlinx:atomicfu-iosarm64:0.33.0
 org.jetbrains.kotlinx:atomicfu:0.33.0
 org.jetbrains.kotlinx:kotlinx-collections-immutable-iosarm64:0.5.1
