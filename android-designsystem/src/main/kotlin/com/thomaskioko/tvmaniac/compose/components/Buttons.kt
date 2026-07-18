@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
 import com.thomaskioko.tvmaniac.domain.theme.Theme
@@ -105,7 +106,7 @@ public fun FilledVerticalIconButton(
                 )
 
                 Text(
-                    modifier = Modifier.padding(top = 2.dp),
+                    modifier = Modifier.padding(top = TvManiacSpacing.xxxSmall),
                     text = text,
                     style = style,
                     color = when {
@@ -151,7 +152,7 @@ public fun FilledHorizontalIconButton(
                     },
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(TvManiacSpacing.xSmall))
 
                 Text(
                     text = text,
@@ -195,7 +196,7 @@ public fun HorizontalOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    textPadding: Dp = 0.dp,
+    textPadding: Dp = TvManiacSpacing.none,
     shape: Shape = MaterialTheme.shapes.small,
     borderColor: Color = MaterialTheme.colorScheme.secondary,
     contentColor: Color = MaterialTheme.colorScheme.secondary,
@@ -203,7 +204,7 @@ public fun HorizontalOutlinedButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.padding(2.dp),
+        modifier = modifier.padding(TvManiacSpacing.xxxSmall),
         enabled = enabled,
         shape = shape,
         content = {
@@ -214,7 +215,7 @@ public fun HorizontalOutlinedButton(
                 Modifier.padding(
                     start = when {
                         leadingIcon != null -> ButtonDefaults.IconSpacing
-                        else -> 0.dp
+                        else -> TvManiacSpacing.none
                     },
                 ),
             ) {
@@ -272,7 +273,7 @@ public fun OutlinedVerticalIconButton(
                         enabled -> MaterialTheme.colorScheme.secondary
                         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                     },
-                    modifier = Modifier.padding(top = 2.dp),
+                    modifier = Modifier.padding(top = TvManiacSpacing.xxxSmall),
                 )
             }
         },

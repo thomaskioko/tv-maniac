@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_similar
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ShowModel
@@ -67,7 +68,7 @@ private fun SimilarShowsContent(
     ) {
         if (similarShows.isNotEmpty()) {
             Column {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
                 HorizontalRowContent(
                     title = title_similar.resolve(LocalContext.current),
@@ -93,8 +94,8 @@ private fun HorizontalRowContent(
             modifier = modifier,
             state = lazyListState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
         ) {
             items(
                 items = items,

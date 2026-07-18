@@ -54,6 +54,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_dismiss
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -157,7 +158,7 @@ public fun TvManiacSnackBarHost(
                 onDismiss = ::dismiss,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp)
+                    .padding(vertical = TvManiacSpacing.medium)
                     .offset { IntOffset(0, offsetY.roundToInt()) }
                     .pointerInput(alignment) {
                         detectVerticalDragGestures(
@@ -204,12 +205,12 @@ internal fun TvManiacSnackBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = TvManiacSpacing.medium)
             .clip(MaterialTheme.shapes.large)
             .background(style.backgroundColor)
-            .padding(16.dp)
+            .padding(TvManiacSpacing.medium)
             .testTag("tvmaniac_snackbar"),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (loading) {
@@ -281,7 +282,7 @@ private fun TvManiacSnackBarPreview(
         TvManiacSnackBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(vertical = TvManiacSpacing.medium),
             message = param.message,
             style = param.style,
         )

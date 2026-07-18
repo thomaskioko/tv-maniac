@@ -177,8 +177,6 @@ private func urlBuilder(path: String? = nil) -> URL? {
 }
 
 private enum DimensionConstants {
-    static let imageRadius: CGFloat = 8
-    static let imageShadow: CGFloat = 2.5
     static let imageWidth: CGFloat = 260
     static let imageHeight: CGFloat = 140
     static let overlayOpacity: Double = 0.2

@@ -64,15 +64,15 @@ public extension GlassButton where Label == GlassButtonIconLabel {
     ZStack {
         Color.black.ignoresSafeArea()
 
-        VStack(spacing: 30) {
-            HStack(spacing: 20) {
+        VStack(spacing: TvManiacSpacingScheme.default.xLarge) {
+            HStack(spacing: TvManiacSpacingScheme.default.large) {
                 GlassButton(icon: "chevron.left") {}
                 GlassButton(icon: "ellipsis") {}
                 GlassButton(icon: "magnifyingglass") {}
                 GlassButton(icon: "gear") {}
             }
 
-            HStack(spacing: 20) {
+            HStack(spacing: TvManiacSpacingScheme.default.large) {
                 GlassButton(icon: "heart") {}
                 GlassButton(icon: "share") {}
                 GlassButton(icon: "bookmark") {}

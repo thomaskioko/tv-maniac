@@ -75,6 +75,8 @@ import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.components.rememberShowAppBarBackground
 import com.thomaskioko.tvmaniac.compose.extensions.contentBackgroundGradient
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_images_count
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
@@ -277,7 +279,7 @@ internal fun LazyColumnContent(
             )
         }
 
-        item(key = "footer") { Spacer(modifier = Modifier.height(54.dp)) }
+        item(key = "footer") { Spacer(modifier = Modifier.height(TvManiacSpacing.xxLarge)) }
     }
 
     when (seasonDetailsModel.dialogState) {
@@ -326,8 +328,8 @@ internal fun ImageGalleryContent(
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = 4.dp,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalItemSpacing = ImageDimens.GridItemSpacing,
+        horizontalArrangement = Arrangement.spacedBy(ImageDimens.GridItemSpacing),
         modifier = modifier.fillMaxSize(),
     ) {
         items(
@@ -381,9 +383,9 @@ private fun HeaderContent(
         Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(horizontal = 16.dp, vertical = 32.dp),
+                .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xLarge),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             HorizontalOutlinedButton(
                 text = resources.getQuantityString(
@@ -428,12 +430,12 @@ private fun HeaderContent(
             LoadingIndicator(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(32.dp)
+                    .padding(TvManiacSpacing.xLarge)
                     .size(28.dp),
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         ShowLinearProgressIndicator(
             progress = watchProgress,
@@ -458,7 +460,7 @@ private fun BodyContent(
             text = title_season_overview.resolve(LocalContext.current),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(TvManiacSpacing.medium),
             style = MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium,
@@ -471,15 +473,15 @@ private fun BodyContent(
             fontWeight = FontWeight.Normal,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = TvManiacSpacing.medium),
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         CollapsableContent(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = TvManiacSpacing.medium),
             episodesCount = seasonDetailsModel.episodeCount,
             watchProgress = seasonDetailsModel.watchProgress,
             isSeasonWatched = seasonDetailsModel.isSeasonWatched,
@@ -502,7 +504,7 @@ private fun CastContent(
         Text(
             text = title_casts.resolve(LocalContext.current),
             modifier = Modifier
-                .padding(16.dp)
+                .padding(TvManiacSpacing.medium)
                 .fillMaxWidth(),
             style = MaterialTheme.typography.titleLarge.copy(
                 color = MaterialTheme.colorScheme.onSurface,
@@ -526,8 +528,8 @@ private fun CastContent(
                         name = cast.name,
                         characterName = cast.characterName,
                         modifier = Modifier.padding(
-                            start = if (index == 0) 16.dp else 0.dp,
-                            end = if (index == castList.size - 1) 16.dp else 8.dp,
+                            start = if (index == 0) TvManiacSpacing.medium else TvManiacSpacing.none,
+                            end = if (index == castList.size - 1) TvManiacSpacing.medium else TvManiacSpacing.xSmall,
                         ),
                     )
                 }

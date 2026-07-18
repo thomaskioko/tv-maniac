@@ -107,7 +107,7 @@ public struct SearchItemView: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: TvManiacSpacingScheme.default.medium) {
         SearchItemView(
             title: "Loki",
             overview: "After stealing the Tesseract during the events of Avengers: Endgame, an alternate version of Loki is brought to the mysterious Time Variance Authority.",

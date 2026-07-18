@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Stable
 public enum class BannerStyle {
@@ -121,12 +122,17 @@ public fun TvManiacBanner(
             Column(
                 modifier = Modifier
                     .statusBarsPadding()
-                    .padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                    .padding(
+                        start = TvManiacSpacing.medium,
+                        end = TvManiacSpacing.xSmall,
+                        top = TvManiacSpacing.small,
+                        bottom = TvManiacSpacing.small,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(

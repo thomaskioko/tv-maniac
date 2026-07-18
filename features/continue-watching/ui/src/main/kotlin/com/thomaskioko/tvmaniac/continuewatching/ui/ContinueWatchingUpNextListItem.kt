@@ -35,7 +35,8 @@ import com.thomaskioko.tvmaniac.compose.components.PremiereBadge
 import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
-import com.thomaskioko.tvmaniac.compose.theme.grey
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
@@ -75,18 +76,18 @@ internal fun ContinueWatchingUpNextListItem(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                    .padding(vertical = TvManiacSpacing.xSmall, horizontal = TvManiacSpacing.medium),
             ) {
                 TextTitlePill(
                     showName = item.showName,
                     onClick = { onShowTitleClicked(item.showId) },
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
                 ) {
                     Text(
                         text = item.episodeNumberFormatted,
@@ -106,7 +107,7 @@ internal fun ContinueWatchingUpNextListItem(
                 }
 
                 Text(
-                    modifier = Modifier.padding(top = 4.dp),
+                    modifier = Modifier.padding(top = TvManiacSpacing.xxSmall),
                     text = item.episodeTitle,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -117,7 +118,7 @@ internal fun ContinueWatchingUpNextListItem(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
                 ) {
                     when (item.badge) {
                         EpisodeBadge.PREMIERE -> PremiereBadge(text = premiereLabel)
@@ -130,10 +131,10 @@ internal fun ContinueWatchingUpNextListItem(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .padding(12.dp)
+                    .padding(TvManiacSpacing.small)
                     .size(32.dp)
                     .background(
-                        color = grey,
+                        color = TvManiacTheme.colorScheme.grey,
                         shape = CircleShape,
                     )
                     .clickable(enabled = !isUpdating) { onMarkWatched() },

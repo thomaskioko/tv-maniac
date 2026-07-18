@@ -50,7 +50,7 @@ public struct PosterPlaceholder: View {
         }
         .frame(width: posterWidth, height: posterHeight)
         .clipShape(RoundedRectangle(cornerRadius: posterRadius ?? 0, style: .continuous))
-        .appShadow(shadowToken ?? theme.shadows.large)
+        .appShadow(shadowToken ?? .none)
     }
 }
 

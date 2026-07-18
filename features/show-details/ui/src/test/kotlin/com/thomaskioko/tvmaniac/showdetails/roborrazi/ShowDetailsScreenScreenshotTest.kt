@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScaffold
 import com.thomaskioko.tvmaniac.showdetails.ui.previewCastState
@@ -78,7 +78,7 @@ class ShowDetailsScreenScreenshotTest {
                         ShowDetailsSimilarSection(state = previewSimilarState, onAction = {})
                     }
                     item(key = "bottom_spacer") {
-                        Spacer(modifier = Modifier.height(54.dp))
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.xxLarge))
                     }
                 }
             }
@@ -173,7 +173,7 @@ class ShowDetailsScreenScreenshotTest {
                         ShowDetailsSimilarSection(state = previewSimilarState, onAction = {})
                     }
                     item(key = "bottom_spacer") {
-                        Spacer(modifier = Modifier.height(54.dp))
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.xxLarge))
                     }
                 }
             }

@@ -62,7 +62,7 @@ public struct LibraryListItemView: View {
                         .lineLimit(2)
 
                     if let rating = formattedRating {
-                        HStack(spacing: 4) {
+                        HStack(spacing: theme.spacing.xxSmall) {
                             Image(systemName: "star.fill")
                                 .textStyle(theme.typography.bodyMedium)
                                 .foregroundStyle(.appAccent)
@@ -82,7 +82,7 @@ public struct LibraryListItemView: View {
                     Spacer()
 
                     if !item.watchProviders.isEmpty {
-                        HStack(spacing: 4) {
+                        HStack(spacing: theme.spacing.xxSmall) {
                             ForEach(Array(item.watchProviders.prefix(6))) { provider in
                                 LazyResizableImage(
                                     url: provider.logoUrl,
@@ -108,7 +108,7 @@ public struct LibraryListItemView: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: TvManiacSpacingScheme.default.medium) {
         LibraryListItemView(
             item: SwiftLibraryItem(
                 showId: 1,

@@ -60,12 +60,12 @@ struct SettingsLoadingUI: View {
         Rectangle()
             .fill(appTheme.colors.outline.opacity(0.2))
             .frame(height: 0.5)
-            .padding(.leading, 64)
+            .padding(.leading, appTheme.spacing.xxxLarge)
     }
 }
 
 #Preview("Settings Loading") {
     SettingsLoadingUI()
-        .padding(.horizontal, 16)
+        .padding(.horizontal, TvManiacSpacingScheme.default.medium)
         .appPreview()
 }

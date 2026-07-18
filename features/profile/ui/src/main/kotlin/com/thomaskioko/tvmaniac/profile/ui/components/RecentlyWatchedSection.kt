@@ -27,6 +27,7 @@ import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileRecentItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
@@ -78,8 +79,8 @@ private fun EpisodeRow(
 ) {
     LazyRow(
         modifier = Modifier.testTag(ProfileTestTags.RECENTLY_WATCHED_ROW_TEST_TAG),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         items(
             items = items,
@@ -106,7 +107,7 @@ private fun EpisodeCard(
             modifier = Modifier.testTag(ProfileTestTags.showCard(item.showId)),
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         Text(
             text = item.title,
@@ -129,8 +130,8 @@ private fun EpisodeCard(
 @Composable
 private fun SkeletonRow(posterWidth: Dp) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         repeat(3) {
             Column(modifier = Modifier.width(posterWidth)) {
@@ -141,7 +142,7 @@ private fun SkeletonRow(posterWidth: Dp) {
                     shape = MaterialTheme.shapes.medium,
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
                 ShimmerBox(
                     modifier = Modifier
@@ -150,7 +151,7 @@ private fun SkeletonRow(posterWidth: Dp) {
                     shape = MaterialTheme.shapes.small,
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
 
                 ShimmerBox(
                     modifier = Modifier

@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
@@ -34,6 +33,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.actionIconWhen
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
@@ -94,7 +94,7 @@ public fun ShowDetailsScreen(
             ShowDetailsSimilarSection(presenter = presenter.similarPresenter)
         }
         item(key = "bottom_spacer") {
-            Spacer(modifier = Modifier.height(54.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xxLarge))
         }
     }
 }
@@ -124,7 +124,7 @@ internal fun ShowDetailsScaffold(
                 if (!hostState.isRefreshing && isHeaderEmpty && hostState.message != null) {
                     item(key = "error") {
                         EmptyStateView(
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = TvManiacSpacing.medium),
                             imageVector = Icons.Outlined.ErrorOutline,
                             title = generic_error_message.resolve(LocalContext.current),
                             buttonText = generic_retry.resolve(LocalContext.current),

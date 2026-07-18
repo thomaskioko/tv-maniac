@@ -31,7 +31,7 @@ public struct ThemePreviewSwatch: View {
 
     public var body: some View {
         Button(action: onSelect) {
-            VStack(spacing: 4) {
+            VStack(spacing: theme.spacing.xxSmall) {
                 ZStack(alignment: .bottomTrailing) {
                     if isSystemTheme {
                         SystemThemeSwatch(isSelected: isSelected)
@@ -140,8 +140,8 @@ struct SystemThemeSwatch: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
-        HStack(spacing: 16) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
+        HStack(spacing: TvManiacSpacingScheme.default.medium) {
             ThemePreviewSwatch(
                 backgroundColor: TvManiacColorScheme.light.background,
                 accentColor: TvManiacColorScheme.light.secondary,
@@ -171,7 +171,7 @@ struct SystemThemeSwatch: View {
             )
         }
 
-        HStack(spacing: 16) {
+        HStack(spacing: TvManiacSpacingScheme.default.medium) {
             ThemePreviewSwatch(
                 backgroundColor: TvManiacColorScheme.terminal.background,
                 accentColor: TvManiacColorScheme.terminal.secondary,
@@ -205,7 +205,7 @@ struct SystemThemeSwatch: View {
 }
 
 #Preview("Free and Premium") {
-    HStack(spacing: 16) {
+    HStack(spacing: TvManiacSpacingScheme.default.medium) {
         ThemePreviewSwatch(
             backgroundColor: TvManiacColorScheme.light.background,
             accentColor: TvManiacColorScheme.light.secondary,

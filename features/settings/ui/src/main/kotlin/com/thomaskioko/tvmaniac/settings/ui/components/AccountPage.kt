@@ -37,6 +37,7 @@ import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_settings_trakt_dialog_button_secondary
 import com.thomaskioko.tvmaniac.i18n.MR.strings.logout
 import com.thomaskioko.tvmaniac.i18n.MR.strings.trakt_dialog_logout_message
@@ -67,7 +68,7 @@ internal fun AccountPage(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
-        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.medium)) }
 
         item {
             AccountSectionHeader(
@@ -76,7 +77,7 @@ internal fun AccountPage(
             )
         }
 
-        item { Spacer(modifier = Modifier.height(4.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall)) }
 
         if (state.isAuthenticated) {
             item { ConnectedAccountCard(state = state, onAction = onAction) }
@@ -84,7 +85,7 @@ internal fun AccountPage(
             item { ProviderSignIn(state = state, onAction = onAction) }
         }
 
-        item { Spacer(modifier = Modifier.height(24.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
     }
 
     LogoutDialog(
@@ -113,11 +114,11 @@ private fun ConnectedAccountCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium),
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 state.activeProvider?.let { provider ->
@@ -128,7 +129,7 @@ private fun ConnectedAccountCard(
                         modifier = Modifier.size(40.dp),
                     )
                 }
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall)) {
                     Text(
                         text = state.activeProvider?.displayName.orEmpty(),
                         style = MaterialTheme.typography.titleMedium,
@@ -151,7 +152,7 @@ private fun ConnectedAccountCard(
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Button(
@@ -190,8 +191,8 @@ private fun AccountSectionHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = TvManiacSpacing.large, vertical = TvManiacSpacing.xSmall),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -219,7 +220,7 @@ private fun ProviderSignIn(
     ProviderSignInCard(
         title = state.labels.traktAuthentication,
         description = state.labels.accountSyncDescription,
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
     ) {
         state.authProviders.forEach { option ->
             ProviderButton(
@@ -271,7 +272,7 @@ private fun SwitchProviderRow(
                 tint = MaterialTheme.colorScheme.secondary,
             )
         }
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(TvManiacSpacing.xSmall))
         Text(text = label)
     }
 }

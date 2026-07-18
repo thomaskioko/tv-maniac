@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.InlineSectionError
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -42,6 +41,7 @@ import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileShowItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
@@ -72,7 +72,7 @@ internal fun ProgressSection(
         title = title,
         modifier = modifier,
         toggleTestTag = CollapsibleSectionTestTags.toggle(ProfileTestTags.PROGRESS_SECTION_KEY),
-        contentSpacing = 0.dp,
+        contentSpacing = TvManiacSpacing.none,
     ) {
         val posterWidth = ImageType.Poster.width
 
@@ -84,7 +84,7 @@ internal fun ProgressSection(
                 onSelected = { selectedFilter = it },
             )
 
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xxxSmall))
 
             val sectionState = when (selectedFilter) {
                 ProgressFilter.IN_PROGRESS -> inProgress
@@ -119,8 +119,8 @@ private fun FilterRow(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(horizontal = TvManiacSpacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         ProgressChip(
             label = completedLabel,
@@ -179,8 +179,8 @@ private fun PosterRow(
 ) {
     LazyRow(
         modifier = Modifier.testTag(ProfileTestTags.PROGRESS_ROW_TEST_TAG),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         items(
             items = shows,
@@ -201,8 +201,8 @@ private fun PosterRow(
 @Composable
 private fun PosterSkeletonRow(posterWidth: Dp) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         repeat(3) {
             ShimmerBox(
@@ -220,7 +220,7 @@ private fun EmptyLabel(label: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 24.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.large),
         contentAlignment = Alignment.Center,
     ) {
         Text(

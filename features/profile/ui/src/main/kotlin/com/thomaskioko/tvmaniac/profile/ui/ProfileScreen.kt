@@ -57,6 +57,8 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
@@ -165,7 +167,7 @@ internal fun ProfileScreen(
                             show = showAppBarBackground,
                             onClick = { onAction(SettingsClicked) },
                             modifier = Modifier
-                                .padding(end = 8.dp)
+                                .padding(end = TvManiacSpacing.xSmall)
                                 .testTag(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG),
                         ) {
                             Icon(
@@ -251,7 +253,7 @@ private fun ProfileContent(
                 val stats = userProfile.stats
                 if (stats != null) {
                     item {
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
                     }
 
                     userProfile.stats?.let { stats ->
@@ -268,7 +270,7 @@ private fun ProfileContent(
 
                 if (recentlyWatched !is SectionState.Empty) {
                     item {
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
                     }
 
                     item {
@@ -284,7 +286,7 @@ private fun ProfileContent(
 
                 if (inProgress !is SectionState.Empty || completed !is SectionState.Empty) {
                     item {
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
                     }
 
                     item {
@@ -304,7 +306,7 @@ private fun ProfileContent(
 
                 if (userLists !is SectionState.Empty) {
                     item {
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
                     }
 
                     item {
@@ -322,7 +324,7 @@ private fun ProfileContent(
 
                 if (favorites !is SectionState.Empty) {
                     item {
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
                     }
 
                     item {
@@ -337,7 +339,7 @@ private fun ProfileContent(
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(TvManiacSpacing.xLarge))
                 }
             }
         }
@@ -390,11 +392,12 @@ private fun HeaderContent(
                 .offset { posterOffset },
         )
 
-        val brush = remember {
+        val scrimColor = TvManiacTheme.colorScheme.scrim
+        val brush = remember(scrimColor) {
             Brush.verticalGradient(
                 listOf(
                     Color.Transparent,
-                    Color.Black.copy(alpha = 0.8f),
+                    scrimColor.copy(alpha = 0.8f),
                 ),
                 startY = 100f,
                 endY = 700f,
@@ -406,11 +409,10 @@ private fun HeaderContent(
                 .background(brush),
         )
 
-        // Profile Content
         Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall),
             verticalAlignment = Alignment.Bottom,
         ) {
             AvatarComponent(
@@ -421,7 +423,7 @@ private fun HeaderContent(
                 border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(TvManiacSpacing.medium))
 
             Column {
                 Text(
@@ -433,7 +435,7 @@ private fun HeaderContent(
                         .testTag(ProfileTestTags.USERNAME_TEST_TAG),
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
                 OutlinedVerticalIconButton(
                     onClick = onEditClicked,
@@ -443,7 +445,7 @@ private fun HeaderContent(
                         Text(
                             text = editButtonLabel,
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(top = 2.dp),
+                            modifier = Modifier.padding(top = TvManiacSpacing.xxxSmall),
                         )
                     },
                 )

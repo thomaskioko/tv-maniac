@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteOutline
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.FilterChipSection
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_apply
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_clear
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_genres
@@ -74,7 +74,7 @@ internal fun SortOptionsContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = TvManiacSpacing.medium)
             .navigationBarsPadding(),
     ) {
         Column(
@@ -103,7 +103,7 @@ internal fun SortOptionsContent(
                 singleSelect = true,
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
             if (state.availableGenres.isNotEmpty()) {
                 FilterChipSection(
@@ -115,7 +115,7 @@ internal fun SortOptionsContent(
                     collapsedItemCount = 5,
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.large))
             }
 
             if (state.availableStatuses.isNotEmpty()) {
@@ -136,7 +136,7 @@ internal fun SortOptionsContent(
                     collapsedItemCount = 5,
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.large))
             }
         }
 
@@ -147,7 +147,7 @@ internal fun SortOptionsContent(
             onApplyClick = onApplyFilters,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
     }
 }
 
@@ -162,14 +162,14 @@ private fun FilterActionBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(top = TvManiacSpacing.xSmall),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedButton(
             modifier = Modifier.testTag(LibraryTestTags.CLEAR_FILTER_BUTTON_TEST_TAG),
             onClick = onClearClick,
-            shape = RoundedCornerShape(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
         ) {
             Icon(
                 imageVector = Icons.Outlined.DeleteOutline,
@@ -178,7 +178,7 @@ private fun FilterActionBar(
             )
             Text(
                 text = clearText,
-                modifier = Modifier.padding(start = 4.dp),
+                modifier = Modifier.padding(start = TvManiacSpacing.xxSmall),
             )
         }
 
@@ -187,7 +187,7 @@ private fun FilterActionBar(
                 .weight(1f)
                 .testTag(LibraryTestTags.APPLY_FILTER_BUTTON_TEST_TAG),
             onClick = onApplyClick,
-            shape = RoundedCornerShape(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             colors = ButtonDefaults.buttonColors(
                 contentColor = MaterialTheme.colorScheme.onSecondary,
                 containerColor = MaterialTheme.colorScheme.secondary,

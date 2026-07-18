@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
@@ -34,6 +33,7 @@ import com.thomaskioko.tvmaniac.compose.components.TextTitlePill
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.Layout
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
@@ -53,12 +53,12 @@ internal fun UpNextListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = TvManiacSpacing.xSmall)
             .clickable(onClick = { onItemClicked(item.showId) }),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
     ) {
         HapticRow(
             modifier = Modifier.testTag(UpNextTestTags.episodeRow(item.showId)),
@@ -80,10 +80,10 @@ internal fun UpNextListItem(
                     .weight(1f)
                     .fillMaxHeight()
                     .padding(
-                        start = 12.dp,
-                        end = 4.dp,
-                        top = 12.dp,
-                        bottom = 12.dp,
+                        start = TvManiacSpacing.small,
+                        end = TvManiacSpacing.xxSmall,
+                        top = TvManiacSpacing.small,
+                        bottom = TvManiacSpacing.small,
                     ),
             ) {
                 TextTitlePill(
@@ -91,7 +91,7 @@ internal fun UpNextListItem(
                     onClick = { onShowTitleClicked(item.showId) },
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
                 Text(
                     text = buildString {
@@ -104,7 +104,7 @@ internal fun UpNextListItem(
                 )
 
                 item.episodeName?.let { name ->
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(TvManiacSpacing.xxxSmall))
                     Text(
                         text = name,
                         style = MaterialTheme.typography.bodySmall,
@@ -119,7 +119,7 @@ internal fun UpNextListItem(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
                 ) {
                     val progress = if (item.totalCount > 0) {
                         item.watchedCount.toFloat() / item.totalCount.toFloat()
@@ -132,7 +132,7 @@ internal fun UpNextListItem(
                         modifier = Modifier
                             .weight(1f)
                             .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp)),
+                            .clip(MaterialTheme.shapes.small),
                         color = MaterialTheme.colorScheme.secondary,
                         trackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
                         strokeCap = StrokeCap.Round,
@@ -154,7 +154,7 @@ internal fun UpNextListItem(
                 isUpdating = isUpdating,
                 onToggle = onMarkWatched,
                 modifier = Modifier
-                    .padding(12.dp)
+                    .padding(TvManiacSpacing.small)
                     .testTag(UpNextTestTags.watchedButton(item.showId)),
             )
         }

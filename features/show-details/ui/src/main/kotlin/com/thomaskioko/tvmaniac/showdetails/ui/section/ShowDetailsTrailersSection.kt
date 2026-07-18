@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.Card
@@ -43,6 +42,9 @@ import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.LocalLandscapeWidthScale
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
@@ -80,19 +82,20 @@ private fun TrailersContent(
 ) {
     if (trailersList.isEmpty()) return
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
     TextLoadingItem(
         title = title_trailer.resolve(LocalContext.current),
         modifier = modifier,
     ) {
         val lazyListState = rememberLazyListState()
+        val scrimColor = TvManiacTheme.colorScheme.scrim
 
         LazyRow(
             state = lazyListState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             items(
                 items = trailersList,
@@ -102,8 +105,8 @@ private fun TrailersContent(
                 Column {
                     Card(
                         onClick = { onTrailerClicked(trailer.showId) },
-                        shape = RoundedCornerShape(4.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        shape = MaterialTheme.shapes.small,
+                        elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.medium),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         ),
@@ -117,7 +120,7 @@ private fun TrailersContent(
                                     .aspectRatio(3 / 1.5f)
                                     .drawWithCache {
                                         val gradient = Brush.verticalGradient(
-                                            colors = listOf(Color.Transparent, Color.Black),
+                                            colors = listOf(Color.Transparent, scrimColor),
                                             startY = size.height / 3,
                                             endY = size.height,
                                         )
@@ -142,7 +145,7 @@ private fun TrailersContent(
                     Text(
                         text = trailer.name,
                         modifier = Modifier
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = TvManiacSpacing.xSmall)
                             .widthIn(0.dp, 280.dp),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,

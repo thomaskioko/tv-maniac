@@ -27,6 +27,8 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun CastCard(
@@ -40,7 +42,7 @@ public fun CastCard(
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.large),
     ) {
         Box(
             modifier = Modifier
@@ -110,11 +112,11 @@ private fun CastNameOverlay(
     characterName: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(8.dp)) {
+    Column(modifier = modifier.padding(TvManiacSpacing.xSmall)) {
         Text(
             text = name,
             modifier = Modifier
-                .padding(vertical = 2.dp)
+                .padding(vertical = TvManiacSpacing.xxxSmall)
                 .fillMaxWidth(),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,

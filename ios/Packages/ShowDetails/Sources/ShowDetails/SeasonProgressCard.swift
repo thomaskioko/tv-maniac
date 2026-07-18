@@ -30,7 +30,7 @@ public struct SeasonProgressCard: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: TvManiacSpacingScheme.default.medium) {
         SeasonProgressCard(
             season: SwiftSeason(
                 tvShowId: 1,

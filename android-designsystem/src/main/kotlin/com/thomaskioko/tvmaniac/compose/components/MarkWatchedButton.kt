@@ -15,8 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.compose.theme.green
-import com.thomaskioko.tvmaniac.compose.theme.grey
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
 
 @Composable
@@ -36,7 +35,7 @@ public fun MarkWatchedButton(
         enabled = !isUpdating,
         modifier = modifier.size(28.dp),
         shape = CircleShape,
-        color = if (isWatched) green else grey,
+        color = if (isWatched) TvManiacTheme.colorScheme.success else TvManiacTheme.colorScheme.grey,
     ) {
         Box(contentAlignment = Alignment.Center) {
             if (isUpdating) {

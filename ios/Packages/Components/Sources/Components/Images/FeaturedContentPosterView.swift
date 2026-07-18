@@ -54,7 +54,7 @@ public struct FeaturedContentPosterView: View {
 
                         Image(systemName: "square.stack.fill")
                             .imageScale(.large)
-                            .foregroundStyle(.appOnPrimary.opacity(0.9))
+                            .foregroundStyle(.appOnScrim.opacity(0.9))
                             .padding([.vertical])
                             .padding(.trailing, theme.spacing.medium)
                             .textStyle(theme.typography.bodySmall)

@@ -50,6 +50,8 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more_trailers
@@ -164,16 +166,16 @@ private fun VideoPlayerContent(
                     }
                 },
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
         }
 
         Text(
             text = str_more_trailers.resolve(LocalContext.current),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         TrailerList(
             listState = listState,
@@ -197,19 +199,20 @@ private fun TrailerList(
         contentPadding = contentPadding.copy(copyTop = false),
         modifier = modifier.fillMaxWidth(),
     ) {
-        item { Spacer(modifier = Modifier.height(8.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall)) }
 
         items(
             items = trailerList,
             key = { it.key },
             contentType = { "Trailer" },
         ) { trailer ->
+            val scrimColor = TvManiacTheme.colorScheme.scrim
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(80.dp)
                     .clickable { onTrailerClicked(trailer.key) }
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = TvManiacSpacing.xSmall),
             ) {
                 val (episodeTitle, image) = createRefs()
 
@@ -221,7 +224,7 @@ private fun TrailerList(
                         .width(140.dp)
                         .drawWithCache {
                             val gradient = Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, Color.Black),
+                                colors = listOf(Color.Transparent, scrimColor),
                                 startY = size.height / 3,
                                 endY = size.height,
                             )
@@ -251,7 +254,7 @@ private fun TrailerList(
                         linkTo(
                             start = image.end,
                             end = parent.end,
-                            startMargin = 8.dp,
+                            startMargin = TvManiacSpacing.xSmall,
                             bias = 0f,
                         )
                         top.linkTo(parent.top)
@@ -261,7 +264,7 @@ private fun TrailerList(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
         }
     }
 }

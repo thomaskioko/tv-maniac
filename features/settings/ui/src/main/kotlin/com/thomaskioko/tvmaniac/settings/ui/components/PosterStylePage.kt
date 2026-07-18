@@ -39,6 +39,7 @@ import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.settings.presenter.LandscapeWidthSelected
@@ -82,11 +83,11 @@ internal fun PosterStylePage(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .testTag(SettingsTestTags.LIST_TEST_TAG)
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+                .padding(horizontal = TvManiacSpacing.medium)
+                .padding(top = TvManiacSpacing.medium, bottom = TvManiacSpacing.large),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.large),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxxSmall)) {
                 PosterStyleHeader(
                     title = labels.title,
                     resetLabel = labels.reset,
@@ -185,7 +186,7 @@ private fun PosterStyleLivePreview(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         Text(
             text = title,
@@ -197,7 +198,7 @@ private fun PosterStyleLivePreview(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(SettingsTestTags.POSTER_STYLE_PREVIEW_TEST_TAG),
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.large),
             verticalAlignment = Alignment.Bottom,
         ) {
             PosterStylePreviewCard(
@@ -241,7 +242,7 @@ private fun PosterStylePreviewCard(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         Box(
             modifier = Modifier
@@ -286,7 +287,7 @@ private fun <T> PosterStyleControl(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         Text(
             text = title,
@@ -295,8 +296,8 @@ private fun <T> PosterStyleControl(
         )
 
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             options.forEach { option ->
                 FilterChip(

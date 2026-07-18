@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -10,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun TvManiacChip(
@@ -30,14 +29,14 @@ public fun TvManiacChip(
                     text = text,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.xSmall),
                 )
             }
         },
         enabled = enabled,
         leadingIcon = null,
         border = null,
-        shape = RoundedCornerShape(4.dp),
+        shape = MaterialTheme.shapes.small,
         colors = FilterChipDefaults.filterChipColors(
             containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
             labelColor = MaterialTheme.colorScheme.secondary,

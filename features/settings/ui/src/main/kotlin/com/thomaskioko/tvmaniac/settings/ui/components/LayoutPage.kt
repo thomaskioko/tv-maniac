@@ -31,10 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.FontSizeChanged
 import com.thomaskioko.tvmaniac.settings.presenter.HapticFeedbackToggled
@@ -58,7 +58,7 @@ internal fun LayoutPage(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.testTag(SettingsTestTags.LIST_TEST_TAG)) {
-        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.medium)) }
 
         item {
             SettingsGroup {
@@ -111,7 +111,7 @@ internal fun LayoutPage(
             }
         }
 
-        item { Spacer(modifier = Modifier.height(20.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
 
         item {
             SettingsGroup {
@@ -126,7 +126,7 @@ internal fun LayoutPage(
             }
         }
 
-        item { Spacer(modifier = Modifier.height(24.dp)) }
+        item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
     }
 }
 
@@ -143,12 +143,12 @@ private fun FontSizeSection(
     var sliderPosition by remember(fontSizePercent) { mutableFloatStateOf(fontSizePercent.toFloat()) }
 
     Column(
-        modifier = modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(TvManiacSpacing.medium),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
             verticalAlignment = Alignment.Top,
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -167,7 +167,7 @@ private fun FontSizeSection(
             if (sliderPosition.roundToInt() != DEFAULT_FONT_SIZE_PERCENT) {
                 TextButton(
                     modifier = Modifier.testTag(SettingsTestTags.FONT_SIZE_RESET_BUTTON_TEST_TAG),
-                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    contentPadding = PaddingValues(horizontal = TvManiacSpacing.xSmall),
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.secondary,
                     ),
@@ -199,7 +199,7 @@ private fun FontSizeSection(
                 text = previewText,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(12.dp),
+                modifier = Modifier.padding(TvManiacSpacing.small),
             )
         }
 

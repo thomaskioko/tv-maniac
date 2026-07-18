@@ -293,6 +293,6 @@ public struct SearchScreen: View {
         let searchBarHeight: CGFloat = 44
         let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
             .windows.first?.safeAreaInsets.top ?? 0
-        return toolbarHeight + safeAreaTop + searchBarHeight + 16
+        return toolbarHeight + safeAreaTop + searchBarHeight + theme.spacing.medium
     }
 }
