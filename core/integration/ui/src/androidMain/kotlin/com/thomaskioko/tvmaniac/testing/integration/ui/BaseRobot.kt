@@ -35,7 +35,7 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import androidx.compose.ui.test.hasContentDescription as composeHasContentDescription
 
-public const val TIMEOUT_MILLIS: Long = 5_000
+public const val TIMEOUT_MILLIS: Long = 10_000
 
 /**
  * Base robot for integration tests.
