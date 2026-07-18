@@ -178,6 +178,100 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should advance to next episode given watched row has pending upload`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatchedWithPendingAction(
+            showId = 1L,
+            episodeId = 101L,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            pendingAction = "UPLOAD",
+        )
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].episodeNumber shouldBe 2L
+            episodes[0].watchedCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should skip unwatched gap episode given later episode already watched`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 102L, seasonNumber = 1L, episodeNumber = 2L)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].episodeNumber shouldBe 3L
+        }
+    }
+
+    @Test
+    fun `should return season zero episode given includeSpecials is true and season not titled Specials`() = runTest {
+        insertShow(id = 14L, name = "Extras Show")
+        insertSeason(seasonId = 141L, showId = 14L, seasonNumber = 0L, title = "Extras", episodeCount = 1L)
+        insertEpisode(episodeId = 1401L, seasonId = 141L, showId = 14L, episodeNumber = 1L, title = "Extra 1")
+        insertSeason(seasonId = 142L, showId = 14L, seasonNumber = 1L, episodeCount = 1L)
+        insertEpisode(episodeId = 1402L, seasonId = 142L, showId = 14L, episodeNumber = 1L, title = "Regular 1")
+        followShow(showId = 14L, followedAt = watchDate)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = true).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].seasonNumber shouldBe 0L
+            episodes[0].episodeName shouldBe "Extra 1"
+        }
+    }
+
+    @Test
+    fun `should skip season zero episode given includeSpecials is false and season not titled Specials`() = runTest {
+        insertShow(id = 14L, name = "Extras Show")
+        insertSeason(seasonId = 141L, showId = 14L, seasonNumber = 0L, title = "Extras", episodeCount = 1L)
+        insertEpisode(episodeId = 1401L, seasonId = 141L, showId = 14L, episodeNumber = 1L, title = "Extra 1")
+        insertSeason(seasonId = 142L, showId = 14L, seasonNumber = 1L, episodeCount = 1L)
+        insertEpisode(episodeId = 1402L, seasonId = 142L, showId = 14L, episodeNumber = 1L, title = "Regular 1")
+        followShow(showId = 14L, followedAt = watchDate)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].seasonNumber shouldBe 1L
+            episodes[0].episodeName shouldBe "Regular 1"
+        }
+    }
+
+    @Test
+    fun `should skip Specials-titled season zero given includeSpecials is true`() = runTest {
+        insertShow4WithSpecials()
+        followShow(showId = 4L, followedAt = watchDate)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = true).test {
+            val episodes = awaitItem()
+            episodes.size shouldBe 1
+            episodes[0].seasonNumber shouldBe 1L
+            episodes[0].episodeName shouldBe "Regular Episode 1"
+        }
+    }
+
+    @Test
+    fun `should list completed show given all aired episodes watched`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L)
+        markEpisodeWatched(showId = 1L, episodeId = 102L, seasonNumber = 1L, episodeNumber = 2L)
+        markEpisodeWatched(showId = 1L, episodeId = 103L, seasonNumber = 1L, episodeNumber = 3L)
+
+        nextEpisodeDao.observeCompletedShows().test {
+            val shows = awaitItem()
+            shows.size shouldBe 1
+            shows[0].showId shouldBe 1L
+            shows[0].watchedCount shouldBe 3L
+            shows[0].totalCount shouldBe 3L
+        }
+    }
+
+    @Test
     fun `should maintain shows in watchlist when tracking sequentially`() = runTest {
         followShow(showId = 1L, followedAt = watchDate)
 

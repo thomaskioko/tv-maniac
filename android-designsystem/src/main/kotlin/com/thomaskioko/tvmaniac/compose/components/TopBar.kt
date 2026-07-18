@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -47,6 +48,8 @@ import androidx.compose.ui.unit.min
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.iconButtonBackgroundScrim
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import kotlin.math.roundToInt
 
 @Composable
@@ -70,6 +73,28 @@ public fun TvManiacTopBar(
 }
 
 @Composable
+public fun rememberShowAppBarBackground(
+    listState: LazyListState,
+    appBarHeight: () -> Int,
+): State<Boolean> = remember(listState) {
+    derivedStateOf {
+        val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+        val height = appBarHeight()
+        when {
+            visibleItemsInfo.isEmpty() -> false
+            height <= 0 -> false
+            else -> {
+                val firstVisibleItem = visibleItemsInfo[0]
+                when {
+                    firstVisibleItem.index > 0 -> true
+                    else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= height
+                }
+            }
+        }
+    }
+}
+
+@Composable
 public fun RefreshCollapsableTopAppBar(
     listState: LazyListState,
     modifier: Modifier = Modifier,
@@ -83,22 +108,7 @@ public fun RefreshCollapsableTopAppBar(
     navIconModifier: Modifier = Modifier,
 ) {
     var appBarHeight by remember { mutableIntStateOf(0) }
-    val showAppBarBackground by remember {
-        derivedStateOf {
-            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-            when {
-                visibleItemsInfo.isEmpty() -> false
-                appBarHeight <= 0 -> false
-                else -> {
-                    val firstVisibleItem = visibleItemsInfo[0]
-                    when {
-                        firstVisibleItem.index > 0 -> true
-                        else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
-                    }
-                }
-            }
-        }
-    }
+    val showAppBarBackground by rememberShowAppBarBackground(listState) { appBarHeight }
 
     RefreshCollapsableTopAppBar(
         modifier = modifier
@@ -127,22 +137,7 @@ public fun RefreshCollapsableTopAppBar(
     centeredTitle: Boolean = false,
 ) {
     var appBarHeight by remember { mutableIntStateOf(0) }
-    val showAppBarBackground by remember {
-        derivedStateOf {
-            val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-            when {
-                visibleItemsInfo.isEmpty() -> false
-                appBarHeight <= 0 -> false
-                else -> {
-                    val firstVisibleItem = visibleItemsInfo[0]
-                    when {
-                        firstVisibleItem.index > 0 -> true
-                        else -> firstVisibleItem.size + firstVisibleItem.offset - 5 <= appBarHeight
-                    }
-                }
-            }
-        }
-    }
+    val showAppBarBackground by rememberShowAppBarBackground(listState) { appBarHeight }
 
     RefreshCollapsableTopAppBar(
         modifier = modifier
@@ -178,7 +173,7 @@ internal fun RefreshCollapsableTopAppBar(
 
     val elevation by animateDpAsState(
         targetValue = when {
-            showAppBarBackground -> 4.dp
+            showAppBarBackground -> TvManiacElevation.medium
             else -> 0.dp
         },
         animationSpec = spring(),
@@ -241,7 +236,7 @@ internal fun RefreshCollapsableTopAppBar(
 
     val elevation by animateDpAsState(
         targetValue = when {
-            showAppBarBackground -> 4.dp
+            showAppBarBackground -> TvManiacElevation.medium
             else -> 0.dp
         },
         animationSpec = spring(),
@@ -281,7 +276,7 @@ internal fun RefreshCollapsableTopAppBar(
                     RefreshButton(
                         modifier = Modifier
                             .size(20.dp)
-                            .padding(2.dp),
+                            .padding(TvManiacSpacing.xxxSmall),
                         isRefreshing = isRefreshing,
                         content = actionIcon ?: {},
                     )
@@ -393,7 +388,7 @@ private fun TopBarScrimPreview() {
                 colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurface),
                 modifier = Modifier
                     .clickable(onClick = {})
-                    .padding(16.dp),
+                    .padding(TvManiacSpacing.medium),
             )
         },
         modifier = Modifier.iconButtonBackgroundScrim(enabled = true, alpha = 0.4f),

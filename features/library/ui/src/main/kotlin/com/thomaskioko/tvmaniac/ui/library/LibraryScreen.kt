@@ -71,6 +71,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.Layout
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
@@ -150,7 +151,7 @@ internal fun LibraryScreen(
             AnimatedContent(
                 modifier = Modifier
                     .padding(contentPadding.copy(copyBottom = false))
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = TvManiacSpacing.xSmall),
                 targetState = state.isGridMode,
                 transitionSpec = {
                     (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
@@ -297,7 +298,7 @@ private fun CollapsedTopBarContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
-            modifier = Modifier.padding(end = 8.dp),
+            modifier = Modifier.padding(end = TvManiacSpacing.xSmall),
             onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
         ) {
             val image = if (state.isGridMode) {
@@ -322,9 +323,9 @@ private fun CollapsedTopBarContent(
         )
 
         Row(
-            modifier = Modifier.padding(end = 8.dp),
+            modifier = Modifier.padding(end = TvManiacSpacing.xSmall),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
         ) {
             IconButton(onClick = onSearchClick, modifier = Modifier.testTag(LibraryTestTags.SEARCH_BUTTON_TEST_TAG)) {
                 Icon(
@@ -413,8 +414,8 @@ private fun LibraryListContent(
     onItemClicked: (Long) -> Unit,
 ) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(top = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+        contentPadding = PaddingValues(top = TvManiacSpacing.xSmall),
         modifier = Modifier
             .testTag(LibraryTestTags.LIBRARY_LIST_TEST_TAG)
             .fillMaxSize()

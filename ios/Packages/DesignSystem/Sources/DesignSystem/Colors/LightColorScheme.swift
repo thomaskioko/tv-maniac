@@ -18,7 +18,7 @@ public extension TvManiacColorScheme {
         outline: Color(hex: "1646F7"),
         accent: Color(hex: "0A4BFF"),
         onAccent: Color.white,
-        buttonBackground: Color(hex: "0A4BFF"),
+        buttonBackground: Color(hex: "3947EA"),
         onButtonBackground: Color.white
     )
 }

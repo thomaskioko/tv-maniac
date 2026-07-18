@@ -52,7 +52,7 @@ public struct FilledVerticalIconButton: View {
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.small)
-        .tint(containerColor ?? theme.colors.accent)
+        .tint(containerColor ?? theme.colors.buttonBackground)
         .buttonBorderShape(.roundedRectangle(radius: theme.shapes.medium))
     }
 
@@ -80,7 +80,7 @@ public struct FilledVerticalIconButton: View {
 }
 
 #Preview {
-    HStack(spacing: 12) {
+    HStack(spacing: TvManiacSpacingScheme.default.small) {
         FilledVerticalIconButton(
             text: "Track",
             systemImage: "plus.circle.fill",

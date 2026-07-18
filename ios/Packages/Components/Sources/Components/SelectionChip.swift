@@ -24,12 +24,12 @@ public struct SelectionChip: View {
                 .foregroundStyle(isSelected ? AnyShapeStyle(.appOnSecondary) : AnyShapeStyle(.appOnSurface))
                 .padding(.horizontal, theme.spacing.medium)
                 .padding(.vertical, theme.spacing.small)
-                .background(isSelected ? AnyShapeStyle(.appSecondary) : AnyShapeStyle(Color.clear))
+                .background(isSelected ? AnyShapeStyle(.appSecondary) : AnyShapeStyle(.appSurfaceVariant.opacity(0.5)))
                 .overlay(
-                    RoundedRectangle(cornerRadius: theme.shapes.small)
-                        .stroke(isSelected ? AnyShapeStyle(Color.clear) : AnyShapeStyle(.appOutline), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: theme.shapes.medium)
+                        .stroke(isSelected ? AnyShapeStyle(Color.clear) : AnyShapeStyle(.appOnSurface.opacity(0.8)), lineWidth: 1)
                 )
-                .cornerRadius(theme.shapes.small)
+                .cornerRadius(theme.shapes.medium)
         }
         .buttonStyle(.plain)
     }
@@ -65,7 +65,7 @@ public struct SelectionChipGroup: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: TvManiacSpacingScheme.default.medium) {
         SelectionChip(label: "High", isSelected: true, action: {})
         SelectionChip(label: "Medium", isSelected: false, action: {})
         SelectionChipGroup(

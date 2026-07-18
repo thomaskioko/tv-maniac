@@ -9,11 +9,11 @@ public struct AppPrimaryButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(theme.typography.labelLarge)
-            .foregroundStyle(.appOnPrimary)
+            .foregroundStyle(.appOnButtonBackground)
             .padding(.horizontal, theme.spacing.large)
             .padding(.vertical, theme.spacing.small)
             .background(
-                .appPrimary,
+                .appButtonBackground,
                 in: RoundedRectangle(cornerRadius: theme.shapes.medium)
             )
             .opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : 0.5)

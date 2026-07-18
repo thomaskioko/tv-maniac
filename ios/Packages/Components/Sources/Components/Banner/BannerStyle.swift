@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 
 /// Visual variant for ``TvManiacBanner``. Owns its own color palette so it can evolve
@@ -10,9 +11,9 @@ public enum BannerStyle {
 }
 
 public extension BannerStyle {
-    var backgroundColor: Color {
+    func backgroundColor(theme: TvManiacTheme) -> Color {
         switch self {
-        case .error: Color.red
+        case .error: theme.colors.error
         case .warning: Color.orange
         case .info: Color.blue
         case .success: Color.green

@@ -48,7 +48,15 @@ public fun createNativeSqliteDriver(
             migrationDriver.close()
         }
     }
-    return NativeSqliteDriver(databaseConfiguration(schema, name, inMemory = inMemory, foreignKeys = true))
+    return NativeSqliteDriver(
+        databaseConfiguration(
+            schema = schema,
+            name = name,
+            inMemory = inMemory,
+            foreignKeys = true,
+        ),
+        maxReaderConnections = if (inMemory) 1 else 4,
+    )
 }
 
 internal fun databaseConfiguration(

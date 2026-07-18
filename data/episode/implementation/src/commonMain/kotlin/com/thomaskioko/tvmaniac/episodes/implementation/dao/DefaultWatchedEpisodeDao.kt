@@ -490,6 +490,17 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
+    override suspend fun updatePendingActions(ids: List<Long>, action: PendingAction) {
+        if (ids.isEmpty()) return
+        withContext(dispatchers.databaseWrite) {
+            database.transaction {
+                ids.forEach { id ->
+                    val _ = database.watchedEpisodesQueries.updatePendingAction(action.value, id)
+                }
+            }
+        }
+    }
+
     override fun deleteAll() {
         database.watchedEpisodesQueries.deleteAll()
     }
@@ -503,6 +514,17 @@ public class DefaultWatchedEpisodeDao(
     override suspend fun deleteById(id: Long) {
         withContext(dispatchers.databaseWrite) {
             database.watchedEpisodesQueries.deleteById(id)
+        }
+    }
+
+    override suspend fun deleteByIds(ids: List<Long>) {
+        if (ids.isEmpty()) return
+        withContext(dispatchers.databaseWrite) {
+            database.transaction {
+                ids.forEach { id ->
+                    val _ = database.watchedEpisodesQueries.deleteById(id)
+                }
+            }
         }
     }
 

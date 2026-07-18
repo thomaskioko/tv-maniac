@@ -140,9 +140,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         source.addEpisodeEntries(entries)
 
-        pending.forEach { episode ->
-            dao.updatePendingAction(episode.watched_id, PendingAction.NOTHING)
-        }
+        dao.updatePendingActions(pending.map { it.watched_id }, PendingAction.NOTHING)
 
         logger.debug(TAG, "Successfully uploaded ${pending.size} episodes")
     }
@@ -167,9 +165,7 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
         source.removeEpisodeEntries(entries)
 
-        pending.forEach { episode ->
-            dao.deleteById(episode.watched_id)
-        }
+        dao.deleteByIds(pending.map { it.watched_id })
 
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
     }

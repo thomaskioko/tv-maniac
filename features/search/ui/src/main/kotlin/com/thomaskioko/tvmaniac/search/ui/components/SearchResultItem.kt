@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear_text
 import com.thomaskioko.tvmaniac.i18n.resolve
 
@@ -52,7 +54,7 @@ internal fun SearchResultItem(
             .clickable { onClick() },
         shape = shape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
+            defaultElevation = TvManiacElevation.medium,
         ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
@@ -68,7 +70,7 @@ internal fun SearchResultItem(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 8.dp),
+                    .padding(vertical = TvManiacSpacing.xxSmall, horizontal = TvManiacSpacing.xSmall),
             ) {
                 Text(
                     text = title,
@@ -77,10 +79,10 @@ internal fun SearchResultItem(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(vertical = 4.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.xxSmall),
                 )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall), verticalAlignment = Alignment.CenterVertically) {
                     val divider = buildAnnotatedString {
                         val tagStyle = MaterialTheme.typography.labelSmall
                             .toSpanStyle()
@@ -137,7 +139,7 @@ internal fun SearchResultItem(
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(vertical = 2.dp),
+                        modifier = Modifier.padding(vertical = TvManiacSpacing.xxxSmall),
                     )
                 }
 
@@ -149,7 +151,7 @@ internal fun SearchResultItem(
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Normal,
                         ),
-                        modifier = Modifier.padding(vertical = 4.dp),
+                        modifier = Modifier.padding(vertical = TvManiacSpacing.xxSmall),
                     )
                 }
             }

@@ -26,6 +26,7 @@ import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.discover.presenter.model.DiscoverShow
 import com.thomaskioko.tvmaniac.discover.ui.discoverCatalogContentSuccess
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
@@ -50,7 +51,7 @@ internal fun HorizontalRowContent(
                 BoxTextItems(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp),
+                        .padding(start = TvManiacSpacing.medium),
                     title = category,
                     label = str_more.resolve(LocalContext.current),
                     onMoreClicked = onMoreClicked,
@@ -62,8 +63,8 @@ internal fun HorizontalRowContent(
                 LazyRow(
                     state = lazyListState,
                     flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
                 ) {
                     items(
                         items = tvShows,

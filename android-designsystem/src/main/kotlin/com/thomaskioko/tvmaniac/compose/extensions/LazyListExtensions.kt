@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.compose.extensions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 /**
  * Calculates the scroll offset needed to make the next item in a lazy list partially visible.
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 public fun calculateScrollOffset(
     itemWidth: Dp,
-    itemSpacing: Dp = 0.dp,
+    itemSpacing: Dp = TvManiacSpacing.none,
     visibleFraction: Float = 0.1f,
 ): Int {
     val density = LocalDensity.current

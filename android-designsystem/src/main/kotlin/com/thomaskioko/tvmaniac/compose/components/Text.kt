@@ -20,10 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun BoxTextItems(
@@ -64,7 +64,7 @@ public fun BoxTextItems(
                 modifier = moreModifier
                     .align(Alignment.CenterEnd)
                     .clickable { onMoreClicked() }
-                    .padding(16.dp),
+                    .padding(TvManiacSpacing.medium),
                 style = MaterialTheme.typography.labelMedium.copy(
                     color = MaterialTheme.colorScheme.secondary,
                 ),
@@ -83,7 +83,7 @@ public fun TextLoadingItem(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp),
+            .padding(vertical = TvManiacSpacing.xSmall, horizontal = TvManiacSpacing.medium),
     ) {
         Column(
             modifier = Modifier.align(Alignment.CenterStart),
@@ -99,7 +99,7 @@ public fun TextLoadingItem(
             subTitle?.let {
                 Text(
                     text = subTitle,
-                    modifier = Modifier.padding(vertical = 2.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.xxxSmall),
                     style = MaterialTheme.typography.labelSmall.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 10.sp,

@@ -81,6 +81,7 @@ struct iOSApp: App {
                 .onAppear {
                     authRegistry.register(presenterGraph: holder.component, appGraph: appDelegate.appGraph)
                     appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)
+                    handleScenePhaseChange(scenePhase, lifecycle: holder.lifecycle)
                 }
                 .onChange(of: scenePhase) { _, newPhase in
                     handleScenePhaseChange(newPhase, lifecycle: holder.lifecycle)

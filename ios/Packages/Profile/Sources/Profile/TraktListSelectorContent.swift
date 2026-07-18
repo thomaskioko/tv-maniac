@@ -135,7 +135,7 @@ public struct TraktListSelectorContent: View {
                 }
                 .frame(maxWidth: .infinity)
 
-                Spacer().frame(height: 16)
+                Spacer().frame(height: theme.spacing.medium)
 
                 Text(state.title)
                     .textStyle(theme.typography.titleMedium)
@@ -233,7 +233,12 @@ public struct TraktListSelectorContent: View {
                     .tint(theme.colors.accent)
                     .disabled(state.createListName.trimmingCharacters(in: .whitespaces).isEmpty || state.isCreatingList)
                 }
-                .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                .listRowInsets(EdgeInsets(
+                    top: theme.spacing.xSmall,
+                    leading: theme.spacing.xSmall,
+                    bottom: theme.spacing.xSmall,
+                    trailing: theme.spacing.xSmall
+                ))
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
             }

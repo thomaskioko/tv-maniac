@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.android.designsystem.R
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun ProviderButton(
@@ -39,14 +40,14 @@ public fun ProviderButton(
             width = 2.dp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
         ),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 14.dp),
+        contentPadding = PaddingValues(horizontal = TvManiacSpacing.large, vertical = TvManiacSpacing.medium),
     ) {
         Icon(
             painter = painterResource(id = logo),
             contentDescription = null,
             modifier = Modifier.size(24.dp),
         )
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(TvManiacSpacing.small))
         Text(
             text = text,
             style = MaterialTheme.typography.labelLarge,
@@ -59,8 +60,8 @@ public fun ProviderButton(
 @Composable
 private fun ProviderButtonPreview() {
     Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         ProviderButton(text = "Continue with Trakt", logo = R.drawable.ic_trakt_mono, onClick = {})
         ProviderButton(text = "Continue with Simkl", logo = R.drawable.ic_simkl_mono, onClick = {})

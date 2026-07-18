@@ -55,7 +55,7 @@ public extension View {
     let theme = TerminalTheme()
     ZStack {
         theme.colors.background
-        VStack(spacing: 20) {
+        VStack(spacing: TvManiacSpacingScheme.default.large) {
             Text("CRT Scanline Effect")
                 .textStyle(theme.typography.headlineSmall)
                 .foregroundStyle(theme.colors.accent)

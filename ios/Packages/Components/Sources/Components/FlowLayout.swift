@@ -49,7 +49,7 @@ public struct FlowLayout<Item, ItemView: View>: View {
     /// - Parameter item    : The item for which a view should be created
     ///
     public init(
-        spacing: CGFloat = 8,
+        spacing: CGFloat = TvManiacSpacingScheme.default.xSmall,
         verticalAlignment: VerticalAlignment = .top,
         items: [Item],
         @ViewBuilder itemView: @escaping (_ item: Item) -> ItemView
@@ -127,7 +127,7 @@ public struct FlowLayout<Item, ItemView: View>: View {
 struct FlowLayout_Previews: PreviewProvider {
     static var previews: some View {
         let theme = LightTheme()
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
             Text("FlowLayout:")
                 .textStyle(theme.typography.labelSmall)
                 .foregroundStyle(.appAccent)

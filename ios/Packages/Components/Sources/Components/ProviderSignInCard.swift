@@ -42,7 +42,7 @@ public struct ProviderSignInCard: View {
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.large) {
+        VStack(alignment: .leading, spacing: theme.spacing.medium) {
             VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(title)
                     .textStyle(theme.typography.titleLarge)
@@ -52,7 +52,7 @@ public struct ProviderSignInCard: View {
                     .foregroundColor(theme.colors.onSurfaceVariant)
             }
 
-            VStack(spacing: theme.spacing.medium) {
+            VStack(spacing: theme.spacing.small) {
                 ForEach(providers) { provider in
                     ProviderButton(title: provider.label, logo: provider.logoName) {
                         onProviderSelected(provider.id)

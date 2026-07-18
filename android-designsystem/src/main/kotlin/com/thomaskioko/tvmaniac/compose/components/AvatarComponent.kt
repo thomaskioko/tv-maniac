@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun AvatarComponent(
@@ -72,7 +73,7 @@ private fun AvatarComponentPreview() {
     AvatarComponent(
         imageUrl = "https://image.png",
         size = 64.dp,
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
     )
 }

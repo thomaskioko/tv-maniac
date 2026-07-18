@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
@@ -37,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.ratingsheet.presenter.RatingSheetAction
@@ -59,7 +62,7 @@ public fun RatingSheet(
         onDismissRequest = { presenter.dispatch(RatingSheetAction.Dismissed) },
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(topStart = SHEET_CORNER_RADIUS, topEnd = SHEET_CORNER_RADIUS),
+        shape = sheetShape,
         dragHandle = null,
         modifier = modifier,
     ) {
@@ -80,7 +83,7 @@ internal fun RatingSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(topStart = SHEET_CORNER_RADIUS, topEnd = SHEET_CORNER_RADIUS))
+            .clip(sheetShape)
             .background(MaterialTheme.colorScheme.surface)
             .testTag(RatingSheetTestTags.SHEET_TEST_TAG),
     ) {
@@ -89,10 +92,10 @@ internal fun RatingSheetContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp),
+                .padding(horizontal = TvManiacSpacing.medium)
+                .padding(top = TvManiacSpacing.xSmall),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.large),
         ) {
             Text(
                 text = state.title,
@@ -100,7 +103,7 @@ internal fun RatingSheetContent(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall)) {
                 for (star in 1..STAR_COUNT) {
                     val value = star * POINTS_PER_STAR
                     RatingStar(
@@ -123,7 +126,7 @@ internal fun RatingSheetContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
     }
 }
 
@@ -165,7 +168,7 @@ private fun SheetGrabber(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(vertical = TvManiacSpacing.small),
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -208,6 +211,8 @@ private fun RatingSheetContentHalfRatedPreview() {
     )
 }
 
+private val sheetShape: CornerBasedShape
+    @Composable get() = MaterialTheme.shapes.large.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
+
 private const val STAR_COUNT = 5
 private const val POINTS_PER_STAR = 2
-private val SHEET_CORNER_RADIUS = 16.dp

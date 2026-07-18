@@ -5,6 +5,11 @@
 <!--region graph-->
 ```mermaid
 graph TB
+  subgraph :core
+    direction TB
+    :core:base[base]:::multiplatform
+    :core:view[view]:::multiplatform
+  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
@@ -39,6 +44,9 @@ graph TB
     :i18n:generator[generator]:::multiplatform
   end
 
+  :core:base --> :core:logger:api
+  :core:base --> :core:view
+  :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
@@ -46,6 +54,7 @@ graph TB
   :data:episode:api --> :data:database:sqldelight
   :data:episode:api --> :data:followedshows:api
   :data:episode:api --> :data:upnext:api
+  :data:upnext:implementation -.-> :core:base
   :data:upnext:implementation --> :data:datastore:api
   :data:upnext:implementation --> :data:episode:api
   :data:upnext:implementation --> :data:upnext:api

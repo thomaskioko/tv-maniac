@@ -83,11 +83,15 @@ public interface WatchedEpisodeDao {
 
     public suspend fun updatePendingAction(id: Long, action: PendingAction)
 
+    public suspend fun updatePendingActions(ids: List<Long>, action: PendingAction)
+
     public fun deleteAll()
 
     public suspend fun countPendingActions(): Long
 
     public suspend fun deleteById(id: Long)
+
+    public suspend fun deleteByIds(ids: List<Long>)
 
     public suspend fun upsertBatchFromTrakt(
         showId: Long,

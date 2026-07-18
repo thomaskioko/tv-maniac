@@ -6,7 +6,7 @@ public extension TvManiacColorScheme {
         primaryContainer: Color(hex: "1F2123"),
         onPrimary: Color(hex: "E0E0FF"),
         secondary: Color(hex: "F7D633"),
-        onSecondary: Color.white,
+        onSecondary: Color(hex: "1F2123"),
         error: Color(hex: "BA1A1A"),
         onError: Color.white,
         background: Color(hex: "373737"),
@@ -18,7 +18,7 @@ public extension TvManiacColorScheme {
         outline: Color(hex: "1F2123"),
         accent: Color(hex: "FDC704"),
         onAccent: Color(hex: "1F2123"),
-        buttonBackground: Color(hex: "1F2123"),
-        onButtonBackground: Color.white
+        buttonBackground: Color(hex: "F7D633"),
+        onButtonBackground: Color(hex: "1F2123")
     )
 }

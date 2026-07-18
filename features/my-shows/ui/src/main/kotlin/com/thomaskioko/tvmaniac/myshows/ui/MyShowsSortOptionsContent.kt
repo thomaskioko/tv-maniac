@@ -11,8 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.FilterChipSection
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_asc
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_added_desc
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_sort_by
@@ -37,7 +37,7 @@ internal fun MyShowsSortOptionsContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = TvManiacSpacing.medium)
             .navigationBarsPadding()
             .verticalScroll(scrollState),
     ) {
@@ -60,6 +60,6 @@ internal fun MyShowsSortOptionsContent(
             singleSelect = true,
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
     }
 }

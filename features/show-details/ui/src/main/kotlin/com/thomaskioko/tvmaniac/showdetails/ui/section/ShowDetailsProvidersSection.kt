@@ -28,6 +28,8 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.TextLoadingItem
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_providers_label
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -59,7 +61,7 @@ private fun WatchProvider(
 ) {
     if (list.isEmpty()) return
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
     val context = LocalContext.current
 
@@ -73,8 +75,8 @@ private fun WatchProvider(
             modifier = modifier,
             state = lazyListState,
             flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
         ) {
             items(
                 items = list,
@@ -84,7 +86,7 @@ private fun WatchProvider(
                 Card(
                     modifier = Modifier.size(width = 80.dp, height = 60.dp),
                     shape = MaterialTheme.shapes.small,
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.large),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     ),

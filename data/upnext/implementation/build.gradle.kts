@@ -16,6 +16,8 @@ kotlin {
                 api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.upnext.api)
+
+                implementation(projects.core.base)
             }
         }
 

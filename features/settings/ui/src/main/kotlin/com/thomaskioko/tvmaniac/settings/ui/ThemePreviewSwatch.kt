@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -43,6 +42,7 @@ import com.thomaskioko.tvmaniac.compose.theme.DarkColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.LightColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.SnowColorScheme
 import com.thomaskioko.tvmaniac.compose.theme.TerminalColorScheme
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
@@ -59,13 +59,13 @@ internal fun ThemePreviewSwatch(
     Column(
         modifier = modifier
             .testTag(SettingsTestTags.themeSwatch(theme.name))
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .selectable(
                 selected = isSelected,
                 onClick = onClick,
                 role = Role.RadioButton,
             )
-            .padding(8.dp),
+            .padding(TvManiacSpacing.xSmall),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
@@ -124,7 +124,7 @@ internal fun ThemePreviewSwatch(
                             imageVector = Icons.Filled.Check,
                             contentDescription = null,
                             tint = if (theme == ThemeModel.SYSTEM) {
-                                Color.White
+                                MaterialTheme.colorScheme.onPrimary
                             } else {
                                 colors.onAccent
                             },
@@ -135,7 +135,7 @@ internal fun ThemePreviewSwatch(
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
 
         Text(
             text = displayName,

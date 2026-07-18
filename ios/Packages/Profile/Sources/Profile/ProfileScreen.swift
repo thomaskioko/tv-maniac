@@ -254,7 +254,7 @@ public struct ProfileScreen: View {
 
                 VStack(alignment: .leading, spacing: appTheme.spacing.xSmall) {
                     Text(userProfile.fullName ?? userProfile.username)
-                        .textStyle(appTheme.typography.bodyLargeEmphasized)
+                        .textStyle(appTheme.typography.bodyLarge)
                         .foregroundStyle(.appOnPrimary)
 
                     Button(action: {}) {
@@ -486,7 +486,7 @@ public struct ProfileScreen: View {
     }
 
     private func watchTimeSegment(value: Int32, unit: String) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 2) {
+        HStack(alignment: .firstTextBaseline, spacing: appTheme.spacing.xxxSmall) {
             StatValueText(count: Int(value))
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
@@ -537,7 +537,7 @@ public struct ProfileScreen: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: appTheme.spacing.large) {
                     Spacer()
-                        .frame(height: 48)
+                        .frame(height: appTheme.spacing.xxLarge)
 
                     Text(state.unauthenticatedTitle)
                         .textStyle(appTheme.typography.displaySmall)
@@ -596,7 +596,7 @@ public struct ProfileScreen: View {
                 Text(description)
                     .textStyle(appTheme.typography.bodyMedium)
                     .foregroundStyle(.appOnSurfaceVariant)
-                    .lineSpacing(2)
+                    .lineSpacing(appTheme.spacing.xxxSmall)
             }
 
             Spacer()
@@ -611,7 +611,7 @@ private struct StatValueText: View {
 
     var body: some View {
         AnimatedCountText(count: count)
-            .textStyle(appTheme.typography.headlineLargeEmphasized)
+            .textStyle(appTheme.typography.headlineLarge)
             .foregroundStyle(.appOnSurface)
             .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
     }

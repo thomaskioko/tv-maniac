@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -34,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 internal fun SettingsSectionLabel(
@@ -46,7 +46,7 @@ internal fun SettingsSectionLabel(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = TvManiacSpacing.large, vertical = TvManiacSpacing.xSmall),
     )
 }
 
@@ -58,9 +58,9 @@ internal fun SettingsGroup(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = TvManiacSpacing.medium),
         color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         border = BorderStroke(
             width = 0.5.dp,
             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
@@ -73,7 +73,7 @@ internal fun SettingsGroup(
 @Composable
 internal fun SettingsGroupDivider() {
     HorizontalDivider(
-        modifier = Modifier.padding(start = 64.dp),
+        modifier = Modifier.padding(start = TvManiacSpacing.xxxLarge),
         thickness = 0.5.dp,
         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
     )
@@ -91,12 +91,12 @@ internal fun SettingsNavigationRow(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
             SettingsIconChip(icon = icon)
-            Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.width(TvManiacSpacing.small))
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -113,7 +113,7 @@ internal fun SettingsNavigationRow(
                 )
             }
         }
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(TvManiacSpacing.small))
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
@@ -135,23 +135,23 @@ internal fun SettingsLinkRow(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         if (leadingIcon != null) {
             Image(
                 painter = leadingIcon,
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(top = 2.dp)
+                    .padding(top = TvManiacSpacing.xxxSmall)
                     .size(40.dp),
                 contentScale = ContentScale.Fit,
             )
         }
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
         ) {
             Text(
                 text = title,
@@ -194,7 +194,7 @@ private fun SettingsIconChip(
     Surface(
         modifier = modifier.size(36.dp),
         color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f),
-        shape = RoundedCornerShape(10.dp),
+        shape = MaterialTheme.shapes.medium,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
