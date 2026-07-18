@@ -27,9 +27,10 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 private val LOCKED_BLUR_RADIUS = 16.dp
-private val LOCKED_LINE_SPACING = 12.dp
+private val LOCKED_LINE_SPACING = TvManiacSpacing.small
 private const val LOCKED_WASH_ALPHA = 0.67f
 private const val LOCKED_FALLBACK_WASH_ALPHA = 0.9f
 private const val LOCKED_CARD_ALPHA = 0.65f
@@ -110,14 +111,14 @@ public fun PremiumOverlay(
         modifier = modifier,
         overlayContent = {
             Surface(
-                modifier = Modifier.padding(horizontal = 32.dp),
+                modifier = Modifier.padding(horizontal = TvManiacSpacing.xLarge),
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.scrim.copy(alpha = LOCKED_CARD_ALPHA),
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(TvManiacSpacing.medium),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
                 ) {
                     PremiumBadge(text = badgeText)
 

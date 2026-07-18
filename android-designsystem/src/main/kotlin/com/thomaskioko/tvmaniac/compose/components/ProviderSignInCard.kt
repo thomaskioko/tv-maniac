@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.android.designsystem.R
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun ProviderSignInCard(
@@ -30,7 +30,7 @@ public fun ProviderSignInCard(
         Surface(
             modifier = modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.surface,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             border = BorderStroke(
                 width = 0.5.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
@@ -39,7 +39,7 @@ public fun ProviderSignInCard(
             ProviderSignInContent(
                 title = title,
                 description = description,
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(TvManiacSpacing.medium),
                 buttons = buttons,
             )
         }
@@ -62,9 +62,9 @@ private fun ProviderSignInContent(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
@@ -79,7 +79,7 @@ private fun ProviderSignInContent(
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
             content = buttons,
         )
     }
@@ -89,7 +89,7 @@ private fun ProviderSignInContent(
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
 private fun ProviderSignInCardPreview() {
-    Box(Modifier.padding(16.dp)) {
+    Box(Modifier.padding(TvManiacSpacing.medium)) {
         ProviderSignInCard(
             title = "Connect & Sync Your Content",
             description = "Save your progress, discover new titles, and sync your content across all devices.",

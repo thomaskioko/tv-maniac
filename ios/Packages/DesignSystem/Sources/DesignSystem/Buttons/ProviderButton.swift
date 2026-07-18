@@ -26,7 +26,8 @@ public struct ProviderButton: View {
                     .textStyle(theme.typography.labelLarge)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, theme.spacing.small)
+            .padding(.horizontal, theme.spacing.large)
+            .padding(.vertical, theme.spacing.medium)
             .foregroundStyle(.appOnSurface)
             .overlay(
                 Capsule().strokeBorder(theme.colors.onSurface.opacity(0.4), lineWidth: 2)
@@ -40,7 +41,7 @@ public struct ProviderButton: View {
 
 #if DEBUG
     #Preview {
-        VStack(spacing: 12) {
+        VStack(spacing: TvManiacSpacingScheme.default.small) {
             ProviderButton(title: "Continue with Trakt", logo: "TraktMono", action: {})
             ProviderButton(title: "Continue with Simkl", logo: "SimklMono", action: {})
         }

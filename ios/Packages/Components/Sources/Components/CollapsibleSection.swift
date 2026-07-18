@@ -83,13 +83,13 @@ private enum DimensionConstants {
 
 #Preview {
     CollapsibleSection(title: "Your Lists", showMore: true) {
-        HStack(spacing: 12) {
+        HStack(spacing: TvManiacSpacingScheme.default.small) {
             ForEach(0 ..< 2, id: \.self) { _ in
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: TvManiacShapeScheme.default.large)
                     .fill(.appSurfaceVariant)
                     .frame(height: 120)
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, TvManiacSpacingScheme.default.medium)
     }
 }

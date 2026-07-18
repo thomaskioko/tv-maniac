@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.profile.ui.StatTile
@@ -43,10 +44,10 @@ internal fun StatsCard(
         title = labels.statsTitle,
         modifier = modifier,
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = TvManiacSpacing.medium)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
             ) {
                 EpisodesWatchedCard(
                     title = labels.episodesWatched,
@@ -61,11 +62,11 @@ internal fun StatsCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.small))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
             ) {
                 WatchTimeCard(
                     title = labels.watchTime,
@@ -178,7 +179,7 @@ internal fun ListsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                         shape = MaterialTheme.shapes.small,
                     )
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                    .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xxSmall),
             )
         }
     }
@@ -196,7 +197,7 @@ private fun WatchTimeValue(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         verticalAlignment = Alignment.Bottom,
     ) {
         WatchTimeSegment(value = months, unit = monthsLabel)
@@ -224,7 +225,7 @@ private fun WatchTimeSegment(
             softWrap = false,
             modifier = Modifier
                 .alignByBaseline()
-                .padding(start = 2.dp),
+                .padding(start = TvManiacSpacing.xxxSmall),
         )
     }
 }
@@ -254,6 +255,6 @@ private fun StatsCardPreview() {
         ),
         listCount = 8,
         onViewLists = {},
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }

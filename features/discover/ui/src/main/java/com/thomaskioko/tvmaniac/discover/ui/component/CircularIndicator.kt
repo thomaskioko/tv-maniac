@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import kotlinx.coroutines.delay
 
 @Composable
@@ -61,7 +61,7 @@ internal fun CircularIndicator(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = TvManiacSpacing.xSmall),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -70,24 +70,24 @@ internal fun CircularIndicator(
                 if (currentPage == index) {
                     Box(
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(TvManiacSpacing.xxxSmall)
                             .width(25.dp)
                             .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(MaterialTheme.shapes.small)
                             .background(Color.Gray.copy(alpha = 0.5f)),
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth(indicatorProgress)
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.small)
                                 .background(MaterialTheme.colorScheme.onSecondary),
                         )
                     }
                 } else {
                     Box(
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(TvManiacSpacing.xxxSmall)
                             .size(6.dp)
                             .clip(CircleShape)
                             .background(Color.Gray.copy(alpha = 0.5f)),
@@ -110,7 +110,7 @@ internal fun CircularIndicator(
                 if (isEdgeIndicator) {
                     Box(
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(TvManiacSpacing.xxxSmall)
                             .size(4.dp)
                             .clip(CircleShape)
                             .background(Color.Gray.copy(alpha = 0.3f)),
@@ -118,17 +118,17 @@ internal fun CircularIndicator(
                 } else if (isActive) {
                     Box(
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(TvManiacSpacing.xxxSmall)
                             .width(25.dp)
                             .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(MaterialTheme.shapes.small)
                             .background(Color.Gray.copy(alpha = 0.5f)),
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth(indicatorProgress)
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(MaterialTheme.shapes.small)
                                 .background(MaterialTheme.colorScheme.onSurface),
                         )
                     }
@@ -136,7 +136,7 @@ internal fun CircularIndicator(
                     // Regular indicator
                     Box(
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(TvManiacSpacing.xxxSmall)
                             .size(6.dp)
                             .clip(CircleShape)
                             .background(Color.Gray.copy(alpha = 0.5f)),

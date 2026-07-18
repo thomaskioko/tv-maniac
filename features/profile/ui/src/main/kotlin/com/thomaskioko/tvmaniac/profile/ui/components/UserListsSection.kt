@@ -41,6 +41,9 @@ import com.thomaskioko.tvmaniac.compose.components.InlineSectionError
 import com.thomaskioko.tvmaniac.compose.components.ShimmerBox
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileListItem
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.testtags.component.CollapsibleSectionTestTags
@@ -99,8 +102,8 @@ private fun ListsRow(
 ) {
     LazyRow(
         modifier = Modifier.testTag(ProfileTestTags.USER_LISTS_ROW_TEST_TAG),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         items(
             items = lists,
@@ -127,7 +130,7 @@ private fun ListCollageCard(
             .clickable(onClick = onClick)
             .testTag(ProfileTestTags.listCard(list.id)),
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.medium),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {
         Box {
@@ -138,11 +141,12 @@ private fun ListCollageCard(
                     .height(CollageHeight),
             )
 
-            val scrim = remember {
+            val scrimColor = TvManiacTheme.colorScheme.scrim
+            val scrim = remember(scrimColor) {
                 Brush.verticalGradient(
                     listOf(
                         Color.Transparent,
-                        Color.Black.copy(alpha = 0.85f),
+                        scrimColor.copy(alpha = 0.85f),
                     ),
                 )
             }
@@ -156,7 +160,7 @@ private fun ListCollageCard(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                    .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.small),
             ) {
                 Text(
                     text = list.name,
@@ -236,8 +240,8 @@ private fun CollagePlaceholder(modifier: Modifier = Modifier) {
 @Composable
 private fun ListsSkeletonRow() {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
     ) {
         repeat(3) {
             ShimmerBox(

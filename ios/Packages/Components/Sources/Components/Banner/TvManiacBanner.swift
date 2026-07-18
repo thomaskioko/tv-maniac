@@ -30,7 +30,7 @@ public struct TvManiacBanner<Action: View>: View {
     }
 
     public var body: some View {
-        VStack(alignment: .trailing, spacing: theme.spacing.small) {
+        VStack(alignment: .trailing, spacing: theme.spacing.xSmall) {
             HStack(alignment: .top, spacing: theme.spacing.small) {
                 Text(message)
                     .textStyle(theme.typography.bodyMedium)
@@ -51,10 +51,10 @@ public struct TvManiacBanner<Action: View>: View {
             action
         }
         .padding(.leading, theme.spacing.medium)
-        .padding(.trailing, theme.spacing.small)
+        .padding(.trailing, theme.spacing.xSmall)
         .padding(.vertical, theme.spacing.small)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(style.backgroundColor)
+        .background(style.backgroundColor(theme: theme))
     }
 }
 
@@ -76,7 +76,7 @@ public extension TvManiacBanner where Action == EmptyView {
 }
 
 #Preview {
-    VStack(spacing: 12) {
+    VStack(spacing: TvManiacSpacingScheme.default.small) {
         TvManiacBanner(
             message: "Your Trakt account is full. Upgrade to keep syncing new shows.",
             style: .error,
@@ -85,8 +85,8 @@ public extension TvManiacBanner where Action == EmptyView {
         ) {
             Button("Upgrade", action: {})
                 .foregroundStyle(.appError)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
+                .padding(.horizontal, TvManiacSpacingScheme.default.medium)
+                .padding(.vertical, TvManiacSpacingScheme.default.xSmall)
                 .background(Color.white, in: Capsule())
         }
 

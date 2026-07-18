@@ -30,7 +30,7 @@ public struct SectionHeaderView: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         SectionHeaderView(title: "Up Next")
         SectionHeaderView(title: "Not watched for a while")
     }

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -25,7 +26,7 @@ public fun SegmentedProgressBar(
     segmentProgress: ImmutableList<Float>,
     modifier: Modifier = Modifier,
     height: Dp = 6.dp,
-    segmentGap: Dp = 4.dp,
+    segmentGap: Dp = TvManiacSpacing.xxSmall,
     trackColor: Color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
 ) {
     if (segmentProgress.isEmpty()) return

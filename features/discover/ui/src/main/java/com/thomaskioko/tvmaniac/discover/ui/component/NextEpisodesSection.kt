@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.BoxTextItems
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -44,7 +44,7 @@ internal fun NextEpisodesSection(
                 BoxTextItems(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp),
+                        .padding(start = TvManiacSpacing.medium),
                     title = title,
                     label = str_more.resolve(LocalContext.current),
                     onMoreClicked = onSeeAllClick,
@@ -55,8 +55,8 @@ internal fun NextEpisodesSection(
                 LazyRow(
                     state = lazyListState,
                     flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
                 ) {
                     items(
                         items = nextEpisodes,

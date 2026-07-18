@@ -58,7 +58,7 @@ class TvManiacBannerTest: SnapshotTestCase {
             onDismiss: {}
         ) {
             Text("Upgrade")
-                .foregroundStyle(BannerStyle.error.backgroundColor)
+                .foregroundStyle(BannerStyle.error.backgroundColor(theme: LightTheme()))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 6)
                 .background(Color.white, in: Capsule())

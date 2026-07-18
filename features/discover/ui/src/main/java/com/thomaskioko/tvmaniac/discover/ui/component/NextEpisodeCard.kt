@@ -28,6 +28,9 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.LocalLandscapeWidthScale
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.discover.presenter.model.NextEpisodeUiModel
 
@@ -46,7 +49,7 @@ internal fun NextEpisodeCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.medium),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImageComposable(
@@ -59,11 +62,12 @@ internal fun NextEpisodeCard(
                 blurContent = LocalBlurUnwatchedEnabled.current,
             )
 
-            val brush = remember {
+            val scrimColor = TvManiacTheme.colorScheme.scrim
+            val brush = remember(scrimColor) {
                 Brush.verticalGradient(
                     listOf(
                         Color.Transparent,
-                        Color.Black.copy(alpha = 0.7f),
+                        scrimColor.copy(alpha = 0.7f),
                     ),
                     startY = 0f,
                     endY = 400f,
@@ -78,8 +82,8 @@ internal fun NextEpisodeCard(
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                    .padding(TvManiacSpacing.small),
+                verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
             ) {
                 Text(
                     text = episode.showName,
@@ -101,12 +105,12 @@ internal fun NextEpisodeCard(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(8.dp)
+                        .padding(TvManiacSpacing.xSmall)
                         .background(
-                            Color.Black.copy(alpha = 0.6f),
+                            scrimColor.copy(alpha = 0.6f),
                             shape = MaterialTheme.shapes.small,
                         )
-                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                        .padding(horizontal = TvManiacSpacing.xSmall, vertical = TvManiacSpacing.xxxSmall),
                 ) {
                     Text(
                         text = runtime,

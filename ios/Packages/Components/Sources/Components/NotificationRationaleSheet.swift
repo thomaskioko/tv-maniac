@@ -36,7 +36,7 @@ public struct NotificationRationaleSheet: View {
             Image(systemName: "bell.badge.fill")
                 .symbolRenderingMode(.monochrome)
                 .textStyle(theme.typography.displayMedium)
-                .foregroundStyle(.appAccent)
+                .foregroundStyle(.appSecondary)
 
             Text(title)
                 .textStyle(theme.typography.headlineSmall)
@@ -78,7 +78,7 @@ public struct NotificationRationaleSheet: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.appSurface)
-        .tint(theme.colors.accent)
+        .tint(theme.colors.buttonBackground)
     }
 
     private var episodeDateSection: some View {
@@ -103,7 +103,7 @@ public struct NotificationRationaleSheet: View {
                 .frame(width: 56, height: 56)
                 .overlay(
                     RoundedRectangle(cornerRadius: theme.shapes.medium)
-                        .strokeBorder(.appAccent, lineWidth: 2)
+                        .strokeBorder(.appSecondary, lineWidth: 2)
                 )
 
                 ForEach([16, 17, 18], id: \.self) { day in

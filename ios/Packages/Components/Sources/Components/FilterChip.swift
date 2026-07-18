@@ -26,11 +26,11 @@ public struct FilterChip: View {
                 .padding(.vertical, theme.spacing.xSmall)
                 .background(
                     isSelected
-                        ? AnyShapeStyle(.appAccent)
-                        : AnyShapeStyle(Color.clear)
+                        ? AnyShapeStyle(.appSecondary)
+                        : AnyShapeStyle(.appSurfaceVariant.opacity(0.5))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: theme.shapes.small)
+                    RoundedRectangle(cornerRadius: theme.shapes.medium)
                         .strokeBorder(
                             isSelected
                                 ? AnyShapeStyle(Color.clear)
@@ -40,17 +40,17 @@ public struct FilterChip: View {
                 )
                 .foregroundStyle(
                     isSelected
-                        ? AnyShapeStyle(.appOnAccent)
+                        ? AnyShapeStyle(.appOnSecondary)
                         : AnyShapeStyle(.appOnSurface)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
+                .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium))
         }
         .buttonStyle(.plain)
     }
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: TvManiacSpacingScheme.default.medium) {
         FilterChip(
             label: "Last watched ↓",
             isSelected: true,

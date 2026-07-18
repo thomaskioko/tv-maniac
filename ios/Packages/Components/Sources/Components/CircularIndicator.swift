@@ -35,7 +35,7 @@ public struct CircularIndicator: View {
     }
 
     public var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: theme.spacing.xxSmall) {
             if totalItems <= maxVisibleDots {
                 ForEach(0 ..< totalItems, id: \.self) { index in
                     indicatorDot(for: index, isActive: currentIndex == index)
@@ -222,7 +222,7 @@ struct ProgressIndicatorBar: View {
 }
 
 #Preview("Few Items") {
-    VStack(spacing: 20) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         CircularIndicator(
             totalItems: 5,
             currentIndex: 2,
@@ -246,7 +246,7 @@ struct ProgressIndicatorBar: View {
 }
 
 #Preview("Many Items") {
-    VStack(spacing: 20) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         CircularIndicator(
             totalItems: 15,
             currentIndex: 0,
@@ -270,7 +270,7 @@ struct ProgressIndicatorBar: View {
 }
 
 #Preview("Progress Bar") {
-    VStack(spacing: 20) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         ProgressIndicatorBar(progress: 0.0)
         ProgressIndicatorBar(progress: 0.25)
         ProgressIndicatorBar(progress: 0.5)

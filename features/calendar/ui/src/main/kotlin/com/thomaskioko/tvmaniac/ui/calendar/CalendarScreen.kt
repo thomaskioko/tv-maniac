@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -53,6 +52,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.theme.Layout
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_next_week
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_previous_week
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -91,13 +91,13 @@ public fun CalendarScreen(
                     isRefreshing = state.isRefreshing,
                     onPreviousClick = { onAction(NavigateToPreviousWeek) },
                     onNextClick = { onAction(NavigateToNextWeek) },
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = TvManiacSpacing.xxSmall),
                 )
             }
 
             CalendarBody(
                 state = state,
-                contentPadding = PaddingValues(0.dp),
+                contentPadding = PaddingValues(TvManiacSpacing.none),
                 scrollBehavior = scrollBehavior,
                 onAction = onAction,
             )
@@ -220,7 +220,7 @@ internal fun WeekNavigationHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = TvManiacSpacing.xSmall),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -242,7 +242,7 @@ internal fun WeekNavigationHeader(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             Text(
                 modifier = Modifier.testTag(CalendarTestTags.WEEK_LABEL),
@@ -295,13 +295,13 @@ private fun CalendarContent(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .padding(contentPadding),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         dateGroups.forEachIndexed { index, dateGroup ->
             item(key = dateGroup.dateLabel) {
                 CalendarDateHeader(
                     dateLabel = dateGroup.dateLabel,
-                    modifier = if (index == 0) Modifier.padding(top = 8.dp) else Modifier,
+                    modifier = if (index == 0) Modifier.padding(top = TvManiacSpacing.xSmall) else Modifier,
                 )
             }
 
@@ -332,7 +332,7 @@ private fun CalendarDateHeader(
     Text(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall)
             .testTag(CalendarTestTags.dateHeader(dateLabel)),
         text = dateLabel,
         style = MaterialTheme.typography.titleMedium,
@@ -350,12 +350,12 @@ private fun CalendarEpisodeCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = TvManiacSpacing.medium)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
     ) {
         Column {
             Row(
@@ -371,14 +371,14 @@ private fun CalendarEpisodeCard(
                     modifier = Modifier.fillMaxHeight(),
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(TvManiacSpacing.small))
 
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(vertical = 12.dp)
-                        .padding(end = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                        .padding(vertical = TvManiacSpacing.small)
+                        .padding(end = TvManiacSpacing.small),
+                    verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
                 ) {
                     Text(
                         text = episode.showTitle,
@@ -418,7 +418,7 @@ private fun CalendarEpisodeCard(
                         .semantics(mergeDescendants = true) {}
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xSmall),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(

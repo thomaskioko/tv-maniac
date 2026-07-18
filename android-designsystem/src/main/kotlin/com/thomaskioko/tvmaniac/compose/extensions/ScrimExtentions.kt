@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import kotlin.math.pow
 
 /**
@@ -77,12 +77,12 @@ internal fun Modifier.iconButtonBackgroundScrim(
 ): Modifier = composed {
     if (enabled) {
         Modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = TvManiacSpacing.xSmall)
             .background(
                 color = MaterialTheme.colorScheme.background.copy(alpha = alpha),
                 shape = shape,
             )
     } else {
-        this.padding(horizontal = 4.dp)
+        this.padding(horizontal = TvManiacSpacing.xxSmall)
     }
 }

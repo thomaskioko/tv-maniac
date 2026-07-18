@@ -53,14 +53,14 @@ public struct EmptyStateView: View {
 
                 Button(action: action) {
                     Text(buttonText)
-                        .textStyle(theme.typography.labelMedium)
-                        .foregroundStyle(.appAccent)
+                        .textStyle(theme.typography.bodyMedium)
+                        .foregroundStyle(.appButtonBackground)
                         .padding(.vertical, theme.spacing.xSmall)
                         .padding(.horizontal, theme.spacing.large)
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: theme.shapes.small)
-                        .stroke(.appAccent, lineWidth: 1.5)
+                        .stroke(.appButtonBackground, lineWidth: 1.5)
                 )
             }
         }

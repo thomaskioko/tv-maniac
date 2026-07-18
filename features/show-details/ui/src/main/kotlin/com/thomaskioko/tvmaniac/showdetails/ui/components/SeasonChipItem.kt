@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacChip
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.SeasonModel
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 
@@ -42,7 +42,7 @@ private fun SeasonChipItemPreview() {
         ),
         isSelected = false,
         onClick = {},
-        modifier = Modifier.padding(4.dp),
+        modifier = Modifier.padding(TvManiacSpacing.xxSmall),
     )
 }
 
@@ -61,6 +61,6 @@ private fun SeasonChipItemSelectedPreview() {
         ),
         isSelected = true,
         onClick = {},
-        modifier = Modifier.padding(4.dp),
+        modifier = Modifier.padding(TvManiacSpacing.xxSmall),
     )
 }

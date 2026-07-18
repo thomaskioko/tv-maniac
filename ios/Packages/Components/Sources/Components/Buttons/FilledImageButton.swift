@@ -34,14 +34,14 @@ public struct FilledImageButton: View {
     }
 
     public var body: some View {
-        let resolvedColor = color ?? theme.colors.accent
-        let resolvedBorderColor = borderColor ?? theme.colors.accent
+        let resolvedColor = color ?? theme.colors.buttonBackground
+        let resolvedBorderColor = borderColor ?? theme.colors.buttonBackground
         let resolvedCornerRadius = cornerRadius ?? theme.shapes.small
 
         TvManiacButton(
             text: text,
             color: resolvedColor,
-            textColor: theme.colors.onPrimary,
+            textColor: theme.colors.onButtonBackground,
             borderColor: resolvedBorderColor,
             systemImageName: systemImageName,
             verticalPadding: verticalPadding ?? theme.spacing.medium,

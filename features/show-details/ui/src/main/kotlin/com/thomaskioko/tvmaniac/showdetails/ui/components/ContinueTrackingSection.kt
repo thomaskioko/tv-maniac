@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.calculateScrollOffset
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.title_continue_tracking
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.ContinueTrackingEpisodeModel
@@ -57,16 +58,16 @@ internal fun ContinueTrackingSection(
             exit = fadeOut(),
         ) {
             Column {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
                 Text(
                     text = title_continue_tracking.resolve(LocalContext.current),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.small))
 
                 val lazyListState = rememberLazyListState()
                 val scrollOffsetPx = calculateScrollOffset(
@@ -90,8 +91,8 @@ internal fun ContinueTrackingSection(
                         .fillMaxWidth()
                         .testTag(ShowDetailsTestTags.CONTINUE_TRACKING_LIST_TEST_TAG),
                     flingBehavior = rememberSnapFlingBehavior(lazyListState, SnapPosition.Start),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
+                    horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
                 ) {
                     itemsIndexed(
                         items = episodes,
@@ -161,5 +162,5 @@ private fun ContinueTrackingSectionPreview() {
 }
 
 private val CARD_WIDTH_DP = 300.dp
-private val CARD_SPACING_DP = 12.dp
+private val CARD_SPACING_DP = TvManiacSpacing.small
 private const val PREVIOUS_ITEM_VISIBLE_FRACTION = 0.1f

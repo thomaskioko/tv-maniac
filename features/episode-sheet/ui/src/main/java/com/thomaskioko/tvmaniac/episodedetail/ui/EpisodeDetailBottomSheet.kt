@@ -36,6 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.testtags.episodesheet.EpisodeSheetTestTags
 
@@ -66,7 +67,7 @@ internal fun EpisodeDetailSheetContent(
             .fillMaxWidth()
             .testTag(EpisodeSheetTestTags.SHEET_TEST_TAG)
             .verticalScroll(rememberScrollState())
-            .padding(bottom = 24.dp),
+            .padding(bottom = TvManiacSpacing.large),
     ) {
         EpisodeDetailHeader(
             imageUrl = episode.imageUrl,
@@ -83,14 +84,14 @@ internal fun EpisodeDetailSheetContent(
         )
 
         actions?.let {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
             HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
                 color = MaterialTheme.colorScheme.outlineVariant,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
             it()
         }
@@ -141,7 +142,7 @@ private fun EpisodeDetailHeader(
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 8.dp)
+                .padding(top = TvManiacSpacing.xSmall)
                 .width(32.dp)
                 .height(4.dp)
                 .background(
@@ -161,10 +162,10 @@ private fun EpisodeDetailContentLayout(
     voteCount: Long?,
 ) {
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         Text(
             text = title,
@@ -183,7 +184,7 @@ private fun EpisodeDetailContentLayout(
         if (rating != null && rating > 0) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Star,
@@ -230,9 +231,9 @@ internal fun SheetActionItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium),
     ) {
         Box(
             modifier = Modifier.size(24.dp),

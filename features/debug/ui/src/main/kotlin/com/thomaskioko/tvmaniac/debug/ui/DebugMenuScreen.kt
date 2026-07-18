@@ -60,6 +60,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.debug.presenter.BackClicked
 import com.thomaskioko.tvmaniac.debug.presenter.DebugActions
@@ -113,7 +114,7 @@ internal fun DebugMenuScreen(
                         Icon(
                             modifier = Modifier
                                 .clickable(onClick = { onAction(BackClicked) })
-                                .padding(16.dp),
+                                .padding(TvManiacSpacing.medium),
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = cd_back.resolve(context),
                             tint = MaterialTheme.colorScheme.onBackground,
@@ -129,7 +130,7 @@ internal fun DebugMenuScreen(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 16.dp),
+                                .padding(start = TvManiacSpacing.medium),
                         )
                     },
                     modifier = Modifier,
@@ -146,7 +147,7 @@ internal fun DebugMenuScreen(
                     .padding(innerPadding)
                     .testTag(DebugTestTags.LIST_TEST_TAG),
             ) {
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(TvManiacSpacing.medium)) }
 
                 itemsIndexed(
                     items = state.items,
@@ -165,12 +166,12 @@ internal fun DebugMenuScreen(
                     if (index < state.items.lastIndex) {
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                            modifier = Modifier.padding(horizontal = 24.dp),
+                            modifier = Modifier.padding(horizontal = TvManiacSpacing.large),
                         )
                     }
                 }
 
-                item { Spacer(modifier = Modifier.height(32.dp)) }
+                item { Spacer(modifier = Modifier.height(TvManiacSpacing.xLarge)) }
             }
         }
 
@@ -208,7 +209,7 @@ private fun DebugMenuItem(
             .fillMaxWidth()
             .then(if (item.id == ACCOUNT_TYPE_ITEM_ID) Modifier.testTag(DebugTestTags.ACCOUNT_TYPE_ROW_TEST_TAG) else Modifier)
             .clickable(enabled = isInteractive && !item.isLoading, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -218,7 +219,7 @@ private fun DebugMenuItem(
             modifier = Modifier.size(24.dp),
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(TvManiacSpacing.medium))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -277,7 +278,7 @@ internal fun AccountTypeDialog(
                         text = label_debug_account_type_description.resolve(context),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 8.dp),
+                        modifier = Modifier.padding(bottom = TvManiacSpacing.xSmall),
                     )
                     AccountTypeOption(
                         label = label_debug_account_type_premium.resolve(context),
@@ -317,7 +318,7 @@ private fun AccountTypeOption(
         modifier = modifier
             .fillMaxWidth()
             .selectable(selected = selected, onClick = onClick, role = Role.RadioButton)
-            .padding(vertical = 12.dp),
+            .padding(vertical = TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(

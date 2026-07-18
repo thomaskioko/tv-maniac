@@ -46,27 +46,6 @@ public struct TvManiacTypographyScheme {
         shared = percent == 100 ? .workSans : scaledWorkSans(scale: CGFloat(percent) / 100)
     }
 
-    static let preview = TvManiacTypographyScheme(
-        displayLarge: style(size: 57, weight: .medium, tracking: -0.25, lineHeight: 64),
-        displayMedium: style(size: 45, weight: .medium, tracking: 0, lineHeight: 52),
-        displaySmall: style(size: 36, weight: .medium, tracking: 0, lineHeight: 44),
-        headlineLarge: style(size: 32, weight: .bold, tracking: 0, lineHeight: 40),
-        headlineLargeEmphasized: style(size: 32, weight: .heavy, tracking: 0, lineHeight: 40),
-        headlineMedium: style(size: 28, weight: .bold, tracking: 0, lineHeight: 36),
-        headlineSmall: style(size: 24, weight: .bold, tracking: 0, lineHeight: 32),
-        titleLarge: style(size: 22, weight: .bold, tracking: 0, lineHeight: 28),
-        titleLargeEmphasized: style(size: 22, weight: .heavy, tracking: 0, lineHeight: 28),
-        titleMedium: style(size: 16, weight: .bold, tracking: 0.15, lineHeight: 24),
-        titleSmall: style(size: 14, weight: .heavy, tracking: 0.1, lineHeight: 20),
-        bodyLarge: style(size: 16, weight: .medium, tracking: 0.15, lineHeight: 24),
-        bodyLargeEmphasized: style(size: 16, weight: .heavy, tracking: 0.15, lineHeight: 24),
-        bodyMedium: style(size: 14, weight: .semibold, tracking: 0.25, lineHeight: 20),
-        bodySmall: style(size: 12, weight: .medium, tracking: 0.4, lineHeight: 16),
-        labelLarge: style(size: 14, weight: .bold, tracking: 0.1, lineHeight: 20),
-        labelMedium: style(size: 12, weight: .bold, tracking: 0.5, lineHeight: 16),
-        labelSmall: style(size: 11, weight: .medium, tracking: 0.5, lineHeight: 16)
-    )
-
     static let workSans = scaledWorkSans(scale: 1)
 
     private static func scaledWorkSans(scale: CGFloat) -> TvManiacTypographyScheme {
@@ -75,15 +54,12 @@ public struct TvManiacTypographyScheme {
             displayMedium: workSansStyle(.medium, size: 45 * scale, relativeTo: .largeTitle, tracking: 0, lineHeight: 52 * scale),
             displaySmall: workSansStyle(.extrabold, size: 36 * scale, relativeTo: .largeTitle, tracking: 0, lineHeight: 44 * scale),
             headlineLarge: workSansStyle(.bold, size: 32 * scale, relativeTo: .title, tracking: 0, lineHeight: 40 * scale),
-            headlineLargeEmphasized: workSansStyle(.extrabold, size: 32 * scale, relativeTo: .title, tracking: 0, lineHeight: 40 * scale),
             headlineMedium: workSansStyle(.bold, size: 28 * scale, relativeTo: .title, tracking: 0, lineHeight: 36 * scale),
             headlineSmall: workSansStyle(.bold, size: 24 * scale, relativeTo: .title2, tracking: 0, lineHeight: 32 * scale),
             titleLarge: workSansStyle(.bold, size: 22 * scale, relativeTo: .title2, tracking: 0, lineHeight: 28 * scale),
-            titleLargeEmphasized: workSansStyle(.extrabold, size: 22 * scale, relativeTo: .title2, tracking: 0, lineHeight: 28 * scale),
             titleMedium: workSansStyle(.bold, size: 16 * scale, relativeTo: .subheadline, tracking: 0.15, lineHeight: 24 * scale),
             titleSmall: workSansStyle(.extrabold, size: 14 * scale, relativeTo: .subheadline, tracking: 0.1, lineHeight: 20 * scale),
             bodyLarge: workSansStyle(.medium, size: 16 * scale, relativeTo: .body, tracking: 0.15, lineHeight: 24 * scale),
-            bodyLargeEmphasized: workSansStyle(.extrabold, size: 16 * scale, relativeTo: .body, tracking: 0.15, lineHeight: 24 * scale),
             bodyMedium: workSansStyle(.medium, size: 14 * scale, relativeTo: .subheadline, tracking: 0.25, lineHeight: 20 * scale),
             bodySmall: workSansStyle(.medium, size: 12 * scale, relativeTo: .caption, tracking: 0.4, lineHeight: 16 * scale),
             labelLarge: workSansStyle(.semibold, size: 14 * scale, relativeTo: .footnote, tracking: 0.1, lineHeight: 20 * scale),
@@ -96,15 +72,12 @@ public struct TvManiacTypographyScheme {
     public let displayMedium: TvManiacTextStyle
     public let displaySmall: TvManiacTextStyle
     public let headlineLarge: TvManiacTextStyle
-    public let headlineLargeEmphasized: TvManiacTextStyle
     public let headlineMedium: TvManiacTextStyle
     public let headlineSmall: TvManiacTextStyle
     public let titleLarge: TvManiacTextStyle
-    public let titleLargeEmphasized: TvManiacTextStyle
     public let titleMedium: TvManiacTextStyle
     public let titleSmall: TvManiacTextStyle
     public let bodyLarge: TvManiacTextStyle
-    public let bodyLargeEmphasized: TvManiacTextStyle
     public let bodyMedium: TvManiacTextStyle
     public let bodySmall: TvManiacTextStyle
     public let labelLarge: TvManiacTextStyle
@@ -116,15 +89,12 @@ public struct TvManiacTypographyScheme {
         displayMedium: TvManiacTextStyle,
         displaySmall: TvManiacTextStyle,
         headlineLarge: TvManiacTextStyle,
-        headlineLargeEmphasized: TvManiacTextStyle,
         headlineMedium: TvManiacTextStyle,
         headlineSmall: TvManiacTextStyle,
         titleLarge: TvManiacTextStyle,
-        titleLargeEmphasized: TvManiacTextStyle,
         titleMedium: TvManiacTextStyle,
         titleSmall: TvManiacTextStyle,
         bodyLarge: TvManiacTextStyle,
-        bodyLargeEmphasized: TvManiacTextStyle,
         bodyMedium: TvManiacTextStyle,
         bodySmall: TvManiacTextStyle,
         labelLarge: TvManiacTextStyle,
@@ -135,33 +105,17 @@ public struct TvManiacTypographyScheme {
         self.displayMedium = displayMedium
         self.displaySmall = displaySmall
         self.headlineLarge = headlineLarge
-        self.headlineLargeEmphasized = headlineLargeEmphasized
         self.headlineMedium = headlineMedium
         self.headlineSmall = headlineSmall
         self.titleLarge = titleLarge
-        self.titleLargeEmphasized = titleLargeEmphasized
         self.titleMedium = titleMedium
         self.titleSmall = titleSmall
         self.bodyLarge = bodyLarge
-        self.bodyLargeEmphasized = bodyLargeEmphasized
         self.bodyMedium = bodyMedium
         self.bodySmall = bodySmall
         self.labelLarge = labelLarge
         self.labelMedium = labelMedium
         self.labelSmall = labelSmall
-    }
-
-    private static func style(
-        size: CGFloat,
-        weight: Font.Weight,
-        tracking: CGFloat,
-        lineHeight: CGFloat
-    ) -> TvManiacTextStyle {
-        TvManiacTextStyle(
-            font: .system(size: size, weight: weight),
-            tracking: tracking,
-            lineSpacing: max(0, lineHeight - size * 1.2)
-        )
     }
 
     private static func workSansStyle(

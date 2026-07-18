@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -35,6 +34,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_less
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_library_filter_show_more
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -67,11 +67,11 @@ public fun <T> FilterChipSection(
     ) {
         SectionHeader(title = title)
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.small))
 
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             visibleItems.forEach { item ->
                 val isSelected = item in selectedItems
@@ -84,7 +84,7 @@ public fun <T> FilterChipSection(
         }
 
         if (hasMoreItems) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
             ShowMoreToggle(
                 isExpanded = isExpanded,
                 showMoreText = label_library_filter_show_more.resolve(context),
@@ -112,7 +112,7 @@ public fun SectionHeader(
             text = title,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
         )
         HorizontalDivider(
             modifier = Modifier.weight(1f),
@@ -138,7 +138,7 @@ public fun SelectableFilterChip(
                 style = MaterialTheme.typography.bodyMedium,
             )
         },
-        shape = RoundedCornerShape(8.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = FilterChipDefaults.filterChipColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
             selectedContainerColor = MaterialTheme.colorScheme.secondary,
@@ -165,9 +165,9 @@ internal fun ShowMoreToggle(
     Row(
         modifier = modifier
             .clickable { onToggle() }
-            .padding(vertical = 4.dp),
+            .padding(vertical = TvManiacSpacing.xxSmall),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
     ) {
         Text(
             text = if (isExpanded) showLessText else showMoreText,
@@ -201,7 +201,7 @@ private fun FilterChipSectionPreview() {
         selectedItems = persistentSetOf("Drama", "Comedy"),
         onItemToggle = {},
         labelProvider = { it },
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }
 
@@ -222,7 +222,7 @@ private fun FilterChipSectionCollapsedPreview() {
         onItemToggle = {},
         labelProvider = { it },
         collapsedItemCount = 3,
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }
 
@@ -232,7 +232,7 @@ private fun FilterChipSectionCollapsedPreview() {
 private fun SectionHeaderPreview() {
     SectionHeader(
         title = "SORT BY",
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }
 
@@ -241,8 +241,8 @@ private fun SectionHeaderPreview() {
 @Composable
 private fun SelectableFilterChipPreview() {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+        modifier = Modifier.padding(TvManiacSpacing.medium),
     ) {
         SelectableFilterChip(
             label = "Last watched ↓",

@@ -47,9 +47,10 @@ public struct PosterItemView: View {
         poster(radius: resolvedRadius, imageHeight: imageHeight)
             .overlay {
                 if isInLibrary {
-                    LibraryOverlay(libraryImageOverlay: libraryImageOverlay)
+                    LibraryOverlay(libraryImageOverlay: libraryImageOverlay, inset: theme.spacing.xSmall)
                 }
             }
+            .appShadow(theme.shadows.medium)
     }
 
     @ViewBuilder
@@ -75,21 +76,17 @@ public struct PosterItemView: View {
     }
 }
 
-private func LibraryOverlay(libraryImageOverlay: String) -> some View {
+private func LibraryOverlay(libraryImageOverlay: String, inset: CGFloat) -> some View {
     VStack {
         HStack {
             Spacer()
             Image(systemName: libraryImageOverlay)
                 .imageScale(.medium)
                 .foregroundStyle(.white)
-                .padding(DimensionConstants.overlayInset)
+                .padding(inset)
         }
         Spacer()
     }
-}
-
-private enum DimensionConstants {
-    static let overlayInset: CGFloat = 8
 }
 
 #Preview {

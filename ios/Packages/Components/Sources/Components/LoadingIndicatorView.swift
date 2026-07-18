@@ -13,7 +13,7 @@ public struct LoadingIndicatorView: View {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle())
                 .scaleEffect(1.5)
-                .tint(theme.colors.accent)
+                .tint(theme.colors.secondary)
                 .padding(.horizontal)
                 .padding(.bottom, theme.spacing.xSmall)
 

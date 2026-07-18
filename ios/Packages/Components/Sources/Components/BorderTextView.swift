@@ -63,7 +63,7 @@ public struct BorderTextView: View {
 }
 
 #Preview {
-    HStack(spacing: 10) {
+    HStack(spacing: TvManiacSpacingScheme.default.xSmall) {
         BorderTextView(
             text: "Continuing",
             colorOpacity: 0.12,

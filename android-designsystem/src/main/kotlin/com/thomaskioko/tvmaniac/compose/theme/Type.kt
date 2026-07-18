@@ -11,25 +11,33 @@ import com.thomaskioko.tvmaniac.i18n.MR
 import dev.icerock.moko.resources.compose.asFont
 
 @Composable
-private fun workSansFontFamily() = FontFamily(
+internal fun workSansFontFamily() = FontFamily(
     MR.fonts.work_sans_thin.asFont(
-        weight = FontWeight.W200,
+        weight = FontWeight.W100,
         style = FontStyle.Normal,
     )!!,
-    MR.fonts.work_sans_medium.asFont(
+    MR.fonts.work_sans_light.asFont(
+        weight = FontWeight.W300,
+        style = FontStyle.Normal,
+    )!!,
+    MR.fonts.work_sans.asFont(
         weight = FontWeight.W400,
         style = FontStyle.Normal,
     )!!,
-    MR.fonts.work_sans_semibold.asFont(
+    MR.fonts.work_sans_medium.asFont(
         weight = FontWeight.W500,
         style = FontStyle.Normal,
     )!!,
-    MR.fonts.work_sans_bold.asFont(
+    MR.fonts.work_sans_semibold.asFont(
         weight = FontWeight.W600,
         style = FontStyle.Normal,
     )!!,
-    MR.fonts.work_sans_extrabold.asFont(
+    MR.fonts.work_sans_bold.asFont(
         weight = FontWeight.W700,
+        style = FontStyle.Normal,
+    )!!,
+    MR.fonts.work_sans_extrabold.asFont(
+        weight = FontWeight.W800,
         style = FontStyle.Normal,
     )!!,
 )
@@ -38,70 +46,70 @@ private fun workSansFontFamily() = FontFamily(
 internal fun tvManiacTypography() = Typography(
     displayLarge = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
     ),
     displayMedium = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp,
     ),
     displaySmall = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 36.sp,
         lineHeight = 44.sp,
         letterSpacing = 0.sp,
     ),
     headlineLarge = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
     ),
     headlineMedium = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
     ),
     headlineSmall = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
     ),
     titleLarge = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
     ),
     titleMedium = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp,
     ),
     titleSmall = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
     ),
     bodyLarge = TextStyle(
         fontFamily = workSansFontFamily(),
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp,
@@ -115,6 +123,7 @@ internal fun tvManiacTypography() = Typography(
     ),
     bodySmall = TextStyle(
         fontFamily = workSansFontFamily(),
+        fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
@@ -135,6 +144,7 @@ internal fun tvManiacTypography() = Typography(
     ),
     labelSmall = TextStyle(
         fontFamily = workSansFontFamily(),
+        fontWeight = FontWeight.SemiBold,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,

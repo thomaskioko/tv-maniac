@@ -55,6 +55,7 @@ import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.continuewatching.ui.ContinueWatchingScreen
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
@@ -293,12 +294,12 @@ private fun CollapsedToolbarContent(
                 )
             }
         } else {
-            Spacer(Modifier.size(48.dp))
+            Spacer(Modifier.size(TvManiacSpacing.xxLarge))
         }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
         ) {
             Text(
                 text = menu_item_my_shows.resolve(context),
@@ -320,7 +321,7 @@ private fun CollapsedToolbarContent(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
         ) {
             IconButton(
                 modifier = Modifier.testTag(MyShowsTestTags.SEARCH_BUTTON_TEST_TAG),

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.LocalPosterCornerRadius
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
@@ -94,7 +95,7 @@ public fun PosterBackdropCard(
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(TvManiacSpacing.medium)
                         .align(Alignment.BottomStart),
                 )
             }

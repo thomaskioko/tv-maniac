@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.LibraryAddCheck
@@ -51,7 +50,8 @@ import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
-import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.following
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
@@ -121,9 +121,9 @@ private fun ShowBody(
             .fillMaxSize()
             .clipToBounds()
             .background(Brush.verticalGradient(surfaceGradient))
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = TvManiacSpacing.medium),
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -154,11 +154,11 @@ private fun ShowBody(
                 fontWeight = FontWeight.Normal,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
             GenreText(state.genres)
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
             ShowDetailButtons(
                 isFollowed = state.isInLibrary,
@@ -172,7 +172,7 @@ private fun ShowBody(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(TvManiacSpacing.medium))
     }
 }
 
@@ -239,7 +239,7 @@ internal fun ShowMetadata(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = TvManiacSpacing.xSmall),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -264,7 +264,7 @@ internal fun ShowMetadata(
                     RatingBadge(
                         rating = formatCommunityRating(communityRating, communityVotes),
                         tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(end = 4.dp),
+                        modifier = Modifier.padding(end = TvManiacSpacing.xxSmall),
                     )
                 }
             }
@@ -297,7 +297,7 @@ private fun RatingBadge(
             text = rating,
             style = MaterialTheme.typography.bodyMedium,
             color = tint,
-            modifier = Modifier.padding(start = 2.dp),
+            modifier = Modifier.padding(start = TvManiacSpacing.xxxSmall),
         )
     }
 }
@@ -309,7 +309,7 @@ private fun GenreText(
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
     ) {
         items(
             items = genreList,
@@ -318,7 +318,7 @@ private fun GenreText(
         ) { genre ->
             FilledTextButton(
                 onClick = {},
-                shape = RoundedCornerShape(4.dp),
+                shape = MaterialTheme.shapes.small,
                 buttonColors = ButtonDefaults.buttonColors(
                     contentColor = MaterialTheme.colorScheme.onSecondary,
                     containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
@@ -350,8 +350,8 @@ internal fun ShowDetailButtons(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(top = TvManiacSpacing.xSmall),
+        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         val context = LocalContext.current
         FilledVerticalIconButton(
@@ -383,8 +383,8 @@ internal fun ShowDetailButtons(
             shape = MaterialTheme.shapes.medium,
             text = listActionLabel,
             imageVector = if (isInList) Icons.Filled.LibraryAddCheck else Icons.Outlined.AutoAwesomeMotion,
-            containerColor = if (isInList) green else MaterialTheme.colorScheme.secondary,
-            contentColor = if (isInList) Color.White else MaterialTheme.colorScheme.onSecondary,
+            containerColor = if (isInList) TvManiacTheme.colorScheme.success else MaterialTheme.colorScheme.secondary,
+            contentColor = if (isInList) TvManiacTheme.colorScheme.onSuccess else MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.labelMedium,
             enabled = canAddToList,
             onClick = onAddToList,

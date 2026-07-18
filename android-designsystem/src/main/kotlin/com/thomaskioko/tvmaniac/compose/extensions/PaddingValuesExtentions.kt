@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun PaddingValues.copy(
@@ -19,10 +19,10 @@ public fun PaddingValues.copy(
     return remember(this) {
         derivedStateOf {
             PaddingValues(
-                start = if (copyStart) calculateStartPadding(LayoutDirection.Ltr) else 0.dp,
-                top = if (copyTop) calculateTopPadding() else 0.dp,
-                end = if (copyEnd) calculateEndPadding(LayoutDirection.Ltr) else 0.dp,
-                bottom = if (copyBottom) calculateBottomPadding() else 0.dp,
+                start = if (copyStart) calculateStartPadding(LayoutDirection.Ltr) else TvManiacSpacing.none,
+                top = if (copyTop) calculateTopPadding() else TvManiacSpacing.none,
+                end = if (copyEnd) calculateEndPadding(LayoutDirection.Ltr) else TvManiacSpacing.none,
+                bottom = if (copyBottom) calculateBottomPadding() else TvManiacSpacing.none,
             )
         }
     }
