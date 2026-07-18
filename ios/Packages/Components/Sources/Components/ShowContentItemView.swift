@@ -98,8 +98,6 @@ private struct MetallicTitleView: View {
 }
 
 private enum DimensionConstants {
-    static let imageRadius: CGFloat = 2.5
-    static let cornerRadius: CGFloat = 4
     static let lineLimit: Int = 1
 }
 

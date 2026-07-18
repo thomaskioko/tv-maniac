@@ -11,7 +11,7 @@ public struct SegmentedProgressBar: View {
     public init(
         segmentProgress: [Float],
         height: CGFloat = 6,
-        segmentGap: CGFloat = 4
+        segmentGap: CGFloat = TvManiacSpacingScheme.default.xxSmall
     ) {
         self.segmentProgress = segmentProgress
         self.height = height
@@ -27,8 +27,8 @@ public struct SegmentedProgressBar: View {
                     ProgressSegment(
                         progress: progress,
                         height: height,
-                        accentColor: theme.colors.accent,
-                        trackColor: theme.colors.accent.opacity(0.3)
+                        accentColor: theme.colors.secondary,
+                        trackColor: theme.colors.secondary.opacity(0.3)
                     )
                 }
             }
@@ -62,7 +62,7 @@ private struct ProgressSegment: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
+    VStack(spacing: TvManiacSpacingScheme.default.large) {
         SegmentedProgressBar(
             segmentProgress: [1.0, 0.5, 0]
         )

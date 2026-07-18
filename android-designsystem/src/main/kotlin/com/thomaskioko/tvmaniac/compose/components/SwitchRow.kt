@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,6 +23,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
 
 @Composable
@@ -53,12 +53,12 @@ public fun SwitchRow(
                 onValueChange = onToggle,
                 role = Role.Switch,
             )
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
             SwitchRowIconChip(icon = icon)
-            Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.width(TvManiacSpacing.small))
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -68,9 +68,9 @@ public fun SwitchRow(
                 fontWeight = FontWeight.Medium,
             )
             if (locked) {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
                 PremiumBadge(text = lockedBadgeText)
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
             }
             if (description != null) {
                 Text(
@@ -80,7 +80,7 @@ public fun SwitchRow(
                 )
             }
         }
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(TvManiacSpacing.small))
         TvManiacSwitch(
             checked = checked,
             onCheckedChange = onToggle,
@@ -97,7 +97,7 @@ private fun SwitchRowIconChip(
     Surface(
         modifier = modifier.size(36.dp),
         color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f),
-        shape = RoundedCornerShape(10.dp),
+        shape = MaterialTheme.shapes.medium,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(

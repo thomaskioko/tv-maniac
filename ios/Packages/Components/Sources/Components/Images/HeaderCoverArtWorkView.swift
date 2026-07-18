@@ -54,8 +54,6 @@ public struct HeaderCoverArtWorkView: View {
 private enum DimensionConstants {
     static let posterWidth: CGFloat = UIScreen.main.bounds.width
     static let fixedImageHeight: CGFloat = 600
-    static let shadowRadius: CGFloat = 2
-    static let cornerRadius: CGFloat = 8
 }
 
 #Preview {

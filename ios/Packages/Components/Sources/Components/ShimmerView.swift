@@ -11,13 +11,13 @@ public struct ShimmerView: View {
 
     @SwiftUI.State private var phase: CGFloat = -1
 
-    public init(cornerRadius: CGFloat = 8) {
+    public init(cornerRadius: CGFloat = TvManiacShapeScheme.default.small) {
         self.cornerRadius = cornerRadius
     }
 
     public var body: some View {
         let base = theme.colors.onSurface.opacity(0.08)
-        let highlight = theme.colors.onSurface.opacity(0.18)
+        let highlight = theme.colors.onSurface.opacity(0.20)
 
         RoundedRectangle(cornerRadius: cornerRadius)
             .fill(base)

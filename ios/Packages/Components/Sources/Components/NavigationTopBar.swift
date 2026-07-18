@@ -31,7 +31,7 @@ public struct NavigationTopBar: View {
     public var body: some View {
         ZStack {
             theme.colors.background
-                .shadow(color: theme.colors.surfaceVariant, radius: 10, x: 0, y: 5)
+                .appShadow(theme.shadows.medium, color: theme.colors.surfaceVariant)
 
             VStack {
                 HStack {
@@ -54,8 +54,7 @@ public struct NavigationTopBar: View {
 
                     if let title = topBarTitle {
                         Text(title)
-                            .textStyle(theme.typography.titleLarge)
-                            .bold()
+                            .textStyle(theme.typography.titleSmall)
                             .foregroundStyle(.appOnSurface)
 
                         Spacer()

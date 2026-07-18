@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.android.feature.settings.R
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
@@ -53,17 +53,17 @@ internal fun InfoPage(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xLarge))
 
         Image(
             painter = painterResource(id = R.drawable.ic_app_launcher),
             contentDescription = null,
             modifier = Modifier
                 .size(72.dp)
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(MaterialTheme.shapes.large),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         Text(
             text = state.labels.appName,
@@ -72,7 +72,7 @@ internal fun InfoPage(
             color = MaterialTheme.colorScheme.onSurface,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         Text(
             text = state.labels.version,
@@ -83,7 +83,7 @@ internal fun InfoPage(
                 .clickable(onClick = { onAction(VersionClicked) }),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
         Text(
             text = state.labels.aboutDescription,
@@ -92,10 +92,10 @@ internal fun InfoPage(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = TvManiacSpacing.large),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
         SettingsGroup {
             SettingsNavigationRow(
@@ -106,7 +106,7 @@ internal fun InfoPage(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
         Text(
             text = state.labels.apiDisclaimer,
@@ -115,7 +115,7 @@ internal fun InfoPage(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 24.dp),
+                .padding(horizontal = TvManiacSpacing.large, vertical = TvManiacSpacing.large),
         )
     }
 }

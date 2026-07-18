@@ -14,7 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 /**
  * Compact, non-intrusive error for a section that fails to load. Trakt-style: a muted line of text
@@ -32,9 +32,9 @@ public fun InlineSectionError(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.xSmall),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
     ) {
         Text(
             text = message,
@@ -53,7 +53,7 @@ public fun InlineSectionError(
                 modifier = retryModifier
                     .clip(MaterialTheme.shapes.small)
                     .clickable(onClick = onRetry)
-                    .padding(vertical = 4.dp),
+                    .padding(vertical = TvManiacSpacing.xxSmall),
             )
         }
     }

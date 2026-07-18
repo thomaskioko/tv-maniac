@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_expand_collapse
 import com.thomaskioko.tvmaniac.i18n.resolve
 
@@ -54,7 +55,7 @@ public fun SheetDragHandle(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterStart)
-                .padding(start = 16.dp),
+                .padding(start = TvManiacSpacing.medium),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -66,7 +67,7 @@ public fun SheetDragHandle(
                     .clickable { onClick() },
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(TvManiacSpacing.xSmall))
 
             title?.let {
                 Text(

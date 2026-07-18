@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
@@ -31,6 +30,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_enable
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.notification_rationale_not_now
@@ -48,7 +48,7 @@ public fun NotificationRationaleContent(
         modifier = modifier
             .testTag(NotificationRationaleTestTags.BOTTOM_SHEET)
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = TvManiacSpacing.large, vertical = TvManiacSpacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
@@ -58,7 +58,7 @@ public fun NotificationRationaleContent(
             tint = MaterialTheme.colorScheme.secondary,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         Text(
             text = stringResource(notification_rationale_title),
@@ -66,7 +66,7 @@ public fun NotificationRationaleContent(
             color = MaterialTheme.colorScheme.onSurface,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         Text(
             text = stringResource(notification_rationale_message),
@@ -75,11 +75,11 @@ public fun NotificationRationaleContent(
             textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
         EpisodeDateSection()
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
 
         Button(
             onClick = onEnable,
@@ -107,7 +107,7 @@ public fun NotificationRationaleContent(
             Text(text = stringResource(notification_rationale_not_now))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
     }
 }
 
@@ -119,10 +119,10 @@ private fun EpisodeDateSection() {
     ) {
         GradientDivider()
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.small))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             listOf(12, 13, 14).forEach { day ->
@@ -141,7 +141,7 @@ private fun EpisodeDateSection() {
                     .border(
                         width = 2.dp,
                         color = MaterialTheme.colorScheme.secondary,
-                        shape = RoundedCornerShape(8.dp),
+                        shape = MaterialTheme.shapes.medium,
                     ),
             ) {
                 Text(
@@ -165,7 +165,7 @@ private fun EpisodeDateSection() {
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(TvManiacSpacing.small))
 
         GradientDivider()
     }
@@ -176,7 +176,7 @@ private fun GradientDivider() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = TvManiacSpacing.large)
             .height(1.dp)
             .background(
                 Brush.horizontalGradient(

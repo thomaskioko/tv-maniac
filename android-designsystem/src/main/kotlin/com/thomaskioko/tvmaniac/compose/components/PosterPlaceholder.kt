@@ -25,6 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
 @Composable
 public fun PosterPlaceholder(
@@ -62,7 +63,7 @@ public fun PosterPlaceholder(
             Text(
                 text = it,
                 modifier = Modifier
-                    .padding(horizontal = 4.dp)
+                    .padding(horizontal = TvManiacSpacing.xxSmall)
                     .constrainAs(text) {
                         top.linkTo(icon.bottom)
                         start.linkTo(parent.start)

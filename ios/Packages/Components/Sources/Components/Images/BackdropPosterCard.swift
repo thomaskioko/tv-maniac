@@ -40,7 +40,7 @@ public struct BackdropPosterCard: View {
         .overlay(alignment: .bottom) {
             ZStack(alignment: .bottomLeading) {
                 LinearGradient(
-                    colors: [.clear, theme.colors.scrim.opacity(0.7)],
+                    colors: [.clear, theme.colors.surface.opacity(0.7)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -48,11 +48,11 @@ public struct BackdropPosterCard: View {
 
                 Text(title)
                     .textStyle(theme.typography.labelLarge)
-                    .foregroundStyle(.appOnScrim)
+                    .foregroundStyle(.appOnSurface)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .padding(.horizontal, theme.spacing.medium)
-                    .padding(.bottom, theme.spacing.xSmall)
+                    .padding(.bottom, theme.spacing.medium)
             }
         }
     }

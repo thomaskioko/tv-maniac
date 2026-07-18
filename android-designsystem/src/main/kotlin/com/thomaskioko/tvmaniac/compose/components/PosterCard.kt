@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.LocalPosterCornerRadius
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 @Composable
@@ -95,7 +97,7 @@ private fun LibraryOverlay(
             contentDescription = null,
             tint = Color.White,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(TvManiacSpacing.xSmall)
                 .size(20.dp),
         )
     }
@@ -115,7 +117,7 @@ internal fun PosterCard(
             .width(imageWidth),
         shape = shape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
+            defaultElevation = TvManiacElevation.medium,
         ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {

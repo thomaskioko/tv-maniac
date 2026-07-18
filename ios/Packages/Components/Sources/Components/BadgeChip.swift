@@ -78,7 +78,7 @@ public struct LockBadge: View {
 }
 
 #Preview {
-    VStack(spacing: 12) {
+    VStack(spacing: TvManiacSpacingScheme.default.small) {
         PremiereBadge(text: "Premiere")
         NewBadge(text: "New")
         LockBadge(text: "Premium")

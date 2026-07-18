@@ -27,12 +27,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
@@ -94,7 +94,7 @@ internal fun SettingsScreen(
                         modifier = Modifier
                             .testTag(SettingsTestTags.BACK_BUTTON_TEST_TAG)
                             .clickable(onClick = { onAction(BackClicked) })
-                            .padding(16.dp),
+                            .padding(TvManiacSpacing.medium),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = state.labels.back,
                         tint = MaterialTheme.colorScheme.onBackground,
@@ -110,7 +110,7 @@ internal fun SettingsScreen(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp),
+                            .padding(start = TvManiacSpacing.medium),
                     )
                 },
                 modifier = Modifier,

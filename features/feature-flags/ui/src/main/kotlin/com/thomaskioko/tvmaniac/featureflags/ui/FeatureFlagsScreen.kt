@@ -50,6 +50,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.featureflags.model.FeatureFlagSortDescriptor
 import com.thomaskioko.tvmaniac.featureflags.presenter.BackClicked
@@ -116,7 +117,7 @@ internal fun FeatureFlagsScreen(
                     Icon(
                         modifier = Modifier
                             .clickable(onClick = onBackClicked)
-                            .padding(16.dp),
+                            .padding(TvManiacSpacing.medium),
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = cd_back.resolve(context),
                         tint = MaterialTheme.colorScheme.onBackground,
@@ -132,7 +133,7 @@ internal fun FeatureFlagsScreen(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp),
+                            .padding(start = TvManiacSpacing.medium),
                     )
                 },
                 actions = {
@@ -164,7 +165,7 @@ internal fun FeatureFlagsScreen(
                 state = lazyListState,
                 modifier = Modifier.fillMaxSize(),
             ) {
-                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item { Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall)) }
 
                 item {
                     FeatureFlagsActionRow(
@@ -178,7 +179,7 @@ internal fun FeatureFlagsScreen(
                 item {
                     HorizontalDivider(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                        modifier = Modifier.padding(horizontal = 24.dp),
+                        modifier = Modifier.padding(horizontal = TvManiacSpacing.large),
                     )
                 }
 
@@ -194,7 +195,7 @@ internal fun FeatureFlagsScreen(
                 item {
                     HorizontalDivider(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                        modifier = Modifier.padding(horizontal = 24.dp),
+                        modifier = Modifier.padding(horizontal = TvManiacSpacing.large),
                     )
                 }
 
@@ -206,7 +207,7 @@ internal fun FeatureFlagsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(24.dp),
+                                .padding(TvManiacSpacing.large),
                         )
                     }
                 } else {
@@ -223,13 +224,13 @@ internal fun FeatureFlagsScreen(
                         if (index < state.items.lastIndex) {
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                                modifier = Modifier.padding(horizontal = 24.dp),
+                                modifier = Modifier.padding(horizontal = TvManiacSpacing.large),
                             )
                         }
                     }
                 }
 
-                item { Spacer(modifier = Modifier.height(32.dp)) }
+                item { Spacer(modifier = Modifier.height(TvManiacSpacing.xLarge)) }
             }
         }
     }
@@ -347,7 +348,7 @@ private fun FeatureFlagsActionRow(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -356,7 +357,7 @@ private fun FeatureFlagsActionRow(
             contentDescription = null,
             modifier = Modifier.size(24.dp),
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(TvManiacSpacing.medium))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
@@ -382,7 +383,7 @@ private fun FeatureFlagRowItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -391,12 +392,12 @@ private fun FeatureFlagRowItem(
                     text = item.title,
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(TvManiacSpacing.xSmall))
                 Text(
                     text = item.source,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 2.dp),
+                    modifier = Modifier.padding(bottom = TvManiacSpacing.xxxSmall),
                 )
             }
             Text(

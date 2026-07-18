@@ -40,7 +40,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.RefreshCollapsableTopAppBar
@@ -50,6 +49,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.extensions.copy
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowAction
 import com.thomaskioko.tvmaniac.discover.presenter.DiscoverShowsPresenter
@@ -221,7 +221,7 @@ internal fun DiscoverLazyColumn(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp),
+                        .padding(start = TvManiacSpacing.medium),
                 )
             },
             actions = { showAppBarBackground ->
@@ -229,7 +229,7 @@ internal fun DiscoverLazyColumn(
                     show = showAppBarBackground,
                     onClick = onSearch,
                     modifier = Modifier
-                        .padding(end = 8.dp)
+                        .padding(end = TvManiacSpacing.xSmall)
                         .testTag(DiscoverTestTags.SEARCH_BUTTON_TEST_TAG),
                 ) {
                     Icon(

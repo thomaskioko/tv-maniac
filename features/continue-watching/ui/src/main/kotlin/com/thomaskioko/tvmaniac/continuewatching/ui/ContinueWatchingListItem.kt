@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -26,10 +24,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.ShowLinearProgressIndicator
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.Layout
-import com.thomaskioko.tvmaniac.compose.theme.green
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.episode_count
 import com.thomaskioko.tvmaniac.i18n.MR.plurals.season_count
@@ -72,12 +71,12 @@ internal fun ContinueWatchingListItem(
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 8.dp,
+                        start = TvManiacSpacing.medium,
+                        top = TvManiacSpacing.xSmall,
                     ),
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
 
                 val divider = buildAnnotatedString {
                     val tagStyle = MaterialTheme.typography.labelMedium
@@ -146,34 +145,25 @@ internal fun ContinueWatchingListItem(
                     text = seasonDetails,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 16.dp), // Adjusted padding
+                    modifier = Modifier.padding(start = TvManiacSpacing.medium),
                 )
 
-                Spacer(modifier = Modifier.height(4.dp)) // Spacer
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
 
                 Text(
                     text = text,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 16.dp), // Adjusted padding
+                    modifier = Modifier.padding(start = TvManiacSpacing.medium),
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                LinearProgressIndicator(
-                    progress = { item.watchProgress },
+                ShowLinearProgressIndicator(
+                    progress = item.watchProgress,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(4.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = if (item.watchProgress == 1f) {
-                        green.copy(alpha = 0.5F)
-                    } else {
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.5F)
-                    },
-                    strokeCap = StrokeCap.Butt,
-                    drawStopIndicator = {},
-                    gapSize = 0.dp,
                 )
             }
         }

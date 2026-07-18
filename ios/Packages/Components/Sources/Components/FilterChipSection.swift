@@ -47,7 +47,7 @@ public struct FilterChipSection<Item: Hashable>: View {
         VStack(alignment: .leading, spacing: theme.spacing.small) {
             sectionHeader
 
-            FlowLayout(spacing: 8, items: visibleItems) { item in
+            FlowLayout(spacing: theme.spacing.xSmall, items: visibleItems) { item in
                 FilterChip(
                     label: labelProvider(item),
                     isSelected: selectedItems.contains(item),
@@ -67,7 +67,7 @@ public struct FilterChipSection<Item: Hashable>: View {
             Text(title)
                 .textStyle(theme.typography.labelMedium)
                 .foregroundStyle(.appOnSurfaceVariant)
-                .padding(.horizontal, theme.spacing.small)
+                .padding(.horizontal, theme.spacing.medium)
             dividerLine
         }
     }
@@ -84,13 +84,14 @@ public struct FilterChipSection<Item: Hashable>: View {
                 isExpanded.toggle()
             }
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: theme.spacing.xxSmall) {
                 Text(isExpanded ? showLessLabel : showMoreLabel)
                     .textStyle(theme.typography.bodyMedium)
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .textStyle(theme.typography.labelSmall)
             }
             .foregroundStyle(.appOnSurfaceVariant)
+            .padding(.vertical, theme.spacing.xxSmall)
         }
         .buttonStyle(.plain)
         .padding(.top, theme.spacing.xSmall)

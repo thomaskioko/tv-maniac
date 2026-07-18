@@ -40,4 +40,5 @@ dependencies {
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)
+    testImplementation(libs.kotest.assertions)
 }

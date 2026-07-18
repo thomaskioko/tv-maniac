@@ -27,7 +27,7 @@ public struct CastCardView: View {
         profileImage
             .overlay(nameOverlay)
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small, style: .continuous))
-            .appShadow(theme.shadows.small, color: theme.colors.outline.opacity(0.3))
+            .appShadow(theme.shadows.large, color: theme.colors.outline.opacity(0.3))
     }
 
     private var profileImage: some View {
@@ -44,7 +44,7 @@ public struct CastCardView: View {
     private var nameOverlay: some View {
         ZStack(alignment: .bottom) {
             LinearGradient(
-                colors: [.clear, theme.colors.scrim.opacity(0.7)],
+                colors: [.clear, theme.colors.surface.opacity(0.7)],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -55,16 +55,16 @@ public struct CastCardView: View {
     }
 
     private var nameView: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxxSmall) {
             Text(name)
                 .textStyle(theme.typography.bodyMedium)
             Text(characterName)
-                .textStyle(theme.typography.labelSmall)
+                .textStyle(theme.typography.bodyMedium)
         }
-        .foregroundStyle(.appOnScrim)
+        .foregroundStyle(.appOnSurface)
         .lineLimit(1)
-        .padding(.horizontal, theme.spacing.xxSmall)
-        .padding(.bottom, theme.spacing.medium)
+        .padding(.horizontal, theme.spacing.xSmall)
+        .padding(.bottom, theme.spacing.xSmall)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

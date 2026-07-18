@@ -64,7 +64,7 @@ public struct ToastView: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: TvManiacSpacingScheme.default.medium) {
         ToastView(
             type: .error,
             title: "Error",

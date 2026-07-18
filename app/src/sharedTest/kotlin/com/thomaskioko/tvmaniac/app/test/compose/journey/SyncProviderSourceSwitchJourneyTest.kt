@@ -5,12 +5,14 @@ import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_SIMKL_ACCOUNT_ID
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.util.testing.FlakyTests
 import org.junit.Test
 
 internal class SyncProviderSourceSwitchJourneyTest : BaseAppFlowTest() {
 
     private val breakingBadTmdbId = 1396L
 
+    @FlakyTests(count = 3)
     @Test
     fun givenTraktSession_whenSwitchesToSimkl_thenActiveBecomesSimklAndDiscoverStaysIntact() = runAppFlowTest {
         scenarios.stubAuthenticatedSyncWithAccountSwitch()

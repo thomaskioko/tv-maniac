@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.compose.components.MarkWatchedButton
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.seasondetails.ui.episodeDetailsModel
@@ -65,7 +66,7 @@ internal fun EpisodeItem(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 4.dp, horizontal = 8.dp),
+                    .padding(vertical = TvManiacSpacing.xxSmall, horizontal = TvManiacSpacing.xSmall),
             ) {
                 Text(
                     text = title,
@@ -74,7 +75,7 @@ internal fun EpisodeItem(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(vertical = 4.dp),
+                    modifier = Modifier.padding(vertical = TvManiacSpacing.xxSmall),
                 )
 
                 Text(
@@ -100,12 +101,12 @@ internal fun EpisodeItem(
                     isUpdating = isProcessing,
                     onToggle = onWatchedToggle,
                     modifier = Modifier
-                        .padding(12.dp)
+                        .padding(TvManiacSpacing.small)
                         .let { if (toggleTag != null) it.testTag(toggleTag) else it },
                 )
             } else if (daysUntilAir != null && daysUntilAir > 0) {
                 Column(
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier.padding(TvManiacSpacing.small),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
@@ -125,7 +126,7 @@ internal fun EpisodeItem(
             } else {
                 Text(
                     text = "TBD",
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier.padding(TvManiacSpacing.small),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

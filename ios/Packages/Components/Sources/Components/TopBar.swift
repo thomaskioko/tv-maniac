@@ -61,7 +61,7 @@ public struct TopBar: View {
 
                 if let title {
                     Text(title)
-                        .textStyle(theme.typography.headlineSmall)
+                        .textStyle(theme.typography.titleSmall)
                         .lineLimit(1)
                         .padding(.leading, theme.spacing.xxSmall)
                         .opacity(progress)

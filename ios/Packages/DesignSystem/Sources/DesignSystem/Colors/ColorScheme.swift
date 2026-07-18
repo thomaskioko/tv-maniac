@@ -20,6 +20,7 @@ public struct TvManiacColorScheme {
     public let buttonBackground: Color
     public let onButtonBackground: Color
     public let success: Color
+    public let onSuccess: Color
     public let syncing: Color
     public let grey: Color
     public let scrim: Color
@@ -45,6 +46,7 @@ public struct TvManiacColorScheme {
         buttonBackground: Color,
         onButtonBackground: Color,
         success: Color = Color(hex: "00B300"),
+        onSuccess: Color = .white,
         syncing: Color = Color(hex: "CC5500"),
         grey: Color = Color(hex: "808080"),
         scrim: Color = .black,
@@ -69,6 +71,7 @@ public struct TvManiacColorScheme {
         self.buttonBackground = buttonBackground
         self.onButtonBackground = onButtonBackground
         self.success = success
+        self.onSuccess = onSuccess
         self.syncing = syncing
         self.grey = grey
         self.scrim = scrim
