@@ -1410,6 +1410,7 @@ graph TB
   :ios-framework --> :features:trailers:presenter
   :ios-framework --> :features:upnext:presenter
   :ios-framework --> :i18n:api
+  :ios-framework --> :i18n:generator
   :ios-framework -.-> :i18n:implementation
   :ios-framework --> :navigation:api
   :ios-framework -.-> :navigation:implementation
