@@ -10,7 +10,7 @@ One command sets up everything:
 
 It is idempotent (safe to re-run) and platform-aware:
 
-- **macOS**: full setup, including the iOS toolchain (Homebrew tools, pinned SwiftLint, fastlane), resolved SwiftPM packages, and a pre-built shared KMP framework.
+- **macOS**: full setup, including the iOS toolchain (Homebrew tools, pinned SwiftLint, fastlane), a built KMP XCFramework, and resolved SwiftPM packages.
 - **Linux / Windows** (Git Bash or WSL): Android setup only. iOS steps are skipped, since iOS builds require a Mac with Xcode.
 
 Run `./scripts/setup.sh --check` to report environment state without changing anything.
@@ -27,7 +27,7 @@ After it finishes, fill in your API keys in `local.properties` (see [Credentials
 - Creates `local.properties` from `local.properties.template`, filling in `sdk.dir` when it can detect your Android SDK.
 - Installs the git hooks via [lefthook](https://lefthook.dev) (see [Git hooks](#git-hooks)).
 - Verifies the Gradle JDK toolchain. Gradle auto-provisions Azul JDK 21, so no manual JDK install is needed.
-- macOS only: `brew bundle` (Mint, SwiftFormat, lefthook), `mint bootstrap` (pinned SwiftLint), `bundle install` (fastlane), resolves SwiftPM packages, and pre-builds the shared KMP framework.
+- macOS only: `brew bundle` (Mint, SwiftFormat, lefthook), `mint bootstrap` (pinned SwiftLint), `bundle install` (fastlane), builds the shared KMP XCFramework (`./scripts/build-kmp-framework.sh`), and resolves SwiftPM packages.
 
 Homebrew is the one macOS prerequisite the script offers to install if missing. Everything else it installs for you.
 
@@ -65,6 +65,24 @@ On commit, the pre-commit hook runs only against your **staged** files: it auto-
 
 - Skip the hook for one commit: `git commit --no-verify`.
 - Non-macOS contributors: install lefthook (`brew install lefthook` or a [release binary](https://github.com/evilmartians/lefthook/releases)), then run `./scripts/install-git-hooks.sh`.
+
+## Working on a single iOS package
+
+The Swift packages under `ios/Packages/` resolve the shared Kotlin code through the `TvManiacFramework` package, so any of them opens and builds on its own once the XCFramework is built:
+
+```bash
+./scripts/build-kmp-framework.sh   # debug, arm64 simulator (default)
+xed ios/Packages/Search
+```
+
+Re-run the script after changing Kotlin code; an outdated framework shows up as compile errors against the Kotlin API. `./gradlew clean` deletes the built framework, so re-run the script after that too. Other slices when needed:
+
+```bash
+./scripts/build-kmp-framework.sh --platform device
+./scripts/build-kmp-framework.sh --configuration release --platform device
+```
+
+Full app builds rebuild the framework automatically through the scheme pre-action. See `ios/Packages/TvManiacFramework/README.md` for details.
 
 ## iOS Toolchain (macOS Only)
 

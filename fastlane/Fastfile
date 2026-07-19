@@ -25,8 +25,20 @@ platform :ios do
     cleanup_ci_keychain if is_ci
   end
 
+  desc "Build the KMP XCFramework the Swift packages resolve"
+  private_lane :build_kmp_framework do |options|
+    configuration = options[:configuration] || "debug"
+    device = options[:device_platform] || "simulator"
+    sh("cd #{PROJECT_DIR} && ./scripts/build-kmp-framework.sh --configuration #{configuration} --platform #{device}")
+    # The framework is now in place; let the scheme pre-action exit early
+    # instead of re-running gradle inside xcodebuild, which can hang.
+    ENV["TVMANIAC_SKIP_FRAMEWORK_BUILD"] = "1"
+  end
+
   desc "Run Snapshot Tests"
   lane :snapshot_tests do
+    build_kmp_framework
+
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "Snapshots",
@@ -54,6 +66,8 @@ platform :ios do
 
   desc "Re-record snapshot baselines"
   lane :record_snapshots do
+    build_kmp_framework
+
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "Snapshots",
@@ -81,6 +95,8 @@ platform :ios do
 
   desc "Build iOS App (Debug, simulator)"
   lane :build_tvmaniac do
+    build_kmp_framework
+
     build_ios_app(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
@@ -152,6 +168,8 @@ platform :ios do
   private_lane :build_signed_app do
     api_key = get_api_key
 
+    build_kmp_framework(configuration: "release", device_platform: "device")
+
     certs
 
     version_file = File.read("#{PROJECT_DIR}/version.txt")
@@ -198,6 +216,8 @@ platform :ios do
 
   desc "Build TvManiac IPA (Debug, simulator)"
   lane :build_tvmaniac_ipa do
+    build_kmp_framework
+
     build_ios_app(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",

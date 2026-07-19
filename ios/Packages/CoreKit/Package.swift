@@ -14,6 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.16.0"),
         .package(url: "https://github.com/kean/Nuke", exact: "12.9.0"),
     ],
@@ -21,6 +22,7 @@ let package = Package(
         .target(
             name: "CoreKit",
             dependencies: [
+                .product(name: "TvManiac", package: "TvManiacFramework"),
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseRemoteConfig", package: "firebase-ios-sdk"),
                 .product(name: "Nuke", package: "Nuke"),

@@ -1,9 +1,9 @@
 name: 'KMP iOS Framework'
-description: 'Resolve the simulator SDK and either build-and-cache (mode=build) or restore (mode=restore) the TvManiac + i18n frameworks the iOS app and snapshot schemes link against.'
+description: 'Resolve the simulator SDK and either build-and-cache (mode=build) or restore (mode=restore) the TvManiac XCFramework the iOS app and packages resolve via SwiftPM.'
 
 inputs:
   mode:
-    description: 'build = link the framework on a cache miss and cache it (producer job); restore = restore-only for consumer jobs.'
+    description: 'build = build the XCFramework on a cache miss and cache it (producer job); restore = restore-only for consumer jobs.'
     required: true
 
 outputs:
@@ -19,50 +19,31 @@ runs:
       shell: bash
       run: echo "sdk_name=iphonesimulator$(xcrun --sdk iphonesimulator --show-sdk-version)" >> "$GITHUB_OUTPUT"
 
-    - name: 🗂️ Cache KMP frameworks
+    - name: 🗂️ Cache KMP XCFramework
       id: cache-build
       if: inputs.mode == 'build'
       uses: actions/cache@v6
       with:
-        path: |
-          ios-framework/build/xcode-frameworks
-          i18n/generator/build/xcode-frameworks
+        path: ios-framework/build/spm
         key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ hashFiles('**/*.kt', '**/*.kts', 'gradle/libs.versions.toml', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}
 
-    - name: 🗂️ Restore prebuilt KMP frameworks
+    - name: 🗂️ Restore prebuilt KMP XCFramework
       if: inputs.mode == 'restore'
       uses: actions/cache/restore@v6
       with:
-        path: |
-          ios-framework/build/xcode-frameworks
-          i18n/generator/build/xcode-frameworks
+        path: ios-framework/build/spm
         key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ hashFiles('**/*.kt', '**/*.kts', 'gradle/libs.versions.toml', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}
 
-    # Static framework (isStatic = true): consumers link it in via FRAMEWORK_SEARCH_PATHS, so the
-    # scheme pre-action can be skipped once this stage is populated. Runs the same embedAndSign task
-    # the schemes run, with Xcode's env vars supplied manually (the task is a no-op without them).
-    # Only on a cache miss.
-    - name: 🧱 Assemble KMP frameworks
+    # Builds the XCFramework into ios-framework/build/spm, the directory the
+    # TvManiacFramework package's binaryTarget points at. Consumer jobs restore
+    # this directory and set TVMANIAC_SKIP_FRAMEWORK_BUILD=1 so the scheme
+    # pre-action skips the gradle build. Only on a cache miss.
+    - name: 🧱 Assemble KMP XCFramework
       if: inputs.mode == 'build' && steps.cache-build.outputs.cache-hit != 'true'
       shell: bash
-      env:
-        CONFIGURATION: Debug
-        SDK_NAME: ${{ steps.sdk.outputs.sdk_name }}
-        ARCHS: arm64
-        ENABLE_USER_SCRIPT_SANDBOXING: 'NO'
-      run: |
-        export TARGET_BUILD_DIR="$RUNNER_TEMP/stage"
-        export BUILT_PRODUCTS_DIR="$RUNNER_TEMP/stage"
-        export FRAMEWORKS_FOLDER_PATH="Frameworks"
-        mkdir -p "$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH"
-        ./gradlew \
-          :ios-framework:embedAndSignAppleFrameworkForXcode \
-          :i18n:generator:embedAndSignAppleFrameworkForXcode \
-          -Papp.enableIos=true
+      run: ./scripts/build-kmp-framework.sh --configuration debug --platform simulator
 
-    - name: ✅ Verify staged frameworks
+    - name: ✅ Verify built framework
       if: inputs.mode == 'build'
       shell: bash
-      run: |
-        test -f "ios-framework/build/xcode-frameworks/Debug/${{ steps.sdk.outputs.sdk_name }}/TvManiac.framework/TvManiac"
-        test -f "i18n/generator/build/xcode-frameworks/Debug/${{ steps.sdk.outputs.sdk_name }}/i18n.framework/i18n"
+      run: test -f "ios-framework/build/spm/TvManiac.xcframework/ios-arm64-simulator/TvManiac.framework/TvManiac"
