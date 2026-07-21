@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.episodes.implementation
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.data.calendar.testing.FakeCalendarRemoteDataSource
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -143,6 +144,7 @@ internal class DefaultEpisodeRepositorySyncErrorTest : BaseDatabaseTest() {
             upcomingEpisodesStore = upcomingEpisodesStore,
             appScopeLauncher = FakeAppScopeLauncher(scope = this),
             syncObserver = syncObserver,
+            notificationManager = FakeNotificationManager(),
         )
     }
 

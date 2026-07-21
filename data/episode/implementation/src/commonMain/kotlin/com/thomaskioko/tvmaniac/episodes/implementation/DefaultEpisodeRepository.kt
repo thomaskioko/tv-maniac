@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
@@ -39,6 +40,7 @@ public class DefaultEpisodeRepository(
     private val upcomingEpisodesStore: UpcomingEpisodesStore,
     private val appScopeLauncher: AppScopeLauncher,
     private val syncObserver: SyncObserver,
+    private val notificationManager: NotificationManager,
 ) : EpisodeRepository {
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
@@ -62,6 +64,7 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
+        notificationManager.cancelNotification(episodeId)
 
         launchSyncReporting { SyncError.MarkWatchedFailed(showId, it) }
     }
@@ -80,6 +83,7 @@ public class DefaultEpisodeRepository(
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
         )
+        notificationManager.cancelNotification(episodeId)
 
         launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
     }
@@ -122,6 +126,7 @@ public class DefaultEpisodeRepository(
             episodes = episodes,
             includeSpecials = includeSpecials,
         )
+        cancelPendingSeasonNotifications(showId, seasonNumber, includePreviousSeasons = false)
 
         launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
     }
@@ -136,6 +141,7 @@ public class DefaultEpisodeRepository(
             seasonNumber = seasonNumber,
             includeSpecials = includeSpecials,
         )
+        cancelPendingSeasonNotifications(showId, seasonNumber, includePreviousSeasons = true)
 
         launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
     }
@@ -205,6 +211,19 @@ public class DefaultEpisodeRepository(
         }
 
     private suspend fun getIncludeSpecials(): Boolean = datastoreRepository.getIncludeSpecials()
+
+    private suspend fun cancelPendingSeasonNotifications(
+        showId: Long,
+        seasonNumber: Long,
+        includePreviousSeasons: Boolean,
+    ) {
+        notificationManager.getPendingNotifications()
+            .filter { notification ->
+                notification.showId == showId &&
+                    (notification.seasonNumber == seasonNumber || (includePreviousSeasons && notification.seasonNumber < seasonNumber))
+            }
+            .forEach { notificationManager.cancelNotification(it.id) }
+    }
 
     /**
      * Push pending watched-episodes changes via the sync repository on a background scope. On

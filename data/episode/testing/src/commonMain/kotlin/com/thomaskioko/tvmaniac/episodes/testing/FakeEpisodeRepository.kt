@@ -58,6 +58,15 @@ public class FakeEpisodeRepository : EpisodeRepository {
     public var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
         private set
 
+    public var lastUpcomingEpisodesLimit: Duration? = null
+        private set
+
+    private var syncUpcomingEpisodesBehavior: (suspend () -> Unit)? = null
+
+    public fun setSyncUpcomingEpisodesBehavior(behavior: suspend () -> Unit) {
+        syncUpcomingEpisodesBehavior = behavior
+    }
+
     public fun setEpisodeById(episode: EpisodeById?) {
         episodeByIdFlow.value = episode
     }
@@ -151,10 +160,13 @@ public class FakeEpisodeRepository : EpisodeRepository {
         seasonNumber: Long,
     ): Flow<Long> = unwatchedCountInPreviousSeasonsFlow.asStateFlow()
 
-    override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> =
-        upcomingEpisodesFlow.value
+    override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> {
+        lastUpcomingEpisodesLimit = limit
+        return upcomingEpisodesFlow.value
+    }
 
     override suspend fun syncUpcomingEpisodes(startDate: String, days: Int, forceRefresh: Boolean) {
+        syncUpcomingEpisodesBehavior?.invoke()
     }
 
     override suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo? =
