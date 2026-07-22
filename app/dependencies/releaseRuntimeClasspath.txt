@@ -207,8 +207,8 @@ com.google.guava:listenablefuture:1.0
 com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0
 com.squareup.okhttp3:okhttp-android:5.4.0
 com.squareup.okhttp3:okhttp:5.4.0
-com.squareup.okio:okio-jvm:3.17.0
-com.squareup.okio:okio:3.17.0
+com.squareup.okio:okio-jvm:3.18.0
+com.squareup.okio:okio:3.18.0
 dev.icerock.moko:graphics-android:0.10.0
 dev.icerock.moko:graphics:0.10.0
 dev.icerock.moko:resources-android:0.26.4
