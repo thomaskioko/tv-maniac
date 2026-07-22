@@ -15,7 +15,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
 @Inject
@@ -31,7 +31,7 @@ public class ScheduleEpisodeNotificationsInteractor(
 ) : Interactor<ScheduleEpisodeNotificationsInteractor.Params>() {
 
     public data class Params(
-        val limit: Duration = 12.hours,
+        val limit: Duration = 7.days,
         val bufferTime: Duration = 10.minutes,
     )
 
@@ -45,7 +45,7 @@ public class ScheduleEpisodeNotificationsInteractor(
 
             val upcomingEpisodes = episodeRepository.getUpcomingEpisodesFromFollowedShows(
                 limit = params.limit,
-            )
+            ).take(MAX_SCHEDULED_NOTIFICATIONS)
 
             logger.debug(TAG, "Found ${upcomingEpisodes.size} upcoming episodes")
 
@@ -102,5 +102,6 @@ public class ScheduleEpisodeNotificationsInteractor(
 
     private companion object {
         private const val TAG = "ScheduleEpisodeNotifications"
+        private const val MAX_SCHEDULED_NOTIFICATIONS = 60
     }
 }

@@ -8,10 +8,10 @@ import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManag
 import com.thomaskioko.tvmaniac.core.view.InvokeStarted
 import com.thomaskioko.tvmaniac.core.view.InvokeSuccess
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.domain.notifications.TestLocalizer
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
@@ -21,6 +21,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
@@ -41,7 +42,7 @@ class ScheduleEpisodeNotificationsInteractorTest {
         main = testDispatcher,
     )
 
-    private val localizer = FakeLocalizer()
+    private val localizer = TestLocalizer()
 
     private val interactor = ScheduleEpisodeNotificationsInteractor(
         datastoreRepository = datastoreRepository,
@@ -347,6 +348,58 @@ class ScheduleEpisodeNotificationsInteractorTest {
         scheduled.size shouldBe 2
         scheduled shouldContainKey 601L
         scheduled shouldContainKey 602L
+    }
+
+    @Test
+    fun `should schedule notifications for seven day window given default params`() = runTest(testDispatcher) {
+        dateTimeProvider.setCurrentTimeMillis(1_000_000L)
+        datastoreRepository.setEpisodeNotificationsEnabled(true)
+
+        interactor(ScheduleEpisodeNotificationsInteractor.Params()).test {
+            awaitItem() shouldBe InvokeStarted
+            awaitItem() shouldBe InvokeSuccess
+            awaitComplete()
+        }
+
+        episodeRepository.lastUpcomingEpisodesLimit shouldBe 7.days
+    }
+
+    @Test
+    fun `should cap scheduled notifications at sixty given more upcoming episodes`() = runTest(testDispatcher) {
+        val currentTime = 1_000_000L
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+        datastoreRepository.setEpisodeNotificationsEnabled(true)
+
+        episodeRepository.setUpcomingEpisodes(
+            (1..70).map { index ->
+                UpcomingEpisode(
+                    episodeId = index.toLong(),
+                    seasonId = 70,
+                    showId = 7,
+                    episodeNumber = index.toLong(),
+                    seasonNumber = 1,
+                    title = "Episode $index",
+                    overview = null,
+                    runtime = null,
+                    imageUrl = null,
+                    firstAired = currentTime + index.hours.inWholeMilliseconds,
+                    showName = "Busy Show",
+                    showPoster = null,
+                )
+            },
+        )
+
+        interactor(ScheduleEpisodeNotificationsInteractor.Params()).test {
+            awaitItem() shouldBe InvokeStarted
+            awaitItem() shouldBe InvokeSuccess
+            awaitComplete()
+        }
+
+        val scheduled = notificationManager.getScheduledNotifications()
+        scheduled.size shouldBe 60
+        scheduled shouldContainKey 1L
+        scheduled shouldContainKey 60L
+        scheduled shouldNotContainKey 61L
     }
 
     @Test
