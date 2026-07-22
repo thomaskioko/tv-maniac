@@ -223,7 +223,7 @@ public class AndroidNotificationManager(
         private const val CHANNEL_DESCRIPTION_EPISODES = "Notifications for upcoming episodes"
         private const val CHANNEL_NAME_DEVELOPER = "Developer Testing"
         private const val CHANNEL_DESCRIPTION_DEVELOPER = "Notifications for testing"
-        private val ALARM_WINDOW_LENGTH = 10.minutes
+        internal val ALARM_WINDOW_LENGTH = 10.minutes
 
         @Volatile
         internal var iconProvider: NotificationIconProvider? = null
