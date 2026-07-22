@@ -7,6 +7,7 @@ import SwiftUI
 /// through to the toolbar beneath it.
 public struct SyncProgressBar: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var animating = false
 
     private let height: CGFloat = 4
@@ -27,7 +28,7 @@ public struct SyncProgressBar: View {
                     .frame(width: segment)
                     .offset(x: animating ? width : -segment)
                     .animation(
-                        .easeInOut(duration: 1.1).repeatForever(autoreverses: false),
+                        reduceMotion ? nil : .easeInOut(duration: 1.1).repeatForever(autoreverses: false),
                         value: animating
                     )
             }
