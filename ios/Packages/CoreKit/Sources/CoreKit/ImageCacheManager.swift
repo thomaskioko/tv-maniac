@@ -15,9 +15,8 @@ import UIKit
 ///
 /// | Setting | Standard | Low Memory |
 /// |---|---|---|
-/// | Memory cache cost limit | 50 MB | 30 MB |
+/// | Memory cache cost limit | 100 MB | 50 MB |
 /// | Memory cache count limit | 50 | 30 |
-/// | Memory cache TTL | 120 s | 60 s |
 /// | Concurrent loads | 4 | 3 |
 /// | URL cache (memory) | 5 MB | 2 MB |
 public enum ImageCacheManager {
@@ -33,9 +32,8 @@ public enum ImageCacheManager {
 
         let imageCache = ImageCache()
         let isLowMem = SystemMemory.isLowMemoryDevice
-        imageCache.costLimit = isLowMem ? 30 * 1024 * 1024 : 50 * 1024 * 1024
+        imageCache.costLimit = isLowMem ? 50 * 1024 * 1024 : 100 * 1024 * 1024
         imageCache.countLimit = isLowMem ? 30 : 50
-        imageCache.ttl = isLowMem ? 60 : 120
         config.imageCache = imageCache
 
         config.isStoringPreviewsInMemoryCache = false

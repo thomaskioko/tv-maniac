@@ -102,7 +102,7 @@ public struct CarouselView<T, Content: View>: View {
     }
 
     private func setupAutoScroll() {
-        guard !items.isEmpty else { return }
+        guard items.count > 1 else { return }
         stopAutoScroll()
         let itemCount = items.count
         timerCancellable = Timer.publish(every: 5, on: .main, in: .common)

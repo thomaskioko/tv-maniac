@@ -100,13 +100,13 @@ public struct DiscoverScreen: View {
             .frame(height: 150)
             .allowsHitTesting(false)
 
-            if #available(iOS 18.0, *) {
+            if #available(iOS 18.0, *), pullOffset > 0 {
                 let progress = min(pullOffset / RefreshConstants.threshold, 1.0)
 
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.onSurface))
                     .scaleEffect(2.0)
-                    .opacity(pullOffset > 0 ? max(0.6, Double(progress)) : 0)
+                    .opacity(max(0.6, Double(progress)))
                     .padding(.top, RefreshConstants.indicatorTopPadding)
                     .allowsHitTesting(false)
             }

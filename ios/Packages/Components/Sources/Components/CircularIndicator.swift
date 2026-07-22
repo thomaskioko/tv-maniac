@@ -48,7 +48,6 @@ public struct CircularIndicator: View {
                 }
             }
         }
-        .drawingGroup()
         .animation(nil, value: indicatorProgress)
         .animation(nil, value: currentIndex)
         .onChange(of: currentIndex) { _, newIndex in
@@ -158,22 +157,19 @@ public struct CircularIndicator: View {
     }
 
     private func resetAndStartProgress() {
+        guard totalItems > 1 else { return }
         progressTimer?.invalidate()
         progressTimer = nil
 
-        withAnimation(nil) {
-            indicatorProgress = 0
-        }
+        indicatorProgress = 0
 
         scheduleDelayedWork(delay: 0.05) {
             let startTime = Date()
-            progressTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+            progressTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { timer in
                 let elapsed = Date().timeIntervalSince(startTime)
                 let progress = min(elapsed / 5.0, 1.0)
 
-                withAnimation(nil) {
-                    indicatorProgress = CGFloat(progress)
-                }
+                indicatorProgress = CGFloat(progress)
 
                 if progress >= 1.0 {
                     timer.invalidate()
