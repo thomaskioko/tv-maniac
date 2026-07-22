@@ -473,6 +473,7 @@ graph TB
   :data:episode:implementation --> :core:base
   :data:episode:implementation --> :core:logger:api
   :data:episode:implementation -.-> :core:network-util:api
+  :data:episode:implementation --> :core:notifications:api
   :data:episode:implementation --> :core:syncstate:api
   :data:episode:implementation --> :core:util:api
   :data:episode:implementation --> :data:account-manager:api

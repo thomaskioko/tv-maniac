@@ -22,6 +22,10 @@ graph TB
     direction TB
     :core:network-util:api[api]:::multiplatform
   end
+  subgraph :core:notifications
+    direction TB
+    :core:notifications:api[api]:::multiplatform
+  end
   subgraph :core:syncstate
     direction TB
     :core:syncstate:api[api]:::multiplatform
@@ -96,6 +100,7 @@ graph TB
   :data:episode:implementation --> :core:base
   :data:episode:implementation --> :core:logger:api
   :data:episode:implementation -.-> :core:network-util:api
+  :data:episode:implementation --> :core:notifications:api
   :data:episode:implementation --> :core:syncstate:api
   :data:episode:implementation --> :core:util:api
   :data:episode:implementation --> :data:account-manager:api
