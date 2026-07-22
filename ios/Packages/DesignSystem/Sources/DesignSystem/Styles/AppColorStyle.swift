@@ -1,9 +1,9 @@
 import SwiftUI
 
 public struct AppColorStyle: ShapeStyle {
-    private let keyPath: KeyPath<TvManiacColorScheme, Color>
+    private let keyPath: KeyPath<TvManiacColorScheme, Color> & Sendable
 
-    public init(_ keyPath: KeyPath<TvManiacColorScheme, Color>) {
+    public init(_ keyPath: KeyPath<TvManiacColorScheme, Color> & Sendable) {
         self.keyPath = keyPath
     }
 
