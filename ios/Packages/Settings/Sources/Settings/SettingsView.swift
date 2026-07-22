@@ -519,7 +519,7 @@ public struct SettingsView: View {
             loginLabel: uiState.labels.login,
             providerName: providerDisplayName(uiState.activeProvider),
             providerLogoName: uiState.activeProvider?.name == "SIMKL" ? "SimklMono" : "TraktMono",
-            authProviders: uiState.authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
+            authProviders: uiState.authProviders.map { option in
                 SwiftAuthProvider(
                     id: option.provider.name,
                     label: option.label,
