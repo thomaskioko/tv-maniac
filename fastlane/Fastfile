@@ -46,7 +46,7 @@ platform :ios do
       destination: TEST_DESTINATION,
       skip_detect_devices: true,
       build_for_testing: true,
-      xcargs: "COMPILATION_CACHE_CAS_PATH=#{COMPILATION_CACHE_PATH} COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS=YES -skipPackagePluginValidation",
+      xcargs: "-skipPackagePluginValidation",
       xcodebuild_formatter: "",
       derived_data_path: DERIVED_DATA_PATH
     )
