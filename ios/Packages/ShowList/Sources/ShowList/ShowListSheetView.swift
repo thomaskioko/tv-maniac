@@ -198,7 +198,7 @@ public struct ShowListSheetView: View {
             ProviderSignInCard(
                 title: state.labels.loginRequiredTitle,
                 description: state.labels.loginRequiredMessage,
-                providers: state.authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
+                providers: state.authProviders.map { option in
                     SwiftAuthProvider(
                         id: option.provider.name,
                         label: option.label,

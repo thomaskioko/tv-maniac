@@ -24,7 +24,7 @@ public struct TabContentView<Content: View>: View {
     public var body: some View {
         ZStack {
             if let child {
-                NavigationView {
+                NavigationStack {
                     content(child)
                         .id(ObjectIdentifier(child))
                 }

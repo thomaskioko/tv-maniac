@@ -275,7 +275,7 @@ private extension ContinueWatchingState {
             staleGridItems: Array(staleItems).map {
                 MyShowsGridItem(
                     showId: $0.showId,
-                    title: $0.title ?? "",
+                    title: $0.title,
                     posterImageUrl: $0.posterImageUrl,
                     watchProgress: $0.watchProgress
                 )

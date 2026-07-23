@@ -100,7 +100,7 @@ public struct DiscoverScreen: View {
             .frame(height: 150)
             .allowsHitTesting(false)
 
-            if #available(iOS 18.0, *), pullOffset > 0 {
+            if pullOffset > 0 {
                 let progress = min(pullOffset / RefreshConstants.threshold, 1.0)
 
                 ProgressView()
@@ -140,30 +140,25 @@ public struct DiscoverScreen: View {
         .toastView(toast: $toast)
     }
 
-    @ViewBuilder
     private var discoverScrollView: some View {
-        if #available(iOS 18.0, *) {
-            scrollViewContent
-                .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                    geometry.contentOffset.y
-                } action: { _, newValue in
-                    if !isRefreshingLocal, isScrollInteracting {
-                        pullOffset = max(0, -newValue)
-                    }
+        scrollViewContent
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y
+            } action: { _, newValue in
+                if !isRefreshingLocal, isScrollInteracting {
+                    pullOffset = max(0, -newValue)
                 }
-                .onScrollPhaseChange { oldPhase, newPhase in
-                    isScrollInteracting = newPhase == .interacting
-                    if oldPhase == .interacting {
-                        if !isRefreshingLocal, pullOffset >= RefreshConstants.threshold {
-                            isRefreshingLocal = true
-                            onRefresh()
-                        }
-                        pullOffset = 0
+            }
+            .onScrollPhaseChange { oldPhase, newPhase in
+                isScrollInteracting = newPhase == .interacting
+                if oldPhase == .interacting {
+                    if !isRefreshingLocal, pullOffset >= RefreshConstants.threshold {
+                        isRefreshingLocal = true
+                        onRefresh()
                     }
+                    pullOffset = 0
                 }
-        } else {
-            scrollViewContent
-        }
+            }
     }
 
     private var scrollViewContent: some View {

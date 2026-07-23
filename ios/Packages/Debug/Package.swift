@@ -6,7 +6,7 @@ let package = Package(
     name: "Debug",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v18),
     ],
     products: [
         .library(
