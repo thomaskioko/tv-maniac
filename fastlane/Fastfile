@@ -6,6 +6,7 @@ TEST_DESTINATION = "platform=iOS Simulator,OS=#{TEST_OS},name=#{TEST_DEVICE}"
 PACKAGE_NAME = "com.thomaskioko.tvmaniac"
 PROJECT_DIR = File.expand_path('..', Dir.pwd)
 DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
+COMPILATION_CACHE_PATH = "#{PROJECT_DIR}/compilation_cache"
 
 platform :ios do
 
@@ -45,7 +46,7 @@ platform :ios do
       destination: TEST_DESTINATION,
       skip_detect_devices: true,
       build_for_testing: true,
-      xcargs: "-skipPackagePluginValidation",
+      xcargs: "COMPILATION_CACHE_CAS_PATH=#{COMPILATION_CACHE_PATH} COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS=YES -skipPackagePluginValidation",
       xcodebuild_formatter: "",
       derived_data_path: DERIVED_DATA_PATH
     )
@@ -104,7 +105,7 @@ platform :ios do
       destination: TEST_DESTINATION,
       derived_data_path: DERIVED_DATA_PATH,
       cloned_source_packages_path: "ios/SourcePackages",
-      xcargs: "COMPILER_INDEX_STORE_ENABLE=NO -skipPackagePluginValidation",
+      xcargs: "COMPILATION_CACHE_CAS_PATH=#{COMPILATION_CACHE_PATH} COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS=YES COMPILER_INDEX_STORE_ENABLE=NO -skipPackagePluginValidation",
       buildlog_path: "fastlane/logs",
       clean: true,
       skip_archive: true,

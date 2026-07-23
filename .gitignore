@@ -93,6 +93,7 @@ ios/build
 ios/SourcePackages/
 
 derived_data/
+compilation_cache/
 *.xcresult
 
 /.junie/guidelines.md
