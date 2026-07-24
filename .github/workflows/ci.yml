@@ -332,28 +332,8 @@ jobs:
                     restore-keys: |
                         ${{ runner.os }}-snapshot-derived-data-
 
-            -   name: 🗂️ Restore Compilation Cache
-                id: compilation-cache
-                uses: actions/cache/restore@v6
-                with:
-                    path: compilation_cache
-                    key: ${{ runner.os }}-xcode-cas-snapshot-${{ env.XCODE_VERSION }}-${{ github.sha }}
-                    restore-keys: |
-                        ${{ runner.os }}-xcode-cas-snapshot-${{ env.XCODE_VERSION }}-
-
             -   name: 📸 Run Snapshot Tests
                 run: bundle exec fastlane snapshot_tests
-
-            -   name: 📏 Compilation cache size
-                if: ${{ !cancelled() }}
-                run: du -sh compilation_cache || true
-
-            -   name: 🗂️ Save Compilation Cache
-                if: github.ref == 'refs/heads/main' && steps.compilation-cache.outputs.cache-hit != 'true'
-                uses: actions/cache/save@v6
-                with:
-                    path: compilation_cache
-                    key: ${{ runner.os }}-xcode-cas-snapshot-${{ env.XCODE_VERSION }}-${{ github.sha }}
 
             -   name: 🗂️ Save DerivedData
                 if: github.ref == 'refs/heads/main' && steps.derived-data.outputs.cache-hit != 'true'
