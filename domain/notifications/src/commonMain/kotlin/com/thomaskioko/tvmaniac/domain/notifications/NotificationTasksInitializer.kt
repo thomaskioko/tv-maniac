@@ -30,9 +30,8 @@ public class NotificationTasksInitializer(
             combine(
                 accountManager.value.isConnected,
                 datastoreRepository.value.observeEpisodeNotificationsEnabled(),
-                datastoreRepository.value.observeBackgroundSyncEnabled(),
-            ) { connected, notificationsEnabled, syncEnabled ->
-                connected && notificationsEnabled && syncEnabled
+            ) { connected, notificationsEnabled ->
+                connected && notificationsEnabled
             }
                 .distinctUntilChanged()
                 .collect { shouldSchedule ->

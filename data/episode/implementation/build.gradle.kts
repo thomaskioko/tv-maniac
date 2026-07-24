@@ -17,6 +17,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.data.calendar.api)
                 api(projects.core.logger.api)
+                api(projects.core.notifications.api)
                 api(projects.core.syncstate.api)
                 api(projects.core.util.api)
                 api(projects.data.accountManager.api)
@@ -40,6 +41,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
+                implementation(projects.core.notifications.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.core.syncstate.testing)
                 implementation(projects.data.accountManager.testing)

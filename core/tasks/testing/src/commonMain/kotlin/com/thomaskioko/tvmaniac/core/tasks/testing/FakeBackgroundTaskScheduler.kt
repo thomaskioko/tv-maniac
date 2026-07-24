@@ -4,8 +4,24 @@ import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 
 public class FakeBackgroundTaskScheduler : BackgroundTaskScheduler {
-    override fun schedulePeriodic(request: PeriodicTaskRequest) {}
-    override fun scheduleAndExecute(request: PeriodicTaskRequest) {}
-    override fun cancel(id: String) {}
+    private val scheduledRequests = mutableListOf<PeriodicTaskRequest>()
+    private val cancelledIds = mutableListOf<String>()
+
+    override fun schedulePeriodic(request: PeriodicTaskRequest) {
+        scheduledRequests += request
+    }
+
+    override fun scheduleAndExecute(request: PeriodicTaskRequest) {
+        scheduledRequests += request
+    }
+
+    override fun cancel(id: String) {
+        cancelledIds += id
+    }
+
     override fun cancelAll() {}
+
+    public fun getScheduledRequests(): List<PeriodicTaskRequest> = scheduledRequests.toList()
+
+    public fun getCancelledIds(): List<String> = cancelledIds.toList()
 }

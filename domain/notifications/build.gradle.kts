@@ -45,6 +45,8 @@ kotlin {
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.networkUtil.testing)
                 implementation(projects.core.notifications.testing)
+                implementation(projects.core.syncstate.testing)
+                implementation(projects.core.tasks.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.core.view)
                 implementation(projects.data.accountManager.testing)
