@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.SearchBar
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
@@ -67,7 +68,6 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsAction
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsPresenter
 import com.thomaskioko.tvmaniac.myshows.presenter.MyShowsState
-import com.thomaskioko.tvmaniac.myshows.ui.component.Searchbar
 import com.thomaskioko.tvmaniac.startwatching.ui.StartWatchingScreen
 import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import io.github.thomaskioko.codegen.annotations.TabUi
@@ -236,7 +236,7 @@ private fun Toolbar(
                 label = "search_expansion_animation",
             ) { expanded ->
                 if (expanded) {
-                    Searchbar(
+                    SearchBar(
                         modifier = Modifier.testTag(MyShowsTestTags.SEARCH_BAR_TEST_TAG),
                         query = state.query,
                         hint = msg_search_show_hint.resolve(context),

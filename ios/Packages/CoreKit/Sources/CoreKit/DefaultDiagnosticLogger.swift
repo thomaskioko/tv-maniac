@@ -11,7 +11,6 @@ public final class DefaultDiagnosticLogger: DiagnosticLogger, @unchecked Sendabl
 
     private let lock = NSLock()
     private var _logger: CoreLogger?
-    private var _lastMemoryWarningDate: Date?
     private var _breadcrumbs: [Breadcrumb] = []
     private let maxBreadcrumbs = 50
 
@@ -25,7 +24,6 @@ public final class DefaultDiagnosticLogger: DiagnosticLogger, @unchecked Sendabl
 
     public func recordMemoryWarning(level: Int, memoryUsage: String) {
         lock.lock()
-        _lastMemoryWarningDate = Date()
         appendBreadcrumbLocked(
             category: "memory",
             message: "Warning #\(level) — \(memoryUsage)"
@@ -60,25 +58,6 @@ public final class DefaultDiagnosticLogger: DiagnosticLogger, @unchecked Sendabl
             tag: "DiagnosticLogger",
             message: "Error: \(error.localizedDescription) context: [\(contextDescription)]"
         )
-    }
-
-    public func setUserContext(userId: String?) {
-        lock.lock()
-        let log = _logger
-        lock.unlock()
-
-        if let userId {
-            log?.debug(tag: "DiagnosticLogger", message: "User context set: \(userId)")
-        } else {
-            log?.debug(tag: "DiagnosticLogger", message: "User context cleared")
-        }
-    }
-
-    public func lastMemoryWarningInterval() -> TimeInterval? {
-        lock.lock()
-        defer { lock.unlock() }
-        guard let date = _lastMemoryWarningDate else { return nil }
-        return Date().timeIntervalSince(date)
     }
 
     private func appendBreadcrumbLocked(category: String, message: String) {

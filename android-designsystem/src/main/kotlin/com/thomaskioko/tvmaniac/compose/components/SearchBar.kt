@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.ui.library
+package com.thomaskioko.tvmaniac.compose.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,21 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewWrapper
-import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
-import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_clear
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.testtags.library.LibraryTestTags
 
 @Composable
-internal fun LibrarySearchbar(
+public fun SearchBar(
     query: String,
     hint: String,
     onQueryChanged: (String) -> Unit,
@@ -57,8 +53,7 @@ internal fun LibrarySearchbar(
         modifier = modifier
             .padding(end = TvManiacSpacing.xSmall)
             .fillMaxWidth()
-            .focusRequester(focusRequester)
-            .testTag(LibraryTestTags.SEARCH_BAR_TEST_TAG),
+            .focusRequester(focusRequester),
         value = textFieldValue,
         onValueChange = { newValue ->
             textFieldValue = newValue
@@ -118,10 +113,10 @@ internal fun LibrarySearchbar(
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun LibrarySearchbarPreview() {
-    LibrarySearchbar(
+private fun SearchBarPreview() {
+    SearchBar(
         query = "",
-        hint = "Search library...",
+        hint = "Search shows...",
         onQueryChanged = {},
         onCloseClick = {},
     )
@@ -130,10 +125,10 @@ private fun LibrarySearchbarPreview() {
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun LibrarySearchbarWithQueryPreview() {
-    LibrarySearchbar(
+private fun SearchBarWithQueryPreview() {
+    SearchBar(
         query = "Breaking Bad",
-        hint = "Search library...",
+        hint = "Search shows...",
         onQueryChanged = {},
         onCloseClick = {},
     )
