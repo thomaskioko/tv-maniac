@@ -135,7 +135,7 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
     }
 
     private fun seedShow(tmdbId: Long): Id<ShowId> {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
             name = "Test Show",
             overview = "Overview",

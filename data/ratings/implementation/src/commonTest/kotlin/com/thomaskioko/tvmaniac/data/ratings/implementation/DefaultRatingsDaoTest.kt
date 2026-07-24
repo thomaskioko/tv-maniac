@@ -171,7 +171,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
     }
 
     private fun seedSeason(seasonId: Long, showId: Long) {
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_id = Id(showId),
             season_number = 1L,
@@ -183,7 +183,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
     }
 
     private fun seedEpisode(episodeId: Long, seasonId: Long, showId: Long) {
-        val _ = database.episodesQueries.upsert(
+        database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
             show_id = Id(showId),
@@ -199,7 +199,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
     }
 
     private fun seedShow(showId: Long) {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = "Test Show $showId",
             overview = "Overview $showId",

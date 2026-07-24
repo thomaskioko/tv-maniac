@@ -128,7 +128,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
     }
 
     private fun insertTestData() {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,
@@ -146,7 +146,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
 
         val showId = showIdForTraktId(TEST_SHOW_ID)
 
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
             show_id = showId,
             season_number = SEASON_1_NUMBER,
@@ -156,7 +156,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             image_url = "/season1.jpg",
         )
 
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
             show_id = showId,
             season_number = SEASON_2_NUMBER,
@@ -169,7 +169,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
-            val _ = database.episodesQueries.upsert(
+            database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
                 show_id = showId,
@@ -187,7 +187,7 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
         repeat(SEASON_2_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 200L + episodeNumber
-            val _ = database.episodesQueries.upsert(
+            database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_2_ID),
                 show_id = showId,
@@ -202,14 +202,14 @@ internal class DefaultEpisodeRepositoryTest : BaseDatabaseTest() {
             )
         }
 
-        val _ = database.followedShowsQueries.upsert(
+        database.followedShowsQueries.upsert(
             showId = showId,
             tmdbId = Id(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",
         )
 
-        val _ = database.showMetadataQueries.upsert(
+        database.showMetadataQueries.upsert(
             show_id = showId,
             season_count = 2,
             episode_count = (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT).toLong(),

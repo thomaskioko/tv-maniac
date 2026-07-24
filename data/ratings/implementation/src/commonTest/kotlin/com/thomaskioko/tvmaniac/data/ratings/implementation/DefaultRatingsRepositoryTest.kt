@@ -503,7 +503,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     }
 
     private fun seedSeason(seasonId: Long) {
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_id = Id(SHOW_ID),
             season_number = 1L,
@@ -515,7 +515,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     }
 
     private fun seedEpisode(episodeId: Long, seasonId: Long) {
-        val _ = database.episodesQueries.upsert(
+        database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
             show_id = Id(SHOW_ID),
