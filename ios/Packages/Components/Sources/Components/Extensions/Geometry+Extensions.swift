@@ -7,13 +7,6 @@ public extension GeometryProxy {
         return Double(min(1, max(0, progress)))
     }
 
-    private func getTitleOpacity(scrollOffset: CGFloat, imageHeight: CGFloat,
-                                 collapsedImageHeight: CGFloat) -> CGFloat
-    {
-        let progress = -scrollOffset / (imageHeight - collapsedImageHeight)
-        return min(1, max(0, progress))
-    }
-
     func getScrollOffset(_ geometry: GeometryProxy) -> CGFloat {
         geometry.frame(in: .global).minY
     }
@@ -27,12 +20,5 @@ public extension GeometryProxy {
         }
 
         return imageHeight
-    }
-
-    func getBlurRadiusForImage(_ geometry: GeometryProxy) -> CGFloat {
-        let offset = geometry.frame(in: .global).maxY
-        let height = geometry.size.height
-        let blur = (height - max(offset, 0)) / height
-        return blur * 6
     }
 }

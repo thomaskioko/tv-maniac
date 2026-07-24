@@ -2,7 +2,6 @@ import DesignSystem
 import SwiftUI
 
 public enum ParallaxConstants {
-    public static let defaultImageHeight: CGFloat = 520
     public static let collapsedImageHeight: CGFloat = 120
     public static let profileImageHeight: CGFloat = 350
     public static let showDetailsImageHeight: CGFloat = 500
@@ -28,12 +27,6 @@ public enum ParallaxConstants {
     }
 }
 
-public enum GridConstants {
-    public static let defaultItemSpacing: CGFloat = 4
-    public static let adaptiveMinimum: CGFloat = 100
-}
-
 public enum AnimationConstants {
     public static let defaultDuration: Double = 0.25
-    public static let springDuration: Double = 0.3
 }
