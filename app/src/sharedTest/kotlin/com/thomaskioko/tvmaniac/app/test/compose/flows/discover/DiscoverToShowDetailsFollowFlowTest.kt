@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.discover
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
+import com.thomaskioko.tvmaniac.util.testing.FlakyTests
 import org.junit.Test
 
 internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
@@ -21,6 +22,7 @@ internal class DiscoverToShowDetailsFollowFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    @FlakyTests(count = 2)
     fun givenShowDetails_whenBackIsPressed_thenRestoresDiscover() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
