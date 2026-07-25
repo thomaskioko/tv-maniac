@@ -121,7 +121,7 @@ class IosDebugRemoteConfigTest {
             bridge = bridge,
             fetchInterval = FeatureFlagFetchInterval(seconds = 900L),
             state = RemoteConfigState(),
-            flags = lazyOf(emptySet()),
+            flags = lazyOf(setOf(TestRemoteFlag(flagKey))),
             logger = FakeLogger(),
         )
 

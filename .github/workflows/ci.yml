@@ -191,26 +191,26 @@ jobs:
                     name: linux-test-report
                     path: '**/build/reports/*'
 
-#    ios-test:
-#        needs: [static-analysis]
-#        runs-on: macos-26
-#        environment:
-#            name: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && 'Protected' || '' }}
-#        steps:
-#            -   uses: actions/checkout@v6
-#
-#            -   name: 🐘 Setup Gradle Environment
-#                uses: ./.github/actions/setup-gradle
-#
-#            -   name: Run iOS Tests
-#                run: ./gradlew iosTest -Papp.enableIos=true -Papp.debugOnly=false
-#
-#            -   name: Upload Test Reports
-#                uses: actions/upload-artifact@v7
-#                if: ${{ !cancelled() }}
-#                with:
-#                    name: ios-test-report
-#                    path: '**/build/reports/*'
+    ios-test:
+        runs-on: macos-26
+        timeout-minutes: 60
+        steps:
+            -   uses: actions/checkout@v7
+
+            -   name: 📱 Setup iOS Environment
+                uses: ./.github/actions/setup-ios
+                with:
+                    xcode-version: ${{ env.XCODE_VERSION }}
+
+            -   name: 🧪 Run Kotlin/Native Tests
+                run: ./gradlew iosTest -Papp.enableIos=true -Papp.debugOnly=false --continue
+
+            -   name: Upload Test Reports
+                uses: actions/upload-artifact@v7
+                if: ${{ !cancelled() }}
+                with:
+                    name: ios-test-report
+                    path: '**/build/reports/*'
 
     build-ios-framework:
         needs: [swift-lint]
