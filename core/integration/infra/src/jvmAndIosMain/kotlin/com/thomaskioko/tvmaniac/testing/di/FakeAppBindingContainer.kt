@@ -16,7 +16,6 @@ import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
 import com.thomaskioko.tvmaniac.domain.notifications.EpisodeNotificationWorker
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRouteSerializer
@@ -53,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.Serializable
 
 @BindingContainer
 @ContributesTo(
@@ -66,6 +66,9 @@ import kotlinx.coroutines.flow.flowOf
     ],
 )
 public object FakeAppBindingContainer {
+
+    @Serializable
+    private data object FakeRoute : NavRoute
 
     @Provides
     @SingleIn(AppScope::class)
@@ -166,7 +169,7 @@ public object FakeAppBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideNavRouteBindings(): Set<NavRouteBinding<*>> = setOf(
-        NavRouteBinding(HomeRoute::class, HomeRoute.serializer()),
+        NavRouteBinding(FakeRoute::class, FakeRoute.serializer()),
     )
 
     @Provides

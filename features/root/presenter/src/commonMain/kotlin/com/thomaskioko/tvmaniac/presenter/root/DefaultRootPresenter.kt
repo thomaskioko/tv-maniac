@@ -35,7 +35,7 @@ import com.thomaskioko.tvmaniac.navigation.ScreenDestination
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.SheetDestination
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
-import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
+import com.thomaskioko.tvmaniac.presenter.home.di.HomeChildGraph
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastType
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -71,7 +71,7 @@ public class DefaultRootPresenter(
     @Assisted componentContext: ComponentContext,
     private val navigator: Navigator,
     private val navDestinations: Set<NavDestination<*>>,
-    homeGraphFactory: HomeScreenGraph.Factory,
+    homeGraphFactory: HomeChildGraph.Factory,
     private val notificationRationale: NotificationRationale,
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,

@@ -606,7 +606,7 @@ graph TB
   :data:library:implementation --> :data:shows:api
   :data:library:implementation --> :data:sync-activity:api
   :data:library:implementation --> :data:watchproviders:api
-  :data:logout:implementation -.-> :core:base
+  :data:logout:implementation --> :core:base
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api
@@ -784,7 +784,7 @@ graph TB
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
-  :data:traktlists:implementation -.-> :data:shows:api
+  :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
   :data:trendingshows:api --> :core:base
   :data:trendingshows:api --> :data:database:sqldelight
@@ -1011,7 +1011,7 @@ graph TB
   :features:discover:presenter --> :core:logger:api
   :features:discover:presenter --> :core:view
   :features:discover:presenter --> :data:account-manager:api
-  :features:discover:presenter -.-> :data:datastore:api
+  :features:discover:presenter --> :data:datastore:api
   :features:discover:presenter -.-> :data:start-watching:api
   :features:discover:presenter --> :domain:continue-watching
   :features:discover:presenter --> :domain:discover

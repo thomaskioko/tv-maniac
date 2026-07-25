@@ -65,7 +65,6 @@ dependencies {
     implementation(projects.features.featureFlags.ui)
     implementation(projects.features.episodeSheet.ui)
     implementation(projects.features.ratingSheet.ui)
-    implementation(projects.features.home.ui)
     implementation(projects.features.library.ui)
     implementation(projects.features.myShows.ui)
     implementation(projects.features.moreShows.ui)

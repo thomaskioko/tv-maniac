@@ -96,7 +96,7 @@ internal class DefaultRequestManagerRepositoryTest : BaseDatabaseTest() {
 
         repository.upsert(entityId, requestType, oldTimestamp)
 
-        val _ = lastRequestsQueries.getLastRequestForId(requestType, entityId)
+        lastRequestsQueries.getLastRequestForId(requestType, entityId)
 
         val result = repository.isRequestExpired(entityId, requestType, threshold)
 

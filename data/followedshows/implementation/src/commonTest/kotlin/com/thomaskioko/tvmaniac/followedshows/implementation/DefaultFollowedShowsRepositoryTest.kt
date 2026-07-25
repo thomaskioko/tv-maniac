@@ -92,7 +92,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should re-add show marked for deletion`() = runTest {
-        val _ = dao.upsert(
+        dao.upsert(
             FollowedShowEntry(
                 showId = 1L,
                 followedAt = testInstant,
@@ -108,7 +108,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should not add show already in watchlist`() = runTest {
-        val _ = dao.upsert(
+        dao.upsert(
             FollowedShowEntry(
                 showId = 1L,
                 followedAt = testInstant,
@@ -125,7 +125,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should mark show for deletion given trakt id exists`() = runTest {
-        val _ = dao.upsert(
+        dao.upsert(
             FollowedShowEntry(
                 showId = 1L,
                 followedAt = testInstant,
@@ -141,7 +141,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should delete local entry given pending upload`() = runTest {
-        val _ = dao.upsert(
+        dao.upsert(
             FollowedShowEntry(
                 showId = 1L,
                 followedAt = testInstant,
@@ -157,14 +157,14 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should get followed shows`() = runTest {
-        val _ = dao.upsert(
+        dao.upsert(
             FollowedShowEntry(
                 showId = 1L,
                 followedAt = testInstant,
                 pendingAction = PendingAction.NOTHING,
             ),
         )
-        val _ = dao.upsert(
+        dao.upsert(
             FollowedShowEntry(
                 showId = 2L,
                 followedAt = testInstant,
@@ -197,7 +197,7 @@ internal class DefaultFollowedShowsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should emit false given show marked for deletion`() = runTest {
-        val _ = dao.upsert(
+        dao.upsert(
             FollowedShowEntry(
                 showId = 1L,
                 followedAt = testInstant,

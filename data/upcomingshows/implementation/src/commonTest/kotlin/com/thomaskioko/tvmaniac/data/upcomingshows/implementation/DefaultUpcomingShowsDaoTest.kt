@@ -110,7 +110,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
     fun `stable query should not return shows with null names`() = runTest {
         // Given - insert a show without name (simulating pre-migration data)
         val showId = seedShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
-        val _ = upcomingShowsQueries.insert(
+        upcomingShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
             page = Id<PageId>(1),
@@ -134,7 +134,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
     fun `stable query should filter by page correctly`() = runTest {
         // Given - add shows to different pages
         val showId = seedShow(showId = 999, name = "Page 2 Show", posterPath = "/page2.jpg")
-        val _ = upcomingShowsQueries.insert(
+        upcomingShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
             page = Id<PageId>(2),
@@ -253,7 +253,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
     fun `stable query should handle COALESCE for empty names correctly`() = runTest {
         val showId = seedShow(showId = 888, name = "Empty Name Show", posterPath = "/empty.jpg")
         database.upcomingShowsQueries.transaction {
-            val _ = database.upcomingShowsQueries.insert(
+            database.upcomingShowsQueries.insert(
                 showId = showId,
                 tmdbId = Id<TmdbId>(888),
                 page = Id<PageId>(1),
@@ -275,7 +275,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
     }
 
     private fun seedShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = name,
             overview = "$name overview",
@@ -295,7 +295,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
 
     private fun insertTestShows() {
         // Insert test TV shows first
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -311,7 +311,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -331,7 +331,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
         showId2 = showIdForTraktId(2)
 
         // Insert upcoming shows with show data
-        val _ = upcomingShowsQueries.insert(
+        upcomingShowsQueries.insert(
             showId = showId1,
             tmdbId = Id<TmdbId>(1),
             page = Id<PageId>(1),
@@ -341,7 +341,7 @@ internal class DefaultUpcomingShowsDaoTest : BaseDatabaseTest() {
             page_order = 0,
         )
 
-        val _ = upcomingShowsQueries.insert(
+        upcomingShowsQueries.insert(
             showId = showId2,
             tmdbId = Id<TmdbId>(2),
             page = Id<PageId>(1),

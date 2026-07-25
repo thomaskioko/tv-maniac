@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.compose.util.LocalAutoAdvanceEnabled
 
 @Composable
 internal fun CircularIndicator(
@@ -33,11 +34,11 @@ internal fun CircularIndicator(
     isUserScrolling: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val isInPreview = LocalInspectionMode.current
-    val indicatorProgress = remember { Animatable(if (isInPreview) 1f else 0f) }
+    val isStatic = LocalInspectionMode.current || !LocalAutoAdvanceEnabled.current
+    val indicatorProgress = remember { Animatable(if (isStatic) 1f else 0f) }
 
-    LaunchedEffect(currentPage, isUserScrolling) {
-        if (isInPreview) {
+    LaunchedEffect(currentPage, isUserScrolling, isStatic) {
+        if (isStatic) {
             indicatorProgress.snapTo(1f)
             return@LaunchedEffect
         }

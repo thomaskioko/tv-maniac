@@ -754,7 +754,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
     private fun followShowOnly(showId: Long, followedAt: Long) {
         val resolvedShowId = showIdByTraktId.getValue(showId)
-        val _ = database.followedShowsQueries.upsert(
+        database.followedShowsQueries.upsert(
             showId = resolvedShowId,
             tmdbId = Id(showId),
             followedAt = followedAt,
@@ -769,7 +769,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         episodeNumber: Long,
         watchedAt: Long = watchDate,
     ) {
-        val _ = database.watchedEpisodesQueries.upsert(
+        database.watchedEpisodesQueries.upsert(
             show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
@@ -787,7 +787,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         pendingAction: String,
         watchedAt: Long = watchDate,
     ) {
-        val _ = database.watchedEpisodesQueries.upsert(
+        database.watchedEpisodesQueries.upsert(
             show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,
@@ -803,7 +803,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         overview: String = "Overview for $name",
         status: String = "Returning Series",
     ) {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(id),
             name = name,
             overview = overview,
@@ -828,7 +828,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         title: String = "Season $seasonNumber",
         episodeCount: Long = 2L,
     ) {
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_id = showIdByTraktId.getValue(showId),
             season_number = seasonNumber,
@@ -847,7 +847,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         title: String,
         firstAired: Long? = LocalDate(2023, 1, 1).toEpochMillis(),
     ) {
-        val _ = database.episodesQueries.upsert(
+        database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
             show_id = showIdByTraktId.getValue(showId),
@@ -906,13 +906,13 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShow(id = 1, name = "Test Show 1")
         insertShow(id = 2, name = "Test Show 2", status = "Ended")
 
-        val _ = database.showMetadataQueries.upsert(
+        database.showMetadataQueries.upsert(
             show_id = showIdByTraktId.getValue(1L),
             season_count = 1,
             episode_count = 3,
             status = "Returning Series",
         )
-        val _ = database.showMetadataQueries.upsert(
+        database.showMetadataQueries.upsert(
             show_id = showIdByTraktId.getValue(2L),
             season_count = 1,
             episode_count = 2,

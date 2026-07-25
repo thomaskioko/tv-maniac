@@ -296,7 +296,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should use the season episode count for total given episode rows are not synced`() = runTest {
         val importedShowId = 5500L
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(importedShowId),
             name = "Imported Show",
             overview = "Seasons synced from a provider, episodes never opened in-app",
@@ -312,7 +312,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/b.jpg",
         )
         val resolvedShowId = showIdForTraktId(importedShowId)
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(5501L),
             show_id = resolvedShowId,
             season_number = 1L,
@@ -349,7 +349,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should attribute watched markers to the linked episode season given the raw season number differs`() = runTest {
         val showId = 7000L
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(showId),
             name = "Linked Show",
             overview = "Marker linked to the correct episode but carrying a mismatched season number",
@@ -365,7 +365,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/b.jpg",
         )
         val resolvedShowId = showIdForTraktId(showId)
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(7003L),
             show_id = resolvedShowId,
             season_number = 3L,
@@ -556,7 +556,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         val seasonNumber = 1L
         val episodeNumber = 5L
 
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(showId),
             name = "UpNext Test Show",
             overview = "A show where episode details haven't been synced",
@@ -573,7 +573,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         )
 
         val resolvedShowId = showIdForTraktId(showId)
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(9001L),
             show_id = resolvedShowId,
             season_number = seasonNumber,
@@ -699,7 +699,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should not follow the show given an episode is marked watched`() = runTest {
         val unfollowedShowId = 5500L
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(unfollowedShowId),
             name = "Watched But Not Followed",
             overview = "Watched locally without being added to the watchlist",
@@ -715,7 +715,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             backdrop_path = "/b.jpg",
         )
         val resolvedShowId = showIdForTraktId(unfollowedShowId)
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(5501L),
             show_id = resolvedShowId,
             season_number = 1L,
@@ -743,7 +743,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     @Test
     fun `should not follow the show given watched history is merged from a provider`() = runTest {
         val unfollowedShowId = 5500L
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(unfollowedShowId),
             name = "Remote Watched Not Followed",
             overview = "Watched history synced from a provider without a watchlist entry",
@@ -784,7 +784,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertTestData() {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id(TEST_SHOW_ID),
             name = TEST_SHOW_NAME,
             overview = TEST_SHOW_OVERVIEW,
@@ -802,7 +802,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         testShowId = showIdForTraktId(TEST_SHOW_ID)
 
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(SEASON_1_ID),
             show_id = testShowId,
             season_number = SEASON_1_NUMBER,
@@ -812,7 +812,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             image_url = "/season1.jpg",
         )
 
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(SEASON_2_ID),
             show_id = testShowId,
             season_number = SEASON_2_NUMBER,
@@ -825,7 +825,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         repeat(SEASON_1_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 100L + episodeNumber
-            val _ = database.episodesQueries.upsert(
+            database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_1_ID),
                 show_id = testShowId,
@@ -843,7 +843,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         repeat(SEASON_2_EPISODE_COUNT) { episodeIndex ->
             val episodeNumber = episodeIndex + 1
             val episodeId = 200L + episodeNumber
-            val _ = database.episodesQueries.upsert(
+            database.episodesQueries.upsert(
                 id = Id(episodeId),
                 season_id = Id(SEASON_2_ID),
                 show_id = testShowId,
@@ -858,7 +858,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             )
         }
 
-        val _ = database.followedShowsQueries.upsert(
+        database.followedShowsQueries.upsert(
             showId = testShowId,
             tmdbId = Id<TmdbId>(TEST_SHOW_ID),
             followedAt = Clock.System.now().toEpochMilliseconds(),

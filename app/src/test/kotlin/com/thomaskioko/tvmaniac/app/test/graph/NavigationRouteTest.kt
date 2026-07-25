@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
@@ -31,7 +30,6 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
     fun `should resolve a NavDestination for every NavRoute subtype`() = runAppFlowTest {
         // 1. Enumerate all routable subtypes (including overlay routes such as EpisodeSheetRoute)
         val routes: List<NavRoute> = listOf(
-            HomeRoute,
             SettingsRoute,
             SearchRoute,
             DebugRoute,
@@ -77,7 +75,6 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
     fun `should expose a NavRouteBinding for every routable NavRoute including overlays`() = runAppFlowTest {
         // 1. Enumerate routable classes (for serialization verification)
         val routableTypes = listOf(
-            HomeRoute::class,
             SettingsRoute::class,
             SearchRoute::class,
             DebugRoute::class,
@@ -99,8 +96,8 @@ internal class NavigationRouteTest : BaseAppFlowTest() {
 
     @Test
     fun `should resolve every codegen-generated graph extension factory`() = runAppFlowTest {
-        // Verify factory chain: TestAppComponent -> ActivityGraph -> HomeScreenGraph
-        val homeGraph = activityGraph.homeScreenGraphFactory
+        // Verify factory chain: TestAppComponent -> ActivityGraph -> HomeChildGraph
+        val homeGraph = activityGraph.homeChildGraphFactory
             .createHomeGraph(componentContext)
         homeGraph.homePresenter.shouldNotBeNull()
 

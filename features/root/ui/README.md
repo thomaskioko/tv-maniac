@@ -336,7 +336,6 @@ graph TB
   :features:home:presenter -.-> :features:progress:nav
   :features:home:presenter --> :navigation:api
   :features:home:ui -.-> :android-designsystem
-  :features:home:ui --> :core:base
   :features:home:ui -.-> :core:test-tags
   :features:home:ui -.-> :features:discover:nav
   :features:home:ui --> :features:home:presenter
@@ -344,8 +343,8 @@ graph TB
   :features:home:ui -.-> :features:profile:nav
   :features:home:ui -.-> :features:progress:nav
   :features:home:ui -.-> :i18n:generator
-  :features:home:ui --> :navigation:api
-  :features:home:ui --> :navigation:ui
+  :features:home:ui -.-> :navigation:api
+  :features:home:ui -.-> :navigation:ui
   :features:library:nav --> :navigation:api
   :features:my-shows:nav --> :navigation:api
   :features:profile:nav --> :navigation:api

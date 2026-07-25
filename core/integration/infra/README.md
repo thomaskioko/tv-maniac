@@ -401,7 +401,6 @@ graph TB
   :core:integration:infra --> :domain:notifications
   :core:integration:infra --> :domain:user
   :core:integration:infra --> :features:discover:nav
-  :core:integration:infra --> :features:home:nav
   :core:integration:infra --> :features:home:presenter
   :core:integration:infra --> :features:library:nav
   :core:integration:infra --> :features:my-shows:nav
@@ -510,7 +509,7 @@ graph TB
   :data:library:implementation --> :data:shows:api
   :data:library:implementation --> :data:sync-activity:api
   :data:library:implementation --> :data:watchproviders:api
-  :data:logout:implementation -.-> :core:base
+  :data:logout:implementation --> :core:base
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api

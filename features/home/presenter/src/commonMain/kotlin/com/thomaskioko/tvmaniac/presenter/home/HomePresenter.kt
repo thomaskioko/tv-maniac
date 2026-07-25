@@ -11,7 +11,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
+import com.thomaskioko.tvmaniac.home.nav.scope.HomeScope
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.navigation.BaseRoute
@@ -24,22 +24,17 @@ import com.thomaskioko.tvmaniac.navigation.RootChild
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import dev.zacsweers.metro.Inject
-import io.github.thomaskioko.codegen.annotations.DestinationKind
+import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.Serializable
-import io.github.thomaskioko.codegen.annotations.NavDestination as NavDestinationAnno
 
 @Serializable
 public data class ProfileAvatar(val url: String? = null)
 
-@NavDestinationAnno(
-    route = HomeRoute::class,
-    parentScope = ActivityScope::class,
-    kind = DestinationKind.SCREEN,
-)
+@ChildPresenter(scope = HomeScope::class, parentScope = ActivityScope::class)
 @Inject
 public class HomePresenter(
     componentContext: ComponentContext,
@@ -67,9 +62,6 @@ public class HomePresenter(
     public val discoverChildStackValue: Value<ChildStack<*, RootChild>> =
         hostStateValue.map { it.tabStacks.getValue(DiscoverRoot) }
 
-    public val libraryChildStackValue: Value<ChildStack<*, RootChild>> =
-        hostStateValue.map { it.tabStacks.getValue(LibraryRoot) }
-
     public val profileChildStackValue: Value<ChildStack<*, RootChild>> =
         hostStateValue.map { it.tabStacks.getValue(ProfileRoot) }
 
@@ -78,21 +70,6 @@ public class HomePresenter(
 
     public val myShowsChildStackValue: Value<ChildStack<*, RootChild>> =
         hostStateValue.map { it.tabStacks.getValue(MyShowsRoot) }
-
-    public val discoverChildStack: StateFlow<ChildStack<*, RootChild>> =
-        discoverChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
-
-    public val libraryChildStack: StateFlow<ChildStack<*, RootChild>> =
-        libraryChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
-
-    public val profileChildStack: StateFlow<ChildStack<*, RootChild>> =
-        profileChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
-
-    public val progressChildStack: StateFlow<ChildStack<*, RootChild>> =
-        progressChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
-
-    public val myShowsChildStack: StateFlow<ChildStack<*, RootChild>> =
-        myShowsChildStackValue.asStateFlow(componentContext.componentCoroutineScope())
 
     public val profileAvatarUrl: StateFlow<String?> = run {
         observeUserProfileInteractor(Unit)

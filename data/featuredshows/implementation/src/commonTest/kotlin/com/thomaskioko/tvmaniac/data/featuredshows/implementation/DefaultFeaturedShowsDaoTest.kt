@@ -100,7 +100,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `should not return shows with null names`() = runTest {
         val showId = seedShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
-        val _ = featuredShowsQueries.insert(
+        featuredShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
             name = null,
@@ -185,7 +185,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
     }
 
     private fun seedShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = name,
             overview = "$name overview",
@@ -204,7 +204,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertTestShows() {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(1),
             name = "Test Show 1",
             overview = "Test overview 1",
@@ -220,7 +220,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             backdrop_path = "/backdrop1.jpg",
         )
 
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(2),
             name = "Test Show 2",
             overview = "Test overview 2",
@@ -239,7 +239,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
         showId1 = showIdForTraktId(1)
         showId2 = showIdForTraktId(2)
 
-        val _ = featuredShowsQueries.insert(
+        featuredShowsQueries.insert(
             showId = showId1,
             tmdbId = Id<TmdbId>(1),
             name = "Test Show 1",
@@ -248,7 +248,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             page_order = 0,
         )
 
-        val _ = featuredShowsQueries.insert(
+        featuredShowsQueries.insert(
             showId = showId2,
             tmdbId = Id<TmdbId>(2),
             name = "Test Show 2",

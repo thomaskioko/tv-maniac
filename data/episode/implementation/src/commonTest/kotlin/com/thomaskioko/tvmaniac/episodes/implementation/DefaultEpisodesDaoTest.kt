@@ -280,7 +280,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         insertSeason(seasonId = 10L, showId = 1L, seasonNumber = 1L)
         insertEpisode(episodeId = 100L, seasonId = 10L, showId = 1L, episodeNumber = 1L, title = "Ep 1")
         insertEpisode(episodeId = 101L, seasonId = 10L, showId = 1L, episodeNumber = 2L, title = "Ep 2")
-        val _ = database.showMetadataQueries.upsert(
+        database.showMetadataQueries.upsert(
             show_id = showIdByTraktId.getValue(1L),
             season_count = 1L,
             episode_count = 10L,
@@ -314,7 +314,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
     }
 
     private fun insertShow(id: Long, name: String) {
-        val _ = database.tvShowQueries.upsert(
+        database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(id),
             name = name,
             overview = "Overview for $name",
@@ -338,7 +338,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         seasonNumber: Long,
         title: String = "Season $seasonNumber",
     ) {
-        val _ = database.seasonsQueries.upsert(
+        database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_id = showIdByTraktId.getValue(showId),
             season_number = seasonNumber,
@@ -357,7 +357,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         title: String,
         firstAired: Long? = null,
     ) {
-        val _ = database.episodesQueries.upsert(
+        database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
             show_id = showIdByTraktId.getValue(showId),
@@ -373,7 +373,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
     }
 
     private fun followShow(showId: Long) {
-        val _ = database.followedShowsQueries.upsert(
+        database.followedShowsQueries.upsert(
             showId = showIdByTraktId.getValue(showId),
             tmdbId = Id(showId),
             followedAt = 1000L,
@@ -387,7 +387,7 @@ internal class DefaultEpisodesDaoTest : BaseDatabaseTest() {
         seasonNumber: Long,
         episodeNumber: Long,
     ) {
-        val _ = database.watchedEpisodesQueries.upsert(
+        database.watchedEpisodesQueries.upsert(
             show_id = showIdByTraktId.getValue(showId),
             episode_id = Id(episodeId),
             season_number = seasonNumber,

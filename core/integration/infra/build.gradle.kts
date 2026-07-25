@@ -4,6 +4,7 @@ plugins {
 
 scaffold {
     useMetro()
+    useSerialization()
     addAndroidTarget(
         enableAndroidResources = true,
     )
@@ -98,7 +99,6 @@ kotlin {
             api(projects.domain.user)
             api(projects.domain.continueWatching)
             api(projects.features.discover.nav)
-            api(projects.features.home.nav)
             api(projects.features.home.presenter)
             api(projects.features.library.nav)
             api(projects.features.profile.nav)
