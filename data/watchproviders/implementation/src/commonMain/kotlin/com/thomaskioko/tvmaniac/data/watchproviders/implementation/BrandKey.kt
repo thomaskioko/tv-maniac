@@ -50,10 +50,5 @@ private fun String.toBrandWords(): List<String> =
         .split(Regex("\\s+"))
         .filter { it.isNotEmpty() }
 
-private fun List<String>.isWordPrefixOf(other: List<String>): Boolean {
-    if (size > other.size) return false
-    for (i in indices) {
-        if (this[i] != other[i]) return false
-    }
-    return true
-}
+private fun List<String>.isWordPrefixOf(other: List<String>): Boolean =
+    other.take(size) == this

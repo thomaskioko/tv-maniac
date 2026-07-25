@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.SearchBar
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
@@ -256,7 +257,8 @@ private fun TopBar(
                 label = "search_expansion_animation",
             ) { expanded ->
                 if (expanded) {
-                    LibrarySearchbar(
+                    SearchBar(
+                        modifier = Modifier.testTag(LibraryTestTags.SEARCH_BAR_TEST_TAG),
                         query = state.query,
                         hint = msg_search_show_hint.resolve(context),
                         onQueryChanged = { onAction(LibraryQueryChanged(it)) },

@@ -6,11 +6,10 @@ import android.os.StrictMode
 import androidx.work.Configuration
 import androidx.work.WorkerFactory
 import com.thomaskioko.tvmaniac.app.di.ApplicationGraph
-import com.thomaskioko.tvmaniac.core.base.extensions.unsafeLazy
 import dev.zacsweers.metro.createGraphFactory
 
 public class TvManicApplication : Application(), Configuration.Provider {
-    private val graph: ApplicationGraph by unsafeLazy {
+    private val graph: ApplicationGraph by lazy(LazyThreadSafetyMode.NONE) {
         createGraphFactory<ApplicationGraph.Factory>()
             .create(this, BuildConfig.DEBUG)
     }

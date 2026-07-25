@@ -11,7 +11,6 @@ import com.arkivanov.essenty.lifecycle.doOnStop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -51,9 +50,7 @@ internal class LifecycleAwareCoroutineScope(
  * Creates a Main [CoroutineScope] instance tied to the lifecycle of this [ComponentContext].
  */
 public fun LifecycleOwner.componentCoroutineScope(): CoroutineScope =
-    MainScope().also { coroutineScope ->
-        lifecycle.doOnDestroy { coroutineScope.cancel() }
-    }
+    coroutineScope(Dispatchers.Main)
 
 /**
  * Converts this Kotlin [StateFlow] to a Decompose [Value].

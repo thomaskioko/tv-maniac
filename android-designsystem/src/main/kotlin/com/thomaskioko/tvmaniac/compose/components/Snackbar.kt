@@ -27,9 +27,6 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -239,36 +236,6 @@ internal fun TvManiacSnackBar(
     }
 }
 
-@Composable
-public fun StandardSnackBar(
-    snackBarHostState: SnackbarHostState,
-    errorMessage: String?,
-    actionLabel: String?,
-    showError: Boolean = !errorMessage.isNullOrBlank(),
-    onErrorAction: () -> Unit = {},
-) {
-    AnimatedVisibility(
-        visible = showError,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
-    ) {
-        errorMessage?.let {
-            LaunchedEffect(errorMessage) {
-                val actionResult = snackBarHostState.showSnackbar(
-                    message = errorMessage,
-                    actionLabel = actionLabel,
-                    duration = SnackbarDuration.Long,
-                )
-
-                when (actionResult) {
-                    SnackbarResult.ActionPerformed -> onErrorAction()
-                    SnackbarResult.Dismissed -> onErrorAction()
-                }
-            }
-        }
-    }
-}
-
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
@@ -287,17 +254,6 @@ private fun TvManiacSnackBarPreview(
             style = param.style,
         )
     }
-}
-
-@ThemePreviews
-@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
-@Composable
-private fun StandardSnackBarPreview() {
-    StandardSnackBar(
-        snackBarHostState = SnackbarHostState(),
-        errorMessage = "Somethig went wrong",
-        actionLabel = "Retry",
-    )
 }
 
 internal data class SnackBarPreviewParam(

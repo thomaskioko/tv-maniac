@@ -34,22 +34,23 @@ internal fun CircularIndicator(
     isUserScrolling: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val isInPreview = LocalInspectionMode.current
-    val isStatic = isInPreview || !LocalAutoAdvanceEnabled.current
-    val progress = remember { Animatable(if (isStatic) 1f else 0f) }
+    val isStatic = LocalInspectionMode.current || !LocalAutoAdvanceEnabled.current
+    val indicatorProgress = remember { Animatable(if (isStatic) 1f else 0f) }
 
     LaunchedEffect(currentPage, isUserScrolling, isStatic) {
-        if (isStatic) return@LaunchedEffect
+        if (isStatic) {
+            indicatorProgress.snapTo(1f)
+            return@LaunchedEffect
+        }
 
-        progress.snapTo(0f)
+        indicatorProgress.snapTo(0f)
         if (!isUserScrolling) {
-            progress.animateTo(
+            indicatorProgress.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = 4_500, easing = LinearEasing),
+                animationSpec = tween(durationMillis = 4500, easing = LinearEasing),
             )
         }
     }
-    val indicatorProgress = progress.value
 
     val maxVisibleDots = 8
 
@@ -74,7 +75,7 @@ internal fun CircularIndicator(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .fillMaxWidth(indicatorProgress)
+                                .fillMaxWidth(indicatorProgress.value)
                                 .clip(MaterialTheme.shapes.small)
                                 .background(MaterialTheme.colorScheme.onSecondary),
                         )
@@ -122,7 +123,7 @@ internal fun CircularIndicator(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .fillMaxWidth(indicatorProgress)
+                                .fillMaxWidth(indicatorProgress.value)
                                 .clip(MaterialTheme.shapes.small)
                                 .background(MaterialTheme.colorScheme.onSurface),
                         )
