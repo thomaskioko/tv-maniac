@@ -63,7 +63,7 @@ jobs:
       - name: Open a pull request with the new profile
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ secrets.GH_COMMIT_PAT }}
           add-paths: app/src/main/generated/baselineProfiles
           branch: baseline-profile-update
           delete-branch: true
