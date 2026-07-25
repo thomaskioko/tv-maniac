@@ -18,10 +18,10 @@ kotlin {
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.traktlists.api)
+                api(projects.data.shows.api)
 
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.followedshows.api)
-                implementation(projects.data.shows.api)
                 implementation(libs.sqldelight.extensions)
             }
         }

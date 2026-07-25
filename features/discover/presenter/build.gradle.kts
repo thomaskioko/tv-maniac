@@ -31,7 +31,7 @@ kotlin {
                 api(libs.kotlinx.collections)
 
                 api(projects.domain.continueWatching)
-                implementation(projects.data.datastore.api)
+                api(projects.data.datastore.api)
                 implementation(projects.data.startWatching.api)
                 implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.home.nav)
