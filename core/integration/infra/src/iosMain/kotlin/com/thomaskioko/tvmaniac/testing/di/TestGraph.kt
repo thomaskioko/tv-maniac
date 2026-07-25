@@ -6,7 +6,7 @@ import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.oauth.api.OAuthLauncher
-import com.thomaskioko.tvmaniac.presenter.home.di.HomeScreenGraph
+import com.thomaskioko.tvmaniac.presenter.home.di.HomeChildGraph
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
@@ -21,7 +21,7 @@ public interface TestGraph {
     public val navigator: Navigator
     public val rootPresenterFactory: RootPresenter.Factory
     public val navDestinations: Set<NavDestination<*>>
-    public val homeScreenGraphFactory: HomeScreenGraph.Factory
+    public val homeChildGraphFactory: HomeChildGraph.Factory
     public val syncObserver: SyncObserver
     public val featureFlags: Set<FeatureFlag<Boolean>>
     public val subscriptionManager: SubscriptionManager

@@ -11,5 +11,5 @@ internal class HomePresenterIosTest : HomePresenterTest() {
     }
 
     override fun createHomePresenter(componentContext: ComponentContext): HomePresenter =
-        testGraph.homeScreenGraphFactory.createHomeGraph(componentContext).homePresenter
+        testGraph.homeChildGraphFactory.createHomeGraph(componentContext).homePresenter
 }
