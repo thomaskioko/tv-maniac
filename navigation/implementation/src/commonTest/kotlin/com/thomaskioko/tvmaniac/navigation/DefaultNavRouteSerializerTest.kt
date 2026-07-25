@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.navigation
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.arkivanov.essenty.statekeeper.consumeRequired
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
@@ -10,13 +9,17 @@ import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlin.test.Test
 
 internal class DefaultNavRouteSerializerTest {
 
+    @Serializable
+    private data object ObjectRoute : NavRoute
+
     private val bindings: Set<NavRouteBinding<*>> = setOf(
-        NavRouteBinding(HomeRoute::class, HomeRoute.serializer()),
+        NavRouteBinding(ObjectRoute::class, ObjectRoute.serializer()),
         NavRouteBinding(ShowDetailsRoute::class, ShowDetailsRoute.serializer()),
         NavRouteBinding(SeasonDetailsRoute::class, SeasonDetailsRoute.serializer()),
         NavRouteBinding(MoreShowsRoute::class, MoreShowsRoute.serializer()),
@@ -26,9 +29,9 @@ internal class DefaultNavRouteSerializerTest {
 
     @Test
     fun `should round trip object route`() {
-        val restored = roundTrip(HomeRoute)
+        val restored = roundTrip(ObjectRoute)
 
-        restored shouldBe HomeRoute
+        restored shouldBe ObjectRoute
     }
 
     @Test
@@ -62,7 +65,7 @@ internal class DefaultNavRouteSerializerTest {
     @Test
     fun `should round trip stack containing mixed routes`() {
         val stack: List<NavRoute> = listOf(
-            HomeRoute,
+            ObjectRoute,
             ShowDetailsRoute(ShowDetailsParam(1)),
             MoreShowsRoute(7),
         )

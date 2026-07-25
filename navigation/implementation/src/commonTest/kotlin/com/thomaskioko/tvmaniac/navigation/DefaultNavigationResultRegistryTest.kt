@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.navigation
 
 import app.cash.turbine.test
-import com.thomaskioko.tvmaniac.home.nav.HomeRoute
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
@@ -9,11 +8,13 @@ import kotlin.test.Test
 
 internal class DefaultNavigationResultRegistryTest {
 
+    private data object OwnerRoute : NavRoute
+
     @Serializable
     private data class TestResult(val value: String)
 
     private val key = NavigationResultRequest.Key<TestResult>(
-        ownerRouteQualifiedName = HomeRoute::class.qualifiedName!!,
+        ownerRouteQualifiedName = OwnerRoute::class.qualifiedName!!,
         resultQualifiedName = TestResult::class.qualifiedName!!,
     )
 
@@ -64,7 +65,7 @@ internal class DefaultNavigationResultRegistryTest {
     @Test
     fun `should treat keys with equal fields as equal`() {
         val other = NavigationResultRequest.Key<TestResult>(
-            ownerRouteQualifiedName = HomeRoute::class.qualifiedName!!,
+            ownerRouteQualifiedName = OwnerRoute::class.qualifiedName!!,
             resultQualifiedName = TestResult::class.qualifiedName!!,
         )
 
