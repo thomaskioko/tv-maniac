@@ -21,6 +21,7 @@ jobs:
 
     permissions:
       contents: write
+      pull-requests: write
 
     timeout-minutes: 60
 
@@ -59,4 +60,18 @@ jobs:
           -Pandroid.experimental.androidTest.numManagedDeviceShards=1
           --no-configuration-cache
 
-      ## ToDo: Commit baseline profile changes to main.
+      - name: Open a pull request with the new profile
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+          add-paths: app/src/main/generated/baselineProfiles
+          branch: baseline-profile-update
+          delete-branch: true
+          commit-message: Update the generated baseline profile
+          title: 'chore: Update the generated baseline profile'
+          body: |
+            ## Description
+            This PR brings in the baseline profile that the scheduled job just generated.
+
+            ## Changes
+            - Update the baseline profile files under `app/src/main/generated/baselineProfiles`
