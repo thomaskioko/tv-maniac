@@ -43,7 +43,7 @@ jobs:
         uses: android-actions/setup-android@v4
 
       - name: Accept licenses
-        run: yes | sdkmanager --licenses || trueMovr
+        run: yes | sdkmanager --licenses || true
 
       - name: Build app and benchmark
         run: ./gradlew assembleNonMinifiedRelease -Papp.debugOnly=false
