@@ -12,6 +12,7 @@
 - [Integration Testing](integration-testing.md): Android harness, fakes, and network stubbing.
 - [Flow Test Patterns](flow-test-patterns.md): Robots, dialogs, and the recipe for writing one flow test.
 - [Journey Tests](journey-tests.md): User lifecycle tests on top of the integration harness.
+- [iOS Testing](ios-testing.md): Kotlin/Native and snapshot layers, and the state isolation the test graph needs.
 
 TvManiac is a Kotlin Multiplatform (KMP) entertainment tracker that shares business logic and data layers across Android (Jetpack Compose) and iOS (SwiftUI). It follows Clean Architecture organized by feature and layer.
 
