@@ -3,6 +3,7 @@ name: Weekly Baseline Profile Generation
 on:
   schedule:
     - cron: '30 0 * * 0,3,5' #Every Sunday, Wednesday, and Friday at 12:30AM
+  workflow_dispatch:
 
 env:
   TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
