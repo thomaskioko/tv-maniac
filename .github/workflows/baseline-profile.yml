@@ -3,6 +3,7 @@ name: Weekly Baseline Profile Generation
 on:
   schedule:
     - cron: '30 0 * * 0,3,5' #Every Sunday, Wednesday, and Friday at 12:30AM
+  workflow_dispatch:
 
 env:
   TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
@@ -20,6 +21,7 @@ jobs:
 
     permissions:
       contents: write
+      pull-requests: write
 
     timeout-minutes: 60
 
@@ -42,7 +44,7 @@ jobs:
         uses: android-actions/setup-android@v4
 
       - name: Accept licenses
-        run: yes | sdkmanager --licenses || trueMovr
+        run: yes | sdkmanager --licenses || true
 
       - name: Build app and benchmark
         run: ./gradlew assembleNonMinifiedRelease -Papp.debugOnly=false
@@ -58,4 +60,18 @@ jobs:
           -Pandroid.experimental.androidTest.numManagedDeviceShards=1
           --no-configuration-cache
 
-      ## ToDo: Commit baseline profile changes to main.
+      - name: Open a pull request with the new profile
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GH_COMMIT_PAT }}
+          add-paths: app/src/main/generated/baselineProfiles
+          branch: baseline-profile-update
+          delete-branch: true
+          commit-message: Update the generated baseline profile
+          title: 'chore: Update the generated baseline profile'
+          body: |
+            ## Description
+            This PR brings in the baseline profile that the scheduled job just generated.
+
+            ## Changes
+            - Update the baseline profile files under `app/src/main/generated/baselineProfiles`
