@@ -19,20 +19,27 @@ runs:
       shell: bash
       run: echo "sdk_name=iphonesimulator$(xcrun --sdk iphonesimulator --show-sdk-version)" >> "$GITHUB_OUTPUT"
 
+    - name: 🔑 Compute framework cache key
+      id: key
+      shell: bash
+      run: |
+        hash="$(./scripts/framework-cache-key.sh)"
+        echo "hash=$hash" >> "$GITHUB_OUTPUT"
+
     - name: 🗂️ Cache KMP XCFramework
       id: cache-build
       if: inputs.mode == 'build'
       uses: actions/cache@v6
       with:
         path: ios-framework/build/spm
-        key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ hashFiles('**/*.kt', '**/*.kts', 'gradle/libs.versions.toml', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}
+        key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ steps.key.outputs.hash }}
 
     - name: 🗂️ Restore prebuilt KMP XCFramework
       if: inputs.mode == 'restore'
       uses: actions/cache/restore@v6
       with:
         path: ios-framework/build/spm
-        key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ hashFiles('**/*.kt', '**/*.kts', 'gradle/libs.versions.toml', 'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties') }}
+        key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ steps.key.outputs.hash }}
 
     # Builds the XCFramework into ios-framework/build/spm, the directory the
     # TvManiacFramework package's binaryTarget points at. Consumer jobs restore
