@@ -72,7 +72,7 @@ graph TB
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
-  :data:traktlists:implementation -.-> :data:shows:api
+  :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

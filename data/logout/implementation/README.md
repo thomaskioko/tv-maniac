@@ -62,7 +62,7 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
-  :data:logout:implementation -.-> :core:base
+  :data:logout:implementation --> :core:base
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api

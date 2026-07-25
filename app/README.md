@@ -609,7 +609,6 @@ graph TB
   :app -.-> :features:feature-flags:ui
   :app -.-> :features:home:nav
   :app -.-> :features:home:presenter
-  :app -.-> :features:home:ui
   :app -.-> :features:library:nav
   :app -.-> :features:library:presenter
   :app -.-> :features:library:ui
@@ -808,7 +807,7 @@ graph TB
   :data:library:implementation --> :data:shows:api
   :data:library:implementation --> :data:sync-activity:api
   :data:library:implementation --> :data:watchproviders:api
-  :data:logout:implementation -.-> :core:base
+  :data:logout:implementation --> :core:base
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api
@@ -977,7 +976,7 @@ graph TB
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
-  :data:traktlists:implementation -.-> :data:shows:api
+  :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
   :data:trendingshows:api --> :core:base
   :data:trendingshows:api --> :data:database:sqldelight
@@ -1223,7 +1222,7 @@ graph TB
   :features:discover:presenter --> :core:logger:api
   :features:discover:presenter --> :core:view
   :features:discover:presenter --> :data:account-manager:api
-  :features:discover:presenter -.-> :data:datastore:api
+  :features:discover:presenter --> :data:datastore:api
   :features:discover:presenter -.-> :data:start-watching:api
   :features:discover:presenter --> :domain:continue-watching
   :features:discover:presenter --> :domain:discover
@@ -1300,7 +1299,6 @@ graph TB
   :features:home:presenter -.-> :features:progress:nav
   :features:home:presenter --> :navigation:api
   :features:home:ui -.-> :android-designsystem
-  :features:home:ui --> :core:base
   :features:home:ui -.-> :core:test-tags
   :features:home:ui -.-> :features:discover:nav
   :features:home:ui --> :features:home:presenter
@@ -1308,8 +1306,8 @@ graph TB
   :features:home:ui -.-> :features:profile:nav
   :features:home:ui -.-> :features:progress:nav
   :features:home:ui -.-> :i18n:generator
-  :features:home:ui --> :navigation:api
-  :features:home:ui --> :navigation:ui
+  :features:home:ui -.-> :navigation:api
+  :features:home:ui -.-> :navigation:ui
   :features:library:nav --> :navigation:api
   :features:library:presenter --> :core:base
   :features:library:presenter --> :core:logger:api
