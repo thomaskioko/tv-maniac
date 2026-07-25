@@ -1,5 +1,8 @@
 package com.thomaskioko.tvmaniac.discover.ui.component
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,10 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import kotlinx.coroutines.delay
+import com.thomaskioko.tvmaniac.compose.util.LocalAutoAdvanceEnabled
 
 @Composable
 internal fun CircularIndicator(
@@ -35,26 +35,21 @@ internal fun CircularIndicator(
     modifier: Modifier = Modifier,
 ) {
     val isInPreview = LocalInspectionMode.current
-    var indicatorProgress by remember { mutableFloatStateOf(if (isInPreview) 1f else 0f) }
+    val isStatic = isInPreview || !LocalAutoAdvanceEnabled.current
+    val progress = remember { Animatable(if (isStatic) 1f else 0f) }
 
-    LaunchedEffect(currentPage, isUserScrolling) {
-        if (isInPreview) {
-            indicatorProgress = 1f
-            return@LaunchedEffect
-        }
+    LaunchedEffect(currentPage, isUserScrolling, isStatic) {
+        if (isStatic) return@LaunchedEffect
 
+        progress.snapTo(0f)
         if (!isUserScrolling) {
-            indicatorProgress = 0f
-            val startTime = System.currentTimeMillis()
-            while (indicatorProgress < 1f) {
-                val elapsed = System.currentTimeMillis() - startTime
-                indicatorProgress = (elapsed / 4500f).coerceAtMost(1f)
-                delay(16)
-            }
-        } else {
-            indicatorProgress = 0f
+            progress.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 4_500, easing = LinearEasing),
+            )
         }
     }
+    val indicatorProgress = progress.value
 
     val maxVisibleDots = 8
 
