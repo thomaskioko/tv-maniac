@@ -32,7 +32,6 @@ import com.thomaskioko.tvmaniac.compose.components.AvatarComponent
 import com.thomaskioko.tvmaniac.compose.components.NavigationDefaultColors
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBottomNavigationItem
 import com.thomaskioko.tvmaniac.compose.components.TvManiacNavigationBar
-import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_tab_my_shows
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_discover
@@ -50,9 +49,7 @@ import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
-import io.github.thomaskioko.codegen.annotations.ScreenUi
 
-@ScreenUi(presenter = HomePresenter::class, parentScope = ActivityScope::class)
 @Composable
 public fun HomeScreen(
     presenter: HomePresenter,

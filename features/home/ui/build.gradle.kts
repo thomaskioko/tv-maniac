@@ -11,12 +11,11 @@ scaffold {
 }
 
 dependencies {
-    api(projects.core.base)
     api(projects.features.home.presenter)
-    api(projects.navigation.api)
-    api(projects.navigation.ui)
 
     api(libs.androidx.compose.runtime)
+    implementation(projects.navigation.api)
+    implementation(projects.navigation.ui)
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
     implementation(projects.i18n.generator)
