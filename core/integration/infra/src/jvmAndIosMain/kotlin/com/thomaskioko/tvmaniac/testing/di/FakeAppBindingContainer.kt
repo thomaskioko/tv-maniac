@@ -37,6 +37,7 @@ import com.thomaskioko.tvmaniac.presenter.root.DefaultRootPresenter
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
+import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.traktauth.implementation.TokenRefreshWorker
 import com.thomaskioko.tvmaniac.util.api.AppUtils
 import dev.zacsweers.metro.AppScope
@@ -45,8 +46,6 @@ import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.respond
-import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -120,19 +119,19 @@ public object FakeAppBindingContainer {
     @SingleIn(AppScope::class)
     @SimklApi
     public fun provideSimklHttpClientEngine(): io.ktor.client.engine.HttpClientEngine =
-        MockEngine { respond("{}", HttpStatusCode.OK) }
+        MockEngine { request -> MockEngineHandler.handler.handle(this, request) }
 
     @Provides
     @SingleIn(AppScope::class)
     @TmdbApi
     public fun provideTmdbHttpClientEngine(): io.ktor.client.engine.HttpClientEngine =
-        MockEngine { respond("{}", HttpStatusCode.OK) }
+        MockEngine { request -> MockEngineHandler.handler.handle(this, request) }
 
     @Provides
     @SingleIn(AppScope::class)
     @TraktApi
     public fun provideTraktHttpClientEngine(): io.ktor.client.engine.HttpClientEngine =
-        MockEngine { respond("{}", HttpStatusCode.OK) }
+        MockEngine { request -> MockEngineHandler.handler.handle(this, request) }
 
     @Provides
     public fun provideAppUtils(): AppUtils = object : AppUtils {

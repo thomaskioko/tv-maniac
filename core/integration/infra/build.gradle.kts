@@ -32,6 +32,13 @@ kotlin {
         getByName("jvmMain").dependsOn(jvmAndIosMain)
         getByName("iosMain").dependsOn(jvmAndIosMain)
 
+        val jvmAndIosTest =
+            create("jvmAndIosTest") {
+                dependsOn(getByName("commonTest"))
+            }
+        getByName("jvmTest").dependsOn(jvmAndIosTest)
+        getByName("iosTest").dependsOn(jvmAndIosTest)
+
         commonMain.dependencies {
             api(projects.core.integration.stubs)
             api(projects.api.simkl.implementation)
