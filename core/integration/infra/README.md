@@ -47,6 +47,7 @@ graph TB
   subgraph :core:integration
     direction TB
     :core:integration:infra[infra]:::multiplatform
+    :core:integration:stubs[stubs]:::multiplatform
   end
   subgraph :core:locale
     direction TB
@@ -357,6 +358,7 @@ graph TB
   :core:integration:infra --> :core:connectivity:implementation
   :core:integration:infra --> :core:feature-flags:api
   :core:integration:infra --> :core:feature-flags:implementation
+  :core:integration:infra --> :core:integration:stubs
   :core:integration:infra --> :core:locale:api
   :core:integration:infra --> :core:logger:api
   :core:integration:infra --> :core:logger:implementation

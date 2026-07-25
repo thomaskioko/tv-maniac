@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.app.test.compose.journey
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
+import com.thomaskioko.tvmaniac.testing.integration.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import com.thomaskioko.tvmaniac.testtags.notifications.NotificationRationaleTestTags
 import org.junit.Test

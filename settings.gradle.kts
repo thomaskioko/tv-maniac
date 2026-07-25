@@ -146,6 +146,7 @@ include(
     ":core:util:implementation",
     ":core:util:testing",
     ":core:integration:infra",
+    ":core:integration:stubs",
     ":core:integration:ui",
     ":core:test-tags",
     ":core:view",

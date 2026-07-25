@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.app.test.compose.journey
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_SIMKL_ACCOUNT_ID
+import com.thomaskioko.tvmaniac.testing.integration.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import com.thomaskioko.tvmaniac.util.testing.FlakyTests
 import org.junit.Test

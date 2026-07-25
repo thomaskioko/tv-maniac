@@ -4,7 +4,7 @@ import com.thomaskioko.tvmaniac.testing.integration.util.FixtureLoader
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.withClue
 import io.kotest.matchers.string.shouldNotBeEmpty
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * Sanity-check every entry in the endpoint catalog: both `successFixture` and `errorFixture`

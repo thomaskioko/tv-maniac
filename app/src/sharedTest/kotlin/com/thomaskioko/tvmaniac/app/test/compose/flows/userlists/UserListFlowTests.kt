@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.userlists
 
 import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
-import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_NAME
-import com.thomaskioko.tvmaniac.app.test.compose.stubs.TEST_CREATED_LIST_TRAKT_ID
+import com.thomaskioko.tvmaniac.testing.integration.TEST_CREATED_LIST_NAME
+import com.thomaskioko.tvmaniac.testing.integration.TEST_CREATED_LIST_TRAKT_ID
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
