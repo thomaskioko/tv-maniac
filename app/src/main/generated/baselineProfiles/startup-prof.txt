@@ -462,7 +462,6 @@ HSPLandroidx/collection/MutableScatterSet;->addAll(Landroidx/collection/ScatterS
 HSPLandroidx/collection/MutableScatterSet;->adjustStorage$collection()V
 HSPLandroidx/collection/MutableScatterSet;->asMutableSet()Ljava/util/Set;
 HSPLandroidx/collection/MutableScatterSet;->clear()V
-HSPLandroidx/collection/MutableScatterSet;->dropDeletes$collection()V
 HSPLandroidx/collection/MutableScatterSet;->findAbsoluteInsertIndex(Ljava/lang/Object;)I
 HSPLandroidx/collection/MutableScatterSet;->findFirstAvailableSlot(I)I
 HSPLandroidx/collection/MutableScatterSet;->initializeGrowth()V
@@ -6589,7 +6588,7 @@ HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->access$getLowerSet$p(Land
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->access$getUpperSet$p(Landroidx/compose/runtime/snapshots/SnapshotIdSet;)J
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->andNot(Landroidx/compose/runtime/snapshots/SnapshotIdSet;)Landroidx/compose/runtime/snapshots/SnapshotIdSet;
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->clear(J)Landroidx/compose/runtime/snapshots/SnapshotIdSet;
-HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->get(J)Z
+HPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->get(J)Z
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->lowest(J)J
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->or(Landroidx/compose/runtime/snapshots/SnapshotIdSet;)Landroidx/compose/runtime/snapshots/SnapshotIdSet;
 HSPLandroidx/compose/runtime/snapshots/SnapshotIdSet;->set(J)Landroidx/compose/runtime/snapshots/SnapshotIdSet;
@@ -25545,6 +25544,8 @@ HSPLio/ktor/client/engine/UtilsKt$attachToUserJob$2;->invoke(Ljava/lang/Object;)
 HSPLio/ktor/client/engine/UtilsKt$attachToUserJob$2;->invoke(Ljava/lang/Throwable;)V
 Lio/ktor/client/engine/UtilsKt$attachToUserJob$cleanupHandler$1;
 HSPLio/ktor/client/engine/UtilsKt$attachToUserJob$cleanupHandler$1;-><init>(Lkotlinx/coroutines/Job;)V
+HSPLio/ktor/client/engine/UtilsKt$attachToUserJob$cleanupHandler$1;->invoke(Ljava/lang/Object;)Ljava/lang/Object;
+HSPLio/ktor/client/engine/UtilsKt$attachToUserJob$cleanupHandler$1;->invoke(Ljava/lang/Throwable;)V
 Lio/ktor/client/engine/okhttp/OkHttp;
 HSPLio/ktor/client/engine/okhttp/OkHttp;-><clinit>()V
 HSPLio/ktor/client/engine/okhttp/OkHttp;-><init>()V
@@ -29224,6 +29225,7 @@ HSPLkotlinx/coroutines/CancellableContinuationImpl;->isReusable()Z
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->parentCancelled$kotlinx_coroutines_core(Ljava/lang/Throwable;)V
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->releaseClaimedReusableContinuation$kotlinx_coroutines_core()V
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->resetStateReusable()Z
+HSPLkotlinx/coroutines/CancellableContinuationImpl;->resume(Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->resume(Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)V
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->resumeImpl$kotlinx_coroutines_core$default(Lkotlinx/coroutines/CancellableContinuationImpl;Ljava/lang/Object;ILkotlin/jvm/functions/Function3;ILjava/lang/Object;)V
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->resumeImpl$kotlinx_coroutines_core(Ljava/lang/Object;ILkotlin/jvm/functions/Function3;)V
@@ -29235,6 +29237,8 @@ HSPLkotlinx/coroutines/CancellableContinuationImpl;->tryResume()Z
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->tryResume(Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->tryResumeImpl(Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Lkotlinx/coroutines/internal/Symbol;
 HSPLkotlinx/coroutines/CancellableContinuationImpl;->trySuspend()Z
+Lkotlinx/coroutines/CancellableContinuationImpl$$ExternalSyntheticLambda0;
+HSPLkotlinx/coroutines/CancellableContinuationImpl$$ExternalSyntheticLambda0;-><init>(Lkotlin/jvm/functions/Function1;)V
 Lkotlinx/coroutines/CancellableContinuationImplKt;
 HSPLkotlinx/coroutines/CancellableContinuationImplKt;-><clinit>()V
 Lkotlinx/coroutines/CancellableContinuationKt;
@@ -29828,7 +29832,6 @@ HSPLkotlinx/coroutines/channels/BufferedChannel;->getSendSegment$volatile$FU()Lj
 HSPLkotlinx/coroutines/channels/BufferedChannel;->getSendersAndCloseStatus$volatile$FU()Ljava/util/concurrent/atomic/AtomicLongFieldUpdater;
 HSPLkotlinx/coroutines/channels/BufferedChannel;->getSendersCounter$kotlinx_coroutines_core()J
 HSPLkotlinx/coroutines/channels/BufferedChannel;->get_closeCause$volatile$FU()Ljava/util/concurrent/atomic/AtomicReferenceFieldUpdater;
-HSPLkotlinx/coroutines/channels/BufferedChannel;->hasElements$kotlinx_coroutines_core()Z
 HSPLkotlinx/coroutines/channels/BufferedChannel;->incCompletedExpandBufferAttempts$default(Lkotlinx/coroutines/channels/BufferedChannel;JILjava/lang/Object;)V
 HSPLkotlinx/coroutines/channels/BufferedChannel;->incCompletedExpandBufferAttempts(J)V
 HSPLkotlinx/coroutines/channels/BufferedChannel;->invokeCloseHandler()V
@@ -31140,10 +31143,13 @@ Lkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;
 HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;-><init>(Lkotlinx/coroutines/sync/MutexImpl;Lkotlinx/coroutines/CancellableContinuationImpl;Ljava/lang/Object;)V
 HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;->completeResume(Ljava/lang/Object;)V
 HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;->invokeOnCancellation(Lkotlinx/coroutines/internal/Segment;I)V
+HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;->resume(Lkotlin/Unit;Lkotlin/jvm/functions/Function3;)V
 HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;->tryResume(Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;->tryResume(Lkotlin/Unit;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 Lkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner$$ExternalSyntheticLambda0;
 HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner$$ExternalSyntheticLambda0;-><init>(Lkotlinx/coroutines/sync/MutexImpl;Lkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;)V
+Lkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner$$ExternalSyntheticLambda1;
+HSPLkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner$$ExternalSyntheticLambda1;-><init>(Lkotlinx/coroutines/sync/MutexImpl;Lkotlinx/coroutines/sync/MutexImpl$CancellableContinuationWithOwner;)V
 Lkotlinx/coroutines/sync/MutexKt;
 HSPLkotlinx/coroutines/sync/MutexKt;-><clinit>()V
 HSPLkotlinx/coroutines/sync/MutexKt;->Mutex$default(ZILjava/lang/Object;)Lkotlinx/coroutines/sync/Mutex;
@@ -32584,6 +32590,7 @@ Lokhttp3/internal/concurrent/Lockable;
 Lokhttp3/internal/concurrent/Task;
 HSPLokhttp3/internal/concurrent/Task;-><init>(Ljava/lang/String;Z)V
 HSPLokhttp3/internal/concurrent/Task;-><init>(Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+HSPLokhttp3/internal/concurrent/Task;->getCancelable()Z
 HSPLokhttp3/internal/concurrent/Task;->getName()Ljava/lang/String;
 HSPLokhttp3/internal/concurrent/Task;->getNextExecuteNanoTime$okhttp()J
 HSPLokhttp3/internal/concurrent/Task;->getQueue$okhttp()Lokhttp3/internal/concurrent/TaskQueue;
@@ -32995,11 +33002,13 @@ HSPLokhttp3/internal/http2/Http2;-><init>()V
 Lokhttp3/internal/http2/Http2Connection;
 HSPLokhttp3/internal/http2/Http2Connection;-><clinit>()V
 HSPLokhttp3/internal/http2/Http2Connection;-><init>(Lokhttp3/internal/http2/Http2Connection$Builder;)V
+HSPLokhttp3/internal/http2/Http2Connection;->access$failConnection(Lokhttp3/internal/http2/Http2Connection;Ljava/io/IOException;)V
 HSPLokhttp3/internal/http2/Http2Connection;->access$getDEFAULT_SETTINGS$cp()Lokhttp3/internal/http2/Settings;
 HSPLokhttp3/internal/http2/Http2Connection;->access$getSettingsListenerQueue$p(Lokhttp3/internal/http2/Http2Connection;)Lokhttp3/internal/concurrent/TaskQueue;
 HSPLokhttp3/internal/http2/Http2Connection;->access$getWriterQueue$p(Lokhttp3/internal/http2/Http2Connection;)Lokhttp3/internal/concurrent/TaskQueue;
 HSPLokhttp3/internal/http2/Http2Connection;->access$setWriteBytesMaximum$p(Lokhttp3/internal/http2/Http2Connection;J)V
 HSPLokhttp3/internal/http2/Http2Connection;->close$okhttp(Lokhttp3/internal/http2/ErrorCode;Lokhttp3/internal/http2/ErrorCode;Ljava/io/IOException;)V
+HSPLokhttp3/internal/http2/Http2Connection;->failConnection(Ljava/io/IOException;)V
 HSPLokhttp3/internal/http2/Http2Connection;->flush()V
 HSPLokhttp3/internal/http2/Http2Connection;->getClient$okhttp()Z
 HSPLokhttp3/internal/http2/Http2Connection;->getConnectionName$okhttp()Ljava/lang/String;
@@ -33113,6 +33122,7 @@ Lokhttp3/internal/http2/Http2Stream;
 HSPLokhttp3/internal/http2/Http2Stream;-><clinit>()V
 HSPLokhttp3/internal/http2/Http2Stream;-><init>(ILokhttp3/internal/http2/Http2Connection;ZZLokhttp3/Headers;)V
 HSPLokhttp3/internal/http2/Http2Stream;->access$doReadTimeout(Lokhttp3/internal/http2/Http2Stream;)Z
+HSPLokhttp3/internal/http2/Http2Stream;->addBytesToWriteWindow(J)V
 HSPLokhttp3/internal/http2/Http2Stream;->cancelStreamIfNecessary$okhttp()V
 HSPLokhttp3/internal/http2/Http2Stream;->doReadTimeout()Z
 HSPLokhttp3/internal/http2/Http2Stream;->getConnection()Lokhttp3/internal/http2/Http2Connection;
