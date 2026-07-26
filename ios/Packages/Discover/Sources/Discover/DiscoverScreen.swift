@@ -121,6 +121,7 @@ public struct DiscoverScreen: View {
                 isLoading: false,
                 trailingIcon: {
                     GlassButton(icon: "magnifyingglass", action: onSearchClicked)
+                        .testTag(DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG)
                 }
             )
             .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),

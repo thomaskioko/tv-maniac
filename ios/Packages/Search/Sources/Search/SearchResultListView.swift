@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiacKit
 
 public struct SearchResultListView: View {
     @Environment(\.appTheme) private var theme
@@ -35,6 +36,7 @@ public struct SearchResultListView: View {
                         .onTapGesture {
                             onClick(item.showId)
                         }
+                        .testTag(SearchTestTags.shared.resultItem(traktId: item.showId))
                     }
                 }
             }

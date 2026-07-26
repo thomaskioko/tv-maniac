@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiacKit
 
 public enum SearchScreenState {
     case loading
@@ -88,6 +89,7 @@ public struct SearchScreen: View {
             headerOverlay
         }
         .appScreen()
+        .screenTag(SearchTestTags.shared.SCREEN_TEST_TAG)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarColor(backgroundColor: .clear)
@@ -160,6 +162,7 @@ public struct SearchScreen: View {
                 .foregroundStyle(.appOnSurfaceVariant)
 
             TextField(state.searchPlaceholder, text: $query)
+                .testTag(SearchTestTags.shared.SEARCH_BAR_TEST_TAG)
                 .textStyle(theme.typography.bodyMedium)
                 .focused($isSearchFocused)
                 .submitLabel(.search)
