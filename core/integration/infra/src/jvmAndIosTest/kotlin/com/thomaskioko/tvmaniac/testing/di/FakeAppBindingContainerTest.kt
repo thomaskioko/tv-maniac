@@ -11,11 +11,6 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
-/**
- * Guards the wiring rather than the handler: these providers used to answer every request with
- * `{}`, which silently gave the JVM and iOS a different backend from Android's. A revert would
- * not fail any presenter test, because those make no HTTP calls, so assert it here.
- */
 class FakeAppBindingContainerTest {
 
     @AfterTest

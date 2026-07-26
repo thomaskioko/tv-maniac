@@ -114,9 +114,8 @@ public struct CarouselView<T, Content: View>: View {
             }
     }
 
-    /// A UI test cannot assert which item is on screen while the carousel moves on its own. The
-    /// launch environment naming a stub scenario is only ever set by one, so it doubles as the
-    /// signal to hold still.
+    /// No test can assert which item is on screen while the carousel moves on its own. Only a UI
+    /// test sets this variable, so it doubles as the signal to hold still.
     private var isDrivenByUITest: Bool {
         ProcessInfo.processInfo.environment["TVMANIAC_STUB_SCENARIO"] != nil
     }

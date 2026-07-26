@@ -102,7 +102,6 @@ struct DiscoverFeaturedContent: View {
             .onTapGesture {
                 onShowClicked(item.showId)
             }
-            .testTag(DiscoverTestTags.shared.featuredShowItem(traktId: item.showId))
         }
     }
 

@@ -10,10 +10,19 @@ public object Scenarios {
     public const val UNAUTHENTICATED: String = "unauthenticated"
     public const val AUTHENTICATED_TRAKT: String = "authenticatedTrakt"
 
+    public const val SEARCH: String = "search"
+
+    public const val SEARCH_QUERY: String = "Breaking Bad"
+
     private val all: List<Scenario> = listOf(
         Scenario(name = UNAUTHENTICATED) {
             stubBrowseGraph()
             stubTraktUsersMeUnauthorized()
+        },
+        Scenario(name = SEARCH) {
+            stubBrowseGraph()
+            stubTraktUsersMeUnauthorized()
+            stubSearch(SEARCH_QUERY)
         },
         Scenario(name = AUTHENTICATED_TRAKT) {
             stubBrowseGraph()
