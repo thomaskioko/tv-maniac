@@ -6,6 +6,9 @@ import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
+import platform.Foundation.NSProcessInfo
+
+private const val CLEAR_STATE_ENV = "TVMANIAC_CLEAR_STATE"
 
 @BindingContainer
 @ContributesTo(AppScope::class)
@@ -13,5 +16,15 @@ public object DatabasePlatformBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideSqlDriver(factory: MigrationDriverFactory): SqlDriver = factory.create()
+    public fun provideSqlDriver(factory: MigrationDriverFactory): SqlDriver {
+        if (shouldStartFromAnEmptyDatabase()) IosDatabaseDriverBuilder().deleteDatabase()
+        return factory.create()
+    }
+
+    /**
+     * A UI test asks for this through the launch environment, and deleting here rather than from
+     * the caller means the file is gone before the driver opens it.
+     */
+    private fun shouldStartFromAnEmptyDatabase(): Boolean =
+        NSProcessInfo.processInfo.environment[CLEAR_STATE_ENV] as String? == "1"
 }
