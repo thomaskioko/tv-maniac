@@ -85,6 +85,7 @@ struct DiscoverFeaturedContent: View {
             ) { index in
                 carouselItemView(item: shows[index])
             }
+            .testTag(DiscoverTestTags.shared.FEATURED_PAGER_TEST_TAG)
         }
     }
 
@@ -101,6 +102,7 @@ struct DiscoverFeaturedContent: View {
             .onTapGesture {
                 onShowClicked(item.showId)
             }
+            .testTag(DiscoverTestTags.shared.featuredShowItem(traktId: item.showId))
         }
     }
 

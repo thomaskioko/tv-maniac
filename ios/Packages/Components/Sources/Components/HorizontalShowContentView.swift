@@ -22,6 +22,7 @@ public struct HorizontalShowContentView: View {
     private let onMoreClicked: () -> Void
     private let spacing: CGFloat?
     private let edgeInsets: EdgeInsets?
+    private let cardTag: ((Int64) -> String)?
 
     public init(
         title: String,
@@ -33,7 +34,8 @@ public struct HorizontalShowContentView: View {
         spacing: CGFloat? = nil,
         edgeInsets: EdgeInsets? = nil,
         onClick: @escaping (Int64) -> Void,
-        onMoreClicked: @escaping () -> Void = {}
+        onMoreClicked: @escaping () -> Void = {},
+        cardTag: ((Int64) -> String)? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
@@ -45,6 +47,7 @@ public struct HorizontalShowContentView: View {
         self.onMoreClicked = onMoreClicked
         self.spacing = spacing
         self.edgeInsets = edgeInsets
+        self.cardTag = cardTag
     }
 
     public var body: some View {
@@ -76,6 +79,7 @@ public struct HorizontalShowContentView: View {
                         .onTapGesture { onClick(item.showId) }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("\(item.title), tap to view details")
+                        .testTag(cardTag?(item.showId))
                 }
             }
             .padding(edgeInsets ?? EdgeInsets(top: 0, leading: theme.spacing.medium, bottom: 0, trailing: 0))
