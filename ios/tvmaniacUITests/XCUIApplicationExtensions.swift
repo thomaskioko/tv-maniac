@@ -11,8 +11,6 @@ extension XCUIApplication {
         return app
     }
 
-    /// Derived from this file's location so it resolves on a laptop and on CI with no build
-    /// setting. Simulator processes can read the host filesystem, so nothing is copied into the app.
     private static var fixtureDirectory: String {
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
@@ -30,8 +28,6 @@ extension XCUIApplication {
         otherElements[identifier]
     }
 
-    /// Looks up by identifier without naming a type. A card renders as an image when its poster
-    /// loads and as static text when it does not, so the type is not stable.
     func element(_ identifier: String) -> XCUIElement {
         descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
@@ -69,9 +65,9 @@ extension XCUIApplication {
     }
 }
 
-/// Mirrors the Kotlin `Scenarios` table.
 enum StubScenario {
     static let unauthenticated = "unauthenticated"
+    static let search = "search"
     static let authenticatedTrakt = "authenticatedTrakt"
 }
 

@@ -7,7 +7,7 @@ final class SearchTests: XCTestCase {
     }
 
     func test_Search_ShowsResultForTheStubbedQuery() {
-        let app = XCUIApplication.launchTvManiac()
+        let app = XCUIApplication.launchTvManiac(scenario: StubScenario.search)
         app.awaitScreen(TestTags.discoverScreen)
 
         app.buttons[TestTags.discoverSearchButton].tap()
