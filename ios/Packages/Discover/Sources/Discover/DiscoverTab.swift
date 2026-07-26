@@ -37,5 +37,6 @@ public struct DiscoverTab: View {
                 presenter.dispatch(action: MessageShown(id: message.id))
             }
         }
+        .screenTag(DiscoverTestTags.shared.SCREEN_TEST_TAG)
     }
 }

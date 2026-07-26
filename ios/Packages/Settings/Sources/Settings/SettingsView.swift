@@ -108,6 +108,7 @@ public struct SettingsView: View {
             store.fontSizePercent = Int(newValue)
         }
         .settingsPosterStyleObservers(uiState: uiState, store: store)
+        .screenTag(SettingsTestTags.shared.SCREEN_TEST_TAG)
     }
 
     // MARK: - Root Sections

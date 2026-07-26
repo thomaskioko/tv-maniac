@@ -92,6 +92,7 @@ public struct MyShowsTab: View {
             watchNextEpisodesSwift.removeAll()
             staleEpisodesSwift.removeAll()
         }
+        .screenTag(MyShowsTestTags.shared.SCREEN_TEST_TAG)
     }
 
     private var pagePicker: some View {

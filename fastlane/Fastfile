@@ -65,6 +65,23 @@ platform :ios do
     )
   end
 
+  desc "Run UI Tests"
+  lane :ui_tests do
+    build_kmp_framework
+
+    run_tests(
+      project: "ios/tv-maniac.xcodeproj",
+      scheme: "tv-maniac",
+      destination: TEST_DESTINATION,
+      skip_detect_devices: true,
+      result_bundle: true,
+      xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
+      number_of_retries: 2,
+      fail_build: true,
+      derived_data_path: DERIVED_DATA_PATH
+    )
+  end
+
   desc "Re-record snapshot baselines"
   lane :record_snapshots do
     build_kmp_framework

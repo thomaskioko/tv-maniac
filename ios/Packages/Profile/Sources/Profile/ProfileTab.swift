@@ -37,6 +37,7 @@ public struct ProfileTab: View {
                 presenter.dispatch(action: ProfileActionMessageShown(id: errorMessage.id))
             }
         }
+        .screenTag(ProfileTestTags.shared.SCREEN_TEST_TAG)
     }
 }
 

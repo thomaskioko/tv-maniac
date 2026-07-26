@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiac
 
 public struct ProfileScreen: View {
     public struct State: Equatable {
@@ -166,6 +167,7 @@ public struct ProfileScreen: View {
                         }
 
                         GlassButton(icon: "gearshape", action: onSettingsClicked)
+                            .testTag(ProfileTestTags.shared.SETTINGS_BUTTON_TEST_TAG)
                     }
                 }
             )

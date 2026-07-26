@@ -63,8 +63,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D6997E342C95A04600D18112"
-               BuildableName = "tv-maniacUITests.xctest"
-               BlueprintName = "tv-maniacUITests"
+               BuildableName = "tvmaniacUITests.xctest"
+               BlueprintName = "tvmaniacUITests"
                ReferencedContainer = "container:tv-maniac.xcodeproj">
             </BuildableReference>
          </TestableReference>
