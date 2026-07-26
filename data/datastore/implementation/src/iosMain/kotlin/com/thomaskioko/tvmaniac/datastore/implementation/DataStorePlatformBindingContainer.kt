@@ -53,7 +53,6 @@ public object DataStorePlatformBindingContainer {
         return requireNotNull(documentDirectory).path + "/$DATA_STORE_FILE_NAME"
     }
 
-    /** Deleting here also clears the reference `createDataStore` caches for the whole process. */
     private fun shouldStartFromEmptyPreferences(): Boolean =
         NSProcessInfo.processInfo.environment[CLEAR_STATE_ENV] as String? == "1"
 }

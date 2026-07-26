@@ -5,11 +5,6 @@ import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.stringWithContentsOfFile
 
-/**
- * Kotlin/Native has no resource mechanism and the framework is static, so the caller names a
- * filesystem path instead. Simulator processes can read the host filesystem, so nothing is copied
- * into the app.
- */
 public const val FIXTURE_DIR_ENV: String = "TVMANIAC_FIXTURE_DIR"
 
 internal actual fun readFixture(resourcePath: String): String {

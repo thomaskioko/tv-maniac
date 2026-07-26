@@ -6,7 +6,6 @@ import platform.Foundation.NSProcessInfo
 
 public const val STUB_SCENARIO_ENV: String = "TVMANIAC_STUB_SCENARIO"
 
-/** XCUITest runs in a separate process, so the launch environment is its only channel. */
 public object StubHttpEngine {
 
     private val environment: Map<Any?, *> get() = NSProcessInfo.processInfo.environment

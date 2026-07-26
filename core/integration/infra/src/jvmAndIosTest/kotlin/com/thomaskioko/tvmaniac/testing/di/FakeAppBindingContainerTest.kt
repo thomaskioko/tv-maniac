@@ -11,10 +11,6 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
-/**
- * No presenter test would catch these providers reverting to `respond("{}")`, because none of them
- * make HTTP calls.
- */
 class FakeAppBindingContainerTest {
 
     @AfterTest

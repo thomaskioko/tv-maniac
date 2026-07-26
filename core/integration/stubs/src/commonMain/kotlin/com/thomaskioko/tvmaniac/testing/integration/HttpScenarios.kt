@@ -11,21 +11,10 @@ public const val TEST_NEXT_WEEK: String = "2026-04-26"
 /** Trakt id of the list returned by `trakt/users/lists/create/success.json`. */
 public const val TEST_CREATED_LIST_TRAKT_ID: Long = 99887766L
 
-/** Name of the list returned by `trakt/users/lists/create/success.json`. */
 public const val TEST_CREATED_LIST_NAME: String = "Watch Later"
 
-/**
- * Methods name their provider rather than taking a `SyncProviderSource`, because
- * `data/account-manager/api` would pull SQLDelight in with the enum and the API modules depend on
- * this one. Callers already holding a provider branch themselves.
- */
 public class HttpScenarios(private val mockHandler: MockEngineHandler) {
 
-    /**
-     * Public data reachable from Discover regardless of login state: the Trakt and TMDB list
-     * endpoints plus the per-show graph. Account-specific endpoints belong to the authenticated
-     * methods below, not here.
-     */
     public fun stubBrowseGraph() {
         mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowsFavoritedWeekly)
         mockHandler.stubEndpoint(Endpoints.PublicCatalog.GenresShows)
@@ -172,10 +161,6 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         mockHandler.stubEndpoint(Endpoints.Simkl.UsersSettings, HttpStatusCode.Unauthorized)
     }
 
-    /**
-     * Trakt's catalog-declared authenticated endpoints plus the account endpoints that carry a
-     * slug or a date. Pair with [stubBrowseGraph], the only source of TMDB and Discover coverage.
-     */
     public fun stubTraktAuthenticatedEndpoints(
         slug: String = TEST_PROFILE_SLUG,
         today: String = TEST_TODAY,
@@ -204,11 +189,6 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         Endpoints.Simkl.authenticatedEndpoints.forEach { mockHandler.stubEndpoint(it) }
     }
 
-    /**
-     * Registers the 401 first and the success responses after it. Matching is
-     * last-registered-first, so the 200 wins every call and the 401 is never served. Preserved from
-     * the Android original; the refresh path this was meant to exercise is not actually reached.
-     */
     public fun stubTraktTokenRefreshEndpoints(slug: String = TEST_PROFILE_SLUG) {
         mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
         mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)

@@ -21,7 +21,6 @@ public object DatabasePlatformBindingContainer {
         return factory.create()
     }
 
-    /** Deleting here rather than from the caller means the file is gone before the driver opens it. */
     private fun shouldStartFromAnEmptyDatabase(): Boolean =
         NSProcessInfo.processInfo.environment[CLEAR_STATE_ENV] as String? == "1"
 }
