@@ -72,6 +72,7 @@ scaffold {
             export(projects.features.featureFlags.presenter)
             export(projects.features.root.presenter)
             export(projects.features.root.nav)
+            export(projects.core.integration.stubs)
             export(projects.core.testTags)
             export(projects.domain.notifications)
 
@@ -133,6 +134,7 @@ kotlin {
                 api(projects.features.library.nav)
                 api(projects.features.profile.nav)
                 api(projects.features.myShows.nav)
+                api(projects.core.integration.stubs)
                 api(projects.core.testTags)
 
                 api(projects.domain.calendar)

@@ -64,6 +64,8 @@ io.ktor:ktor-client-darwin-iosarm64:3.5.1
 io.ktor:ktor-client-darwin:3.5.1
 io.ktor:ktor-client-logging-iosarm64:3.5.1
 io.ktor:ktor-client-logging:3.5.1
+io.ktor:ktor-client-mock-iosarm64:3.5.1
+io.ktor:ktor-client-mock:3.5.1
 io.ktor:ktor-events-iosarm64:3.5.1
 io.ktor:ktor-events:3.5.1
 io.ktor:ktor-http-cio-iosarm64:3.5.1
