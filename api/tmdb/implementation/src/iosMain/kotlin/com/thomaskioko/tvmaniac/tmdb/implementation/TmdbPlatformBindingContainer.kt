@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.thomaskioko.tvmaniac.core.base.TmdbApi
+import com.thomaskioko.tvmaniac.testing.integration.StubHttpEngine
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -16,5 +17,5 @@ public object TmdbPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     @TmdbApi
-    public fun provideTmdbHttpClientEngine(): HttpClientEngine = Darwin.create()
+    public fun provideTmdbHttpClientEngine(): HttpClientEngine = StubHttpEngine.createOrNull() ?: Darwin.create()
 }

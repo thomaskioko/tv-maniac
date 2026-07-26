@@ -29,6 +29,11 @@ kotlin {
 
         commonTest { dependencies { implementation(libs.ktor.serialization) } }
 
-        iosMain { dependencies { implementation(libs.ktor.darwin) } }
+        iosMain {
+            dependencies {
+                implementation(libs.ktor.darwin)
+                implementation(projects.core.integration.stubs)
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
 import com.thomaskioko.tvmaniac.core.base.SimklApi
+import com.thomaskioko.tvmaniac.testing.integration.StubHttpEngine
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -16,5 +17,5 @@ public object SimklPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     @SimklApi
-    public fun provideSimklHttpClientEngine(): HttpClientEngine = Darwin.create()
+    public fun provideSimklHttpClientEngine(): HttpClientEngine = StubHttpEngine.createOrNull() ?: Darwin.create()
 }
