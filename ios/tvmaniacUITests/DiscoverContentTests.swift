@@ -21,10 +21,11 @@ final class DiscoverContentTests: XCTestCase {
 }
 
 enum FixtureData {
-    /// First two entries of `trakt/shows/favorite/success.json`, rendered by the featured section.
+    /// The featured carousel holds these two in order, which is what the Android journey asserts.
     static let featuredShowTitle = "Breaking Bad"
     static let breakingBadId = 1396
-
-    /// Second entry of the featured carousel, matching what the Android journey asserts.
     static let betterCallSaulId = 60059
+
+    /// Matches `Scenarios.SEARCH_QUERY`, the only query the scenarios stub.
+    static let searchQuery = "Breaking Bad"
 }

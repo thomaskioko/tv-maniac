@@ -19,4 +19,12 @@ enum TestTags {
     static func discoverTrendingCard(_ showId: Int) -> String {
         "discover_show_card_trending_\(showId)"
     }
+
+    static let searchScreen = "search_screen"
+    static let searchBar = "search_bar"
+    static let discoverSearchButton = "discover_search_button"
+
+    static func searchResultItem(_ showId: Int) -> String {
+        "search_result_item_\(showId)"
+    }
 }
