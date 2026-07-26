@@ -47,6 +47,10 @@ graph TB
     direction TB
     :core:imageloading:api[api]:::multiplatform
   end
+  subgraph :core:integration
+    direction TB
+    :core:integration:stubs[stubs]:::multiplatform
+  end
   subgraph :core:locale
     direction TB
     :core:locale:api[api]:::multiplatform
@@ -1274,6 +1278,7 @@ graph TB
   :ios-framework -.-> :core:connectivity:implementation
   :ios-framework --> :core:feature-flags:api
   :ios-framework -.-> :core:feature-flags:implementation
+  :ios-framework --> :core:integration:stubs
   :ios-framework -.-> :core:locale:api
   :ios-framework -.-> :core:locale:implementation
   :ios-framework -.-> :core:logger:api
