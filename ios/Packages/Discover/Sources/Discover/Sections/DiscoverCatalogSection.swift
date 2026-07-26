@@ -112,7 +112,8 @@ struct DiscoverCatalogContent: View {
                     cardStyle: .poster,
                     items: trendingShows,
                     onClick: onShowClicked,
-                    onMoreClicked: onTrendingMoreClicked
+                    onMoreClicked: onTrendingMoreClicked,
+                    cardTag: { DiscoverTestTags.shared.showCard(rowKey: DiscoverTestTags.shared.ROW_KEY_TRENDING, traktId: $0) }
                 )
             }
 
@@ -123,7 +124,8 @@ struct DiscoverCatalogContent: View {
                     cardStyle: .poster,
                     items: upcomingShows,
                     onClick: onShowClicked,
-                    onMoreClicked: onUpcomingMoreClicked
+                    onMoreClicked: onUpcomingMoreClicked,
+                    cardTag: { DiscoverTestTags.shared.showCard(rowKey: DiscoverTestTags.shared.ROW_KEY_UPCOMING, traktId: $0) }
                 )
             }
 
@@ -134,7 +136,8 @@ struct DiscoverCatalogContent: View {
                     cardStyle: .poster,
                     items: popularShows,
                     onClick: onShowClicked,
-                    onMoreClicked: onPopularMoreClicked
+                    onMoreClicked: onPopularMoreClicked,
+                    cardTag: { DiscoverTestTags.shared.showCard(rowKey: DiscoverTestTags.shared.ROW_KEY_POPULAR, traktId: $0) }
                 )
             }
 
@@ -145,7 +148,8 @@ struct DiscoverCatalogContent: View {
                     cardStyle: .poster,
                     items: topRatedShows,
                     onClick: onShowClicked,
-                    onMoreClicked: onTopRatedMoreClicked
+                    onMoreClicked: onTopRatedMoreClicked,
+                    cardTag: { DiscoverTestTags.shared.showCard(rowKey: DiscoverTestTags.shared.ROW_KEY_TOP_RATED, traktId: $0) }
                 )
             }
         }

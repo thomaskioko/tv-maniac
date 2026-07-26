@@ -102,7 +102,7 @@ public struct CarouselView<T, Content: View>: View {
     }
 
     private func setupAutoScroll() {
-        guard items.count > 1 else { return }
+        guard items.count > 1, !isDrivenByUITest else { return }
         stopAutoScroll()
         let itemCount = items.count
         timerCancellable = Timer.publish(every: 5, on: .main, in: .common)
@@ -112,6 +112,13 @@ public struct CarouselView<T, Content: View>: View {
                     currentIndex = (currentIndex + 1) % itemCount
                 }
             }
+    }
+
+    /// A UI test cannot assert which item is on screen while the carousel moves on its own. The
+    /// launch environment naming a stub scenario is only ever set by one, so it doubles as the
+    /// signal to hold still.
+    private var isDrivenByUITest: Bool {
+        ProcessInfo.processInfo.environment["TVMANIAC_STUB_SCENARIO"] != nil
     }
 
     private func stopAutoScroll() {

@@ -30,6 +30,12 @@ extension XCUIApplication {
         otherElements[identifier]
     }
 
+    /// Looks up by identifier without naming a type. A card renders as an image when its poster
+    /// loads and as static text when it does not, so the type is not stable.
+    func element(_ identifier: String) -> XCUIElement {
+        descendants(matching: .any).matching(identifier: identifier).firstMatch
+    }
+
     @discardableResult
     func awaitScreen(
         _ identifier: String,
