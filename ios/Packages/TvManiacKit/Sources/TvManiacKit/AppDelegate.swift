@@ -38,8 +38,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
 
     override public init() {
         super.init()
-        // Must precede the first `appGraph` access: the driver holds the database file open.
-        IosTestHooks.shared.clearPersistentStateIfNeeded()
         if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
             FirebaseApp.configure()
             CrashReportingBridgeHolder.shared.bridge = FirebaseCrashlyticsBridge()
@@ -48,7 +46,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         // Force IosTaskScheduler construction so BGTask handlers are registered
         // synchronously during app launch — Apple silently discards late registrations.
         _ = appGraph.backgroundTaskScheduler
-        IosTestHooks.shared.saveAuthStateIfNeeded(authStore: appGraph.authStore)
         appGraph.initializers.initialize()
         setupNotifications()
         setupNotificationDelegate()

@@ -23,13 +23,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
         }
 
-        iosMain.dependencies {
-            api(projects.data.accountManager.api)
-            api(projects.data.oauth.api)
-            implementation(projects.data.database.sqldelight)
-            implementation(projects.data.datastore.implementation)
-        }
-
         commonTest.dependencies {
             implementation(libs.bundles.unittest)
         }
