@@ -15,16 +15,9 @@ public const val TEST_CREATED_LIST_TRAKT_ID: Long = 99887766L
 public const val TEST_CREATED_LIST_NAME: String = "Watch Later"
 
 /**
- * Every stub registration that is purely HTTP, so Android, the JVM and iOS answer test requests
- * from one set of saved responses instead of three different backends.
- *
- * Methods name their provider rather than taking a `SyncProviderSource`. That keeps this module
- * free of project dependencies, which matters because `ios-framework` has to depend on it and
- * `data/account-manager/api` would pull SQLDelight along with the enum. Callers that already hold
- * a provider value do the branch themselves.
- *
- * Anything that mutates a dependency graph fake, drives the UI, or seeds credentials stays with
- * the caller; this class only ever touches [mockHandler].
+ * Methods name their provider rather than taking a `SyncProviderSource`, because
+ * `data/account-manager/api` would pull SQLDelight in with the enum and the API modules depend on
+ * this one. Callers already holding a provider branch themselves.
  */
 public class HttpScenarios(private val mockHandler: MockEngineHandler) {
 
@@ -212,8 +205,9 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
     }
 
     /**
-     * Answers `/users/me` with 401 once, then registers the endpoints a successful refresh calls,
-     * so the last-registered-wins ordering replays the round-trip.
+     * Registers the 401 first and the success responses after it. Matching is
+     * last-registered-first, so the 200 wins every call and the 401 is never served. Preserved from
+     * the Android original; the refresh path this was meant to exercise is not actually reached.
      */
     public fun stubTraktTokenRefreshEndpoints(slug: String = TEST_PROFILE_SLUG) {
         mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)

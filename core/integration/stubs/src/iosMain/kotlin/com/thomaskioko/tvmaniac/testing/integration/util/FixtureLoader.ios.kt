@@ -6,11 +6,9 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.stringWithContentsOfFile
 
 /**
- * Environment variable naming the directory that holds the fixture tree. Kotlin/Native has no
- * resource mechanism and the framework is static, so there is no bundle to read from; the caller
- * supplies a filesystem path instead. Gradle sets it for `iosTest`, and the XCUITest launch
- * environment sets it for the app. Simulator processes can read the host filesystem, which is why
- * this works without copying anything into the app.
+ * Kotlin/Native has no resource mechanism and the framework is static, so the caller names a
+ * filesystem path instead. Simulator processes can read the host filesystem, so nothing is copied
+ * into the app.
  */
 public const val FIXTURE_DIR_ENV: String = "TVMANIAC_FIXTURE_DIR"
 

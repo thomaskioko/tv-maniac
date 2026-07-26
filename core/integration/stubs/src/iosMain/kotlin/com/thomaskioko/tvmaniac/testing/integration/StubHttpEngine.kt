@@ -15,7 +15,6 @@ public object StubHttpEngine {
         (environment[STUB_SCENARIO_ENV] as String?)?.also { Scenarios.apply(MockEngineHandler.handler, it) }
     }
 
-    /** Returns null when no scenario was named, which is every launch outside a UI test. */
     public fun createOrNull(): HttpClientEngine? {
         scenarioName ?: return null
         return MockEngine { request -> MockEngineHandler.handler.handle(this, request) }

@@ -21,10 +21,7 @@ public object DatabasePlatformBindingContainer {
         return factory.create()
     }
 
-    /**
-     * A UI test asks for this through the launch environment, and deleting here rather than from
-     * the caller means the file is gone before the driver opens it.
-     */
+    /** Deleting here rather than from the caller means the file is gone before the driver opens it. */
     private fun shouldStartFromAnEmptyDatabase(): Boolean =
         NSProcessInfo.processInfo.environment[CLEAR_STATE_ENV] as String? == "1"
 }
