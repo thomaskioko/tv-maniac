@@ -9,4 +9,14 @@ public extension View {
     func testTag(_ identifier: String) -> some View {
         accessibilityIdentifier(identifier)
     }
+
+    /// Tags a screen's outermost container so XCUITest can assert the screen is on
+    /// display. Unlike `testTag`, this also publishes the container itself as an
+    /// accessibility element, which SwiftUI otherwise skips for plain layout views,
+    /// leaving it unreachable through `app.otherElements`. Apply it outside every
+    /// loading, empty, and error branch so the tag survives whatever state renders.
+    func screenTag(_ identifier: String) -> some View {
+        accessibilityElement(children: .contain)
+            .accessibilityIdentifier(identifier)
+    }
 }

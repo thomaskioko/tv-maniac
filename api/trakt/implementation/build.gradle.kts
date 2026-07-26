@@ -59,6 +59,7 @@ kotlin {
         iosMain {
             dependencies {
                 implementation(libs.ktor.darwin)
+                implementation(projects.core.integration.stubs)
             }
         }
     }

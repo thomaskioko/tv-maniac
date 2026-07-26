@@ -1,6 +1,7 @@
 package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.core.base.TraktApi
+import com.thomaskioko.tvmaniac.testing.integration.StubHttpEngine
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -16,5 +17,5 @@ public object TraktPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     @TraktApi
-    public fun provideTraktHttpClientEngine(): HttpClientEngine = Darwin.create()
+    public fun provideTraktHttpClientEngine(): HttpClientEngine = StubHttpEngine.createOrNull() ?: Darwin.create()
 }

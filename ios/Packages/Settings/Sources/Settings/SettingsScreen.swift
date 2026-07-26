@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiac
 
 public struct SettingsScreen<Theme: ThemeItem>: View {
     public struct State {
@@ -106,6 +107,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
                 opacity: 1.0,
                 leadingIcon: {
                     GlassButton(icon: "chevron.left", action: onBack)
+                        .testTag(SettingsTestTags.shared.BACK_BUTTON_TEST_TAG)
                 }
             ),
             alignment: .top

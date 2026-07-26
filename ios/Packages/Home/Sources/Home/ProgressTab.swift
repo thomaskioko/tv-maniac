@@ -43,6 +43,7 @@ struct ProgressTab: View {
             }
         }
         .toastView(toast: $toast)
+        .screenTag(ProgressTestTags.shared.SCREEN_TEST_TAG)
     }
 
     private var upNextContent: some View {

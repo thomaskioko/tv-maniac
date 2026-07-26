@@ -2,46 +2,76 @@
 
 ## Table of Contents
 
-- [The Layers](#the-layers)
+- [Test Layers](#test-layers)
 - [Kotlin/Native Tests](#kotlinnative-tests)
 - [State Isolation](#state-isolation)
 - [Snapshot Tests](#snapshot-tests)
+- [UI Tests](#ui-tests)
+- [Launch Environment](#launch-environment)
 - [Running Tests](#running-tests)
 
-Android's equivalent harness is described in [`integration-testing.md`](integration-testing.md).
+Android's harness is described in [`integration-testing.md`](integration-testing.md).
 
-## The Layers
+## Test Layers
 
-| Layer | Runs | Catches | CI job |
+| Layer | Runs | Covers | CI job |
 |---|---|---|---|
-| Kotlin/Native tests | Simulator, no app | Broken iOS `actual` declarations, [Metro](glossary.md#metro) graph wiring, presenter logic on Kotlin/Native | `ios-test` |
-| Snapshot tests | Simulator, no app | Visual regressions in stateless `XScreen` structs | `ios-snapshot-test` |
+| Kotlin/Native tests | Simulator, no app | iOS `actual` declarations, [Metro](glossary.md#metro) graph construction, presenter logic on Kotlin/Native | `ios-test` |
+| Snapshot tests | Simulator, no app | Rendering of stateless `XScreen` structs | `ios-snapshot-test` |
+| UI tests | Simulator, real app | App launch, graph construction at runtime, framework linking, navigation | `ios-ui-test` |
 
-A third layer, XCUITest against the real app, is planned. Neither existing layer starts the binary, so a crash inside `AppDelegate.init` still reaches main: `fastlane build_tvmaniac` compiles and links the app without ever launching it, and snapshot tests never import `TvManiac`.
+`fastlane build_tvmaniac` compiles and links the app without launching it, and the snapshot targets never import `TvManiac`. The UI tests are the only layer that starts the binary, so they are the only layer that fails when `AppDelegate.init` throws.
 
 ## Kotlin/Native Tests
 
-`./gradlew iosTest` runs every `iosTest` source set on `iosSimulatorArm64`. Most are ordinary unit tests. Two of them, `HomePresenterIosTest` and `DefaultRootPresenterIosTest`, build presenters out of a real Metro graph and are the closest thing iOS has to Android's flow tests.
+`./gradlew iosTest` runs every `iosTest` source set on `iosSimulatorArm64`. `HomePresenterIosTest` and `DefaultRootPresenterIosTest` build presenters from a real Metro graph; the rest are unit tests.
 
-That graph is `TestGraph` in `core/integration/infra/src/iosMain/.../TestGraph.kt`, entered through `runTestWithGraph`. It is the iOS twin of the JVM `TestGraph`; the two are duplicated per source set because Metro materializes `@DependencyGraph.Factory` per target.
+That graph is `TestGraph` (`core/integration/infra/src/iosMain/.../TestGraph.kt`), entered through `runTestWithGraph`. `core/integration/infra/src/jvmMain/.../TestGraph.kt` declares the same graph for the JVM. Metro materializes `@DependencyGraph.Factory` per target, so the two cannot share a declaration.
 
-Always pass `--continue`. Without it Gradle stops at the first failing module and hides every other failure.
+Pass `--continue`. Gradle otherwise stops at the first failing module and reports no others.
 
 ## State Isolation
 
-`iosTest` runs one Kotlin/Native binary per module, so **all tests in a module share one process and one on-disk state**. `FakeIosPlatformBindingContainer` overrides the three pieces that would otherwise leak between tests, matching what `TestJvmPlatformBindingContainer` already does on the JVM:
+`iosTest` runs one Kotlin/Native binary per module, so every test in a module shares one process and one set of files on disk. `FakeIosPlatformBindingContainer` replaces the three bindings that carry values from one test into the next, matching `TestJvmPlatformBindingContainer` on the JVM:
 
-- **Keychain**: `IosAuthStore` is replaced by `FakeAuthStore`. A Kotlin/Native test binary is not an app bundle, so it has no keychain entitlement and every keychain read fails with `-25291`.
-- **Preferences**: `DataStorePlatformBindingContainer` writes a single file in `NSDocumentDirectory`, and `createDataStore` in `DataStoreHelper.kt` caches one instance for the whole process behind a lock. A fresh Metro graph does *not* get a fresh DataStore. The override builds `PreferenceDataStoreFactory` directly against a unique temporary directory, bypassing the singleton.
-- **Database**: `DatabasePlatformBindingContainer` opens a named file. The override uses `createNativeSqliteDriver(inMemory = true)`.
+- **Keychain**: replaces `IosAuthStore` with `FakeAuthStore`. A Kotlin/Native test binary is not an app bundle and holds no keychain entitlement, so `KeychainSettings` fails every read with `-25291`.
+- **Preferences**: replaces `DataStorePlatformBindingContainer`, which writes one file in `NSDocumentDirectory`. `createDataStore` in `DataStoreHelper.kt` also caches a single instance for the process, so building a new Metro graph returns the same `DataStore`. The override calls `PreferenceDataStoreFactory.createWithPath` against a unique temporary directory.
+- **Database**: replaces `DatabasePlatformBindingContainer`, which opens a named file, with `createNativeSqliteDriver(inMemory = true)`.
 
-When one of these is missing, the symptom is an assertion whose "actual" is a value some *other* test set, such as `fontSizePercent=120` appearing in a theme assertion. It reads as flakiness but is really execution order. Any new binding that persists state needs a matching override here.
+A missing override surfaces as an assertion reading a value an earlier test wrote, such as `fontSizePercent=120` in a theme assertion. The failure depends on execution order. Add an override here for every new binding that writes to disk.
 
 ## Snapshot Tests
 
-Described by the `Snapshots` scheme plus `ios/Packages/SnapshotTestingLib`. Each feature package owns a `Tests/` target that renders its `XScreen` struct in light and dark against committed PNG baselines.
+The `Snapshots` scheme runs them, and `ios/Packages/SnapshotTestingLib` holds the harness. Each feature package owns a `Tests/` target that renders its `XScreen` struct in light and dark against committed PNG baselines.
 
-Screens stay free of `import TvManiac` on purpose. That keeps snapshot targets off the framework and keeps the View/Screen split honest: the `XView` owns the presenter, the `XScreen` is a plain `State` struct plus closures.
+`XScreen` structs do not import `TvManiac`. That keeps the snapshot targets off the framework and holds the split: `XView` owns the presenter, `XScreen` takes a `State` struct and closures.
+
+## UI Tests
+
+`ios/tvmaniacUITests` drives the app through XCUITest.
+
+`XCUIApplication.launchTvManiac(scenario:)` starts the app with the [launch environment](#launch-environment) below. `IosHttpEngineBindingContainer` (`ios-framework/src/iosMain/`) reads `TVMANIAC_STUB_SCENARIO` and returns either a `MockEngine` backed by `MockEngineHandler` or `Darwin.create()`. Metro resolves `replaces` at compile time, so both branches live in that one container. A launch without the variable reaches the live services.
+
+`IosTestHooks` performs the two steps Android's journey tests run inside the test process:
+
+- `clearPersistentStateIfNeeded()` deletes the database, the preferences file and the saved credentials. `AppDelegate.init` calls it before the first `appGraph` access, because the SQLDelight driver holds the database file open and `createDataStore` caches one instance for the process.
+- `saveAuthStateIfNeeded(authStore:)` writes the credentials named by the scenario through the production `AuthStore`, which emits the login event `ContinueWatchingTasksInitializer` collects.
+
+`AppLaunchTests` and `SettingsNavigationTests` assert that a screen container exists, which holds in every data state. `DiscoverContentTests` asserts on a show title that only the saved responses contain, and fails when the app reaches the live services instead.
+
+Locate tabs by index through `app.tabBar.buttons.element(boundBy:)`. SwiftUI discards accessibility identifiers set inside `.tabItem`, so `HomeTestTags` constants do not resolve there.
+
+`TestTags.swift` repeats the `core:test-tags` strings as literals. Importing `TvManiac` links the Kotlin/Native static framework into the test bundle, which fails on missing `_sqlite3_*` symbols unless the app's `OTHER_LDFLAGS` are copied.
+
+## Launch Environment
+
+| Variable | Effect |
+|---|---|
+| `TVMANIAC_STUB_SCENARIO` | Names an entry in the Kotlin `Scenarios` table. The app answers HTTP from that scenario's saved responses. |
+| `TVMANIAC_FIXTURE_DIR` | Absolute path to the saved responses. `XCUIApplicationExtensions.swift` derives it from `#filePath`, so it resolves on a laptop and on CI without a build setting. |
+| `TVMANIAC_CLEAR_STATE` | Set to `1` to delete the database, preferences and saved credentials before the graph is built. |
+
+XCUITest runs in a separate process from the app, so the launch environment is the only channel between them.
 
 ## Running Tests
 
@@ -51,8 +81,11 @@ Screens stay free of `import TvManiac` on purpose. That keeps snapshot targets o
 
 # Snapshots
 bundle exec fastlane ios snapshot_tests
+
+# UI tests
+bundle exec fastlane ios ui_tests
 ```
 
-The snapshot lane builds the KMP framework first. Set `TVMANIAC_SKIP_FRAMEWORK_BUILD=1` to reuse an existing build.
+Both Fastlane lanes build the KMP framework first. Set `TVMANIAC_SKIP_FRAMEWORK_BUILD=1` to reuse an existing build.
 
-Note that `TvManiacFramework/Package.swift` calls `fatalError` when `TvManiac.xcframework` is missing, so a fresh checkout cannot even list Xcode schemes until `./scripts/build-kmp-framework.sh` has run.
+`TvManiacFramework/Package.swift` calls `fatalError` when `TvManiac.xcframework` is missing, so `xcodebuild -list` fails on a fresh checkout until `./scripts/build-kmp-framework.sh` has run.
