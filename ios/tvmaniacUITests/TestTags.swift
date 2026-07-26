@@ -1,5 +1,3 @@
-/// Literals rather than the Kotlin `core:test-tags` constants: importing `TvManiac` links the
-/// whole Kotlin/Native framework into the test bundle, which fails on missing sqlite3 symbols.
 enum TestTags {
     static let discoverScreen = "discover_screen"
     static let progressScreen = "progress_screen"
