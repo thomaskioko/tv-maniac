@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
-import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
@@ -25,7 +24,6 @@ public interface IosApplicationGraph {
     public val appMetadata: AppMetadata
     public val debugConfig: DebugConfig
     public val logger: Logger
-    public val authStore: AuthStore
 
     @DependencyGraph.Factory
     public fun interface Factory {
