@@ -49,6 +49,34 @@ extension XCUIApplication {
         return element
     }
 
+    func openShowDetailsFromSearch(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        awaitScreen(TestTags.discoverScreen)
+        buttons[TestTags.discoverSearchButton].tap()
+        awaitScreen(TestTags.searchScreen)
+
+        let field = textFields[TestTags.searchBar]
+        XCTAssertTrue(
+            field.waitForExistence(timeout: UITestTimeouts.screen),
+            "The search field never appeared.",
+            file: file,
+            line: line
+        )
+        field.tap()
+        field.typeText(FixtureData.searchQuery)
+
+        let result = element(TestTags.searchResultItem(FixtureData.breakingBadId))
+        XCTAssertTrue(
+            result.waitForExistence(timeout: UITestTimeouts.screen),
+            "Searching for \(FixtureData.searchQuery) never showed a result to tap.",
+            file: file,
+            line: line
+        )
+        result.tap()
+    }
+
     func dismissSystemAlertIfPresent() {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let alert = springboard.alerts.firstMatch
