@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiacKit
 
 public struct SeasonProgressCard: View {
     @Environment(\.appTheme) private var theme
@@ -26,6 +27,7 @@ public struct SeasonProgressCard: View {
             isSelected: isSelected,
             action: onClick
         )
+        .testTag(ShowDetailsTestTags.shared.seasonChip(seasonNumber: season.seasonNumber))
     }
 }
 

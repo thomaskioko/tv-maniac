@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiacKit
 
 public struct ShowDetailsScreen<Content: View>: View {
     public struct State {
@@ -116,6 +117,7 @@ public struct ShowDetailsScreen<Content: View>: View {
                 leadingIcon: {
                     GlassButton(icon: "chevron.left", action: onBack)
                         .opacity(1 - showGlass)
+                        .testTag(ShowDetailsTestTags.shared.BACK_BUTTON_TEST_TAG)
                 },
                 trailingIcon: {
                     GlassButton(icon: "arrow.clockwise", action: onRefresh)
