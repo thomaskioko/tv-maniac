@@ -46,24 +46,7 @@ private extension ProfileState {
         ProfileScreen.State(
             title: labels.title,
             isLoading: showLoading,
-            userProfile: userProfile.map { profile in
-                SwiftProfileInfo(
-                    username: profile.username,
-                    fullName: profile.fullName,
-                    avatarUrl: profile.avatarUrl,
-                    backgroundUrl: profile.backgroundUrl,
-                    stats: profile.stats.map { s in
-                        SwiftProfileStats(
-                            showsWatched: s.showsWatched,
-                            episodesWatched: s.episodesWatched,
-                            months: s.months,
-                            days: s.days,
-                            hours: s.hours,
-                            listCount: listCount
-                        )
-                    }
-                )
-            },
+            userProfile: swiftUserProfile,
             editButtonLabel: labels.editButton,
             statsTitle: labels.statsTitle,
             watchTimeLabel: labels.watchTime,
@@ -92,40 +75,69 @@ private extension ProfileState {
             authTitle: labels.authTitle,
             authDescription: labels.authDescription,
             isAuthenticated: authenticated,
-            featureItems: [
-                SwiftFeatureItem(
-                    id: "discover",
-                    iconName: "magnifyingglass",
-                    title: labels.featureDiscoverTitle,
-                    description: labels.featureDiscoverDescription
-                ),
-                SwiftFeatureItem(
-                    id: "track",
-                    iconName: "tv",
-                    title: labels.featureTrackTitle,
-                    description: labels.featureTrackDescription
-                ),
-                SwiftFeatureItem(
-                    id: "manage",
-                    iconName: "rectangle.stack",
-                    title: labels.featureManageTitle,
-                    description: labels.featureManageDescription
-                ),
-                SwiftFeatureItem(
-                    id: "more",
-                    iconName: "sparkles",
-                    title: labels.featureMoreTitle,
-                    description: labels.featureMoreDescription
-                ),
-            ],
-            authProviders: authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
-                SwiftAuthProvider(
-                    id: option.provider.name,
-                    label: option.label,
-                    logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
-                )
-            }
+            featureItems: swiftFeatureItems,
+            authProviders: swiftAuthProviders
         )
+    }
+
+    private var swiftUserProfile: SwiftProfileInfo? {
+        userProfile.map { profile in
+            SwiftProfileInfo(
+                username: profile.username,
+                fullName: profile.fullName,
+                avatarUrl: profile.avatarUrl,
+                backgroundUrl: profile.backgroundUrl,
+                stats: profile.stats.map { stats in
+                    SwiftProfileStats(
+                        showsWatched: stats.showsWatched,
+                        episodesWatched: stats.episodesWatched,
+                        months: stats.months,
+                        days: stats.days,
+                        hours: stats.hours,
+                        listCount: listCount
+                    )
+                }
+            )
+        }
+    }
+
+    private var swiftFeatureItems: [SwiftFeatureItem] {
+        [
+            SwiftFeatureItem(
+                id: "discover",
+                iconName: "magnifyingglass",
+                title: labels.featureDiscoverTitle,
+                description: labels.featureDiscoverDescription
+            ),
+            SwiftFeatureItem(
+                id: "track",
+                iconName: "tv",
+                title: labels.featureTrackTitle,
+                description: labels.featureTrackDescription
+            ),
+            SwiftFeatureItem(
+                id: "manage",
+                iconName: "rectangle.stack",
+                title: labels.featureManageTitle,
+                description: labels.featureManageDescription
+            ),
+            SwiftFeatureItem(
+                id: "more",
+                iconName: "sparkles",
+                title: labels.featureMoreTitle,
+                description: labels.featureMoreDescription
+            ),
+        ]
+    }
+
+    private var swiftAuthProviders: [SwiftAuthProvider] {
+        authProviders.compactMap { $0 as? AuthProviderOption }.map { option in
+            SwiftAuthProvider(
+                id: option.provider.name,
+                label: option.label,
+                logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+            )
+        }
     }
 }
 

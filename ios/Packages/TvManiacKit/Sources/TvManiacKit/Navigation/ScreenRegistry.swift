@@ -47,8 +47,8 @@ public final class ScreenRegistry {
     }
 
     public func dismissSheet(child: Any) {
-        for entry in sheetBuilders {
-            if entry.dismiss(child) { return }
+        for entry in sheetBuilders where entry.dismiss(child) {
+            return
         }
     }
 }
