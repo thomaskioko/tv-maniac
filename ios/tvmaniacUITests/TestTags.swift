@@ -25,4 +25,11 @@ enum TestTags {
     static func searchResultItem(_ showId: Int) -> String {
         "search_result_item_\(showId)"
     }
+
+    static let showDetailsScreen = "show_details_screen"
+    static let showDetailsBackButton = "show_details_back_button"
+
+    static func showDetailsSeasonChip(_ seasonNumber: Int) -> String {
+        "show_details_season_chip_\(seasonNumber)"
+    }
 }

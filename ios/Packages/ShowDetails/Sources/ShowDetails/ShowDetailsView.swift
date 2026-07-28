@@ -42,6 +42,7 @@ public struct ShowDetailsView: View {
                 showStatus: headerState.status
             )
         }
+        .screenTag(ShowDetailsTestTags.shared.SHOW_DETAILS_SCREEN_TEST_TAG)
         .onChange(of: hostState.message) { _, newValue in
             if let message = newValue {
                 toast = Toast(type: .error, title: "Error", message: message.message)
