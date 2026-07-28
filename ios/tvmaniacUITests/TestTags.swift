@@ -26,6 +26,12 @@ enum TestTags {
         "search_result_item_\(showId)"
     }
 
+    static let progressUpNextTab = "progress_tab_0"
+    static let progressCalendarTab = "progress_tab_1"
+    static let upNextEmptyState = "upnext_empty_state"
+    static let calendarScreen = "calendar_screen"
+    static let calendarLoggedOutState = "calendar_logged_out_state"
+
     static let showDetailsScreen = "show_details_screen"
     static let showDetailsBackButton = "show_details_back_button"
 

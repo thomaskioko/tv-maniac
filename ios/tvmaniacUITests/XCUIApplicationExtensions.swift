@@ -49,6 +49,20 @@ extension XCUIApplication {
         return element
     }
 
+    func openProgress(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(
+            tabBar.waitForExistence(timeout: UITestTimeouts.launch),
+            "The tab bar never appeared.",
+            file: file,
+            line: line
+        )
+        tabBar.buttons.element(boundBy: TabIndex.progress.rawValue).tap()
+        awaitScreen(TestTags.progressScreen)
+    }
+
     func openShowDetailsFromSearch(
         file: StaticString = #filePath,
         line: UInt = #line
