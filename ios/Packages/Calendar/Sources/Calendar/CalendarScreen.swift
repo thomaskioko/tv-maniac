@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiacKit
 
 public enum CalendarScreenState: Equatable {
     case loading
@@ -107,6 +108,7 @@ public struct CalendarPageContent: View {
             }
         }
         .appScreen()
+        .screenTag(CalendarTestTags.shared.SCREEN_TEST_TAG)
     }
 
     private var weekNavigationHeader: some View {
@@ -181,6 +183,7 @@ public struct CalendarPageContent: View {
                 )
                 .frame(maxWidth: .infinity)
             }
+            .screenTag(CalendarTestTags.shared.LOGGED_OUT_STATE_TEST_TAG)
         case let .empty(title, message):
             CenteredFullScreenView {
                 EmptyStateView(
