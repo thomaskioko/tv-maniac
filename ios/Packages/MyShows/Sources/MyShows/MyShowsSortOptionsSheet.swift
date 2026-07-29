@@ -36,6 +36,7 @@ struct MyShowsSortOptionsSheet: View {
                 }
             }
         }
+        .screenTag(MyShowsTestTags.shared.SORT_SHEET_TEST_TAG)
     }
 
     private var sortBySection: some View {

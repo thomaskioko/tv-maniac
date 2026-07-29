@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiacKit
 import UpNext
 
 public struct MyShowsScreen: View {
@@ -226,6 +227,7 @@ public struct MyShowsScreen: View {
             title: state.emptyText,
             message: subtitle
         )
+        .screenTag(MyShowsTestTags.shared.EMPTY_STATE_TEST_TAG)
     }
 
     private var upNextEmptyView: some View {
@@ -233,5 +235,6 @@ public struct MyShowsScreen: View {
             systemName: "checkmark.circle",
             title: state.upToDateText
         )
+        .screenTag(MyShowsTestTags.shared.EMPTY_STATE_TEST_TAG)
     }
 }

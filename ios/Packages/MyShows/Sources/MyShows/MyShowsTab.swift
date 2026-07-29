@@ -101,7 +101,9 @@ public struct MyShowsTab: View {
             set: { presenter.dispatch(action: MyShowsActionSelectPage(index: Int32($0))) }
         )) {
             Text(uiState.continueWatchingTitle).tag(0)
+                .testTag(MyShowsTestTags.shared.CONTINUE_WATCHING_TAB)
             Text(uiState.startWatchingTitle).tag(1)
+                .testTag(MyShowsTestTags.shared.START_WATCHING_TAB)
         }
         .pickerStyle(.segmented)
         .padding(.horizontal)
@@ -147,9 +149,11 @@ public struct MyShowsTab: View {
                             isSearchFocused = true
                         }
                     }
+                    .testTag(MyShowsTestTags.shared.SEARCH_BUTTON_TEST_TAG)
                     GlassButton(icon: "line.3.horizontal.decrease.circle") {
                         showSortOptions = true
                     }
+                    .testTag(MyShowsTestTags.shared.SORT_BUTTON_TEST_TAG)
                 }
             }
         }
@@ -236,6 +240,7 @@ public struct MyShowsTab: View {
                 systemName: "play.rectangle.on.rectangle",
                 title: String(\.label_start_watching_empty)
             )
+            .screenTag(StartWatchingTestTags.shared.EMPTY_STATE)
         } else {
             GridView(
                 items: startWatchingState.items.map { $0.toSwift() },
