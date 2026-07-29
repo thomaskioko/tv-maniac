@@ -6,27 +6,20 @@ final class ProgressTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func test_Progress_ShowsUpNextEmptyStateWhenSignedOut() {
+    func test_Progress_ShowsBothPagesWhenSignedOut() {
         let app = XCUIApplication.launchTvManiac()
         app.openTab(.progress)
 
-        let emptyState = app.element(TestTags.upNextEmptyState)
         XCTAssertTrue(
-            emptyState.waitForExistence(timeout: UITestTimeouts.screen),
+            app.element(TestTags.upNextEmptyState).waitForExistence(timeout: UITestTimeouts.screen),
             "Up Next never showed its empty state for a signed out account."
         )
-    }
-
-    func test_Progress_SwitchesToCalendar() {
-        let app = XCUIApplication.launchTvManiac()
-        app.openTab(.progress)
 
         app.buttons[TestTags.progressCalendarTab].tap()
         app.awaitScreen(TestTags.calendarScreen)
 
-        let loggedOutState = app.element(TestTags.calendarLoggedOutState)
         XCTAssertTrue(
-            loggedOutState.waitForExistence(timeout: UITestTimeouts.screen),
+            app.element(TestTags.calendarLoggedOutState).waitForExistence(timeout: UITestTimeouts.screen),
             "The calendar never asked a signed out account to log in."
         )
     }
