@@ -7,6 +7,7 @@ PACKAGE_NAME = "com.thomaskioko.tvmaniac"
 PROJECT_DIR = File.expand_path('..', Dir.pwd)
 DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
 COMPILATION_CACHE_PATH = "#{PROJECT_DIR}/compilation_cache"
+UI_TEST_ALLOWANCE_SECONDS = 600
 
 platform :ios do
 
@@ -75,7 +76,10 @@ platform :ios do
       destination: TEST_DESTINATION,
       skip_detect_devices: true,
       result_bundle: true,
-      xcargs: "-retry-tests-on-failure -skipPackagePluginValidation",
+      xcargs: "-skipPackagePluginValidation " \
+              "-test-timeouts-enabled YES " \
+              "-default-test-execution-time-allowance #{UI_TEST_ALLOWANCE_SECONDS} " \
+              "-maximum-test-execution-time-allowance #{UI_TEST_ALLOWANCE_SECONDS}",
       number_of_retries: 2,
       fail_build: true,
       derived_data_path: DERIVED_DATA_PATH

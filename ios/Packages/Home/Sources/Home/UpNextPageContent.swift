@@ -115,5 +115,6 @@ struct UpNextPageContent: View {
                 title: String(\.label_upnext_empty)
             )
         }
+        .screenTag(UpNextTestTags.shared.EMPTY_STATE_TEST_TAG)
     }
 }
