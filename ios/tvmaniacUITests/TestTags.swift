@@ -26,6 +26,13 @@ enum TestTags {
         "search_result_item_\(showId)"
     }
 
+    static let myShowsContinueWatchingTab = "my_shows_tab_0"
+    static let myShowsStartWatchingTab = "my_shows_tab_1"
+    static let myShowsEmptyState = "my_shows_empty_state"
+    static let myShowsSortButton = "my_shows_sort_button"
+    static let myShowsSortSheet = "my_shows_sort_sheet"
+    static let startWatchingEmptyState = "start_watching_empty_state"
+
     static let progressUpNextTab = "progress_tab_0"
     static let progressCalendarTab = "progress_tab_1"
     static let upNextEmptyState = "upnext_empty_state"
