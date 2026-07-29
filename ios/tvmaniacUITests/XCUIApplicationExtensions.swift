@@ -49,7 +49,8 @@ extension XCUIApplication {
         return element
     }
 
-    func openProgress(
+    func openTab(
+        _ tab: TabIndex,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
@@ -59,8 +60,8 @@ extension XCUIApplication {
             file: file,
             line: line
         )
-        tabBar.buttons.element(boundBy: TabIndex.progress.rawValue).tap()
-        awaitScreen(TestTags.progressScreen)
+        tabBar.buttons.element(boundBy: tab.rawValue).tap()
+        awaitScreen(tab.screenTag, file: file, line: line)
     }
 
     func openShowDetailsFromSearch(

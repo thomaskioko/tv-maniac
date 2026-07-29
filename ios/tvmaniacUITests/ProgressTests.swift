@@ -8,7 +8,7 @@ final class ProgressTests: XCTestCase {
 
     func test_Progress_ShowsUpNextEmptyStateWhenSignedOut() {
         let app = XCUIApplication.launchTvManiac()
-        app.openProgress()
+        app.openTab(.progress)
 
         let emptyState = app.element(TestTags.upNextEmptyState)
         XCTAssertTrue(
@@ -19,7 +19,7 @@ final class ProgressTests: XCTestCase {
 
     func test_Progress_SwitchesToCalendar() {
         let app = XCUIApplication.launchTvManiac()
-        app.openProgress()
+        app.openTab(.progress)
 
         app.buttons[TestTags.progressCalendarTab].tap()
         app.awaitScreen(TestTags.calendarScreen)
