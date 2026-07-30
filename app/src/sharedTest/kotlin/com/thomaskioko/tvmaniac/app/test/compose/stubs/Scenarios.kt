@@ -209,36 +209,6 @@ internal class Scenarios(
         stubUnauthenticatedState()
     }
 
-    /**
-     * Simulates 401-then-refresh round-trip on `/users/me`. Configures fake repo with fresh
-     * AuthState so next refresh resolves successfully, and re-stubs the profile endpoints so
-     * post-refresh calls pass. Stubs the profile endpoints directly rather than going through
-     * [stubActiveProvider], which would also reset the auth/refresh state this test is verifying.
-     */
-    fun stubTokenRefresh(
-        provider: SyncProviderSource = SyncProviderSource.TRAKT,
-        accessToken: String = "refreshed-access",
-        refreshToken: String = "refreshed-refresh",
-        tokenLifetimeSeconds: Long = 3600,
-    ) {
-        when (provider) {
-            SyncProviderSource.TRAKT -> {
-                val refreshedAuthState = AuthState(
-                    accessToken = accessToken,
-                    refreshToken = refreshToken,
-                    isAuthorized = true,
-                    expiresAt = Clock.System.now() + tokenLifetimeSeconds.seconds,
-                    tokenLifetimeSeconds = tokenLifetimeSeconds,
-                )
-                graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(refreshedAuthState))
-                http.stubTraktTokenRefreshEndpoints()
-            }
-            SyncProviderSource.SIMKL -> error(
-                "Simkl token refresh is not stubbed yet; add it when a Simkl refresh journey exists.",
-            )
-        }
-    }
-
     inner class Auth {
         fun stubLoggedInUser(
             accessToken: String = TEST_ACCESS_TOKEN,

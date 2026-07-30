@@ -50,9 +50,12 @@ kotlin {
                 implementation(libs.ktor.serialization.json)
                 implementation(projects.api.trakt.api)
                 implementation(projects.api.trakt.testing)
+                implementation(projects.core.connectivity.testing)
+                implementation(projects.core.logger.testing)
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.calendar.api)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.data.traktauth.testing)
             }
         }
 

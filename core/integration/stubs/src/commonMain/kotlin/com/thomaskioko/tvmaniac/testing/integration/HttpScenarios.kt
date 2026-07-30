@@ -189,14 +189,6 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         Endpoints.Simkl.authenticatedEndpoints.forEach { mockHandler.stubEndpoint(it) }
     }
 
-    public fun stubTraktTokenRefreshEndpoints(slug: String = TEST_PROFILE_SLUG) {
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
-        mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe)
-        mockHandler.stubEndpoint(Endpoints.Trakt.userStats(slug))
-        mockHandler.stubEndpoint(Endpoints.Trakt.userLists(slug))
-        mockHandler.stubEndpoint(Endpoints.Trakt.UserListItems)
-    }
-
     private fun stubShowsFrom(fixturePath: String) {
         showFixtures(FixtureLoader.load(fixturePath)).forEach { mockHandler.stubShow(it) }
     }
