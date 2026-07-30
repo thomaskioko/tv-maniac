@@ -1265,7 +1265,7 @@ graph TB
   :ios-framework -.-> :api:simkl:implementation
   :ios-framework -.-> :api:tmdb:api
   :ios-framework -.-> :api:tmdb:implementation
-  :ios-framework --> :api:trakt:api
+  :ios-framework -.-> :api:trakt:api
   :ios-framework -.-> :api:trakt:implementation
   :ios-framework --> :core:appconfig:api
   :ios-framework --> :core:appconfig:implementation
@@ -1366,11 +1366,11 @@ graph TB
   :ios-framework --> :domain:calendar
   :ios-framework --> :domain:continue-watching
   :ios-framework --> :domain:favorites
-  :ios-framework --> :domain:feature-flags
+  :ios-framework -.-> :domain:feature-flags
   :ios-framework --> :domain:followedshows
   :ios-framework -.-> :domain:followedshows
   :ios-framework -.-> :domain:logout
-  :ios-framework --> :domain:notifications
+  :ios-framework -.-> :domain:notifications
   :ios-framework --> :domain:recently-watched
   :ios-framework --> :domain:settings
   :ios-framework --> :domain:start-watching
@@ -1383,11 +1383,11 @@ graph TB
   :ios-framework --> :features:discover:nav
   :ios-framework --> :features:discover:presenter
   :ios-framework --> :features:episode-sheet:presenter
-  :ios-framework --> :features:feature-flags:nav
+  :ios-framework -.-> :features:feature-flags:nav
   :ios-framework --> :features:feature-flags:presenter
   :ios-framework --> :features:home:nav
   :ios-framework --> :features:home:presenter
-  :ios-framework --> :features:library:nav
+  :ios-framework -.-> :features:library:nav
   :ios-framework --> :features:library:presenter
   :ios-framework --> :features:more-shows:presenter
   :ios-framework --> :features:my-shows:nav
@@ -1400,12 +1400,12 @@ graph TB
   :ios-framework --> :features:root:nav
   :ios-framework --> :features:root:presenter
   :ios-framework --> :features:search:presenter
-  :ios-framework --> :features:season-details:nav
+  :ios-framework -.-> :features:season-details:nav
   :ios-framework --> :features:season-details:presenter
   :ios-framework --> :features:settings:presenter
   :ios-framework --> :features:show-details:nav
   :ios-framework --> :features:show-details:presenter
-  :ios-framework --> :features:show-list:nav
+  :ios-framework -.-> :features:show-list:nav
   :ios-framework --> :features:show-list:presenter
   :ios-framework --> :features:start-watching:presenter
   :ios-framework --> :features:trailers:presenter
