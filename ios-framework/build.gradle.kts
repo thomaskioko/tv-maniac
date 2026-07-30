@@ -20,6 +20,7 @@ scaffold {
         with(framework) {
             isStatic = true
             if (debuggable) freeCompilerArgs += "-Xadd-light-debug=enable"
+            if (!debuggable) freeCompilerArgs += "-Xbinary=smallBinary=true"
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
             disableNativeCache(
