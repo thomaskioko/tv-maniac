@@ -6,18 +6,31 @@ final class SettingsNavigationTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func test_Settings_OpensFromProfileAndReturns() {
+    func test_Settings_WalksItsPagesAndReturnsToProfile() {
         let app = XCUIApplication.launchTvManiac()
-        XCTAssertTrue(app.tabBar.waitForExistence(timeout: UITestTimeouts.launch))
-
-        app.tabBar.buttons.element(boundBy: TabIndex.profile.rawValue).tap()
-        app.awaitScreen(TestTags.profileScreen)
+        app.openTab(.profile)
 
         let settingsButton = app.buttons[TestTags.profileSettingsButton]
-        XCTAssertTrue(settingsButton.waitForExistence(timeout: UITestTimeouts.screen))
+        XCTAssertTrue(
+            settingsButton.waitForExistence(timeout: UITestTimeouts.screen),
+            "Profile never showed its settings button."
+        )
         settingsButton.tap()
-
         app.awaitScreen(TestTags.settingsScreen)
+
+        app.openSettingsPage(TestTags.settingsAppearanceRow)
+        XCTAssertTrue(
+            app.element(TestTags.settingsImageQualityChip("AUTO")).waitForExistence(timeout: UITestTimeouts.screen),
+            "The appearance page never showed the image quality choices."
+        )
+        app.leaveSettingsPage()
+
+        app.openSettingsPage(TestTags.settingsInfoRow)
+        XCTAssertTrue(
+            app.element(TestTags.settingsVersionText).waitForExistence(timeout: UITestTimeouts.screen),
+            "The about page never showed the version."
+        )
+        app.leaveSettingsPage()
 
         app.buttons[TestTags.settingsBackButton].tap()
         app.awaitScreen(TestTags.profileScreen)

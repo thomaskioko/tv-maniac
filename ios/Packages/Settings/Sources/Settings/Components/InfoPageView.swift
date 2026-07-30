@@ -1,5 +1,6 @@
 import DesignSystem
 import SwiftUI
+import TvManiacKit
 
 struct InfoPageView: View {
     @Environment(\.appTheme) private var appTheme
@@ -26,6 +27,7 @@ struct InfoPageView: View {
                     .textStyle(appTheme.typography.bodyLarge)
                     .foregroundColor(appTheme.colors.secondary)
                     .onTapGesture(perform: content.onVersionTap)
+                    .testTag(SettingsTestTags.shared.INFO_VERSION_TEXT_TEST_TAG)
             }
             .frame(maxWidth: .infinity)
             .padding(.top, appTheme.spacing.large)

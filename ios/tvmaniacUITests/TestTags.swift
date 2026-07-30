@@ -7,15 +7,16 @@ enum TestTags {
 
     static let profileSettingsButton = "profile_settings_button"
     static let settingsBackButton = "settings_back_button"
+    static let settingsAppearanceRow = "settings_general_appearance_row"
+    static let settingsInfoRow = "settings_about_info_row"
+    static let settingsVersionText = "settings_info_version_text"
 
-    static let discoverFeaturedPager = "discover_featured_pager"
-
-    static func discoverFeaturedItem(_ showId: Int) -> String {
-        "discover_featured_show_\(showId)"
+    static func settingsImageQualityChip(_ quality: String) -> String {
+        "settings_image_quality_\(quality.lowercased())"
     }
 
-    static func discoverTrendingCard(_ showId: Int) -> String {
-        "discover_show_card_trending_\(showId)"
+    static func discoverShowCard(row: DiscoverRow, showId: Int) -> String {
+        "discover_show_card_\(row.rawValue)_\(showId)"
     }
 
     static let searchScreen = "search_screen"
