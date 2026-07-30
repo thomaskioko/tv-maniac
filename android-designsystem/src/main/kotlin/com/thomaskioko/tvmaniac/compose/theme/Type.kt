@@ -3,43 +3,20 @@ package com.thomaskioko.tvmaniac.compose.theme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.thomaskioko.tvmaniac.i18n.MR
-import dev.icerock.moko.resources.compose.asFont
+import com.thomaskioko.tvmaniac.android.designsystem.R
 
-@Composable
 internal fun workSansFontFamily() = FontFamily(
-    MR.fonts.work_sans_thin.asFont(
-        weight = FontWeight.W100,
-        style = FontStyle.Normal,
-    )!!,
-    MR.fonts.work_sans_light.asFont(
-        weight = FontWeight.W300,
-        style = FontStyle.Normal,
-    )!!,
-    MR.fonts.work_sans.asFont(
-        weight = FontWeight.W400,
-        style = FontStyle.Normal,
-    )!!,
-    MR.fonts.work_sans_medium.asFont(
-        weight = FontWeight.W500,
-        style = FontStyle.Normal,
-    )!!,
-    MR.fonts.work_sans_semibold.asFont(
-        weight = FontWeight.W600,
-        style = FontStyle.Normal,
-    )!!,
-    MR.fonts.work_sans_bold.asFont(
-        weight = FontWeight.W700,
-        style = FontStyle.Normal,
-    )!!,
-    MR.fonts.work_sans_extrabold.asFont(
-        weight = FontWeight.W800,
-        style = FontStyle.Normal,
-    )!!,
+    Font(R.font.work_sans_thin, weight = FontWeight.W100),
+    Font(R.font.work_sans_light, weight = FontWeight.W300),
+    Font(R.font.work_sans, weight = FontWeight.W400),
+    Font(R.font.work_sans_medium, weight = FontWeight.W500),
+    Font(R.font.work_sans_semibold, weight = FontWeight.W600),
+    Font(R.font.work_sans_bold, weight = FontWeight.W700),
+    Font(R.font.work_sans_extrabold, weight = FontWeight.W800),
 )
 
 @Composable
