@@ -95,7 +95,7 @@ extension XCUIApplication {
     func dismissSystemAlertIfPresent() {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let alert = springboard.alerts.firstMatch
-        guard alert.waitForExistence(timeout: UITestTimeouts.systemAlert) else { return }
+        guard alert.exists else { return }
 
         for label in ["Allow", "Allow While Using App", "OK", "Don’t Allow"] {
             let button = alert.buttons[label]
@@ -117,5 +117,4 @@ enum StubScenario {
 enum UITestTimeouts {
     static let launch: TimeInterval = 90
     static let screen: TimeInterval = 30
-    static let systemAlert: TimeInterval = 5
 }
