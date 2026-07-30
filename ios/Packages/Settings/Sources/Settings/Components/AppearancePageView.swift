@@ -1,6 +1,7 @@
 import Components
 import DesignSystem
 import SwiftUI
+import TvManiacKit
 
 struct AppearancePageView<Theme: ThemeItem>: View {
     @Environment(\.appTheme) private var appTheme
@@ -44,6 +45,7 @@ struct AppearancePageView<Theme: ThemeItem>: View {
                                     isSelected: option.id == imageQualityItem.selectedOptionId,
                                     action: option.onSelect
                                 )
+                                .testTag(SettingsTestTags.shared.imageQualityChip(name: option.id))
                             }
                         }
                         Text(imageQualityItem.subtitle)
