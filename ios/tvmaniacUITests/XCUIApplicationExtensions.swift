@@ -64,6 +64,25 @@ extension XCUIApplication {
         awaitScreen(tab.screenTag, file: file, line: line)
     }
 
+    func openSettingsPage(
+        _ rowTag: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let row = element(rowTag)
+        XCTAssertTrue(
+            row.waitForExistence(timeout: UITestTimeouts.screen),
+            "Settings never showed the \"\(rowTag)\" row.",
+            file: file,
+            line: line
+        )
+        row.tap()
+    }
+
+    func leaveSettingsPage() {
+        buttons[TestTags.settingsBackButton].tap()
+    }
+
     func openShowDetailsFromSearch(
         file: StaticString = #filePath,
         line: UInt = #line
