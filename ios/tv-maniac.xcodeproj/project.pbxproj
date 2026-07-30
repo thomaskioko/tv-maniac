@@ -300,7 +300,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which mint >/dev/null; then\n  (cd \"$SRCROOT/..\" && mint run swiftlint --config .swiftlint.yml)\nelse\n  echo \"warning: Mint not installed. Run 'brew bundle install && mint bootstrap' from the repo root to enable pinned SwiftLint.\"\nfi\n\ncd \"$SRCROOT/..\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \\\n    :i18n:generator:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n";
+			shellScript = "if which mint >/dev/null; then\n  (cd \"$SRCROOT/..\" && mint run swiftlint --config .swiftlint.yml)\nelse\n  echo \"warning: Mint not installed. Run 'brew bundle install && mint bootstrap' from the repo root to enable pinned SwiftLint.\"\nfi\n\ncd \"$SRCROOT/..\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \\\n    :i18n:generator:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"$CONFIGURATION\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\" \n\n# Base.lproj duplicates en.lproj byte for byte; drop it from the shipped bundle.\nrm -rf \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/tv-maniac.i18n:generator.bundle/Contents/Resources/Base.lproj\"\n";
 		};
 		D6CDA52D2F417A820021240C /* Copy GoogleService-Info.plist */ = {
 			isa = PBXShellScriptBuildPhase;
