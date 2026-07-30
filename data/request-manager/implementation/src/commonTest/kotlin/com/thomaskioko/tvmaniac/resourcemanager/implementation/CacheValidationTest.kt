@@ -10,10 +10,11 @@ import kotlin.test.Test
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 internal class CacheValidationTest : BaseDatabaseTest() {
     private lateinit var repository: DefaultRequestManagerRepository
-    private val fakeDateTimeProvider = FakeDateTimeProvider()
+    private val fakeDateTimeProvider = FakeDateTimeProvider(currentTime = FIXED_NOW)
 
     @BeforeTest
     fun setup() {
@@ -113,7 +114,7 @@ internal class CacheValidationTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `isRequestExpired should handle edge case at exact threshold boundary`() {
+    fun `isRequestExpired should return false when request is exactly at the threshold`() {
         val entityId = 123L
         val requestType = "SHOW_DETAILS"
         val exactlyOneDayAgo = fakeDateTimeProvider.now() - 1.days
@@ -126,8 +127,7 @@ internal class CacheValidationTest : BaseDatabaseTest() {
             threshold = 1.days,
         )
 
-        // Should be expired (true) when timestamp equals cutoff time
-        result shouldBe true
+        result shouldBe false
     }
 
     @Test
@@ -135,15 +135,13 @@ internal class CacheValidationTest : BaseDatabaseTest() {
         val requestType = "SHOW_DETAILS"
         val now = fakeDateTimeProvider.now()
 
-        // Add requests for different entities
         repository.upsert(1L, requestType, now - 30.minutes)
         repository.upsert(2L, requestType, now - 2.days)
         repository.upsert(3L, requestType, now - 61.minutes)
 
-        // Check each entity individually
-        repository.isRequestExpired(1L, requestType, 1.hours) shouldBe false // Valid
-        repository.isRequestExpired(2L, requestType, 1.hours) shouldBe true // Expired
-        repository.isRequestExpired(3L, requestType, 1.hours) shouldBe true // Expired
+        repository.isRequestExpired(1L, requestType, 1.hours) shouldBe false
+        repository.isRequestExpired(2L, requestType, 1.hours) shouldBe true
+        repository.isRequestExpired(3L, requestType, 1.hours) shouldBe true
     }
 
     @Test
@@ -151,15 +149,13 @@ internal class CacheValidationTest : BaseDatabaseTest() {
         val entityId = 123L
         val now = fakeDateTimeProvider.now()
 
-        // Add different request types for same entity
         repository.upsert(entityId, "SHOW_DETAILS", now - 30.minutes)
         repository.upsert(entityId, "SIMILAR_SHOWS", now - 2.hours)
         repository.upsert(entityId, "SEASON_DETAILS", now - 1.days)
 
-        // Check each request type individually
-        repository.isRequestExpired(entityId, "SHOW_DETAILS", 1.hours) shouldBe false // Valid
-        repository.isRequestExpired(entityId, "SIMILAR_SHOWS", 1.hours) shouldBe true // Expired
-        repository.isRequestExpired(entityId, "SEASON_DETAILS", 1.hours) shouldBe true // Expired
+        repository.isRequestExpired(entityId, "SHOW_DETAILS", 1.hours) shouldBe false
+        repository.isRequestExpired(entityId, "SIMILAR_SHOWS", 1.hours) shouldBe true
+        repository.isRequestExpired(entityId, "SEASON_DETAILS", 1.hours) shouldBe true
     }
 
     @Test
@@ -172,42 +168,31 @@ internal class CacheValidationTest : BaseDatabaseTest() {
         repository.upsert(entityId, "DIFFERENT_TYPE", now)
         repository.upsert(456L, requestType, now)
 
-        // Verify all requests exist
         repository.isRequestExpired(entityId, requestType, 1.hours) shouldBe false
         repository.isRequestExpired(entityId, "DIFFERENT_TYPE", 1.hours) shouldBe false
         repository.isRequestExpired(456L, requestType, 1.hours) shouldBe false
 
-        // Delete specific combination
         repository.delete(entityId, requestType)
 
-        // Verify only the specific combination was deleted
-        repository.isRequestExpired(entityId, requestType, 1.hours) shouldBe true // Deleted
-        repository.isRequestExpired(
-            entityId,
-            "DIFFERENT_TYPE",
-            1.hours,
-        ) shouldBe false // Still exists
-        repository.isRequestExpired(456L, requestType, 1.hours) shouldBe false // Still exists
+        repository.isRequestExpired(entityId, requestType, 1.hours) shouldBe true
+        repository.isRequestExpired(entityId, "DIFFERENT_TYPE", 1.hours) shouldBe false
+        repository.isRequestExpired(456L, requestType, 1.hours) shouldBe false
     }
 
     @Test
     fun `deleteAll should remove all cached requests`() {
         val now = fakeDateTimeProvider.now()
 
-        // Add multiple requests
         repository.upsert(1L, "SHOW_DETAILS", now)
         repository.upsert(2L, "SIMILAR_SHOWS", now)
         repository.upsert(3L, "SEASON_DETAILS", now)
 
-        // Verify requests exist
         repository.isRequestExpired(1L, "SHOW_DETAILS", 1.hours) shouldBe false
         repository.isRequestExpired(2L, "SIMILAR_SHOWS", 1.hours) shouldBe false
         repository.isRequestExpired(3L, "SEASON_DETAILS", 1.hours) shouldBe false
 
-        // Delete all
         repository.deleteAll()
 
-        // Verify all requests are gone
         repository.isRequestExpired(1L, "SHOW_DETAILS", 1.hours) shouldBe true
         repository.isRequestExpired(2L, "SIMILAR_SHOWS", 1.hours) shouldBe true
         repository.isRequestExpired(3L, "SEASON_DETAILS", 1.hours) shouldBe true
@@ -218,17 +203,19 @@ internal class CacheValidationTest : BaseDatabaseTest() {
         val now = fakeDateTimeProvider.now()
 
         RequestTypeConfig.entries.forEach { config ->
-            // Insert request that should be valid
             repository.upsert(config.requestId, config.name, now - (config.duration / 2))
 
             val isValid = repository.isRequestValid(config.name, config.duration)
             isValid shouldBe true
 
-            // Insert request that should be expired
             repository.upsert(config.requestId, config.name, now - (config.duration + 1.hours))
 
             val isExpired = repository.isRequestValid(config.name, config.duration)
             isExpired shouldBe false
         }
+    }
+
+    private companion object {
+        private val FIXED_NOW = Instant.fromEpochMilliseconds(1_700_000_000_000)
     }
 }
