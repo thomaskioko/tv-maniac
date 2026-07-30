@@ -91,7 +91,7 @@ extension SettingsView {
 
     var infoContent: SettingsInfoContent {
         SettingsInfoContent(
-            icon: TvManiacAppIcon.image(isDebug: appDelegate.isDebug),
+            icon: TvManiacAppIcon.image(),
             appName: uiState.labels.appName,
             versionText: uiState.labels.version,
             description: uiState.labels.aboutDescription,

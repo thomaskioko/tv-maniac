@@ -29,7 +29,7 @@ public struct RootNavigationView: View {
     }
 
     public var body: some View {
-        SplashView(isDebug: appDelegate.isDebug) {
+        SplashView {
             TabBarView(
                 presenter: rootPresenter.homePresenter,
                 navigator: navigator,
