@@ -1,5 +1,3 @@
-require 'json'
-
 default_platform(:ios)
 
 TEST_DEVICE = "iPhone 17 Pro"
@@ -71,12 +69,13 @@ platform :ios do
   desc "Run UI Tests"
   lane :ui_tests do
     build_kmp_framework
-    boot_test_simulator
 
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
       destination: TEST_DESTINATION,
+      devices: ["#{TEST_DEVICE} (#{TEST_OS})"],
+      prelaunch_simulator: true,
       skip_detect_devices: true,
       result_bundle: true,
       xcargs: "-skipPackagePluginValidation " \
@@ -88,18 +87,6 @@ platform :ios do
       fail_build: true,
       derived_data_path: DERIVED_DATA_PATH
     )
-  end
-
-  desc "Start the test simulator and wait for it to finish booting"
-  private_lane :boot_test_simulator do
-    runtime = "com.apple.CoreSimulator.SimRuntime.iOS-#{TEST_OS.tr('.', '-')}"
-    devices = JSON.parse(sh("xcrun simctl list devices available -j", log: false))["devices"]
-    device = (devices[runtime] || []).find { |candidate| candidate["name"] == TEST_DEVICE }
-
-    UI.user_error!("No #{TEST_DEVICE} available on iOS #{TEST_OS}") if device.nil?
-
-    sh("xcrun simctl boot #{device['udid']}") unless device["state"] == "Booted"
-    sh("xcrun simctl bootstatus #{device['udid']} -b")
   end
 
   desc "Re-record snapshot baselines"
