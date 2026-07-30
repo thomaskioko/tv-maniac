@@ -12,4 +12,6 @@ ENABLE_DEBUG_DYLIB = NO
 ENABLE_PREVIEWS = NO
 ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO
 ASSETCATALOG_COMPILER_OPTIMIZATION = space
+// Measured 2026-07-30: -Osize grew the release binary by ~805 KB on this
+// SwiftUI-heavy app, so the optimizer stays on -O.
 SWIFT_OPTIMIZATION_LEVEL = -O
