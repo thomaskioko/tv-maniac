@@ -6,25 +6,21 @@ final class ShowDetailsTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func test_ShowDetails_ShowsSeasonsFromTheSavedResponses() {
+    func test_ShowDetails_ShowsSeasonsAndGoesBackToSearch() {
         let app = XCUIApplication.launchTvManiac(scenario: StubScenario.search)
         app.openShowDetailsFromSearch()
         app.awaitScreen(TestTags.showDetailsScreen)
 
-        let seasonChip = app.element(TestTags.showDetailsSeasonChip(1))
         XCTAssertTrue(
-            seasonChip.waitForExistence(timeout: UITestTimeouts.screen),
+            app.element(TestTags.showDetailsSeasonChip(1)).waitForExistence(timeout: UITestTimeouts.screen),
             "Show details never listed season 1. The app is not reading the saved responses."
         )
-    }
-
-    func test_ShowDetails_GoesBackToSearch() {
-        let app = XCUIApplication.launchTvManiac(scenario: StubScenario.search)
-        app.openShowDetailsFromSearch()
-        app.awaitScreen(TestTags.showDetailsScreen)
 
         let backButton = app.element(TestTags.showDetailsBackButton)
-        XCTAssertTrue(backButton.waitForExistence(timeout: UITestTimeouts.screen))
+        XCTAssertTrue(
+            backButton.waitForExistence(timeout: UITestTimeouts.screen),
+            "Show details never showed its back button."
+        )
         backButton.tap()
 
         app.awaitScreen(TestTags.searchScreen)

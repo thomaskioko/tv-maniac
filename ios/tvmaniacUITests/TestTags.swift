@@ -8,14 +8,8 @@ enum TestTags {
     static let profileSettingsButton = "profile_settings_button"
     static let settingsBackButton = "settings_back_button"
 
-    static let discoverFeaturedPager = "discover_featured_pager"
-
-    static func discoverFeaturedItem(_ showId: Int) -> String {
-        "discover_featured_show_\(showId)"
-    }
-
-    static func discoverTrendingCard(_ showId: Int) -> String {
-        "discover_show_card_trending_\(showId)"
+    static func discoverShowCard(row: DiscoverRow, showId: Int) -> String {
+        "discover_show_card_\(row.rawValue)_\(showId)"
     }
 
     static let searchScreen = "search_screen"

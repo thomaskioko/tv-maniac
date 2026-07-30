@@ -19,6 +19,7 @@ struct iOSApp: App {
     private let screenRegistry = ScreenRegistryBootstrap.makeRegistry()
 
     init() {
+        SettingsAppStorage.clearStoredValuesIfRequested()
         TvManiacTypographyScheme.configure()
     }
 

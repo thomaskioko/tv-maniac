@@ -6,7 +6,7 @@ final class AppLaunchTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func test_TabBar_ShownAfterColdLaunch() {
+    func test_EachTab_ShowsItsScreenAfterColdLaunch() {
         let app = XCUIApplication.launchTvManiac()
 
         XCTAssertTrue(
@@ -14,11 +14,6 @@ final class AppLaunchTests: XCTestCase {
             "Tab bar never appeared, so the app did not finish launching."
         )
         XCTAssertEqual(app.tabBar.buttons.count, TabIndex.allCases.count)
-    }
-
-    func test_EachTab_ShowsItsScreen() {
-        let app = XCUIApplication.launchTvManiac()
-        XCTAssertTrue(app.tabBar.waitForExistence(timeout: UITestTimeouts.launch))
 
         app.awaitScreen(TestTags.discoverScreen)
 
