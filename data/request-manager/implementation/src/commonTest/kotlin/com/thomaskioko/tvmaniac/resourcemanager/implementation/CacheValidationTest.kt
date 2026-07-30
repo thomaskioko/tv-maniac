@@ -10,11 +10,10 @@ import kotlin.test.Test
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 
 internal class CacheValidationTest : BaseDatabaseTest() {
     private lateinit var repository: DefaultRequestManagerRepository
-    private val fakeDateTimeProvider = FakeDateTimeProvider(currentTime = FIXED_NOW)
+    private val fakeDateTimeProvider = FakeDateTimeProvider()
 
     @BeforeTest
     fun setup() {
@@ -231,9 +230,5 @@ internal class CacheValidationTest : BaseDatabaseTest() {
             val isExpired = repository.isRequestValid(config.name, config.duration)
             isExpired shouldBe false
         }
-    }
-
-    private companion object {
-        private val FIXED_NOW = Instant.fromEpochMilliseconds(1_700_000_000_000)
     }
 }
