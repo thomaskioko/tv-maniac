@@ -26,6 +26,7 @@ public class FakeTraktAuthRepository : OAuthRepository {
     private val _state = MutableStateFlow(AccountAuthState.LOGGED_OUT)
     private val _authState = MutableStateFlow<AuthState?>(null)
     private var refreshOutcome: TokenRefreshResult = TokenRefreshResult.NotLoggedIn
+    private var refreshCount: Int = 0
     private val _authError = MutableStateFlow<AuthError?>(null)
     private val _loginEvents = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
 
@@ -40,6 +41,9 @@ public class FakeTraktAuthRepository : OAuthRepository {
     public fun setRefreshOutcome(outcome: TokenRefreshResult) {
         refreshOutcome = outcome
     }
+
+    /** How many times [refreshTokens] has been called, so tests can assert a refresh happened. */
+    public fun refreshTokenCallCount(): Int = refreshCount
 
     /**
      * Emits a login event in tests without going through the real OAuth handshake.
@@ -61,7 +65,10 @@ public class FakeTraktAuthRepository : OAuthRepository {
 
     override suspend fun getAuthState(): AuthState? = _authState.value
 
-    override suspend fun refreshTokens(): TokenRefreshResult = refreshOutcome
+    override suspend fun refreshTokens(): TokenRefreshResult {
+        refreshCount++
+        return refreshOutcome
+    }
 
     override suspend fun logout() {
         _state.emit(AccountAuthState.LOGGED_OUT)
