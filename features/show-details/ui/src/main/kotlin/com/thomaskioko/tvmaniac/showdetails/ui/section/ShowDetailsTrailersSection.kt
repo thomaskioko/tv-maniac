@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.showdetails.ui.section
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +16,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,6 +33,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -114,6 +117,7 @@ private fun TrailersContent(
                             AsyncImageComposable(
                                 model = trailer.youtubeThumbnailUrl,
                                 contentDescription = trailer.name,
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .height(140.dp * LocalLandscapeWidthScale.current)
                                     .aspectRatio(3 / 1.5f)
@@ -131,12 +135,17 @@ private fun TrailersContent(
                             )
 
                             Icon(
-                                imageVector = Icons.Filled.PlayCircle,
+                                imageVector = Icons.Filled.PlayArrow,
                                 contentDescription = trailer.name,
-                                tint = MaterialTheme.colorScheme.onSecondary,
+                                tint = TvManiacTheme.colorScheme.onScrim,
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .size(48.dp),
+                                    .size(48.dp)
+                                    .background(
+                                        color = TvManiacTheme.colorScheme.scrim.copy(alpha = 0.5f),
+                                        shape = CircleShape,
+                                    )
+                                    .padding(8.dp),
                             )
                         }
                     }
