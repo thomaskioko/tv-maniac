@@ -36,7 +36,7 @@ public class ContinueWatchingMapper(
         },
     )
 
-    public fun toSectionedItems(
+    internal fun toSectionedItems(
         sections: WatchlistSections,
         sortOption: WatchlistSortOption,
     ): SectionedItems {
@@ -47,7 +47,7 @@ public class ContinueWatchingMapper(
         )
     }
 
-    public fun toSectionedEpisodes(sections: UpNextSections): SectionedEpisodes = sections.toPresenter()
+    internal fun toSectionedEpisodes(sections: UpNextSections): SectionedEpisodes = sections.toPresenter()
 
     private fun ImmutableList<ContinueWatchingItem>.applySorting(
         sortOption: WatchlistSortOption,
