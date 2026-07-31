@@ -1,3 +1,4 @@
+import TvManiacTestTags
 import XCTest
 
 final class MyShowsTests: XCTestCase {
@@ -11,20 +12,20 @@ final class MyShowsTests: XCTestCase {
         app.openTab(.myShows)
 
         XCTAssertTrue(
-            app.element(TestTags.myShowsEmptyState).waitForExistence(timeout: UITestTimeouts.screen),
+            app.element(MyShowsTestTags.shared.EMPTY_STATE_TEST_TAG).waitForExistence(timeout: UITestTimeouts.screen),
             "My Shows never showed its empty state for a signed out account."
         )
 
-        app.buttons[TestTags.myShowsStartWatchingTab].tap()
+        app.buttons[MyShowsTestTags.shared.START_WATCHING_TAB].tap()
         XCTAssertTrue(
-            app.element(TestTags.startWatchingEmptyState).waitForExistence(timeout: UITestTimeouts.screen),
+            app.element(StartWatchingTestTags.shared.EMPTY_STATE).waitForExistence(timeout: UITestTimeouts.screen),
             "Start Watching never showed its empty state for a signed out account."
         )
 
-        app.buttons[TestTags.myShowsContinueWatchingTab].tap()
-        app.buttons[TestTags.myShowsSortButton].tap()
+        app.buttons[MyShowsTestTags.shared.CONTINUE_WATCHING_TAB].tap()
+        app.buttons[MyShowsTestTags.shared.SORT_BUTTON_TEST_TAG].tap()
         XCTAssertTrue(
-            app.element(TestTags.myShowsSortSheet).waitForExistence(timeout: UITestTimeouts.screen),
+            app.element(MyShowsTestTags.shared.SORT_SHEET_TEST_TAG).waitForExistence(timeout: UITestTimeouts.screen),
             "Tapping sort never opened the sort options."
         )
     }

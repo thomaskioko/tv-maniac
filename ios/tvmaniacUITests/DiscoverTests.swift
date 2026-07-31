@@ -1,3 +1,4 @@
+import TvManiacTestTags
 import XCTest
 
 final class DiscoverTests: XCTestCase {
@@ -8,13 +9,16 @@ final class DiscoverTests: XCTestCase {
 
     func test_Discover_ShowsCardsFromTheSavedResponses() {
         let app = XCUIApplication.launchTvManiac()
-        app.awaitScreen(TestTags.discoverScreen)
+        app.awaitScreen(DiscoverTestTags.shared.SCREEN_TEST_TAG)
 
         for row in [DiscoverRow.trending, .upcoming] {
-            let card = app.element(TestTags.discoverShowCard(row: row, showId: FixtureData.breakingBadId))
+            let card = app.element(DiscoverTestTags.shared.showCard(
+                rowKey: row.key,
+                traktId: FixtureData.breakingBadId
+            ))
             XCTAssertTrue(
                 card.waitForExistence(timeout: UITestTimeouts.screen),
-                "The \(row.rawValue) row never showed the show from the saved responses."
+                "The \(row.key) row never showed the show from the saved responses."
             )
         }
     }
