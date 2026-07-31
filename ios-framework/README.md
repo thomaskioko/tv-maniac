@@ -1018,7 +1018,6 @@ graph TB
   :features:discover:presenter --> :domain:episode
   :features:discover:presenter --> :domain:followedshows
   :features:discover:presenter --> :domain:genre
-  :features:discover:presenter --> :domain:showdetails
   :features:discover:presenter --> :domain:start-watching
   :features:discover:presenter --> :features:discover:nav
   :features:discover:presenter -.-> :features:episode-sheet:nav

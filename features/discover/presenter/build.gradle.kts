@@ -20,7 +20,6 @@ kotlin {
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)
                 api(projects.domain.genre)
-                api(projects.domain.showdetails)
                 api(projects.domain.startWatching)
                 api(projects.features.discover.nav)
                 api(projects.i18n.api)

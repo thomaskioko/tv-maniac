@@ -61,10 +61,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.HiddenFromObjC
 import kotlin.time.Duration.Companion.milliseconds
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError as SyncStateError
 
-@OptIn(kotlinx.coroutines.FlowPreview::class)
+@OptIn(kotlinx.coroutines.FlowPreview::class, ExperimentalObjCRefinement::class)
+@HiddenFromObjC
 @AppRoot(parentScope = ActivityScope::class)
 @AssistedInject
 public class DefaultRootPresenter(

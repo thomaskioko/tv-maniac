@@ -530,7 +530,6 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
 					"-l\"c++\"",
 					"-lsqlite3",
 				);
@@ -568,7 +567,6 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
 					"-l\"c++\"",
 					"-lsqlite3",
 				);

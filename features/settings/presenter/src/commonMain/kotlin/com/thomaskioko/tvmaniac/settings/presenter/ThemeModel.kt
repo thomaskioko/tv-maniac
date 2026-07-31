@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.domain.theme.Theme
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.HiddenFromObjC
 
 public enum class ThemeModel(public val theme: Theme) {
     SYSTEM(Theme.SYSTEM_THEME),
@@ -31,13 +33,15 @@ public enum class ThemeModel(public val theme: Theme) {
     }
 }
 
+@OptIn(ExperimentalObjCRefinement::class)
+@HiddenFromObjC
 public fun AppTheme.toTheme(): Theme = Theme.valueOf(name)
 
-public fun Theme.toAppTheme(): AppTheme = AppTheme.valueOf(name)
+internal fun Theme.toAppTheme(): AppTheme = AppTheme.valueOf(name)
 
 public fun Theme.toThemeModel(): ThemeModel =
     ThemeModel.entries.first { it.theme == this }
 
 public fun ThemeModel.toTheme(): Theme = theme
 
-public fun ThemeModel.toAppTheme(): AppTheme = theme.toAppTheme()
+internal fun ThemeModel.toAppTheme(): AppTheme = theme.toAppTheme()

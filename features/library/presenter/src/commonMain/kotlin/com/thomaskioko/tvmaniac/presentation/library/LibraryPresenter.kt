@@ -46,7 +46,7 @@ import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption as DataLibr
     parentScope = ActivityScope::class,
     kind = DestinationKind.TAB_ROOT,
 )
-public class LibraryPresenter(
+public class LibraryPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val repository: LibraryRepository,

@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
-public class UpNextPresenter(
+public class UpNextPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,

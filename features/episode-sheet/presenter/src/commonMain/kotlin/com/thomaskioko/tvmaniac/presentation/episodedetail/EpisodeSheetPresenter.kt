@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
     kind = DestinationKind.OVERLAY,
 )
 @AssistedInject
-public class EpisodeSheetPresenter(
+public class EpisodeSheetPresenter internal constructor(
     @Assisted private val param: EpisodeSheetParam,
     componentContext: ComponentContext,
     observeEpisodeByIdInteractor: ObserveEpisodeByIdInteractor,

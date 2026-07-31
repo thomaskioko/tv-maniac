@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = ShowDetailsChildScope::class, parentScope = ShowDetailsRoute::class)
 @AssistedInject
-public class ShowDetailsSeasonsEpisodesPresenter(
+public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
     componentContext: ComponentContext,
     @Assisted private val showId: Long,
     @Assisted private val forceRefresh: Boolean,

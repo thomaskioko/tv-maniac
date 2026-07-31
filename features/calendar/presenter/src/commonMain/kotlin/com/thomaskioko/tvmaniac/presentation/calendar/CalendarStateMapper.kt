@@ -18,7 +18,7 @@ public class CalendarStateMapper(
 
     public fun getString(key: StringResourceKey): String = localizer.getString(key)
 
-    public fun toCalendarDateGroups(
+    internal fun toCalendarDateGroups(
         entries: List<GroupedCalendarEntry>,
     ): ImmutableList<CalendarDateGroup> {
         return entries.map { group ->

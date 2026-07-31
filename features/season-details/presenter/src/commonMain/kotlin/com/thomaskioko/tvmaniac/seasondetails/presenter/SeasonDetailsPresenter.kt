@@ -58,7 +58,7 @@ import kotlinx.coroutines.launch
     kind = DestinationKind.SCREEN,
 )
 @AssistedInject
-public class SeasonDetailsPresenter(
+public class SeasonDetailsPresenter internal constructor(
     componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
     private val navigator: Navigator,

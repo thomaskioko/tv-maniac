@@ -83,7 +83,7 @@ import kotlinx.coroutines.launch
     parentScope = ActivityScope::class,
     kind = DestinationKind.TAB_ROOT,
 )
-public class ProfilePresenter(
+public class ProfilePresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val localizer: Localizer,

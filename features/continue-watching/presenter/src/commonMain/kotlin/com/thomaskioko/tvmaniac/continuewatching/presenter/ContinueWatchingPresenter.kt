@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = MyShowsChildScope::class, parentScope = MyShowsRoot::class)
 @Inject
-public class ContinueWatchingPresenter(
+public class ContinueWatchingPresenter internal constructor(
     @ContinueWatchingNitroFlagQualifier
     nitroFlag: FeatureFlag<Boolean>,
     syncObserver: SyncObserver,
