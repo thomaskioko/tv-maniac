@@ -290,15 +290,23 @@ jobs:
                     path: compilation_cache
                     key: ${{ runner.os }}-xcode-cas-app-${{ env.XCODE_VERSION }}-${{ github.sha }}
 
+            -   name: 📦 Pack the build products
+                if: ${{ !cancelled() }}
+                run: tar -cf ios-build.tar -C derived_data/Build Products
+
             -   name: Upload build artifacts
                 uses: actions/upload-artifact@v7
                 if: ${{ !cancelled() }}
                 with:
                     name: ios-build
-                    path: |
-                        derived_data/Build/Products/
-                        fastlane/logs
-                        !derived_data/Build/Products/**/*.bundle/**
+                    path: ios-build.tar
+
+            -   name: Upload build logs
+                uses: actions/upload-artifact@v7
+                if: ${{ !cancelled() }}
+                with:
+                    name: ios-build-logs
+                    path: fastlane/logs
 
 
     ios-snapshot-test:
@@ -354,9 +362,9 @@ jobs:
 
 
     ios-ui-test:
-        needs: [build-ios-framework]
+        needs: [build-ios]
         runs-on: macos-26
-        timeout-minutes: 60
+        timeout-minutes: 30
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
             TVMANIAC_SKIP_FRAMEWORK_BUILD: '1'
@@ -369,30 +377,28 @@ jobs:
                 uses: ./.github/actions/setup-ios
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
+                    kotlin-tooling: 'false'
 
+            # TvManiacFramework's Package.swift calls fatalError when the xcframework is
+            # absent, so every xcodebuild invocation needs it on disk, including one that
+            # only runs tests.
             -   name: 🗂️ Restore prebuilt KMP frameworks
                 uses: ./.github/actions/kmp-ios-framework
                 with:
                     mode: restore
 
-            -   name: 🗂️ Restore DerivedData
-                id: derived-data
-                uses: actions/cache/restore@v6
+            -   name: 📦 Download the prebuilt app and test bundle
+                uses: actions/download-artifact@v7
                 with:
-                    path: derived_data
-                    key: ${{ runner.os }}-uitest-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
-                    restore-keys: |
-                        ${{ runner.os }}-uitest-derived-data-
+                    name: ios-build
+
+            -   name: 📦 Unpack the build products
+                run: |
+                    mkdir -p derived_data/Build
+                    tar -xf ios-build.tar -C derived_data/Build
 
             -   name: 🧭 Run UI Tests
-                run: bundle exec fastlane ui_tests
-
-            -   name: 🗂️ Save DerivedData
-                if: github.ref == 'refs/heads/main' && steps.derived-data.outputs.cache-hit != 'true'
-                uses: actions/cache/save@v6
-                with:
-                    path: derived_data
-                    key: ${{ runner.os }}-uitest-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
+                run: bundle exec fastlane ui_tests prebuilt:true
 
             -   name: Upload test results
                 uses: actions/upload-artifact@v7
