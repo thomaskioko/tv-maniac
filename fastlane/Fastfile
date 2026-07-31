@@ -10,11 +10,14 @@ COMPILATION_CACHE_PATH = "#{PROJECT_DIR}/compilation_cache"
 SOURCE_PACKAGES_PATH = "#{PROJECT_DIR}/ios/SourcePackages"
 UI_TEST_ALLOWANCE_SECONDS = 600
 
-# The compilation cache defaults to a directory inside derived data, which the lanes
-# below delete. It has to live outside for anything to survive between runs.
+NO_INDEX_STORE_XCARGS = "COMPILER_INDEX_STORE_ENABLE=NO"
+
+# build_tvmaniac deletes derived data on every run, so its compilation cache has to sit
+# outside it to survive. The test lanes keep theirs at the default location inside derived
+# data, where it is cached along with the rest of the build.
 BUILD_CACHE_XCARGS = "COMPILATION_CACHE_CAS_PATH=#{COMPILATION_CACHE_PATH} " \
                      "COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS=YES " \
-                     "COMPILER_INDEX_STORE_ENABLE=NO"
+                     "#{NO_INDEX_STORE_XCARGS}"
 
 platform :ios do
 
@@ -55,7 +58,7 @@ platform :ios do
       skip_detect_devices: true,
       build_for_testing: true,
       cloned_source_packages_path: SOURCE_PACKAGES_PATH,
-      xcargs: "#{BUILD_CACHE_XCARGS} -skipPackagePluginValidation",
+      xcargs: "#{NO_INDEX_STORE_XCARGS} -skipPackagePluginValidation",
       xcodebuild_formatter: "",
       derived_data_path: DERIVED_DATA_PATH
     )
@@ -88,7 +91,7 @@ platform :ios do
       skip_detect_devices: true,
       result_bundle: true,
       cloned_source_packages_path: SOURCE_PACKAGES_PATH,
-      xcargs: "#{BUILD_CACHE_XCARGS} " \
+      xcargs: "#{NO_INDEX_STORE_XCARGS} " \
               "-skipPackagePluginValidation " \
               "-parallel-testing-enabled NO " \
               "-test-timeouts-enabled YES " \

@@ -203,7 +203,7 @@ jobs:
                     xcode-version: ${{ env.XCODE_VERSION }}
 
             -   name: 🧪 Run Kotlin/Native Tests
-                run: ./gradlew iosTest -Papp.enableIos=true -Papp.debugOnly=false --continue
+                run: ./gradlew iosTest -Papp.enableIos=true -Papp.debugOnly=false --continue --scan --console=plain
 
             -   name: Upload Test Reports
                 uses: actions/upload-artifact@v7
@@ -323,29 +323,24 @@ jobs:
                 with:
                     mode: restore
 
-            -   name: 🗂️ Restore Compilation Cache
-                id: compilation-cache
+            -   name: 🗂️ Restore DerivedData
+                id: derived-data
                 uses: actions/cache/restore@v6
                 with:
-                    path: compilation_cache
-                    key: ${{ runner.os }}-xcode-cas-snapshot-${{ env.XCODE_VERSION }}-${{ github.sha }}
+                    path: derived_data
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
                     restore-keys: |
-                        ${{ runner.os }}-xcode-cas-snapshot-${{ env.XCODE_VERSION }}-
-                        ${{ runner.os }}-xcode-cas-
+                        ${{ runner.os }}-snapshot-derived-data-
 
             -   name: 📸 Run Snapshot Tests
                 run: bundle exec fastlane snapshot_tests
 
-            -   name: 📏 Compilation cache size
-                if: ${{ !cancelled() }}
-                run: du -sh compilation_cache || true
-
-            -   name: 🗂️ Save Compilation Cache
-                if: github.ref == 'refs/heads/main' && steps.compilation-cache.outputs.cache-hit != 'true'
+            -   name: 🗂️ Save DerivedData
+                if: github.ref == 'refs/heads/main' && steps.derived-data.outputs.cache-hit != 'true'
                 uses: actions/cache/save@v6
                 with:
-                    path: compilation_cache
-                    key: ${{ runner.os }}-xcode-cas-snapshot-${{ env.XCODE_VERSION }}-${{ github.sha }}
+                    path: derived_data
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
 
             -   name: Upload test results
                 uses: actions/upload-artifact@v7
@@ -380,29 +375,24 @@ jobs:
                 with:
                     mode: restore
 
-            -   name: 🗂️ Restore Compilation Cache
-                id: compilation-cache
+            -   name: 🗂️ Restore DerivedData
+                id: derived-data
                 uses: actions/cache/restore@v6
                 with:
-                    path: compilation_cache
-                    key: ${{ runner.os }}-xcode-cas-uitest-${{ env.XCODE_VERSION }}-${{ github.sha }}
+                    path: derived_data
+                    key: ${{ runner.os }}-uitest-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
                     restore-keys: |
-                        ${{ runner.os }}-xcode-cas-uitest-${{ env.XCODE_VERSION }}-
-                        ${{ runner.os }}-xcode-cas-
+                        ${{ runner.os }}-uitest-derived-data-
 
             -   name: 🧭 Run UI Tests
                 run: bundle exec fastlane ui_tests
 
-            -   name: 📏 Compilation cache size
-                if: ${{ !cancelled() }}
-                run: du -sh compilation_cache || true
-
-            -   name: 🗂️ Save Compilation Cache
-                if: github.ref == 'refs/heads/main' && steps.compilation-cache.outputs.cache-hit != 'true'
+            -   name: 🗂️ Save DerivedData
+                if: github.ref == 'refs/heads/main' && steps.derived-data.outputs.cache-hit != 'true'
                 uses: actions/cache/save@v6
                 with:
-                    path: compilation_cache
-                    key: ${{ runner.os }}-xcode-cas-uitest-${{ env.XCODE_VERSION }}-${{ github.sha }}
+                    path: derived_data
+                    key: ${{ runner.os }}-uitest-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
 
             -   name: Upload test results
                 uses: actions/upload-artifact@v7
