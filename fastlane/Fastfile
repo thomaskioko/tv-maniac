@@ -13,8 +13,8 @@ UI_TEST_ALLOWANCE_SECONDS = 600
 NO_INDEX_STORE_XCARGS = "COMPILER_INDEX_STORE_ENABLE=NO"
 
 # build_tvmaniac deletes derived data on every run, so its compilation cache has to sit
-# outside it to survive. The test lanes keep theirs at the default location inside derived
-# data, where it is cached along with the rest of the build.
+# outside it to survive. snapshot_tests keeps its own at the default location inside
+# derived data, where it is cached along with the rest of the build.
 BUILD_CACHE_XCARGS = "COMPILATION_CACHE_CAS_PATH=#{COMPILATION_CACHE_PATH} " \
                      "COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS=YES " \
                      "#{NO_INDEX_STORE_XCARGS}"
@@ -79,8 +79,11 @@ platform :ios do
   end
 
   desc "Run UI Tests"
-  lane :ui_tests do
-    build_kmp_framework
+  # prebuilt:true runs the products build_tvmaniac left in derived data instead of
+  # building again. CI passes it so the app is compiled once per run, in build-ios.
+  lane :ui_tests do |options|
+    prebuilt = options[:prebuilt].to_s == "true"
+    build_kmp_framework unless prebuilt
 
     run_tests(
       project: "ios/tv-maniac.xcodeproj",
@@ -89,6 +92,8 @@ platform :ios do
       devices: ["#{TEST_DEVICE} (#{TEST_OS})"],
       prelaunch_simulator: true,
       skip_detect_devices: true,
+      test_without_building: prebuilt,
+      skip_package_dependencies_resolution: prebuilt,
       result_bundle: true,
       cloned_source_packages_path: SOURCE_PACKAGES_PATH,
       xcargs: "#{NO_INDEX_STORE_XCARGS} " \
@@ -132,23 +137,22 @@ platform :ios do
     )
   end
 
-  desc "Build iOS App (Debug, simulator)"
+  desc "Build iOS App and its UI test bundle (Debug, simulator)"
   lane :build_tvmaniac do
     build_kmp_framework
 
-    build_ios_app(
+    run_tests(
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
       configuration: "Debug",
       destination: TEST_DESTINATION,
+      skip_detect_devices: true,
+      build_for_testing: true,
       derived_data_path: DERIVED_DATA_PATH,
       cloned_source_packages_path: SOURCE_PACKAGES_PATH,
       xcargs: "#{BUILD_CACHE_XCARGS} -skipPackagePluginValidation",
       buildlog_path: "fastlane/logs",
-      clean: true,
-      skip_archive: true,
-      skip_codesigning: true,
-      skip_package_ipa: true
+      clean: true
     )
   end
 

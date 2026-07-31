@@ -45,7 +45,7 @@ Re-record snapshot baselines
 [bundle exec] fastlane ios build_tvmaniac
 ```
 
-Build iOS App (Debug, simulator)
+Build iOS App and its UI test bundle (Debug, simulator)
 
 ### ios certs
 
