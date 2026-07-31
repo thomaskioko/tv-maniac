@@ -63,13 +63,15 @@ case "$CONFIG" in
 esac
 
 if [ "${TVMANIAC_SKIP_FRAMEWORK_BUILD:-}" = "1" ] \
-    && [ -d "$DEST/TvManiac.xcframework/$SLICE" ]; then
-  echo "note: using prebuilt KMP XCFramework from $DEST"
+    && [ -d "$DEST/TvManiac.xcframework/$SLICE" ] \
+    && [ -d "$DEST/TvManiacTestTags.xcframework/$SLICE" ]; then
+  echo "note: using prebuilt KMP XCFrameworks from $DEST"
   exit 0
 fi
 
 ./gradlew \
   ":ios-framework:link${TASK_CONFIG}Framework${TARGET}" \
+  ":core:test-tags:link${TASK_CONFIG}Framework${TARGET}" \
   -Papp.enableIos=true
 
 bundle() {
@@ -90,5 +92,6 @@ bundle() {
 }
 
 bundle "TvManiac" "ios-framework"
+bundle "TvManiacTestTags" "core/test-tags"
 
-echo "note: KMP XCFramework ($CONFIG) written to $DEST"
+echo "note: KMP XCFrameworks ($CONFIG) written to $DEST"

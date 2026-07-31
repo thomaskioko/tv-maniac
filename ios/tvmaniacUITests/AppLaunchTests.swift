@@ -1,3 +1,4 @@
+import TvManiacTestTags
 import XCTest
 
 final class AppLaunchTests: XCTestCase {
@@ -15,7 +16,7 @@ final class AppLaunchTests: XCTestCase {
         )
         XCTAssertEqual(app.tabBar.buttons.count, TabIndex.allCases.count)
 
-        app.awaitScreen(TestTags.discoverScreen)
+        app.awaitScreen(DiscoverTestTags.shared.SCREEN_TEST_TAG)
 
         for tab in TabIndex.allCases {
             app.tabBar.buttons.element(boundBy: tab.rawValue).tap()
@@ -32,10 +33,10 @@ enum TabIndex: Int, CaseIterable {
 
     var screenTag: String {
         switch self {
-        case .discover: TestTags.discoverScreen
-        case .progress: TestTags.progressScreen
-        case .myShows: TestTags.myShowsScreen
-        case .profile: TestTags.profileScreen
+        case .discover: DiscoverTestTags.shared.SCREEN_TEST_TAG
+        case .progress: ProgressTestTags.shared.SCREEN_TEST_TAG
+        case .myShows: MyShowsTestTags.shared.SCREEN_TEST_TAG
+        case .profile: ProfileTestTags.shared.SCREEN_TEST_TAG
         }
     }
 }

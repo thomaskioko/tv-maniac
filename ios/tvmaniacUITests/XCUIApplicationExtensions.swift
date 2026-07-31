@@ -1,3 +1,4 @@
+import TvManiacTestTags
 import XCTest
 
 extension XCUIApplication {
@@ -80,18 +81,18 @@ extension XCUIApplication {
     }
 
     func leaveSettingsPage() {
-        buttons[TestTags.settingsBackButton].tap()
+        buttons[SettingsTestTags.shared.BACK_BUTTON_TEST_TAG].tap()
     }
 
     func openShowDetailsFromSearch(
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        awaitScreen(TestTags.discoverScreen)
-        buttons[TestTags.discoverSearchButton].tap()
-        awaitScreen(TestTags.searchScreen)
+        awaitScreen(DiscoverTestTags.shared.SCREEN_TEST_TAG)
+        buttons[DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG].tap()
+        awaitScreen(SearchTestTags.shared.SCREEN_TEST_TAG)
 
-        let field = textFields[TestTags.searchBar]
+        let field = textFields[SearchTestTags.shared.SEARCH_BAR_TEST_TAG]
         XCTAssertTrue(
             field.waitForExistence(timeout: UITestTimeouts.screen),
             "The search field never appeared.",
@@ -101,7 +102,7 @@ extension XCUIApplication {
         field.tap()
         field.typeText(FixtureData.searchQuery)
 
-        let result = element(TestTags.searchResultItem(FixtureData.breakingBadId))
+        let result = element(SearchTestTags.shared.resultItem(traktId: FixtureData.breakingBadId))
         XCTAssertTrue(
             result.waitForExistence(timeout: UITestTimeouts.screen),
             "Searching for \(FixtureData.searchQuery) never showed a result to tap.",
