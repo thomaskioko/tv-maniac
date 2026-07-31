@@ -203,7 +203,7 @@ jobs:
                     xcode-version: ${{ env.XCODE_VERSION }}
 
             -   name: 🧪 Run Kotlin/Native Tests
-                run: ./gradlew iosTest -Papp.enableIos=true -Papp.debugOnly=false --continue
+                run: ./gradlew iosTest -Papp.enableIos=true -Papp.debugOnly=false --continue --scan --console=plain
 
             -   name: Upload Test Reports
                 uses: actions/upload-artifact@v7
