@@ -10,12 +10,6 @@ scaffold {
 
 kotlin {
     sourceSets {
-        androidMain {
-            dependencies {
-                implementation(projects.data.database.sqldelight)
-            }
-        }
-
         commonMain {
             dependencies {
                 api(projects.core.base)

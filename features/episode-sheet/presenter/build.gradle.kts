@@ -38,7 +38,6 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
-                implementation(projects.data.database.sqldelight)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.testing)
                 implementation(projects.data.followedshows.testing)
