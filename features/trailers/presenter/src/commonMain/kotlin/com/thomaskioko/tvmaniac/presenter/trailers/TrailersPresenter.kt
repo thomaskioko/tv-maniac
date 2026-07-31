@@ -47,7 +47,7 @@ public class TrailersPresenter internal constructor(
             when (action) {
                 is VideoPlayerError -> _state.update { TrailerError(action.errorMessage) }
                 is TrailerSelected ->
-                    _state.update { TrailersContent(selectedVideoKey = action.trailerKey) }
+                    _state.update { (it as? TrailersContent)?.copy(selectedVideoKey = action.trailerKey) ?: it }
 
                 ReloadTrailers -> observeTrailerInfo()
             }
