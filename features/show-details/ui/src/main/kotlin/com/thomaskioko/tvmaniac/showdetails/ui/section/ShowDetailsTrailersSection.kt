@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,8 +44,6 @@ import com.thomaskioko.tvmaniac.compose.theme.LocalLandscapeWidthScale
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
-import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.ShowDetailsTrailersAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.ShowDetailsTrailersPresenter
@@ -69,6 +66,7 @@ internal fun ShowDetailsTrailersSection(
 ) {
     TrailersContent(
         modifier = Modifier.testTag(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG),
+        title = state.title,
         trailersList = state.trailersList,
         onTrailerClicked = { id -> onAction(ShowDetailsWatchTrailerClicked(id)) },
     )
@@ -76,6 +74,7 @@ internal fun ShowDetailsTrailersSection(
 
 @Composable
 private fun TrailersContent(
+    title: String,
     trailersList: ImmutableList<TrailerModel>,
     onTrailerClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -85,7 +84,7 @@ private fun TrailersContent(
     Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
     TextLoadingItem(
-        title = title_trailer.resolve(LocalContext.current),
+        title = title,
         modifier = modifier,
     ) {
         val lazyListState = rememberLazyListState()
