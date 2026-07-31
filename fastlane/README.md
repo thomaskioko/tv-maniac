@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Run Snapshot Tests
 
+### ios ui_tests
+
+```sh
+[bundle exec] fastlane ios ui_tests
+```
+
+Run UI Tests
+
 ### ios record_snapshots
 
 ```sh

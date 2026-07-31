@@ -31,9 +31,6 @@ let package = Package(
                 "Models",
                 "TvManiacKit",
                 .product(name: "TvManiac", package: "TvManiacFramework"),
-            ],
-            resources: [
-                .process("Resources"),
             ]
         ),
         .testTarget(

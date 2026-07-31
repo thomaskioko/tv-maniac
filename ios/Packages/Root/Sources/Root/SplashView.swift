@@ -15,11 +15,9 @@ struct SplashView: View {
     @State private var isActive = false
     @State private var logoScale: CGFloat = 0.6
     @State private var logoOpacity: Double = 0
-    private let isDebug: Bool
     private let content: AnyView
 
-    init(isDebug: Bool, @ViewBuilder content: @escaping () -> some View) {
-        self.isDebug = isDebug
+    init(@ViewBuilder content: @escaping () -> some View) {
         self.content = AnyView(content())
     }
 
@@ -29,7 +27,7 @@ struct SplashView: View {
                 .transition(.opacity)
         } else {
             ZStack {
-                TvManiacAppIcon.image(isDebug: isDebug)
+                TvManiacAppIcon.image()
                     .resizable()
                     .scaledToFit()
                     .frame(width: 180, height: 180)

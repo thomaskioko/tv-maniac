@@ -6,14 +6,16 @@ final class DiscoverTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func test_Discover_ShowsTrendingCardFromTheSavedResponses() {
+    func test_Discover_ShowsCardsFromTheSavedResponses() {
         let app = XCUIApplication.launchTvManiac()
         app.awaitScreen(TestTags.discoverScreen)
 
-        let card = app.element(TestTags.discoverTrendingCard(FixtureData.breakingBadId))
-        XCTAssertTrue(
-            card.waitForExistence(timeout: UITestTimeouts.screen),
-            "Trending row never showed Breaking Bad. The app is not reading the saved responses."
-        )
+        for row in [DiscoverRow.trending, .upcoming] {
+            let card = app.element(TestTags.discoverShowCard(row: row, showId: FixtureData.breakingBadId))
+            XCTAssertTrue(
+                card.waitForExistence(timeout: UITestTimeouts.screen),
+                "The \(row.rawValue) row never showed the show from the saved responses."
+            )
+        }
     }
 }

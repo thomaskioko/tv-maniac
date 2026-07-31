@@ -49,10 +49,72 @@ extension XCUIApplication {
         return element
     }
 
+    func openTab(
+        _ tab: TabIndex,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(
+            tabBar.waitForExistence(timeout: UITestTimeouts.launch),
+            "The tab bar never appeared.",
+            file: file,
+            line: line
+        )
+        tabBar.buttons.element(boundBy: tab.rawValue).tap()
+        awaitScreen(tab.screenTag, file: file, line: line)
+    }
+
+    func openSettingsPage(
+        _ rowTag: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let row = element(rowTag)
+        XCTAssertTrue(
+            row.waitForExistence(timeout: UITestTimeouts.screen),
+            "Settings never showed the \"\(rowTag)\" row.",
+            file: file,
+            line: line
+        )
+        row.tap()
+    }
+
+    func leaveSettingsPage() {
+        buttons[TestTags.settingsBackButton].tap()
+    }
+
+    func openShowDetailsFromSearch(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        awaitScreen(TestTags.discoverScreen)
+        buttons[TestTags.discoverSearchButton].tap()
+        awaitScreen(TestTags.searchScreen)
+
+        let field = textFields[TestTags.searchBar]
+        XCTAssertTrue(
+            field.waitForExistence(timeout: UITestTimeouts.screen),
+            "The search field never appeared.",
+            file: file,
+            line: line
+        )
+        field.tap()
+        field.typeText(FixtureData.searchQuery)
+
+        let result = element(TestTags.searchResultItem(FixtureData.breakingBadId))
+        XCTAssertTrue(
+            result.waitForExistence(timeout: UITestTimeouts.screen),
+            "Searching for \(FixtureData.searchQuery) never showed a result to tap.",
+            file: file,
+            line: line
+        )
+        result.tap()
+    }
+
     func dismissSystemAlertIfPresent() {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let alert = springboard.alerts.firstMatch
-        guard alert.waitForExistence(timeout: UITestTimeouts.systemAlert) else { return }
+        guard alert.exists else { return }
 
         for label in ["Allow", "Allow While Using App", "OK", "Don’t Allow"] {
             let button = alert.buttons[label]
@@ -74,5 +136,4 @@ enum StubScenario {
 enum UITestTimeouts {
     static let launch: TimeInterval = 90
     static let screen: TimeInterval = 30
-    static let systemAlert: TimeInterval = 5
 }

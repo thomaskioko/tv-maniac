@@ -7,15 +7,16 @@ enum TestTags {
 
     static let profileSettingsButton = "profile_settings_button"
     static let settingsBackButton = "settings_back_button"
+    static let settingsAppearanceRow = "settings_general_appearance_row"
+    static let settingsInfoRow = "settings_about_info_row"
+    static let settingsVersionText = "settings_info_version_text"
 
-    static let discoverFeaturedPager = "discover_featured_pager"
-
-    static func discoverFeaturedItem(_ showId: Int) -> String {
-        "discover_featured_show_\(showId)"
+    static func settingsImageQualityChip(_ quality: String) -> String {
+        "settings_image_quality_\(quality.lowercased())"
     }
 
-    static func discoverTrendingCard(_ showId: Int) -> String {
-        "discover_show_card_trending_\(showId)"
+    static func discoverShowCard(row: DiscoverRow, showId: Int) -> String {
+        "discover_show_card_\(row.rawValue)_\(showId)"
     }
 
     static let searchScreen = "search_screen"
@@ -24,5 +25,25 @@ enum TestTags {
 
     static func searchResultItem(_ showId: Int) -> String {
         "search_result_item_\(showId)"
+    }
+
+    static let myShowsContinueWatchingTab = "my_shows_tab_0"
+    static let myShowsStartWatchingTab = "my_shows_tab_1"
+    static let myShowsEmptyState = "my_shows_empty_state"
+    static let myShowsSortButton = "my_shows_sort_button"
+    static let myShowsSortSheet = "my_shows_sort_sheet"
+    static let startWatchingEmptyState = "start_watching_empty_state"
+
+    static let progressUpNextTab = "progress_tab_0"
+    static let progressCalendarTab = "progress_tab_1"
+    static let upNextEmptyState = "upnext_empty_state"
+    static let calendarScreen = "calendar_screen"
+    static let calendarLoggedOutState = "calendar_logged_out_state"
+
+    static let showDetailsScreen = "show_details_screen"
+    static let showDetailsBackButton = "show_details_back_button"
+
+    static func showDetailsSeasonChip(_ seasonNumber: Int) -> String {
+        "show_details_season_chip_\(seasonNumber)"
     }
 }

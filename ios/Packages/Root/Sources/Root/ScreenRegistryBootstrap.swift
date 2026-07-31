@@ -7,10 +7,12 @@
 //  adding a new screen means adding one line here. `RootNavigationView` itself does not change.
 //
 
-import Debug
+#if DEBUG
+    import Debug
+    import FeatureFlags
+#endif
 import DesignSystem
 import EpisodeDetail
-import FeatureFlags
 import MoreShows
 import RatingSheet
 import Search
@@ -35,8 +37,10 @@ public enum ScreenRegistryBootstrap {
         registry.registerScreen(for: SeasonDetailsPresenter.self) { SeasonDetailsView(presenter: $0) }
         registry.registerScreen(for: SearchShowsPresenter.self) { SearchTab(presenter: $0) }
         registry.registerScreen(for: SettingsPresenter.self) { SettingsView(presenter: $0) }
-        registry.registerScreen(for: DebugPresenter.self) { DebugMenuView(presenter: $0) }
-        registry.registerScreen(for: FeatureFlagsPresenter.self) { FeatureFlagsView(presenter: $0) }
+        #if DEBUG
+            registry.registerScreen(for: DebugPresenter.self) { DebugMenuView(presenter: $0) }
+            registry.registerScreen(for: FeatureFlagsPresenter.self) { FeatureFlagsView(presenter: $0) }
+        #endif
         registry.registerScreen(for: MoreShowsPresenter.self) { MoreShowsView(presenter: $0) }
     }
 

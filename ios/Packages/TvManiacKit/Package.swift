@@ -21,7 +21,7 @@ let package = Package(
         .package(name: "Components", path: "../Components"),
         .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
         .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.16.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.17.0"),
     ],
     targets: [
         .target(

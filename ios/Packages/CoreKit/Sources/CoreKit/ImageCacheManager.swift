@@ -22,6 +22,10 @@ import UIKit
 public enum ImageCacheManager {
     private static var isConfigured = false
 
+    private static var isRunningUITests: Bool {
+        ProcessInfo.processInfo.environment["TVMANIAC_STUB_SCENARIO"] != nil
+    }
+
     /// Configures the shared `ImagePipeline` with memory-aware limits.
     /// Safe to call multiple times — subsequent calls are no-ops.
     public static func configure() {
@@ -47,11 +51,16 @@ public enum ImageCacheManager {
             memoryCapacity: isLowMem ? 2 * 1024 * 1024 : 5 * 1024 * 1024,
             diskCapacity: 100 * 1024 * 1024
         )
-        config.dataLoader = DataLoader(configuration: {
-            let configuration = DataLoader.defaultConfiguration
-            configuration.urlCache = urlCache
-            return configuration
-        }())
+        if isRunningUITests {
+            config.dataLoader = StubImageDataLoader()
+            config.dataCache = nil
+        } else {
+            config.dataLoader = DataLoader(configuration: {
+                let configuration = DataLoader.defaultConfiguration
+                configuration.urlCache = urlCache
+                return configuration
+            }())
+        }
 
         ImagePipeline.shared = ImagePipeline(configuration: config)
     }

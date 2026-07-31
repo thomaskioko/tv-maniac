@@ -2,6 +2,7 @@ import Components
 import DesignSystem
 import Models
 import SwiftUI
+import TvManiacKit
 
 public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
     public struct State: Equatable {
@@ -93,7 +94,9 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
             set: { onPageChanged($0) }
         )) {
             Text(state.upNextTabTitle).tag(0)
+                .testTag(ProgressTestTags.shared.UPNEXT_TAB)
             Text(state.calendarTabTitle).tag(1)
+                .testTag(ProgressTestTags.shared.CALENDAR_TAB)
         }
         .pickerStyle(.segmented)
         .padding(.horizontal)
