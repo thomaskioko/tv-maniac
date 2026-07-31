@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
     kind = DestinationKind.SCREEN,
 )
 @AssistedInject
-public class TrailersPresenter(
+public class TrailersPresenter internal constructor(
     componentContext: ComponentContext,
     @Assisted private val showId: Long,
     private val repository: TrailerRepository,
