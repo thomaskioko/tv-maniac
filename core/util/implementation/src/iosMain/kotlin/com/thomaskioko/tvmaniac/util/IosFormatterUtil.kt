@@ -13,6 +13,8 @@ import platform.Foundation.NSTimeZone
 import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.Foundation.localeWithLocaleIdentifier
 import platform.Foundation.timeZoneWithName
+import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
@@ -27,15 +29,10 @@ public class IosFormatterUtil : FormatterUtil {
     override fun formatTmdbPosterPath(imageUrl: String): String = POSTER_PATH.replace("%s", imageUrl)
 
     override fun formatDouble(number: Double?, scale: Int): Double {
-        val formatter = NSNumberFormatter()
-        formatter.minimumFractionDigits = scale.toULong()
-        formatter.maximumFractionDigits = scale.toULong()
-        formatter.roundingMode = 0u // NSNumberFormatterRoundUp
-        formatter.numberStyle = 1u // Decimal
-        return when {
-            number != null -> formatter.stringFromNumber(NSNumber(number))?.toDouble() ?: 0.0
-            else -> 0.0
-        }
+        if (number == null) return 0.0
+        val factor = 10.0.pow(scale)
+        val rounded = ceil(abs(number) * factor) / factor
+        return if (number < 0) -rounded else rounded
     }
 
     override fun formatDuration(number: Int): String {
