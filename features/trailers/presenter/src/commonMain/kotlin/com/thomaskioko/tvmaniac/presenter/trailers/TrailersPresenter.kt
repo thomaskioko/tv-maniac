@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.data.trailers.implementation.TrailerRepository
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
@@ -29,10 +31,12 @@ public class TrailersPresenter internal constructor(
     componentContext: ComponentContext,
     @Assisted private val showId: Long,
     private val repository: TrailerRepository,
+    private val localizer: Localizer,
 ) {
 
     private val coroutineScope = componentContext.coroutineScope()
-    private val _state = MutableStateFlow<TrailersState>(LoadingTrailers)
+    private val title = localizer.getString(StringResourceKey.TitleTrailer)
+    private val _state = MutableStateFlow<TrailersState>(LoadingTrailers(title))
 
     init {
         coroutineScope.launch { observeTrailerInfo() }
@@ -45,7 +49,13 @@ public class TrailersPresenter internal constructor(
     public fun dispatch(action: TrailersAction) {
         coroutineScope.launch {
             when (action) {
-                is VideoPlayerError -> _state.update { TrailerError(action.errorMessage) }
+                is VideoPlayerError -> _state.update {
+                    TrailerError(
+                        title = title,
+                        errorMessage = action.errorMessage,
+                        retryLabel = localizer.getString(StringResourceKey.GenericRetry),
+                    )
+                }
                 is TrailerSelected ->
                     _state.update { (it as? TrailersContent)?.copy(selectedVideoKey = action.trailerKey) ?: it }
 
@@ -59,6 +69,8 @@ public class TrailersPresenter internal constructor(
             .collectLatest { result ->
                 _state.update {
                     TrailersContent(
+                        title = title,
+                        moreTrailersTitle = localizer.getString(StringResourceKey.StrMoreTrailers),
                         selectedVideoKey = result.toTrailerList().firstOrNull()?.key,
                         trailersList = result.toTrailerList(),
                     )

@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.presenter.trailers.model.Trailer
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.trailers.testing.trailers
@@ -22,8 +24,12 @@ internal class TrailersPresenterTest {
 
     private val lifecycle = LifecycleRegistry()
     private val repository = FakeTrailerRepository()
+    private val localizer = FakeLocalizer()
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var presenter: TrailersPresenter
+
+    private val title = localizer.getString(StringResourceKey.TitleTrailer)
+    private val moreTrailersTitle = localizer.getString(StringResourceKey.StrMoreTrailers)
 
     @BeforeTest
     fun setUp() {
@@ -35,6 +41,7 @@ internal class TrailersPresenterTest {
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             showId = 84958,
             repository = repository,
+            localizer = localizer,
         )
     }
 
@@ -48,9 +55,49 @@ internal class TrailersPresenterTest {
         repository.setTrailerResult(trailers)
 
         presenter.state.test {
-            awaitItem() shouldBe LoadingTrailers
+            awaitItem() shouldBe LoadingTrailers(title)
             awaitItem() shouldBe TrailersContent(
+                title = title,
+                moreTrailersTitle = moreTrailersTitle,
                 selectedVideoKey = "Fd43V",
+                trailersList = persistentListOf(
+                    Trailer(
+                        showId = 84958,
+                        key = "Fd43V",
+                        name = "Some title",
+                        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `given trailer is selected then selection changes and list is kept`() = runTest {
+        repository.setTrailerResult(trailers)
+
+        presenter.state.test {
+            awaitItem() shouldBe LoadingTrailers(title)
+            awaitItem() shouldBe TrailersContent(
+                title = title,
+                moreTrailersTitle = moreTrailersTitle,
+                selectedVideoKey = "Fd43V",
+                trailersList = persistentListOf(
+                    Trailer(
+                        showId = 84958,
+                        key = "Fd43V",
+                        name = "Some title",
+                        youtubeThumbnailUrl = "https://i.ytimg.com/vi/Fd43V/hqdefault.jpg",
+                    ),
+                ),
+            )
+
+            presenter.dispatch(TrailerSelected(trailerKey = "aB9dE"))
+
+            awaitItem() shouldBe TrailersContent(
+                title = title,
+                moreTrailersTitle = moreTrailersTitle,
+                selectedVideoKey = "aB9dE",
                 trailersList = persistentListOf(
                     Trailer(
                         showId = 84958,
@@ -68,8 +115,11 @@ internal class TrailersPresenterTest {
         repository.setTrailerResult(emptyList())
 
         presenter.state.test {
-            awaitItem() shouldBe LoadingTrailers
-            awaitItem() shouldBe TrailersContent()
+            awaitItem() shouldBe LoadingTrailers(title)
+            awaitItem() shouldBe TrailersContent(
+                title = title,
+                moreTrailersTitle = moreTrailersTitle,
+            )
 
             presenter.dispatch(ReloadTrailers)
 
@@ -77,6 +127,8 @@ internal class TrailersPresenterTest {
 
             awaitItem() shouldBe
                 TrailersContent(
+                    title = title,
+                    moreTrailersTitle = moreTrailersTitle,
                     selectedVideoKey = "Fd43V",
                     trailersList = persistentListOf(
                         Trailer(

@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -53,10 +52,6 @@ import com.thomaskioko.tvmaniac.compose.extensions.copy
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
-import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
-import com.thomaskioko.tvmaniac.i18n.MR.strings.str_more_trailers
-import com.thomaskioko.tvmaniac.i18n.MR.strings.unexpected_error_retry
-import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.trailers.LoadingTrailers
 import com.thomaskioko.tvmaniac.presenter.trailers.ReloadTrailers
 import com.thomaskioko.tvmaniac.presenter.trailers.TrailerError
@@ -106,6 +101,7 @@ internal fun TrailersScreen(
                 is TrailersContent -> {
                     VideoPlayerContent(
                         listState = listState,
+                        moreTrailersTitle = state.moreTrailersTitle,
                         trailersList = state.trailersList,
                         videoKey = state.selectedVideoKey,
                         onYoutubeError = { onAction(VideoPlayerError(it)) },
@@ -116,8 +112,8 @@ internal fun TrailersScreen(
                 is TrailerError ->
                     EmptyStateView(
                         imageVector = Icons.Outlined.ErrorOutline,
-                        title = state.errorMessage ?: unexpected_error_retry.resolve(LocalContext.current),
-                        buttonText = generic_retry.resolve(LocalContext.current),
+                        title = state.errorMessage,
+                        buttonText = state.retryLabel,
                         onClick = { onAction(ReloadTrailers) },
                     )
             }
@@ -128,6 +124,7 @@ internal fun TrailersScreen(
 @Composable
 private fun VideoPlayerContent(
     listState: LazyListState,
+    moreTrailersTitle: String,
     trailersList: ImmutableList<Trailer>,
     videoKey: String?,
     onYoutubeError: (String) -> Unit,
@@ -170,7 +167,7 @@ private fun VideoPlayerContent(
         }
 
         Text(
-            text = str_more_trailers.resolve(LocalContext.current),
+            text = moreTrailersTitle,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
         )
