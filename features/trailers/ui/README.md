@@ -12,20 +12,77 @@ graph TB
     :core:test-tags[test-tags]:::multiplatform
     :core:view[view]:::multiplatform
   end
+  subgraph :core:connectivity
+    direction TB
+    :core:connectivity:api[api]:::multiplatform
+  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
+  end
+  subgraph :core:network-util
+    direction TB
+    :core:network-util:api[api]:::multiplatform
+  end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
+  subgraph :data:account-manager
+    direction TB
+    :data:account-manager:api[api]:::multiplatform
+  end
+  subgraph :data:cast
+    direction TB
+    :data:cast:api[api]:::multiplatform
   end
   subgraph :data:database
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
+  subgraph :data:episode
+    direction TB
+    :data:episode:api[api]:::multiplatform
+  end
+  subgraph :data:followedshows
+    direction TB
+    :data:followedshows:api[api]:::multiplatform
+  end
+  subgraph :data:library
+    direction TB
+    :data:library:api[api]:::multiplatform
+  end
+  subgraph :data:seasondetails
+    direction TB
+    :data:seasondetails:api[api]:::multiplatform
+  end
+  subgraph :data:seasons
+    direction TB
+    :data:seasons:api[api]:::multiplatform
+  end
+  subgraph :data:showdetails
+    direction TB
+    :data:showdetails:api[api]:::multiplatform
+  end
+  subgraph :data:similar
+    direction TB
+    :data:similar:api[api]:::multiplatform
+  end
   subgraph :data:trailers
     direction TB
     :data:trailers:api[api]:::multiplatform
   end
+  subgraph :data:upnext
+    direction TB
+    :data:upnext:api[api]:::multiplatform
+  end
+  subgraph :data:watchproviders
+    direction TB
+    :data:watchproviders:api[api]:::multiplatform
+  end
   subgraph :domain
     direction TB
+    :domain:showdetails[showdetails]:::multiplatform
     :domain:theme[theme]:::multiplatform
   end
   subgraph :features:trailers
@@ -36,6 +93,7 @@ graph TB
   end
   subgraph :i18n
     direction TB
+    :i18n:api[api]:::multiplatform
     :i18n:generator[generator]:::multiplatform
   end
   subgraph :navigation
@@ -49,14 +107,45 @@ graph TB
   :android-designsystem -.-> :i18n:generator
   :core:base --> :core:logger:api
   :core:base --> :core:view
+  :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
+  :data:cast:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
+  :data:episode:api --> :data:account-manager:api
+  :data:episode:api --> :data:database:sqldelight
+  :data:episode:api --> :data:followedshows:api
+  :data:episode:api --> :data:upnext:api
+  :data:library:api --> :core:network-util:api
+  :data:library:api --> :data:account-manager:api
+  :data:library:api --> :data:database:sqldelight
+  :data:seasondetails:api --> :data:database:sqldelight
+  :data:seasons:api --> :data:database:sqldelight
+  :data:showdetails:api --> :data:database:sqldelight
+  :data:similar:api --> :data:database:sqldelight
   :data:trailers:api --> :data:database:sqldelight
+  :data:watchproviders:api --> :data:database:sqldelight
+  :domain:showdetails --> :core:base
+  :domain:showdetails --> :core:util:api
+  :domain:showdetails --> :data:cast:api
+  :domain:showdetails --> :data:episode:api
+  :domain:showdetails --> :data:followedshows:api
+  :domain:showdetails --> :data:library:api
+  :domain:showdetails --> :data:seasondetails:api
+  :domain:showdetails --> :data:seasons:api
+  :domain:showdetails --> :data:showdetails:api
+  :domain:showdetails --> :data:similar:api
+  :domain:showdetails --> :data:trailers:api
+  :domain:showdetails --> :data:watchproviders:api
   :domain:theme --> :i18n:generator
   :features:trailers:nav --> :navigation:api
   :features:trailers:presenter --> :core:base
-  :features:trailers:presenter --> :data:trailers:api
+  :features:trailers:presenter --> :core:logger:api
+  :features:trailers:presenter --> :core:view
+  :features:trailers:presenter --> :domain:showdetails
   :features:trailers:presenter --> :features:trailers:nav
+  :features:trailers:presenter --> :i18n:api
+  :features:trailers:presenter -.-> :i18n:generator
   :features:trailers:presenter --> :navigation:api
   :features:trailers:ui -.-> :android-designsystem
   :features:trailers:ui --> :core:base
@@ -64,6 +153,7 @@ graph TB
   :features:trailers:ui -.-> :i18n:generator
   :features:trailers:ui --> :navigation:api
   :features:trailers:ui --> :navigation:ui
+  :i18n:api --> :i18n:generator
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api
 
