@@ -18,15 +18,21 @@ import PackageDescription
 /// The guard below is intentional: without it a missing framework fails
 /// resolution with SwiftPM's short "does not contain a binary artifact"
 /// message. Failing the manifest with instructions is clearer.
-let frameworkPath = URL(fileURLWithPath: #filePath)
-    .deletingLastPathComponent()
-    .appendingPathComponent("../../../ios-framework/build/spm/TvManiac.xcframework")
-    .standardized
-    .path
-guard FileManager.default.fileExists(atPath: frameworkPath) else {
+/// TvManiacTestTags is a second, much smaller framework built from :core:test-tags.
+/// Only the UI test bundle links it, so the tests read the same tag constants the app
+/// applies instead of keeping their own copy of the strings.
+func frameworkPath(_ name: String) -> String {
+    URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .appendingPathComponent("../../../ios-framework/build/spm/\(name).xcframework")
+        .standardized
+        .path
+}
+
+for name in ["TvManiac", "TvManiacTestTags"] where !FileManager.default.fileExists(atPath: frameworkPath(name)) {
     fatalError("""
-    Missing TvManiac.xcframework (fresh checkout, or ./gradlew clean removed it).
-    Build the KMP framework from the repo root:
+    Missing \(name).xcframework (fresh checkout, or ./gradlew clean removed it).
+    Build the KMP frameworks from the repo root:
         ./scripts/build-kmp-framework.sh
     then re-resolve packages (File > Packages > Resolve Package Versions).
     """)
@@ -42,11 +48,19 @@ let package = Package(
             name: "TvManiac",
             targets: ["TvManiac"]
         ),
+        .library(
+            name: "TvManiacTestTags",
+            targets: ["TvManiacTestTags"]
+        ),
     ],
     targets: [
         .binaryTarget(
             name: "TvManiac",
             path: "../../../ios-framework/build/spm/TvManiac.xcframework"
+        ),
+        .binaryTarget(
+            name: "TvManiacTestTags",
+            path: "../../../ios-framework/build/spm/TvManiacTestTags.xcframework"
         ),
     ]
 )

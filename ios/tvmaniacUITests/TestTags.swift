@@ -1,49 +1,51 @@
-enum TestTags {
-    static let discoverScreen = "discover_screen"
-    static let progressScreen = "progress_screen"
-    static let myShowsScreen = "my_shows_screen"
-    static let profileScreen = "profile_screen"
-    static let settingsScreen = "settings_screen"
+import TvManiacTestTags
 
-    static let profileSettingsButton = "profile_settings_button"
-    static let settingsBackButton = "settings_back_button"
-    static let settingsAppearanceRow = "settings_general_appearance_row"
-    static let settingsInfoRow = "settings_about_info_row"
-    static let settingsVersionText = "settings_info_version_text"
+enum TestTags {
+    static let discoverScreen = DiscoverTestTags.shared.SCREEN_TEST_TAG
+    static let progressScreen = ProgressTestTags.shared.SCREEN_TEST_TAG
+    static let myShowsScreen = MyShowsTestTags.shared.SCREEN_TEST_TAG
+    static let profileScreen = ProfileTestTags.shared.SCREEN_TEST_TAG
+    static let settingsScreen = SettingsTestTags.shared.SCREEN_TEST_TAG
+
+    static let profileSettingsButton = ProfileTestTags.shared.SETTINGS_BUTTON_TEST_TAG
+    static let settingsBackButton = SettingsTestTags.shared.BACK_BUTTON_TEST_TAG
+    static let settingsAppearanceRow = SettingsTestTags.shared.GENERAL_APPEARANCE_ROW_TEST_TAG
+    static let settingsInfoRow = SettingsTestTags.shared.ABOUT_INFO_ROW_TEST_TAG
+    static let settingsVersionText = SettingsTestTags.shared.INFO_VERSION_TEXT_TEST_TAG
 
     static func settingsImageQualityChip(_ quality: String) -> String {
-        "settings_image_quality_\(quality.lowercased())"
+        SettingsTestTags.shared.imageQualityChip(name: quality)
     }
 
     static func discoverShowCard(row: DiscoverRow, showId: Int) -> String {
-        "discover_show_card_\(row.rawValue)_\(showId)"
+        DiscoverTestTags.shared.showCard(rowKey: row.rawValue, traktId: Int64(showId))
     }
 
-    static let searchScreen = "search_screen"
-    static let searchBar = "search_bar"
-    static let discoverSearchButton = "discover_search_button"
+    static let searchScreen = SearchTestTags.shared.SCREEN_TEST_TAG
+    static let searchBar = SearchTestTags.shared.SEARCH_BAR_TEST_TAG
+    static let discoverSearchButton = DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG
 
     static func searchResultItem(_ showId: Int) -> String {
-        "search_result_item_\(showId)"
+        SearchTestTags.shared.resultItem(traktId: Int64(showId))
     }
 
-    static let myShowsContinueWatchingTab = "my_shows_tab_0"
-    static let myShowsStartWatchingTab = "my_shows_tab_1"
-    static let myShowsEmptyState = "my_shows_empty_state"
-    static let myShowsSortButton = "my_shows_sort_button"
-    static let myShowsSortSheet = "my_shows_sort_sheet"
-    static let startWatchingEmptyState = "start_watching_empty_state"
+    static let myShowsContinueWatchingTab = MyShowsTestTags.shared.CONTINUE_WATCHING_TAB
+    static let myShowsStartWatchingTab = MyShowsTestTags.shared.START_WATCHING_TAB
+    static let myShowsEmptyState = MyShowsTestTags.shared.EMPTY_STATE_TEST_TAG
+    static let myShowsSortButton = MyShowsTestTags.shared.SORT_BUTTON_TEST_TAG
+    static let myShowsSortSheet = MyShowsTestTags.shared.SORT_SHEET_TEST_TAG
+    static let startWatchingEmptyState = StartWatchingTestTags.shared.EMPTY_STATE
 
-    static let progressUpNextTab = "progress_tab_0"
-    static let progressCalendarTab = "progress_tab_1"
-    static let upNextEmptyState = "upnext_empty_state"
-    static let calendarScreen = "calendar_screen"
-    static let calendarLoggedOutState = "calendar_logged_out_state"
+    static let progressUpNextTab = ProgressTestTags.shared.UPNEXT_TAB
+    static let progressCalendarTab = ProgressTestTags.shared.CALENDAR_TAB
+    static let upNextEmptyState = UpNextTestTags.shared.EMPTY_STATE_TEST_TAG
+    static let calendarScreen = CalendarTestTags.shared.SCREEN_TEST_TAG
+    static let calendarLoggedOutState = CalendarTestTags.shared.LOGGED_OUT_STATE_TEST_TAG
 
-    static let showDetailsScreen = "show_details_screen"
-    static let showDetailsBackButton = "show_details_back_button"
+    static let showDetailsScreen = ShowDetailsTestTags.shared.SHOW_DETAILS_SCREEN_TEST_TAG
+    static let showDetailsBackButton = ShowDetailsTestTags.shared.BACK_BUTTON_TEST_TAG
 
     static func showDetailsSeasonChip(_ seasonNumber: Int) -> String {
-        "show_details_season_chip_\(seasonNumber)"
+        ShowDetailsTestTags.shared.seasonChip(seasonNumber: Int64(seasonNumber))
     }
 }
