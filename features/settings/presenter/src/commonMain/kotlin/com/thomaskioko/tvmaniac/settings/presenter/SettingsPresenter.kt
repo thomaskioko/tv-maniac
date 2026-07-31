@@ -66,7 +66,7 @@ import kotlin.time.Duration.Companion.minutes
     kind = DestinationKind.SCREEN,
 )
 @Inject
-public class SettingsPresenter(
+public class SettingsPresenter internal constructor(
     componentContext: ComponentContext,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     userRepository: UserRepository,

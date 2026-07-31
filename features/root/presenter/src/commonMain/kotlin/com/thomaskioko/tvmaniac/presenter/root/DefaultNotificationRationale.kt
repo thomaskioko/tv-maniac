@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.take
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class DefaultNotificationRationale(
+public class DefaultNotificationRationale internal constructor(
     private val datastoreRepository: DatastoreRepository,
 ) : NotificationRationale {
 

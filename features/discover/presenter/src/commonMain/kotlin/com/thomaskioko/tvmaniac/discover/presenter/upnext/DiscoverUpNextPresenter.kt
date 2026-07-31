@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 
 @ChildPresenter(scope = DiscoverChildScope::class, parentScope = DiscoverRoot::class)
 @Inject
-public class DiscoverUpNextPresenter(
+public class DiscoverUpNextPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     observeUpNextInteractor: ObserveUpNextInteractor,
