@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
+import com.thomaskioko.tvmaniac.core.base.coroutines.CoroutineCrashUtil
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -33,7 +34,7 @@ public class DefaultAccountManager(
     dispatchers: AppCoroutineDispatchers,
 ) : AccountManager {
 
-    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
+    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io + CoroutineCrashUtil.handler)
 
     private val selectedProvider = MutableStateFlow<SyncProviderSource?>(null)
 
