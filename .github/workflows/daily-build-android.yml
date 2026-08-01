@@ -1,26 +1,19 @@
-name: Beta Release
+name: Daily Build Android
 
 on:
   workflow_dispatch:
-    inputs:
-      skip_android:
-        description: 'Skip Android build'
-        type: boolean
-        default: false
-      skip_ios:
-        description: 'Skip iOS build'
-        type: boolean
-        default: false
+  schedule:
+    - cron: '0 6 * * 1-5'  # Weekdays at 6:00 AM UTC
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
-  group: beta-release
+  group: daily-build-android
   cancel-in-progress: false
 
 env:
-  XCODE_VERSION: 26.5
   TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
   TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
   TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
@@ -30,8 +23,31 @@ env:
   SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
 
 jobs:
-  build-android:
-    if: ${{ !inputs.skip_android }}
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.dedupe.outputs.should_run }}
+    steps:
+      - name: Skip when nothing new since the last nightly
+        id: dedupe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          last=$(gh run list --repo "${{ github.repository }}" --workflow daily-build-android.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
+          if [ "$last" = "${{ github.sha }}" ]; then
+            echo "No new commits since the last successful nightly — skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     outputs:
@@ -61,7 +77,7 @@ jobs:
           ./gradlew :app:bundleRelease :app:assembleRelease \
             -Pandroidx.baselineprofile.skipgeneration=true \
             -Papp.debugOnly=false \
-            -Papp.versionSuffix=-beta \
+            -Papp.versionSuffix=-dev \
             -PreleaseStoreFile=release/app-release.jks \
             -PreleaseStorePassword="$SIGNING_STORE_PASSWORD" \
             -PreleaseKeyAlias=tvmaniac \
@@ -71,7 +87,7 @@ jobs:
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v7
         with:
-          name: android-beta-aab
+          name: android-daily-aab
           path: app/build/outputs/bundle/release/app-release.aab
           retention-days: 5
           overwrite: true
@@ -80,14 +96,14 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
         with:
-          name: android-beta-apk
+          name: android-daily-apk
           path: app/build/outputs/apk/release/app-release.apk
           retention-days: 5
           overwrite: true
           if-no-files-found: error
 
-  deploy-play-beta:
-    needs: build-android
+  deploy-play-store:
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -107,18 +123,44 @@ jobs:
       - name: Download AAB artifact
         uses: actions/download-artifact@v7
         with:
-          name: android-beta-aab
+          name: android-daily-aab
           path: app/build/outputs/bundle/release
 
-      - name: Deploy to Play Store open testing track
+      - name: Deploy to Play Store internal track
         run: |
           PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
           export PLAY_STORE_SERVICE_ACCOUNT_JSON
-          bundle exec fastlane android deploy_play_store track:beta
-          echo "Published **${{ needs.build-android.outputs.version }}-beta** build \`${{ needs.build-android.outputs.build }}\` to the Play Store open testing track" >> "$GITHUB_STEP_SUMMARY"
+          bundle exec fastlane android deploy_play_store
+          echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to the Play Store internal track" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-github-nightly:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: android-daily-apk
+
+      - name: Update the nightly release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mv app-release.apk tvmaniac-nightly.apk
+          notes="Automated nightly build ${{ needs.build.outputs.version }}-dev (build ${{ needs.build.outputs.build }}) from ${GITHUB_SHA}."
+          if ! gh release view nightly --repo "${{ github.repository }}" > /dev/null 2>&1; then
+            gh release create nightly --repo "${{ github.repository }}" --prerelease --title "Nightly build" --notes "$notes"
+          else
+            gh release edit nightly --repo "${{ github.repository }}" --notes "$notes"
+          fi
+          gh release upload nightly tvmaniac-nightly.apk --clobber --repo "${{ github.repository }}"
+          echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to the nightly GitHub release" >> "$GITHUB_STEP_SUMMARY"
 
   deploy-firebase:
-    needs: build-android
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -138,7 +180,7 @@ jobs:
       - name: Download APK artifact
         uses: actions/download-artifact@v7
         with:
-          name: android-beta-apk
+          name: android-daily-apk
           path: app/build/outputs/apk/release
 
       - name: Distribute to Firebase App Distribution
@@ -151,83 +193,4 @@ jobs:
           fi
           export FIREBASE_APP_DISTRIBUTION_SA=release/firebase-sa.json
           bundle exec fastlane android distribute_firebase
-          echo "Published **${{ needs.build-android.outputs.version }}-beta** build \`${{ needs.build-android.outputs.build }}\` to Firebase App Distribution" >> "$GITHUB_STEP_SUMMARY"
-
-  build-ios:
-    if: ${{ !inputs.skip_ios }}
-    runs-on: macos-26
-    timeout-minutes: 60
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-      build: ${{ steps.version.outputs.build }}
-    env:
-      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Setup iOS Release
-        uses: ./.github/actions/setup-ios-release
-        with:
-          xcode-version: ${{ env.XCODE_VERSION }}
-          google-service-info-plist: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_RELEASE }}
-
-      - name: Write build number
-        id: version
-        run: ./scripts/ci/write-build-number.sh
-
-      - name: Build signed IPA
-        env:
-          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-        run: bundle exec fastlane ios build_ipa
-
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: ios-beta-ipa
-          path: build/tv-maniac.ipa
-          retention-days: 5
-          overwrite: true
-          if-no-files-found: error
-
-      - name: Upload build logs
-        uses: actions/upload-artifact@v7
-        if: failure()
-        with:
-          name: ios-beta-logs
-          path: fastlane/logs
-          overwrite: true
-
-  deploy-testflight:
-    needs: build-ios
-    runs-on: macos-26
-    timeout-minutes: 15
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Download IPA artifact
-        uses: actions/download-artifact@v7
-        with:
-          name: ios-beta-ipa
-          path: build
-
-      - name: Upload to TestFlight
-        env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-        run: |
-          bundle exec fastlane ios upload_testflight
-          echo "Published **${{ needs.build-ios.outputs.version }}** build \`${{ needs.build-ios.outputs.build }}\` to TestFlight" >> "$GITHUB_STEP_SUMMARY"
+          echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to Firebase App Distribution" >> "$GITHUB_STEP_SUMMARY"
