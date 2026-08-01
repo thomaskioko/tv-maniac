@@ -15,6 +15,10 @@ public class FakePopularShowsRepository : PopularShowsRepository {
         _shows.value = result
     }
 
+    public fun setPagedShows(pagingData: PagingData<ShowEntity>) {
+        _pagedShows.value = pagingData
+    }
+
     override suspend fun fetchPopularShows(forceRefresh: Boolean, page: Long) {
     }
 
