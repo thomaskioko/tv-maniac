@@ -119,11 +119,11 @@ public struct MyShowsTab: View {
         } else {
             if uiState.selectedPage == 0 {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    let isGridMode = uiState.listStyle == ListStyle.grid
+                    let isGridMode = uiState.listStyle == ApiListStyle.grid
                     let image = isGridMode ? "list.bullet" : "rectangle.grid.2x2"
                     GlassButton(icon: image) {
                         withAnimation {
-                            let target = isGridMode ? ListStyle.list : ListStyle.grid
+                            let target = isGridMode ? ApiListStyle.list : ApiListStyle.grid
                             presenter.dispatch(action: MyShowsActionChangeListStyle(listStyle: target))
                         }
                     }
@@ -270,7 +270,7 @@ private extension ContinueWatchingState {
             premiereLabel: labels.premiereBadge,
             newLabel: labels.newBadge,
             isLoading: showLoading,
-            isGridMode: listStyle == ListStyle.grid,
+            isGridMode: listStyle == ApiListStyle.grid,
             query: query,
             watchNextGridItems: Array(watchNextItems).map {
                 MyShowsGridItem(
