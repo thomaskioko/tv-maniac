@@ -133,6 +133,32 @@ jobs:
           bundle exec fastlane android deploy_play_store
           echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to the Play Store internal track" >> "$GITHUB_STEP_SUMMARY"
 
+  deploy-github-nightly:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: android-daily-apk
+
+      - name: Update the nightly release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mv app-release.apk tvmaniac-nightly.apk
+          notes="Automated nightly build ${{ needs.build.outputs.version }}-dev (build ${{ needs.build.outputs.build }}) from ${GITHUB_SHA}."
+          if ! gh release view nightly --repo "${{ github.repository }}" > /dev/null 2>&1; then
+            gh release create nightly --repo "${{ github.repository }}" --prerelease --title "Nightly build" --notes "$notes"
+          else
+            gh release edit nightly --repo "${{ github.repository }}" --notes "$notes"
+          fi
+          gh release upload nightly tvmaniac-nightly.apk --clobber --repo "${{ github.repository }}"
+          echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to the nightly GitHub release" >> "$GITHUB_STEP_SUMMARY"
+
   deploy-firebase:
     needs: build
     runs-on: ubuntu-latest

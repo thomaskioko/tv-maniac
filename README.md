@@ -11,6 +11,7 @@
 
 [![Download APK](https://img.shields.io/github/v/release/thomaskioko/tv-maniac?label=Download%20APK&logo=android&style=for-the-badge)](https://github.com/thomaskioko/tv-maniac/releases/latest)
 [![Join Beta](https://img.shields.io/badge/Join%20Beta-Google%20Play-01875f?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/com.thomaskioko.tvmaniac)
+[![Nightly APK](https://img.shields.io/badge/Nightly%20APK-GitHub-24292e?style=for-the-badge&logo=github&logoColor=white)](https://github.com/thomaskioko/tv-maniac/releases/download/nightly/tvmaniac-nightly.apk)
 
 **TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app (Android & iOS) for tracking TV Shows. By utilizing [Trakt](https://trakt.tv) and [TMDB](https://developer.themoviedb.org/docs), you can discover shows, manage your watchlist, track watch progress, and get personalized recommendations.
 
@@ -24,7 +25,7 @@
 
 ## Install
 
-Download the latest APK from [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases).
+Download the latest APK from [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases), or grab the freshest [nightly build](https://github.com/thomaskioko/tv-maniac/releases/tag/nightly).
 
 Join the open beta on [Google Play](https://play.google.com/store/apps/details?id=com.thomaskioko.tvmaniac&hl=en_US) or stay up to date with daily builds via Firebase:
 

@@ -103,7 +103,7 @@ gh workflow run daily-build-ios.yml
 1. **Check**: Scheduled runs skip when `main` has no new commits since the last successful daily build. Manual runs always build.
 2. **Version**: `scripts/ci/write-build-number.sh` derives the build number as `base(version) + commits since the release tag` and writes it to `version.txt` in the runner's workspace only — nothing is committed or pushed.
 3. **Build**: One job builds the signed artifacts with a `-dev` suffix (Android AAB and APK, iOS IPA) and uploads them as workflow artifacts.
-4. **Deploy**: Separate jobs download the artifacts and publish them — Android to the Play Store internal track and Firebase App Distribution in parallel, iOS to TestFlight.
+4. **Deploy**: Separate jobs download the artifacts and publish them — Android to the Play Store internal track, Firebase App Distribution, and the rolling `nightly` GitHub release in parallel, iOS to TestFlight. The nightly release keeps one stable download URL whose APK is replaced on every run.
 
 Build and deploy are separate jobs, so a failed upload retries without rebuilding:
 
