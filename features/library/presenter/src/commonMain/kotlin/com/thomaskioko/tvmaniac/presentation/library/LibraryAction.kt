@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presentation.library
 
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 
@@ -13,7 +14,7 @@ public data object ClearLibraryQuery : LibraryAction
 
 public data object ToggleSearchActive : LibraryAction
 
-public data class ChangeListStyleClicked(val isGridMode: Boolean) : LibraryAction
+public data class ChangeListStyleClicked(val listStyle: ListStyle) : LibraryAction
 
 public data class ChangeSortOption(val sortOption: LibrarySortOption) : LibraryAction
 

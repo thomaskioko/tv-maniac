@@ -104,12 +104,12 @@ public class ContinueWatchingPresenter internal constructor(
         syncObserver.isSyncing,
         watchlistLoadingState.observable,
         episodeActionLoadingState.observable,
-    ) { updatingEpisodeIds, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, isLoading, isUpdating ->
+    ) { updatingEpisodeIds, isUserRefreshing, watchlistSections, upNextSections, listStyle, sortOption, message, query, isSyncing, isLoading, isUpdating ->
         val sectionedItems = mapper.toSectionedItems(watchlistSections, sortOption)
         val sectionedEpisodes = mapper.toSectionedEpisodes(upNextSections)
         ContinueWatchingState(
             query = query,
-            isGridMode = isGridMode,
+            listStyle = listStyle,
             isLoading = isLoading,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,

@@ -74,6 +74,7 @@ import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
@@ -153,13 +154,13 @@ internal fun LibraryScreen(
                 modifier = Modifier
                     .padding(contentPadding.copy(copyBottom = false))
                     .padding(horizontal = TvManiacSpacing.xSmall),
-                targetState = state.isGridMode,
+                targetState = state.listStyle,
                 transitionSpec = {
                     (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
                         (scaleOut(animationSpec = spring()) + fadeOut())
                 },
                 label = "list_style_animation",
-            ) { isGridMode ->
+            ) { listStyle ->
                 when {
                     state.showLoading -> {
                         Box(
@@ -182,7 +183,7 @@ internal fun LibraryScreen(
                             message = message,
                         )
                     }
-                    isGridMode -> {
+                    listStyle == ListStyle.GRID -> {
                         LibraryGridContent(
                             items = state.items,
                             scrollBehavior = scrollBehavior,
@@ -301,9 +302,12 @@ private fun CollapsedTopBarContent(
     ) {
         IconButton(
             modifier = Modifier.padding(end = TvManiacSpacing.xSmall),
-            onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
+            onClick = {
+                val target = if (state.listStyle == ListStyle.GRID) ListStyle.LIST else ListStyle.GRID
+                onAction(ChangeListStyleClicked(target))
+            },
         ) {
-            val image = if (state.isGridMode) {
+            val image = if (state.listStyle == ListStyle.GRID) {
                 Icons.AutoMirrored.Outlined.List
             } else {
                 Icons.Outlined.GridView

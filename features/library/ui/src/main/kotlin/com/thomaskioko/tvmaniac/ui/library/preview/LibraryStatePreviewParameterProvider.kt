@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.ui.library.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.presentation.library.LibraryState
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
@@ -22,14 +23,14 @@ internal class LibraryStatePreviewParameterProvider : PreviewParameterProvider<L
         ),
         LibraryState(
             isRefreshing = false,
-            isGridMode = true,
+            listStyle = ListStyle.GRID,
             items = previewLibraryItems(),
             availableGenres = previewGenres(),
             availableStatuses = previewStatuses(),
         ),
         LibraryState(
             isRefreshing = false,
-            isGridMode = false,
+            listStyle = ListStyle.LIST,
             items = previewLibraryItems(),
             availableGenres = previewGenres(),
             availableStatuses = previewStatuses(),
@@ -38,14 +39,14 @@ internal class LibraryStatePreviewParameterProvider : PreviewParameterProvider<L
         ),
         LibraryState(
             isRefreshing = true,
-            isGridMode = true,
+            listStyle = ListStyle.GRID,
             items = previewLibraryItems(),
         ),
         LibraryState(
             query = "Breaking",
             isSearchActive = true,
             isRefreshing = false,
-            isGridMode = false,
+            listStyle = ListStyle.LIST,
             items = persistentListOf(
                 LibraryShowItem(
                     showId = 1,

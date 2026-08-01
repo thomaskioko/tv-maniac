@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.myshows.presenter
 
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 
 public sealed interface MyShowsAction {
@@ -11,7 +12,7 @@ public sealed interface MyShowsAction {
 
     public data object ToggleSearch : MyShowsAction
 
-    public data class ChangeListStyle(val isGridMode: Boolean) : MyShowsAction
+    public data class ChangeListStyle(val listStyle: ListStyle) : MyShowsAction
 
     public data class ChangeSortOption(val sortOption: WatchlistSortOption) : MyShowsAction
 }

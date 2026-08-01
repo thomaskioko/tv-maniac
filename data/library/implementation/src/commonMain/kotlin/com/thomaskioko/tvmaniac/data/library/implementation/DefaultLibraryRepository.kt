@@ -103,14 +103,9 @@ public class DefaultLibraryRepository(
         }
     }
 
-    override fun observeListStyle(): Flow<Boolean> {
-        return datastoreRepository.observeListStyle().map { listStyle ->
-            listStyle == ListStyle.GRID
-        }
-    }
+    override fun observeListStyle(): Flow<ListStyle> = datastoreRepository.observeListStyle()
 
-    override suspend fun saveListStyle(isGridMode: Boolean) {
-        val listStyle = if (isGridMode) ListStyle.GRID else ListStyle.LIST
+    override suspend fun saveListStyle(listStyle: ListStyle) {
         datastoreRepository.saveListStyle(listStyle)
     }
 

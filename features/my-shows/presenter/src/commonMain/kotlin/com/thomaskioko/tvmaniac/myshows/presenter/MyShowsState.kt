@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.myshows.presenter
 
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.watchlistprefs.api.model.WatchlistSortOption
 
 public data class MyShowsState(
@@ -8,7 +9,7 @@ public data class MyShowsState(
     val startWatchingTitle: String = "",
     val query: String = "",
     val isSearchActive: Boolean = false,
-    val isGridMode: Boolean = true,
+    val listStyle: ListStyle = ListStyle.GRID,
     val sortOption: WatchlistSortOption = WatchlistSortOption.ADDED_DESC,
     val showRefreshIndicator: Boolean = false,
 )

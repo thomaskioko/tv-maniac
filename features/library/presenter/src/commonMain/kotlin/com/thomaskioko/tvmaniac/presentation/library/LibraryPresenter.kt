@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
@@ -84,7 +85,7 @@ public class LibraryPresenter internal constructor(
         selectedGenresFlow,
         selectedStatusesFlow,
         loadingState.observable,
-    ) { currentState, items, isGridMode, sortOption, message, query, followedOnly, selectedGenres,
+    ) { currentState, items, listStyle, sortOption, message, query, followedOnly, selectedGenres,
         selectedStatuses, isLoading,
         ->
 
@@ -95,7 +96,7 @@ public class LibraryPresenter internal constructor(
 
         currentState.copy(
             query = query,
-            isGridMode = isGridMode,
+            listStyle = listStyle,
             isRefreshing = isLoading,
             sortOption = sortOption,
             followedOnly = followedOnly,
@@ -120,7 +121,7 @@ public class LibraryPresenter internal constructor(
             is LibraryQueryChanged -> updateQuery(action.query)
             is ClearLibraryQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
-            is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
+            is ChangeListStyleClicked -> changeListStyle(action.listStyle)
             is ChangeSortOption -> changeSortOption(action.sortOption)
             is ToggleGenreFilter -> toggleGenreFilter(action.genre)
             is ToggleStatusFilter -> toggleStatusFilter(action.status)
@@ -234,9 +235,9 @@ public class LibraryPresenter internal constructor(
         _state.update { it.copy(isSearchActive = !it.isSearchActive) }
     }
 
-    private fun toggleListStyle(currentIsGridMode: Boolean) {
+    private fun changeListStyle(listStyle: ListStyle) {
         coroutineScope.launch {
-            repository.saveListStyle(!currentIsGridMode)
+            repository.saveListStyle(listStyle)
         }
     }
 

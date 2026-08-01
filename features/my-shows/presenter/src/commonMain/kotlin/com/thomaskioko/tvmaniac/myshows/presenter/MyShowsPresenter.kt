@@ -65,14 +65,14 @@ public class MyShowsPresenter(
         repository.observeSortOption(),
         continueWatchingPresenter.state,
         startWatchingPresenter.state,
-    ) { page, currentQuery, isSearchActive, isGridMode, sortOption, continueWatching, startWatching ->
+    ) { page, currentQuery, isSearchActive, listStyle, sortOption, continueWatching, startWatching ->
         MyShowsState(
             selectedPage = page,
             continueWatchingTitle = continueWatchingTitle,
             startWatchingTitle = startWatchingTitle,
             query = currentQuery,
             isSearchActive = isSearchActive,
-            isGridMode = isGridMode,
+            listStyle = listStyle,
             sortOption = sortOption,
             showRefreshIndicator = if (page == 0) {
                 continueWatching.showRefreshIndicator
@@ -98,7 +98,7 @@ public class MyShowsPresenter(
             is MyShowsAction.ClearQuery -> updateQuery("")
             is MyShowsAction.ToggleSearch -> toggleSearch()
             is MyShowsAction.ChangeListStyle -> coroutineScope.launch {
-                repository.saveListStyle(!action.isGridMode)
+                repository.saveListStyle(action.listStyle)
             }
             is MyShowsAction.ChangeSortOption -> coroutineScope.launch {
                 repository.saveSortOption(action.sortOption)

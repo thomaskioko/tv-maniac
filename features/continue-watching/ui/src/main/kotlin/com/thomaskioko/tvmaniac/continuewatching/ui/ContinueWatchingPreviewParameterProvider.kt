@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchin
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.collections.immutable.toPersistentList
 
 internal val continueWatchingItems = List(3) { index ->
@@ -105,7 +106,7 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
             return sequenceOf(
                 ContinueWatchingState(
                     isRefreshing = false,
-                    isGridMode = false,
+                    listStyle = ListStyle.LIST,
                     labels = previewLabels,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,
@@ -114,7 +115,7 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                 ),
                 ContinueWatchingState(
                     isRefreshing = false,
-                    isGridMode = true,
+                    listStyle = ListStyle.GRID,
                     labels = previewLabels,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,
@@ -122,7 +123,7 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                     staleEpisodes = staleEpisodes,
                 ),
                 ContinueWatchingState(
-                    isGridMode = false,
+                    listStyle = ListStyle.LIST,
                     isRefreshing = false,
                     labels = previewLabels,
                     watchNextItems = continueWatchingItems,

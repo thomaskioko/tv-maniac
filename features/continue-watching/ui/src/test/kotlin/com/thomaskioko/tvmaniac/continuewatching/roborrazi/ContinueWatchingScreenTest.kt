@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingState
 import com.thomaskioko.tvmaniac.continuewatching.ui.ContinueWatchingScreen
 import com.thomaskioko.tvmaniac.continuewatching.ui.continueWatchingItems
 import com.thomaskioko.tvmaniac.continuewatching.ui.watchNextEpisodes
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
@@ -53,7 +54,7 @@ class ContinueWatchingScreenTest {
             TvManiacBackground {
                 ContinueWatchingScreen(
                     state = ContinueWatchingState(
-                        isGridMode = false,
+                        listStyle = ListStyle.LIST,
                         isRefreshing = false,
                         labels = ContinueWatchingLabels(
                             watchingTitle = "Watching",
@@ -113,7 +114,7 @@ class ContinueWatchingScreenTest {
             TvManiacBackground {
                 ContinueWatchingScreen(
                     state = ContinueWatchingState(
-                        isGridMode = false,
+                        listStyle = ListStyle.LIST,
                         isRefreshing = false,
                         isLoading = false,
                         labels = ContinueWatchingLabels(upToDate = "All caught up"),
@@ -132,7 +133,7 @@ class ContinueWatchingScreenTest {
             TvManiacBackground {
                 ContinueWatchingScreen(
                     state = ContinueWatchingState(
-                        isGridMode = false,
+                        listStyle = ListStyle.LIST,
                         isRefreshing = false,
                         isLoading = false,
                         labels = ContinueWatchingLabels(upToDate = "All caught up"),

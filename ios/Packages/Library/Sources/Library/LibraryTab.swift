@@ -20,7 +20,8 @@ public struct LibraryTab: View {
             onQueryChanged: { presenter.dispatch(action: LibraryQueryChanged(query: $0)) },
             onQueryCleared: { presenter.dispatch(action: ClearLibraryQuery()) },
             onToggleListStyle: {
-                presenter.dispatch(action: ChangeListStyleClicked(isGridMode: uiState.isGridMode))
+                let target = uiState.listStyle == ListStyle.grid ? ListStyle.list : ListStyle.grid
+                presenter.dispatch(action: ChangeListStyleClicked(listStyle: target))
             },
             onToggleSearch: { presenter.dispatch(action: ToggleSearchActive()) },
             onSortClicked: { showSortOptions = true },
@@ -59,7 +60,7 @@ private extension LibraryState {
             isLoading: showLoading,
             isRefreshing: isRefreshing,
             isEmpty: isEmpty,
-            isGridMode: isGridMode,
+            isGridMode: listStyle == ListStyle.grid,
             isSearchActive: isSearchActive,
             query: query,
             gridItems: Array(items).map {

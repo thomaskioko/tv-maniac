@@ -5,6 +5,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -98,7 +99,7 @@ class ContinueWatchingPresenterTest {
 
             val state = awaitItem()
             state.query shouldBe ""
-            state.isGridMode shouldBe true
+            state.listStyle shouldBe ListStyle.GRID
             state.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
 
             factory.upNextRepository.setNextEpisodesForWatchlist(updatedNextEpisodes)
