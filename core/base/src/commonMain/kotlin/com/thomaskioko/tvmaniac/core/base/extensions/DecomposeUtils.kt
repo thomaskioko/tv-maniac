@@ -8,6 +8,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.lifecycle.doOnStart
 import com.arkivanov.essenty.lifecycle.doOnStop
+import com.thomaskioko.tvmaniac.core.base.coroutines.CoroutineCrashUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,7 +31,10 @@ import kotlin.coroutines.CoroutineContext
 public fun LifecycleOwner.coroutineScope(
     context: CoroutineContext = Dispatchers.Main.immediate,
 ): CoroutineScope {
-    val scope = LifecycleAwareCoroutineScope(CoroutineScope(context + SupervisorJob()), lifecycle)
+    val scope = LifecycleAwareCoroutineScope(
+        CoroutineScope(CoroutineCrashUtil.handler + context + SupervisorJob()),
+        lifecycle,
+    )
     lifecycle.doOnDestroy(scope::cancel)
 
     return scope
