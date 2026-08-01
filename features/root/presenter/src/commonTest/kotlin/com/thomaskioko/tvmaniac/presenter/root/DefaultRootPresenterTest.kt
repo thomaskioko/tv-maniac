@@ -9,6 +9,7 @@ import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.root.model.AppUiState
 import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
+import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.theme.Theme
@@ -17,6 +18,7 @@ import com.thomaskioko.tvmaniac.i18n.testing.util.getString
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.RootChild
+import com.thomaskioko.tvmaniac.presenter.root.model.ConnectivityBannerState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastType
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -50,6 +52,7 @@ abstract class DefaultRootPresenterTest {
     abstract val datastoreRepository: DatastoreRepository
     abstract val navigator: Navigator
     abstract val syncObserver: SyncObserver
+    abstract val internetConnectionChecker: FakeInternetConnectionChecker
 
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
@@ -497,4 +500,109 @@ abstract class DefaultRootPresenterTest {
                 presenter.accountLimitBannerVisible.value shouldBe false
             }
         }
+
+    @Test
+    fun `should show offline banner given connection is lost`() = runTest(testDispatcher) {
+        presenter.connectivityBannerState.test {
+            awaitItem() shouldBe ConnectivityBannerState.Hidden
+
+            internetConnectionChecker.setConnected(false)
+            advanceTimeBy(301.milliseconds)
+            runCurrent()
+
+            awaitItem() shouldBe ConnectivityBannerState.Offline
+        }
+    }
+
+    @Test
+    fun `should hide offline banner given it is dismissed`() = runTest(testDispatcher) {
+        presenter.connectivityBannerState.test {
+            awaitItem() shouldBe ConnectivityBannerState.Hidden
+
+            internetConnectionChecker.setConnected(false)
+            advanceTimeBy(301.milliseconds)
+            runCurrent()
+            awaitItem() shouldBe ConnectivityBannerState.Offline
+
+            presenter.onDismissOfflineBanner()
+
+            awaitItem() shouldBe ConnectivityBannerState.Hidden
+        }
+    }
+
+    @Test
+    fun `should show offline banner again given device goes offline after a dismissed reconnect`() =
+        runTest(testDispatcher) {
+            presenter.connectivityBannerState.test {
+                awaitItem() shouldBe ConnectivityBannerState.Hidden
+
+                internetConnectionChecker.setConnected(false)
+                advanceTimeBy(301.milliseconds)
+                runCurrent()
+                awaitItem() shouldBe ConnectivityBannerState.Offline
+
+                presenter.onDismissOfflineBanner()
+                awaitItem() shouldBe ConnectivityBannerState.Hidden
+
+                internetConnectionChecker.setConnected(true)
+                advanceTimeBy(301.milliseconds)
+                runCurrent()
+                expectNoEvents()
+
+                internetConnectionChecker.setConnected(false)
+                advanceTimeBy(301.milliseconds)
+                runCurrent()
+
+                awaitItem() shouldBe ConnectivityBannerState.Offline
+            }
+        }
+
+    @Test
+    fun `should flash back online given connection returns while banner is visible`() = runTest(testDispatcher) {
+        presenter.connectivityBannerState.test {
+            awaitItem() shouldBe ConnectivityBannerState.Hidden
+
+            internetConnectionChecker.setConnected(false)
+            advanceTimeBy(301.milliseconds)
+            runCurrent()
+            awaitItem() shouldBe ConnectivityBannerState.Offline
+
+            internetConnectionChecker.setConnected(true)
+            advanceTimeBy(301.milliseconds)
+            runCurrent()
+            awaitItem() shouldBe ConnectivityBannerState.BackOnline
+
+            advanceTimeBy(2_501.milliseconds)
+            runCurrent()
+
+            awaitItem() shouldBe ConnectivityBannerState.Hidden
+        }
+    }
+
+    @Test
+    fun `should keep banner hidden given app starts online`() = runTest(testDispatcher) {
+        presenter.connectivityBannerState.test {
+            awaitItem() shouldBe ConnectivityBannerState.Hidden
+
+            advanceTimeBy(400.milliseconds)
+            runCurrent()
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `should keep banner hidden given connection flaps within the debounce window`() = runTest(testDispatcher) {
+        presenter.connectivityBannerState.test {
+            awaitItem() shouldBe ConnectivityBannerState.Hidden
+
+            internetConnectionChecker.setConnected(false)
+            advanceTimeBy(100.milliseconds)
+            internetConnectionChecker.setConnected(true)
+            advanceTimeBy(400.milliseconds)
+            runCurrent()
+
+            expectNoEvents()
+        }
+    }
 }

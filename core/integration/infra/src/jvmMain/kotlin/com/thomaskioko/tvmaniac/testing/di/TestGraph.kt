@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
+import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
@@ -28,6 +29,7 @@ public interface TestGraph {
     public val workerFactory: WorkerFactory
     public val featureFlags: Set<FeatureFlag<Boolean>>
     public val subscriptionManager: SubscriptionManager
+    public val fakeInternetConnectionChecker: FakeInternetConnectionChecker
 
     @IoCoroutineScope
     public val ioCoroutineScope: CoroutineScope
