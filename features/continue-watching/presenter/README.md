@@ -90,6 +90,10 @@ graph TB
     direction TB
     :data:similar:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -159,6 +163,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
@@ -166,6 +171,7 @@ graph TB
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
   :data:trailers:api --> :data:database:sqldelight
+  :data:watchlist-prefs:api --> :data:datastore:api
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api
@@ -213,6 +219,7 @@ graph TB
   :features:continue-watching:presenter --> :core:logger:api
   :features:continue-watching:presenter --> :core:view
   :features:continue-watching:presenter --> :data:account-manager:api
+  :features:continue-watching:presenter --> :data:subscription:api
   :features:continue-watching:presenter --> :data:watchlist-prefs:api
   :features:continue-watching:presenter --> :domain:continue-watching
   :features:continue-watching:presenter --> :domain:episode

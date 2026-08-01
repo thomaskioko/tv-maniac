@@ -792,6 +792,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:library:implementation --> :api:tmdb:api
   :data:library:implementation --> :core:base
   :data:library:implementation --> :core:logger:api
@@ -1022,6 +1023,7 @@ graph TB
   :data:watch-status:implementation --> :core:util:api
   :data:watch-status:implementation --> :data:database:sqldelight
   :data:watch-status:implementation --> :data:watch-status:api
+  :data:watchlist-prefs:api --> :data:datastore:api
   :data:watchlist-prefs:implementation --> :data:datastore:api
   :data:watchlist-prefs:implementation --> :data:watchlist-prefs:api
   :data:watchproviders:api --> :data:database:sqldelight
@@ -1178,6 +1180,7 @@ graph TB
   :features:continue-watching:presenter --> :core:logger:api
   :features:continue-watching:presenter --> :core:view
   :features:continue-watching:presenter --> :data:account-manager:api
+  :features:continue-watching:presenter --> :data:subscription:api
   :features:continue-watching:presenter --> :data:watchlist-prefs:api
   :features:continue-watching:presenter --> :domain:continue-watching
   :features:continue-watching:presenter --> :domain:episode
@@ -1313,6 +1316,7 @@ graph TB
   :features:library:presenter --> :core:view
   :features:library:presenter --> :data:account-manager:api
   :features:library:presenter --> :data:library:api
+  :features:library:presenter --> :data:subscription:api
   :features:library:presenter --> :domain:library
   :features:library:presenter -.-> :features:home:nav
   :features:library:presenter --> :features:library:nav
@@ -1344,6 +1348,7 @@ graph TB
   :features:more-shows:ui --> :navigation:ui
   :features:my-shows:nav --> :navigation:api
   :features:my-shows:presenter --> :core:base
+  :features:my-shows:presenter --> :data:subscription:api
   :features:my-shows:presenter --> :data:watchlist-prefs:api
   :features:my-shows:presenter --> :features:continue-watching:presenter
   :features:my-shows:presenter -.-> :features:home:nav
