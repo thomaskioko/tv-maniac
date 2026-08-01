@@ -42,7 +42,7 @@ public struct LibraryListItemView: View {
 
     private var formattedRating: String? {
         guard let rating = item.rating else { return nil }
-        return String(format: "%.1f", rating)
+        return rating.formatted(.number.precision(.fractionLength(1)))
     }
 
     public var body: some View {

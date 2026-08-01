@@ -32,6 +32,15 @@ kotlin {
             }
         }
 
-        commonTest { dependencies { implementation(libs.bundles.unittest) } }
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+                implementation(projects.data.popularshows.testing)
+                implementation(projects.data.topratedshows.testing)
+                implementation(projects.data.trendingshows.testing)
+                implementation(projects.data.upcomingshows.testing)
+                implementation(projects.navigation.testing)
+            }
+        }
     }
 }

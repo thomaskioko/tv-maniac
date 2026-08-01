@@ -86,7 +86,9 @@ class DiscoverScreenTest: SnapshotTestCase {
     func test_DiscoverScreen_Error() {
         EmptyStateView(
             systemName: "exclamationmark.arrow.triangle.2.circlepath",
-            title: "Something went wrong"
+            title: "Something went wrong",
+            buttonText: "Retry",
+            action: {}
         )
         .appScreen()
         .appPreview()
