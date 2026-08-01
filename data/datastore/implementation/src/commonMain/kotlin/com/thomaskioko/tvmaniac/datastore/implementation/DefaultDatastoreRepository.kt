@@ -74,10 +74,7 @@ public class DefaultDatastoreRepository(
 
     override fun observeListStyle(): Flow<ListStyle> =
         dataStore.data.map { preferences ->
-            when (preferences[KEY_LIST_STYLE]) {
-                ListStyle.LIST.name -> ListStyle.LIST
-                else -> ListStyle.GRID // Default to GRID
-            }
+            ListStyle.entries.find { it.name == preferences[KEY_LIST_STYLE] } ?: ListStyle.GRID
         }
 
     override suspend fun saveImageQuality(quality: ImageQuality) {

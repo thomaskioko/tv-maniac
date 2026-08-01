@@ -6,6 +6,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -230,6 +231,22 @@ class ContinueWatchingPresenterTest {
             state.watchNextEpisodes[0].showName shouldBe "Active Show"
             state.staleEpisodes.size shouldBe 1
             state.staleEpisodes[0].showName shouldBe "Stale Show"
+        }
+    }
+
+    @Test
+    fun `should emit the free fallback layout when list view types access is revoked`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe ContinueWatchingState()
+
+            factory.repository.setListStyle(ListStyle.COMPACT)
+            awaitItem().listStyle shouldBe ListStyle.COMPACT
+
+            factory.subscriptionManager.setAccess(SubscriptionFeature.ListViewTypes, false)
+            awaitItem().listStyle shouldBe ListStyle.LIST
+
+            factory.subscriptionManager.setAccess(SubscriptionFeature.ListViewTypes, true)
+            awaitItem().listStyle shouldBe ListStyle.COMPACT
         }
     }
 

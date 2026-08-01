@@ -14,6 +14,7 @@ public data class LibraryState(
     val query: String = "",
     val isSearchActive: Boolean = false,
     val listStyle: ListStyle = ListStyle.GRID,
+    val isListStyleLocked: Boolean = false,
     val isRefreshing: Boolean = true,
     val sortOption: LibrarySortOption = LibrarySortOption.ADDED_DESC,
     val followedOnly: Boolean = false,

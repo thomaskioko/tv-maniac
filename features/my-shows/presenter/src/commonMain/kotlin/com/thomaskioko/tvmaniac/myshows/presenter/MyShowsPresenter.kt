@@ -9,11 +9,14 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.startwatching.presenter.StartWatchingPresenter
 import com.thomaskioko.tvmaniac.startwatching.presenter.di.StartWatchingChildGraph
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
@@ -34,6 +37,7 @@ public class MyShowsPresenter(
     componentContext: ComponentContext,
     localizer: Localizer,
     private val repository: WatchlistPrefsRepository,
+    subscriptionManager: SubscriptionManager,
     continueWatchingGraphFactory: ContinueWatchingChildGraph.Factory,
     startWatchingGraphFactory: StartWatchingChildGraph.Factory,
 ) : ComponentContext by componentContext {
@@ -65,14 +69,18 @@ public class MyShowsPresenter(
         repository.observeSortOption(),
         continueWatchingPresenter.state,
         startWatchingPresenter.state,
-    ) { page, currentQuery, isSearchActive, listStyle, sortOption, continueWatching, startWatching ->
+        subscriptionManager.observeAccess(SubscriptionFeature.ListViewTypes),
+    ) { page, currentQuery, isSearchActive, listStyle, sortOption, continueWatching, startWatching,
+        hasListViewTypesAccess,
+        ->
         MyShowsState(
             selectedPage = page,
             continueWatchingTitle = continueWatchingTitle,
             startWatchingTitle = startWatchingTitle,
             query = currentQuery,
             isSearchActive = isSearchActive,
-            listStyle = listStyle,
+            listStyle = if (hasListViewTypesAccess) listStyle else listStyle.freeFallback,
+            isListStyleLocked = !hasListViewTypesAccess,
             sortOption = sortOption,
             showRefreshIndicator = if (page == 0) {
                 continueWatching.showRefreshIndicator
@@ -97,12 +105,18 @@ public class MyShowsPresenter(
             is MyShowsAction.QueryChanged -> updateQuery(action.query)
             is MyShowsAction.ClearQuery -> updateQuery("")
             is MyShowsAction.ToggleSearch -> toggleSearch()
-            is MyShowsAction.ChangeListStyle -> coroutineScope.launch {
-                repository.saveListStyle(action.listStyle)
-            }
+            is MyShowsAction.ChangeListStyle -> changeListStyle(action.listStyle)
+            is MyShowsAction.UpgradeClicked -> Unit
             is MyShowsAction.ChangeSortOption -> coroutineScope.launch {
                 repository.saveSortOption(action.sortOption)
             }
+        }
+    }
+
+    private fun changeListStyle(listStyle: ListStyle) {
+        if (listStyle.isPremium && state.value.isListStyleLocked) return
+        coroutineScope.launch {
+            repository.saveListStyle(listStyle)
         }
     }
 

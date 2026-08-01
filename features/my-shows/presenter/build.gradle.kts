@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
+                api(projects.data.subscription.api)
                 api(projects.data.watchlistPrefs.api)
                 api(projects.features.continueWatching.presenter)
                 api(projects.features.startWatching.presenter)

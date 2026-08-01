@@ -25,6 +25,8 @@ import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -54,6 +56,7 @@ public class LibraryPresenter internal constructor(
     private val observeLibraryInteractor: ObserveLibraryInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
     private val accountManager: AccountManager,
+    private val subscriptionManager: SubscriptionManager,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -85,8 +88,9 @@ public class LibraryPresenter internal constructor(
         selectedGenresFlow,
         selectedStatusesFlow,
         loadingState.observable,
+        subscriptionManager.observeAccess(SubscriptionFeature.ListViewTypes),
     ) { currentState, items, listStyle, sortOption, message, query, followedOnly, selectedGenres,
-        selectedStatuses, isLoading,
+        selectedStatuses, isLoading, hasListViewTypesAccess,
         ->
 
         val availableGenres = getAvailableGenres(items)
@@ -96,7 +100,8 @@ public class LibraryPresenter internal constructor(
 
         currentState.copy(
             query = query,
-            listStyle = listStyle,
+            listStyle = if (hasListViewTypesAccess) listStyle else listStyle.freeFallback,
+            isListStyleLocked = !hasListViewTypesAccess,
             isRefreshing = isLoading,
             sortOption = sortOption,
             followedOnly = followedOnly,
@@ -122,6 +127,7 @@ public class LibraryPresenter internal constructor(
             is ClearLibraryQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
             is ChangeListStyleClicked -> changeListStyle(action.listStyle)
+            is LibraryUpgradeClicked -> Unit
             is ChangeSortOption -> changeSortOption(action.sortOption)
             is ToggleGenreFilter -> toggleGenreFilter(action.genre)
             is ToggleStatusFilter -> toggleStatusFilter(action.status)
@@ -236,6 +242,7 @@ public class LibraryPresenter internal constructor(
     }
 
     private fun changeListStyle(listStyle: ListStyle) {
+        if (listStyle.isPremium && state.value.isListStyleLocked) return
         coroutineScope.launch {
             repository.saveListStyle(listStyle)
         }

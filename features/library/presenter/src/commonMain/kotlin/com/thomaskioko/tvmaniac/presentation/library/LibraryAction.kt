@@ -16,6 +16,8 @@ public data object ToggleSearchActive : LibraryAction
 
 public data class ChangeListStyleClicked(val listStyle: ListStyle) : LibraryAction
 
+public data object LibraryUpgradeClicked : LibraryAction
+
 public data class ChangeSortOption(val sortOption: LibrarySortOption) : LibraryAction
 
 public data class ToggleGenreFilter(val genre: String) : LibraryAction

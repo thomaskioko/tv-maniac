@@ -10,6 +10,7 @@ public data class MyShowsState(
     val query: String = "",
     val isSearchActive: Boolean = false,
     val listStyle: ListStyle = ListStyle.GRID,
+    val isListStyleLocked: Boolean = false,
     val sortOption: WatchlistSortOption = WatchlistSortOption.ADDED_DESC,
     val showRefreshIndicator: Boolean = false,
 )

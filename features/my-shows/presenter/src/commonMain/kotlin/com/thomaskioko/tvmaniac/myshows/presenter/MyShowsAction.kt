@@ -14,5 +14,7 @@ public sealed interface MyShowsAction {
 
     public data class ChangeListStyle(val listStyle: ListStyle) : MyShowsAction
 
+    public data object UpgradeClicked : MyShowsAction
+
     public data class ChangeSortOption(val sortOption: WatchlistSortOption) : MyShowsAction
 }

@@ -4,4 +4,5 @@ public enum class SubscriptionFeature {
     EpisodeNotifications,
     Calendar,
     CustomThemes,
+    ListViewTypes,
 }
