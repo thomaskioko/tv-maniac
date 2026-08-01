@@ -333,6 +333,7 @@ graph TB
   :features:progress:nav --> :navigation:api
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
+  :features:root:presenter --> :core:connectivity:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view
