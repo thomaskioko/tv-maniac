@@ -150,7 +150,6 @@ graph TB
   :features:trailers:ui -.-> :android-designsystem
   :features:trailers:ui --> :core:base
   :features:trailers:ui --> :features:trailers:presenter
-  :features:trailers:ui -.-> :i18n:generator
   :features:trailers:ui --> :navigation:api
   :features:trailers:ui --> :navigation:ui
   :i18n:api --> :i18n:generator
