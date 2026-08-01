@@ -5,10 +5,21 @@
 <!--region graph-->
 ```mermaid
 graph TB
+  subgraph :data:datastore
+    direction TB
+    :data:datastore:api[api]:::multiplatform
+  end
   subgraph :data:watchlist-prefs
     direction TB
     :data:watchlist-prefs:api[api]:::multiplatform
   end
+  subgraph :i18n
+    direction TB
+    :i18n:generator[generator]:::multiplatform
+  end
+
+  :data:datastore:api --> :i18n:generator
+  :data:watchlist-prefs:api --> :data:datastore:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

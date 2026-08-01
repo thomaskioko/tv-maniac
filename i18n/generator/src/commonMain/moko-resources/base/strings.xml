@@ -511,4 +511,10 @@
     <string name="label_action_rate">Rate</string>
     <string name="label_action_rate_episode">Rate episode</string>
     <string name="label_action_remove_rating">Remove rating</string>
+    <string name="label_layout_grid">Grid</string>
+    <string name="label_layout_list">List</string>
+    <string name="label_layout_compact">Compact</string>
+    <string name="label_layout_detailed">Detailed</string>
+    <string name="label_layouts_locked_title">Compact and Detailed are Premium layouts</string>
+    <string name="label_layouts_locked_message">Upgrade to Premium to use these layouts.</string>
 </resources>

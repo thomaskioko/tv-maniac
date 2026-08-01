@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.features.home.nav)
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
+    implementation(projects.data.datastore.api)
     implementation(projects.data.watchlistPrefs.api)
     implementation(projects.i18n.generator)
 

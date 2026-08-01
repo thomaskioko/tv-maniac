@@ -87,6 +87,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:library:implementation --> :api:tmdb:api
   :data:library:implementation --> :core:base
   :data:library:implementation --> :core:logger:api

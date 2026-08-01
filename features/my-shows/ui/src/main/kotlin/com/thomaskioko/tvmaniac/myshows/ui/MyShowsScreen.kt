@@ -59,6 +59,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.continuewatching.ui.ContinueWatchingScreen
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
@@ -248,10 +249,13 @@ private fun Toolbar(
                     )
                 } else {
                     CollapsedToolbarContent(
-                        isGridMode = state.isGridMode,
+                        listStyle = state.listStyle,
                         showListStyleToggle = state.selectedPage == 0,
                         showRefreshIndicator = state.showRefreshIndicator,
-                        onToggleListStyle = { onAction(MyShowsAction.ChangeListStyle(state.isGridMode)) },
+                        onToggleListStyle = {
+                            val target = if (state.listStyle == ListStyle.GRID) ListStyle.LIST else ListStyle.GRID
+                            onAction(MyShowsAction.ChangeListStyle(target))
+                        },
                         onSearchClick = { onAction(MyShowsAction.ToggleSearch) },
                         onSortClick = onSortClick,
                     )
@@ -268,7 +272,7 @@ private fun Toolbar(
 
 @Composable
 private fun CollapsedToolbarContent(
-    isGridMode: Boolean,
+    listStyle: ListStyle,
     showListStyleToggle: Boolean,
     showRefreshIndicator: Boolean,
     onToggleListStyle: () -> Unit,
@@ -288,7 +292,11 @@ private fun CollapsedToolbarContent(
                 onClick = onToggleListStyle,
             ) {
                 Icon(
-                    imageVector = if (isGridMode) Icons.AutoMirrored.Outlined.List else Icons.Outlined.GridView,
+                    imageVector = if (listStyle == ListStyle.GRID) {
+                        Icons.AutoMirrored.Outlined.List
+                    } else {
+                        Icons.Outlined.GridView
+                    },
                     contentDescription = cd_toggle_list_style.resolve(context),
                     tint = MaterialTheme.colorScheme.onSurface,
                 )

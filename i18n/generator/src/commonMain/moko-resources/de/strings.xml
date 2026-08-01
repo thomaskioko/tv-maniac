@@ -503,4 +503,10 @@
     <string name="label_action_rate">Bewerten</string>
     <string name="label_action_rate_episode">Folge bewerten</string>
     <string name="label_action_remove_rating">Bewertung entfernen</string>
+    <string name="label_layout_grid">Raster</string>
+    <string name="label_layout_list">Liste</string>
+    <string name="label_layout_compact">Kompakt</string>
+    <string name="label_layout_detailed">Detailliert</string>
+    <string name="label_layouts_locked_title">Kompakt und Detailliert sind Premium-Layouts</string>
+    <string name="label_layouts_locked_message">Hol dir Premium, um diese Layouts zu verwenden.</string>
 </resources>

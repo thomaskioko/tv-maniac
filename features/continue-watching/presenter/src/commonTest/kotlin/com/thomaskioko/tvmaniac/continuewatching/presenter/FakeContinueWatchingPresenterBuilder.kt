@@ -29,6 +29,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
@@ -52,6 +53,7 @@ class FakeContinueWatchingPresenterBuilder {
     val syncObserver = FakeSyncObserver()
     val nitroFlag = FakeFeatureFlag(initial = false)
     val localizer = FakeLocalizer()
+    val subscriptionManager = FakeSubscriptionManager()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
@@ -119,6 +121,7 @@ class FakeContinueWatchingPresenterBuilder {
         componentContext = componentContext,
         navigator = navigator,
         repository = repository,
+        subscriptionManager = subscriptionManager,
         unfollowShowInteractor = UnfollowShowInteractor(
             followedShowsRepository = fakeFollowedShowsRepository,
             libraryRepository = FakeLibraryRepository(),

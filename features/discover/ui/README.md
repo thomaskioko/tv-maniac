@@ -220,6 +220,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:popularshows:api --> :core:base
   :data:popularshows:api --> :data:database:sqldelight
   :data:popularshows:api --> :data:shows:api

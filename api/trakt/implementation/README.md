@@ -43,6 +43,10 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
+  subgraph :data:datastore
+    direction TB
+    :data:datastore:api[api]:::multiplatform
+  end
   subgraph :data:episode
     direction TB
     :data:episode:api[api]:::multiplatform
@@ -79,6 +83,10 @@ graph TB
     direction TB
     :data:user:api[api]:::multiplatform
   end
+  subgraph :i18n
+    direction TB
+    :i18n:generator[generator]:::multiplatform
+  end
 
   :api:trakt:api --> :core:network-util:api
   :api:trakt:implementation --> :api:trakt:api
@@ -105,6 +113,7 @@ graph TB
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:database:sqldelight --> :core:logger:api
+  :data:datastore:api --> :i18n:generator
   :data:episode:api --> :data:account-manager:api
   :data:episode:api --> :data:database:sqldelight
   :data:episode:api --> :data:followedshows:api
@@ -112,6 +121,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:oauth:api --> :data:account-manager:api
   :data:ratings:api --> :core:network-util:api
   :data:ratings:api --> :data:account-manager:api

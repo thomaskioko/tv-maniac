@@ -27,6 +27,8 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
@@ -47,6 +49,7 @@ public class ContinueWatchingPresenter internal constructor(
     nitroFlag: FeatureFlag<Boolean>,
     syncObserver: SyncObserver,
     repository: WatchlistPrefsRepository,
+    subscriptionManager: SubscriptionManager,
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -77,6 +80,13 @@ public class ContinueWatchingPresenter internal constructor(
             initialValue = false,
         )
 
+    private val resolvedListStyle = kotlinx.coroutines.flow.combine(
+        repository.observeListStyle(),
+        subscriptionManager.observeAccess(SubscriptionFeature.ListViewTypes),
+    ) { listStyle, hasAccess ->
+        if (hasAccess) listStyle else listStyle.freeFallback
+    }
+
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
@@ -97,19 +107,19 @@ public class ContinueWatchingPresenter internal constructor(
         userRefreshState.observable,
         observeWatchlistSectionsInteractor.flow,
         observeUpNextSectionsInteractor.flow,
-        repository.observeListStyle(),
+        resolvedListStyle,
         repository.observeSortOption(),
         uiMessageManager.message,
         queryFlow,
         syncObserver.isSyncing,
         watchlistLoadingState.observable,
         episodeActionLoadingState.observable,
-    ) { updatingEpisodeIds, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, isLoading, isUpdating ->
+    ) { updatingEpisodeIds, isUserRefreshing, watchlistSections, upNextSections, listStyle, sortOption, message, query, isSyncing, isLoading, isUpdating ->
         val sectionedItems = mapper.toSectionedItems(watchlistSections, sortOption)
         val sectionedEpisodes = mapper.toSectionedEpisodes(upNextSections)
         ContinueWatchingState(
             query = query,
-            isGridMode = isGridMode,
+            listStyle = listStyle,
             isLoading = isLoading,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,

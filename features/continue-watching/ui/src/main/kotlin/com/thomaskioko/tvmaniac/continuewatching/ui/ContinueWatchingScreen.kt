@@ -62,6 +62,7 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.UpNextEpisodeClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -87,13 +88,13 @@ public fun ContinueWatchingScreen(
             onRefresh = { onAction(RefreshContinueWatching(forceRefresh = true)) },
         ) {
             AnimatedContent(
-                targetState = state.isGridMode,
+                targetState = state.listStyle,
                 transitionSpec = {
                     (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
                         (scaleOut(animationSpec = spring()) + fadeOut())
                 },
                 label = "list_style_animation",
-            ) { isGridMode ->
+            ) { listStyle ->
                 val hasNoItems = state.watchNextItems.isEmpty() && state.staleItems.isEmpty()
                 val hasNoEpisodes = state.watchNextEpisodes.isEmpty() && state.staleEpisodes.isEmpty()
 
@@ -107,7 +108,7 @@ public fun ContinueWatchingScreen(
                         }
                     }
 
-                    isGridMode -> {
+                    listStyle == ListStyle.GRID -> {
                         if (hasNoItems) {
                             EmptyStateView(
                                 modifier = Modifier.testTag(MyShowsTestTags.EMPTY_STATE_TEST_TAG),
