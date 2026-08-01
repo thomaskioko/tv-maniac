@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
+import com.thomaskioko.tvmaniac.core.base.coroutines.CoroutineCrashUtil
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -54,7 +55,7 @@ public class DefaultAuthStateHolder(
 
     private val states: Map<SyncProviderSource, ProviderState> =
         SyncProviderSource.entries.associateWith { ProviderState() }
-    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
+    private val scope = CoroutineScope(SupervisorJob() + dispatchers.io + CoroutineCrashUtil.handler)
 
     init {
         scope.launch {
