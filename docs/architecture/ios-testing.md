@@ -88,4 +88,6 @@ bundle exec fastlane ios ui_tests
 
 Both Fastlane lanes build the KMP framework first. Set `TVMANIAC_SKIP_FRAMEWORK_BUILD=1` to reuse an existing build.
 
+CI builds the app once, in `build-ios`, which runs `build_tvmaniac` and publishes the products. `ios-ui-test` downloads them and runs `fastlane ui_tests prebuilt:true`, which skips both the framework and the app build.
+
 `TvManiacFramework/Package.swift` calls `fatalError` when `TvManiac.xcframework` is missing, so `xcodebuild -list` fails on a fresh checkout until `./scripts/build-kmp-framework.sh` has run.
