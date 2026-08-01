@@ -1,0 +1,312 @@
+name: Release Android
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-android-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+  SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
+  SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+  SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.info.outputs.version }}
+      build: ${{ steps.info.outputs.build }}
+      changelog: ${{ steps.changelog.outputs.body }}
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag matches version.txt
+        run: |
+          tag="${{ github.ref_name }}"
+          version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
+          if [ "$tag" != "v${version}" ]; then
+            echo "::error::Tag '$tag' does not match version.txt version 'v${version}'"
+            exit 1
+          fi
+
+      - name: Read version info
+        id: info
+        run: |
+          echo "version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')" >> "$GITHUB_OUTPUT"
+          echo "build=$(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')" >> "$GITHUB_OUTPUT"
+
+      - name: Install git-cliff
+        uses: kenji-miyake/setup-git-cliff@2778609c643a39a2576c4bae2e493b855eb4aee8 # v2.0.1
+
+      - name: Generate release notes
+        id: changelog
+        run: |
+          body=$(git cliff --current --strip header 2>/dev/null || echo "Release ${{ github.ref_name }}")
+          {
+            echo 'body<<CHANGELOG_EOF'
+            echo "$body"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v7
+
+      - name: Setup Android Release
+        uses: ./.github/actions/setup-android-release
+        with:
+          google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
+          signing-encrypt-key: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+
+      - name: Build release AAB and APK
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew :app:bundleRelease :app:assembleRelease \
+            -Pandroidx.baselineprofile.skipgeneration=true \
+            -Papp.debugOnly=false \
+            -Papp.versionSuffix= \
+            -PreleaseStoreFile=release/app-release.jks \
+            -PreleaseStorePassword="$SIGNING_STORE_PASSWORD" \
+            -PreleaseKeyAlias=tvmaniac \
+            -PreleaseKeyPassword="$SIGNING_KEY_PASSWORD" \
+            --no-configuration-cache
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-release-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+  deploy-play-store:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Download AAB artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: android-release-aab
+          path: app/build/outputs/bundle/release
+
+      - name: Write release notes
+        env:
+          RELEASE_CHANGELOG: ${{ needs.prepare.outputs.changelog }}
+        run: |
+          mkdir -p fastlane/metadata/android/en-US/changelogs
+          echo "$RELEASE_CHANGELOG" > fastlane/metadata/android/en-US/changelogs/default.txt
+
+      - name: Deploy to Play Store production at 0.1%
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android deploy_production rollout:0.001
+          echo "Published **${{ needs.prepare.outputs.version }}** build \`${{ needs.prepare.outputs.build }}\` to Play Store production at 0.1%" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-firebase:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Firebase service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/firebase-sa.aes -out release/firebase-sa.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: android-release-apk
+          path: app/build/outputs/apk/release
+
+      - name: Distribute to Firebase App Distribution
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+        run: |
+          if [ -z "$FIREBASE_APP_ID" ]; then
+            echo "error: FIREBASE_APP_ID secret is not set" >&2
+            exit 1
+          fi
+          export FIREBASE_APP_DISTRIBUTION_SA=release/firebase-sa.json
+          bundle exec fastlane android distribute_firebase
+          echo "Published **${{ needs.prepare.outputs.version }}** build \`${{ needs.prepare.outputs.build }}\` to Firebase App Distribution" >> "$GITHUB_STEP_SUMMARY"
+
+  github-release:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: android-release-apk
+          path: artifacts
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_CHANGELOG: ${{ needs.prepare.outputs.changelog }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "Release ${{ needs.prepare.outputs.version }}" \
+            --notes "$RELEASE_CHANGELOG" \
+            --draft \
+            artifacts/app-release.apk
+
+  promote-1:
+    needs: [prepare, deploy-play-store]
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Increase rollout to 1%
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android promote from:production to:production rollout:0.01
+          echo "Rollout of **${{ needs.prepare.outputs.version }}** increased to 1%" >> "$GITHUB_STEP_SUMMARY"
+
+  promote-10:
+    needs: [prepare, promote-1]
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Increase rollout to 10%
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android promote from:production to:production rollout:0.1
+          echo "Rollout of **${{ needs.prepare.outputs.version }}** increased to 10%" >> "$GITHUB_STEP_SUMMARY"
+
+  promote-50:
+    needs: [prepare, promote-10]
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Increase rollout to 50%
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android promote from:production to:production rollout:0.5
+          echo "Rollout of **${{ needs.prepare.outputs.version }}** increased to 50%" >> "$GITHUB_STEP_SUMMARY"
+
+  promote-100:
+    needs: [prepare, promote-50]
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Complete rollout at 100%
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android promote from:production to:production rollout:1.0
+          echo "Rollout of **${{ needs.prepare.outputs.version }}** completed at 100%" >> "$GITHUB_STEP_SUMMARY"
