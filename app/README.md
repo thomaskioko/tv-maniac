@@ -1193,6 +1193,7 @@ graph TB
   :features:continue-watching:ui -.-> :android-designsystem
   :features:continue-watching:ui -.-> :core:test-tags
   :features:continue-watching:ui -.-> :core:view
+  :features:continue-watching:ui -.-> :data:datastore:api
   :features:continue-watching:ui --> :features:continue-watching:presenter
   :features:continue-watching:ui -.-> :i18n:generator
   :features:debug:nav --> :navigation:api
@@ -1326,6 +1327,7 @@ graph TB
   :features:library:ui --> :core:base
   :features:library:ui -.-> :core:test-tags
   :features:library:ui -.-> :core:view
+  :features:library:ui -.-> :data:datastore:api
   :features:library:ui -.-> :features:home:nav
   :features:library:ui --> :features:library:presenter
   :features:library:ui -.-> :i18n:generator
@@ -1359,6 +1361,7 @@ graph TB
   :features:my-shows:ui -.-> :android-designsystem
   :features:my-shows:ui --> :core:base
   :features:my-shows:ui -.-> :core:test-tags
+  :features:my-shows:ui -.-> :data:datastore:api
   :features:my-shows:ui -.-> :data:watchlist-prefs:api
   :features:my-shows:ui -.-> :features:continue-watching:presenter
   :features:my-shows:ui -.-> :features:continue-watching:ui

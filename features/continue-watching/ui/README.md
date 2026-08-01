@@ -240,6 +240,7 @@ graph TB
   :features:continue-watching:ui -.-> :android-designsystem
   :features:continue-watching:ui -.-> :core:test-tags
   :features:continue-watching:ui -.-> :core:view
+  :features:continue-watching:ui -.-> :data:datastore:api
   :features:continue-watching:ui --> :features:continue-watching:presenter
   :features:continue-watching:ui -.-> :i18n:generator
   :features:my-shows:nav --> :navigation:api

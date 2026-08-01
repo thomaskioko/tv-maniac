@@ -207,6 +207,7 @@ graph TB
   :features:library:ui --> :core:base
   :features:library:ui -.-> :core:test-tags
   :features:library:ui -.-> :core:view
+  :features:library:ui -.-> :data:datastore:api
   :features:library:ui -.-> :features:home:nav
   :features:library:ui --> :features:library:presenter
   :features:library:ui -.-> :i18n:generator
