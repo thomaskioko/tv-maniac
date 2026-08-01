@@ -424,6 +424,7 @@ internal class ShowDetailsPresenterTest {
             navigator = navigator,
             accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            localizer = FakeLocalizer(),
             logger = FakeLogger(),
         )
 

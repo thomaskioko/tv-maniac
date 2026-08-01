@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.showdetails.roborrazi
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
@@ -80,6 +81,17 @@ class ShowDetailsScreenScreenshotTest {
                     item(key = "bottom_spacer") {
                         Spacer(modifier = Modifier.height(TvManiacSpacing.xxLarge))
                     }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsTrailersSection() {
+        composeTestRule.captureMultiDevice("ShowDetailsTrailersSection") {
+            TvManiacBackground {
+                Column {
+                    ShowDetailsTrailersSection(state = previewTrailersState, onAction = {})
                 }
             }
         }

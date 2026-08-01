@@ -1239,8 +1239,12 @@ graph TB
   :features:start-watching:presenter --> :navigation:api
   :features:trailers:nav --> :navigation:api
   :features:trailers:presenter --> :core:base
-  :features:trailers:presenter --> :data:trailers:api
+  :features:trailers:presenter --> :core:logger:api
+  :features:trailers:presenter --> :core:view
+  :features:trailers:presenter --> :domain:showdetails
   :features:trailers:presenter --> :features:trailers:nav
+  :features:trailers:presenter --> :i18n:api
+  :features:trailers:presenter -.-> :i18n:generator
   :features:trailers:presenter --> :navigation:api
   :features:upnext:presenter --> :core:base
   :features:upnext:presenter --> :core:logger:api

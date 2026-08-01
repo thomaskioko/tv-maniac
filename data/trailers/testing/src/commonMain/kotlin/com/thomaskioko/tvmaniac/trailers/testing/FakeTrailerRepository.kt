@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 public class FakeTrailerRepository : TrailerRepository {
     private val youtubePlayerInstalled = Channel<Boolean>(Channel.UNLIMITED)
     private var response = MutableStateFlow<List<SelectByShowId>>(emptyList())
+    private var fetchTrailersError: Throwable? = null
 
     public suspend fun setTrailerResult(result: List<SelectByShowId>) {
         response.emit(result)
@@ -20,10 +21,15 @@ public class FakeTrailerRepository : TrailerRepository {
         youtubePlayerInstalled.send(installed)
     }
 
+    public fun setFetchTrailersFailure(error: Throwable) {
+        fetchTrailersError = error
+    }
+
     override fun observeTrailers(showId: Long): Flow<List<SelectByShowId>> = response.asStateFlow()
 
     override fun isYoutubePlayerInstalled(): Flow<Boolean> = youtubePlayerInstalled.receiveAsFlow()
 
     override suspend fun fetchTrailers(showId: Long, forceRefresh: Boolean) {
+        fetchTrailersError?.let { throw it }
     }
 }

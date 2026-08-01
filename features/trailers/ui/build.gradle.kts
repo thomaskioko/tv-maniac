@@ -17,7 +17,6 @@ dependencies {
     api(projects.navigation.ui)
 
     implementation(projects.androidDesignsystem)
-    implementation(projects.i18n.generator)
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.runtime)

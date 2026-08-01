@@ -13,9 +13,14 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
-                api(projects.data.trailers.api)
+                api(projects.core.logger.api)
+                api(projects.core.view)
+                api(projects.domain.showdetails)
                 api(projects.features.trailers.nav)
+                api(projects.i18n.api)
                 api(projects.navigation.api)
+
+                implementation(projects.i18n.generator)
 
                 api(libs.decompose.decompose)
                 api(libs.essenty.lifecycle)
@@ -26,7 +31,9 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.logger.testing)
                 implementation(projects.data.trailers.testing)
+                implementation(projects.i18n.testing)
             }
         }
     }

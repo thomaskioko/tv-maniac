@@ -6,24 +6,34 @@ import SwiftUI
 public struct TrailerListView: View {
     @Environment(\.appTheme) private var theme
 
+    private let title: String
     private let trailers: [SwiftTrailer]
     private let openInYouTube: Bool
+    private let onMoreClicked: () -> Void
     private let onError: ((Error) -> Void)?
 
     public init(
+        title: String,
         trailers: [SwiftTrailer],
         openInYouTube: Bool,
+        onMoreClicked: @escaping () -> Void,
         onError: ((Error) -> Void)? = nil
     ) {
+        self.title = title
         self.trailers = trailers
         self.openInYouTube = openInYouTube
+        self.onMoreClicked = onMoreClicked
         self.onError = onError
     }
 
     public var body: some View {
         if !trailers.isEmpty {
             VStack {
-                ChevronTitle(title: "Trailers")
+                ChevronTitle(
+                    title: title,
+                    chevronStyle: .chevronOnly,
+                    action: onMoreClicked
+                )
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -49,6 +59,7 @@ public struct TrailerListView: View {
 #Preview {
     VStack {
         TrailerListView(
+            title: "Trailers",
             trailers: [
                 .init(
                     showId: 123,
@@ -63,7 +74,8 @@ public struct TrailerListView: View {
                     youtubeThumbnailUrl: "https://i.ytimg.com/vi/XZ8daibM3AE/hqdefault.jpg"
                 ),
             ],
-            openInYouTube: false
+            openInYouTube: false,
+            onMoreClicked: {}
         )
     }
 }
