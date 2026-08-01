@@ -9,6 +9,8 @@ DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
 COMPILATION_CACHE_PATH = "#{PROJECT_DIR}/compilation_cache"
 SOURCE_PACKAGES_PATH = "#{PROJECT_DIR}/ios/SourcePackages"
 UI_TEST_ALLOWANCE_SECONDS = 600
+# Matches IPHONEOS_DEPLOYMENT_TARGET in ios/tv-maniac.xcodeproj.
+IOS_DEPLOYMENT_TARGET = "18.0"
 
 NO_INDEX_STORE_XCARGS = "COMPILER_INDEX_STORE_ENABLE=NO"
 
@@ -85,17 +87,39 @@ platform :ios do
     prebuilt = options[:prebuilt].to_s == "true"
     build_kmp_framework unless prebuilt
 
+    # Running the xctestrun on its own keeps xcodebuild away from the project, so it
+    # reads no build settings and resolves no packages. Reading them costs five minutes
+    # on CI and is the only reason a test-only job needs the KMP framework on disk.
+    # The file names the SDK it was built against, so it is found rather than spelled out.
+    source = if prebuilt
+               xctestrun = Dir["#{DERIVED_DATA_PATH}/Build/Products/*.xctestrun"].first
+               UI.user_error!("No xctestrun under #{DERIVED_DATA_PATH}. Run build_tvmaniac first.") if xctestrun.nil?
+               # scan still wants a project to satisfy its own checks, but it leaves
+               # -project and -scheme off the xcodebuild command once xctestrun is set.
+               # deployment_target_version is passed so it does not read the value out of
+               # the project, which is the call that costs the five minutes.
+               {
+                 xctestrun: xctestrun,
+                 test_without_building: true,
+                 skip_package_dependencies_resolution: true,
+                 deployment_target_version: IOS_DEPLOYMENT_TARGET
+               }
+             else
+               { cloned_source_packages_path: SOURCE_PACKAGES_PATH }
+             end
+
     run_tests(
+      **source,
       project: "ios/tv-maniac.xcodeproj",
       scheme: "tv-maniac",
+      # Naming the app keeps scan from reading WRAPPER_NAME out of the project, which is
+      # the last thing that would make it dump build settings.
+      app_name: "tv-maniac",
       destination: TEST_DESTINATION,
       devices: ["#{TEST_DEVICE} (#{TEST_OS})"],
       prelaunch_simulator: true,
       skip_detect_devices: true,
-      test_without_building: prebuilt,
-      skip_package_dependencies_resolution: prebuilt,
       result_bundle: true,
-      cloned_source_packages_path: SOURCE_PACKAGES_PATH,
       xcargs: "#{NO_INDEX_STORE_XCARGS} " \
               "-skipPackagePluginValidation " \
               "-parallel-testing-enabled NO " \
