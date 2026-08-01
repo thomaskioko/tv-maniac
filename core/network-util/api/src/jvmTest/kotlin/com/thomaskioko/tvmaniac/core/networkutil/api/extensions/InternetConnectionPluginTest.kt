@@ -17,11 +17,19 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
 import kotlin.test.Test
 
 class InternetConnectionPluginTest {
+
+    private fun internetConnectionChecker(connected: Boolean) = object : InternetConnectionChecker {
+        override fun isConnected(): Boolean = connected
+
+        override fun observeConnection(): Flow<Boolean> = flowOf(connected)
+    }
 
     private fun createClient(checker: InternetConnectionChecker? = null): HttpClient {
         val engine = MockEngine { _ ->
@@ -41,10 +49,7 @@ class InternetConnectionPluginTest {
 
     @Test
     fun `should proceed with request given device is connected`() = runTest {
-        val checker = object : InternetConnectionChecker {
-            override fun isConnected(): Boolean = true
-        }
-        val client = createClient(checker)
+        val client = createClient(internetConnectionChecker(connected = true))
 
         val response = client.get("/test")
 
@@ -53,10 +58,7 @@ class InternetConnectionPluginTest {
 
     @Test
     fun `should throw NoInternetException given device is disconnected`() = runTest {
-        val checker = object : InternetConnectionChecker {
-            override fun isConnected(): Boolean = false
-        }
-        val client = createClient(checker)
+        val client = createClient(internetConnectionChecker(connected = false))
 
         shouldThrow<NoInternetException> {
             client.get("/test")
@@ -74,9 +76,6 @@ class InternetConnectionPluginTest {
 
     @Test
     fun `should return OfflineError given NoInternetException is thrown`() = runTest {
-        val checker = object : InternetConnectionChecker {
-            override fun isConnected(): Boolean = false
-        }
         val engine = MockEngine { _ ->
             respond(
                 content = """{"id":1,"name":"test"}""",
@@ -87,7 +86,7 @@ class InternetConnectionPluginTest {
         val client = HttpClient(engine) {
             install(ContentNegotiation) { json() }
             install(InternetConnectionPlugin) {
-                internetConnectionChecker = checker
+                internetConnectionChecker = internetConnectionChecker(connected = false)
             }
         }
 

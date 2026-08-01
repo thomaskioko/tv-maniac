@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.minTrueDuration
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
@@ -36,6 +37,7 @@ import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.navigation.SheetDestination
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.home.di.HomeChildGraph
+import com.thomaskioko.tvmaniac.presenter.root.model.ConnectivityBannerState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastType
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
@@ -48,9 +50,11 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.AppRoot
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -83,6 +87,7 @@ public class DefaultRootPresenter(
     private val datastoreRepository: DatastoreRepository,
     private val syncObserver: SyncObserver,
     private val localizer: Localizer,
+    private val internetConnectionChecker: InternetConnectionChecker,
 ) : RootPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -91,6 +96,7 @@ public class DefaultRootPresenter(
     private val uiMessageManager = UiMessageManager()
     private val syncErrorMessages = UiMessageManager()
     private val uiState = MutableStateFlow(RootUiState())
+    private val connectivityBanner = MutableStateFlow(ConnectivityBannerState.Hidden)
 
     init {
         coroutineScope.launch {
@@ -119,6 +125,23 @@ public class DefaultRootPresenter(
                 .filter { it }
                 .take(1)
                 .collect { notificationRationale.showIfNeeded() }
+        }
+
+        coroutineScope.launch {
+            internetConnectionChecker.observeConnection()
+                .debounce(CONNECTIVITY_DEBOUNCE)
+                .distinctUntilChanged()
+                .collectLatest { connected ->
+                    if (connected) {
+                        if (connectivityBanner.value == ConnectivityBannerState.Offline) {
+                            connectivityBanner.value = ConnectivityBannerState.BackOnline
+                            delay(MIN_STATUS_DISPLAY)
+                        }
+                        connectivityBanner.value = ConnectivityBannerState.Hidden
+                    } else {
+                        connectivityBanner.value = ConnectivityBannerState.Offline
+                    }
+                }
         }
 
         coroutineScope.launch {
@@ -248,6 +271,11 @@ public class DefaultRootPresenter(
     override val accountLimitBannerVisibleValue: Value<Boolean> =
         accountLimitBannerVisible.asValue(coroutineScope)
 
+    override val connectivityBannerState: StateFlow<ConnectivityBannerState> = connectivityBanner.asStateFlow()
+
+    override val connectivityBannerStateValue: Value<ConnectivityBannerState> =
+        connectivityBannerState.asValue(coroutineScope)
+
     override fun onRationaleAccepted() {
         coroutineScope.launch {
             datastoreRepository.setShowNotificationRationale(false)
@@ -328,6 +356,10 @@ public class DefaultRootPresenter(
         uiState.update { it.copy(accountLimitBannerDismissed = true) }
     }
 
+    override fun onDismissOfflineBanner() {
+        connectivityBanner.value = ConnectivityBannerState.Hidden
+    }
+
     @AssistedFactory
     public fun interface Factory {
         public fun create(componentContext: ComponentContext): DefaultRootPresenter
@@ -335,6 +367,7 @@ public class DefaultRootPresenter(
 
     private companion object {
         private val MIN_STATUS_DISPLAY = 2_500.milliseconds
+        private val CONNECTIVITY_DEBOUNCE = 300.milliseconds
     }
 }
 

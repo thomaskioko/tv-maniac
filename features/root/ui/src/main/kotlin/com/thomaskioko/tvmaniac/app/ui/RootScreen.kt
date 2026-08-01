@@ -42,6 +42,7 @@ import com.thomaskioko.tvmaniac.navigation.ui.LocalScreenContents
 import com.thomaskioko.tvmaniac.navigation.ui.ScreenContent
 import com.thomaskioko.tvmaniac.navigation.ui.SheetContent
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
+import com.thomaskioko.tvmaniac.presenter.root.model.ConnectivityBannerState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastType
 import io.github.thomaskioko.codegen.annotations.AppRootUi
@@ -73,6 +74,7 @@ public fun RootScreen(
     val toastState by rootPresenter.toastState.collectAsStateWithLifecycle()
     val syncIndicatorVisible by rootPresenter.syncIndicatorVisible.collectAsStateWithLifecycle()
     val accountLimitBannerVisible by rootPresenter.accountLimitBannerVisible.collectAsStateWithLifecycle()
+    val connectivityBannerState by rootPresenter.connectivityBannerState.collectAsStateWithLifecycle()
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -98,10 +100,12 @@ public fun RootScreen(
         notificationPermissionState = notificationPermissionState,
         episodeSheetSlot = episodeSheetSlot,
         accountLimitBannerVisible = accountLimitBannerVisible,
+        connectivityBannerState = connectivityBannerState,
         onRationaleAccepted = { rootPresenter.onRationaleAccepted() },
         onRationaleDismissed = { rootPresenter.onRationaleDismissed() },
         onDismissToast = { toastState.id?.let(rootPresenter::onToastShown) },
         onDismissAccountLimitBanner = { rootPresenter.onDismissAccountLimitBanner() },
+        onDismissOfflineBanner = { rootPresenter.onDismissOfflineBanner() },
         modifier = modifier,
     ) {
         HomeScreen(
@@ -120,10 +124,12 @@ internal fun RootContent(
     notificationPermissionState: NotificationPermissionState,
     episodeSheetSlot: ChildSlot<*, SheetChild>,
     accountLimitBannerVisible: Boolean,
+    connectivityBannerState: ConnectivityBannerState,
     onRationaleAccepted: () -> Unit,
     onRationaleDismissed: () -> Unit,
     onDismissToast: () -> Unit,
     onDismissAccountLimitBanner: () -> Unit,
+    onDismissOfflineBanner: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -171,6 +177,12 @@ internal fun RootContent(
                     visible = accountLimitBannerVisible,
                     modifier = Modifier.align(Alignment.TopCenter),
                 )
+
+                OfflineBanner(
+                    state = connectivityBannerState,
+                    onDismiss = onDismissOfflineBanner,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
             }
 
             TvManiacSnackBarHost(
@@ -197,10 +209,12 @@ private fun RootScreenPreview(
         notificationPermissionState = state.notificationPermissionState,
         episodeSheetSlot = ChildSlot<Nothing, Nothing>(),
         accountLimitBannerVisible = state.accountLimitBannerVisible,
+        connectivityBannerState = state.connectivityBannerState,
         onRationaleAccepted = {},
         onRationaleDismissed = {},
         onDismissToast = {},
         onDismissAccountLimitBanner = {},
+        onDismissOfflineBanner = {},
     ) {
         Box(modifier = Modifier.fillMaxSize())
     }
@@ -211,6 +225,7 @@ internal data class RootPreviewState(
     val syncIndicatorVisible: Boolean = false,
     val notificationPermissionState: NotificationPermissionState = NotificationPermissionState(),
     val accountLimitBannerVisible: Boolean = false,
+    val connectivityBannerState: ConnectivityBannerState = ConnectivityBannerState.Hidden,
 )
 
 internal class RootPreviewParameterProvider : PreviewParameterProvider<RootPreviewState> {
@@ -228,5 +243,7 @@ internal class RootPreviewParameterProvider : PreviewParameterProvider<RootPrevi
             ),
             RootPreviewState(syncIndicatorVisible = true),
             RootPreviewState(accountLimitBannerVisible = true),
+            RootPreviewState(connectivityBannerState = ConnectivityBannerState.Offline),
+            RootPreviewState(connectivityBannerState = ConnectivityBannerState.BackOnline),
         )
 }
