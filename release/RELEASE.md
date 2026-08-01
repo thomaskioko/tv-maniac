@@ -1,12 +1,13 @@
 # Release Process
 
-TvManiac uses an automated release pipeline that builds, signs, and deploys to both Google Play Store and Apple App Store. Production releases are triggered by tags pushed from the local release task. Internal/beta releases are triggered manually via GitHub Actions.
+TvManiac uses an automated release pipeline that builds, signs, and deploys to both Google Play Store and Apple App Store. Production releases are triggered by tags pushed from the local release task and roll out through approval gates. Daily builds run on a weekday schedule; beta releases are triggered manually.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Create a Production Release](#create-a-production-release)
-- [Trigger Internal Release on CI](#trigger-internal-release-on-ci)
+- [Trigger Beta Release on CI](#trigger-beta-release-on-ci)
+- [Daily Builds](#daily-builds)
 - [Gradual Rollout](#gradual-rollout)
 - [Promote a Release Locally](#promote-a-release-locally)
 - [Version Bumping](#version-bumping)
@@ -25,7 +26,7 @@ Before you can create or promote releases, make sure the following are set up:
 - [git-cliff](https://git-cliff.org/) installed: `brew install git-cliff`
 - Ruby and Fastlane configured: `bundle install`
 - For CI releases: GitHub secrets configured (see [Signing & Secrets](#signing--secrets))
-- For local releases: signing properties in `release/signing.properties` (see [release-signing-setup.md](../tasks/release-signing-setup.md))
+- For local releases: signing properties in `release/signing.properties` (setup guide lives in the Obsidian vault under `TvManiac/`)
 
 ---
 
@@ -52,13 +53,13 @@ Production releases are created locally and triggered on CI by pushing a version
 
 ### Step 2: CI builds and deploys automatically
 
-When the tag (e.g., `v0.1.3`) is pushed, CI automatically:
+When the tag (e.g., `v0.1.3`) is pushed, two independent workflows run: `release-android.yml` and `release-ios.yml`. Each validates that the tag matches `version.txt`, builds once, and fans out to deploy jobs, so a failed upload retries with `gh run rerun <run-id> --failed` without rebuilding.
 
-1. **Build Android**: Builds a signed release AAB + APK, deploys to Play Store production at 0.1% rollout, and distributes to Firebase App Distribution
-2. **Build iOS**: Builds a signed release IPA via Fastlane Match and uploads to TestFlight. Use the promote workflow to submit to App Store review after TestFlight testing.
-3. **GitHub Release**: Creates a draft GitHub Release with the changelog and APK attached. Review and publish when ready.
+**Release Android**: builds the signed AAB + APK, then in parallel deploys to Play Store production at 0.1% rollout, distributes the APK to Firebase App Distribution, and creates a draft GitHub Release with the changelog and APK attached. The run then ramps the rollout through approval-gated jobs (see [Gradual Rollout](#gradual-rollout)).
 
-Platform builds are independent. If one platform fails, the other still deploys.
+**Release iOS**: builds the signed IPA, uploads it to TestFlight, then pauses at an approval gate before submitting to App Store review with phased release enabled.
+
+Platform workflows are independent. If one platform fails, the other still deploys.
 
 > **Note:** The release build variant is disabled by default for faster local development (`app.debugOnly=true`). The release task handles this automatically.
 
@@ -66,7 +67,7 @@ Platform builds are independent. If one platform fails, the other still deploys.
 
 ## Trigger Beta Release on CI
 
-Beta releases deploy builds to Play Store open testing track and TestFlight for wider testing. The workflow bumps the beta build number, commits to `main`, then builds and deploys.
+Beta releases deploy builds to the Play Store open testing track and TestFlight for wider testing. Nothing is committed or pushed — the build number is derived the same way as daily builds.
 
 Go to **Actions > Beta Release > Run workflow**, or use the CLI:
 
@@ -82,61 +83,53 @@ gh workflow run beta-release.yml -f skip_ios=true
 
 **What happens:**
 
-1. **Prepare**: Runs `bumpVersion -Ptype=beta`, increments `BUILD_NUMBER`, commits and pushes to `main`
-2. **Build Android**: Builds a signed release AAB with `-beta` suffix, deploys to Play Store open testing track
-3. **Build iOS**: Builds a signed release IPA, uploads to TestFlight
+1. **Version**: `scripts/ci/write-build-number.sh` derives the build number and writes `version.txt` in the runner's workspace only.
+2. **Build**: Per-platform build jobs produce the signed artifacts (Android with a `-beta` suffix) and upload them as workflow artifacts.
+3. **Deploy**: Separate jobs publish them — Android to the Play Store open testing track and Firebase App Distribution, iOS to TestFlight.
 
-## Trigger Daily Build on CI
+A beta and a daily build cut from the same commit derive the same build number, and the stores reject the duplicate upload. Land a commit first, or rerun after one lands.
 
-Daily builds deploy to Play Store internal track and TestFlight for team testing. The schedule is inactive by default — trigger manually or uncomment the cron schedule in `daily-build.yml` to enable.
+## Daily Builds
+
+Daily builds run per platform on weekdays at 6:00 AM UTC, and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
 
 ```bash
-gh workflow run daily-build.yml
+gh workflow run daily-build-android.yml
+gh workflow run daily-build-ios.yml
 ```
 
 **What happens:**
 
-1. **Prepare**: Bumps build number, commits and pushes to `main`
-2. **Build Android**: Builds a signed release AAB with `-dev` suffix, deploys to Play Store internal track
-3. **Build iOS**: Builds a signed release IPA, uploads to TestFlight
+1. **Check**: Scheduled runs skip when `main` has no new commits since the last successful daily build. Manual runs always build.
+2. **Version**: `scripts/ci/write-build-number.sh` derives the build number as `base(version) + commits since the release tag` and writes it to `version.txt` in the runner's workspace only — nothing is committed or pushed.
+3. **Build**: One job builds the signed artifacts with a `-dev` suffix (Android AAB and APK, iOS IPA) and uploads them as workflow artifacts.
+4. **Deploy**: Separate jobs download the artifacts and publish them — Android to the Play Store internal track and Firebase App Distribution in parallel, iOS to TestFlight.
+
+Build and deploy are separate jobs, so a failed upload retries without rebuilding:
+
+```bash
+gh run rerun <run-id> --failed
+```
+
+The derived build number stays inside the version's 999-slot budget; the script fails the run when the budget is exhausted, which means it is time to cut a release.
 
 ---
 
 ## Gradual Rollout
 
-After a production release deploys at 0.1%, the rollout ramps over a week. The promote workflow checks Play Vitals crash-free rate before allowing promotion (gracefully skips if the Reporting API isn't enabled).
+The rollout lives inside the `Release Android` run as a chain of approval-gated jobs. After production deploys at 0.1%, the run pauses at each ramp stage until you approve it in the Actions UI. Check Play Vitals and Crashlytics before approving — you are the crash gate.
 
-Each ramp requires **manual approval** via the GitHub Actions UI (using the `production` environment with required reviewers). You get a notification when it's time to approve.
+| Stage       | Android          | iOS                            |
+|-------------|------------------|--------------------------------|
+| Release     | 0.1% (automatic) | TestFlight (automatic)         |
+| Gate 1      | 1%               | Submit for App Store review    |
+| Gate 2      | 10%              | Apple manages phased rollout   |
+| Gate 3      | 50%              |                                |
+| Gate 4      | 100%             |                                |
 
-| Day         | Android          | iOS                                |
-|-------------|------------------|------------------------------------|
-| 0 (release) | 0.1% (automatic) | TestFlight                         |
-| 1           | 1%               | Submitted for App Store review     |
-| 3           | 10%              | Apple manages phased rollout       |
-| 5           | 50%              | Apple manages phased rollout       |
-| 7           | 100%             | Phased rollout complete            |
+Approve each stage on your own schedule — a pending gate waits up to 30 days. Rejecting a gate stops the chain; ship a fixed patch release instead. On iOS, the single gate submits the TestFlight build for App Store review with phased release enabled; Apple then ramps automatically (1% > 2% > 5% > 10% > 20% > 50% > 100% over 7 days).
 
-iOS is submitted for App Store review on every promote run by default. Use `skip_ios=true` to skip if already submitted. Apple's phased release handles the iOS rollout automatically (1% > 2% > 5% > 10% > 20% > 50% > 100% over 7 days).
-
-To manually override the rollout percentage:
-
-```bash
-gh workflow run promote-release.yml -f android_rollout=0.5
-```
-
-To skip iOS submission (e.g., already in review):
-
-```bash
-gh workflow run promote-release.yml -f skip_ios=true
-```
-
-To adjust the crash-free threshold (default 99%):
-
-```bash
-gh workflow run promote-release.yml -f crash_free_threshold=98.5
-```
-
-**Setup required**: Create a `production` environment in **GitHub > Repository > Settings > Environments** with yourself as a required reviewer. For crash gating, enable the [Play Developer Reporting API](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) and grant the Play Store service account "View app information" permission.
+The gates pause because the `production` environment in **Settings > Environments** requires your review. To jump to a different percentage outside the chain, use the local promote lane below.
 
 ---
 
@@ -167,8 +160,9 @@ bundle exec fastlane ios deploy_app_store
 ./gradlew :app:bumpVersion -Ptype=patch   # 0.1.2 > 0.1.3, BUILD = 103000
 ./gradlew :app:bumpVersion -Ptype=minor   # 0.1.2 > 0.2.0, BUILD = 200000
 ./gradlew :app:bumpVersion -Ptype=major   # 0.1.2 > 1.0.0, BUILD = 10000000
-./gradlew :app:bumpVersion -Ptype=beta    # 0.1.2 stays,    BUILD = 102001
 ```
+
+`-Ptype=beta` still exists but is legacy: CI derives beta and daily build numbers from git instead. Don't commit beta bumps — a raised `BUILD_NUMBER` floor can block derived builds until enough commits land.
 
 ---
 
@@ -176,17 +170,16 @@ bundle exec fastlane ios deploy_app_store
 
 Beta builds let you upload multiple test versions to Play Store and TestFlight without burning version numbers. This is useful for internal testing before a production release.
 
-`bumpVersion -Ptype=beta` increments `BUILD_NUMBER` by 1 without changing `VERSION_NUMBER`. The version name gets a `-beta` suffix automatically.
+Beta and daily build numbers are derived, not committed: `base(version) + commits since the release tag`. The committed `BUILD_NUMBER` in `version.txt` only changes on production releases.
 
 **Example lifecycle:**
 
 ```
-0.1.2 / 102000  >  beta   >  0.1.2 / 102001 (internal release)
-0.1.2 / 102001  >  beta   >  0.1.2 / 102002 (internal release)
-0.1.2 / 102002  >  patch  >  0.1.3 / 103000 (production release via tag)
+0.1.2 / 102000 released  >  40 commits land   >  daily/beta builds derive 102001…102040
+patch release            >  0.1.3 / 103000     >  derivation continues from v0.1.3
 ```
 
-Each version reserves 1000 build number slots. Production resets to `X000`, betas use `X001` through `X999`.
+Each version reserves 1000 build number slots. Production takes `X000`, derived builds use `X001` through `X999`. The version script fails the run when the budget is exhausted — time to cut a release.
 
 ---
 
@@ -196,16 +189,16 @@ All versioning is driven by `version.txt` at the project root, which contains `V
 
 **Build number formula:** `(major * 10,000,000) + (minor * 100,000) + (patch * 1,000)`
 
-|              | Production                | Beta                  | Daily               |
-|--------------|---------------------------|-----------------------|---------------------|
-| Version name | `0.1.3`                   | `0.1.2-beta`          | `0.1.2-dev`         |
-| Build number | `103000`                  | `102001`, `102002`... | `102003`, `102004`… |
-| Tag          | `v0.1.3`                  | No tag                | No tag              |
-| Play Store   | production (0.1% rollout) | open testing track    | internal track      |
-| Firebase     | Yes                       | Yes                   | Yes                 |
-| Trigger      | Tag push                  | `workflow_dispatch`   | Schedule / manual   |
+|              | Production                | Beta                     | Daily                    |
+|--------------|---------------------------|--------------------------|--------------------------|
+| Version name | `0.1.3`                   | `0.1.2-beta`             | `0.1.2-dev`              |
+| Build number | `103000` (committed)      | derived `102001`–`102999` | derived `102001`–`102999` |
+| Tag          | `v0.1.3`                  | No tag                   | No tag                   |
+| Play Store   | production (0.1% rollout) | open testing track       | internal track           |
+| Firebase     | Yes                       | Yes                      | Yes                      |
+| Trigger      | Tag push                  | `workflow_dispatch`      | Schedule / manual        |
 
-The `-beta` suffix is controlled by `app.versionSuffix` in `gradle.properties` (default: `-beta`). Production releases override it to empty via `-Papp.versionSuffix=`.
+Version-name suffixes are passed per workflow: production overrides to empty, daily builds use `-dev`, betas use `-beta`. Local builds default to `-debug` via `gradle.properties`.
 
 ---
 
@@ -240,4 +233,4 @@ Release commits (prefixed with `release:`) are automatically excluded.
 
 Release builds require signing keys (Android keystore, iOS certificates) and store credentials. These are encrypted and stored in the repository.
 
-See [release-signing-setup.md](../tasks/release-signing-setup.md) for the full setup guide and list of required GitHub secrets.
+The full setup guide and list of required GitHub secrets live in the Obsidian vault under `TvManiac/`.
