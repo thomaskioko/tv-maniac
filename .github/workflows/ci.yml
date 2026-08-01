@@ -367,7 +367,6 @@ jobs:
         timeout-minutes: 30
         env:
             FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
-            TVMANIAC_SKIP_FRAMEWORK_BUILD: '1'
 
         steps:
             -   name: 🚚 Checkout project
@@ -378,14 +377,6 @@ jobs:
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
                     kotlin-tooling: 'false'
-
-            # TvManiacFramework's Package.swift calls fatalError when the xcframework is
-            # absent, so every xcodebuild invocation needs it on disk, including one that
-            # only runs tests.
-            -   name: 🗂️ Restore prebuilt KMP frameworks
-                uses: ./.github/actions/kmp-ios-framework
-                with:
-                    mode: restore
 
             -   name: 📦 Download the prebuilt app and test bundle
                 uses: actions/download-artifact@v7
