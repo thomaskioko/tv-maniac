@@ -1,13 +1,13 @@
 # Release Process
 
-TvManiac uses an automated release pipeline that builds, signs, and deploys to both Google Play Store and Apple App Store. Production releases are triggered by tags pushed from the local release task and roll out through approval gates. Daily builds run on a weekday schedule; beta releases are triggered manually.
+TvManiac uses an automated release pipeline that builds, signs, and deploys to both Google Play Store and Apple App Store. Production releases are triggered by tags pushed from the local release task and roll out through approval gates. Dev builds run on a Monday and Thursday schedule; beta releases are triggered manually.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Create a Production Release](#create-a-production-release)
 - [Trigger Beta Release on CI](#trigger-beta-release-on-ci)
-- [Daily Builds](#daily-builds)
+- [Dev Builds](#dev-builds)
 - [Gradual Rollout](#gradual-rollout)
 - [Promote a Release Locally](#promote-a-release-locally)
 - [Version Bumping](#version-bumping)
@@ -67,7 +67,7 @@ Platform workflows are independent. If one platform fails, the other still deplo
 
 ## Trigger Beta Release on CI
 
-Beta releases deploy builds to the Play Store open testing track and TestFlight for wider testing. Nothing is committed or pushed — the build number is derived the same way as daily builds.
+Beta releases deploy builds to the Play Store open testing track and TestFlight for wider testing. Nothing is committed or pushed — the build number is derived the same way as dev builds.
 
 Go to **Actions > Beta Release > Run workflow**, or use the CLI:
 
@@ -87,20 +87,20 @@ gh workflow run beta-release.yml -f skip_ios=true
 2. **Build**: Per-platform build jobs produce the signed artifacts (Android with a `-beta` suffix) and upload them as workflow artifacts.
 3. **Deploy**: Separate jobs publish them — Android to the Play Store open testing track and Firebase App Distribution, iOS to TestFlight.
 
-A beta and a daily build cut from the same commit derive the same build number, and the stores reject the duplicate upload. Land a commit first, or rerun after one lands.
+A beta and a dev build cut from the same commit derive the same build number, and the stores reject the duplicate upload. Land a commit first, or rerun after one lands.
 
-## Daily Builds
+## Dev Builds
 
-Daily builds run per platform on weekdays at 1:00 AM UTC (3:00 AM Berlin in summer, 2:00 AM in winter), and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
+Dev builds run per platform on Mondays and Thursdays at 1:00 AM UTC (3:00 AM Berlin in summer, 2:00 AM in winter), and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
 
 ```bash
-gh workflow run daily-build-android.yml
-gh workflow run daily-build-ios.yml
+gh workflow run dev-build-android.yml
+gh workflow run dev-build-ios.yml
 ```
 
 **What happens:**
 
-1. **Check**: Scheduled runs skip when `main` has no new commits since the last successful daily build. Manual runs always build.
+1. **Check**: Scheduled runs skip when `main` has no new commits since the last successful dev build. Manual runs always build.
 2. **Version**: `scripts/ci/write-build-number.sh` derives the build number as `base(version) + commits since the release tag` and writes it to `version.txt` in the runner's workspace only — nothing is committed or pushed.
 3. **Build**: One job builds the signed artifacts with a `-dev` suffix (Android AAB and APK, iOS IPA) and uploads them as workflow artifacts.
 4. **Deploy**: Separate jobs download the artifacts and publish them — Android to the Play Store internal track, Firebase App Distribution, and the rolling `nightly` GitHub release in parallel, iOS to TestFlight. The nightly release keeps one stable download URL whose APK is replaced on every run.
@@ -162,7 +162,7 @@ bundle exec fastlane ios deploy_app_store
 ./gradlew :app:bumpVersion -Ptype=major   # 0.1.2 > 1.0.0, BUILD = 10000000
 ```
 
-`-Ptype=beta` still exists but is legacy: CI derives beta and daily build numbers from git instead. Don't commit beta bumps — a raised `BUILD_NUMBER` floor can block derived builds until enough commits land.
+`-Ptype=beta` still exists but is legacy: CI derives beta and dev build numbers from git instead. Don't commit beta bumps — a raised `BUILD_NUMBER` floor can block derived builds until enough commits land.
 
 ---
 
@@ -170,12 +170,12 @@ bundle exec fastlane ios deploy_app_store
 
 Beta builds let you upload multiple test versions to Play Store and TestFlight without burning version numbers. This is useful for internal testing before a production release.
 
-Beta and daily build numbers are derived, not committed: `base(version) + commits since the release tag`. The committed `BUILD_NUMBER` in `version.txt` only changes on production releases.
+Beta and dev build numbers are derived, not committed: `base(version) + commits since the release tag`. The committed `BUILD_NUMBER` in `version.txt` only changes on production releases.
 
 **Example lifecycle:**
 
 ```
-0.1.2 / 102000 released  >  40 commits land   >  daily/beta builds derive 102001…102040
+0.1.2 / 102000 released  >  40 commits land   >  dev/beta builds derive 102001…102040
 patch release            >  0.1.3 / 103000     >  derivation continues from v0.1.3
 ```
 
@@ -189,7 +189,7 @@ All versioning is driven by `version.txt` at the project root, which contains `V
 
 **Build number formula:** `(major * 10,000,000) + (minor * 100,000) + (patch * 1,000)`
 
-|              | Production                | Beta                     | Daily                    |
+|              | Production                | Beta                     | Dev                    |
 |--------------|---------------------------|--------------------------|--------------------------|
 | Version name | `0.1.3`                   | `0.1.2-beta`             | `0.1.2-dev`              |
 | Build number | `103000` (committed)      | derived `102001`–`102999` | derived `102001`–`102999` |
@@ -198,7 +198,7 @@ All versioning is driven by `version.txt` at the project root, which contains `V
 | Firebase     | Yes                       | Yes                      | Yes                      |
 | Trigger      | Tag push                  | `workflow_dispatch`      | Schedule / manual        |
 
-Version-name suffixes are passed per workflow: production overrides to empty, daily builds use `-dev`, betas use `-beta`. Local builds default to `-debug` via `gradle.properties`.
+Version-name suffixes are passed per workflow: production overrides to empty, dev builds use `-dev`, betas use `-beta`. Local builds default to `-debug` via `gradle.properties`.
 
 ---
 

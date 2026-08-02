@@ -3,7 +3,7 @@ name: Dev Build iOS
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * 1-5'  # Weekdays at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
+    - cron: '0 1 * * 1,4'  # Mon + Thu at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
 
 permissions:
   contents: read
