@@ -234,9 +234,9 @@ platform :ios do
       UI.user_error!("App Store Connect API key is not configured — set APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and APP_STORE_CONNECT_API_KEY")
     end
 
-    build_kmp_framework(configuration: "release", device_platform: "device")
-
     certs
+
+    build_kmp_framework(configuration: "release", device_platform: "device")
 
     version_file = File.read("#{PROJECT_DIR}/version.txt")
     version = version_file[/VERSION_NUMBER\s*=\s*(.+)/, 1].strip
