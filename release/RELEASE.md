@@ -91,7 +91,7 @@ A beta and a daily build cut from the same commit derive the same build number, 
 
 ## Daily Builds
 
-Daily builds run per platform on weekdays at 6:00 AM UTC, and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
+Daily builds run per platform on weekdays at 1:00 AM UTC (3:00 AM Berlin in summer, 2:00 AM in winter), and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
 
 ```bash
 gh workflow run daily-build-android.yml
