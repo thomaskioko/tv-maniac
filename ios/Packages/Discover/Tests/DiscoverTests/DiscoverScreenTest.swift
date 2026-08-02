@@ -157,6 +157,28 @@ class DiscoverScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog_HiddenSection")
     }
 
+    func test_DiscoverUpNextSection_DynamicTypeXXXLarge() {
+        DiscoverUpNextContent(
+            title: "Up Next",
+            episodes: sampleEpisodes,
+            onEpisodeClicked: { _ in }
+        )
+        .appPreview()
+        .environment(\.dynamicTypeSize, .xxxLarge)
+        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "DiscoverScreen_UpNext_DynamicTypeXXXLarge")
+    }
+
+    func test_DiscoverUpNextSection_DynamicTypeAX3() {
+        DiscoverUpNextContent(
+            title: "Up Next",
+            episodes: sampleEpisodes,
+            onEpisodeClicked: { _ in }
+        )
+        .appPreview()
+        .environment(\.dynamicTypeSize, .accessibility3)
+        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "DiscoverScreen_UpNext_DynamicTypeAX3")
+    }
+
     func test_DiscoverFeaturedSection_Empty() {
         DiscoverFeaturedContent(
             shows: [],

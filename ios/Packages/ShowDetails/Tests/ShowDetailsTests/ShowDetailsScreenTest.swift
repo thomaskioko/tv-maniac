@@ -35,6 +35,36 @@ class ShowDetailsScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_Default")
     }
 
+    func test_ShowDetailsScreen_DynamicTypeXXXLarge() {
+        ShowDetailsScreen(
+            state: sampleState,
+            toast: .constant(nil),
+            seasonCountFormat: { "\($0) Seasons" },
+            onBack: {},
+            onRefresh: {}
+        ) {
+            EmptyView()
+        }
+        .appPreview()
+        .environment(\.dynamicTypeSize, .xxxLarge)
+        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "ShowDetailsScreen_DynamicTypeXXXLarge")
+    }
+
+    func test_ShowDetailsScreen_DynamicTypeAX3() {
+        ShowDetailsScreen(
+            state: sampleState,
+            toast: .constant(nil),
+            seasonCountFormat: { "\($0) Seasons" },
+            onBack: {},
+            onRefresh: {}
+        ) {
+            EmptyView()
+        }
+        .appPreview()
+        .environment(\.dynamicTypeSize, .accessibility3)
+        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "ShowDetailsScreen_DynamicTypeAX3")
+    }
+
     func test_ShowDetailsScreen_Refreshing() {
         ShowDetailsScreen(
             state: ShowDetailsScreen<EmptyView>.State(
