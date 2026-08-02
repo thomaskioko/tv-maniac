@@ -54,11 +54,12 @@ public struct MyShowsDetailedCardView: View {
                         .textStyle(theme.typography.bodySmall)
                         .foregroundStyle(.appOnSurfaceVariant)
                         .lineLimit(1)
-
-                    ProgressView(value: Double(progress), total: 1)
-                        .progressViewStyle(RoundedRectProgressViewStyle())
                 }
                 .padding(theme.spacing.medium)
+
+                ProgressView(value: Double(progress), total: 1)
+                    .progressViewStyle(RoundedRectProgressViewStyle())
+                    .frame(maxWidth: .infinity)
             }
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.medium, style: .continuous))
             .appShadow(theme.shadows.medium)
