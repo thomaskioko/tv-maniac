@@ -236,6 +236,16 @@ platform :ios do
 
     certs
 
+    update_code_signing_settings(
+      path: "ios/tv-maniac.xcodeproj",
+      use_automatic_signing: false,
+      team_id: "2M53227BD2",
+      targets: ["tv-maniac"],
+      code_sign_identity: "Apple Distribution",
+      profile_name: "match AppStore #{PACKAGE_NAME}",
+      bundle_identifier: PACKAGE_NAME,
+    )
+
     build_kmp_framework(configuration: "release", device_platform: "device")
 
     version_file = File.read("#{PROJECT_DIR}/version.txt")
@@ -248,7 +258,6 @@ platform :ios do
       scheme: "tv-maniac",
       configuration: "Release",
       export_method: "app-store",
-      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='match AppStore #{PACKAGE_NAME}'",
       output_directory: "build",
       output_name: "tv-maniac",
       buildlog_path: "fastlane/logs",
