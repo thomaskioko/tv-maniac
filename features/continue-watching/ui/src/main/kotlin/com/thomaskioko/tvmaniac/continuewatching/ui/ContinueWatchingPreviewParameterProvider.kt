@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingLabel
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingState
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
+import com.thomaskioko.tvmaniac.continuewatching.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
@@ -20,6 +21,15 @@ internal val continueWatchingItems = List(3) { index ->
         seasonCount = 6,
         episodeCount = 12,
         watchProgress = 0.3f + (index * 0.2f),
+        nextEpisode = NextEpisodeItem(
+            episodeId = 1L + index,
+            episodeTitle = "Glorious Purpose",
+            episodeNumberFormatted = "S01 | E01",
+            seasonNumber = 1,
+            episodeNumber = 1,
+            stillPath = null,
+            firstAired = null,
+        ),
     )
 }.toPersistentList()
 
@@ -116,6 +126,24 @@ internal class ContinueWatchingPreviewParameterProvider : PreviewParameterProvid
                 ContinueWatchingState(
                     isRefreshing = false,
                     listStyle = ListStyle.GRID,
+                    labels = previewLabels,
+                    watchNextItems = continueWatchingItems,
+                    staleItems = staleContinueWatchingItems,
+                    watchNextEpisodes = watchNextEpisodes,
+                    staleEpisodes = staleEpisodes,
+                ),
+                ContinueWatchingState(
+                    isRefreshing = false,
+                    listStyle = ListStyle.COMPACT,
+                    labels = previewLabels,
+                    watchNextItems = continueWatchingItems,
+                    staleItems = staleContinueWatchingItems,
+                    watchNextEpisodes = watchNextEpisodes,
+                    staleEpisodes = staleEpisodes,
+                ),
+                ContinueWatchingState(
+                    isRefreshing = false,
+                    listStyle = ListStyle.DETAILED,
                     labels = previewLabels,
                     watchNextItems = continueWatchingItems,
                     staleItems = staleContinueWatchingItems,

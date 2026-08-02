@@ -49,6 +49,48 @@ class ContinueWatchingScreenTest {
     }
 
     @Test
+    fun continueWatchingCompactViewState() {
+        composeTestRule.captureMultiDevice("ContinueWatchingCompactView") {
+            TvManiacBackground {
+                ContinueWatchingScreen(
+                    state = ContinueWatchingState(
+                        listStyle = ListStyle.COMPACT,
+                        isRefreshing = false,
+                        labels = ContinueWatchingLabels(
+                            watchingTitle = "Watching",
+                            staleTitle = "Haven't Watched For A While",
+                        ),
+                        watchNextItems = continueWatchingItems,
+                        staleItems = continueWatchingItems,
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun continueWatchingDetailedViewState() {
+        composeTestRule.captureMultiDevice("ContinueWatchingDetailedView") {
+            TvManiacBackground {
+                ContinueWatchingScreen(
+                    state = ContinueWatchingState(
+                        listStyle = ListStyle.DETAILED,
+                        isRefreshing = false,
+                        labels = ContinueWatchingLabels(
+                            watchingTitle = "Watching",
+                            staleTitle = "Haven't Watched For A While",
+                        ),
+                        watchNextItems = continueWatchingItems,
+                        staleItems = continueWatchingItems,
+                    ),
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
     fun continueWatchingListViewListView() {
         composeTestRule.captureMultiDevice("ContinueWatchingListView") {
             TvManiacBackground {
