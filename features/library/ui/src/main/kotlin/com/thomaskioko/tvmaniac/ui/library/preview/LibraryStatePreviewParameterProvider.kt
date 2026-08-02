@@ -38,6 +38,20 @@ internal class LibraryStatePreviewParameterProvider : PreviewParameterProvider<L
             selectedStatuses = persistentSetOf(ShowStatus.ENDED),
         ),
         LibraryState(
+            isRefreshing = false,
+            listStyle = ListStyle.COMPACT,
+            items = previewLibraryItems(),
+            availableGenres = previewGenres(),
+            availableStatuses = previewStatuses(),
+        ),
+        LibraryState(
+            isRefreshing = false,
+            listStyle = ListStyle.DETAILED,
+            items = previewLibraryItems(),
+            availableGenres = previewGenres(),
+            availableStatuses = previewStatuses(),
+        ),
+        LibraryState(
             isRefreshing = true,
             listStyle = ListStyle.GRID,
             items = previewLibraryItems(),
