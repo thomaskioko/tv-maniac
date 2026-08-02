@@ -29,4 +29,43 @@ final class MyShowsTests: XCTestCase {
             "Tapping sort never opened the sort options."
         )
     }
+
+    func test_MyShows_OpensLayoutMenuAndSelectsFreeLayout() {
+        let app = XCUIApplication.launchTvManiac()
+        app.openTab(.myShows)
+
+        let menuButton = app.buttons[MyShowsTestTags.shared.LAYOUT_MENU_BUTTON_TEST_TAG]
+        XCTAssertTrue(
+            menuButton.waitForExistence(timeout: UITestTimeouts.screen),
+            "My Shows never showed the layout menu button."
+        )
+        menuButton.tap()
+
+        let gridOption = app.buttons[MyShowsTestTags.shared.LAYOUT_MENU_ITEM_GRID_TEST_TAG]
+        XCTAssertTrue(
+            gridOption.waitForExistence(timeout: UITestTimeouts.screen),
+            "Opening the layout menu never showed the Grid option."
+        )
+        XCTAssertTrue(gridOption.isSelected, "Grid should be the default active layout.")
+
+        let listOption = app.buttons[MyShowsTestTags.shared.LAYOUT_MENU_ITEM_LIST_TEST_TAG]
+        XCTAssertTrue(listOption.exists, "The layout menu never showed the List option.")
+        XCTAssertTrue(
+            app.buttons[MyShowsTestTags.shared.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG].exists,
+            "The layout menu never showed the Compact option."
+        )
+        XCTAssertTrue(
+            app.buttons[MyShowsTestTags.shared.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG].exists,
+            "The layout menu never showed the Detailed option."
+        )
+        listOption.tap()
+
+        menuButton.tap()
+        let reopenedListOption = app.buttons[MyShowsTestTags.shared.LAYOUT_MENU_ITEM_LIST_TEST_TAG]
+        XCTAssertTrue(
+            reopenedListOption.waitForExistence(timeout: UITestTimeouts.screen),
+            "Re-opening the layout menu never showed the List option."
+        )
+        XCTAssertTrue(reopenedListOption.isSelected, "Selecting List never applied the layout.")
+    }
 }
