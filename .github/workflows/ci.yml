@@ -170,6 +170,7 @@ jobs:
                     path: |
                         **/build/compose-metrics/
                         **/build/compose-reports/
+                        **/build/reports/compose/
 
 
 
