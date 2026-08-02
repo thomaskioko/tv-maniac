@@ -1,5 +1,6 @@
 import Components
 import DesignSystem
+import Models
 import SwiftUI
 import TvManiacKit
 
@@ -19,10 +20,10 @@ public struct LibraryTab: View {
             emptySearchResultFormat: { query in String(\.label_watchlist_empty_result, parameter: query) },
             onQueryChanged: { presenter.dispatch(action: LibraryQueryChanged(query: $0)) },
             onQueryCleared: { presenter.dispatch(action: ClearLibraryQuery()) },
-            onToggleListStyle: {
-                let target = uiState.listStyle == ApiListStyle.grid ? ApiListStyle.list : ApiListStyle.grid
-                presenter.dispatch(action: ChangeListStyleClicked(listStyle: target))
+            onLayoutSelected: { target in
+                presenter.dispatch(action: ChangeListStyleClicked(listStyle: target.toApiListStyle))
             },
+            onUpgradeRequested: { presenter.dispatch(action: LibraryUpgradeClicked()) },
             onToggleSearch: { presenter.dispatch(action: ToggleSearchActive()) },
             onSortClicked: { showSortOptions = true },
             onShowClicked: { id in presenter.dispatch(action: LibraryShowClicked(showId: id)) }
@@ -60,7 +61,18 @@ private extension LibraryState {
             isLoading: showLoading,
             isRefreshing: isRefreshing,
             isEmpty: isEmpty,
-            isGridMode: listStyle == ApiListStyle.grid,
+            layout: listStyle.toSwift(),
+            isLayoutLocked: isListStyleLocked,
+            layoutMenuCopy: LayoutMenuCopy(
+                grid: String(\.label_layout_grid),
+                list: String(\.label_layout_list),
+                compact: String(\.label_layout_compact),
+                detailed: String(\.label_layout_detailed),
+                premiumSectionTitle: String(\.label_premium_badge),
+                lockedAccessibilitySuffix: String(\.cd_locked),
+                lockedHint: "\(String(\.label_layouts_locked_title)). \(String(\.label_layouts_locked_message))",
+                upgradeActionName: String(\.label_upgrade_to_premium)
+            ),
             isSearchActive: isSearchActive,
             query: query,
             gridItems: Array(items).map {
