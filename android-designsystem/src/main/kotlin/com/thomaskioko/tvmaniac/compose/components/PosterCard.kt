@@ -45,6 +45,7 @@ public fun PosterCard(
     isInLibrary: Boolean = false,
     libraryImageOverlay: ImageVector = Icons.Filled.Bookmarks,
     blurContent: Boolean = false,
+    placeholderIconSize: Dp = 52.dp,
 ) {
     PosterCard(
         onClick = onClick,
@@ -58,6 +59,7 @@ public fun PosterCard(
                         .fillMaxWidth()
                         .aspectRatio(aspectRatio)
                         .align(Alignment.Center),
+                    imageSize = placeholderIconSize,
                     title = title,
                 )
 
