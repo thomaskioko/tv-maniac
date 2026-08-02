@@ -329,6 +329,9 @@
     <string name="label_settings_include_specials">Saisons Spéciales</string>
     <string name="label_settings_include_specials_description">Afficher les Specials et saisons bonus</string>
 
+    <string name="label_settings_quick_rate">Notation Rapide</string>
+    <string name="label_settings_quick_rate_description">Demander une note dès qu\'un épisode est marqué comme vu</string>
+
     <string name="label_up_to_date">Tout vu</string>
 
     <string name="label_settings_episode_notifications">Notifications d\'épisodes</string>
