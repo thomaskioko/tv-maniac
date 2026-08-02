@@ -74,6 +74,7 @@ public struct ShowHeaderInfoView: View {
 
             Text(year)
                 .textStyle(theme.typography.bodyMedium)
+                .layoutPriority(1)
 
             if seasonCount > 0 {
                 Text("•")
@@ -91,6 +92,7 @@ public struct ShowHeaderInfoView: View {
 
                 Text(language)
                     .textStyle(theme.typography.bodyMedium)
+                    .layoutPriority(1)
             }
 
             if let communityRating {
@@ -107,8 +109,10 @@ public struct ShowHeaderInfoView: View {
                     .textStyle(theme.typography.bodyMedium)
                     .foregroundStyle(.appAccent)
                     .accessibilityLabel(communityRatingAccessibilityLabel(communityRating))
+                    .layoutPriority(1)
             }
         }
+        .lineLimit(1)
         .frame(maxWidth: .infinity, alignment: .center)
     }
 
