@@ -28,6 +28,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_show_poster
 
 private val BackdropAspect = 16f / 9f
 private val ScrimHeight = 96.dp
+private val ProgressHeight = 8.dp
 
 @Composable
 public fun DetailedShowCard(
@@ -107,15 +108,16 @@ public fun DetailedShowCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
+            }
 
-                progress?.let {
-                    ShowLinearProgressIndicator(
-                        progress = it,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = TvManiacSpacing.xxSmall),
-                    )
-                }
+            progress?.let {
+                ShowLinearProgressIndicator(
+                    progress = it,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(ProgressHeight),
+                )
             }
         }
     }
