@@ -8,6 +8,7 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_ACCOUNT_TYPE
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_QUICK_RATE_ENABLED
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_THEME
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +42,7 @@ internal class DatastoreRepositoryTest {
         dataStore.edit {
             it.remove(KEY_THEME)
             it.remove(KEY_ACCOUNT_TYPE)
+            it.remove(KEY_QUICK_RATE_ENABLED)
         }
         preferencesScope.cancel()
     }
@@ -90,6 +92,20 @@ internal class DatastoreRepositoryTest {
 
             repository.saveAccountType(null)
             awaitItem() shouldBe null
+        }
+    }
+
+    @Test
+    fun `should emit disabled quick rate given nothing has been saved`() = runTest {
+        repository.observeQuickRateEnabled().test { awaitItem() shouldBe false }
+    }
+
+    @Test
+    fun `should emit enabled quick rate when updated`() = runTest {
+        repository.observeQuickRateEnabled().test {
+            repository.saveQuickRateEnabled(true)
+            awaitItem() shouldBe false
+            awaitItem() shouldBe true
         }
     }
 }
