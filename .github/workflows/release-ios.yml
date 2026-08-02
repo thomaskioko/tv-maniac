@@ -1,0 +1,135 @@
+name: Release iOS
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-ios-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  XCODE_VERSION: 26.5
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+  SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
+  SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+  SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 60
+    outputs:
+      version: ${{ steps.info.outputs.version }}
+      build: ${{ steps.info.outputs.build }}
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v7
+
+      - name: Validate tag matches version.txt
+        run: |
+          tag="${{ github.ref_name }}"
+          version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
+          if [ "$tag" != "v${version}" ]; then
+            echo "::error::Tag '$tag' does not match version.txt version 'v${version}'"
+            exit 1
+          fi
+
+      - name: Read version info
+        id: info
+        run: |
+          echo "version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')" >> "$GITHUB_OUTPUT"
+          echo "build=$(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')" >> "$GITHUB_OUTPUT"
+
+      - name: Setup iOS Release
+        uses: ./.github/actions/setup-ios-release
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+          google-service-info-plist: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_RELEASE }}
+
+      - name: Build signed IPA
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: bundle exec fastlane ios build_ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-release-ipa
+          path: build/tv-maniac.ipa
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+      - name: Upload build logs
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: ios-release-logs
+          path: fastlane/logs
+          overwrite: true
+
+  deploy-testflight:
+    needs: build
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Download IPA artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ios-release-ipa
+          path: build
+
+      - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          bundle exec fastlane ios upload_testflight
+          echo "Published **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` to TestFlight" >> "$GITHUB_STEP_SUMMARY"
+
+  submit-app-store:
+    needs: [build, deploy-testflight]
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Submit to App Store review
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          IOS_SUBMIT_FOR_REVIEW: "true"
+        run: |
+          bundle exec fastlane ios deploy_app_store
+          echo "Submitted **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` for App Store review (phased release)" >> "$GITHUB_STEP_SUMMARY"

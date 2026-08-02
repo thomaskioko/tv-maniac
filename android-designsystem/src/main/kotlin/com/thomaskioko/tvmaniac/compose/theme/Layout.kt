@@ -100,6 +100,15 @@ public object Layout {
             WindowWidthSizeClass.Expanded -> 144.dp
             else -> 112.dp
         }
+
+    /** Artwork width for compact list rows, matching the iOS `ImageDimens.compactThumbnailWidth`. */
+    public val compactThumbnailWidth: Dp
+        @Composable @ReadOnlyComposable
+        get() = when (LocalWindowWidthSizeClass.current) {
+            WindowWidthSizeClass.Medium -> 120.dp
+            WindowWidthSizeClass.Expanded -> 136.dp
+            else -> 104.dp
+        }
 }
 
 /**

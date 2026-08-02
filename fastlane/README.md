@@ -55,6 +55,22 @@ Build iOS App and its UI test bundle (Debug, simulator)
 
 Download signing certificates
 
+### ios build_ipa
+
+```sh
+[bundle exec] fastlane ios build_ipa
+```
+
+Build signed release IPA
+
+### ios upload_testflight
+
+```sh
+[bundle exec] fastlane ios upload_testflight
+```
+
+Upload built IPA to TestFlight
+
 ### ios build_beta
 
 ```sh
@@ -62,14 +78,6 @@ Download signing certificates
 ```
 
 Build beta and upload to TestFlight
-
-### ios build_release
-
-```sh
-[bundle exec] fastlane ios build_release
-```
-
-Build production release and upload to TestFlight
 
 ### ios deploy_app_store
 

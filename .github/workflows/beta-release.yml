@@ -13,7 +13,11 @@ on:
         default: false
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: beta-release
+  cancel-in-progress: false
 
 env:
   XCODE_VERSION: 26.5
@@ -26,61 +30,28 @@ env:
   SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.bump.outputs.version }}
-      build: ${{ steps.bump.outputs.build }}
-      sha: ${{ steps.push.outputs.sha }}
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v7
-        with:
-          ref: main
-          fetch-depth: 0
-          token: ${{ secrets.RELEASE_TOKEN }}
-
-      - name: Setup Gradle Environment
-        uses: ./.github/actions/setup-gradle
-
-      - name: Configure git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump beta version
-        id: bump
-        run: |
-          ./gradlew bumpVersion -Ptype=beta
-          version=$(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')
-          build=$(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "build=$build" >> "$GITHUB_OUTPUT"
-          echo "Version: $version, BUILD_NUMBER: $build"
-
-      - name: Commit and push
-        id: push
-        run: |
-          git add version.txt
-          git commit -m "chore: bump beta build number to ${{ steps.bump.outputs.build }}"
-          git push origin main
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
   build-android:
-    needs: prepare
     if: ${{ !inputs.skip_android }}
     runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ needs.prepare.outputs.sha }}
+          fetch-depth: 0
 
       - name: Setup Android Release
         uses: ./.github/actions/setup-android-release
         with:
           google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
           signing-encrypt-key: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+
+      - name: Write build number
+        id: version
+        run: ./scripts/ci/write-build-number.sh
 
       - name: Build release AAB and APK
         env:
@@ -97,39 +68,105 @@ jobs:
             -PreleaseKeyPassword="$SIGNING_KEY_PASSWORD" \
             --no-configuration-cache
 
-      - name: Print build info
-        run: |
-          echo "Version: $(grep 'VERSION_NUMBER' version.txt | sed 's/.*= *//')-beta"
-          echo "Build:   $(grep 'BUILD_NUMBER' version.txt | sed 's/.*= *//')"
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-beta-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-beta-apk
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+  deploy-play-beta:
+    needs: build-android
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Download AAB artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: android-beta-aab
+          path: app/build/outputs/bundle/release
 
       - name: Deploy to Play Store open testing track
         run: |
-          export PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
           bundle exec fastlane android deploy_play_store track:beta
+          echo "Published **${{ needs.build-android.outputs.version }}-beta** build \`${{ needs.build-android.outputs.build }}\` to the Play Store open testing track" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-firebase:
+    needs: build-android
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Firebase service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/firebase-sa.aes -out release/firebase-sa.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: android-beta-apk
+          path: app/build/outputs/apk/release
 
       - name: Distribute to Firebase App Distribution
         env:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         run: |
-          if [ -n "$FIREBASE_APP_ID" ] && [ -f "release/firebase-sa.json" ]; then
-            export FIREBASE_APP_DISTRIBUTION_SA=release/firebase-sa.json
-            bundle exec fastlane android distribute_firebase
-          else
-            echo "warning: Firebase not configured — skipping distribution"
+          if [ -z "$FIREBASE_APP_ID" ]; then
+            echo "error: FIREBASE_APP_ID secret is not set" >&2
+            exit 1
           fi
+          export FIREBASE_APP_DISTRIBUTION_SA=release/firebase-sa.json
+          bundle exec fastlane android distribute_firebase
+          echo "Published **${{ needs.build-android.outputs.version }}-beta** build \`${{ needs.build-android.outputs.build }}\` to Firebase App Distribution" >> "$GITHUB_STEP_SUMMARY"
 
   build-ios:
-    needs: prepare
     if: ${{ !inputs.skip_ios }}
     runs-on: macos-26
     timeout-minutes: 60
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
     env:
       FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ needs.prepare.outputs.sha }}
+          fetch-depth: 0
 
       - name: Setup iOS Release
         uses: ./.github/actions/setup-ios-release
@@ -137,20 +174,60 @@ jobs:
           xcode-version: ${{ env.XCODE_VERSION }}
           google-service-info-plist: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_RELEASE }}
 
-      - name: Build and upload to TestFlight
+      - name: Write build number
+        id: version
+        run: ./scripts/ci/write-build-number.sh
+
+      - name: Build signed IPA
         env:
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-        run: bundle exec fastlane ios build_beta
+        run: bundle exec fastlane ios build_ipa
 
-      - name: Upload iOS artifacts
+      - name: Upload IPA artifact
         uses: actions/upload-artifact@v7
-        if: always()
         with:
-          name: ios-internal
-          path: |
-            build/
-            fastlane/logs
+          name: ios-beta-ipa
+          path: build/tv-maniac.ipa
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+      - name: Upload build logs
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: ios-beta-logs
+          path: fastlane/logs
+          overwrite: true
+
+  deploy-testflight:
+    needs: build-ios
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Download IPA artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ios-beta-ipa
+          path: build
+
+      - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          bundle exec fastlane ios upload_testflight
+          echo "Published **${{ needs.build-ios.outputs.version }}** build \`${{ needs.build-ios.outputs.build }}\` to TestFlight" >> "$GITHUB_STEP_SUMMARY"

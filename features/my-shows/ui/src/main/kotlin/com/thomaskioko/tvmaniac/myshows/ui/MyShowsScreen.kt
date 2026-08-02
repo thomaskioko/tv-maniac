@@ -9,20 +9,28 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.ViewAgenda
+import androidx.compose.material.icons.outlined.ViewHeadline
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,12 +54,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
+import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.components.SearchBar
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
@@ -63,6 +73,14 @@ import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_compact
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_detailed
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_grid
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_list
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layouts_locked_message
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layouts_locked_title
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_premium_badge
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upgrade_to_premium
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_my_shows
 import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -75,6 +93,9 @@ import io.github.thomaskioko.codegen.annotations.TabUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+
+private val PremiumLockCardWidth = 280.dp
+private val PremiumLockCardMinHeight = 240.dp
 
 @TabUi(presenter = MyShowsPresenter::class, parentScope = ActivityScope::class)
 @Composable
@@ -124,6 +145,7 @@ internal fun MyShowsScreen(
     )
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var showSortOptions by remember { mutableStateOf(false) }
+    var layoutMenuExpanded by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
@@ -147,6 +169,8 @@ internal fun MyShowsScreen(
             onAction = onAction,
             scrollBehavior = scrollBehavior,
             onSortClick = { showSortOptions = true },
+            layoutMenuExpanded = layoutMenuExpanded,
+            onLayoutMenuExpandedChange = { layoutMenuExpanded = it },
         )
 
         SecondaryTabRow(
@@ -218,6 +242,8 @@ private fun Toolbar(
     onAction: (MyShowsAction) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     onSortClick: () -> Unit,
+    layoutMenuExpanded: Boolean,
+    onLayoutMenuExpandedChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -249,15 +275,13 @@ private fun Toolbar(
                     )
                 } else {
                     CollapsedToolbarContent(
-                        listStyle = state.listStyle,
-                        showListStyleToggle = state.selectedPage == 0,
-                        showRefreshIndicator = state.showRefreshIndicator,
-                        onToggleListStyle = {
-                            val target = if (state.listStyle == ListStyle.GRID) ListStyle.LIST else ListStyle.GRID
-                            onAction(MyShowsAction.ChangeListStyle(target))
-                        },
+                        state = state,
+                        showLayoutMenu = state.selectedPage == 0,
+                        onAction = onAction,
                         onSearchClick = { onAction(MyShowsAction.ToggleSearch) },
                         onSortClick = onSortClick,
+                        layoutMenuExpanded = layoutMenuExpanded,
+                        onLayoutMenuExpandedChange = onLayoutMenuExpandedChange,
                     )
                 }
             }
@@ -272,12 +296,13 @@ private fun Toolbar(
 
 @Composable
 private fun CollapsedToolbarContent(
-    listStyle: ListStyle,
-    showListStyleToggle: Boolean,
-    showRefreshIndicator: Boolean,
-    onToggleListStyle: () -> Unit,
+    state: MyShowsState,
+    showLayoutMenu: Boolean,
+    onAction: (MyShowsAction) -> Unit,
     onSearchClick: () -> Unit,
     onSortClick: () -> Unit,
+    layoutMenuExpanded: Boolean,
+    onLayoutMenuExpandedChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -286,21 +311,14 @@ private fun CollapsedToolbarContent(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (showListStyleToggle) {
-            IconButton(
-                modifier = Modifier.testTag(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG),
-                onClick = onToggleListStyle,
-            ) {
-                Icon(
-                    imageVector = if (listStyle == ListStyle.GRID) {
-                        Icons.AutoMirrored.Outlined.List
-                    } else {
-                        Icons.Outlined.GridView
-                    },
-                    contentDescription = cd_toggle_list_style.resolve(context),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+        if (showLayoutMenu) {
+            LayoutMenu(
+                currentStyle = state.listStyle,
+                isLocked = state.isListStyleLocked,
+                expanded = layoutMenuExpanded,
+                onExpandedChange = onLayoutMenuExpandedChange,
+                onAction = onAction,
+            )
         } else {
             Spacer(Modifier.size(TvManiacSpacing.xxLarge))
         }
@@ -318,7 +336,7 @@ private fun CollapsedToolbarContent(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            if (showRefreshIndicator) {
+            if (state.showRefreshIndicator) {
                 LoadingIndicator(
                     modifier = Modifier
                         .testTag(MyShowsTestTags.MY_SHOWS_INDICATOR)
@@ -354,6 +372,125 @@ private fun CollapsedToolbarContent(
             }
         }
     }
+}
+
+@Composable
+internal fun LayoutMenu(
+    currentStyle: ListStyle,
+    isLocked: Boolean,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onAction: (MyShowsAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+
+    Box(modifier = modifier) {
+        IconButton(
+            onClick = { onExpandedChange(true) },
+            modifier = Modifier.testTag(MyShowsTestTags.LAYOUT_MENU_BUTTON_TEST_TAG),
+        ) {
+            Icon(
+                imageVector = currentStyle.icon(),
+                contentDescription = cd_toggle_list_style.resolve(context),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { onExpandedChange(false) },
+            modifier = Modifier.testTag(MyShowsTestTags.LAYOUT_MENU_TEST_TAG),
+        ) {
+            LayoutMenuItem(
+                label = label_layout_grid.resolve(context),
+                style = ListStyle.GRID,
+                currentStyle = currentStyle,
+                tag = MyShowsTestTags.LAYOUT_MENU_ITEM_GRID_TEST_TAG,
+                onClick = {
+                    onAction(MyShowsAction.ChangeListStyle(ListStyle.GRID))
+                    onExpandedChange(false)
+                },
+            )
+            LayoutMenuItem(
+                label = label_layout_list.resolve(context),
+                style = ListStyle.LIST,
+                currentStyle = currentStyle,
+                tag = MyShowsTestTags.LAYOUT_MENU_ITEM_LIST_TEST_TAG,
+                onClick = {
+                    onAction(MyShowsAction.ChangeListStyle(ListStyle.LIST))
+                    onExpandedChange(false)
+                },
+            )
+
+            PremiumOverlay(
+                locked = isLocked,
+                badgeText = label_premium_badge.resolve(context),
+                title = label_layouts_locked_title.resolve(context),
+                message = label_layouts_locked_message.resolve(context),
+                actionText = label_upgrade_to_premium.resolve(context),
+                onActionClick = {
+                    onAction(MyShowsAction.UpgradeClicked)
+                    onExpandedChange(false)
+                },
+                modifier = Modifier
+                    .width(PremiumLockCardWidth)
+                    .testTag(MyShowsTestTags.LAYOUT_MENU_LOCKED_SECTION_TEST_TAG)
+                    .then(if (isLocked) Modifier.heightIn(min = PremiumLockCardMinHeight) else Modifier),
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    LayoutMenuItem(
+                        label = label_layout_compact.resolve(context),
+                        style = ListStyle.COMPACT,
+                        currentStyle = currentStyle,
+                        tag = MyShowsTestTags.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG,
+                        onClick = {
+                            onAction(MyShowsAction.ChangeListStyle(ListStyle.COMPACT))
+                            onExpandedChange(false)
+                        },
+                    )
+                    LayoutMenuItem(
+                        label = label_layout_detailed.resolve(context),
+                        style = ListStyle.DETAILED,
+                        currentStyle = currentStyle,
+                        tag = MyShowsTestTags.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG,
+                        onClick = {
+                            onAction(MyShowsAction.ChangeListStyle(ListStyle.DETAILED))
+                            onExpandedChange(false)
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LayoutMenuItem(
+    label: String,
+    style: ListStyle,
+    currentStyle: ListStyle,
+    tag: String,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = { Text(text = label) },
+        leadingIcon = { Icon(imageVector = style.icon(), contentDescription = null) },
+        trailingIcon = if (style == currentStyle) {
+            { Icon(imageVector = Icons.Filled.Check, contentDescription = null) }
+        } else {
+            null
+        },
+        onClick = onClick,
+        modifier = Modifier.testTag(tag),
+    )
+}
+
+private fun ListStyle.icon(): ImageVector = when (this) {
+    ListStyle.GRID -> Icons.Outlined.GridView
+    ListStyle.LIST -> Icons.AutoMirrored.Outlined.List
+    ListStyle.COMPACT -> Icons.Outlined.ViewHeadline
+    ListStyle.DETAILED -> Icons.Outlined.ViewAgenda
 }
 
 @ThemePreviews

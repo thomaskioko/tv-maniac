@@ -1,0 +1,127 @@
+name: Daily Build iOS
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * 1-5'  # Weekdays at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: daily-build-ios
+  cancel-in-progress: false
+
+env:
+  XCODE_VERSION: 26.5
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+  SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
+  SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+  SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.dedupe.outputs.should_run }}
+    steps:
+      - name: Skip when nothing new since the last nightly
+        id: dedupe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          last=$(gh run list --repo "${{ github.repository }}" --workflow daily-build-ios.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
+          if [ "$last" = "${{ github.sha }}" ]; then
+            echo "No new commits since the last successful nightly — skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.should_run == 'true'
+    runs-on: macos-26
+    timeout-minutes: 60
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
+    env:
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup iOS Release
+        uses: ./.github/actions/setup-ios-release
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+          google-service-info-plist: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_RELEASE }}
+
+      - name: Write build number
+        id: version
+        run: ./scripts/ci/write-build-number.sh
+
+      - name: Build signed IPA
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: bundle exec fastlane ios build_ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-daily-ipa
+          path: build/tv-maniac.ipa
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+      - name: Upload build logs
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: ios-daily-logs
+          path: fastlane/logs
+          overwrite: true
+
+  deploy-testflight:
+    needs: build
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Download IPA artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ios-daily-ipa
+          path: build
+
+      - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          bundle exec fastlane ios upload_testflight
+          echo "Published **${{ needs.build.outputs.version }}** build \`${{ needs.build.outputs.build }}\` to TestFlight" >> "$GITHUB_STEP_SUMMARY"
