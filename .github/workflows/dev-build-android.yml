@@ -150,10 +150,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mv app-release.apk tvmaniac-nightly.apk
-          notes="Automated nightly build ${{ needs.build.outputs.version }}-dev (build ${{ needs.build.outputs.build }}) from ${GITHUB_SHA}."
+          notes="Nightly build ${{ needs.build.outputs.version }}-dev (build ${{ needs.build.outputs.build }}) from ${GITHUB_SHA:0:7}."
+          last=$(gh run list --repo "${{ github.repository }}" --workflow dev-build-android.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
+          if [ -n "$last" ] && [ "$last" != "$GITHUB_SHA" ]; then
+            changes=$(gh api "repos/${{ github.repository }}/compare/$last...$GITHUB_SHA" \
+              --jq '.commits[].commit.message | split("\n")[0] | select(startswith("Merge ") | not) | "- " + .')
+            if [ -n "$changes" ]; then
+              notes=$(printf "%s\n\n## What's Changed\n%s" "$notes" "$changes")
+            fi
+          fi
           if ! gh release view nightly --repo "${{ github.repository }}" > /dev/null 2>&1; then
-            gh release create nightly --repo "${{ github.repository }}" --prerelease --title "Nightly build" --notes "$notes"
+            gh release create nightly --repo "${{ github.repository }}" --prerelease --target "$GITHUB_SHA" --title "Nightly build" --notes "$notes"
           else
+            gh api -X PATCH "repos/${{ github.repository }}/git/refs/tags/nightly" -f sha="$GITHUB_SHA" -F force=true
             gh release edit nightly --repo "${{ github.repository }}" --notes "$notes"
           fi
           gh release upload nightly tvmaniac-nightly.apk --clobber --repo "${{ github.repository }}"
