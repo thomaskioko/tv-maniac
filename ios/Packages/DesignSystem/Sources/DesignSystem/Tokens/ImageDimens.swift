@@ -64,6 +64,14 @@ public enum ImageDimens {
         posterWidthFixed(sizeClass) * posterWidthScale
     }
 
+    public static func compactThumbnailWidth(_ sizeClass: WidthSizeClass) -> CGFloat {
+        switch sizeClass {
+        case .compact: 104
+        case .medium: 120
+        case .expanded: 136
+        }
+    }
+
     public static func backdropCardWidth(_ sizeClass: WidthSizeClass) -> CGFloat {
         let base: CGFloat = switch sizeClass {
         case .compact: 240
