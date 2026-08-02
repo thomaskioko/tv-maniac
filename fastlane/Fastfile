@@ -196,7 +196,7 @@ platform :ios do
     match(
       type: "appstore",
       app_identifier: PACKAGE_NAME,
-      git_url: ENV["MATCH_GIT_URL"],
+      git_url: ENV["MATCH_GIT_URL"]&.strip,
       readonly: true,
       api_key: api_key,
     )
@@ -248,6 +248,7 @@ platform :ios do
       scheme: "tv-maniac",
       configuration: "Release",
       export_method: "app-store",
+      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='match AppStore #{PACKAGE_NAME}'",
       output_directory: "build",
       output_name: "tv-maniac",
       buildlog_path: "fastlane/logs",
