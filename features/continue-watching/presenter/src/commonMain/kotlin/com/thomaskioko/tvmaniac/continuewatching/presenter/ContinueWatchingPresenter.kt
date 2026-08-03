@@ -12,17 +12,21 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.myshows.nav.scope.MyShowsChildScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -39,6 +43,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -57,6 +62,7 @@ public class ContinueWatchingPresenter internal constructor(
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val mapper: ContinueWatchingMapper,
     private val logger: Logger,
@@ -178,6 +184,19 @@ public class ContinueWatchingPresenter internal constructor(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
+            ).onCompletion {
+                promptForRating(showId = action.showId, episodeId = action.episodeId)
+            }
+        }
+    }
+
+    private suspend fun promptForRating(showId: Long, episodeId: Long) {
+        val shouldPrompt = shouldPromptForRatingInteractor(
+            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
+        )
+        if (shouldPrompt) {
+            navigator.navigateTo(
+                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
             )
         }
     }

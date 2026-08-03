@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
@@ -65,6 +66,7 @@ public class SeasonDetailsPresenter internal constructor(
     observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
     private val seasonDetailsInteractor: SeasonDetailsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val markSeasonWatchedInteractor: MarkSeasonWatchedInteractor,
     private val markSeasonUnwatchedInteractor: MarkSeasonUnwatchedInteractor,
@@ -295,6 +297,8 @@ public class SeasonDetailsPresenter internal constructor(
         if (trackedEpisodeId != null) {
             updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + trackedEpisodeId).toPersistentSet()) }
         }
+
+        // TODO:: Remove/rethink the try catch block
         try {
             when (operation) {
                 is WatchOperation.MarkEpisodeWatched ->
@@ -315,6 +319,23 @@ public class SeasonDetailsPresenter internal constructor(
         } finally {
             if (trackedEpisodeId != null) {
                 updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
+            }
+        }
+
+        if (operation is WatchOperation.MarkEpisodeWatched && !operation.params.markPreviousEpisodes) {
+            val params = operation.params
+            val shouldPrompt = shouldPromptForRatingInteractor(
+                ShouldPromptForRatingInteractor.Param(
+                    showId = params.showId,
+                    episodeId = params.episodeId,
+                ),
+            )
+            if (shouldPrompt) {
+                navigator.navigateTo(
+                    RatingSheetRoute(
+                        RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = params.episodeId),
+                    ),
+                )
             }
         }
     }

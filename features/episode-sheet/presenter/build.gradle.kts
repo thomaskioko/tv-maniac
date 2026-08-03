@@ -43,6 +43,8 @@ kotlin {
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.library.testing)
                 implementation(projects.i18n.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.subscription.testing)
                 implementation(projects.navigation.testing)
             }
         }

@@ -18,6 +18,8 @@ kotlin {
                 api(projects.data.accountManager.api)
                 api(projects.data.upnext.api)
                 api(projects.domain.episode)
+                api(projects.domain.ratings)
+                api(projects.features.ratingSheet.nav)
                 api(projects.domain.followedshows)
                 api(projects.domain.continueWatching)
                 api(projects.features.progress.nav)
@@ -51,6 +53,9 @@ kotlin {
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.upnext.testing)
                 implementation(projects.data.watchproviders.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.subscription.testing)
+                implementation(projects.data.ratings.testing)
                 implementation(projects.navigation.testing)
             }
         }

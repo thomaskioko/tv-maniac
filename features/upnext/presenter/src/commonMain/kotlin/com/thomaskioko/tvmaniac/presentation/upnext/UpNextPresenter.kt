@@ -12,12 +12,14 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -25,6 +27,8 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -41,6 +45,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -51,6 +56,7 @@ public class UpNextPresenter internal constructor(
     private val navigator: Navigator,
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val upNextRepository: UpNextRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val accountManager: AccountManager,
@@ -157,6 +163,19 @@ public class UpNextPresenter internal constructor(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
+            ).onCompletion {
+                showRatingPrompt(showId = action.showId, episodeId = action.episodeId)
+            }
+        }
+    }
+
+    private suspend fun showRatingPrompt(showId: Long, episodeId: Long) {
+        val shouldPrompt = shouldPromptForRatingInteractor(
+            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
+        )
+        if (shouldPrompt) {
+            navigator.navigateTo(
+                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
             )
         }
     }
