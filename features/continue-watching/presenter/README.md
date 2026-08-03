@@ -70,6 +70,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:ratings
+    direction TB
+    :data:ratings:api[api]:::multiplatform
+  end
   subgraph :data:request-manager
     direction TB
     :data:request-manager:api[api]:::multiplatform
@@ -119,6 +123,7 @@ graph TB
     :domain:continue-watching[continue-watching]:::multiplatform
     :domain:episode[episode]:::multiplatform
     :domain:followedshows[followedshows]:::multiplatform
+    :domain:ratings[ratings]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
   end
@@ -129,6 +134,10 @@ graph TB
   subgraph :features:my-shows
     direction TB
     :features:my-shows:nav[nav]:::multiplatform
+  end
+  subgraph :features:rating-sheet
+    direction TB
+    :features:rating-sheet:nav[nav]:::multiplatform
   end
   subgraph :features:season-details
     direction TB
@@ -164,6 +173,10 @@ graph TB
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
   :data:library:api --> :data:datastore:api
+  :data:ratings:api --> :core:network-util:api
+  :data:ratings:api --> :data:account-manager:api
+  :data:ratings:api --> :data:database:sqldelight
+  :data:ratings:api --> :data:followedshows:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
@@ -200,6 +213,10 @@ graph TB
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api
+  :domain:ratings --> :core:base
+  :domain:ratings --> :data:datastore:api
+  :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:subscription:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api
@@ -224,12 +241,16 @@ graph TB
   :features:continue-watching:presenter --> :domain:continue-watching
   :features:continue-watching:presenter --> :domain:episode
   :features:continue-watching:presenter --> :domain:followedshows
+  :features:continue-watching:presenter --> :domain:ratings
   :features:continue-watching:presenter --> :features:my-shows:nav
+  :features:continue-watching:presenter --> :features:rating-sheet:nav
   :features:continue-watching:presenter -.-> :features:season-details:nav
   :features:continue-watching:presenter -.-> :features:show-details:nav
   :features:continue-watching:presenter --> :i18n:api
   :features:continue-watching:presenter --> :navigation:api
   :features:my-shows:nav --> :navigation:api
+  :features:rating-sheet:nav --> :data:ratings:api
+  :features:rating-sheet:nav --> :navigation:api
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
   :i18n:api --> :i18n:generator

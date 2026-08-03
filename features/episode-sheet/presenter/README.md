@@ -58,6 +58,10 @@ graph TB
     direction TB
     :data:ratings:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -127,7 +131,9 @@ graph TB
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api
   :domain:ratings --> :core:base
+  :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:subscription:api
   :features:episode-sheet:nav --> :navigation:api
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
