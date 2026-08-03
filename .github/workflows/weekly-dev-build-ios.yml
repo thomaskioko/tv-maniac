@@ -1,16 +1,16 @@
-name: Dev Build iOS
+name: Weekly Dev Build iOS
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * 1,4'  # Mon + Thu at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
+    - cron: '0 1 * * 1'  # Mon at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
 
 permissions:
   contents: read
   actions: read
 
 concurrency:
-  group: dev-build-ios
+  group: weekly-dev-build-ios
   cancel-in-progress: false
 
 env:
@@ -29,7 +29,7 @@ jobs:
     outputs:
       should_run: ${{ steps.dedupe.outputs.should_run }}
     steps:
-      - name: Skip when nothing new since the last nightly
+      - name: Skip when nothing new since the last dev build
         id: dedupe
         env:
           GH_TOKEN: ${{ github.token }}
@@ -38,9 +38,9 @@ jobs:
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          last=$(gh run list --repo "${{ github.repository }}" --workflow dev-build-ios.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
+          last=$(gh run list --repo "${{ github.repository }}" --workflow weekly-dev-build-ios.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
           if [ "$last" = "${{ github.sha }}" ]; then
-            echo "No new commits since the last successful nightly — skipping."
+            echo "No new commits since the last successful dev build — skipping."
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           else
             echo "should_run=true" >> "$GITHUB_OUTPUT"
@@ -84,7 +84,7 @@ jobs:
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ios-daily-ipa
+          name: ios-dev-ipa
           path: build/tv-maniac.ipa
           retention-days: 5
           overwrite: true
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: ios-daily-logs
+          name: ios-dev-logs
           path: fastlane/logs
           overwrite: true
 
@@ -114,7 +114,7 @@ jobs:
       - name: Download IPA artifact
         uses: actions/download-artifact@v7
         with:
-          name: ios-daily-ipa
+          name: ios-dev-ipa
           path: build
 
       - name: Upload to TestFlight

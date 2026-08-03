@@ -1,16 +1,16 @@
-name: Dev Build Android
+name: Weekly Dev Build Android
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 1 * * 1,4'  # Mon + Thu at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
+    - cron: '0 1 * * 1'  # Mon at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
 
 permissions:
   contents: read
   actions: read
 
 concurrency:
-  group: dev-build-android
+  group: weekly-dev-build-android
   cancel-in-progress: false
 
 env:
@@ -28,7 +28,7 @@ jobs:
     outputs:
       should_run: ${{ steps.dedupe.outputs.should_run }}
     steps:
-      - name: Skip when nothing new since the last nightly
+      - name: Skip when nothing new since the last dev build
         id: dedupe
         env:
           GH_TOKEN: ${{ github.token }}
@@ -37,9 +37,9 @@ jobs:
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          last=$(gh run list --repo "${{ github.repository }}" --workflow dev-build-android.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
+          last=$(gh run list --repo "${{ github.repository }}" --workflow weekly-dev-build-android.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
           if [ "$last" = "${{ github.sha }}" ]; then
-            echo "No new commits since the last successful nightly — skipping."
+            echo "No new commits since the last successful dev build — skipping."
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           else
             echo "should_run=true" >> "$GITHUB_OUTPUT"
@@ -87,7 +87,7 @@ jobs:
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v7
         with:
-          name: android-daily-aab
+          name: android-dev-aab
           path: app/build/outputs/bundle/release/app-release.aab
           retention-days: 5
           overwrite: true
@@ -96,7 +96,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
         with:
-          name: android-daily-apk
+          name: android-dev-apk
           path: app/build/outputs/apk/release/app-release.apk
           retention-days: 5
           overwrite: true
@@ -123,7 +123,7 @@ jobs:
       - name: Download AAB artifact
         uses: actions/download-artifact@v7
         with:
-          name: android-daily-aab
+          name: android-dev-aab
           path: app/build/outputs/bundle/release
 
       - name: Deploy to Play Store internal track
@@ -132,41 +132,6 @@ jobs:
           export PLAY_STORE_SERVICE_ACCOUNT_JSON
           bundle exec fastlane android deploy_play_store
           echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to the Play Store internal track" >> "$GITHUB_STEP_SUMMARY"
-
-  deploy-github-nightly:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
-      - name: Download APK artifact
-        uses: actions/download-artifact@v7
-        with:
-          name: android-daily-apk
-
-      - name: Update the nightly release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mv app-release.apk tvmaniac-nightly.apk
-          notes="Nightly build ${{ needs.build.outputs.version }}-dev (build ${{ needs.build.outputs.build }}) from ${GITHUB_SHA:0:7}."
-          last=$(gh run list --repo "${{ github.repository }}" --workflow dev-build-android.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
-          if [ -n "$last" ] && [ "$last" != "$GITHUB_SHA" ]; then
-            changes=$(gh api "repos/${{ github.repository }}/compare/$last...$GITHUB_SHA" \
-              --jq '.commits[].commit.message | split("\n")[0] | select(startswith("Merge ") | not) | "- " + .')
-            if [ -n "$changes" ]; then
-              notes=$(printf "%s\n\n## What's Changed\n%s" "$notes" "$changes")
-            fi
-          fi
-          if ! gh release view nightly --repo "${{ github.repository }}" > /dev/null 2>&1; then
-            gh release create nightly --repo "${{ github.repository }}" --prerelease --target "$GITHUB_SHA" --title "Nightly build" --notes "$notes"
-          else
-            gh api -X PATCH "repos/${{ github.repository }}/git/refs/tags/nightly" -f sha="$GITHUB_SHA" -F force=true
-            gh release edit nightly --repo "${{ github.repository }}" --notes "$notes"
-          fi
-          gh release upload nightly tvmaniac-nightly.apk --clobber --repo "${{ github.repository }}"
-          echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to the nightly GitHub release" >> "$GITHUB_STEP_SUMMARY"
 
   deploy-firebase:
     needs: build
@@ -189,7 +154,7 @@ jobs:
       - name: Download APK artifact
         uses: actions/download-artifact@v7
         with:
-          name: android-daily-apk
+          name: android-dev-apk
           path: app/build/outputs/apk/release
 
       - name: Distribute to Firebase App Distribution
