@@ -27,6 +27,15 @@ final class SettingsNavigationTests: XCTestCase {
         )
         app.leaveSettingsPage()
 
+        app.openSettingsPage(SettingsTestTags.shared.GENERAL_BEHAVIOR_ROW_TEST_TAG)
+        let quickRateToggle = app.switches[SettingsTestTags.shared.QUICK_RATE_TOGGLE_TEST_TAG]
+        XCTAssertTrue(
+            quickRateToggle.waitForExistence(timeout: UITestTimeouts.screen),
+            "The behavior page never showed the quick rate toggle."
+        )
+        quickRateToggle.tap()
+        app.leaveSettingsPage()
+
         app.openSettingsPage(SettingsTestTags.shared.ABOUT_INFO_ROW_TEST_TAG)
         XCTAssertTrue(
             app.element(SettingsTestTags.shared.INFO_VERSION_TEXT_TEST_TAG)

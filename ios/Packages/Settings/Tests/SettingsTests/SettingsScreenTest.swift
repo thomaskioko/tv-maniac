@@ -107,6 +107,19 @@ class SettingsScreenTest: SnapshotTestCase {
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Behavior")
     }
 
+    func test_SettingsScreen_Behavior_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .behavior,
+                authenticated: true,
+                customBehaviorToggles: behaviorLockedToggles
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Behavior_Locked")
+    }
+
     func test_SettingsScreen_Notifications() {
         SettingsScreen(state: makeState(page: .notifications, authenticated: true), onBack: {})
             .appPreview()
