@@ -216,7 +216,7 @@ public class SeasonDetailsPresenter internal constructor(
         }
     }
 
-    private suspend fun handleMarkSeasonAsWatched(hasUnwatchedInPreviousSeasons: Boolean) {
+    private fun handleMarkSeasonAsWatched(hasUnwatchedInPreviousSeasons: Boolean) {
         if (hasUnwatchedInPreviousSeasons) {
             updateState {
                 copy(
