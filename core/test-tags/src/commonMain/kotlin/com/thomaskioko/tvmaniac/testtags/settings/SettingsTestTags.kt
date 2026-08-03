@@ -21,7 +21,6 @@ public object SettingsTestTags {
     public const val SEASON_ORDER_TOGGLE_TEST_TAG: String = "settings_season_order_toggle"
     public const val BLUR_UNWATCHED_TOGGLE_TEST_TAG: String = "settings_blur_unwatched_toggle"
     public const val QUICK_RATE_TOGGLE_TEST_TAG: String = "settings_quick_rate_toggle"
-    public const val QUICK_RATE_LOCKED_TEST_TAG: String = "settings_quick_rate_locked"
     public const val DISCOVER_SECTIONS_ROW_TEST_TAG: String = "settings_discover_sections_row"
     public const val FONT_SIZE_SLIDER_TEST_TAG: String = "settings_font_size_slider"
     public const val FONT_SIZE_RESET_BUTTON_TEST_TAG: String = "settings_font_size_reset_button"
