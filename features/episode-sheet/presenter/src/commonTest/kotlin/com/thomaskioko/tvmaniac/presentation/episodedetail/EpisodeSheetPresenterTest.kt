@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
@@ -18,6 +19,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -28,6 +30,8 @@ import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -55,6 +59,12 @@ internal class EpisodeSheetPresenterTest {
     private val logger = FakeLogger()
 
     private val navigator = FakeNavigator()
+    private val datastoreRepository = FakeDatastoreRepository()
+    private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
+        datastoreRepository = datastoreRepository,
+        subscriptionManager = FakeSubscriptionManager(),
+        ratingsRepository = ratingsRepository,
+    )
 
     @BeforeTest
     fun setUp() {
@@ -226,6 +236,67 @@ internal class EpisodeSheetPresenterTest {
             )
             episodeRepository.lastMarkEpisodeUnwatchedCall.shouldBeNull()
             navigator.overlayDismissCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should open the rating sheet given quick rate is on and the episode is marked watched`() = runTest {
+        datastoreRepository.saveQuickRateEnabled(true)
+        episodeRepository.setEpisodeById(testEpisode(isWatched = false))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+            route.param.ratingType shouldBe RatingEntityType.EPISODE
+            route.param.id shouldBe 1L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not open the rating sheet given quick rate is off`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = false))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            navigator.activatedOverlays.shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not open the rating sheet given the episode is marked unwatched`() = runTest {
+        datastoreRepository.saveQuickRateEnabled(true)
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            navigator.activatedOverlays.shouldBeEmpty()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -409,6 +480,7 @@ internal class EpisodeSheetPresenterTest {
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
+            shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),
             unfollowShowInteractor = UnfollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,

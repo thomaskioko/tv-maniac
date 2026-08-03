@@ -19,6 +19,8 @@ kotlin {
                 api(projects.data.subscription.api)
                 api(projects.data.watchlistPrefs.api)
                 api(projects.domain.episode)
+                api(projects.domain.ratings)
+                api(projects.features.ratingSheet.nav)
                 api(projects.domain.followedshows)
                 api(projects.domain.continueWatching)
                 api(projects.features.myShows.nav)
@@ -65,6 +67,8 @@ kotlin {
                 implementation(projects.data.continueWatching.testing)
                 implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.i18n.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.ratings.testing)
                 implementation(projects.navigation.testing)
             }
         }

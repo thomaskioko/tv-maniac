@@ -88,6 +88,10 @@ graph TB
     direction TB
     :data:similar:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:trailers
     direction TB
     :data:trailers:api[api]:::multiplatform
@@ -211,7 +215,9 @@ graph TB
   :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
   :domain:ratings --> :core:base
+  :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:subscription:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api

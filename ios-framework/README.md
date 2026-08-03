@@ -928,7 +928,9 @@ graph TB
   :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
   :domain:ratings --> :core:base
+  :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:subscription:api
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api
   :domain:seasondetails --> :core:base
@@ -988,7 +990,9 @@ graph TB
   :features:continue-watching:presenter --> :domain:continue-watching
   :features:continue-watching:presenter --> :domain:episode
   :features:continue-watching:presenter --> :domain:followedshows
+  :features:continue-watching:presenter --> :domain:ratings
   :features:continue-watching:presenter --> :features:my-shows:nav
+  :features:continue-watching:presenter --> :features:rating-sheet:nav
   :features:continue-watching:presenter -.-> :features:season-details:nav
   :features:continue-watching:presenter -.-> :features:show-details:nav
   :features:continue-watching:presenter --> :i18n:api
@@ -1261,8 +1265,10 @@ graph TB
   :features:upnext:presenter --> :domain:continue-watching
   :features:upnext:presenter --> :domain:episode
   :features:upnext:presenter --> :domain:followedshows
+  :features:upnext:presenter --> :domain:ratings
   :features:upnext:presenter -.-> :features:episode-sheet:nav
   :features:upnext:presenter --> :features:progress:nav
+  :features:upnext:presenter --> :features:rating-sheet:nav
   :features:upnext:presenter -.-> :features:season-details:nav
   :features:upnext:presenter -.-> :features:show-details:nav
   :features:upnext:presenter --> :navigation:api

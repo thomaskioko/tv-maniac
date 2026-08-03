@@ -12,13 +12,16 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
@@ -26,12 +29,14 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
@@ -40,7 +45,9 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -65,6 +72,13 @@ internal class UpNextPresenterTest {
     private val logger = FakeLogger()
     private val syncObserver = FakeSyncObserver()
     private val navigator = FakeNavigator()
+    private val datastoreRepository = FakeDatastoreRepository()
+    private val ratingsRepository = FakeRatingsRepository()
+    private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
+        datastoreRepository = datastoreRepository,
+        subscriptionManager = FakeSubscriptionManager(),
+        ratingsRepository = ratingsRepository,
+    )
 
     @BeforeTest
     fun setUp() {
@@ -249,6 +263,33 @@ internal class UpNextPresenterTest {
 
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `should open the rating sheet given quick rate is on and an episode is marked watched`() = runTest {
+        datastoreRepository.saveQuickRateEnabled(true)
+        val presenter = createPresenter()
+
+        presenter.dispatch(
+            MarkWatched(showId = 123L, episodeId = 456L, seasonNumber = 1L, episodeNumber = 5L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.id shouldBe 456L
+    }
+
+    @Test
+    fun `should not open the rating sheet given quick rate is off`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.dispatch(
+            MarkWatched(showId = 123L, episodeId = 456L, seasonNumber = 1L, episodeNumber = 5L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        episodeRepository.lastMarkEpisodeWatchedCall.shouldNotBeNull()
+        navigator.activatedOverlays.shouldBeEmpty()
     }
 
     @Test
@@ -538,6 +579,7 @@ internal class UpNextPresenterTest {
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = logger,
             syncObserver = syncObserver,
+            shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
         )
     }
 

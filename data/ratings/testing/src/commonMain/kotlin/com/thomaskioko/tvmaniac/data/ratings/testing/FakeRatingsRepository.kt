@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 
 public class FakeRatingsRepository : RatingsRepository {
 
@@ -21,6 +22,7 @@ public class FakeRatingsRepository : RatingsRepository {
     private val episodeRatingFlow = MutableStateFlow(
         EpisodeRating(userRating = null, pendingAction = PendingAction.NOTHING),
     )
+    private val episodeRatingOverrides = MutableStateFlow<Map<Long, EpisodeRating>>(emptyMap())
     private val pendingRatingsFlow = MutableStateFlow(false)
 
     public fun setSyncPendingRatingsError(error: Throwable?) {
@@ -43,6 +45,10 @@ public class FakeRatingsRepository : RatingsRepository {
 
     public fun setEpisodeRating(rating: EpisodeRating) {
         episodeRatingFlow.value = rating
+    }
+
+    public fun setEpisodeRating(episodeId: Long, rating: EpisodeRating) {
+        episodeRatingOverrides.value += (episodeId to rating)
     }
 
     override suspend fun rateShow(showId: Long, rating: Int) {
@@ -74,5 +80,8 @@ public class FakeRatingsRepository : RatingsRepository {
     override suspend fun removeEpisodeRating(episodeId: Long) {
     }
 
-    override fun observeEpisodeRating(episodeId: Long): Flow<EpisodeRating> = episodeRatingFlow.asStateFlow()
+    override fun observeEpisodeRating(episodeId: Long): Flow<EpisodeRating> =
+        combine(episodeRatingFlow, episodeRatingOverrides) { fallback, overrides ->
+            overrides[episodeId] ?: fallback
+        }
 }

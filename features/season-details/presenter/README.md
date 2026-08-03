@@ -66,6 +66,10 @@ graph TB
     direction TB
     :data:seasondetails:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -129,7 +133,9 @@ graph TB
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:ratings --> :core:base
+  :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:subscription:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api

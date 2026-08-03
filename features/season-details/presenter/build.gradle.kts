@@ -42,6 +42,8 @@ kotlin {
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.testing)
                 implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.subscription.testing)
                 implementation(projects.navigation.testing)
             }
         }

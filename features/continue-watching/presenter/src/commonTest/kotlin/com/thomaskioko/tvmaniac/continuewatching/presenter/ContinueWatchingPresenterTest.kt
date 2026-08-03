@@ -6,9 +6,13 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -45,6 +49,40 @@ class ContinueWatchingPresenterTest {
     @AfterTest
     fun tearDown() {
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `should open the rating sheet given quick rate is on and an episode is marked watched`() = runTest {
+        val navigator = FakeNavigator()
+        factory.datastoreRepository.saveQuickRateEnabled(true)
+        val presenter = factory.create(
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            navigator = navigator,
+        )
+
+        presenter.dispatch(
+            MarkUpNextEpisodeWatched(showId = 1L, episodeId = 2L, seasonNumber = 1L, episodeNumber = 3L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.id shouldBe 2L
+    }
+
+    @Test
+    fun `should not open the rating sheet given quick rate is off`() = runTest {
+        val navigator = FakeNavigator()
+        val presenter = factory.create(
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            navigator = navigator,
+        )
+
+        presenter.dispatch(
+            MarkUpNextEpisodeWatched(showId = 1L, episodeId = 2L, seasonNumber = 1L, episodeNumber = 3L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        navigator.activatedOverlays.shouldBeEmpty()
     }
 
     @Test

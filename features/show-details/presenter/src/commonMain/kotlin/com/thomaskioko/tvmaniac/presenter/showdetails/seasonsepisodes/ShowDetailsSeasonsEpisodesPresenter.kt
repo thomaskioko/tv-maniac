@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
@@ -20,6 +21,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
@@ -27,6 +29,8 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.toContinueTrackingModels
 import com.thomaskioko.tvmaniac.presenter.showdetails.toScrollIndex
 import com.thomaskioko.tvmaniac.presenter.showdetails.toSeasonModels
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -43,6 +47,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -59,6 +64,7 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
     private val fetchSeasonsEpisodesInteractor: FetchSeasonsEpisodesInteractor,
     private val syncShowEpisodeWatchesInteractor: SyncShowEpisodeWatchesInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val navigator: Navigator,
     private val accountManager: AccountManager,
@@ -148,7 +154,9 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
                         episodeNumber = action.episodeNumber,
                         markPreviousEpisodes = false,
                     ),
-                )
+                ).onCompletion {
+                    showRatingPrompt(showId = action.showId, episodeId = action.episodeId)
+                }
             }
 
             is ShowDetailsMarkEpisodeUnwatched -> coroutineScope.launchUpdating(
@@ -186,6 +194,17 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
                 .distinctUntilChanged()
                 .filter { it }
                 .collect { syncWatchStatus(forceRefresh = true) }
+        }
+    }
+
+    private suspend fun showRatingPrompt(showId: Long, episodeId: Long) {
+        val shouldPrompt = shouldPromptForRatingInteractor(
+            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
+        )
+        if (shouldPrompt) {
+            navigator.navigateTo(
+                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
+            )
         }
     }
 

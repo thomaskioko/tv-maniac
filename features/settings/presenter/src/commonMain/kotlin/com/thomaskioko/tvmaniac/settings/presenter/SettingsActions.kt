@@ -48,6 +48,10 @@ public data class IncludeSpecialsToggled(
     val enabled: Boolean,
 ) : SettingsActions
 
+public data class QuickRateToggled(
+    val enabled: Boolean,
+) : SettingsActions
+
 public data class BackgroundSyncToggled(
     val enabled: Boolean,
 ) : SettingsActions
