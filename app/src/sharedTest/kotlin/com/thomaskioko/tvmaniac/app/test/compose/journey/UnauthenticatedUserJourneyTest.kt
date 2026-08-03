@@ -132,6 +132,17 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         rootRobot.assertNotificationRationaleDoesNotExist()
 
+        // Turn quick rate on and off
+        settingsRobot
+            .clickBackButton()
+            .openBehaviorPage()
+            .scrollToQuickRateToggle()
+            .assertQuickRateDisabled()
+            .clickQuickRateToggle()
+            .assertQuickRateEnabled()
+            .clickQuickRateToggle()
+            .assertQuickRateDisabled()
+
         // Follow show locally
         settingsRobot
             .clickBackButton()

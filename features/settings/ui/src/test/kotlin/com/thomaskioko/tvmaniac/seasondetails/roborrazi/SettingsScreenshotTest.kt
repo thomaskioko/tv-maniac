@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchingState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceLockedState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
+import com.thomaskioko.tvmaniac.settings.ui.behaviorLockedState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
 import com.thomaskioko.tvmaniac.settings.ui.discoverSectionsState
@@ -194,6 +195,18 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = behaviorState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBehaviorPageLocked() {
+        composeTestRule.captureMultiDevice("SettingsScreenBehaviorPageLocked") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = behaviorLockedState,
                     onAction = {},
                 )
             }

@@ -212,6 +212,13 @@ internal val appearanceLockedState = appearanceState.copy(
     ),
 )
 internal val behaviorState = loggedInState.copy(currentPage = SettingsPage.BEHAVIOR, currentPageTitle = "Behavior")
+internal val behaviorLockedState = behaviorState.copy(
+    locks = SettingsLocks(
+        quickRateLocked = true,
+        badgeText = "Premium",
+        lockedContentDescription = "Locked",
+    ),
+)
 internal val notificationsState = loggedInState.copy(currentPage = SettingsPage.NOTIFICATIONS, currentPageTitle = "Notifications")
 internal val notificationsLockedState = notificationsState.copy(
     locks = SettingsLocks(

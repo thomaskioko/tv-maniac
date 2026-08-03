@@ -163,6 +163,25 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         click(SettingsTestTags.EPISODE_NOTIFICATIONS_TOGGLE_TEST_TAG)
     }
 
+    fun scrollToQuickRateToggle() = apply {
+        scrollToListTag(
+            SettingsTestTags.LIST_TEST_TAG,
+            SettingsTestTags.QUICK_RATE_TOGGLE_TEST_TAG,
+        )
+    }
+
+    fun assertQuickRateEnabled() = apply {
+        assertChecked(SettingsTestTags.QUICK_RATE_TOGGLE_TEST_TAG)
+    }
+
+    fun assertQuickRateDisabled() = apply {
+        assertUnchecked(SettingsTestTags.QUICK_RATE_TOGGLE_TEST_TAG)
+    }
+
+    fun clickQuickRateToggle() = apply {
+        click(SettingsTestTags.QUICK_RATE_TOGGLE_TEST_TAG)
+    }
+
     fun scrollToSwitchProviderButton() = apply {
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.SWITCH_PROVIDER_BUTTON_TEST_TAG)
     }
