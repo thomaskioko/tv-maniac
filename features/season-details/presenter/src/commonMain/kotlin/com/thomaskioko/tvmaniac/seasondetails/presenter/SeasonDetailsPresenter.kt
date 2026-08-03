@@ -298,28 +298,25 @@ public class SeasonDetailsPresenter internal constructor(
             updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + trackedEpisodeId).toPersistentSet()) }
         }
 
-        // TODO:: Remove/rethink the try catch block
-        try {
-            when (operation) {
-                is WatchOperation.MarkEpisodeWatched ->
-                    markEpisodeWatchedInteractor(operation.params)
-                is WatchOperation.MarkEpisodeUnwatched ->
-                    markEpisodeUnwatchedInteractor(
-                        MarkEpisodeUnwatchedParams(operation.showId, operation.episodeId),
-                    )
-                is MarkSeasonWatched ->
-                    markSeasonWatchedInteractor(
-                        MarkSeasonWatchedParams(operation.showId, operation.seasonNumber, operation.markPreviousSeasons),
-                    )
-                is WatchOperation.MarkSeasonUnwatched ->
-                    markSeasonUnwatchedInteractor(
-                        MarkSeasonUnwatchedParams(operation.showId, operation.seasonNumber),
-                    )
-            }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-        } finally {
-            if (trackedEpisodeId != null) {
-                updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
-            }
+        when (operation) {
+            is WatchOperation.MarkEpisodeWatched ->
+                markEpisodeWatchedInteractor(operation.params)
+            is WatchOperation.MarkEpisodeUnwatched ->
+                markEpisodeUnwatchedInteractor(
+                    MarkEpisodeUnwatchedParams(operation.showId, operation.episodeId),
+                )
+            is MarkSeasonWatched ->
+                markSeasonWatchedInteractor(
+                    MarkSeasonWatchedParams(operation.showId, operation.seasonNumber, operation.markPreviousSeasons),
+                )
+            is WatchOperation.MarkSeasonUnwatched ->
+                markSeasonUnwatchedInteractor(
+                    MarkSeasonUnwatchedParams(operation.showId, operation.seasonNumber),
+                )
+        }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+
+        if (trackedEpisodeId != null) {
+            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
         }
 
         if (operation is WatchOperation.MarkEpisodeWatched && !operation.params.markPreviousEpisodes) {
