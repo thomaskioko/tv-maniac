@@ -10,15 +10,15 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
-public sealed interface WatchOperation {
-    public data class MarkEpisodeWatched(val params: MarkEpisodeWatchedParams) : WatchOperation
-    public data class MarkEpisodeUnwatched(val showId: Long, val episodeId: Long) : WatchOperation
-    public data class MarkSeasonWatched(
+public sealed interface WatchChange {
+    public data class WatchEpisode(val params: MarkEpisodeWatchedParams) : WatchChange
+    public data class UnwatchEpisode(val showId: Long, val episodeId: Long) : WatchChange
+    public data class WatchSeason(
         val showId: Long,
         val seasonNumber: Long,
         val markPreviousSeasons: Boolean = false,
-    ) : WatchOperation
-    public data class MarkSeasonUnwatched(val showId: Long, val seasonNumber: Long) : WatchOperation
+    ) : WatchChange
+    public data class UnwatchSeason(val showId: Long, val seasonNumber: Long) : WatchChange
 }
 
 public sealed interface SeasonDialogState {
@@ -26,30 +26,30 @@ public sealed interface SeasonDialogState {
     public data object Gallery : SeasonDialogState
 
     public sealed interface Confirmation : SeasonDialogState {
-        public val primaryOperation: WatchOperation
-        public val secondaryOperation: WatchOperation? get() = null
+        public val primaryChange: WatchChange
+        public val secondaryChange: WatchChange? get() = null
     }
 
     public data class WatchSeasonConfirmation(
-        override val primaryOperation: WatchOperation.MarkSeasonWatched,
+        override val primaryChange: WatchChange.WatchSeason,
     ) : Confirmation
 
     public data class UnwatchSeasonConfirmation(
-        override val primaryOperation: WatchOperation.MarkSeasonUnwatched,
+        override val primaryChange: WatchChange.UnwatchSeason,
     ) : Confirmation
 
     public data class MarkPreviousEpisodesConfirmation(
-        override val primaryOperation: WatchOperation.MarkEpisodeWatched,
-        override val secondaryOperation: WatchOperation.MarkEpisodeWatched,
+        override val primaryChange: WatchChange.WatchEpisode,
+        override val secondaryChange: WatchChange.WatchEpisode,
     ) : Confirmation
 
     public data class UnwatchEpisodeConfirmation(
-        override val primaryOperation: WatchOperation.MarkEpisodeUnwatched,
+        override val primaryChange: WatchChange.UnwatchEpisode,
     ) : Confirmation
 
     public data class MarkPreviousSeasonsConfirmation(
-        override val primaryOperation: WatchOperation.MarkSeasonWatched,
-        override val secondaryOperation: WatchOperation.MarkSeasonWatched,
+        override val primaryChange: WatchChange.WatchSeason,
+        override val secondaryChange: WatchChange.WatchSeason,
     ) : Confirmation
 }
 

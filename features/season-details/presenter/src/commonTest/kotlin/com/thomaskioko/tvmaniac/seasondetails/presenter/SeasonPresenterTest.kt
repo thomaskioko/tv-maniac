@@ -556,7 +556,7 @@ class SeasonPresenterTest {
             val state = awaitItem()
             val dialog = state.dialogState
             dialog.shouldBeInstanceOf<SeasonDialogState.UnwatchEpisodeConfirmation>()
-            dialog.primaryOperation.episodeId shouldBe 12345
+            dialog.primaryChange.episodeId shouldBe 12345
         }
     }
 
@@ -744,7 +744,7 @@ class SeasonPresenterTest {
             val dialogState = awaitItem()
             val dialog = dialogState.dialogState
             dialog.shouldBeInstanceOf<SeasonDialogState.UnwatchEpisodeConfirmation>()
-            dialog.primaryOperation.episodeId shouldBe 12345
+            dialog.primaryChange.episodeId shouldBe 12345
 
             presenter.dispatch(ConfirmDialogAction)
 
