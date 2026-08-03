@@ -217,6 +217,9 @@
     <string name="label_settings_include_specials">Special Seasons</string>
     <string name="label_settings_include_specials_description">Display Specials and bonus seasons</string>
 
+    <string name="label_settings_quick_rate">Quick Rate</string>
+    <string name="label_settings_quick_rate_description">Ask for a rating after you mark an episode as watched</string>
+
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>
     <string name="btn_add_to_list">Add To List</string>

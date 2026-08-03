@@ -5,4 +5,5 @@ public enum class SubscriptionFeature {
     Calendar,
     CustomThemes,
     ListViewTypes,
+    QuickRate,
 }

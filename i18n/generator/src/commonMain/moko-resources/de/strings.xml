@@ -332,6 +332,9 @@
     <string name="label_settings_include_specials">Spezialstaffeln</string>
     <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>
 
+    <string name="label_settings_quick_rate">Schnellbewertung</string>
+    <string name="label_settings_quick_rate_description">Nach einer Bewertung fragen, sobald eine Episode als gesehen markiert wird</string>
+
     <string name="label_up_to_date">Alles gesehen</string>
 
     <string name="label_settings_episode_notifications">Episodenbenachrichtigungen</string>
