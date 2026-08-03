@@ -101,11 +101,13 @@ public class SettingsPresenter internal constructor(
     private val locksFlow = kotlinx.coroutines.flow.combine(
         subscriptionManager.observeAccess(SubscriptionFeature.CustomThemes),
         subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
-    ) { customThemesAccess, episodeNotificationsAccess ->
+        subscriptionManager.observeAccess(SubscriptionFeature.QuickRate),
+    ) { customThemesAccess, episodeNotificationsAccess, quickRateAccess ->
         SettingsLocks(
             customThemesLocked = !customThemesAccess,
             posterStyleLocked = !customThemesAccess,
             episodeNotificationsLocked = !episodeNotificationsAccess,
+            quickRateLocked = !quickRateAccess,
             badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
             themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
             themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
@@ -141,6 +143,7 @@ public class SettingsPresenter internal constructor(
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
+            quickRateEnabled = preferences.quickRateEnabled,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
             authProviders = authProviderOptions(simklEnabled),
@@ -241,6 +244,13 @@ public class SettingsPresenter internal constructor(
             is IncludeSpecialsToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.saveIncludeSpecials(action.enabled)
+                }
+            }
+
+            is QuickRateToggled -> {
+                if (state.value.locks.quickRateLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.saveQuickRateEnabled(action.enabled)
                 }
             }
 
@@ -623,6 +633,8 @@ public class SettingsPresenter internal constructor(
         },
         includeSpecialsTitle = localizer.getString(StringResourceKey.LabelSettingsIncludeSpecials),
         includeSpecialsDescription = localizer.getString(StringResourceKey.LabelSettingsIncludeSpecialsDescription),
+        quickRateTitle = localizer.getString(StringResourceKey.LabelSettingsQuickRate),
+        quickRateDescription = localizer.getString(StringResourceKey.LabelSettingsQuickRateDescription),
         youtubeTitle = localizer.getString(StringResourceKey.LabelSettingsYoutube),
         youtubeDescription = localizer.getString(StringResourceKey.LabelSettingsYoutubeDescription),
         episodeNotificationsTitle = localizer.getString(StringResourceKey.LabelSettingsEpisodeNotifications),
