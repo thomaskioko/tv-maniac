@@ -1,6 +1,6 @@
 # Release Process
 
-TvManiac uses an automated release pipeline that builds, signs, and deploys to both Google Play Store and Apple App Store. Production releases are triggered by tags pushed from the local release task and roll out through approval gates. Dev builds run on a Monday and Thursday schedule; beta releases are triggered manually.
+TvManiac uses an automated release pipeline that builds, signs, and deploys to both Google Play Store and Apple App Store. Production releases are triggered by tags pushed from the local release task and roll out through approval gates. Dev builds run weekly; beta releases are triggered manually.
 
 ## Table of Contents
 
@@ -91,11 +91,11 @@ A beta and a dev build cut from the same commit derive the same build number, an
 
 ## Dev Builds
 
-Dev builds run per platform on Mondays and Thursdays at 1:00 AM UTC (3:00 AM Berlin in summer, 2:00 AM in winter), and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
+Dev builds run per platform every Monday at 1:00 AM UTC (3:00 AM Berlin in summer, 2:00 AM in winter), and can also be triggered manually. Each workflow is self-contained, so a failed platform reruns alone.
 
 ```bash
-gh workflow run dev-build-android.yml
-gh workflow run dev-build-ios.yml
+gh workflow run weekly-dev-build-android.yml
+gh workflow run weekly-dev-build-ios.yml
 ```
 
 **What happens:**
@@ -103,7 +103,7 @@ gh workflow run dev-build-ios.yml
 1. **Check**: Scheduled runs skip when `main` has no new commits since the last successful dev build. Manual runs always build.
 2. **Version**: `scripts/ci/write-build-number.sh` derives the build number as `base(version) + commits since the release tag` and writes it to `version.txt` in the runner's workspace only — nothing is committed or pushed.
 3. **Build**: One job builds the signed artifacts with a `-dev` suffix (Android AAB and APK, iOS IPA) and uploads them as workflow artifacts.
-4. **Deploy**: Separate jobs download the artifacts and publish them — Android to the Play Store internal track, Firebase App Distribution, and the rolling `nightly` GitHub release in parallel, iOS to TestFlight. The nightly release keeps one stable download URL whose APK is replaced on every run.
+4. **Deploy**: Separate jobs download the artifacts and publish them — Android to the Play Store internal track and Firebase App Distribution in parallel, iOS to TestFlight. GitHub Releases are cut by the production release workflow only.
 
 Build and deploy are separate jobs, so a failed upload retries without rebuilding:
 
