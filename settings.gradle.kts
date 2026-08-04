@@ -96,6 +96,8 @@ include(
     ":features:settings:nav",
     ":features:settings:presenter",
     ":features:settings:ui",
+    ":features:statistics:nav",
+    ":features:statistics:presenter",
     ":features:trailers:presenter",
     ":features:trailers:ui",
     ":api:simkl:api",
