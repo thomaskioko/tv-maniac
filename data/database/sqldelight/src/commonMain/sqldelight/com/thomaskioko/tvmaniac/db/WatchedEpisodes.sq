@@ -290,3 +290,28 @@ LEFT JOIN (
 ) watched ON watched.effective_season_number = s.season_number
 WHERE s.show_id = :showId
 ORDER BY s.season_number;
+
+watchedAtWithRuntime:
+SELECT
+    watched_episodes.watched_at,
+    COALESCE(episode.runtime, tvshow.runtime) AS runtime
+FROM watched_episodes
+INNER JOIN tvshow ON tvshow.id = watched_episodes.show_id
+LEFT JOIN episode ON episode.id = watched_episodes.episode_id
+WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+ORDER BY watched_episodes.watched_at;
+
+mostWatchedShows:
+SELECT
+    tvshow.tmdb_id AS show_id,
+    tvshow.name AS title,
+    tvshow.poster_path,
+    COUNT(*) AS episode_count,
+    SUM(COALESCE(episode.runtime, tvshow.runtime, 0)) AS total_runtime
+FROM watched_episodes
+INNER JOIN tvshow ON tvshow.id = watched_episodes.show_id
+LEFT JOIN episode ON episode.id = watched_episodes.episode_id
+WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+GROUP BY tvshow.id
+ORDER BY episode_count DESC, tvshow.name ASC
+LIMIT :limit;
