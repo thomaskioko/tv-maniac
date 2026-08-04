@@ -397,6 +397,10 @@ graph TB
     direction TB
     :features:start-watching:presenter[presenter]:::multiplatform
   end
+  subgraph :features:statistics
+    direction TB
+    :features:statistics:nav[nav]:::multiplatform
+  end
   subgraph :features:trailers
     direction TB
     :features:trailers:nav[nav]:::multiplatform
@@ -1117,6 +1121,7 @@ graph TB
   :features:profile:presenter --> :features:profile:nav
   :features:profile:presenter -.-> :features:settings:nav
   :features:profile:presenter -.-> :features:show-details:nav
+  :features:profile:presenter -.-> :features:statistics:nav
   :features:profile:presenter --> :i18n:api
   :features:profile:presenter --> :navigation:api
   :features:progress:nav --> :navigation:api
@@ -1247,6 +1252,7 @@ graph TB
   :features:start-watching:presenter --> :features:my-shows:nav
   :features:start-watching:presenter -.-> :features:show-details:nav
   :features:start-watching:presenter --> :navigation:api
+  :features:statistics:nav --> :navigation:api
   :features:trailers:nav --> :navigation:api
   :features:trailers:presenter --> :core:base
   :features:trailers:presenter --> :core:logger:api

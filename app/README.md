@@ -414,6 +414,10 @@ graph TB
     :features:start-watching:presenter[presenter]:::multiplatform
     :features:start-watching:ui[ui]:::android-library
   end
+  subgraph :features:statistics
+    direction TB
+    :features:statistics:nav[nav]:::multiplatform
+  end
   subgraph :features:trailers
     direction TB
     :features:trailers:nav[nav]:::multiplatform
@@ -1393,6 +1397,7 @@ graph TB
   :features:profile:presenter --> :features:profile:nav
   :features:profile:presenter -.-> :features:settings:nav
   :features:profile:presenter -.-> :features:show-details:nav
+  :features:profile:presenter -.-> :features:statistics:nav
   :features:profile:presenter --> :i18n:api
   :features:profile:presenter --> :navigation:api
   :features:profile:ui -.-> :android-designsystem
@@ -1611,6 +1616,7 @@ graph TB
   :features:start-watching:ui -.-> :core:view
   :features:start-watching:ui --> :features:start-watching:presenter
   :features:start-watching:ui -.-> :i18n:generator
+  :features:statistics:nav --> :navigation:api
   :features:trailers:nav --> :navigation:api
   :features:trailers:presenter --> :core:base
   :features:trailers:presenter --> :core:logger:api
