@@ -25,7 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -60,6 +60,7 @@ import com.thomaskioko.tvmaniac.presentation.upnext.UpNextState
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags
 import com.thomaskioko.tvmaniac.testtags.upnext.UpNextTestTags.SCREEN_TEST_TAG
 import com.thomaskioko.tvmaniac.ui.upnext.preview.UpNextStatePreviewParameterProvider
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,17 +93,19 @@ internal fun UpNextScreenContent(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
-
-    LaunchedEffect(state.episodes.firstOrNull()?.showId, state.sortOption) {
-        listState.animateScrollToItem(0)
-    }
+    val scope = rememberCoroutineScope()
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             if (!state.isEmpty && !state.showLoading) {
                 SortChipsRow(
                     currentSortOption = state.sortOption,
-                    onSortOptionSelected = { onAction(UpNextChangeSortOption(it)) },
+                    onSortOptionSelected = { sortOption ->
+                        if (sortOption != state.sortOption) {
+                            onAction(UpNextChangeSortOption(sortOption))
+                            scope.launch { listState.scrollToItem(0) }
+                        }
+                    },
                 )
             }
 
