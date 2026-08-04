@@ -24,6 +24,13 @@ public class FakeRatingsRepository : RatingsRepository {
     )
     private val episodeRatingOverrides = MutableStateFlow<Map<Long, EpisodeRating>>(emptyMap())
     private val pendingRatingsFlow = MutableStateFlow(false)
+    private val userRatingDistribution = MutableStateFlow<Map<Int, Long>>(emptyMap())
+
+    public fun setUserRatingDistribution(distribution: Map<Int, Long>) {
+        userRatingDistribution.value = distribution
+    }
+
+    override fun observeUserRatingDistribution(): Flow<Map<Int, Long>> = userRatingDistribution.asStateFlow()
 
     public fun setSyncPendingRatingsError(error: Throwable?) {
         syncPendingRatingsError = error

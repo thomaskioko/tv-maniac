@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 public interface RatingsDao {
     public fun observePendingRatingsCount(): Flow<Long>
+    public fun observeUserRatingDistribution(): Flow<Map<Int, Long>>
     public fun upsertShowUserRating(showId: Long, userRating: Long, ratedAt: Long, pendingAction: PendingAction)
     public fun saveRemoteShowRating(showId: Long, userRating: Long, ratedAt: Long)
     public fun observeShowRating(showId: Long): Flow<ShowRatingEntry?>

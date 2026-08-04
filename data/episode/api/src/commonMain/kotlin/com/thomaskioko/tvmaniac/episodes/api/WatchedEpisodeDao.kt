@@ -3,9 +3,11 @@ package com.thomaskioko.tvmaniac.episodes.api
 import com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction
 import com.thomaskioko.tvmaniac.db.GetWatchedEpisodes
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
+import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 
@@ -20,6 +22,14 @@ public interface WatchedEpisodeDao {
     public fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress>
 
     public fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>>
+
+    public fun observeWatchedAtWithRuntime(): Flow<List<WatchedEpisodeRuntime>>
+
+    public fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>>
+
+    public suspend fun updateShowRuntime(tmdbId: Long, runtime: Long)
+
+    public suspend fun countWatchedShowsMissingRuntime(): Long
 
     public suspend fun markAsWatched(
         showId: Long,

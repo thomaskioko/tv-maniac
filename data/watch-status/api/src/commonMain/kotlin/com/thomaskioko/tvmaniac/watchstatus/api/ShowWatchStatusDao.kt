@@ -10,6 +10,7 @@ public interface ShowWatchStatusDao {
     public fun getStatus(showId: Id<ShowId>): WatchStatus?
     public fun observeStatus(showId: Id<ShowId>): Flow<WatchStatus?>
     public fun getWatchProgress(showId: Id<ShowId>): ShowWatchProgress?
+    public fun observeStatusCounts(): Flow<Map<WatchStatus, Long>>
     public fun delete(showId: Id<ShowId>)
     public fun deleteAll()
 }

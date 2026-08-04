@@ -32,6 +32,11 @@ public class FakeShowWatchStatusDao : ShowWatchStatusDao {
 
     override fun getWatchProgress(showId: Id<ShowId>): ShowWatchProgress? = progress[showId.id]
 
+    override fun observeStatusCounts(): Flow<Map<WatchStatus, Long>> =
+        statuses.map { current ->
+            current.values.groupingBy { it }.eachCount().mapValues { it.value.toLong() }
+        }
+
     override fun delete(showId: Id<ShowId>) {
         statuses.value = statuses.value - showId.id
         progress.remove(showId.id)

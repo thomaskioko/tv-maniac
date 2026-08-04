@@ -2,11 +2,13 @@ package com.thomaskioko.tvmaniac.episodes.testing
 
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +41,17 @@ public data class SyncParams(
 )
 
 public class FakeEpisodeRepository : EpisodeRepository {
+
+    private val watchedEpisodeRuntimesFlow = MutableStateFlow<List<WatchedEpisodeRuntime>>(emptyList())
+    private val mostWatchedShowsFlow = MutableStateFlow<List<MostWatchedShow>>(emptyList())
+
+    public fun setWatchedEpisodeRuntimes(runtimes: List<WatchedEpisodeRuntime>) {
+        watchedEpisodeRuntimesFlow.value = runtimes
+    }
+
+    public fun setMostWatchedShows(shows: List<MostWatchedShow>) {
+        mostWatchedShowsFlow.value = shows
+    }
     private val nextEpisodesForWatchlist = MutableStateFlow<List<NextEpisodeWithShow>>(emptyList())
     private val episodeByIdFlow = MutableStateFlow<EpisodeById?>(null)
     private val seasonWatchProgressFlow = MutableStateFlow(SeasonWatchProgress(0, 0, 0, 0))
@@ -104,6 +117,12 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     override fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>> =
         recentlyWatchedFlow.asStateFlow()
+
+    override fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>> =
+        watchedEpisodeRuntimesFlow.asStateFlow()
+
+    override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =
+        mostWatchedShowsFlow.asStateFlow()
 
     override suspend fun markEpisodeAsWatched(
         showId: Long,

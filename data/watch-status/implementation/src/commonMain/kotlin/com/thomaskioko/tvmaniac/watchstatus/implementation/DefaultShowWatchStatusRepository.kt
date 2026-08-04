@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
@@ -20,6 +21,8 @@ public class DefaultShowWatchStatusRepository(
     private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ShowWatchStatusRepository {
+
+    override fun observeShowCountsByStatus(): Flow<Map<WatchStatus, Long>> = dao.observeStatusCounts()
 
     override suspend fun refresh(showId: Long) {
         withContext(dispatchers.databaseWrite) {

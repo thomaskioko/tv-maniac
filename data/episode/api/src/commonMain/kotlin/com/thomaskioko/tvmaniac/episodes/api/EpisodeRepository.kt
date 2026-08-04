@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.episodes.api
 
 import com.thomaskioko.tvmaniac.db.EpisodeById
+import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
 
@@ -15,6 +17,10 @@ public interface EpisodeRepository {
 
     /** Observes the most-recently watched episodes across all shows, newest first. */
     public fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>>
+
+    public fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>>
+
+    public fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>>
 
     public suspend fun markEpisodeAsWatched(
         showId: Long,
