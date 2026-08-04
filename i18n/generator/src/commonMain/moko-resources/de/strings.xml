@@ -512,4 +512,24 @@
     <string name="label_layout_detailed">Detailliert</string>
     <string name="label_layouts_locked_title">Kompakt und Detailliert sind Premium-Layouts</string>
     <string name="label_layouts_locked_message">Hol dir Premium, um diese Layouts zu verwenden.</string>
+
+    <string name="label_statistics_title">Statistiken</string>
+    <string name="cd_statistics_open">Statistiken öffnen</string>
+    <string name="label_statistics_locked_title">Statistiken sind eine Premium-Funktion</string>
+    <string name="label_statistics_locked_message">Upgraden Sie auf Premium, um zu sehen, wie Sie schauen.</string>
+    <string name="label_statistics_empty">Markieren Sie eine Episode als gesehen, um Ihre Statistiken aufzubauen.</string>
+    <string name="label_statistics_episodes_over_time">Episoden im Zeitverlauf</string>
+    <string name="label_statistics_time_of_day">Tageszeit</string>
+    <string name="label_statistics_time_of_day_note">Die Zeiten zeigen, wann Episoden als gesehen markiert wurden, nicht wann Sie sie geschaut haben.</string>
+    <string name="label_statistics_streak">Streak</string>
+    <string name="label_statistics_streak_current">Aktuell</string>
+    <string name="label_statistics_streak_longest">Am längsten</string>
+    <string name="label_statistics_most_watched">Meistgesehene Serien</string>
+    <string name="label_statistics_watch_status">Serien nach Status</string>
+    <string name="label_statistics_ratings">Ihre Bewertungen</string>
+    <string name="label_watch_status_watchlist">Merkliste</string>
+    <string name="label_watch_status_watching">Wird angesehen</string>
+    <string name="label_watch_status_completed">Abgeschlossen</string>
+    <string name="label_watch_status_on_hold">Pausiert</string>
+    <string name="label_watch_status_dropped">Abgebrochen</string>
 </resources>
