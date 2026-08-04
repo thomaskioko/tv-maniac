@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS tvshow(
     status TEXT DEFAULT NULL,
     ratings REAL NOT NULL,
     vote_count INTEGER NOT NULL,
-    genres TEXT AS List<String>
+    genres TEXT AS List<String>,
+    runtime INTEGER DEFAULT NULL
 );
 
 -- Create indexes for common lookups
@@ -55,6 +56,17 @@ ON CONFLICT(tmdb_id) DO UPDATE SET
     season_numbers = excluded.season_numbers,
     poster_path = excluded.poster_path,
     backdrop_path = excluded.backdrop_path;
+
+updateRuntime:
+UPDATE tvshow SET runtime = :runtime WHERE tmdb_id = :tmdbId;
+
+countWatchedShowsMissingRuntime:
+SELECT COUNT(*) FROM tvshow
+WHERE runtime IS NULL
+  AND id IN (
+    SELECT DISTINCT show_id FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+  );
 
 tvshowDetails:
 SELECT

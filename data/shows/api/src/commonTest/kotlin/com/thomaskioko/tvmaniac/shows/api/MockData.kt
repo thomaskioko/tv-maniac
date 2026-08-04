@@ -26,6 +26,7 @@ internal object MockData {
         backdrop_path = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
         episode_numbers = "10",
         season_numbers = "1",
+        runtime = null,
         ratings = 8.1,
     )
 
@@ -49,6 +50,7 @@ internal object MockData {
             backdrop_path = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
             episode_numbers = "10",
             season_numbers = "1",
+            runtime = null,
             ratings = 8.1,
         ),
         Tvshow(
@@ -67,6 +69,7 @@ internal object MockData {
             backdrop_path = "/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg",
             episode_numbers = "10",
             season_numbers = "1",
+            runtime = null,
             ratings = 8.1,
         ),
     )
