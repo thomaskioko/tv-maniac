@@ -29,6 +29,7 @@ dependencies {
     implementation(projects.features.home.nav)
     implementation(projects.core.testTags)
     implementation(projects.core.view)
+    implementation(projects.i18n.generator)
     implementation(libs.androidx.compose.material3)
     implementation(libs.coil.compose)
 

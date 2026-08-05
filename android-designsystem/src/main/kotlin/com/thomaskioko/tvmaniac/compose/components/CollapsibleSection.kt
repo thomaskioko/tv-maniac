@@ -47,6 +47,7 @@ public fun CollapsibleSection(
     moreContentDescription: String? = null,
     onMoreClick: () -> Unit = {},
     toggleTestTag: String? = null,
+    moreTestTag: String? = null,
     contentSpacing: Dp = TvManiacSpacing.small,
     content: @Composable () -> Unit,
 ) {
@@ -61,6 +62,7 @@ public fun CollapsibleSection(
             onMoreClick = onMoreClick,
             onToggleCollapse = { collapsed = !collapsed },
             toggleTestTag = toggleTestTag,
+            moreTestTag = moreTestTag,
         )
 
         if (!collapsed) {
@@ -79,6 +81,7 @@ private fun SectionHeaderRow(
     onMoreClick: () -> Unit,
     onToggleCollapse: () -> Unit,
     toggleTestTag: String?,
+    moreTestTag: String?,
     modifier: Modifier = Modifier,
 ) {
     val rotation by animateFloatAsState(
@@ -98,6 +101,7 @@ private fun SectionHeaderRow(
             modifier = Modifier
                 .weight(1f, fill = false)
                 .clip(MaterialTheme.shapes.small)
+                .then(if (moreTestTag != null) Modifier.testTag(moreTestTag) else Modifier)
                 .clickable(enabled = showMore, onClick = onMoreClick),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
