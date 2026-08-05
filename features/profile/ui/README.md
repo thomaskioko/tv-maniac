@@ -287,6 +287,7 @@ graph TB
   :features:profile:ui -.-> :data:account-manager:api
   :features:profile:ui -.-> :features:home:nav
   :features:profile:ui --> :features:profile:presenter
+  :features:profile:ui -.-> :i18n:generator
   :features:profile:ui --> :navigation:api
   :features:profile:ui --> :navigation:ui
   :features:settings:nav --> :navigation:api

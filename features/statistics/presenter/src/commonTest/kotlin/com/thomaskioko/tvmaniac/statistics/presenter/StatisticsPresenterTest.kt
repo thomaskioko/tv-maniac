@@ -158,6 +158,28 @@ internal class StatisticsPresenterTest {
     }
 
     @Test
+    fun `should order the tiles from the widest time span down`() = runTest(testDispatcher) {
+        seedWatches()
+        ratingsRepository.setUserRatingDistribution(mapOf(9 to 1L))
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            awaitItem()
+
+            awaitItem().tiles.map { it.id } shouldBe listOf(
+                StatisticTileId.PeakYear,
+                StatisticTileId.WatchDaysThisYear,
+                StatisticTileId.TopWeekday,
+                StatisticTileId.LastThirtyDays,
+                StatisticTileId.TitlesTracked,
+                StatisticTileId.Episodes,
+                StatisticTileId.AverageRating,
+                StatisticTileId.WatchStreak,
+            )
+        }
+    }
+
+    @Test
     fun `should lock the screen given the subscription does not cover statistics`() = runTest(testDispatcher) {
         subscriptionManager.setAccess(SubscriptionFeature.Statistics, false)
         seedWatches()

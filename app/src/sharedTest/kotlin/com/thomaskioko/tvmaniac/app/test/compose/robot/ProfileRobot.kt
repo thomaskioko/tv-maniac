@@ -91,4 +91,12 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
     fun clickSettingsButton() = apply {
         click(ProfileTestTags.SETTINGS_BUTTON_TEST_TAG)
     }
+
+    fun clickStatisticsRow(slug: String) = apply {
+        scrollToListTag(
+            listTag = ProfileTestTags.userCard(slug),
+            itemTag = ProfileTestTags.STATISTICS_ROW_TEST_TAG,
+        )
+        click(ProfileTestTags.STATISTICS_ROW_TEST_TAG)
+    }
 }

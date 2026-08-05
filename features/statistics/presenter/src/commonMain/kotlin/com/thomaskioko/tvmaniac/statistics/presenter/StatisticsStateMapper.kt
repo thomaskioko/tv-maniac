@@ -41,6 +41,42 @@ public class StatisticsStateMapper(
     }
 
     public fun toTiles(statistics: WatchStatistics): ImmutableList<StatisticTile> = buildList {
+        statistics.peakYear?.let { peak ->
+            add(
+                StatisticTile(
+                    id = StatisticTileId.PeakYear,
+                    label = localizer.getString(StringResourceKey.LabelStatisticsPeakYear),
+                    value = peak.year.toString(),
+                    caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, peak.episodeCount),
+                ),
+            )
+        }
+        add(
+            StatisticTile(
+                id = StatisticTileId.WatchDaysThisYear,
+                label = localizer.getString(StringResourceKey.LabelStatisticsWatchDays),
+                value = "${statistics.watchDaysThisYear.daysWatched}/${statistics.watchDaysThisYear.daysElapsed}",
+                caption = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysCaption),
+            ),
+        )
+        statistics.topWeekday?.let { weekday ->
+            add(
+                StatisticTile(
+                    id = StatisticTileId.TopWeekday,
+                    label = localizer.getString(StringResourceKey.LabelStatisticsTopWeekday),
+                    value = dateTimeProvider.formatDayOfWeek(weekday.mostRecentDate),
+                    caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, weekday.episodeCount),
+                ),
+            )
+        }
+        add(
+            StatisticTile(
+                id = StatisticTileId.LastThirtyDays,
+                label = localizer.getString(StringResourceKey.LabelStatisticsLastThirtyDays),
+                value = formatterUtil.formatCompactNumber(statistics.lastThirtyDays.episodeCount.toLong()),
+                caption = localizer.getPlural(PluralsResourceKey.DayCount, statistics.lastThirtyDays.activeDays),
+            ),
+        )
         add(
             StatisticTile(
                 id = StatisticTileId.TitlesTracked,
@@ -70,48 +106,12 @@ public class StatisticsStateMapper(
                 ),
             )
         }
-        statistics.peakYear?.let { peak ->
-            add(
-                StatisticTile(
-                    id = StatisticTileId.PeakYear,
-                    label = localizer.getString(StringResourceKey.LabelStatisticsPeakYear),
-                    value = peak.year.toString(),
-                    caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, peak.episodeCount),
-                ),
-            )
-        }
-        statistics.topWeekday?.let { weekday ->
-            add(
-                StatisticTile(
-                    id = StatisticTileId.TopWeekday,
-                    label = localizer.getString(StringResourceKey.LabelStatisticsTopWeekday),
-                    value = dateTimeProvider.formatDayOfWeek(weekday.mostRecentDate),
-                    caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, weekday.episodeCount),
-                ),
-            )
-        }
         add(
             StatisticTile(
                 id = StatisticTileId.WatchStreak,
                 label = localizer.getString(StringResourceKey.LabelStatisticsStreak),
                 value = localizer.getPlural(PluralsResourceKey.DayCount, statistics.streak.longestDays),
                 caption = localizer.getString(StringResourceKey.LabelStatisticsLongestRun),
-            ),
-        )
-        add(
-            StatisticTile(
-                id = StatisticTileId.LastThirtyDays,
-                label = localizer.getString(StringResourceKey.LabelStatisticsLastThirtyDays),
-                value = formatterUtil.formatCompactNumber(statistics.lastThirtyDays.episodeCount.toLong()),
-                caption = localizer.getPlural(PluralsResourceKey.DayCount, statistics.lastThirtyDays.activeDays),
-            ),
-        )
-        add(
-            StatisticTile(
-                id = StatisticTileId.WatchDaysThisYear,
-                label = localizer.getString(StringResourceKey.LabelStatisticsWatchDays),
-                value = "${statistics.watchDaysThisYear.daysWatched}/${statistics.watchDaysThisYear.daysElapsed}",
-                caption = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysCaption),
             ),
         )
     }.toImmutableList()
