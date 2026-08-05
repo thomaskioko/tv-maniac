@@ -151,6 +151,10 @@ graph TB
     direction TB
     :features:show-details:nav[nav]:::multiplatform
   end
+  subgraph :features:statistics
+    direction TB
+    :features:statistics:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -273,6 +277,7 @@ graph TB
   :features:profile:presenter --> :features:profile:nav
   :features:profile:presenter -.-> :features:settings:nav
   :features:profile:presenter -.-> :features:show-details:nav
+  :features:profile:presenter -.-> :features:statistics:nav
   :features:profile:presenter --> :i18n:api
   :features:profile:presenter --> :navigation:api
   :features:profile:ui -.-> :android-designsystem
@@ -286,6 +291,7 @@ graph TB
   :features:profile:ui --> :navigation:ui
   :features:settings:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
+  :features:statistics:nav --> :navigation:api
   :i18n:api --> :i18n:generator
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api

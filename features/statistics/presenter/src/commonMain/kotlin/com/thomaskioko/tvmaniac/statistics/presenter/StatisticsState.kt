@@ -1,0 +1,32 @@
+package com.thomaskioko.tvmaniac.statistics.presenter
+
+import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
+import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
+import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTile
+import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchHeatMap
+import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchStatusItem
+import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchTime
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
+public data class StatisticsState(
+    val isLoading: Boolean = true,
+    val isLocked: Boolean = false,
+    val hasWatchHistory: Boolean = false,
+    val showsMarkedWatchedTimes: Boolean = false,
+    val totalWatchTime: WatchTime? = null,
+    val tiles: ImmutableList<StatisticTile> = persistentListOf(),
+    val heatMap: WatchHeatMap? = null,
+    val mostWatchedShows: ImmutableList<MostWatchedShowItem> = persistentListOf(),
+    val watchStatusBreakdown: ImmutableList<WatchStatusItem> = persistentListOf(),
+    val ratingBreakdown: ImmutableList<RatingBar> = persistentListOf(),
+    val labels: StatisticsLabels = StatisticsLabels(),
+    val message: UiMessage? = null,
+) {
+    val showEmptyState: Boolean
+        get() = !isLoading && !isLocked && !hasWatchHistory
+
+    val showContent: Boolean
+        get() = !isLoading && hasWatchHistory
+}

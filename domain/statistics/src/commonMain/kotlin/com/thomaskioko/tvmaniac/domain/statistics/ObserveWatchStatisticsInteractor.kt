@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.domain.statistics
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRepository
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
 import dev.zacsweers.metro.Inject

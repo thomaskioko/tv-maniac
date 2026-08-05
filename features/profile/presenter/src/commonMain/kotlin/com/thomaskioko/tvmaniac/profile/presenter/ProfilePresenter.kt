@@ -45,6 +45,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.SettingsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.ShowClicked
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.StatisticsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.ViewListsClicked
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileInfo
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
@@ -57,6 +58,7 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.statistics.nav.StatisticsRoute
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import com.thomaskioko.tvmaniac.upnext.api.model.CompletedShow
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
@@ -210,6 +212,7 @@ public class ProfilePresenter internal constructor(
                 }
             }
             SettingsClicked -> navigator.navigateTo(SettingsRoute)
+            StatisticsClicked -> navigator.navigateTo(StatisticsRoute)
             ViewListsClicked -> {
                 // TODO: Navigate to the user's lists screen. To be implemented.
             }

@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.db.SeasonId
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.WatchStatus
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.implementation.DefaultShowWatchStatusDao

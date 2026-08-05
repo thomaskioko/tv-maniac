@@ -1,6 +1,18 @@
 package com.thomaskioko.tvmaniac.domain.statistics
 
 import com.thomaskioko.tvmaniac.db.WatchStatus
+import com.thomaskioko.tvmaniac.domain.statistics.model.AverageRating
+import com.thomaskioko.tvmaniac.domain.statistics.model.DailyWatchCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.PeakYear
+import com.thomaskioko.tvmaniac.domain.statistics.model.PeriodSummary
+import com.thomaskioko.tvmaniac.domain.statistics.model.RatingCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.ShowsTracked
+import com.thomaskioko.tvmaniac.domain.statistics.model.TopWeekday
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDaysThisYear
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDuration
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatusCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -69,7 +81,7 @@ public class WatchStatisticsCalculator(
 
     private fun calculateDailyCounts(watchedDays: List<WatchedDay>, today: LocalDate): List<DailyWatchCount> {
         val byDate = watchedDays.groupBy { it.date }
-        val firstDay = today.plus(-(HEATMAP_DAYS - 1), DateTimeUnit.DAY)
+        val firstDay = today.plus(-(HEAT_MAP_DAYS - 1), DateTimeUnit.DAY)
         return generateSequence(firstDay) { day ->
             if (day == today) null else day.plus(1, DateTimeUnit.DAY)
         }.map { day ->
@@ -90,12 +102,15 @@ public class WatchStatisticsCalculator(
     }
 
     private fun calculateTopWeekday(watchedDays: List<WatchedDay>): TopWeekday? {
-        val top = watchedDays.groupingBy { it.date.dayOfWeek }
-            .eachCount()
+        val top = watchedDays.groupBy { it.date.dayOfWeek }
             .entries
-            .maxByOrNull { it.value }
+            .maxByOrNull { it.value.size }
             ?: return null
-        return TopWeekday(dayOfWeek = top.key, episodeCount = top.value)
+        return TopWeekday(
+            dayOfWeek = top.key,
+            episodeCount = top.value.size,
+            mostRecentDate = top.value.maxOf { it.date },
+        )
     }
 
     private fun calculateWatchDaysThisYear(watchedDays: List<WatchedDay>, today: LocalDate): WatchDaysThisYear =
@@ -163,7 +178,7 @@ public class WatchStatisticsCalculator(
     private data class WatchedDay(val date: LocalDate, val minutes: Long)
 
     private companion object {
-        const val HEATMAP_DAYS = 365
+        const val HEAT_MAP_DAYS = 365
         const val LAST_PERIOD_DAYS = 30
         const val LOWEST_RATING = 1
         const val HIGHEST_RATING = 10
