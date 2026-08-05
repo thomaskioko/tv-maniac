@@ -572,6 +572,7 @@ graph TB
   :app -.-> :data:upnext:implementation
   :app -.-> :data:user:api
   :app -.-> :data:user:implementation
+  :app -.-> :data:watch-status:api
   :app -.-> :data:watch-status:implementation
   :app -.-> :data:watchlist-prefs:api
   :app -.-> :data:watchlist-prefs:implementation
@@ -596,6 +597,7 @@ graph TB
   :app -.-> :domain:showdetails
   :app -.-> :domain:similarshows
   :app -.-> :domain:start-watching
+  :app -.-> :domain:statistics
   :app -.-> :domain:sync-activity
   :app -.-> :domain:theme
   :app -.-> :domain:traktlists
