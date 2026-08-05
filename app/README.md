@@ -292,6 +292,7 @@ graph TB
     :domain:showdetails[showdetails]:::multiplatform
     :domain:similarshows[similarshows]:::multiplatform
     :domain:start-watching[start-watching]:::multiplatform
+    :domain:statistics[statistics]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
     :domain:theme[theme]:::multiplatform
     :domain:traktlists[traktlists]:::multiplatform
@@ -417,6 +418,8 @@ graph TB
   subgraph :features:statistics
     direction TB
     :features:statistics:nav[nav]:::multiplatform
+    :features:statistics:presenter[presenter]:::multiplatform
+    :features:statistics:ui[ui]:::android-library
   end
   subgraph :features:trailers
     direction TB
@@ -650,6 +653,9 @@ graph TB
   :app -.-> :features:show-list:presenter
   :app -.-> :features:show-list:ui
   :app -.-> :features:start-watching:presenter
+  :app -.-> :features:statistics:nav
+  :app -.-> :features:statistics:presenter
+  :app -.-> :features:statistics:ui
   :app -.-> :features:trailers:nav
   :app -.-> :features:trailers:presenter
   :app -.-> :features:trailers:ui
@@ -1154,6 +1160,12 @@ graph TB
   :domain:start-watching --> :core:base
   :domain:start-watching --> :data:episode:api
   :domain:start-watching --> :data:start-watching:api
+  :domain:statistics --> :core:base
+  :domain:statistics --> :core:util:api
+  :domain:statistics --> :data:database:sqldelight
+  :domain:statistics --> :data:episode:api
+  :domain:statistics --> :data:ratings:api
+  :domain:statistics --> :data:watch-status:api
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api
   :domain:theme --> :i18n:generator
@@ -1407,6 +1419,7 @@ graph TB
   :features:profile:ui -.-> :data:account-manager:api
   :features:profile:ui -.-> :features:home:nav
   :features:profile:ui --> :features:profile:presenter
+  :features:profile:ui -.-> :i18n:generator
   :features:profile:ui --> :navigation:api
   :features:profile:ui --> :navigation:ui
   :features:progress:nav --> :navigation:api
@@ -1617,6 +1630,27 @@ graph TB
   :features:start-watching:ui --> :features:start-watching:presenter
   :features:start-watching:ui -.-> :i18n:generator
   :features:statistics:nav --> :navigation:api
+  :features:statistics:presenter --> :core:base
+  :features:statistics:presenter --> :core:util:api
+  :features:statistics:presenter --> :core:view
+  :features:statistics:presenter --> :data:account-manager:api
+  :features:statistics:presenter --> :data:database:sqldelight
+  :features:statistics:presenter --> :data:episode:api
+  :features:statistics:presenter --> :data:subscription:api
+  :features:statistics:presenter --> :domain:statistics
+  :features:statistics:presenter -.-> :features:show-details:nav
+  :features:statistics:presenter --> :features:statistics:nav
+  :features:statistics:presenter --> :i18n:api
+  :features:statistics:presenter --> :i18n:generator
+  :features:statistics:presenter --> :navigation:api
+  :features:statistics:ui -.-> :android-designsystem
+  :features:statistics:ui --> :core:base
+  :features:statistics:ui -.-> :core:test-tags
+  :features:statistics:ui -.-> :core:view
+  :features:statistics:ui --> :features:statistics:presenter
+  :features:statistics:ui -.-> :i18n:generator
+  :features:statistics:ui --> :navigation:api
+  :features:statistics:ui --> :navigation:ui
   :features:trailers:nav --> :navigation:api
   :features:trailers:presenter --> :core:base
   :features:trailers:presenter --> :core:logger:api
