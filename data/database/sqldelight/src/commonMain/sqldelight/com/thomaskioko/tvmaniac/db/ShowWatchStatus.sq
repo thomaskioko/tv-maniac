@@ -33,3 +33,9 @@ DELETE FROM show_watch_status WHERE show_id = :showId;
 
 deleteAll:
 DELETE FROM show_watch_status;
+
+statusCounts:
+SELECT status, COUNT(*) AS show_count
+FROM show_watch_status
+WHERE status IS NOT NULL
+GROUP BY status;

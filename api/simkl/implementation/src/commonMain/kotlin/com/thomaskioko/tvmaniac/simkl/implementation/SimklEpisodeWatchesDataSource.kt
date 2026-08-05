@@ -89,6 +89,7 @@ private fun SimklWatchedShow.toBatch(): WatchedShowBatch {
         title = show.title,
         providerShowId = ids.simkl?.toString(),
         episodes = episodes,
+        runtime = show.runtime?.toLong(),
     )
 }
 

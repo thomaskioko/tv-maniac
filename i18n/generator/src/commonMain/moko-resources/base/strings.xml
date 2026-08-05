@@ -520,4 +520,24 @@
     <string name="label_layout_detailed">Detailed</string>
     <string name="label_layouts_locked_title">Compact and Detailed are Premium layouts</string>
     <string name="label_layouts_locked_message">Upgrade to Premium to use these layouts.</string>
+
+    <string name="label_statistics_title">Statistics</string>
+    <string name="cd_statistics_open">Open statistics</string>
+    <string name="label_statistics_locked_title">Statistics are a Premium feature</string>
+    <string name="label_statistics_locked_message">Upgrade to Premium to see how you watch.</string>
+    <string name="label_statistics_empty">Mark an episode as watched to start building your statistics.</string>
+    <string name="label_statistics_episodes_over_time">Episodes over time</string>
+    <string name="label_statistics_time_of_day">Time of day</string>
+    <string name="label_statistics_time_of_day_note">Times show when episodes were marked as watched, not when you watched them.</string>
+    <string name="label_statistics_streak">Watch streak</string>
+    <string name="label_statistics_streak_current">Current</string>
+    <string name="label_statistics_streak_longest">Longest</string>
+    <string name="label_statistics_most_watched">Most watched shows</string>
+    <string name="label_statistics_watch_status">Shows by status</string>
+    <string name="label_statistics_ratings">Your ratings</string>
+    <string name="label_watch_status_watchlist">Watchlist</string>
+    <string name="label_watch_status_watching">Watching</string>
+    <string name="label_watch_status_completed">Completed</string>
+    <string name="label_watch_status_on_hold">On hold</string>
+    <string name="label_watch_status_dropped">Dropped</string>
 </resources>

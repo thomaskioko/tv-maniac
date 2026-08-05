@@ -282,6 +282,7 @@ include(
     ":domain:seasondetails",
     ":domain:showdetails",
     ":domain:similarshows",
+    ":domain:statistics",
     ":domain:sync-activity",
     ":domain:theme",
     ":domain:traktlists",

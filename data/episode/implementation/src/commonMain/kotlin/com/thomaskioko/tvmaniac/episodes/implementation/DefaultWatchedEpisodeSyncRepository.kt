@@ -203,10 +203,36 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         logger.debug(TAG, "Bulk watched-shows sync drained $totalShows shows across $page page(s)")
 
+        fetchMissingShowRuntimes()
+
         firstFailure?.let { failure ->
             logger.error(TAG, "Bulk watched-shows sync failed for $failedShows of $totalShows shows")
             throw failure
         }
+    }
+
+    private suspend fun fetchMissingShowRuntimes() {
+        val source = activeSource() ?: return
+        val missing = dao.countWatchedShowsMissingRuntime()
+        if (missing == 0L) return
+
+        logger.debug(TAG, "Fetching runtime for $missing watched show(s)")
+        var page = 1
+        var updated = 0
+        while (true) {
+            currentCoroutineContext().ensureActive()
+            val runtimes = source.getWatchedShowRuntimes(page = page, limit = PAGE_LIMIT)
+            if (runtimes.isEmpty()) break
+
+            runtimes.forEach { showRuntime ->
+                dao.updateShowRuntime(tmdbId = showRuntime.tmdbId, runtime = showRuntime.runtimeMinutes)
+            }
+            updated += runtimes.size
+
+            if (runtimes.size < PAGE_LIMIT) break
+            page++
+        }
+        logger.debug(TAG, "Stored runtime for $updated show(s)")
     }
 
     private suspend fun upsertBatch(batch: WatchedShowBatch, includeSpecials: Boolean) {
@@ -225,6 +251,8 @@ public class DefaultWatchedEpisodeSyncRepository(
             is ShowResolveOutcome.Resolved -> outcome.tmdbId
             is ShowResolveOutcome.Skipped -> return
         }
+
+        batch.runtime?.let { runtime -> dao.updateShowRuntime(tmdbId = tmdbId, runtime = runtime) }
 
         val remoteUpdatedAt = batch.lastUpdatedAt?.toEpochMilliseconds()
         if (remoteUpdatedAt != null &&

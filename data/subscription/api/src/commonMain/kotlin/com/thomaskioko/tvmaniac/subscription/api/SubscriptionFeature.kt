@@ -6,4 +6,5 @@ public enum class SubscriptionFeature {
     CustomThemes,
     ListViewTypes,
     QuickRate,
+    Statistics,
 }

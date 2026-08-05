@@ -9,4 +9,5 @@ public data class WatchedShowBatch(
     public val providerShowId: String?,
     public val episodes: List<WatchedEpisodeEntry>,
     public val lastUpdatedAt: Instant? = null,
+    public val runtime: Long? = null,
 )

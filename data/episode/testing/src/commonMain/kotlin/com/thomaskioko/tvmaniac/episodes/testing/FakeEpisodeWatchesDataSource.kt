@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.episodes.testing
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
+import com.thomaskioko.tvmaniac.episodes.api.ShowRuntime
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 
@@ -12,6 +13,19 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     private val addEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
     private val removeEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
     private var allWatchedShowsError: Throwable? = null
+    private val showRuntimePages = mutableMapOf<Int, List<ShowRuntime>>()
+    private val runtimeRequestPages = mutableListOf<Int>()
+
+    public fun setShowRuntimePage(page: Int, runtimes: List<ShowRuntime>) {
+        showRuntimePages[page] = runtimes
+    }
+
+    public fun runtimeRequestPages(): List<Int> = runtimeRequestPages.toList()
+
+    override suspend fun getWatchedShowRuntimes(page: Int, limit: Int): List<ShowRuntime> {
+        runtimeRequestPages.add(page)
+        return showRuntimePages[page].orEmpty()
+    }
 
     public fun setShowEpisodeWatches(showId: Long, watches: List<WatchedEpisodeEntry>) {
         watchesMap[showId] = watches

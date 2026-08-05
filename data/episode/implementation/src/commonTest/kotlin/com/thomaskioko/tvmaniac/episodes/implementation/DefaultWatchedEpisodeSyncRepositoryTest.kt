@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
+import com.thomaskioko.tvmaniac.episodes.api.ShowRuntime
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
@@ -23,6 +24,7 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.testing.FakeShowWatchStatusRepository
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
@@ -551,6 +553,33 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         private const val SIMKL_SHOW_ID = 583436L
         private const val PAST_MILLIS = 1_600_000_000_000L
     }
+
+    @Test
+    fun `should store runtime for watched shows missing it given bulk sync runs`() = runTest(testDispatcher) {
+        seedShow()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        recordingDataSource.runtimesToReturn = listOf(
+            ShowRuntime(tmdbId = SHOW_ID, runtimeMinutes = 47),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne().runtime shouldBe 47L
+        recordingDataSource.runtimeRequestPages shouldContainExactly listOf(1)
+    }
+
+    @Test
+    fun `should skip the runtime request given every watched show already has one`() = runTest(testDispatcher) {
+        seedShow()
+        database.tvShowQueries.updateRuntime(runtime = 47, tmdbId = Id(SHOW_ID))
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        recordingDataSource.runtimeRequestPages.shouldBeEmpty()
+    }
 }
 
 private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
@@ -565,6 +594,16 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
     var batchesToReturn: List<WatchedShowBatch> = emptyList()
+    var runtimesToReturn: List<ShowRuntime> = emptyList()
+
+    private val _runtimeRequestPages = mutableListOf<Int>()
+    val runtimeRequestPages: List<Int> get() = _runtimeRequestPages.toList()
+
+    override suspend fun getWatchedShowRuntimes(page: Int, limit: Int): List<ShowRuntime> {
+        _runtimeRequestPages += page
+        val offset = (page - 1) * limit
+        return runtimesToReturn.drop(offset).take(limit)
+    }
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
         _getShowEpisodeWatchesCalls += showId

@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.ratings.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
@@ -29,6 +30,11 @@ public class DefaultRatingsDao(
     override fun observePendingRatingsCount(): Flow<Long> = queries.pendingRatingsCount()
         .asFlow()
         .mapToOne(dispatchers.io)
+
+    override fun observeUserRatingDistribution(): Flow<Map<Int, Long>> = queries.userRatingDistribution()
+        .asFlow()
+        .mapToList(dispatchers.databaseRead)
+        .map { rows -> rows.associate { it.rating.toInt() to it.rating_count } }
 
     override fun upsertShowUserRating(showId: Long, userRating: Long, ratedAt: Long, pendingAction: PendingAction) {
         queries.upsertShowUserRating(

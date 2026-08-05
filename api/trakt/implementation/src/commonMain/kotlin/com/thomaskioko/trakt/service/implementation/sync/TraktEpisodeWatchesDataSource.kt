@@ -3,6 +3,7 @@ package com.thomaskioko.trakt.service.implementation.sync
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
+import com.thomaskioko.tvmaniac.episodes.api.ShowRuntime
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
@@ -63,6 +64,23 @@ public class TraktEpisodeWatchesDataSource(
             is ApiResponse.Error -> throw BulkWatchedShowsFetchException(
                 "Bulk watched-shows fetch failed for page=$page",
             )
+        }
+    }
+
+    override suspend fun getWatchedShowRuntimes(page: Int, limit: Int): List<ShowRuntime> {
+        val response = syncRemoteDataSource.getWatchedShows(
+            page = page,
+            limit = limit,
+            extended = "full",
+        )
+        return when (response) {
+            is ApiResponse.Success -> response.body.mapNotNull { entry ->
+                val tmdbId = entry.show.ids.tmdb ?: return@mapNotNull null
+                val runtime = entry.show.runtime ?: return@mapNotNull null
+                ShowRuntime(tmdbId = tmdbId, runtimeMinutes = runtime)
+            }
+            is ApiResponse.Unauthenticated -> emptyList()
+            is ApiResponse.Error -> emptyList()
         }
     }
 
@@ -136,5 +154,6 @@ private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
         providerShowId = show.ids.trakt.toString(),
         episodes = episodes,
         lastUpdatedAt = lastUpdatedAt?.let { runCatching { Instant.parse(it) }.getOrNull() },
+        runtime = show.runtime,
     )
 }

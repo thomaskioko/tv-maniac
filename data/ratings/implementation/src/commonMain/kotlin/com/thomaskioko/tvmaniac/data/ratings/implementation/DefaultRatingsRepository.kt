@@ -50,6 +50,9 @@ public class DefaultRatingsRepository(
     override fun observePendingRatings(): Flow<Boolean> =
         ratingsDao.observePendingRatingsCount().map { it > 0 }.distinctUntilChanged()
 
+    override fun observeUserRatingDistribution(): Flow<Map<Int, Long>> =
+        ratingsDao.observeUserRatingDistribution().distinctUntilChanged()
+
     override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
         val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
         when {
