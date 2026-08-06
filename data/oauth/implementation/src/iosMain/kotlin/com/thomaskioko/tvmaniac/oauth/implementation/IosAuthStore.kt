@@ -13,10 +13,14 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.withContext
 import platform.Foundation.CFBridgingRetain
+import platform.Foundation.NSProcessInfo
 import platform.Security.kSecAttrAccessible
 import platform.Security.kSecAttrAccessibleAfterFirstUnlock
 import platform.Security.kSecAttrService
 import kotlin.time.Instant
+
+private const val STUB_SCENARIO_ENV = "TVMANIAC_STUB_SCENARIO"
+private const val AUTHENTICATED_TRAKT_SCENARIO = "authenticatedTrakt"
 
 @OptIn(
     ExperimentalSettingsApi::class,
@@ -37,6 +41,16 @@ public class IosAuthStore(
     }
 
     override suspend fun get(provider: SyncProviderSource): AuthState? = withContext(dispatchers.io) {
+        if (isStubbedAuthenticatedTrakt(provider)) {
+            return@withContext AuthState(
+                accessToken = "stub-access-token",
+                refreshToken = "stub-refresh-token",
+                isAuthorized = true,
+                expiresAt = Instant.DISTANT_FUTURE,
+                tokenLifetimeSeconds = null,
+            )
+        }
+
         val accessToken = settings.getStringOrNull(accessTokenKey(provider))
         val refreshToken = settings.getStringOrNull(refreshTokenKey(provider))
         val expiresAt = settings.getLongOrNull(expiresAtKey(provider))
@@ -72,6 +86,10 @@ public class IosAuthStore(
             settings.remove(tokenLifetimeKey(provider))
         }
     }
+
+    private fun isStubbedAuthenticatedTrakt(provider: SyncProviderSource): Boolean =
+        provider == SyncProviderSource.TRAKT &&
+            NSProcessInfo.processInfo.environment[STUB_SCENARIO_ENV] as String? == AUTHENTICATED_TRAKT_SCENARIO
 
     private fun prefix(provider: SyncProviderSource): String = provider.name.lowercase()
     private fun accessTokenKey(provider: SyncProviderSource) = "${prefix(provider)}_access_token"
