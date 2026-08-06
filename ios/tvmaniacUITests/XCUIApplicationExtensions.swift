@@ -9,6 +9,7 @@ extension XCUIApplication {
         app.launchEnvironment["TVMANIAC_CLEAR_STATE"] = "1"
         app.launch()
         app.dismissSystemAlertIfPresent()
+        app.dismissNotificationRationaleIfPresent()
         return app
     }
 
@@ -125,6 +126,13 @@ extension XCUIApplication {
             }
         }
         alert.buttons.firstMatch.tap()
+    }
+
+    func dismissNotificationRationaleIfPresent() {
+        let dismissButton = element(NotificationRationaleTestTags.shared.DISMISS_BUTTON)
+        if dismissButton.waitForExistence(timeout: 5) {
+            dismissButton.tap()
+        }
     }
 }
 
