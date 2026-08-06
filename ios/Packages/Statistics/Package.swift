@@ -20,6 +20,7 @@ let package = Package(
         .package(name: "Models", path: "../Models"),
         .package(name: "TvManiacKit", path: "../TvManiacKit"),
         .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
+        .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
     ],
     targets: [
         .target(
@@ -31,6 +32,17 @@ let package = Package(
                 "TvManiacKit",
                 .product(name: "TvManiac", package: "TvManiacFramework"),
             ]
+        ),
+        .testTarget(
+            name: "StatisticsTests",
+            dependencies: [
+                "SnapshotTestingLib",
+                "Statistics",
+                "DesignSystem",
+                "Components",
+                "Models",
+            ],
+            exclude: ["__Snapshots__"]
         ),
     ],
     swiftLanguageModes: [.v5]
