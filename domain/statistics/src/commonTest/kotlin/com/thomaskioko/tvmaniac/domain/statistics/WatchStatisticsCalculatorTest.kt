@@ -22,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlin.test.AfterTest
@@ -227,6 +228,53 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
 
         thisMonth.daysWatched shouldBe 2
         thisMonth.daysElapsed shouldBe 3
+    }
+
+    @Test
+    fun `should keep every year that has watches ordered oldest first`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        setShowRuntime(BREAKING_BAD, runtime = 30)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = epochMillis(2026, 1, 5))
+        markWatched(BREAKING_BAD, episodeNumber = 3, watchedAt = epochMillis(2024, 3, 9))
+
+        val years = calculate().yearlyCounts
+
+        years.map { it.year } shouldBe listOf(2024, 2026)
+        years.map { it.episodeCount } shouldBe listOf(1, 2)
+        years.map { it.minutes } shouldBe listOf(30L, 60L)
+    }
+
+    @Test
+    fun `should report every month including the ones with no watches`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = epochMillis(2026, 8, 1))
+        markWatched(BREAKING_BAD, episodeNumber = 3, watchedAt = epochMillis(2026, 1, 5))
+
+        val months = calculate().monthlyCounts
+
+        months.size shouldBe 12
+        months.first().month shouldBe Month.JANUARY
+        months.single { it.month == Month.JANUARY }.episodeCount shouldBe 1
+        months.single { it.month == Month.AUGUST }.episodeCount shouldBe 2
+        months.filter { it.episodeCount == 0 }.size shouldBe 10
+    }
+
+    @Test
+    fun `should report every weekday including the ones with no watches`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = epochMillis(2026, 7, 27))
+        markWatched(BREAKING_BAD, episodeNumber = 3, watchedAt = epochMillis(2026, 8, 1))
+
+        val weekdays = calculate().weekdayCounts
+
+        weekdays.size shouldBe 7
+        weekdays.first().dayOfWeek shouldBe DayOfWeek.MONDAY
+        weekdays.single { it.dayOfWeek == DayOfWeek.MONDAY }.episodeCount shouldBe 2
+        weekdays.single { it.dayOfWeek == DayOfWeek.SATURDAY }.episodeCount shouldBe 1
+        weekdays.filter { it.episodeCount == 0 }.size shouldBe 5
     }
 
     @Test
