@@ -30,18 +30,16 @@ public struct SwiftMostWatchedShowItem: Identifiable, Equatable {
     public let showId: Int64
     public let title: String
     public let posterPath: String?
-    public let episodeCount: Int64
     public let caption: String
 
     public var id: Int64 {
         showId
     }
 
-    public init(showId: Int64, title: String, posterPath: String?, episodeCount: Int64, caption: String) {
+    public init(showId: Int64, title: String, posterPath: String?, caption: String) {
         self.showId = showId
         self.title = title
         self.posterPath = posterPath
-        self.episodeCount = episodeCount
         self.caption = caption
     }
 }

@@ -32,7 +32,7 @@ extension StatisticTile {
 
 extension MostWatchedShowItem {
     func toSwift() -> SwiftMostWatchedShowItem {
-        .init(showId: showId, title: title, posterPath: posterPath, episodeCount: episodeCount, caption: caption)
+        .init(showId: showId, title: title, posterPath: posterPath, caption: caption)
     }
 }
 

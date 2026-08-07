@@ -37,9 +37,9 @@ class StatisticsScreenTest: SnapshotTestCase {
     ]
 
     private let mostWatchedShows: [SwiftMostWatchedShowItem] = [
-        .init(showId: 1396, title: "Breaking Bad", posterPath: nil, episodeCount: 62, caption: "62 episodes"),
-        .init(showId: 1399, title: "Game of Thrones", posterPath: nil, episodeCount: 73, caption: "73 episodes"),
-        .init(showId: 66732, title: "Stranger Things", posterPath: nil, episodeCount: 34, caption: "34 episodes"),
+        .init(showId: 1396, title: "Breaking Bad", posterPath: nil, caption: "62 episodes"),
+        .init(showId: 1399, title: "Game of Thrones", posterPath: nil, caption: "73 episodes"),
+        .init(showId: 66732, title: "Stranger Things", posterPath: nil, caption: "34 episodes"),
     ]
 
     private let watchStatusBreakdown: [SwiftWatchStatusItem] = [
