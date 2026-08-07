@@ -59,6 +59,14 @@ public class StatisticsStateMapper(
                 caption = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysCaption),
             ),
         )
+        add(
+            StatisticTile(
+                id = StatisticTileId.WatchDaysThisMonth,
+                label = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysMonth),
+                value = "${statistics.watchDaysThisMonth.daysWatched}/${statistics.watchDaysThisMonth.daysElapsed}",
+                caption = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysCaption),
+            ),
+        )
         statistics.topWeekday?.let { weekday ->
             add(
                 StatisticTile(
@@ -112,6 +120,14 @@ public class StatisticsStateMapper(
                 label = localizer.getString(StringResourceKey.LabelStatisticsStreak),
                 value = localizer.getPlural(PluralsResourceKey.DayCount, statistics.streak.longestDays),
                 caption = localizer.getString(StringResourceKey.LabelStatisticsLongestRun),
+            ),
+        )
+        add(
+            StatisticTile(
+                id = StatisticTileId.CurrentStreak,
+                label = localizer.getString(StringResourceKey.LabelStatisticsCurrentStreak),
+                value = localizer.getPlural(PluralsResourceKey.DayCount, statistics.streak.currentDays),
+                caption = localizer.getString(StringResourceKey.LabelStatisticsRunningNow),
             ),
         )
     }.toImmutableList()

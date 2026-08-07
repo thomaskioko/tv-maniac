@@ -7,6 +7,8 @@ public enum class StatisticTileId {
     PeakYear,
     TopWeekday,
     WatchStreak,
+    CurrentStreak,
     LastThirtyDays,
     WatchDaysThisYear,
+    WatchDaysThisMonth,
 }
