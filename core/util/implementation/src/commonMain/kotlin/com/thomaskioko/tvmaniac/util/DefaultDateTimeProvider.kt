@@ -6,9 +6,14 @@ import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
@@ -67,8 +72,28 @@ public class DefaultDateTimeProvider(
     override fun formatDayOfWeek(date: LocalDate, timeZone: TimeZone): String =
         formatterUtil.formatDateTime(date.atStartOfDayIn(timeZone).toEpochMilliseconds(), DAY_OF_WEEK_PATTERN)
 
+    override fun formatShortMonth(month: Month): String =
+        formatterUtil.formatDateTime(
+            LocalDate(REFERENCE_YEAR, month, 1).atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
+            SHORT_MONTH_PATTERN,
+        )
+
+    override fun formatShortDayOfWeek(dayOfWeek: DayOfWeek): String =
+        formatterUtil.formatDateTime(
+            REFERENCE_WEEK_START.plus(dayOfWeek.isoDayNumber - 1, DateTimeUnit.DAY)
+                .atStartOfDayIn(TimeZone.UTC)
+                .toEpochMilliseconds(),
+            SHORT_DAY_OF_WEEK_PATTERN,
+        )
+
     private companion object {
         private const val DISPLAY_DATE_PATTERN = "MMM d, yyyy"
         private const val DAY_OF_WEEK_PATTERN = "EEEE"
+        private const val SHORT_MONTH_PATTERN = "MMM"
+        private const val SHORT_DAY_OF_WEEK_PATTERN = "EEE"
+        private const val REFERENCE_YEAR = 2024
+
+        // 2024-01-01 is a Monday, so an ISO day number maps onto this week by its offset.
+        private val REFERENCE_WEEK_START = LocalDate(2024, 1, 1)
     }
 }

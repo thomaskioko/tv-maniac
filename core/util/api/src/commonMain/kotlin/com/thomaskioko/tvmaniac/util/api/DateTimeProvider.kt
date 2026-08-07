@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.util.api
 
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlin.time.Instant
 
@@ -16,5 +18,7 @@ public interface DateTimeProvider {
     public fun currentYear(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int
     public fun formatDisplayDate(date: LocalDate, timeZone: TimeZone = TimeZone.UTC): String
     public fun formatDayOfWeek(date: LocalDate, timeZone: TimeZone = TimeZone.UTC): String
+    public fun formatShortMonth(month: Month): String
+    public fun formatShortDayOfWeek(dayOfWeek: DayOfWeek): String
     public fun getTimeZone(): TimeZone = TimeZone.currentSystemDefault()
 }

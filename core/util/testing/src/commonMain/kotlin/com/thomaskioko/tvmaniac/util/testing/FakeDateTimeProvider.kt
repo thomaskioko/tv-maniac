@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.util.testing
 
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
@@ -41,6 +43,10 @@ public class FakeDateTimeProvider(
     override fun formatDisplayDate(date: LocalDate, timeZone: TimeZone): String = formatDisplayDateResult
 
     override fun formatDayOfWeek(date: LocalDate, timeZone: TimeZone): String = formatDayOfWeekResult
+
+    override fun formatShortMonth(month: Month): String = month.name
+
+    override fun formatShortDayOfWeek(dayOfWeek: DayOfWeek): String = dayOfWeek.name
 
     public fun setCurrentTime(instant: Instant) {
         currentTime = instant
