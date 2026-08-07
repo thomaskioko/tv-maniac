@@ -177,13 +177,18 @@ private fun AxisLabels(
     bars: ImmutableList<ActivityBar>,
     modifier: Modifier = Modifier,
 ) {
-    val step = ((bars.size - 1) / (AXIS_LABEL_COUNT - 1)).coerceAtLeast(1)
+    // Evenly spaced and always including both ends, so the axis names where it starts and stops.
+    val labelled = if (bars.lastIndex <= 0) {
+        setOf(0)
+    } else {
+        (0 until AXIS_LABEL_COUNT).map { it * bars.lastIndex / (AXIS_LABEL_COUNT - 1) }.toSet()
+    }
 
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        bars.filterIndexed { index, _ -> index % step == 0 }.forEach { bar ->
+        bars.filterIndexed { index, _ -> index in labelled }.forEach { bar ->
             Text(
                 text = bar.label,
                 style = MaterialTheme.typography.labelSmall,

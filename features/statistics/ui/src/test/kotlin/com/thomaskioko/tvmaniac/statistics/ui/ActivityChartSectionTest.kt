@@ -73,7 +73,23 @@ class ActivityChartSectionTest {
 
     @Test
     fun `should write the axis labels in full given a long run of years`() {
-        val years = (2008..2026).map { year ->
+        showYears(2008..2026)
+
+        listOf("2008", "2014", "2020", "2026").forEach { year ->
+            composeTestRule.onNodeWithText(year).assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun `should label the first and last year given the span does not divide evenly`() {
+        showYears(2016..2026)
+
+        composeTestRule.onNodeWithText("2016").assertIsDisplayed()
+        composeTestRule.onNodeWithText("2026").assertIsDisplayed()
+    }
+
+    private fun showYears(years: IntRange) {
+        val bars = years.map { year ->
             ActivityBar(
                 label = year.toString(),
                 episodeCount = 1,
@@ -85,17 +101,13 @@ class ActivityChartSectionTest {
         composeTestRule.setContent {
             TvManiacBackground {
                 ActivityChartSection(
-                    bars = years,
+                    bars = bars,
                     title = "Episodes by year",
                     sectionTestTag = StatisticsTestTags.YEARLY_ACTIVITY_TEST_TAG,
                     sectionName = "yearly",
                     showAxisLabels = true,
                 )
             }
-        }
-
-        listOf("2008", "2014", "2020", "2026").forEach { year ->
-            composeTestRule.onNodeWithText(year).assertIsDisplayed()
         }
     }
 
