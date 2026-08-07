@@ -43,9 +43,11 @@ import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsAction
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsPresenter
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsState
+import com.thomaskioko.tvmaniac.statistics.ui.components.ActivityChartSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.MostWatchedShowsSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.RatingsSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.StatisticTileGrid
+import com.thomaskioko.tvmaniac.statistics.ui.components.WatchHeatMapSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.WatchStatusSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.WatchTimeSection
 import com.thomaskioko.tvmaniac.testtags.statistics.StatisticsTestTags
@@ -235,6 +237,48 @@ private fun StatisticsContent(
                         .fillMaxWidth()
                         .padding(horizontal = TvManiacSpacing.medium)
                         .testTag(StatisticsTestTags.MARKED_WATCHED_NOTE_TEST_TAG),
+                )
+            }
+        }
+
+        state.heatMap?.let { heatMap ->
+            item(key = "heat_map") {
+                WatchHeatMapSection(
+                    heatMap = heatMap,
+                    title = state.labels.episodesOverTimeTitle,
+                )
+            }
+        }
+
+        if (state.yearlyActivity.isNotEmpty()) {
+            item(key = "yearly_activity") {
+                ActivityChartSection(
+                    bars = state.yearlyActivity,
+                    title = state.labels.yearlyActivityTitle,
+                    sectionTestTag = StatisticsTestTags.YEARLY_ACTIVITY_TEST_TAG,
+                    sectionName = "yearly",
+                )
+            }
+        }
+
+        if (state.monthlyActivity.isNotEmpty()) {
+            item(key = "monthly_activity") {
+                ActivityChartSection(
+                    bars = state.monthlyActivity,
+                    title = state.labels.monthlyActivityTitle,
+                    sectionTestTag = StatisticsTestTags.MONTHLY_ACTIVITY_TEST_TAG,
+                    sectionName = "monthly",
+                )
+            }
+        }
+
+        if (state.weekdayActivity.isNotEmpty()) {
+            item(key = "weekday_activity") {
+                ActivityChartSection(
+                    bars = state.weekdayActivity,
+                    title = state.labels.weekdayActivityTitle,
+                    sectionTestTag = StatisticsTestTags.WEEKDAY_ACTIVITY_TEST_TAG,
+                    sectionName = "weekday",
                 )
             }
         }
