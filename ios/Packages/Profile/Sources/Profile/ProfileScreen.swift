@@ -14,6 +14,7 @@ public struct ProfileScreen: View {
     let onRetryLists: () -> Void
     let onShowClicked: (Int64) -> Void
     let onRetryProgress: () -> Void
+    let onViewStatistics: () -> Void
 
     public init(
         state: State,
@@ -22,7 +23,8 @@ public struct ProfileScreen: View {
         onViewListsClicked: @escaping () -> Void = {},
         onRetryLists: @escaping () -> Void = {},
         onShowClicked: @escaping (Int64) -> Void = { _ in },
-        onRetryProgress: @escaping () -> Void = {}
+        onRetryProgress: @escaping () -> Void = {},
+        onViewStatistics: @escaping () -> Void = {}
     ) {
         self.state = state
         self.onSettingsClicked = onSettingsClicked
@@ -31,6 +33,7 @@ public struct ProfileScreen: View {
         self.onRetryLists = onRetryLists
         self.onShowClicked = onShowClicked
         self.onRetryProgress = onRetryProgress
+        self.onViewStatistics = onViewStatistics
     }
 
     @SwiftUI.State private var showGlass: Double = 0
@@ -176,7 +179,12 @@ public struct ProfileScreen: View {
     // MARK: - Stats Section
 
     private func statsSection(stats: SwiftProfileStats) -> some View {
-        CollapsibleSection(title: state.statsTitle) {
+        CollapsibleSection(
+            title: state.statsTitle,
+            showMore: true,
+            onMoreClick: onViewStatistics,
+            moreTestTag: ProfileTestTags.shared.STATISTICS_ROW_TEST_TAG
+        ) {
             VStack(spacing: appTheme.spacing.small) {
                 HStack(spacing: appTheme.spacing.small) {
                     StatsCardItem(

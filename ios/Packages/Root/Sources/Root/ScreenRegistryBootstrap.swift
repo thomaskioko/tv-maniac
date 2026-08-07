@@ -20,6 +20,7 @@ import SeasonDetails
 import Settings
 import ShowDetails
 import ShowList
+import Statistics
 import SwiftUI
 import Trailers
 import TvManiac
@@ -44,6 +45,7 @@ public enum ScreenRegistryBootstrap {
         #endif
         registry.registerScreen(for: MoreShowsPresenter.self) { MoreShowsView(presenter: $0) }
         registry.registerScreen(for: TrailersPresenter.self) { TrailersView(presenter: $0) }
+        registry.registerScreen(for: StatisticsPresenter.self) { StatisticsView(presenter: $0) }
     }
 
     private static func registerSheets(into registry: ScreenRegistry) {

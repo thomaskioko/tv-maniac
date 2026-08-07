@@ -99,7 +99,10 @@ public struct RootNavigationView: View {
                 onDismiss: {
                     rationaleActionTaken = true
                     rootPresenter.onRationaleDismissed()
-                }
+                },
+                sheetTestTag: NotificationRationaleTestTags.shared.BOTTOM_SHEET,
+                enableButtonTestTag: NotificationRationaleTestTags.shared.ENABLE_BUTTON,
+                dismissButtonTestTag: NotificationRationaleTestTags.shared.DISMISS_BUTTON
             )
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)

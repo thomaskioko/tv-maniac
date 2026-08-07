@@ -295,6 +295,7 @@ graph TB
     :domain:showdetails[showdetails]:::multiplatform
     :domain:similarshows[similarshows]:::multiplatform
     :domain:start-watching[start-watching]:::multiplatform
+    :domain:statistics[statistics]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
     :domain:theme[theme]:::multiplatform
     :domain:traktlists[traktlists]:::multiplatform
@@ -400,6 +401,7 @@ graph TB
   subgraph :features:statistics
     direction TB
     :features:statistics:nav[nav]:::multiplatform
+    :features:statistics:presenter[presenter]:::multiplatform
   end
   subgraph :features:trailers
     direction TB
@@ -962,6 +964,12 @@ graph TB
   :domain:start-watching --> :core:base
   :domain:start-watching --> :data:episode:api
   :domain:start-watching --> :data:start-watching:api
+  :domain:statistics --> :core:base
+  :domain:statistics --> :core:util:api
+  :domain:statistics --> :data:database:sqldelight
+  :domain:statistics --> :data:episode:api
+  :domain:statistics --> :data:ratings:api
+  :domain:statistics --> :data:watch-status:api
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api
   :domain:theme --> :i18n:generator
@@ -1253,6 +1261,19 @@ graph TB
   :features:start-watching:presenter -.-> :features:show-details:nav
   :features:start-watching:presenter --> :navigation:api
   :features:statistics:nav --> :navigation:api
+  :features:statistics:presenter --> :core:base
+  :features:statistics:presenter --> :core:util:api
+  :features:statistics:presenter --> :core:view
+  :features:statistics:presenter --> :data:account-manager:api
+  :features:statistics:presenter --> :data:database:sqldelight
+  :features:statistics:presenter --> :data:episode:api
+  :features:statistics:presenter --> :data:subscription:api
+  :features:statistics:presenter --> :domain:statistics
+  :features:statistics:presenter -.-> :features:show-details:nav
+  :features:statistics:presenter --> :features:statistics:nav
+  :features:statistics:presenter --> :i18n:api
+  :features:statistics:presenter --> :i18n:generator
+  :features:statistics:presenter --> :navigation:api
   :features:trailers:nav --> :navigation:api
   :features:trailers:presenter --> :core:base
   :features:trailers:presenter --> :core:logger:api
@@ -1429,6 +1450,7 @@ graph TB
   :ios-framework -.-> :features:show-list:nav
   :ios-framework --> :features:show-list:presenter
   :ios-framework --> :features:start-watching:presenter
+  :ios-framework --> :features:statistics:presenter
   :ios-framework --> :features:trailers:presenter
   :ios-framework --> :features:upnext:presenter
   :ios-framework --> :i18n:api
