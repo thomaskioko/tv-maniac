@@ -169,12 +169,14 @@ internal class StatisticsPresenterTest {
             awaitItem().tiles.map { it.id } shouldBe listOf(
                 StatisticTileId.PeakYear,
                 StatisticTileId.WatchDaysThisYear,
+                StatisticTileId.WatchDaysThisMonth,
                 StatisticTileId.TopWeekday,
                 StatisticTileId.LastThirtyDays,
                 StatisticTileId.TitlesTracked,
                 StatisticTileId.Episodes,
                 StatisticTileId.AverageRating,
                 StatisticTileId.WatchStreak,
+                StatisticTileId.CurrentStreak,
             )
         }
     }

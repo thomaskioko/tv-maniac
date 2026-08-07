@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
 import com.thomaskioko.tvmaniac.statistics.presenter.model.HeatMap
 import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
@@ -24,6 +25,7 @@ import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.isoDayNumber
 
@@ -56,6 +58,14 @@ public class StatisticsStateMapper(
                 id = StatisticTileId.WatchDaysThisYear,
                 label = localizer.getString(StringResourceKey.LabelStatisticsWatchDays),
                 value = "${statistics.watchDaysThisYear.daysWatched}/${statistics.watchDaysThisYear.daysElapsed}",
+                caption = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysCaption),
+            ),
+        )
+        add(
+            StatisticTile(
+                id = StatisticTileId.WatchDaysThisMonth,
+                label = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysMonth),
+                value = "${statistics.watchDaysThisMonth.daysWatched}/${statistics.watchDaysThisMonth.daysElapsed}",
                 caption = localizer.getString(StringResourceKey.LabelStatisticsWatchDaysCaption),
             ),
         )
@@ -114,6 +124,14 @@ public class StatisticsStateMapper(
                 caption = localizer.getString(StringResourceKey.LabelStatisticsLongestRun),
             ),
         )
+        add(
+            StatisticTile(
+                id = StatisticTileId.CurrentStreak,
+                label = localizer.getString(StringResourceKey.LabelStatisticsCurrentStreak),
+                value = localizer.getPlural(PluralsResourceKey.DayCount, statistics.streak.currentDays),
+                caption = localizer.getString(StringResourceKey.LabelStatisticsRunningNow),
+            ),
+        )
     }.toImmutableList()
 
     public fun toHeatMap(statistics: WatchStatistics): WatchHeatMap? {
@@ -168,6 +186,26 @@ public class StatisticsStateMapper(
         }.toImmutableList()
     }
 
+    public fun toYearlyActivity(statistics: WatchStatistics): ImmutableList<ActivityBar> {
+        val counts = statistics.yearlyCounts
+        if (counts.isEmpty()) return persistentListOf()
+        val byYear = counts.associateBy { it.year }
+        val lastYear = maxOf(counts.last().year, dateTimeProvider.currentYear())
+        return (counts.first().year..lastYear)
+            .map { year -> year.toString() to (byYear[year]?.episodeCount ?: 0) }
+            .toActivityBars()
+    }
+
+    public fun toMonthlyActivity(statistics: WatchStatistics): ImmutableList<ActivityBar> =
+        statistics.monthlyCounts
+            .map { dateTimeProvider.formatShortMonth(it.month) to it.episodeCount }
+            .toActivityBars()
+
+    public fun toWeekdayActivity(statistics: WatchStatistics): ImmutableList<ActivityBar> =
+        statistics.weekdayCounts
+            .map { dateTimeProvider.formatShortDayOfWeek(it.dayOfWeek) to it.episodeCount }
+            .toActivityBars()
+
     public fun toLabels(): StatisticsLabels = StatisticsLabels(
         screenTitle = localizer.getString(StringResourceKey.LabelStatisticsTitle),
         emptyMessage = localizer.getString(StringResourceKey.LabelStatisticsEmpty),
@@ -180,12 +218,27 @@ public class StatisticsStateMapper(
         mostWatchedTitle = localizer.getString(StringResourceKey.LabelStatisticsMostWatched),
         watchStatusTitle = localizer.getString(StringResourceKey.LabelStatisticsWatchStatus),
         ratingsTitle = localizer.getString(StringResourceKey.LabelStatisticsRatings),
+        yearlyActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsYearlyActivity),
+        monthlyActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsMonthlyActivity),
+        weekdayActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsWeekdayActivity),
         lockedTitle = localizer.getString(StringResourceKey.LabelStatisticsLockedTitle),
         lockedMessage = localizer.getString(StringResourceKey.LabelStatisticsLockedMessage),
         lockedBadgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
         lockedActionText = localizer.getString(StringResourceKey.LabelUpgradeToPremium),
         lockedContentDescription = localizer.getString(StringResourceKey.CdLocked),
     )
+
+    private fun List<Pair<String, Int>>.toActivityBars(): ImmutableList<ActivityBar> {
+        val busiest = maxOfOrNull { it.second } ?: 0
+        return map { (label, episodeCount) ->
+            ActivityBar(
+                label = label,
+                episodeCount = episodeCount,
+                caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, episodeCount),
+                fraction = if (busiest == 0) 0f else episodeCount.toFloat() / busiest,
+            )
+        }.toImmutableList()
+    }
 
     private fun levelFor(day: DailyWatchCount, busiest: Int): Int = when {
         day.episodeCount == 0 -> 0

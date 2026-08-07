@@ -547,6 +547,12 @@
     <string name="label_statistics_most_watched">Most watched shows</string>
     <string name="label_statistics_watch_status">Shows by status</string>
     <string name="label_statistics_ratings">Your ratings</string>
+    <string name="label_statistics_yearly_activity">Episodes by year</string>
+    <string name="label_statistics_monthly_activity">Episodes by month</string>
+    <string name="label_statistics_weekday_activity">Episodes by day of the week</string>
+    <string name="label_statistics_current_streak">Current streak</string>
+    <string name="label_statistics_running_now">running now</string>
+    <string name="label_statistics_watch_days_month">Watch days this month</string>
     <string name="label_watch_status_watchlist">Watchlist</string>
     <string name="label_watch_status_watching">Watching</string>
     <string name="label_watch_status_completed">Completed</string>
