@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
 import com.thomaskioko.tvmaniac.statistics.ui.components.ActivityChartSection
 import com.thomaskioko.tvmaniac.testtags.statistics.StatisticsTestTags
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -68,6 +69,34 @@ class ActivityChartSectionTest {
         composeTestRule.onNodeWithTag(StatisticsTestTags.activityBar("weekday", "Sat")).performClick()
 
         composeTestRule.onNodeWithTag(StatisticsTestTags.ACTIVITY_TOOLTIP_TEST_TAG).assertDoesNotExist()
+    }
+
+    @Test
+    fun `should write the axis labels in full given a long run of years`() {
+        val years = (2008..2026).map { year ->
+            ActivityBar(
+                label = year.toString(),
+                episodeCount = 1,
+                caption = "1 episode",
+                fraction = 0.5f,
+            )
+        }.toImmutableList()
+
+        composeTestRule.setContent {
+            TvManiacBackground {
+                ActivityChartSection(
+                    bars = years,
+                    title = "Episodes by year",
+                    sectionTestTag = StatisticsTestTags.YEARLY_ACTIVITY_TEST_TAG,
+                    sectionName = "yearly",
+                    showAxisLabels = true,
+                )
+            }
+        }
+
+        listOf("2008", "2014", "2020", "2026").forEach { year ->
+            composeTestRule.onNodeWithText(year).assertIsDisplayed()
+        }
     }
 
     private fun showChart() {

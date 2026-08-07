@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -181,19 +180,16 @@ private fun AxisLabels(
     val step = ((bars.size - 1) / (AXIS_LABEL_COUNT - 1)).coerceAtLeast(1)
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = TvManiacSpacing.medium),
-        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxxSmall),
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        bars.forEachIndexed { index, bar ->
+        bars.filterIndexed { index, _ -> index % step == 0 }.forEach { bar ->
             Text(
-                text = if (index % step == 0) bar.label else "",
+                text = bar.label,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
-                modifier = Modifier.weight(1f),
             )
         }
     }
