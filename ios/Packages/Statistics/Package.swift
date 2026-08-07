@@ -28,7 +28,6 @@ let package = Package(
             dependencies: [
                 "DesignSystem",
                 "Components",
-                "Models",
                 "TvManiacKit",
                 .product(name: "TvManiac", package: "TvManiacFramework"),
             ]
