@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.domain.statistics.model.MonthlyWatchCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.domain.statistics.model.WeekdayWatchCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.YearlyWatchCount
+import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTileId
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -18,8 +19,10 @@ import kotlin.test.Test
 
 internal class StatisticsStateMapperTest {
 
+    private val localizer = FakeLocalizer()
+
     private val mapper = StatisticsStateMapper(
-        localizer = FakeLocalizer(),
+        localizer = localizer,
         formatterUtil = FakeFormatterUtil(),
         dateTimeProvider = FakeDateTimeProvider(),
     )
@@ -64,9 +67,38 @@ internal class StatisticsStateMapperTest {
 
         val bars = mapper.toYearlyActivity(statistics)
 
-        bars.map { it.label } shouldBe listOf("2024", "2026")
-        bars.map { it.episodeCount } shouldBe listOf(1, 4)
-        bars.map { it.fraction } shouldBe listOf(0.25f, 1f)
+        bars.map { it.episodeCount } shouldBe listOf(1, 0, 4)
+        bars.map { it.fraction } shouldBe listOf(0.25f, 0f, 1f)
+    }
+
+    @Test
+    fun `should give a bar to every year between the first and last watch`() {
+        val statistics = WatchStatistics.EMPTY.copy(
+            yearlyCounts = listOf(
+                YearlyWatchCount(year = 2020, episodeCount = 2, minutes = 60),
+                YearlyWatchCount(year = 2026, episodeCount = 4, minutes = 120),
+            ),
+        )
+
+        val bars = mapper.toYearlyActivity(statistics)
+
+        bars.map { it.label } shouldBe listOf("2020", "2021", "2022", "2023", "2024", "2025", "2026")
+        bars.filter { it.episodeCount == 0 }.size shouldBe 5
+    }
+
+    @Test
+    fun `should give each bar a caption naming its episode count`() {
+        val statistics = WatchStatistics.EMPTY.copy(
+            yearlyCounts = listOf(YearlyWatchCount(year = 2026, episodeCount = 4, minutes = 120)),
+        )
+
+        mapper.toYearlyActivity(statistics).single().caption shouldBe
+            localizer.getPlural(PluralsResourceKey.EpisodeCount, 4)
+    }
+
+    @Test
+    fun `should give no yearly bars given nothing was watched`() {
+        mapper.toYearlyActivity(WatchStatistics.EMPTY).size shouldBe 0
     }
 
     @Test

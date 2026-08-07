@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.util.api.FormatterUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.isoDayNumber
 
@@ -185,10 +186,14 @@ public class StatisticsStateMapper(
         }.toImmutableList()
     }
 
-    public fun toYearlyActivity(statistics: WatchStatistics): ImmutableList<ActivityBar> =
-        statistics.yearlyCounts
-            .map { it.year.toString() to it.episodeCount }
+    public fun toYearlyActivity(statistics: WatchStatistics): ImmutableList<ActivityBar> {
+        val counts = statistics.yearlyCounts
+        if (counts.isEmpty()) return persistentListOf()
+        val byYear = counts.associateBy { it.year }
+        return (counts.first().year..counts.last().year)
+            .map { year -> year.toString() to (byYear[year]?.episodeCount ?: 0) }
             .toActivityBars()
+    }
 
     public fun toMonthlyActivity(statistics: WatchStatistics): ImmutableList<ActivityBar> =
         statistics.monthlyCounts
@@ -228,6 +233,7 @@ public class StatisticsStateMapper(
             ActivityBar(
                 label = label,
                 episodeCount = episodeCount,
+                caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, episodeCount),
                 fraction = if (busiest == 0) 0f else episodeCount.toFloat() / busiest,
             )
         }.toImmutableList()
