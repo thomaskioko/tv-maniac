@@ -190,7 +190,8 @@ public class StatisticsStateMapper(
         val counts = statistics.yearlyCounts
         if (counts.isEmpty()) return persistentListOf()
         val byYear = counts.associateBy { it.year }
-        return (counts.first().year..counts.last().year)
+        val lastYear = maxOf(counts.last().year, dateTimeProvider.currentYear())
+        return (counts.first().year..lastYear)
             .map { year -> year.toString() to (byYear[year]?.episodeCount ?: 0) }
             .toActivityBars()
     }
