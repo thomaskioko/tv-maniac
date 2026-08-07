@@ -208,6 +208,16 @@ private fun StatisticsContent(
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.large),
     ) {
+        state.heatMap?.let { heatMap ->
+            item(key = "heat_map") {
+                WatchHeatMapSection(
+                    heatMap = heatMap,
+                    title = state.labels.episodesOverTimeTitle,
+                    modifier = Modifier.padding(top = TvManiacSpacing.small),
+                )
+            }
+        }
+
         state.totalWatchTime?.let { watchTime ->
             item(key = "watch_time_hero") {
                 WatchTimeSection(
@@ -216,7 +226,6 @@ private fun StatisticsContent(
                     daysLabel = state.labels.daysLabel,
                     hoursLabel = state.labels.hoursLabel,
                     minutesLabel = state.labels.minutesLabel,
-                    modifier = Modifier.padding(top = TvManiacSpacing.small),
                 )
             }
         }
@@ -237,15 +246,6 @@ private fun StatisticsContent(
                         .fillMaxWidth()
                         .padding(horizontal = TvManiacSpacing.medium)
                         .testTag(StatisticsTestTags.MARKED_WATCHED_NOTE_TEST_TAG),
-                )
-            }
-        }
-
-        state.heatMap?.let { heatMap ->
-            item(key = "heat_map") {
-                WatchHeatMapSection(
-                    heatMap = heatMap,
-                    title = state.labels.episodesOverTimeTitle,
                 )
             }
         }
