@@ -3,22 +3,28 @@ package com.thomaskioko.tvmaniac.domain.statistics
 import com.thomaskioko.tvmaniac.db.WatchStatus
 import com.thomaskioko.tvmaniac.domain.statistics.model.AverageRating
 import com.thomaskioko.tvmaniac.domain.statistics.model.DailyWatchCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.MonthlyWatchCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.PeakYear
 import com.thomaskioko.tvmaniac.domain.statistics.model.PeriodSummary
 import com.thomaskioko.tvmaniac.domain.statistics.model.RatingCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.ShowsTracked
 import com.thomaskioko.tvmaniac.domain.statistics.model.TopWeekday
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDaysThisMonth
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDaysThisYear
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDuration
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatusCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
+import com.thomaskioko.tvmaniac.domain.statistics.model.WeekdayWatchCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.YearlyWatchCount
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
@@ -51,12 +57,16 @@ public class WatchStatisticsCalculator(
             topWeekday = calculateTopWeekday(watchedDays),
             streak = calculateStreak(watchedDays, today),
             watchDaysThisYear = calculateWatchDaysThisYear(watchedDays, today),
+            watchDaysThisMonth = calculateWatchDaysThisMonth(watchedDays, today),
             lastThirtyDays = calculatePeriodSummary(
                 watchedDays = watchedDays,
                 from = today.plus(-LAST_PERIOD_DAYS, DateTimeUnit.DAY),
             ),
             peakYear = calculatePeakYear(watchedDays),
             dailyCounts = calculateDailyCounts(watchedDays, today),
+            yearlyCounts = calculateYearlyCounts(watchedDays),
+            monthlyCounts = calculateMonthlyCounts(watchedDays),
+            weekdayCounts = calculateWeekdayCounts(watchedDays),
             mostWatchedShows = mostWatchedShows,
             showsByWatchStatus = getShowsByWatchStatus(showCountsByStatus),
             ratingDistribution = getRatingDistribution(ratingCounts),
@@ -118,6 +128,46 @@ public class WatchStatisticsCalculator(
             daysWatched = watchedDays.filter { it.date.year == today.year }.distinctBy { it.date }.size,
             daysElapsed = today.dayOfYear,
         )
+
+    private fun calculateWatchDaysThisMonth(watchedDays: List<WatchedDay>, today: LocalDate): WatchDaysThisMonth =
+        WatchDaysThisMonth(
+            daysWatched = watchedDays
+                .filter { it.date.year == today.year && it.date.month == today.month }
+                .distinctBy { it.date }
+                .size,
+            daysElapsed = today.dayOfMonth,
+        )
+
+    private fun calculateYearlyCounts(watchedDays: List<WatchedDay>): List<YearlyWatchCount> =
+        watchedDays.groupBy { it.date.year }
+            .map { (year, days) ->
+                YearlyWatchCount(year = year, episodeCount = days.size, minutes = days.sumOf { it.minutes })
+            }
+            .sortedBy { it.year }
+
+    private fun calculateMonthlyCounts(watchedDays: List<WatchedDay>): List<MonthlyWatchCount> {
+        val byMonth = watchedDays.groupBy { it.date.month }
+        return Month.entries.map { month ->
+            val inMonth = byMonth[month].orEmpty()
+            MonthlyWatchCount(
+                month = month,
+                episodeCount = inMonth.size,
+                minutes = inMonth.sumOf { it.minutes },
+            )
+        }
+    }
+
+    private fun calculateWeekdayCounts(watchedDays: List<WatchedDay>): List<WeekdayWatchCount> {
+        val byWeekday = watchedDays.groupBy { it.date.dayOfWeek }
+        return DayOfWeek.entries.map { dayOfWeek ->
+            val onDay = byWeekday[dayOfWeek].orEmpty()
+            WeekdayWatchCount(
+                dayOfWeek = dayOfWeek,
+                episodeCount = onDay.size,
+                minutes = onDay.sumOf { it.minutes },
+            )
+        }
+    }
 
     private fun calculatePeriodSummary(watchedDays: List<WatchedDay>, from: LocalDate): PeriodSummary {
         val inPeriod = watchedDays.filter { it.date >= from }
