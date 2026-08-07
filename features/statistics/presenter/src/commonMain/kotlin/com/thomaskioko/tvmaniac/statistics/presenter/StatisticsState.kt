@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.statistics.presenter
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
 import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTile
@@ -21,6 +22,9 @@ public data class StatisticsState(
     val mostWatchedShows: ImmutableList<MostWatchedShowItem> = persistentListOf(),
     val watchStatusBreakdown: ImmutableList<WatchStatusItem> = persistentListOf(),
     val ratingBreakdown: ImmutableList<RatingBar> = persistentListOf(),
+    val yearlyActivity: ImmutableList<ActivityBar> = persistentListOf(),
+    val monthlyActivity: ImmutableList<ActivityBar> = persistentListOf(),
+    val weekdayActivity: ImmutableList<ActivityBar> = persistentListOf(),
     val labels: StatisticsLabels = StatisticsLabels(),
     val message: UiMessage? = null,
 ) {

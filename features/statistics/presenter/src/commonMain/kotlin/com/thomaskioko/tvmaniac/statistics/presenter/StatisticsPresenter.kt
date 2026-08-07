@@ -63,6 +63,9 @@ public class StatisticsPresenter internal constructor(
             mostWatchedShows = stateMapper.toMostWatchedShows(statistics),
             watchStatusBreakdown = stateMapper.toWatchStatusBreakdown(statistics),
             ratingBreakdown = stateMapper.toRatingBreakdown(statistics),
+            yearlyActivity = stateMapper.toYearlyActivity(statistics),
+            monthlyActivity = stateMapper.toMonthlyActivity(statistics),
+            weekdayActivity = stateMapper.toWeekdayActivity(statistics),
             labels = stateMapper.toLabels(),
             message = message,
         )
