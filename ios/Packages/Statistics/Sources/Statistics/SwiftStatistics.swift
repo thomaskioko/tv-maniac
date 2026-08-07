@@ -58,6 +58,32 @@ public struct SwiftWatchStatusItem: Identifiable, Equatable {
     }
 }
 
+public struct SwiftActivityBar: Identifiable, Equatable {
+    public let label: String
+    public let caption: String
+    public let fraction: Float
+
+    public var id: String {
+        label
+    }
+
+    public init(label: String, caption: String, fraction: Float) {
+        self.label = label
+        self.caption = caption
+        self.fraction = fraction
+    }
+}
+
+public struct SwiftWatchHeatMap: Equatable {
+    public let levels: [Int]
+    public let leadingBlankCells: Int
+
+    public init(levels: [Int], leadingBlankCells: Int) {
+        self.levels = levels
+        self.leadingBlankCells = leadingBlankCells
+    }
+}
+
 public struct SwiftRatingBar: Identifiable, Equatable {
     public let rating: Int32
     public let count: Int64
@@ -81,10 +107,14 @@ public struct SwiftStatisticsLabels: Equatable {
     public let daysLabel: String
     public let hoursLabel: String
     public let minutesLabel: String
+    public let episodesOverTimeTitle: String
     public let markedWatchedNote: String
     public let mostWatchedTitle: String
     public let watchStatusTitle: String
     public let ratingsTitle: String
+    public let yearlyActivityTitle: String
+    public let monthlyActivityTitle: String
+    public let weekdayActivityTitle: String
     public let lockedTitle: String
     public let lockedMessage: String
     public let lockedBadgeText: String
@@ -98,10 +128,14 @@ public struct SwiftStatisticsLabels: Equatable {
         daysLabel: String = "",
         hoursLabel: String = "",
         minutesLabel: String = "",
+        episodesOverTimeTitle: String = "",
         markedWatchedNote: String = "",
         mostWatchedTitle: String = "",
         watchStatusTitle: String = "",
         ratingsTitle: String = "",
+        yearlyActivityTitle: String = "",
+        monthlyActivityTitle: String = "",
+        weekdayActivityTitle: String = "",
         lockedTitle: String = "",
         lockedMessage: String = "",
         lockedBadgeText: String = "",
@@ -114,10 +148,14 @@ public struct SwiftStatisticsLabels: Equatable {
         self.daysLabel = daysLabel
         self.hoursLabel = hoursLabel
         self.minutesLabel = minutesLabel
+        self.episodesOverTimeTitle = episodesOverTimeTitle
         self.markedWatchedNote = markedWatchedNote
         self.mostWatchedTitle = mostWatchedTitle
         self.watchStatusTitle = watchStatusTitle
         self.ratingsTitle = ratingsTitle
+        self.yearlyActivityTitle = yearlyActivityTitle
+        self.monthlyActivityTitle = monthlyActivityTitle
+        self.weekdayActivityTitle = weekdayActivityTitle
         self.lockedTitle = lockedTitle
         self.lockedMessage = lockedMessage
         self.lockedBadgeText = lockedBadgeText
