@@ -2,8 +2,9 @@ import Components
 import DesignSystem
 import Models
 import SnapshotTestingLib
-import Statistics
+@testable import Statistics
 import SwiftUI
+import TvManiac
 import XCTest
 
 class StatisticsScreenTest: SnapshotTestCase {
@@ -14,10 +15,14 @@ class StatisticsScreenTest: SnapshotTestCase {
         daysLabel: "days",
         hoursLabel: "hours",
         minutesLabel: "minutes",
+        episodesOverTimeTitle: "Your year of watching",
         markedWatchedNote: "Dates show when episodes were marked as watched, not when you watched them.",
         mostWatchedTitle: "Most watched shows",
         watchStatusTitle: "Shows by status",
         ratingsTitle: "Your ratings",
+        yearlyActivityTitle: "Episodes by year",
+        monthlyActivityTitle: "Episodes by month",
+        weekdayActivityTitle: "Episodes by day of the week",
         lockedTitle: "Statistics are a Premium feature",
         lockedMessage: "Upgrade to Premium to see how you watch.",
         lockedBadgeText: "Premium",
@@ -58,15 +63,66 @@ class StatisticsScreenTest: SnapshotTestCase {
         .init(rating: 6, count: 1, fraction: 0.08),
     ]
 
+    private let yearlyActivity: [SwiftActivityBar] = [
+        .init(label: "2022", caption: "84 episodes", fraction: 0.27),
+        .init(label: "2023", caption: "312 episodes", fraction: 1),
+        .init(label: "2024", caption: "196 episodes", fraction: 0.63),
+        .init(label: "2025", caption: "148 episodes", fraction: 0.47),
+        .init(label: "2026", caption: "91 episodes", fraction: 0.29),
+    ]
+
+    private let monthlyActivity: [SwiftActivityBar] = [
+        .init(label: "Jan", caption: "24 episodes", fraction: 0.6),
+        .init(label: "Feb", caption: "18 episodes", fraction: 0.45),
+        .init(label: "Mar", caption: "31 episodes", fraction: 0.77),
+        .init(label: "Apr", caption: "12 episodes", fraction: 0.3),
+        .init(label: "May", caption: "40 episodes", fraction: 1),
+        .init(label: "Jun", caption: "22 episodes", fraction: 0.55),
+        .init(label: "Jul", caption: "8 episodes", fraction: 0.2),
+        .init(label: "Aug", caption: "27 episodes", fraction: 0.67),
+        .init(label: "Sep", caption: "15 episodes", fraction: 0.37),
+        .init(label: "Oct", caption: "33 episodes", fraction: 0.82),
+        .init(label: "Nov", caption: "19 episodes", fraction: 0.47),
+        .init(label: "Dec", caption: "29 episodes", fraction: 0.72),
+    ]
+
+    private let weekdayActivity: [SwiftActivityBar] = [
+        .init(label: "Mon", caption: "12 episodes", fraction: 0.6),
+        .init(label: "Tue", caption: "8 episodes", fraction: 0.4),
+        .init(label: "Wed", caption: "14 episodes", fraction: 0.7),
+        .init(label: "Thu", caption: "6 episodes", fraction: 0.3),
+        .init(label: "Fri", caption: "17 episodes", fraction: 0.85),
+        .init(label: "Sat", caption: "20 episodes", fraction: 1),
+        .init(label: "Sun", caption: "16 episodes", fraction: 0.8),
+    ]
+
+    private let heatMap = SwiftWatchHeatMap(
+        levels: (0 ..< 215).map { ($0 * 7) % 5 },
+        leadingBlankCells: 3
+    )
+
+    private let longRunOfYears: [SwiftActivityBar] = (2008 ... 2026).enumerated().map { index, year in
+        let episodeCount = (index * 7) % 40
+        return .init(
+            label: "\(year)",
+            caption: "\(episodeCount) episodes",
+            fraction: Float(episodeCount) / 40
+        )
+    }
+
     private var contentState: StatisticsScreen.State {
         StatisticsScreen.State(
             isLoading: false,
             showContent: true,
             totalWatchTime: SwiftWatchTime(days: 12, hours: 4, minutes: 30),
             tiles: tiles,
+            heatMap: heatMap,
             mostWatchedShows: mostWatchedShows,
             watchStatusBreakdown: watchStatusBreakdown,
             ratingBreakdown: ratingBreakdown,
+            yearlyActivity: yearlyActivity,
+            monthlyActivity: monthlyActivity,
+            weekdayActivity: weekdayActivity,
             labels: labels
         )
     }
@@ -94,9 +150,13 @@ class StatisticsScreenTest: SnapshotTestCase {
                 showsMarkedWatchedTimes: true,
                 totalWatchTime: contentState.totalWatchTime,
                 tiles: contentState.tiles,
+                heatMap: contentState.heatMap,
                 mostWatchedShows: contentState.mostWatchedShows,
                 watchStatusBreakdown: contentState.watchStatusBreakdown,
                 ratingBreakdown: contentState.ratingBreakdown,
+                yearlyActivity: contentState.yearlyActivity,
+                monthlyActivity: contentState.monthlyActivity,
+                weekdayActivity: contentState.weekdayActivity,
                 labels: labels
             )
         )
@@ -111,13 +171,32 @@ class StatisticsScreenTest: SnapshotTestCase {
                 showContent: true,
                 totalWatchTime: contentState.totalWatchTime,
                 tiles: contentState.tiles,
+                heatMap: contentState.heatMap,
                 mostWatchedShows: contentState.mostWatchedShows,
                 watchStatusBreakdown: contentState.watchStatusBreakdown,
                 ratingBreakdown: contentState.ratingBreakdown,
+                yearlyActivity: contentState.yearlyActivity,
+                monthlyActivity: contentState.monthlyActivity,
+                weekdayActivity: contentState.weekdayActivity,
                 labels: labels
             )
         )
         .assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Locked")
+    }
+
+    func test_ActivityChart_LongRunOfYears() {
+        ActivityChartSectionView(
+            bars: longRunOfYears,
+            title: "Episodes by year",
+            sectionTestTag: StatisticsTestTags.shared.YEARLY_ACTIVITY_TEST_TAG,
+            sectionName: "yearly",
+            showAxisLabels: true
+        )
+        .appPreview()
+        .assertSnapshot(
+            layout: .fixed(width: 390, height: 220),
+            testName: "ActivityChart_LongRunOfYears"
+        )
     }
 
     private func makeScreen(state: StatisticsScreen.State) -> some View {
