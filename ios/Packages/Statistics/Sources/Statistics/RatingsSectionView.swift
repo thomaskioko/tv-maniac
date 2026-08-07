@@ -22,7 +22,7 @@ struct RatingsSectionView: View {
             }
             .padding(.horizontal, theme.spacing.medium)
         }
-        .testTag(StatisticsTestTags.shared.RATINGS_SECTION_TEST_TAG)
+        .screenTag(StatisticsTestTags.shared.RATINGS_SECTION_TEST_TAG)
     }
 
     private func row(_ rating: SwiftRatingBar) -> some View {

@@ -33,7 +33,7 @@ struct StatisticTileGridView: View {
             }
         }
         .padding(.horizontal, theme.spacing.medium)
-        .testTag(StatisticsTestTags.shared.TILE_GRID_TEST_TAG)
+        .screenTag(StatisticsTestTags.shared.TILE_GRID_TEST_TAG)
     }
 }
 

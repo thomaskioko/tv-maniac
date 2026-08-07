@@ -19,7 +19,7 @@ struct WatchStatusSectionView: View {
             }
             .padding(.horizontal, theme.spacing.medium)
         }
-        .testTag(StatisticsTestTags.shared.WATCH_STATUS_SECTION_TEST_TAG)
+        .screenTag(StatisticsTestTags.shared.WATCH_STATUS_SECTION_TEST_TAG)
     }
 
     private func row(_ item: SwiftWatchStatusItem) -> some View {

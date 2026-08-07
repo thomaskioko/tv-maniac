@@ -29,7 +29,7 @@ struct MostWatchedShowsSectionView: View {
                 }
                 .padding(.horizontal, theme.spacing.medium)
             }
-            .testTag(StatisticsTestTags.shared.MOST_WATCHED_ROW_TEST_TAG)
+            .screenTag(StatisticsTestTags.shared.MOST_WATCHED_ROW_TEST_TAG)
         }
     }
 
