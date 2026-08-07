@@ -536,6 +536,12 @@
     <string name="label_statistics_most_watched">Séries les plus regardées</string>
     <string name="label_statistics_watch_status">Séries par statut</string>
     <string name="label_statistics_ratings">Vos notes</string>
+    <string name="label_statistics_yearly_activity">Épisodes par année</string>
+    <string name="label_statistics_monthly_activity">Épisodes par mois</string>
+    <string name="label_statistics_weekday_activity">Épisodes par jour de la semaine</string>
+    <string name="label_statistics_current_streak">Série en cours</string>
+    <string name="label_statistics_running_now">en cours</string>
+    <string name="label_statistics_watch_days_month">Jours de visionnage ce mois-ci</string>
     <string name="label_watch_status_watchlist">Liste de suivi</string>
     <string name="label_watch_status_watching">En cours de visionnage</string>
     <string name="label_watch_status_completed">Terminées</string>

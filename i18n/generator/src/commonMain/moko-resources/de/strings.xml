@@ -539,6 +539,12 @@
     <string name="label_statistics_most_watched">Meistgesehene Serien</string>
     <string name="label_statistics_watch_status">Serien nach Status</string>
     <string name="label_statistics_ratings">Ihre Bewertungen</string>
+    <string name="label_statistics_yearly_activity">Folgen nach Jahr</string>
+    <string name="label_statistics_monthly_activity">Folgen nach Monat</string>
+    <string name="label_statistics_weekday_activity">Folgen nach Wochentag</string>
+    <string name="label_statistics_current_streak">Aktuelle Serie</string>
+    <string name="label_statistics_running_now">läuft gerade</string>
+    <string name="label_statistics_watch_days_month">Sehtage diesen Monat</string>
     <string name="label_watch_status_watchlist">Merkliste</string>
     <string name="label_watch_status_watching">Wird angesehen</string>
     <string name="label_watch_status_completed">Abgeschlossen</string>
