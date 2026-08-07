@@ -21,10 +21,12 @@ internal class StatisticsStateMapperTest {
 
     private val localizer = FakeLocalizer()
 
+    private val dateTimeProvider = FakeDateTimeProvider()
+
     private val mapper = StatisticsStateMapper(
         localizer = localizer,
         formatterUtil = FakeFormatterUtil(),
-        dateTimeProvider = FakeDateTimeProvider(),
+        dateTimeProvider = dateTimeProvider,
     )
 
     @Test
@@ -84,6 +86,19 @@ internal class StatisticsStateMapperTest {
 
         bars.map { it.label } shouldBe listOf("2020", "2021", "2022", "2023", "2024", "2025", "2026")
         bars.filter { it.episodeCount == 0 }.size shouldBe 5
+    }
+
+    @Test
+    fun `should carry the yearly bars up to this year given the last watch was earlier`() {
+        dateTimeProvider.setCurrentYear(2026)
+        val statistics = WatchStatistics.EMPTY.copy(
+            yearlyCounts = listOf(YearlyWatchCount(year = 2023, episodeCount = 4, minutes = 120)),
+        )
+
+        val bars = mapper.toYearlyActivity(statistics)
+
+        bars.map { it.label } shouldBe listOf("2023", "2024", "2025", "2026")
+        bars.map { it.episodeCount } shouldBe listOf(4, 0, 0, 0)
     }
 
     @Test
