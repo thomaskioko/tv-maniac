@@ -17,6 +17,7 @@ public object StatisticsTestTags {
     public const val YEARLY_ACTIVITY_TEST_TAG: String = "statistics_yearly_activity"
     public const val MONTHLY_ACTIVITY_TEST_TAG: String = "statistics_monthly_activity"
     public const val WEEKDAY_ACTIVITY_TEST_TAG: String = "statistics_weekday_activity"
+    public const val ACTIVITY_TOOLTIP_TEST_TAG: String = "statistics_activity_tooltip"
     public fun tile(id: String): String = "statistics_tile_$id"
     public fun mostWatchedShowCard(showId: Long): String = "statistics_most_watched_show_$showId"
     public fun watchStatusRow(id: String): String = "statistics_watch_status_row_$id"

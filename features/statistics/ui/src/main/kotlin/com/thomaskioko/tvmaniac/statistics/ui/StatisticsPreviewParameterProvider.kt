@@ -102,36 +102,36 @@ private val previewTiles: ImmutableList<StatisticTile> = persistentListOf(
 )
 
 private val previewYearlyActivity: ImmutableList<ActivityBar> = persistentListOf(
-    ActivityBar(label = "2022", episodeCount = 84, fraction = 0.27f),
-    ActivityBar(label = "2023", episodeCount = 312, fraction = 1f),
-    ActivityBar(label = "2024", episodeCount = 196, fraction = 0.63f),
-    ActivityBar(label = "2025", episodeCount = 148, fraction = 0.47f),
-    ActivityBar(label = "2026", episodeCount = 91, fraction = 0.29f),
+    ActivityBar(label = "2022", episodeCount = 84, caption = "84 episodes", fraction = 0.27f),
+    ActivityBar(label = "2023", episodeCount = 312, caption = "312 episodes", fraction = 1f),
+    ActivityBar(label = "2024", episodeCount = 196, caption = "196 episodes", fraction = 0.63f),
+    ActivityBar(label = "2025", episodeCount = 148, caption = "148 episodes", fraction = 0.47f),
+    ActivityBar(label = "2026", episodeCount = 91, caption = "91 episodes", fraction = 0.29f),
 )
 
 private val previewMonthlyActivity: ImmutableList<ActivityBar> = persistentListOf(
-    ActivityBar(label = "Jan", episodeCount = 24, fraction = 0.6f),
-    ActivityBar(label = "Feb", episodeCount = 18, fraction = 0.45f),
-    ActivityBar(label = "Mar", episodeCount = 31, fraction = 0.77f),
-    ActivityBar(label = "Apr", episodeCount = 12, fraction = 0.3f),
-    ActivityBar(label = "May", episodeCount = 40, fraction = 1f),
-    ActivityBar(label = "Jun", episodeCount = 22, fraction = 0.55f),
-    ActivityBar(label = "Jul", episodeCount = 8, fraction = 0.2f),
-    ActivityBar(label = "Aug", episodeCount = 27, fraction = 0.67f),
-    ActivityBar(label = "Sep", episodeCount = 15, fraction = 0.37f),
-    ActivityBar(label = "Oct", episodeCount = 33, fraction = 0.82f),
-    ActivityBar(label = "Nov", episodeCount = 19, fraction = 0.47f),
-    ActivityBar(label = "Dec", episodeCount = 29, fraction = 0.72f),
+    ActivityBar(label = "Jan", episodeCount = 24, caption = "24 episodes", fraction = 0.6f),
+    ActivityBar(label = "Feb", episodeCount = 18, caption = "18 episodes", fraction = 0.45f),
+    ActivityBar(label = "Mar", episodeCount = 31, caption = "31 episodes", fraction = 0.77f),
+    ActivityBar(label = "Apr", episodeCount = 12, caption = "12 episodes", fraction = 0.3f),
+    ActivityBar(label = "May", episodeCount = 40, caption = "40 episodes", fraction = 1f),
+    ActivityBar(label = "Jun", episodeCount = 22, caption = "22 episodes", fraction = 0.55f),
+    ActivityBar(label = "Jul", episodeCount = 8, caption = "8 episodes", fraction = 0.2f),
+    ActivityBar(label = "Aug", episodeCount = 27, caption = "27 episodes", fraction = 0.67f),
+    ActivityBar(label = "Sep", episodeCount = 15, caption = "15 episodes", fraction = 0.37f),
+    ActivityBar(label = "Oct", episodeCount = 33, caption = "33 episodes", fraction = 0.82f),
+    ActivityBar(label = "Nov", episodeCount = 19, caption = "19 episodes", fraction = 0.47f),
+    ActivityBar(label = "Dec", episodeCount = 29, caption = "29 episodes", fraction = 0.72f),
 )
 
 private val previewWeekdayActivity: ImmutableList<ActivityBar> = persistentListOf(
-    ActivityBar(label = "Mon", episodeCount = 12, fraction = 0.6f),
-    ActivityBar(label = "Tue", episodeCount = 8, fraction = 0.4f),
-    ActivityBar(label = "Wed", episodeCount = 14, fraction = 0.7f),
-    ActivityBar(label = "Thu", episodeCount = 6, fraction = 0.3f),
-    ActivityBar(label = "Fri", episodeCount = 17, fraction = 0.85f),
-    ActivityBar(label = "Sat", episodeCount = 20, fraction = 1f),
-    ActivityBar(label = "Sun", episodeCount = 16, fraction = 0.8f),
+    ActivityBar(label = "Mon", episodeCount = 12, caption = "12 episodes", fraction = 0.6f),
+    ActivityBar(label = "Tue", episodeCount = 8, caption = "8 episodes", fraction = 0.4f),
+    ActivityBar(label = "Wed", episodeCount = 14, caption = "14 episodes", fraction = 0.7f),
+    ActivityBar(label = "Thu", episodeCount = 6, caption = "6 episodes", fraction = 0.3f),
+    ActivityBar(label = "Fri", episodeCount = 17, caption = "17 episodes", fraction = 0.85f),
+    ActivityBar(label = "Sat", episodeCount = 20, caption = "20 episodes", fraction = 1f),
+    ActivityBar(label = "Sun", episodeCount = 16, caption = "16 episodes", fraction = 0.8f),
 )
 
 private val previewHeatMap: WatchHeatMap = WatchHeatMap(

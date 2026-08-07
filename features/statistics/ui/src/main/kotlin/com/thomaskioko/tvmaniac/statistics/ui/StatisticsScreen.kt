@@ -257,6 +257,7 @@ private fun StatisticsContent(
                     title = state.labels.yearlyActivityTitle,
                     sectionTestTag = StatisticsTestTags.YEARLY_ACTIVITY_TEST_TAG,
                     sectionName = "yearly",
+                    showAxisLabels = true,
                 )
             }
         }
