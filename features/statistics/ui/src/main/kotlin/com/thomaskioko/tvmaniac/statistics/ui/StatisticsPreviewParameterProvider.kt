@@ -23,7 +23,7 @@ internal val previewLabels: StatisticsLabels = StatisticsLabels(
     daysLabel = "days",
     hoursLabel = "hours",
     minutesLabel = "minutes",
-    episodesOverTimeTitle = "Your last year of watching",
+    episodesOverTimeTitle = "Your year of watching",
     markedWatchedNote = "Dates show when episodes were marked as watched, not when you watched them.",
     mostWatchedTitle = "Most watched shows",
     watchStatusTitle = "Shows by status",
@@ -143,11 +143,11 @@ private val previewHeatMap: WatchHeatMap = WatchHeatMap(
         )
     },
     leadingBlankCells = 3,
-    activeDays = 232,
-    quietDays = 133,
+    activeDays = 138,
+    quietDays = 77,
 )
 
-private const val HEAT_MAP_PREVIEW_DAYS = 365
+private const val HEAT_MAP_PREVIEW_DAYS = 215
 
 private val previewMostWatchedShows: ImmutableList<MostWatchedShowItem> = persistentListOf(
     MostWatchedShowItem(

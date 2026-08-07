@@ -515,7 +515,7 @@
     <string name="label_statistics_locked_title">Les statistiques sont une fonctionnalité Premium</string>
     <string name="label_statistics_locked_message">Passez à Premium pour voir comment vous regardez.</string>
     <string name="label_statistics_empty">Marquez un épisode comme vu pour commencer vos statistiques.</string>
-    <string name="label_statistics_activity">Votre dernière année de visionnage</string>
+    <string name="label_statistics_activity">Votre année de visionnage</string>
     <string name="label_statistics_marked_watched_note">Les dates indiquent quand les épisodes ont été marqués comme vus, pas quand vous les avez regardés.</string>
     <string name="label_statistics_watch_time">Temps total de visionnage</string>
     <string name="label_statistics_days">jours</string>

@@ -526,7 +526,7 @@
     <string name="label_statistics_locked_title">Statistics are a Premium feature</string>
     <string name="label_statistics_locked_message">Upgrade to Premium to see how you watch.</string>
     <string name="label_statistics_empty">Mark an episode as watched to start building your statistics.</string>
-    <string name="label_statistics_activity">Your last year of watching</string>
+    <string name="label_statistics_activity">Your year of watching</string>
     <string name="label_statistics_marked_watched_note">Dates show when episodes were marked as watched, not when you watched them.</string>
     <string name="label_statistics_watch_time">Total time watched</string>
     <string name="label_statistics_days">days</string>

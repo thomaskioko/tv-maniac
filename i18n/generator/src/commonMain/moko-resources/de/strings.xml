@@ -518,7 +518,7 @@
     <string name="label_statistics_locked_title">Statistiken sind eine Premium-Funktion</string>
     <string name="label_statistics_locked_message">Upgraden Sie auf Premium, um zu sehen, wie Sie schauen.</string>
     <string name="label_statistics_empty">Markieren Sie eine Episode als gesehen, um Ihre Statistiken aufzubauen.</string>
-    <string name="label_statistics_activity">Ihr letztes Jahr im Überblick</string>
+    <string name="label_statistics_activity">Ihr Jahr im Überblick</string>
     <string name="label_statistics_marked_watched_note">Die Daten zeigen, wann Episoden als gesehen markiert wurden, nicht wann Sie sie geschaut haben.</string>
     <string name="label_statistics_watch_time">Gesamte Sehdauer</string>
     <string name="label_statistics_days">Tage</string>

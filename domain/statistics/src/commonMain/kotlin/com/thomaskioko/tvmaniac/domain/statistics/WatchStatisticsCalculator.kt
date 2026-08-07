@@ -91,7 +91,7 @@ public class WatchStatisticsCalculator(
 
     private fun calculateDailyCounts(watchedDays: List<WatchedDay>, today: LocalDate): List<DailyWatchCount> {
         val byDate = watchedDays.groupBy { it.date }
-        val firstDay = today.plus(-(HEAT_MAP_DAYS - 1), DateTimeUnit.DAY)
+        val firstDay = LocalDate(today.year, 1, 1)
         return generateSequence(firstDay) { day ->
             if (day == today) null else day.plus(1, DateTimeUnit.DAY)
         }.map { day ->
@@ -228,7 +228,6 @@ public class WatchStatisticsCalculator(
     private data class WatchedDay(val date: LocalDate, val minutes: Long)
 
     private companion object {
-        const val HEAT_MAP_DAYS = 365
         const val LAST_PERIOD_DAYS = 30
         const val LOWEST_RATING = 1
         const val HIGHEST_RATING = 10
