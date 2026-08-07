@@ -24,6 +24,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toInstant
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -67,7 +68,8 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
 
         statistics.hasWatchHistory shouldBe false
         statistics.hasRuntimeData shouldBe false
-        statistics.dailyCounts.size shouldBe 365
+        statistics.dailyCounts.first().date shouldBe FIRST_OF_YEAR
+        statistics.dailyCounts.last().date shouldBe TODAY
         statistics.dailyCounts.all { it.episodeCount == 0 } shouldBe true
         statistics.ratingDistribution.map { it.rating } shouldBe (1..10).toList()
         statistics.ratingDistribution.all { it.count == 0L } shouldBe true
@@ -129,16 +131,16 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should end the daily series on today and cover a year`() = runTest(testDispatcher) {
+    fun `should run the daily series from the first of the year up to today`() = runTest(testDispatcher) {
         insertShow(tmdbId = BREAKING_BAD)
         markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
 
         val days = calculate().dailyCounts
 
-        days.size shouldBe 365
-        days.last().date shouldBe LocalDate(2026, 8, 3)
+        days.size shouldBe FIRST_OF_YEAR.daysUntil(TODAY) + 1
+        days.last().date shouldBe TODAY
         days.last().episodeCount shouldBe 1
-        days.first().date shouldBe LocalDate(2025, 8, 4)
+        days.first().date shouldBe FIRST_OF_YEAR
     }
 
     @Test
@@ -498,6 +500,9 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
     }
 
     private companion object {
+        val TODAY = LocalDate(2026, 8, 3)
+        val FIRST_OF_YEAR = LocalDate(TODAY.year, 1, 1)
+
         const val BREAKING_BAD = 1396L
         const val THE_WIRE = 1438L
         const val SEASON_ID = 3572L

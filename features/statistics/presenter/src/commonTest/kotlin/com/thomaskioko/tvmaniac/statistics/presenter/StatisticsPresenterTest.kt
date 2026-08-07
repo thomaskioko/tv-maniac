@@ -99,7 +99,9 @@ internal class StatisticsPresenterTest {
             state.hasWatchHistory shouldBe true
             state.showContent shouldBe true
             state.showEmptyState shouldBe false
-            state.heatMap.shouldNotBeNull().cells.size shouldBe 365
+            val cells = state.heatMap.shouldNotBeNull().cells
+            cells.first().date shouldBe "2026-01-01"
+            cells.last().date shouldBe "2026-08-03"
         }
     }
 
