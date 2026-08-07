@@ -215,6 +215,21 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should count watch days against days elapsed this month`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 3, watchedAt = epochMillis(2026, 8, 1))
+        markWatched(BREAKING_BAD, episodeNumber = 4, watchedAt = epochMillis(2026, 7, 30))
+        markWatched(BREAKING_BAD, episodeNumber = 5, watchedAt = epochMillis(2025, 8, 2))
+
+        val thisMonth = calculate().watchDaysThisMonth
+
+        thisMonth.daysWatched shouldBe 2
+        thisMonth.daysElapsed shouldBe 3
+    }
+
+    @Test
     fun `should summarise only the last thirty days`() = runTest(testDispatcher) {
         insertShow(tmdbId = BREAKING_BAD)
         setShowRuntime(BREAKING_BAD, runtime = 30)

@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.domain.statistics.model.PeriodSummary
 import com.thomaskioko.tvmaniac.domain.statistics.model.RatingCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.ShowsTracked
 import com.thomaskioko.tvmaniac.domain.statistics.model.TopWeekday
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDaysThisMonth
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDaysThisYear
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDuration
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
@@ -51,6 +52,7 @@ public class WatchStatisticsCalculator(
             topWeekday = calculateTopWeekday(watchedDays),
             streak = calculateStreak(watchedDays, today),
             watchDaysThisYear = calculateWatchDaysThisYear(watchedDays, today),
+            watchDaysThisMonth = calculateWatchDaysThisMonth(watchedDays, today),
             lastThirtyDays = calculatePeriodSummary(
                 watchedDays = watchedDays,
                 from = today.plus(-LAST_PERIOD_DAYS, DateTimeUnit.DAY),
@@ -117,6 +119,15 @@ public class WatchStatisticsCalculator(
         WatchDaysThisYear(
             daysWatched = watchedDays.filter { it.date.year == today.year }.distinctBy { it.date }.size,
             daysElapsed = today.dayOfYear,
+        )
+
+    private fun calculateWatchDaysThisMonth(watchedDays: List<WatchedDay>, today: LocalDate): WatchDaysThisMonth =
+        WatchDaysThisMonth(
+            daysWatched = watchedDays
+                .filter { it.date.year == today.year && it.date.month == today.month }
+                .distinctBy { it.date }
+                .size,
+            daysElapsed = today.dayOfMonth,
         )
 
     private fun calculatePeriodSummary(watchedDays: List<WatchedDay>, from: LocalDate): PeriodSummary {
