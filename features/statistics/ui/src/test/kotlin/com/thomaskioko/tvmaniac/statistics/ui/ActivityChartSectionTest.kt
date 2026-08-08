@@ -30,8 +30,8 @@ class ActivityChartSectionTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     private val bars = persistentListOf(
-        ActivityBar(label = "Mon", episodeCount = 12, caption = "12 episodes", fraction = 0.6f),
-        ActivityBar(label = "Sat", episodeCount = 20, caption = "20 episodes", fraction = 1f),
+        ActivityBar(label = "Mon", count = 12, caption = "12 episodes", fraction = 0.6f),
+        ActivityBar(label = "Sat", count = 20, caption = "20 episodes", fraction = 1f),
     )
 
     @Test
@@ -92,7 +92,7 @@ class ActivityChartSectionTest {
         val bars = years.map { year ->
             ActivityBar(
                 label = year.toString(),
-                episodeCount = 1,
+                count = 1,
                 caption = "1 episode",
                 fraction = 0.5f,
             )
