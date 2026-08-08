@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -147,7 +148,17 @@ private fun StatisticsBody(
             StatisticsPageBody(state = state, contentPadding = contentPadding, onAction = onAction)
         }
     } else {
-        StatisticsPageBody(state = state, contentPadding = contentPadding, onAction = onAction, modifier = modifier)
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onAction(StatisticsAction.Refresh) },
+            modifier = modifier.padding(top = contentPadding.calculateTopPadding()),
+        ) {
+            StatisticsPageBody(
+                state = state,
+                contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                onAction = onAction,
+            )
+        }
     }
 }
 

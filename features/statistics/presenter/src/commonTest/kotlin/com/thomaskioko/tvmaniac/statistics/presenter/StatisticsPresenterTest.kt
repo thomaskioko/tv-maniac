@@ -6,14 +6,19 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.db.WatchStatus
 import com.thomaskioko.tvmaniac.domain.statistics.ObserveWatchStatisticsInteractor
+import com.thomaskioko.tvmaniac.domain.statistics.SyncStatisticsInteractor
 import com.thomaskioko.tvmaniac.domain.statistics.WatchStatisticsCalculator
 import com.thomaskioko.tvmaniac.domain.statistics.model.AverageRating
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
@@ -30,6 +35,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -48,6 +54,14 @@ internal class StatisticsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val showWatchStatusRepository = FakeShowWatchStatusRepository()
     private val ratingsRepository = FakeRatingsRepository()
+    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
+    private val dispatchers = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
+    )
     private val subscriptionManager = FakeSubscriptionManager()
     private val accountManager = FakeAccountManager()
     private val localizer = FakeLocalizer()
@@ -292,6 +306,76 @@ internal class StatisticsPresenterTest {
         )
     }
 
+    @Test
+    fun `should read the watches and the ratings again given a refresh is asked for`() = runTest(testDispatcher) {
+        seedWatches()
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitItem()
+
+            presenter.dispatch(StatisticsAction.Refresh)
+            advanceUntilIdle()
+
+            watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(true)
+            ratingsRepository.syncUserRatingsCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should wait for the sync to finish given refresh is awaited`() = runTest(testDispatcher) {
+        seedWatches()
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitItem()
+
+            presenter.refresh()
+
+            watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(true)
+            ratingsRepository.syncUserRatingsCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should return right away given refresh is awaited on a locked screen`() = runTest(testDispatcher) {
+        subscriptionManager.setAccess(SubscriptionFeature.Statistics, false)
+        seedWatches()
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitItem()
+
+            presenter.refresh()
+
+            watchedEpisodeSyncRepository.syncAllInvocations().shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not refresh given the screen is locked`() = runTest(testDispatcher) {
+        subscriptionManager.setAccess(SubscriptionFeature.Statistics, false)
+        seedWatches()
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            awaitItem()
+
+            presenter.dispatch(StatisticsAction.Refresh)
+            advanceUntilIdle()
+
+            watchedEpisodeSyncRepository.syncAllInvocations().shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun buildPresenter(): StatisticsPresenter = StatisticsPresenter(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         observeWatchStatisticsInteractor = ObserveWatchStatisticsInteractor(
@@ -302,12 +386,19 @@ internal class StatisticsPresenterTest {
         ),
         accountManager = accountManager,
         subscriptionManager = subscriptionManager,
+        syncStatisticsInteractor = SyncStatisticsInteractor(
+            watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+            ratingsRepository = ratingsRepository,
+            dispatchers = dispatchers,
+        ),
         stateMapper = StatisticsStateMapper(
             localizer = localizer,
             formatterUtil = formatterUtil,
             dateTimeProvider = dateTimeProvider,
         ),
         navigator = navigator,
+        errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+        logger = FakeLogger(),
     )
 
     private companion object {

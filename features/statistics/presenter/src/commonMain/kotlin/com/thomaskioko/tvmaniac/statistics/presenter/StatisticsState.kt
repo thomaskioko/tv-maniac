@@ -13,6 +13,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 public data class StatisticsState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val isLocked: Boolean = false,
     val hasWatchHistory: Boolean = false,
     val showsMarkedWatchedTimes: Boolean = false,
