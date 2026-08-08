@@ -29,6 +29,7 @@ struct WatchHeatMapSectionView: View {
                     }
                 }
                 .padding(.horizontal, theme.spacing.medium)
+                .accessibilityHidden(true)
             }
         }
         .screenTag(StatisticsTestTags.shared.HEAT_MAP_TEST_TAG)

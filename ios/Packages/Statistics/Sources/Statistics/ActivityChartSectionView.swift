@@ -69,6 +69,10 @@ struct ActivityChartSectionView: View {
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
         .onTapGesture { selectedLabel = isSelected ? nil : bar.label }
+        .accessibilityElement()
+        .accessibilityLabel("\(bar.label), \(bar.caption)")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { selectedLabel = isSelected ? nil : bar.label }
         .testTag(StatisticsTestTags.shared.activityBar(section: sectionName, label: bar.label))
     }
 
