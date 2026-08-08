@@ -539,6 +539,10 @@
     <string name="label_statistics_yearly_activity">Épisodes par année</string>
     <string name="label_statistics_monthly_activity">Épisodes par mois</string>
     <string name="label_statistics_weekday_activity">Épisodes par jour de la semaine</string>
+    <string name="label_statistics_genres">Genres que vous regardez</string>
+    <string name="label_statistics_release_years">Séries par année de sortie</string>
+    <string name="label_statistics_genre_other">Autres</string>
+    <string name="label_statistics_genres_unavailable">Simkl ne fournit pas de genres, ceci n'est donc disponible qu'avec un compte Trakt.</string>
     <string name="label_statistics_current_streak">Série en cours</string>
     <string name="label_statistics_running_now">en cours</string>
     <string name="label_statistics_watch_days_month">Jours de visionnage ce mois-ci</string>

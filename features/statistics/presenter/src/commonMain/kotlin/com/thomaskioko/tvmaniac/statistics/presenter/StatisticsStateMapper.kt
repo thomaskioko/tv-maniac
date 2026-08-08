@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
+import com.thomaskioko.tvmaniac.statistics.presenter.model.GenreSlice
 import com.thomaskioko.tvmaniac.statistics.presenter.model.HeatMap
 import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
@@ -206,6 +207,30 @@ public class StatisticsStateMapper(
             .map { dateTimeProvider.formatShortDayOfWeek(it.dayOfWeek) to it.episodeCount }
             .toActivityBars()
 
+    public fun toReleaseYears(statistics: WatchStatistics): ImmutableList<ActivityBar> =
+        statistics.releaseYears
+            .map { it.year.toString() to it.showCount.toInt() }
+            .toActivityBars(PluralsResourceKey.ShowCount)
+
+    public fun toGenreBreakdown(statistics: WatchStatistics): ImmutableList<GenreSlice> {
+        val total = statistics.genreBreakdown.sumOf { it.showCount }
+        if (total == 0L) return persistentListOf()
+
+        val named = statistics.genreBreakdown.take(NAMED_GENRE_LIMIT)
+        val tail = statistics.genreBreakdown.drop(NAMED_GENRE_LIMIT).sumOf { it.showCount }
+        val slices = named.map { genre -> genre.name to genre.showCount } +
+            if (tail > 0) listOf(localizer.getString(StringResourceKey.LabelStatisticsGenreOther) to tail) else emptyList()
+
+        return slices.map { (name, showCount) ->
+            GenreSlice(
+                name = name,
+                showCount = showCount.toInt(),
+                caption = localizer.getPlural(PluralsResourceKey.ShowCount, showCount.toInt()),
+                fraction = showCount.toFloat() / total,
+            )
+        }.toImmutableList()
+    }
+
     public fun toLabels(): StatisticsLabels = StatisticsLabels(
         screenTitle = localizer.getString(StringResourceKey.LabelStatisticsTitle),
         emptyMessage = localizer.getString(StringResourceKey.LabelStatisticsEmpty),
@@ -221,6 +246,9 @@ public class StatisticsStateMapper(
         yearlyActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsYearlyActivity),
         monthlyActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsMonthlyActivity),
         weekdayActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsWeekdayActivity),
+        genresTitle = localizer.getString(StringResourceKey.LabelStatisticsGenres),
+        releaseYearsTitle = localizer.getString(StringResourceKey.LabelStatisticsReleaseYears),
+        genresUnavailableNote = localizer.getString(StringResourceKey.LabelStatisticsGenresUnavailable),
         lockedTitle = localizer.getString(StringResourceKey.LabelStatisticsLockedTitle),
         lockedMessage = localizer.getString(StringResourceKey.LabelStatisticsLockedMessage),
         lockedBadgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
@@ -228,14 +256,16 @@ public class StatisticsStateMapper(
         lockedContentDescription = localizer.getString(StringResourceKey.CdLocked),
     )
 
-    private fun List<Pair<String, Int>>.toActivityBars(): ImmutableList<ActivityBar> {
+    private fun List<Pair<String, Int>>.toActivityBars(
+        plural: PluralsResourceKey = PluralsResourceKey.EpisodeCount,
+    ): ImmutableList<ActivityBar> {
         val busiest = maxOfOrNull { it.second } ?: 0
-        return map { (label, episodeCount) ->
+        return map { (label, count) ->
             ActivityBar(
                 label = label,
-                episodeCount = episodeCount,
-                caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, episodeCount),
-                fraction = if (busiest == 0) 0f else episodeCount.toFloat() / busiest,
+                count = count,
+                caption = localizer.getPlural(plural, count),
+                fraction = if (busiest == 0) 0f else count.toFloat() / busiest,
             )
         }.toImmutableList()
     }
@@ -270,5 +300,6 @@ public class StatisticsStateMapper(
         const val RATING_DECIMALS = 1
         const val HEAT_MAP_LEVELS = 4
         const val DAYS_IN_WEEK = 7
+        const val NAMED_GENRE_LIMIT = 6
     }
 }

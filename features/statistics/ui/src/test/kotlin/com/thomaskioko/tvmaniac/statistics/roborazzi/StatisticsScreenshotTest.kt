@@ -36,7 +36,7 @@ internal class StatisticsScreenshotTest {
         val episodeCount = (index * 7) % 40
         ActivityBar(
             label = year.toString(),
-            episodeCount = episodeCount,
+            count = episodeCount,
             caption = "$episodeCount episodes",
             fraction = episodeCount / 40f,
         )

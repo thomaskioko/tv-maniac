@@ -1,12 +1,14 @@
 package com.thomaskioko.tvmaniac.statistics.presenter
 
 import com.thomaskioko.tvmaniac.domain.statistics.model.DailyWatchCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.GenreCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.MonthlyWatchCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.ReleaseYearCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.domain.statistics.model.WeekdayWatchCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.YearlyWatchCount
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
-import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTileId
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
@@ -19,7 +21,7 @@ import kotlin.test.Test
 
 internal class StatisticsStateMapperTest {
 
-    private val localizer = FakeLocalizer()
+    private val localizer = TestLocalizer()
 
     private val dateTimeProvider = FakeDateTimeProvider()
 
@@ -69,7 +71,7 @@ internal class StatisticsStateMapperTest {
 
         val bars = mapper.toYearlyActivity(statistics)
 
-        bars.map { it.episodeCount } shouldBe listOf(1, 0, 4)
+        bars.map { it.count } shouldBe listOf(1, 0, 4)
         bars.map { it.fraction } shouldBe listOf(0.25f, 0f, 1f)
     }
 
@@ -85,7 +87,7 @@ internal class StatisticsStateMapperTest {
         val bars = mapper.toYearlyActivity(statistics)
 
         bars.map { it.label } shouldBe listOf("2020", "2021", "2022", "2023", "2024", "2025", "2026")
-        bars.filter { it.episodeCount == 0 }.size shouldBe 5
+        bars.filter { it.count == 0 }.size shouldBe 5
     }
 
     @Test
@@ -98,7 +100,7 @@ internal class StatisticsStateMapperTest {
         val bars = mapper.toYearlyActivity(statistics)
 
         bars.map { it.label } shouldBe listOf("2023", "2024", "2025", "2026")
-        bars.map { it.episodeCount } shouldBe listOf(4, 0, 0, 0)
+        bars.map { it.count } shouldBe listOf(4, 0, 0, 0)
     }
 
     @Test
@@ -163,6 +165,67 @@ internal class StatisticsStateMapperTest {
 
         ids.contains(StatisticTileId.CurrentStreak) shouldBe true
         ids.contains(StatisticTileId.WatchDaysThisMonth) shouldBe true
+    }
+
+    @Test
+    fun `should return no genre slices given no genres`() {
+        mapper.toGenreBreakdown(WatchStatistics.EMPTY).isEmpty() shouldBe true
+    }
+
+    @Test
+    fun `should give each genre a share of the whole`() {
+        val statistics = WatchStatistics.EMPTY.copy(
+            genreBreakdown = listOf(
+                GenreCount(name = "Drama", showCount = 3),
+                GenreCount(name = "Crime", showCount = 1),
+            ),
+        )
+
+        val slices = mapper.toGenreBreakdown(statistics)
+
+        slices.map { it.name } shouldBe listOf("Drama", "Crime")
+        slices.map { it.showCount } shouldBe listOf(3, 1)
+        slices.map { it.fraction } shouldBe listOf(0.75f, 0.25f)
+    }
+
+    @Test
+    fun `should roll the genres past the sixth into one other row`() {
+        val statistics = WatchStatistics.EMPTY.copy(
+            genreBreakdown = (1..9).map { GenreCount(name = "genre-$it", showCount = 10L - it) },
+        )
+
+        val slices = mapper.toGenreBreakdown(statistics)
+
+        slices.size shouldBe 7
+        slices.take(6).map { it.name } shouldBe (1..6).map { "genre-$it" }
+        slices.last().name shouldBe localizer.getString(StringResourceKey.LabelStatisticsGenreOther)
+        slices.last().showCount shouldBe 6
+    }
+
+    @Test
+    fun `should leave out the other row given six genres or fewer`() {
+        val statistics = WatchStatistics.EMPTY.copy(
+            genreBreakdown = (1..6).map { GenreCount(name = "genre-$it", showCount = 1) },
+        )
+
+        mapper.toGenreBreakdown(statistics).size shouldBe 6
+    }
+
+    @Test
+    fun `should caption the release year bars with a show count`() {
+        val statistics = WatchStatistics.EMPTY.copy(
+            releaseYears = listOf(
+                ReleaseYearCount(year = 2002, showCount = 1),
+                ReleaseYearCount(year = 2008, showCount = 2),
+            ),
+        )
+
+        val bars = mapper.toReleaseYears(statistics)
+
+        bars.map { it.label } shouldBe listOf("2002", "2008")
+        bars.map { it.count } shouldBe listOf(1, 2)
+        bars.map { it.fraction } shouldBe listOf(0.5f, 1f)
+        bars.first().caption shouldBe localizer.getPlural(PluralsResourceKey.ShowCount, 1)
     }
 
     private fun statisticsWithDailyCounts(): WatchStatistics = WatchStatistics.EMPTY.copy(
