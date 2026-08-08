@@ -56,7 +56,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `should insert popular shows`() = runTest {
         // Given - first insert a show into tvshow table
-        val showId = seedShow(showId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
+        val showId = addShow(showId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
 
         val popularShow = Popular_shows(
             show_id = showId,
@@ -224,7 +224,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should not return shows with null names`() = runTest {
         // Given - insert a show without name (simulating pre-migration data)
-        val showId = seedShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
+        val showId = addShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
         popularShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
@@ -248,7 +248,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should filter by page correctly`() = runTest {
         // Given - add shows to different pages
-        val showId = seedShow(showId = 999, name = "Page 2 Show", posterPath = "/page2.jpg")
+        val showId = addShow(showId = 999, name = "Page 2 Show", posterPath = "/page2.jpg")
         popularShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
@@ -298,7 +298,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
             initialShows.size shouldBe 2
 
             // When - add a new show
-            val showId = seedShow(showId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
+            val showId = addShow(showId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
             val newShow = Popular_shows(
                 show_id = showId,
                 tmdb_id = Id<TmdbId>(999),
@@ -321,7 +321,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should handle COALESCE for empty names correctly`() = runTest {
-        val showId = seedShow(showId = 888, name = "Empty Name Show", posterPath = "/empty.jpg")
+        val showId = addShow(showId = 888, name = "Empty Name Show", posterPath = "/empty.jpg")
         database.popularShowsQueries.transaction {
             database.popularShowsQueries.insert(
                 showId = showId,
@@ -342,7 +342,7 @@ internal class DefaultPopularShowsDaoTest : BaseDatabaseTest() {
         }
     }
 
-    private fun seedShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
+    private fun addShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = name,

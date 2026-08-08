@@ -12,8 +12,8 @@ class Migration40Test {
     @Test
     fun `should clear last_requests on migration`() {
         openSnapshot(version = 39).use { driver ->
-            driver.seedLastRequest(entityId = 101L, requestType = "SHOW_DETAILS")
-            driver.seedLastRequest(entityId = 202L, requestType = "SHOW_CAST")
+            driver.addLastRequest(entityId = 101L, requestType = "SHOW_DETAILS")
+            driver.addLastRequest(entityId = 202L, requestType = "SHOW_CAST")
 
             migrateToVersion(driver, oldVersion = 39, newVersion = 40)
 
@@ -31,7 +31,7 @@ class Migration40Test {
     }
 }
 
-private fun SqlDriver.seedLastRequest(entityId: Long, requestType: String) {
+private fun SqlDriver.addLastRequest(entityId: Long, requestType: String) {
     execute(
         identifier = null,
         sql = """

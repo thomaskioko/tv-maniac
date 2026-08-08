@@ -55,7 +55,7 @@ class Migration42Test {
     fun `should default pending_action to NOTHING given a new show rating row`() {
         openSnapshot(version = 41).use { driver ->
             migrateToVersion(driver, oldVersion = 41, newVersion = 42)
-            driver.seedShow(showId = 1L)
+            driver.addShow(showId = 1L)
 
             driver.execute(
                 identifier = null,
@@ -72,7 +72,7 @@ class Migration42Test {
         openSnapshot(version = 41).use { driver ->
             migrateToVersion(driver, oldVersion = 41, newVersion = 42)
             driver.enableForeignKeys()
-            driver.seedShow(showId = 1L)
+            driver.addShow(showId = 1L)
             driver.execute(
                 identifier = null,
                 sql = "INSERT INTO show_ratings (show_id, user_rating) VALUES (1, 8)",
@@ -89,7 +89,7 @@ class Migration42Test {
     fun `should reject pending_action value outside allowed set`() {
         openSnapshot(version = 41).use { driver ->
             migrateToVersion(driver, oldVersion = 41, newVersion = 42)
-            driver.seedShow(showId = 1L)
+            driver.addShow(showId = 1L)
 
             val result = runCatching {
                 driver.execute(
@@ -104,7 +104,7 @@ class Migration42Test {
     }
 }
 
-private fun SqlDriver.seedShow(showId: Long) {
+private fun SqlDriver.addShow(showId: Long) {
     execute(
         identifier = null,
         sql = """

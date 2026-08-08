@@ -20,6 +20,8 @@ public data class WatchStatistics(
     val mostWatchedShows: List<MostWatchedShow>,
     val showsByWatchStatus: List<WatchStatusCount>,
     val ratingDistribution: List<RatingCount>,
+    val genreBreakdown: List<GenreCount>,
+    val releaseYears: List<ReleaseYearCount>,
 ) {
     val hasWatchHistory: Boolean
         get() = episodesWatched > 0
@@ -46,6 +48,8 @@ public data class WatchStatistics(
             mostWatchedShows = emptyList(),
             showsByWatchStatus = emptyList(),
             ratingDistribution = emptyList(),
+            genreBreakdown = emptyList(),
+            releaseYears = emptyList(),
         )
     }
 }

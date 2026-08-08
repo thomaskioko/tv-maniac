@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 
@@ -25,11 +26,18 @@ public interface WatchedEpisodeDao {
 
     public fun observeWatchedAtWithRuntime(): Flow<List<WatchedEpisodeRuntime>>
 
+    public fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>>
+
     public fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>>
 
-    public suspend fun updateShowRuntime(tmdbId: Long, runtime: Long)
+    public suspend fun updateShowMetadata(
+        tmdbId: Long,
+        runtime: Long? = null,
+        year: String? = null,
+        genres: List<String>? = null,
+    )
 
-    public suspend fun countWatchedShowsMissingRuntime(): Long
+    public suspend fun countWatchedShowsMissingMetadata(): Long
 
     public suspend fun markAsWatched(
         showId: Long,

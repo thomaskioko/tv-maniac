@@ -14,7 +14,7 @@ class ForeignKeyMigrationProbeTest {
     @Test
     fun `migration preserves children when run through the fk safe driver`() {
         val name = uniqueName("fk-safe")
-        seedVersionOne(name)
+        createVersionOneDatabase(name)
 
         val driver = createNativeSqliteDriver(schema = schemaV2, name = name)
         val childCount = driver.countRows("child")
@@ -41,7 +41,7 @@ class ForeignKeyMigrationProbeTest {
     @Test
     fun `naive fk on migration cascade wipes children`() {
         val name = uniqueName("fk-naive")
-        seedVersionOne(name)
+        createVersionOneDatabase(name)
 
         // The pre-fix behavior: open with foreign keys enforced while the migration runs.
         val naive = NativeSqliteDriver(
@@ -53,7 +53,7 @@ class ForeignKeyMigrationProbeTest {
         childCount shouldBe 0L
     }
 
-    private fun seedVersionOne(name: String) {
+    private fun createVersionOneDatabase(name: String) {
         val driver = createNativeSqliteDriver(schema = schemaV1, name = name)
         driver.execute(identifier = null, sql = "INSERT INTO parent (id, name) VALUES (1, 'p')", parameters = 0)
         driver.execute(identifier = null, sql = "INSERT INTO child (id, parent_id) VALUES (10, 1)", parameters = 0)

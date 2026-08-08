@@ -42,7 +42,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
      * before the activity launches. The interface counterpart [setNotificationPermissionAsked] is
      * suspend, which deadlocks under `runBlocking` when the Compose Robolectric harness installs a
      * `TestDispatcher` as `Dispatchers.Main` (every dispatcher role binds to Main via
-     * `IntegrationTestDispatcherBindings`). Use this from `@Before` to seed state synchronously.
+     * `IntegrationTestDispatcherBindings`). Use this from `@Before` to store state synchronously.
      */
     public fun setNotificationPermissionAskedNow(asked: Boolean) {
         notificationPermissionAskedFlow.value = asked

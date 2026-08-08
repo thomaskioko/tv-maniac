@@ -3,9 +3,9 @@ package com.thomaskioko.trakt.service.implementation.sync
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
-import com.thomaskioko.tvmaniac.episodes.api.ShowRuntime
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
+import com.thomaskioko.tvmaniac.episodes.api.WatchedShowMetadata
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.trakt.api.TraktEpisodeHistoryRemoteDataSource
@@ -67,7 +67,7 @@ public class TraktEpisodeWatchesDataSource(
         }
     }
 
-    override suspend fun getWatchedShowRuntimes(page: Int, limit: Int): List<ShowRuntime> {
+    override suspend fun getWatchedShowMetadata(page: Int, limit: Int): List<WatchedShowMetadata> {
         val response = syncRemoteDataSource.getWatchedShows(
             page = page,
             limit = limit,
@@ -76,8 +76,14 @@ public class TraktEpisodeWatchesDataSource(
         return when (response) {
             is ApiResponse.Success -> response.body.mapNotNull { entry ->
                 val tmdbId = entry.show.ids.tmdb ?: return@mapNotNull null
-                val runtime = entry.show.runtime ?: return@mapNotNull null
-                ShowRuntime(tmdbId = tmdbId, runtimeMinutes = runtime)
+                WatchedShowMetadata(
+                    tmdbId = tmdbId,
+                    runtimeMinutes = entry.show.runtime,
+                    year = entry.show.year?.toString(),
+                    genres = entry.show.genres
+                        ?.takeIf { it.isNotEmpty() }
+                        ?.map { genre -> genre.replaceFirstChar { char -> char.uppercase() } },
+                )
             }
             is ApiResponse.Unauthenticated -> emptyList()
             is ApiResponse.Error -> emptyList()

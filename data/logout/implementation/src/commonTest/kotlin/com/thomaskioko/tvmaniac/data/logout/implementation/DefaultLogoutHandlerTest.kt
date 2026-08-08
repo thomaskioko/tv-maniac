@@ -71,7 +71,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
 
         showIdForBreakingBad = insertTvShow(traktId = BREAKING_BAD_TRAKT_ID, tmdbId = BREAKING_BAD_TMDB_ID)
         showIdForTheWire = insertTvShow(traktId = THE_WIRE_TRAKT_ID, tmdbId = THE_WIRE_TMDB_ID)
-        seedUserState()
+        addUserState()
     }
 
     @AfterTest
@@ -207,7 +207,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
         fakeActivitySyncRepository.clearAllCallCount() shouldBe 1
     }
 
-    private fun seedUserState() {
+    private fun addUserState() {
         val now = Clock.System.now().toEpochMilliseconds()
 
         database.watchedEpisodesQueries.upsert(

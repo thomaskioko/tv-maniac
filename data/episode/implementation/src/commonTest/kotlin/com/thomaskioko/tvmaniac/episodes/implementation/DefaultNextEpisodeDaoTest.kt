@@ -634,7 +634,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         insertShowWithTenAiredEpisodes()
         followShow(showId = 12L, followedAt = watchDate)
         (1L..8L).forEach { episodeNumber ->
-            seedTraktSyncedWatch(
+            addTraktSyncedWatch(
                 showId = 12L,
                 seasonNumber = 1L,
                 episodeNumber = episodeNumber,
@@ -954,7 +954,7 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
         }
     }
 
-    private fun seedTraktSyncedWatch(
+    private fun addTraktSyncedWatch(
         showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,

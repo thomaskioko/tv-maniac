@@ -137,7 +137,7 @@ internal class DefaultContinueWatchingDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should seed continue watching membership from live watched episodes`() {
+    fun `should fill continue watching membership from live watched episodes`() {
         insertWatchedEpisode(tmdbId = BREAKING_BAD_TMDB_ID, season = 1L, episode = 1L, watchedAt = EARLIER)
         insertWatchedEpisode(tmdbId = BREAKING_BAD_TMDB_ID, season = 1L, episode = 2L, watchedAt = LATER)
 

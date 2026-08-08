@@ -54,7 +54,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should insert featured shows`() = runTest {
-        val showId = seedShow(showId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
+        val showId = addShow(showId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
 
         val featuredShow = Featured_shows(
             show_id = showId,
@@ -99,7 +99,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should not return shows with null names`() = runTest {
-        val showId = seedShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
+        val showId = addShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
         featuredShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
@@ -134,7 +134,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
             val initialShows = awaitItem()
             initialShows.size shouldBe 2
 
-            val showId = seedShow(showId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
+            val showId = addShow(showId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
             val newShow = Featured_shows(
                 show_id = showId,
                 tmdb_id = Id<TmdbId>(999),
@@ -184,7 +184,7 @@ internal class DefaultFeaturedShowsDaoTest : BaseDatabaseTest() {
         }
     }
 
-    private fun seedShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
+    private fun addShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = name,
