@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.data.ratings.api.ProviderMetaDao
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsDao
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRemoteDataSource
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRepository
+import com.thomaskioko.tvmaniac.data.ratings.api.RemoteShowRating
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRating
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRatingEntry
 import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
@@ -137,6 +138,36 @@ public class DefaultRatingsRepository(
 
     override suspend fun syncPendingRatings() {
         syncMutex.withLock { processPendingUploadActions() }
+    }
+
+    override suspend fun syncUserRatings() {
+        syncMutex.withLock { pullUserRatings() }
+    }
+
+    private suspend fun pullUserRatings() {
+        try {
+            val source = activeSource() ?: return
+            when (val response = source.getShowUserRatings()) {
+                is ApiResponse.Success -> saveUserRatings(response.body)
+                is ApiResponse.Unauthenticated -> Unit
+                is ApiResponse.Error -> logger.error(TAG, "Could not read ratings: $response")
+            }
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (throwable: Throwable) {
+            syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = throwable))
+        }
+    }
+
+    private fun saveUserRatings(ratings: List<RemoteShowRating>) {
+        for (rating in ratings) {
+            val localShowId = tvShowsDao.getLocalShowIdByTmdbId(rating.tmdbId) ?: continue
+            ratingsDao.saveRemoteShowRating(
+                showId = localShowId,
+                userRating = rating.userRating.toLong(),
+                ratedAt = dateTimeProvider.nowMillis(),
+            )
+        }
     }
 
     private suspend fun processPendingUploadActions() {
