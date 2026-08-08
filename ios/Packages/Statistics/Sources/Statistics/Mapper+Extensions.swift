@@ -10,9 +10,13 @@ extension StatisticsState {
             showsMarkedWatchedTimes: showsMarkedWatchedTimes,
             totalWatchTime: totalWatchTime?.toSwift(),
             tiles: tiles.map { $0.toSwift() },
+            heatMap: heatMap?.toSwift(),
             mostWatchedShows: mostWatchedShows.map { $0.toSwift() },
             watchStatusBreakdown: watchStatusBreakdown.map { $0.toSwift() },
             ratingBreakdown: ratingBreakdown.map { $0.toSwift() },
+            yearlyActivity: yearlyActivity.map { $0.toSwift() },
+            monthlyActivity: monthlyActivity.map { $0.toSwift() },
+            weekdayActivity: weekdayActivity.map { $0.toSwift() },
             labels: labels.toSwift()
         )
     }
@@ -48,6 +52,21 @@ extension RatingBar {
     }
 }
 
+extension ActivityBar {
+    func toSwift() -> SwiftActivityBar {
+        .init(label: label, caption: caption, fraction: fraction)
+    }
+}
+
+extension WatchHeatMap {
+    func toSwift() -> SwiftWatchHeatMap {
+        .init(
+            levels: cells.map { Int($0.level) },
+            leadingBlankCells: Int(leadingBlankCells)
+        )
+    }
+}
+
 extension StatisticsLabels {
     func toSwift() -> SwiftStatisticsLabels {
         .init(
@@ -57,10 +76,14 @@ extension StatisticsLabels {
             daysLabel: daysLabel,
             hoursLabel: hoursLabel,
             minutesLabel: minutesLabel,
+            episodesOverTimeTitle: episodesOverTimeTitle,
             markedWatchedNote: markedWatchedNote,
             mostWatchedTitle: mostWatchedTitle,
             watchStatusTitle: watchStatusTitle,
             ratingsTitle: ratingsTitle,
+            yearlyActivityTitle: yearlyActivityTitle,
+            monthlyActivityTitle: monthlyActivityTitle,
+            weekdayActivityTitle: weekdayActivityTitle,
             lockedTitle: lockedTitle,
             lockedMessage: lockedMessage,
             lockedBadgeText: lockedBadgeText,

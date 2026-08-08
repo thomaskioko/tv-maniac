@@ -12,19 +12,22 @@ public struct StatisticsScreen: View {
     private let onBack: () -> Void
     private let onUpgradeClicked: () -> Void
     private let onShowClicked: (Int64) -> Void
+    private let onRefresh: () async -> Void
 
     public init(
         state: State,
         backButtonAccessibilityLabel: String = "",
         onBack: @escaping () -> Void = {},
         onUpgradeClicked: @escaping () -> Void = {},
-        onShowClicked: @escaping (Int64) -> Void = { _ in }
+        onShowClicked: @escaping (Int64) -> Void = { _ in },
+        onRefresh: @escaping () async -> Void = {}
     ) {
         self.state = state
         self.backButtonAccessibilityLabel = backButtonAccessibilityLabel
         self.onBack = onBack
         self.onUpgradeClicked = onUpgradeClicked
         self.onShowClicked = onShowClicked
+        self.onRefresh = onRefresh
     }
 
     public var body: some View {
@@ -77,6 +80,13 @@ public struct StatisticsScreen: View {
     private var contentScrollView: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(alignment: .leading, spacing: theme.spacing.large) {
+                if let heatMap = state.heatMap {
+                    WatchHeatMapSectionView(
+                        heatMap: heatMap,
+                        title: state.labels.episodesOverTimeTitle
+                    )
+                }
+
                 if let totalWatchTime = state.totalWatchTime {
                     WatchTimeHeroView(
                         watchTime: totalWatchTime,
@@ -100,6 +110,34 @@ public struct StatisticsScreen: View {
                         .testTag(StatisticsTestTags.shared.MARKED_WATCHED_NOTE_TEST_TAG)
                 }
 
+                if !state.yearlyActivity.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.yearlyActivity,
+                        title: state.labels.yearlyActivityTitle,
+                        sectionTestTag: StatisticsTestTags.shared.YEARLY_ACTIVITY_TEST_TAG,
+                        sectionName: "yearly",
+                        showAxisLabels: true
+                    )
+                }
+
+                if !state.monthlyActivity.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.monthlyActivity,
+                        title: state.labels.monthlyActivityTitle,
+                        sectionTestTag: StatisticsTestTags.shared.MONTHLY_ACTIVITY_TEST_TAG,
+                        sectionName: "monthly"
+                    )
+                }
+
+                if !state.weekdayActivity.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.weekdayActivity,
+                        title: state.labels.weekdayActivityTitle,
+                        sectionTestTag: StatisticsTestTags.shared.WEEKDAY_ACTIVITY_TEST_TAG,
+                        sectionName: "weekday"
+                    )
+                }
+
                 if !state.mostWatchedShows.isEmpty {
                     MostWatchedShowsSectionView(
                         shows: state.mostWatchedShows,
@@ -119,6 +157,7 @@ public struct StatisticsScreen: View {
             .padding(.bottom, theme.spacing.large)
         }
         .contentMargins(.top, toolbarInset + theme.spacing.small)
+        .refreshable { await onRefresh() }
         .testTag(StatisticsTestTags.shared.CONTENT_TEST_TAG)
     }
 

@@ -7,9 +7,13 @@ public extension StatisticsScreen {
         public let showsMarkedWatchedTimes: Bool
         public let totalWatchTime: SwiftWatchTime?
         public let tiles: [SwiftStatisticTile]
+        public let heatMap: SwiftWatchHeatMap?
         public let mostWatchedShows: [SwiftMostWatchedShowItem]
         public let watchStatusBreakdown: [SwiftWatchStatusItem]
         public let ratingBreakdown: [SwiftRatingBar]
+        public let yearlyActivity: [SwiftActivityBar]
+        public let monthlyActivity: [SwiftActivityBar]
+        public let weekdayActivity: [SwiftActivityBar]
         public let labels: SwiftStatisticsLabels
 
         public init(
@@ -20,9 +24,13 @@ public extension StatisticsScreen {
             showsMarkedWatchedTimes: Bool = false,
             totalWatchTime: SwiftWatchTime? = nil,
             tiles: [SwiftStatisticTile] = [],
+            heatMap: SwiftWatchHeatMap? = nil,
             mostWatchedShows: [SwiftMostWatchedShowItem] = [],
             watchStatusBreakdown: [SwiftWatchStatusItem] = [],
             ratingBreakdown: [SwiftRatingBar] = [],
+            yearlyActivity: [SwiftActivityBar] = [],
+            monthlyActivity: [SwiftActivityBar] = [],
+            weekdayActivity: [SwiftActivityBar] = [],
             labels: SwiftStatisticsLabels = SwiftStatisticsLabels()
         ) {
             self.isLoading = isLoading
@@ -32,9 +40,13 @@ public extension StatisticsScreen {
             self.showsMarkedWatchedTimes = showsMarkedWatchedTimes
             self.totalWatchTime = totalWatchTime
             self.tiles = tiles
+            self.heatMap = heatMap
             self.mostWatchedShows = mostWatchedShows
             self.watchStatusBreakdown = watchStatusBreakdown
             self.ratingBreakdown = ratingBreakdown
+            self.yearlyActivity = yearlyActivity
+            self.monthlyActivity = monthlyActivity
+            self.weekdayActivity = weekdayActivity
             self.labels = labels
         }
     }

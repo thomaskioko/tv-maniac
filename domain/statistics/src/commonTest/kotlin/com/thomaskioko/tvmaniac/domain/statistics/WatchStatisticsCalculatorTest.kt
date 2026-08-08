@@ -71,8 +71,7 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
         statistics.dailyCounts.first().date shouldBe FIRST_OF_YEAR
         statistics.dailyCounts.last().date shouldBe TODAY
         statistics.dailyCounts.all { it.episodeCount == 0 } shouldBe true
-        statistics.ratingDistribution.map { it.rating } shouldBe (1..10).toList()
-        statistics.ratingDistribution.all { it.count == 0L } shouldBe true
+        statistics.ratingDistribution.shouldBeEmptyList()
         statistics.streak shouldBe WatchStreak.NONE
         statistics.averageRating shouldBe null
         statistics.topWeekday shouldBe null
@@ -355,7 +354,7 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should count shows for every watch status`() = runTest(testDispatcher) {
+    fun `should leave out a watch status no show sits in`() = runTest(testDispatcher) {
         insertShow(tmdbId = BREAKING_BAD)
         insertShow(tmdbId = THE_WIRE)
         database.showWatchStatusQueries.upsert(
@@ -373,9 +372,42 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
 
         val counts = calculate().showsByWatchStatus.associate { it.status to it.showCount }
 
-        counts.keys shouldBe WatchStatus.entries.toSet()
+        counts.keys shouldBe setOf(WatchStatus.COMPLETED)
         counts[WatchStatus.COMPLETED] shouldBe 2L
-        counts[WatchStatus.DROPPED] shouldBe 0L
+    }
+
+    @Test
+    fun `should count a followed show with nothing watched as watchlist`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        follow(BREAKING_BAD)
+
+        val counts = calculate().showsByWatchStatus.associate { it.status to it.showCount }
+
+        counts[WatchStatus.WATCHLIST] shouldBe 1L
+    }
+
+    @Test
+    fun `should count a followed show once given it already has a watch status`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        follow(BREAKING_BAD)
+        database.showWatchStatusQueries.upsert(
+            showId = internalId(BREAKING_BAD),
+            status = WatchStatus.WATCHING,
+            lastWatchedAt = null,
+            lastSyncedAt = null,
+        )
+
+        val counts = calculate().showsByWatchStatus.associate { it.status to it.showCount }
+
+        counts shouldBe mapOf(WatchStatus.WATCHING to 1L)
+    }
+
+    @Test
+    fun `should leave out a followed show the user is unfollowing`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        follow(BREAKING_BAD, pendingAction = "DELETE")
+
+        calculate().showsByWatchStatus.shouldBeEmptyList()
     }
 
     @Test
@@ -418,7 +450,7 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
             pendingAction = "DELETE",
         )
 
-        calculate().ratingDistribution.all { it.count == 0L } shouldBe true
+        calculate().ratingDistribution.shouldBeEmptyList()
     }
 
     private fun internalId(tmdbId: Long): Id<ShowId> =
@@ -445,6 +477,15 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
             backdrop_path = null,
         )
         showIdForTraktId(traktId = tmdbId, tmdbId = tmdbId)
+    }
+
+    private fun follow(tmdbId: Long, pendingAction: String = "NOTHING") {
+        database.followedShowsQueries.upsert(
+            showId = internalId(tmdbId),
+            tmdbId = Id<TmdbId>(tmdbId),
+            followedAt = 0L,
+            pendingAction = pendingAction,
+        )
     }
 
     private fun insertSeasonAndEpisode(tmdbId: Long) {

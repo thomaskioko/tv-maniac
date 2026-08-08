@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.combine
 public class FakeRatingsRepository : RatingsRepository {
 
     private var syncPendingRatingsError: Throwable? = null
+    public var syncUserRatingsCount: Int = 0
+        private set
     private val showRatingFlow = MutableStateFlow(
         ShowRating(userRating = null, communityRating = null, communityVotes = null, pendingAction = PendingAction.NOTHING),
     )
@@ -66,6 +68,10 @@ public class FakeRatingsRepository : RatingsRepository {
 
     override suspend fun syncPendingRatings() {
         syncPendingRatingsError?.let { throw it }
+    }
+
+    override suspend fun syncUserRatings() {
+        syncUserRatingsCount++
     }
 
     override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {

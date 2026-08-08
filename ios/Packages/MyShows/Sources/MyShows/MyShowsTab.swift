@@ -285,7 +285,7 @@ public struct MyShowsTab: View {
                     episodeNumber: episode.episodeNumberValue
                 ))
             },
-            onRefresh: { continueWatchingPresenter.dispatch(action: RefreshContinueWatching(forceRefresh: true)) }
+            onRefresh: { try? await continueWatchingPresenter.refresh() }
         )
     }
 

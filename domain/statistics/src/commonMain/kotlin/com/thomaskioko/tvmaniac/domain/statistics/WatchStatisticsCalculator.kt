@@ -80,14 +80,17 @@ public class WatchStatisticsCalculator(
         )
 
     private fun getShowsByWatchStatus(showCountsByStatus: Map<WatchStatus, Long>): List<WatchStatusCount> =
-        WatchStatus.entries.map { status ->
-            WatchStatusCount(status = status, showCount = showCountsByStatus[status] ?: 0L)
+        WatchStatus.entries.mapNotNull { status ->
+            val showCount = showCountsByStatus[status] ?: 0L
+            if (showCount == 0L) null else WatchStatusCount(status = status, showCount = showCount)
         }
 
-    private fun getRatingDistribution(ratingCounts: Map<Int, Long>): List<RatingCount> =
-        (LOWEST_RATING..HIGHEST_RATING).map { rating ->
+    private fun getRatingDistribution(ratingCounts: Map<Int, Long>): List<RatingCount> {
+        if (ratingCounts.values.sum() == 0L) return emptyList()
+        return (LOWEST_RATING..HIGHEST_RATING).map { rating ->
             RatingCount(rating = rating, count = ratingCounts[rating] ?: 0L)
         }
+    }
 
     private fun calculateDailyCounts(watchedDays: List<WatchedDay>, today: LocalDate): List<DailyWatchCount> {
         val byDate = watchedDays.groupBy { it.date }

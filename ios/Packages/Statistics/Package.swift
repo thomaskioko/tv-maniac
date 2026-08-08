@@ -40,6 +40,7 @@ let package = Package(
                 "DesignSystem",
                 "Components",
                 "Models",
+                .product(name: "TvManiac", package: "TvManiacFramework"),
             ],
             exclude: ["__Snapshots__"]
         ),

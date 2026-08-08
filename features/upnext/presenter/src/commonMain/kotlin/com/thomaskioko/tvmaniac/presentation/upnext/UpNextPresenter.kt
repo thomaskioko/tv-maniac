@@ -40,6 +40,7 @@ import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -138,9 +139,18 @@ public class UpNextPresenter internal constructor(
         }
     }
 
-    private fun refreshUpNext(isUserInitiated: Boolean = false) {
+    /**
+     * Suspends until the refresh finishes so a caller can hold a progress indicator open for it.
+     * The work runs in the presenter's own scope, so leaving the screen part way through cancels
+     * the wait rather than the sync.
+     */
+    public suspend fun refresh() {
+        refreshUpNext(isUserInitiated = true).join()
+    }
+
+    private fun refreshUpNext(isUserInitiated: Boolean = false): Job {
         val counter = if (isUserInitiated) refreshingState else loadingState
-        coroutineScope.launch {
+        return coroutineScope.launch {
             syncContinueWatchingInteractor(SyncContinueWatchingInteractor.Param(forceRefresh = isUserInitiated))
                 .collectStatus(counter, logger, uiMessageManager, "Up Next", errorToStringMapper)
         }

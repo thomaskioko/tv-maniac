@@ -8,10 +8,14 @@ private let previewLabels = SwiftStatisticsLabels(
     daysLabel: "days",
     hoursLabel: "hours",
     minutesLabel: "minutes",
+    episodesOverTimeTitle: "Your year of watching",
     markedWatchedNote: "Dates show when episodes were marked as watched, not when you watched them.",
     mostWatchedTitle: "Most watched shows",
     watchStatusTitle: "Shows by status",
     ratingsTitle: "Your ratings",
+    yearlyActivityTitle: "Episodes by year",
+    monthlyActivityTitle: "Episodes by month",
+    weekdayActivityTitle: "Episodes by day of the week",
     lockedTitle: "Statistics are a Premium feature",
     lockedMessage: "Upgrade to Premium to see how you watch.",
     lockedBadgeText: "Premium",
@@ -52,14 +56,56 @@ private let previewRatingBreakdown: [SwiftRatingBar] = [
     .init(rating: 6, count: 1, fraction: 0.08),
 ]
 
+private let previewYearlyActivity: [SwiftActivityBar] = [
+    .init(label: "2022", caption: "84 episodes", fraction: 0.27),
+    .init(label: "2023", caption: "312 episodes", fraction: 1),
+    .init(label: "2024", caption: "196 episodes", fraction: 0.63),
+    .init(label: "2025", caption: "148 episodes", fraction: 0.47),
+    .init(label: "2026", caption: "91 episodes", fraction: 0.29),
+]
+
+private let previewMonthlyActivity: [SwiftActivityBar] = [
+    .init(label: "Jan", caption: "24 episodes", fraction: 0.6),
+    .init(label: "Feb", caption: "18 episodes", fraction: 0.45),
+    .init(label: "Mar", caption: "31 episodes", fraction: 0.77),
+    .init(label: "Apr", caption: "12 episodes", fraction: 0.3),
+    .init(label: "May", caption: "40 episodes", fraction: 1),
+    .init(label: "Jun", caption: "22 episodes", fraction: 0.55),
+    .init(label: "Jul", caption: "8 episodes", fraction: 0.2),
+    .init(label: "Aug", caption: "27 episodes", fraction: 0.67),
+    .init(label: "Sep", caption: "15 episodes", fraction: 0.37),
+    .init(label: "Oct", caption: "33 episodes", fraction: 0.82),
+    .init(label: "Nov", caption: "19 episodes", fraction: 0.47),
+    .init(label: "Dec", caption: "29 episodes", fraction: 0.72),
+]
+
+private let previewWeekdayActivity: [SwiftActivityBar] = [
+    .init(label: "Mon", caption: "12 episodes", fraction: 0.6),
+    .init(label: "Tue", caption: "8 episodes", fraction: 0.4),
+    .init(label: "Wed", caption: "14 episodes", fraction: 0.7),
+    .init(label: "Thu", caption: "6 episodes", fraction: 0.3),
+    .init(label: "Fri", caption: "17 episodes", fraction: 0.85),
+    .init(label: "Sat", caption: "20 episodes", fraction: 1),
+    .init(label: "Sun", caption: "16 episodes", fraction: 0.8),
+]
+
+private let previewHeatMap = SwiftWatchHeatMap(
+    levels: (0 ..< 215).map { ($0 * 7) % 5 },
+    leadingBlankCells: 3
+)
+
 private let previewContentState = StatisticsScreen.State(
     isLoading: false,
     showContent: true,
     totalWatchTime: SwiftWatchTime(days: 12, hours: 4, minutes: 30),
     tiles: previewTiles,
+    heatMap: previewHeatMap,
     mostWatchedShows: previewMostWatchedShows,
     watchStatusBreakdown: previewWatchStatusBreakdown,
     ratingBreakdown: previewRatingBreakdown,
+    yearlyActivity: previewYearlyActivity,
+    monthlyActivity: previewMonthlyActivity,
+    weekdayActivity: previewWeekdayActivity,
     labels: previewLabels
 )
 
@@ -98,9 +144,13 @@ private let previewContentState = StatisticsScreen.State(
                 showsMarkedWatchedTimes: true,
                 totalWatchTime: previewContentState.totalWatchTime,
                 tiles: previewContentState.tiles,
+                heatMap: previewContentState.heatMap,
                 mostWatchedShows: previewContentState.mostWatchedShows,
                 watchStatusBreakdown: previewContentState.watchStatusBreakdown,
                 ratingBreakdown: previewContentState.ratingBreakdown,
+                yearlyActivity: previewContentState.yearlyActivity,
+                monthlyActivity: previewContentState.monthlyActivity,
+                weekdayActivity: previewContentState.weekdayActivity,
                 labels: previewLabels
             )
         )
@@ -118,9 +168,13 @@ private let previewContentState = StatisticsScreen.State(
                 showContent: true,
                 totalWatchTime: previewContentState.totalWatchTime,
                 tiles: previewContentState.tiles,
+                heatMap: previewContentState.heatMap,
                 mostWatchedShows: previewContentState.mostWatchedShows,
                 watchStatusBreakdown: previewContentState.watchStatusBreakdown,
                 ratingBreakdown: previewContentState.ratingBreakdown,
+                yearlyActivity: previewContentState.yearlyActivity,
+                monthlyActivity: previewContentState.monthlyActivity,
+                weekdayActivity: previewContentState.weekdayActivity,
                 labels: previewLabels
             )
         )

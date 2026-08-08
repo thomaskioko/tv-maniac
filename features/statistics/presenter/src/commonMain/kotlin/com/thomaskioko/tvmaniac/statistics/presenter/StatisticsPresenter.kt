@@ -7,8 +7,13 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
+import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.statistics.ObserveWatchStatisticsInteractor
+import com.thomaskioko.tvmaniac.domain.statistics.SyncStatisticsInteractor
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
@@ -18,6 +23,7 @@ import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -35,12 +41,16 @@ public class StatisticsPresenter internal constructor(
     observeWatchStatisticsInteractor: ObserveWatchStatisticsInteractor,
     accountManager: AccountManager,
     subscriptionManager: SubscriptionManager,
+    private val syncStatisticsInteractor: SyncStatisticsInteractor,
     private val stateMapper: StatisticsStateMapper,
     private val navigator: Navigator,
+    private val errorToStringMapper: ErrorToStringMapper,
+    private val logger: Logger,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
     private val uiMessageManager = UiMessageManager()
+    private val refreshingState = ObservableLoadingCounter()
 
     init {
         observeWatchStatisticsInteractor(Unit)
@@ -51,9 +61,11 @@ public class StatisticsPresenter internal constructor(
         subscriptionManager.observeAccess(SubscriptionFeature.Statistics),
         accountManager.activeProvider,
         uiMessageManager.message,
-    ) { statistics, hasAccess, activeProvider, message ->
+        refreshingState.observable,
+    ) { statistics, hasAccess, activeProvider, message, isRefreshing ->
         StatisticsState(
             isLoading = false,
+            isRefreshing = isRefreshing,
             isLocked = !hasAccess,
             hasWatchHistory = statistics.hasWatchHistory,
             showsMarkedWatchedTimes = activeProvider == SyncProviderSource.SIMKL,
@@ -88,6 +100,24 @@ public class StatisticsPresenter internal constructor(
             is StatisticsAction.MessageShown -> coroutineScope.launch {
                 uiMessageManager.clearMessage(action.id)
             }
+            is StatisticsAction.Refresh -> startRefresh()
+        }
+    }
+
+    /**
+     * Suspends until the refresh finishes so a caller can hold a progress indicator open for it.
+     * The work runs in the presenter's own scope, so leaving the screen part way through cancels
+     * the wait rather than the sync.
+     */
+    public suspend fun refresh() {
+        startRefresh()?.join()
+    }
+
+    private fun startRefresh(): Job? {
+        if (state.value.isLocked) return null
+        return coroutineScope.launch {
+            syncStatisticsInteractor(SyncStatisticsInteractor.Params(forceRefresh = true))
+                .collectStatus(refreshingState, logger, uiMessageManager, "Statistics", errorToStringMapper)
         }
     }
 }

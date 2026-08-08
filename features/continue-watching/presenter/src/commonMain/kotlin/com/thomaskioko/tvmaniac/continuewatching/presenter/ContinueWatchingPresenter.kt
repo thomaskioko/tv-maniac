@@ -38,6 +38,7 @@ import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -221,21 +222,28 @@ public class ContinueWatchingPresenter internal constructor(
         }
     }
 
-    private fun syncWatchlist(forceRefresh: Boolean = false) {
-        coroutineScope.launch {
-            val counter = if (forceRefresh) userRefreshState else watchlistLoadingState
-            syncContinueWatchingInteractor(
-                SyncContinueWatchingInteractor.Param(
-                    forceRefresh = forceRefresh,
-                    useNitro = nitroEnabled.value,
-                ),
+    /**
+     * Suspends until the refresh finishes so a caller can hold a progress indicator open for it.
+     * The work runs in the presenter's own scope, so leaving the screen part way through cancels
+     * the wait rather than the sync.
+     */
+    public suspend fun refresh() {
+        syncWatchlist(forceRefresh = true).join()
+    }
+
+    private fun syncWatchlist(forceRefresh: Boolean = false): Job = coroutineScope.launch {
+        val counter = if (forceRefresh) userRefreshState else watchlistLoadingState
+        syncContinueWatchingInteractor(
+            SyncContinueWatchingInteractor.Param(
+                forceRefresh = forceRefresh,
+                useNitro = nitroEnabled.value,
+            ),
+        )
+            .collectStatus(
+                counter = counter,
+                logger = logger,
+                uiMessageManager = uiMessageManager,
+                errorToStringMapper = errorToStringMapper,
             )
-                .collectStatus(
-                    counter = counter,
-                    logger = logger,
-                    uiMessageManager = uiMessageManager,
-                    errorToStringMapper = errorToStringMapper,
-                )
-        }
     }
 }

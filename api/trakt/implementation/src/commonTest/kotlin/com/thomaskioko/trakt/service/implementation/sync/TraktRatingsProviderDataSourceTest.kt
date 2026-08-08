@@ -52,12 +52,44 @@ class TraktRatingsProviderDataSourceTest {
         source.getShowUserRating(providerShowId = 99).getOrThrow().shouldBeNull()
     }
 
-    private fun userRatingItem(traktId: Long, rating: Int): TraktUserRatingItem = TraktUserRatingItem(
-        ratedAt = "2026-01-01T00:00:00Z",
-        rating = rating,
-        type = "show",
-        show = TraktHistoryShow(ids = TraktHistoryShowIds(traktId = traktId)),
-    )
+    @Test
+    fun `should key every user rating by its tmdb id`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(
+                listOf(
+                    userRatingItem(traktId = 10, rating = 6, tmdbId = 111),
+                    userRatingItem(traktId = 20, rating = 9, tmdbId = 222),
+                ),
+            ),
+        )
+
+        val ratings = source.getShowUserRatings().getOrThrow()
+
+        ratings.map { it.tmdbId } shouldBe listOf(111L, 222L)
+        ratings.map { it.userRating } shouldBe listOf(6, 9)
+    }
+
+    @Test
+    fun `should leave out a user rating carrying no tmdb id`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(
+                listOf(
+                    userRatingItem(traktId = 10, rating = 6),
+                    userRatingItem(traktId = 20, rating = 9, tmdbId = 222),
+                ),
+            ),
+        )
+
+        source.getShowUserRatings().getOrThrow().map { it.tmdbId } shouldBe listOf(222L)
+    }
+
+    private fun userRatingItem(traktId: Long, rating: Int, tmdbId: Long? = null): TraktUserRatingItem =
+        TraktUserRatingItem(
+            ratedAt = "2026-01-01T00:00:00Z",
+            rating = rating,
+            type = "show",
+            show = TraktHistoryShow(ids = TraktHistoryShowIds(traktId = traktId, tmdbId = tmdbId)),
+        )
 
     @Test
     fun `should map add rating response to success given trakt accepts the rating`() = runTest {

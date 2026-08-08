@@ -1633,6 +1633,7 @@ graph TB
   :features:start-watching:ui -.-> :i18n:generator
   :features:statistics:nav --> :navigation:api
   :features:statistics:presenter --> :core:base
+  :features:statistics:presenter --> :core:logger:api
   :features:statistics:presenter --> :core:util:api
   :features:statistics:presenter --> :core:view
   :features:statistics:presenter --> :data:account-manager:api

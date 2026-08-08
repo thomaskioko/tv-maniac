@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.toDbProvider
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.data.ratings.api.RemoteShowRating
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRemoteDataSource
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
@@ -98,6 +99,79 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         entries.size shouldBe 1
         entries.first().userRating shouldBe 8L
         entries.first().pendingAction shouldBe PendingAction.UPLOAD
+    }
+
+    @Test
+    fun `should store the ratings the provider already holds given syncUserRatings succeeds`() = runTest {
+        val repository = buildRepository(FakeSyncObserver())
+        tvShowsDao.setLocalShowIdForTmdbId(tmdbId = TMDB_ID, showId = SHOW_ID)
+        remoteDataSource.setUserRatingsResponse(
+            ApiResponse.Success(listOf(RemoteShowRating(tmdbId = TMDB_ID, userRating = 8))),
+        )
+
+        repository.syncUserRatings()
+
+        ratingsDao.observeShowRating(SHOW_ID).test {
+            val entry = awaitItem()
+            entry?.userRating shouldBe 8L
+            entry?.pendingAction shouldBe PendingAction.NOTHING
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should keep a rating waiting to upload given syncUserRatings returns a different one`() = runTest {
+        val repository = buildRepository(FakeSyncObserver())
+        tvShowsDao.setLocalShowIdForTmdbId(tmdbId = TMDB_ID, showId = SHOW_ID)
+        ratingsDao.upsertShowUserRating(
+            showId = SHOW_ID,
+            userRating = 10L,
+            ratedAt = dateTimeProvider.nowMillis(),
+            pendingAction = PendingAction.UPLOAD,
+        )
+        remoteDataSource.setUserRatingsResponse(
+            ApiResponse.Success(listOf(RemoteShowRating(tmdbId = TMDB_ID, userRating = 3))),
+        )
+
+        repository.syncUserRatings()
+
+        ratingsDao.observeShowRating(SHOW_ID).test {
+            val entry = awaitItem()
+            entry?.userRating shouldBe 10L
+            entry?.pendingAction shouldBe PendingAction.UPLOAD
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should skip a rating for a show that is not stored given syncUserRatings succeeds`() = runTest {
+        val repository = buildRepository(FakeSyncObserver())
+        remoteDataSource.setUserRatingsResponse(
+            ApiResponse.Success(listOf(RemoteShowRating(tmdbId = DISTINCT_TMDB_ID, userRating = 8))),
+        )
+
+        repository.syncUserRatings()
+
+        ratingsDao.observeUserRatingDistribution().test {
+            awaitItem() shouldBe emptyMap()
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should do nothing given no account is signed in`() = runTest {
+        val repository = buildRepository(FakeSyncObserver())
+        activeRemoteSource = null
+        remoteDataSource.setUserRatingsResponse(
+            ApiResponse.Success(listOf(RemoteShowRating(tmdbId = TMDB_ID, userRating = 8))),
+        )
+
+        repository.syncUserRatings()
+
+        ratingsDao.observeUserRatingDistribution().test {
+            awaitItem() shouldBe emptyMap()
+            cancelAndConsumeRemainingEvents()
+        }
     }
 
     @Test
