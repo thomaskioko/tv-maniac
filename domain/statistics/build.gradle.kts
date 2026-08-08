@@ -27,7 +27,9 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.episode.implementation)
+                implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.implementation)
+                implementation(projects.data.ratings.testing)
                 implementation(projects.data.watchStatus.implementation)
             }
         }
