@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRENDING_S
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
@@ -153,7 +154,7 @@ private fun TraktShowResponse.toTvShow(
     posterPath = posterPath,
     backdropPath = backdropPath,
     status = status,
-    genres = genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+    genres = genres?.map(::traktGenreName),
     episodeNumbers = airedEpisodes?.toString(),
     seasonNumbers = null,
 )

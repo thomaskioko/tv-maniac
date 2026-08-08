@@ -542,7 +542,7 @@
     <string name="label_statistics_genres">Genres que vous regardez</string>
     <string name="label_statistics_release_years">Séries par année de sortie</string>
     <string name="label_statistics_genre_other">Autres</string>
-    <string name="label_statistics_genres_unavailable">Simkl ne fournit pas de genres, ceci n'est donc disponible qu'avec un compte Trakt.</string>
+    <string name="label_statistics_genres_empty">Nous ne connaissons pas encore les genres des séries que vous avez regardées.</string>
     <string name="label_statistics_current_streak">Série en cours</string>
     <string name="label_statistics_running_now">en cours</string>
     <string name="label_statistics_watch_days_month">Jours de visionnage ce mois-ci</string>

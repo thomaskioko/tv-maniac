@@ -609,7 +609,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
                 tmdbId = SHOW_ID,
                 runtimeMinutes = 47,
                 year = "2019",
-                genres = listOf("Drama", "Science-fiction"),
+                genres = listOf("drama", "science-fiction"),
             ),
         )
 
@@ -618,7 +618,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
         val show = database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne()
         show.year shouldBe "2019"
-        show.genres shouldContainExactly listOf("Drama", "Science-fiction")
+        show.genres shouldContainExactly listOf("Drama", "Science Fiction")
     }
 
     @Test
