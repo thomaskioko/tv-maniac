@@ -60,9 +60,18 @@ ON CONFLICT(tmdb_id) DO UPDATE SET
 updateRuntime:
 UPDATE tvshow SET runtime = :runtime WHERE tmdb_id = :tmdbId;
 
-countWatchedShowsMissingRuntime:
+updateWatchedShowMetadata:
+UPDATE tvshow
+SET runtime = COALESCE(:runtime, runtime),
+    year = COALESCE(:year, year)
+WHERE tmdb_id = :tmdbId;
+
+updateWatchedShowGenres:
+UPDATE tvshow SET genres = :genres WHERE tmdb_id = :tmdbId;
+
+countWatchedShowsMissingMetadata:
 SELECT COUNT(*) FROM tvshow
-WHERE runtime IS NULL
+WHERE (runtime IS NULL OR year IS NULL OR genres IS NULL)
   AND id IN (
     SELECT DISTINCT show_id FROM watched_episodes
     WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')

@@ -10,4 +10,5 @@ public data class WatchedShowBatch(
     public val episodes: List<WatchedEpisodeEntry>,
     public val lastUpdatedAt: Instant? = null,
     public val runtime: Long? = null,
+    public val year: String? = null,
 )

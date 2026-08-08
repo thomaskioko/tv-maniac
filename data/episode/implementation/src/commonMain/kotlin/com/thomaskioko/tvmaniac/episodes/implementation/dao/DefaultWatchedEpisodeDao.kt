@@ -82,15 +82,27 @@ public class DefaultWatchedEpisodeDao(
             }
             .catch { emit(emptyList()) }
 
-    override suspend fun updateShowRuntime(tmdbId: Long, runtime: Long) {
+    override suspend fun updateShowMetadata(
+        tmdbId: Long,
+        runtime: Long?,
+        year: String?,
+        genres: List<String>?,
+    ) {
         withContext(dispatchers.databaseWrite) {
-            database.tvShowQueries.updateRuntime(runtime = runtime, tmdbId = Id(tmdbId))
+            database.tvShowQueries.updateWatchedShowMetadata(
+                runtime = runtime,
+                year = year,
+                tmdbId = Id(tmdbId),
+            )
+            if (genres != null) {
+                database.tvShowQueries.updateWatchedShowGenres(genres = genres, tmdbId = Id(tmdbId))
+            }
         }
     }
 
-    override suspend fun countWatchedShowsMissingRuntime(): Long =
+    override suspend fun countWatchedShowsMissingMetadata(): Long =
         withContext(dispatchers.databaseRead) {
-            database.tvShowQueries.countWatchedShowsMissingRuntime().executeAsOne()
+            database.tvShowQueries.countWatchedShowsMissingMetadata().executeAsOne()
         }
 
     override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =

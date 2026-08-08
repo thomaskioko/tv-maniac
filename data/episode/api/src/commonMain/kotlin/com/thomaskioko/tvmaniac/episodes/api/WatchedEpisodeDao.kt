@@ -27,9 +27,14 @@ public interface WatchedEpisodeDao {
 
     public fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>>
 
-    public suspend fun updateShowRuntime(tmdbId: Long, runtime: Long)
+    public suspend fun updateShowMetadata(
+        tmdbId: Long,
+        runtime: Long? = null,
+        year: String? = null,
+        genres: List<String>? = null,
+    )
 
-    public suspend fun countWatchedShowsMissingRuntime(): Long
+    public suspend fun countWatchedShowsMissingMetadata(): Long
 
     public suspend fun markAsWatched(
         showId: Long,

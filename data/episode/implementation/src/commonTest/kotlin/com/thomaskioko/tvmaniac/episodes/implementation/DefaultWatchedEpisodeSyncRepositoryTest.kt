@@ -9,9 +9,9 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
-import com.thomaskioko.tvmaniac.episodes.api.ShowRuntime
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
+import com.thomaskioko.tvmaniac.episodes.api.WatchedShowMetadata
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -473,6 +473,25 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         showId = showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_ID)
     }
 
+    private fun seedShowWithoutMetadata() {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id(SHOW_ID),
+            name = "Test Show",
+            overview = "",
+            language = "en",
+            year = null,
+            ratings = 8.0,
+            vote_count = 100,
+            genres = null,
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        showId = showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_ID)
+    }
+
     private fun seedAdditionalShow(tmdbId: Long, traktId: Long): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id(tmdbId),
@@ -558,19 +577,19 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     fun `should store runtime for watched shows missing it given bulk sync runs`() = runTest(testDispatcher) {
         seedShow()
         recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
-        recordingDataSource.runtimesToReturn = listOf(
-            ShowRuntime(tmdbId = SHOW_ID, runtimeMinutes = 47),
+        recordingDataSource.metadataToReturn = listOf(
+            WatchedShowMetadata(tmdbId = SHOW_ID, runtimeMinutes = 47),
         )
 
         defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
         advanceUntilIdle()
 
         database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne().runtime shouldBe 47L
-        recordingDataSource.runtimeRequestPages shouldContainExactly listOf(1)
+        recordingDataSource.metadataRequestPages shouldContainExactly listOf(1)
     }
 
     @Test
-    fun `should skip the runtime request given every watched show already has one`() = runTest(testDispatcher) {
+    fun `should skip the metadata request given every watched show already has it`() = runTest(testDispatcher) {
         seedShow()
         database.tvShowQueries.updateRuntime(runtime = 47, tmdbId = Id(SHOW_ID))
         recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
@@ -578,7 +597,55 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
         advanceUntilIdle()
 
-        recordingDataSource.runtimeRequestPages.shouldBeEmpty()
+        recordingDataSource.metadataRequestPages.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should store the release year and genres given a watched show is missing them`() = runTest(testDispatcher) {
+        seedShowWithoutMetadata()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        recordingDataSource.metadataToReturn = listOf(
+            WatchedShowMetadata(
+                tmdbId = SHOW_ID,
+                runtimeMinutes = 47,
+                year = "2019",
+                genres = listOf("Drama", "Science-fiction"),
+            ),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        val show = database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne()
+        show.year shouldBe "2019"
+        show.genres shouldContainExactly listOf("Drama", "Science-fiction")
+    }
+
+    @Test
+    fun `should keep the stored genres given the provider returns none`() = runTest(testDispatcher) {
+        seedShow()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        recordingDataSource.metadataToReturn = listOf(
+            WatchedShowMetadata(tmdbId = SHOW_ID, runtimeMinutes = 47, year = null, genres = null),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        val show = database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne()
+        show.year shouldBe "2024"
+        show.genres shouldContainExactly listOf("Drama")
+    }
+
+    @Test
+    fun `should store the release year given a batch carries one`() = runTest(testDispatcher) {
+        seedShowWithoutMetadata()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID).copy(year = "2016"))
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne().year shouldBe "2016"
     }
 }
 
@@ -594,15 +661,15 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
     var batchesToReturn: List<WatchedShowBatch> = emptyList()
-    var runtimesToReturn: List<ShowRuntime> = emptyList()
+    var metadataToReturn: List<WatchedShowMetadata> = emptyList()
 
-    private val _runtimeRequestPages = mutableListOf<Int>()
-    val runtimeRequestPages: List<Int> get() = _runtimeRequestPages.toList()
+    private val _metadataRequestPages = mutableListOf<Int>()
+    val metadataRequestPages: List<Int> get() = _metadataRequestPages.toList()
 
-    override suspend fun getWatchedShowRuntimes(page: Int, limit: Int): List<ShowRuntime> {
-        _runtimeRequestPages += page
+    override suspend fun getWatchedShowMetadata(page: Int, limit: Int): List<WatchedShowMetadata> {
+        _metadataRequestPages += page
         val offset = (page - 1) * limit
-        return runtimesToReturn.drop(offset).take(limit)
+        return metadataToReturn.drop(offset).take(limit)
     }
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
