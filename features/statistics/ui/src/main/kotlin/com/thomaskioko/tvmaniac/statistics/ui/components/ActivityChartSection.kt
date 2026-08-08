@@ -209,13 +209,13 @@ private fun AxisLabels(
 private fun ActivityChartSectionPreview() {
     ActivityChartSection(
         bars = persistentListOf(
-            ActivityBar(label = "Mon", episodeCount = 12, caption = "12 episodes", fraction = 0.6f),
-            ActivityBar(label = "Tue", episodeCount = 8, caption = "8 episodes", fraction = 0.4f),
-            ActivityBar(label = "Wed", episodeCount = 14, caption = "14 episodes", fraction = 0.7f),
-            ActivityBar(label = "Thu", episodeCount = 6, caption = "6 episodes", fraction = 0.3f),
-            ActivityBar(label = "Fri", episodeCount = 17, caption = "17 episodes", fraction = 0.85f),
-            ActivityBar(label = "Sat", episodeCount = 20, caption = "20 episodes", fraction = 1f),
-            ActivityBar(label = "Sun", episodeCount = 0, caption = "0 episodes", fraction = 0f),
+            ActivityBar(label = "Mon", count = 12, caption = "12 episodes", fraction = 0.6f),
+            ActivityBar(label = "Tue", count = 8, caption = "8 episodes", fraction = 0.4f),
+            ActivityBar(label = "Wed", count = 14, caption = "14 episodes", fraction = 0.7f),
+            ActivityBar(label = "Thu", count = 6, caption = "6 episodes", fraction = 0.3f),
+            ActivityBar(label = "Fri", count = 17, caption = "17 episodes", fraction = 0.85f),
+            ActivityBar(label = "Sat", count = 20, caption = "20 episodes", fraction = 1f),
+            ActivityBar(label = "Sun", count = 0, caption = "0 episodes", fraction = 0f),
         ),
         title = "Episodes by day of the week",
         sectionTestTag = StatisticsTestTags.WEEKDAY_ACTIVITY_TEST_TAG,

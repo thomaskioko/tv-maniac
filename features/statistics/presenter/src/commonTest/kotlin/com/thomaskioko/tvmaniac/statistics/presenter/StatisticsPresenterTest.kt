@@ -20,7 +20,6 @@ import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
-import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTileId
@@ -64,7 +63,7 @@ internal class StatisticsPresenterTest {
     )
     private val subscriptionManager = FakeSubscriptionManager()
     private val accountManager = FakeAccountManager()
-    private val localizer = FakeLocalizer()
+    private val localizer = TestLocalizer()
     private val formatterUtil = FakeFormatterUtil()
     private val navigator = FakeNavigator()
     private val dateTimeProvider = FakeDateTimeProvider(
