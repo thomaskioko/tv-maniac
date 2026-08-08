@@ -45,6 +45,7 @@ import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsAction
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsPresenter
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsState
 import com.thomaskioko.tvmaniac.statistics.ui.components.ActivityChartSection
+import com.thomaskioko.tvmaniac.statistics.ui.components.GenreSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.MostWatchedShowsSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.RatingsSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.StatisticTileGrid
@@ -291,6 +292,28 @@ private fun StatisticsContent(
                     title = state.labels.weekdayActivityTitle,
                     sectionTestTag = StatisticsTestTags.WEEKDAY_ACTIVITY_TEST_TAG,
                     sectionName = "weekday",
+                )
+            }
+        }
+
+        if (state.releaseYears.isNotEmpty()) {
+            item(key = "release_years") {
+                ActivityChartSection(
+                    bars = state.releaseYears,
+                    title = state.labels.releaseYearsTitle,
+                    sectionTestTag = StatisticsTestTags.RELEASE_YEARS_TEST_TAG,
+                    sectionName = "release_years",
+                    showAxisLabels = true,
+                )
+            }
+        }
+
+        if (state.hasWatchHistory) {
+            item(key = "genres") {
+                GenreSection(
+                    genres = state.genreBreakdown,
+                    title = state.labels.genresTitle,
+                    emptyMessage = state.labels.genresEmptyMessage,
                 )
             }
         }

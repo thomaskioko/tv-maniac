@@ -173,7 +173,7 @@ internal class StatisticsStateMapperTest {
     }
 
     @Test
-    fun `should give each genre a share of the whole`() {
+    fun `should scale each genre against the most watched one`() {
         val statistics = WatchStatistics.EMPTY.copy(
             genreBreakdown = listOf(
                 GenreCount(name = "Drama", showCount = 3),
@@ -185,7 +185,7 @@ internal class StatisticsStateMapperTest {
 
         slices.map { it.name } shouldBe listOf("Drama", "Crime")
         slices.map { it.showCount } shouldBe listOf(3, 1)
-        slices.map { it.fraction } shouldBe listOf(0.75f, 0.25f)
+        slices.map { it.fraction } shouldBe listOf(1f, 1f / 3f)
     }
 
     @Test
