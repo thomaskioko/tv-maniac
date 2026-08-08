@@ -12,19 +12,22 @@ public struct StatisticsScreen: View {
     private let onBack: () -> Void
     private let onUpgradeClicked: () -> Void
     private let onShowClicked: (Int64) -> Void
+    private let onRefresh: () async -> Void
 
     public init(
         state: State,
         backButtonAccessibilityLabel: String = "",
         onBack: @escaping () -> Void = {},
         onUpgradeClicked: @escaping () -> Void = {},
-        onShowClicked: @escaping (Int64) -> Void = { _ in }
+        onShowClicked: @escaping (Int64) -> Void = { _ in },
+        onRefresh: @escaping () async -> Void = {}
     ) {
         self.state = state
         self.backButtonAccessibilityLabel = backButtonAccessibilityLabel
         self.onBack = onBack
         self.onUpgradeClicked = onUpgradeClicked
         self.onShowClicked = onShowClicked
+        self.onRefresh = onRefresh
     }
 
     public var body: some View {
@@ -154,6 +157,7 @@ public struct StatisticsScreen: View {
             .padding(.bottom, theme.spacing.large)
         }
         .contentMargins(.top, toolbarInset + theme.spacing.small)
+        .refreshable { await onRefresh() }
         .testTag(StatisticsTestTags.shared.CONTENT_TEST_TAG)
     }
 

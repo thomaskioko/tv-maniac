@@ -20,7 +20,8 @@ public struct StatisticsView: View {
             backButtonAccessibilityLabel: String(\.cd_back),
             onBack: { presenter.dispatch(action: StatisticsActionBackClicked()) },
             onUpgradeClicked: { presenter.dispatch(action: StatisticsActionUpgradeClicked()) },
-            onShowClicked: { showId in presenter.dispatch(action: StatisticsActionShowClicked(showId: showId)) }
+            onShowClicked: { showId in presenter.dispatch(action: StatisticsActionShowClicked(showId: showId)) },
+            onRefresh: { try? await presenter.refresh() }
         )
         .onChange(of: uiState.message) { _, message in
             if let message {
