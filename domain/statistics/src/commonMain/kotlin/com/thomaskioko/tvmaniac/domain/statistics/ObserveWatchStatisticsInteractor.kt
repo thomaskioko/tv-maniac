@@ -22,12 +22,14 @@ public class ObserveWatchStatisticsInteractor(
         episodeRepository.observeMostWatchedShows(MOST_WATCHED_LIMIT),
         showWatchStatusRepository.observeShowCountsByStatus(),
         ratingsRepository.observeUserRatingDistribution(),
-    ) { watches, mostWatchedShows, showCountsByStatus, ratingCounts ->
+        episodeRepository.observeWatchedShowComposition(),
+    ) { watches, mostWatchedShows, showCountsByStatus, ratingCounts, showComposition ->
         calculator.calculate(
             watches = watches,
             mostWatchedShows = mostWatchedShows,
             showCountsByStatus = showCountsByStatus,
             ratingCounts = ratingCounts,
+            showComposition = showComposition,
         )
     }
 

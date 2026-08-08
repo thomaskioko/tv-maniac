@@ -3,10 +3,12 @@ package com.thomaskioko.tvmaniac.domain.statistics
 import com.thomaskioko.tvmaniac.db.WatchStatus
 import com.thomaskioko.tvmaniac.domain.statistics.model.AverageRating
 import com.thomaskioko.tvmaniac.domain.statistics.model.DailyWatchCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.GenreCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.MonthlyWatchCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.PeakYear
 import com.thomaskioko.tvmaniac.domain.statistics.model.PeriodSummary
 import com.thomaskioko.tvmaniac.domain.statistics.model.RatingCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.ReleaseYearCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.ShowsTracked
 import com.thomaskioko.tvmaniac.domain.statistics.model.TopWeekday
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchDaysThisMonth
@@ -19,6 +21,7 @@ import com.thomaskioko.tvmaniac.domain.statistics.model.WeekdayWatchCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.YearlyWatchCount
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
 import kotlinx.datetime.DateTimeUnit
@@ -39,6 +42,7 @@ public class WatchStatisticsCalculator(
         mostWatchedShows: List<MostWatchedShow>,
         showCountsByStatus: Map<WatchStatus, Long>,
         ratingCounts: Map<Int, Long>,
+        showComposition: List<WatchedShowComposition>,
     ): WatchStatistics {
         val timeZone = dateTimeProvider.getTimeZone()
         val today = dateTimeProvider.now().toLocalDateTime(timeZone).date
@@ -70,8 +74,27 @@ public class WatchStatisticsCalculator(
             mostWatchedShows = mostWatchedShows,
             showsByWatchStatus = getShowsByWatchStatus(showCountsByStatus),
             ratingDistribution = getRatingDistribution(ratingCounts),
+            genreBreakdown = calculateGenreBreakdown(showComposition),
+            releaseYears = calculateReleaseYears(showComposition),
         )
     }
+
+    private fun calculateGenreBreakdown(showComposition: List<WatchedShowComposition>): List<GenreCount> =
+        showComposition
+            .flatMap { show -> show.genres.orEmpty() }
+            .filter { genre -> genre.isNotBlank() }
+            .groupingBy { genre -> genre }
+            .eachCount()
+            .map { (genre, count) -> GenreCount(name = genre, showCount = count.toLong()) }
+            .sortedWith(compareByDescending<GenreCount> { it.showCount }.thenBy { it.name })
+
+    private fun calculateReleaseYears(showComposition: List<WatchedShowComposition>): List<ReleaseYearCount> =
+        showComposition
+            .mapNotNull { show -> show.year?.toIntOrNull() }
+            .groupingBy { year -> year }
+            .eachCount()
+            .map { (year, count) -> ReleaseYearCount(year = year, showCount = count.toLong()) }
+            .sortedBy { it.year }
 
     private fun calculateShowsTracked(showCountsByStatus: Map<WatchStatus, Long>): ShowsTracked =
         ShowsTracked(

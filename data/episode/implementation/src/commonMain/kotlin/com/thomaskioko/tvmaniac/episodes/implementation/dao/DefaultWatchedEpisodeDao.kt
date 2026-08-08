@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
@@ -78,6 +79,18 @@ public class DefaultWatchedEpisodeDao(
             .map { rows ->
                 rows.map { row ->
                     WatchedEpisodeRuntime(watchedAt = row.watched_at, runtimeMinutes = row.runtime)
+                }
+            }
+            .catch { emit(emptyList()) }
+
+    override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> =
+        database.watchedEpisodesQueries
+            .watchedShowComposition()
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows ->
+                rows.map { row ->
+                    WatchedShowComposition(year = row.year, genres = row.genres)
                 }
             }
             .catch { emit(emptyList()) }

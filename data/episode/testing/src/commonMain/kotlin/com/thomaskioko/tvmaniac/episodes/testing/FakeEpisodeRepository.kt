@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,9 +45,14 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     private val watchedEpisodeRuntimesFlow = MutableStateFlow<List<WatchedEpisodeRuntime>>(emptyList())
     private val mostWatchedShowsFlow = MutableStateFlow<List<MostWatchedShow>>(emptyList())
+    private val watchedShowCompositionFlow = MutableStateFlow<List<WatchedShowComposition>>(emptyList())
 
     public fun setWatchedEpisodeRuntimes(runtimes: List<WatchedEpisodeRuntime>) {
         watchedEpisodeRuntimesFlow.value = runtimes
+    }
+
+    public fun setWatchedShowComposition(composition: List<WatchedShowComposition>) {
+        watchedShowCompositionFlow.value = composition
     }
 
     public fun setMostWatchedShows(shows: List<MostWatchedShow>) {
@@ -120,6 +126,9 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     override fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>> =
         watchedEpisodeRuntimesFlow.asStateFlow()
+
+    override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> =
+        watchedShowCompositionFlow.asStateFlow()
 
     override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =
         mostWatchedShowsFlow.asStateFlow()

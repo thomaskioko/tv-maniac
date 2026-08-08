@@ -9,6 +9,8 @@ import com.thomaskioko.tvmaniac.db.SeasonId
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.WatchStatus
+import com.thomaskioko.tvmaniac.domain.statistics.model.GenreCount
+import com.thomaskioko.tvmaniac.domain.statistics.model.ReleaseYearCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
@@ -55,6 +57,7 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
         mostWatchedShows = watchedEpisodeDao.observeMostWatchedShows(10).first(),
         showCountsByStatus = showWatchStatusDao.observeStatusCounts().first(),
         ratingCounts = ratingsDao.observeUserRatingDistribution().first(),
+        showComposition = watchedEpisodeDao.observeWatchedShowComposition().first(),
     )
 
     @AfterTest
@@ -451,6 +454,87 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
         )
 
         calculate().ratingDistribution.shouldBeEmptyList()
+    }
+
+    @Test
+    fun `should count a genre once for every watched show carrying it`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        insertShow(tmdbId = THE_WIRE)
+        setShowComposition(BREAKING_BAD, year = "2008", genres = listOf("Drama", "Crime"))
+        setShowComposition(THE_WIRE, year = "2002", genres = listOf("Drama"))
+        markWatched(tmdbId = BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(tmdbId = THE_WIRE, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+
+        calculate().genreBreakdown shouldBe listOf(
+            GenreCount(name = "Drama", showCount = 2),
+            GenreCount(name = "Crime", showCount = 1),
+        )
+    }
+
+    @Test
+    fun `should leave out a show with no genres from the breakdown`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        insertShow(tmdbId = THE_WIRE)
+        setShowComposition(BREAKING_BAD, year = "2008", genres = listOf("Drama"))
+        setShowComposition(THE_WIRE, year = "2002", genres = null)
+        markWatched(tmdbId = BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(tmdbId = THE_WIRE, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+
+        calculate().genreBreakdown shouldBe listOf(GenreCount(name = "Drama", showCount = 1))
+    }
+
+    @Test
+    fun `should count the release years oldest first`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        insertShow(tmdbId = THE_WIRE)
+        setShowComposition(BREAKING_BAD, year = "2008", genres = listOf("Drama"))
+        setShowComposition(THE_WIRE, year = "2002", genres = listOf("Drama"))
+        markWatched(tmdbId = BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(tmdbId = THE_WIRE, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+
+        calculate().releaseYears shouldBe listOf(
+            ReleaseYearCount(year = 2002, showCount = 1),
+            ReleaseYearCount(year = 2008, showCount = 1),
+        )
+    }
+
+    @Test
+    fun `should leave out a show with no release year`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        setShowComposition(BREAKING_BAD, year = null, genres = listOf("Drama"))
+        markWatched(tmdbId = BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+
+        calculate().releaseYears.shouldBeEmptyList()
+    }
+
+    @Test
+    fun `should leave out a show that is not watched`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        insertShow(tmdbId = THE_WIRE)
+        setShowComposition(BREAKING_BAD, year = "2008", genres = listOf("Drama"))
+        setShowComposition(THE_WIRE, year = "2002", genres = listOf("Crime"))
+        markWatched(tmdbId = BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+
+        calculate().genreBreakdown shouldBe listOf(GenreCount(name = "Drama", showCount = 1))
+        calculate().releaseYears shouldBe listOf(ReleaseYearCount(year = 2008, showCount = 1))
+    }
+
+    private fun setShowComposition(tmdbId: Long, year: String?, genres: List<String>?) {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id<TmdbId>(tmdbId),
+            name = "show-$tmdbId",
+            overview = "overview",
+            language = "en",
+            year = year,
+            ratings = 8.0,
+            vote_count = 100,
+            genres = genres,
+            status = "Ended",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
     }
 
     private fun internalId(tmdbId: Long): Id<ShowId> =
