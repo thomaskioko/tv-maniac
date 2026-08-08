@@ -223,7 +223,7 @@ internal class StatisticsPresenterTest {
     }
 
     @Test
-    fun `should count shows for every watch status`() = runTest(testDispatcher) {
+    fun `should count only the watch statuses shows sit in`() = runTest(testDispatcher) {
         seedWatches()
         showWatchStatusRepository.setShowCountsByStatus(
             mapOf(WatchStatus.COMPLETED to 3L, WatchStatus.WATCHING to 1L),
@@ -234,7 +234,7 @@ internal class StatisticsPresenterTest {
             awaitItem()
             val breakdown = awaitItem().watchStatusBreakdown
 
-            breakdown.size shouldBe WatchStatus.entries.size
+            breakdown.size shouldBe 2
             breakdown.first { it.label == localizer.getString(StringResourceKey.LabelWatchStatusCompleted) }
                 .showCount shouldBe 3L
         }
