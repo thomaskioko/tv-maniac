@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -83,7 +84,7 @@ private fun SearchShowResult.toTvshow(formatterUtil: FormatterUtil, dateTimeProv
         voteCount = traktShow.votes ?: 0L,
         posterPath = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         backdropPath = tmdb?.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
-        genres = traktShow.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+        genres = traktShow.genres?.map(::traktGenreName),
         seasonNumbers = null,
     )
 }
