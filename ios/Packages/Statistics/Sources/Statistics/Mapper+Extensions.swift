@@ -17,6 +17,8 @@ extension StatisticsState {
             yearlyActivity: yearlyActivity.map { $0.toSwift() },
             monthlyActivity: monthlyActivity.map { $0.toSwift() },
             weekdayActivity: weekdayActivity.map { $0.toSwift() },
+            genreBreakdown: genreBreakdown.map { $0.toSwift() },
+            releaseYears: releaseYears.map { $0.toSwift() },
             labels: labels.toSwift()
         )
     }
@@ -52,6 +54,12 @@ extension RatingBar {
     }
 }
 
+extension GenreSlice {
+    func toSwift() -> SwiftGenreSlice {
+        .init(name: name, showCount: Int(showCount), caption: caption, fraction: fraction)
+    }
+}
+
 extension ActivityBar {
     func toSwift() -> SwiftActivityBar {
         .init(label: label, caption: caption, fraction: fraction)
@@ -84,6 +92,9 @@ extension StatisticsLabels {
             yearlyActivityTitle: yearlyActivityTitle,
             monthlyActivityTitle: monthlyActivityTitle,
             weekdayActivityTitle: weekdayActivityTitle,
+            genresTitle: genresTitle,
+            releaseYearsTitle: releaseYearsTitle,
+            genresEmptyMessage: genresEmptyMessage,
             lockedTitle: lockedTitle,
             lockedMessage: lockedMessage,
             lockedBadgeText: lockedBadgeText,

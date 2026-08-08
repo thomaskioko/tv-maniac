@@ -14,6 +14,8 @@ public extension StatisticsScreen {
         public let yearlyActivity: [SwiftActivityBar]
         public let monthlyActivity: [SwiftActivityBar]
         public let weekdayActivity: [SwiftActivityBar]
+        public let genreBreakdown: [SwiftGenreSlice]
+        public let releaseYears: [SwiftActivityBar]
         public let labels: SwiftStatisticsLabels
 
         public init(
@@ -31,6 +33,8 @@ public extension StatisticsScreen {
             yearlyActivity: [SwiftActivityBar] = [],
             monthlyActivity: [SwiftActivityBar] = [],
             weekdayActivity: [SwiftActivityBar] = [],
+            genreBreakdown: [SwiftGenreSlice] = [],
+            releaseYears: [SwiftActivityBar] = [],
             labels: SwiftStatisticsLabels = SwiftStatisticsLabels()
         ) {
             self.isLoading = isLoading
@@ -47,6 +51,8 @@ public extension StatisticsScreen {
             self.yearlyActivity = yearlyActivity
             self.monthlyActivity = monthlyActivity
             self.weekdayActivity = weekdayActivity
+            self.genreBreakdown = genreBreakdown
+            self.releaseYears = releaseYears
             self.labels = labels
         }
     }

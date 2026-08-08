@@ -58,6 +58,24 @@ public struct SwiftWatchStatusItem: Identifiable, Equatable {
     }
 }
 
+public struct SwiftGenreSlice: Identifiable, Equatable {
+    public let name: String
+    public let showCount: Int
+    public let caption: String
+    public let fraction: Float
+
+    public var id: String {
+        name
+    }
+
+    public init(name: String, showCount: Int, caption: String, fraction: Float) {
+        self.name = name
+        self.showCount = showCount
+        self.caption = caption
+        self.fraction = fraction
+    }
+}
+
 public struct SwiftActivityBar: Identifiable, Equatable {
     public let label: String
     public let caption: String
@@ -115,6 +133,9 @@ public struct SwiftStatisticsLabels: Equatable {
     public let yearlyActivityTitle: String
     public let monthlyActivityTitle: String
     public let weekdayActivityTitle: String
+    public let genresTitle: String
+    public let releaseYearsTitle: String
+    public let genresEmptyMessage: String
     public let lockedTitle: String
     public let lockedMessage: String
     public let lockedBadgeText: String
@@ -136,6 +157,9 @@ public struct SwiftStatisticsLabels: Equatable {
         yearlyActivityTitle: String = "",
         monthlyActivityTitle: String = "",
         weekdayActivityTitle: String = "",
+        genresTitle: String = "",
+        releaseYearsTitle: String = "",
+        genresEmptyMessage: String = "",
         lockedTitle: String = "",
         lockedMessage: String = "",
         lockedBadgeText: String = "",
@@ -156,6 +180,9 @@ public struct SwiftStatisticsLabels: Equatable {
         self.yearlyActivityTitle = yearlyActivityTitle
         self.monthlyActivityTitle = monthlyActivityTitle
         self.weekdayActivityTitle = weekdayActivityTitle
+        self.genresTitle = genresTitle
+        self.releaseYearsTitle = releaseYearsTitle
+        self.genresEmptyMessage = genresEmptyMessage
         self.lockedTitle = lockedTitle
         self.lockedMessage = lockedMessage
         self.lockedBadgeText = lockedBadgeText

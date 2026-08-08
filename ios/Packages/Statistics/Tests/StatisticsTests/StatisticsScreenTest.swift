@@ -23,6 +23,9 @@ class StatisticsScreenTest: SnapshotTestCase {
         yearlyActivityTitle: "Episodes by year",
         monthlyActivityTitle: "Episodes by month",
         weekdayActivityTitle: "Episodes by day of the week",
+        genresTitle: "Genres you watch",
+        releaseYearsTitle: "Shows by release year",
+        genresEmptyMessage: "We do not know the genres of the shows you have watched yet.",
         lockedTitle: "Statistics are a Premium feature",
         lockedMessage: "Upgrade to Premium to see how you watch.",
         lockedBadgeText: "Premium",
@@ -110,6 +113,23 @@ class StatisticsScreenTest: SnapshotTestCase {
         )
     }
 
+    private let genreBreakdown: [SwiftGenreSlice] = [
+        .init(name: "Drama", showCount: 24, caption: "24 shows", fraction: 1),
+        .init(name: "Comedy", showCount: 11, caption: "11 shows", fraction: 0.45),
+        .init(name: "Crime", showCount: 9, caption: "9 shows", fraction: 0.37),
+        .init(name: "Science Fiction", showCount: 7, caption: "7 shows", fraction: 0.29),
+        .init(name: "Other", showCount: 12, caption: "12 shows", fraction: 0.5),
+    ]
+
+    private let releaseYears: [SwiftActivityBar] = [
+        .init(label: "2016", caption: "3 shows", fraction: 0.37),
+        .init(label: "2017", caption: "5 shows", fraction: 0.62),
+        .init(label: "2018", caption: "2 shows", fraction: 0.25),
+        .init(label: "2019", caption: "8 shows", fraction: 1),
+        .init(label: "2020", caption: "4 shows", fraction: 0.5),
+        .init(label: "2021", caption: "6 shows", fraction: 0.75),
+    ]
+
     private var contentState: StatisticsScreen.State {
         StatisticsScreen.State(
             isLoading: false,
@@ -123,6 +143,8 @@ class StatisticsScreenTest: SnapshotTestCase {
             yearlyActivity: yearlyActivity,
             monthlyActivity: monthlyActivity,
             weekdayActivity: weekdayActivity,
+            genreBreakdown: genreBreakdown,
+            releaseYears: releaseYears,
             labels: labels
         )
     }
@@ -204,5 +226,31 @@ class StatisticsScreenTest: SnapshotTestCase {
             StatisticsScreen(state: state, backButtonAccessibilityLabel: "Back")
         }
         .appPreview()
+    }
+
+    func test_GenreSection_Content() {
+        GenreSectionView(
+            genres: genreBreakdown,
+            title: "Genres you watch",
+            emptyMessage: ""
+        )
+        .appPreview()
+        .assertSnapshot(
+            layout: .fixed(width: 390, height: 400),
+            testName: "GenreSection_Content"
+        )
+    }
+
+    func test_GenreSection_Empty() {
+        GenreSectionView(
+            genres: [],
+            title: "Genres you watch",
+            emptyMessage: "We do not know the genres of the shows you have watched yet."
+        )
+        .appPreview()
+        .assertSnapshot(
+            layout: .fixed(width: 390, height: 160),
+            testName: "GenreSection_Empty"
+        )
     }
 }
