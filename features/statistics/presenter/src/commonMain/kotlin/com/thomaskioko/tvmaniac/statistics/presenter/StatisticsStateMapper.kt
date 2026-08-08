@@ -221,12 +221,13 @@ public class StatisticsStateMapper(
         val slices = named.map { genre -> genre.name to genre.showCount } +
             if (tail > 0) listOf(localizer.getString(StringResourceKey.LabelStatisticsGenreOther) to tail) else emptyList()
 
+        val biggest = slices.maxOf { (_, showCount) -> showCount }
         return slices.map { (name, showCount) ->
             GenreSlice(
                 name = name,
                 showCount = showCount.toInt(),
                 caption = localizer.getPlural(PluralsResourceKey.ShowCount, showCount.toInt()),
-                fraction = showCount.toFloat() / total,
+                fraction = showCount.toFloat() / biggest,
             )
         }.toImmutableList()
     }

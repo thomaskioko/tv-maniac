@@ -4,6 +4,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsLabels
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsState
 import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
+import com.thomaskioko.tvmaniac.statistics.presenter.model.GenreSlice
 import com.thomaskioko.tvmaniac.statistics.presenter.model.HeatMap
 import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
@@ -31,6 +32,9 @@ internal val previewLabels: StatisticsLabels = StatisticsLabels(
     yearlyActivityTitle = "Episodes by year",
     monthlyActivityTitle = "Episodes by month",
     weekdayActivityTitle = "Episodes by day of the week",
+    genresTitle = "Genres you watch",
+    releaseYearsTitle = "Shows by release year",
+    genresEmptyMessage = "We do not know the genres of the shows you have watched yet.",
     lockedTitle = "Statistics are a Premium feature",
     lockedMessage = "Upgrade to Premium to see how you watch.",
     lockedBadgeText = "Premium",
@@ -200,6 +204,25 @@ internal val emptyState: StatisticsState = StatisticsState(
     labels = previewLabels,
 )
 
+private val previewGenreBreakdown: ImmutableList<GenreSlice> = persistentListOf(
+    GenreSlice(name = "Drama", showCount = 24, caption = "24 shows", fraction = 1f),
+    GenreSlice(name = "Comedy", showCount = 11, caption = "11 shows", fraction = 0.45f),
+    GenreSlice(name = "Crime", showCount = 9, caption = "9 shows", fraction = 0.37f),
+    GenreSlice(name = "Science Fiction", showCount = 7, caption = "7 shows", fraction = 0.29f),
+    GenreSlice(name = "Thriller", showCount = 5, caption = "5 shows", fraction = 0.2f),
+    GenreSlice(name = "Action", showCount = 4, caption = "4 shows", fraction = 0.16f),
+    GenreSlice(name = "Other", showCount = 12, caption = "12 shows", fraction = 0.5f),
+)
+
+private val previewReleaseYears: ImmutableList<ActivityBar> = persistentListOf(
+    ActivityBar(label = "2016", count = 3, caption = "3 shows", fraction = 0.37f),
+    ActivityBar(label = "2017", count = 5, caption = "5 shows", fraction = 0.62f),
+    ActivityBar(label = "2018", count = 2, caption = "2 shows", fraction = 0.25f),
+    ActivityBar(label = "2019", count = 8, caption = "8 shows", fraction = 1f),
+    ActivityBar(label = "2020", count = 4, caption = "4 shows", fraction = 0.5f),
+    ActivityBar(label = "2021", count = 6, caption = "6 shows", fraction = 0.75f),
+)
+
 internal val contentState: StatisticsState = StatisticsState(
     isLoading = false,
     hasWatchHistory = true,
@@ -211,6 +234,8 @@ internal val contentState: StatisticsState = StatisticsState(
     yearlyActivity = previewYearlyActivity,
     monthlyActivity = previewMonthlyActivity,
     weekdayActivity = previewWeekdayActivity,
+    genreBreakdown = previewGenreBreakdown,
+    releaseYears = previewReleaseYears,
     heatMap = previewHeatMap,
     labels = previewLabels,
 )
