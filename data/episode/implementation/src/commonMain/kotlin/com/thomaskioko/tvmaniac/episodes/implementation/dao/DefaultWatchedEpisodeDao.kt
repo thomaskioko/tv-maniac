@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
@@ -82,15 +83,39 @@ public class DefaultWatchedEpisodeDao(
             }
             .catch { emit(emptyList()) }
 
-    override suspend fun updateShowRuntime(tmdbId: Long, runtime: Long) {
+    override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> =
+        database.watchedEpisodesQueries
+            .watchedShowComposition()
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows ->
+                rows.map { row ->
+                    WatchedShowComposition(year = row.year, genres = row.genres)
+                }
+            }
+            .catch { emit(emptyList()) }
+
+    override suspend fun updateShowMetadata(
+        tmdbId: Long,
+        runtime: Long?,
+        year: String?,
+        genres: List<String>?,
+    ) {
         withContext(dispatchers.databaseWrite) {
-            database.tvShowQueries.updateRuntime(runtime = runtime, tmdbId = Id(tmdbId))
+            database.tvShowQueries.updateWatchedShowMetadata(
+                runtime = runtime,
+                year = year,
+                tmdbId = Id(tmdbId),
+            )
+            if (genres != null) {
+                database.tvShowQueries.updateWatchedShowGenres(genres = genres, tmdbId = Id(tmdbId))
+            }
         }
     }
 
-    override suspend fun countWatchedShowsMissingRuntime(): Long =
+    override suspend fun countWatchedShowsMissingMetadata(): Long =
         withContext(dispatchers.databaseRead) {
-            database.tvShowQueries.countWatchedShowsMissingRuntime().executeAsOne()
+            database.tvShowQueries.countWatchedShowsMissingMetadata().executeAsOne()
         }
 
     override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =

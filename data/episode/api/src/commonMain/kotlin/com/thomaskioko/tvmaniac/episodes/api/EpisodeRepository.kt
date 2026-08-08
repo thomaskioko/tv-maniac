@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
 
@@ -19,6 +20,8 @@ public interface EpisodeRepository {
     public fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>>
 
     public fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>>
+
+    public fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>>
 
     public fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>>
 

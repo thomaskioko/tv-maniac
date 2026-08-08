@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
@@ -54,6 +55,10 @@ public class DefaultEpisodeRepository(
 
     override fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>> =
         watchedEpisodeDao.observeWatchedAtWithRuntime()
+            .distinctUntilChanged()
+
+    override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> =
+        watchedEpisodeDao.observeWatchedShowComposition()
             .distinctUntilChanged()
 
     override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =

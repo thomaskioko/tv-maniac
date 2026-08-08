@@ -103,7 +103,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should show content given watch history`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -121,7 +121,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should report the total watch time given episodes carry a runtime`() = runTest(testDispatcher) {
-        seedWatches(runtimeMinutes = 45)
+        addWatches(runtimeMinutes = 45)
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -136,7 +136,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should omit the total watch time given no episode carries a runtime`() = runTest(testDispatcher) {
-        seedWatches(runtimeMinutes = null)
+        addWatches(runtimeMinutes = null)
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -147,7 +147,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should omit the rating tile given nothing is rated`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -161,7 +161,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should add the rating tile given ratings exist`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         ratingsRepository.setUserRatingDistribution(mapOf(8 to 1L, 10 to 1L))
         val presenter = buildPresenter()
 
@@ -175,7 +175,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should order the tiles from the widest time span down`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         ratingsRepository.setUserRatingDistribution(mapOf(9 to 1L))
         val presenter = buildPresenter()
 
@@ -200,7 +200,7 @@ internal class StatisticsPresenterTest {
     @Test
     fun `should lock the screen given the subscription does not cover statistics`() = runTest(testDispatcher) {
         subscriptionManager.setAccess(SubscriptionFeature.Statistics, false)
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -216,7 +216,7 @@ internal class StatisticsPresenterTest {
     @Test
     fun `should note marked watched times given a Simkl account`() = runTest(testDispatcher) {
         accountManager.setActiveProvider(SyncProviderSource.SIMKL)
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -227,7 +227,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should not note marked watched times given a Trakt account`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -238,7 +238,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should count only the watch statuses shows sit in`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         showWatchStatusRepository.setShowCountsByStatus(
             mapOf(WatchStatus.COMPLETED to 3L, WatchStatus.WATCHING to 1L),
         )
@@ -256,7 +256,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should open the show given a show is clicked`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -273,7 +273,7 @@ internal class StatisticsPresenterTest {
     @Test
     fun `should ignore a show click given the screen is locked`() = runTest(testDispatcher) {
         subscriptionManager.setAccess(SubscriptionFeature.Statistics, false)
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -286,7 +286,7 @@ internal class StatisticsPresenterTest {
         }
     }
 
-    private fun seedWatches(runtimeMinutes: Long? = 45) {
+    private fun addWatches(runtimeMinutes: Long? = 45) {
         episodeRepository.setWatchedEpisodeRuntimes(
             listOf(
                 WatchedEpisodeRuntime(watchedAt = epochMillis(2026, 8, 2), runtimeMinutes = runtimeMinutes),
@@ -308,7 +308,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should read the watches and the ratings again given a refresh is asked for`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -326,7 +326,7 @@ internal class StatisticsPresenterTest {
 
     @Test
     fun `should wait for the sync to finish given refresh is awaited`() = runTest(testDispatcher) {
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -344,7 +344,7 @@ internal class StatisticsPresenterTest {
     @Test
     fun `should return right away given refresh is awaited on a locked screen`() = runTest(testDispatcher) {
         subscriptionManager.setAccess(SubscriptionFeature.Statistics, false)
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {
@@ -361,7 +361,7 @@ internal class StatisticsPresenterTest {
     @Test
     fun `should not refresh given the screen is locked`() = runTest(testDispatcher) {
         subscriptionManager.setAccess(SubscriptionFeature.Statistics, false)
-        seedWatches()
+        addWatches()
         val presenter = buildPresenter()
 
         presenter.state.test {

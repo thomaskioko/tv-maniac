@@ -203,7 +203,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         logger.debug(TAG, "Bulk watched-shows sync drained $totalShows shows across $page page(s)")
 
-        fetchMissingShowRuntimes()
+        fetchMissingShowMetadata()
 
         firstFailure?.let { failure ->
             logger.error(TAG, "Bulk watched-shows sync failed for $failedShows of $totalShows shows")
@@ -211,28 +211,33 @@ public class DefaultWatchedEpisodeSyncRepository(
         }
     }
 
-    private suspend fun fetchMissingShowRuntimes() {
+    private suspend fun fetchMissingShowMetadata() {
         val source = activeSource() ?: return
-        val missing = dao.countWatchedShowsMissingRuntime()
+        val missing = dao.countWatchedShowsMissingMetadata()
         if (missing == 0L) return
 
-        logger.debug(TAG, "Fetching runtime for $missing watched show(s)")
+        logger.debug(TAG, "Fetching metadata for $missing watched show(s)")
         var page = 1
         var updated = 0
         while (true) {
             currentCoroutineContext().ensureActive()
-            val runtimes = source.getWatchedShowRuntimes(page = page, limit = PAGE_LIMIT)
-            if (runtimes.isEmpty()) break
+            val metadata = source.getWatchedShowMetadata(page = page, limit = PAGE_LIMIT)
+            if (metadata.isEmpty()) break
 
-            runtimes.forEach { showRuntime ->
-                dao.updateShowRuntime(tmdbId = showRuntime.tmdbId, runtime = showRuntime.runtimeMinutes)
+            metadata.forEach { show ->
+                dao.updateShowMetadata(
+                    tmdbId = show.tmdbId,
+                    runtime = show.runtimeMinutes,
+                    year = show.year,
+                    genres = show.genres,
+                )
             }
-            updated += runtimes.size
+            updated += metadata.size
 
-            if (runtimes.size < PAGE_LIMIT) break
+            if (metadata.size < PAGE_LIMIT) break
             page++
         }
-        logger.debug(TAG, "Stored runtime for $updated show(s)")
+        logger.debug(TAG, "Stored metadata for $updated show(s)")
     }
 
     private suspend fun upsertBatch(batch: WatchedShowBatch, includeSpecials: Boolean) {
@@ -252,7 +257,9 @@ public class DefaultWatchedEpisodeSyncRepository(
             is ShowResolveOutcome.Skipped -> return
         }
 
-        batch.runtime?.let { runtime -> dao.updateShowRuntime(tmdbId = tmdbId, runtime = runtime) }
+        if (batch.runtime != null || batch.year != null) {
+            dao.updateShowMetadata(tmdbId = tmdbId, runtime = batch.runtime, year = batch.year)
+        }
 
         val remoteUpdatedAt = batch.lastUpdatedAt?.toEpochMilliseconds()
         if (remoteUpdatedAt != null &&

@@ -34,7 +34,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
     @BeforeTest
     fun setup() {
         dao = DefaultRatingsDao(database, coroutineDispatcher)
-        seedShow(showId = 1L)
+        addShow(showId = 1L)
     }
 
     @AfterTest
@@ -100,7 +100,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return only entries with upload pending action given mixed pending actions`() = runTest {
-        seedShow(showId = 2L)
+        addShow(showId = 2L)
         dao.upsertShowUserRating(showId = 1L, userRating = 8L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.UPLOAD)
         dao.upsertShowUserRating(showId = 2L, userRating = 5L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.NOTHING)
 
@@ -112,7 +112,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return season rating given user rating is upserted`() = runTest {
-        seedSeason(seasonId = 100L, showId = 1L)
+        addSeason(seasonId = 100L, showId = 1L)
 
         dao.upsertSeasonUserRating(seasonId = 100L, userRating = 7L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.UPLOAD)
 
@@ -127,8 +127,8 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return only season entries with delete pending action given mixed pending actions`() = runTest {
-        seedSeason(seasonId = 100L, showId = 1L)
-        seedSeason(seasonId = 101L, showId = 1L)
+        addSeason(seasonId = 100L, showId = 1L)
+        addSeason(seasonId = 101L, showId = 1L)
         dao.upsertSeasonUserRating(seasonId = 100L, userRating = 7L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.NOTHING)
         dao.upsertSeasonUserRating(seasonId = 101L, userRating = 4L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.NOTHING)
 
@@ -141,8 +141,8 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return episode rating given user rating is upserted`() = runTest {
-        seedSeason(seasonId = 100L, showId = 1L)
-        seedEpisode(episodeId = 200L, seasonId = 100L, showId = 1L)
+        addSeason(seasonId = 100L, showId = 1L)
+        addEpisode(episodeId = 200L, seasonId = 100L, showId = 1L)
 
         dao.upsertEpisodeUserRating(episodeId = 200L, userRating = 9L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.UPLOAD)
 
@@ -157,9 +157,9 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return only episode entries with delete pending action given mixed pending actions`() = runTest {
-        seedSeason(seasonId = 100L, showId = 1L)
-        seedEpisode(episodeId = 200L, seasonId = 100L, showId = 1L)
-        seedEpisode(episodeId = 201L, seasonId = 100L, showId = 1L)
+        addSeason(seasonId = 100L, showId = 1L)
+        addEpisode(episodeId = 200L, seasonId = 100L, showId = 1L)
+        addEpisode(episodeId = 201L, seasonId = 100L, showId = 1L)
         dao.upsertEpisodeUserRating(episodeId = 200L, userRating = 9L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.NOTHING)
         dao.upsertEpisodeUserRating(episodeId = 201L, userRating = 3L, ratedAt = 1_700_000_000L, pendingAction = PendingAction.NOTHING)
 
@@ -170,7 +170,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
         entries.first().episodeId shouldBe 200L
     }
 
-    private fun seedSeason(seasonId: Long, showId: Long) {
+    private fun addSeason(seasonId: Long, showId: Long) {
         database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_id = Id(showId),
@@ -182,7 +182,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedEpisode(episodeId: Long, seasonId: Long, showId: Long) {
+    private fun addEpisode(episodeId: Long, seasonId: Long, showId: Long) {
         database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),
@@ -198,7 +198,7 @@ internal class DefaultRatingsDaoTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedShow(showId: Long) {
+    private fun addShow(showId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = "Test Show $showId",

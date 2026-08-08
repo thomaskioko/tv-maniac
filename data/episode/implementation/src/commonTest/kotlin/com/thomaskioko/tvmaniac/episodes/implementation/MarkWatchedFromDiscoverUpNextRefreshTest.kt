@@ -47,7 +47,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         fakeDateTimeProvider.setCurrentTimeMillis(now)
         watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         nextEpisodeDao = DefaultNextEpisodeDao(database, dispatchers, fakeDateTimeProvider)
-        seedShowWithThreeAiredEpisodes()
+        addShowWithThreeAiredEpisodes()
     }
 
     @AfterTest
@@ -187,7 +187,7 @@ internal class MarkWatchedFromDiscoverUpNextRefreshTest : BaseDatabaseTest() {
         afterUnmark shouldBe now + 1_000L
     }
 
-    private fun seedShowWithThreeAiredEpisodes() {
+    private fun addShowWithThreeAiredEpisodes() {
         database.tvShowQueries.upsert(
             tmdb_id = Id(SHOW_ID),
             name = "Severance",

@@ -86,7 +86,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should fetch and persist recommended shows given trakt id is present`() = runTest(testDispatcher) {
-        seedParentShow(tmdbId = PARENT_TMDB_ID)
+        addParentShow(tmdbId = PARENT_TMDB_ID)
         showIdForTraktId(traktId = PARENT_TRAKT_ID, tmdbId = PARENT_TMDB_ID)
 
         traktSource.setRelatedShows(
@@ -118,7 +118,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should fetch and persist recommended shows given no trakt id`() = runTest(testDispatcher) {
-        seedParentShow(tmdbId = PARENT_TMDB_ID)
+        addParentShow(tmdbId = PARENT_TMDB_ID)
 
         tmdbSource.setRecommendedShows(
             ApiResponse.Success(
@@ -160,7 +160,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should return empty list given no trakt id and tmdb returns empty results`() = runTest(testDispatcher) {
-        seedParentShow(tmdbId = PARENT_TMDB_ID)
+        addParentShow(tmdbId = PARENT_TMDB_ID)
 
         tmdbSource.setRecommendedShows(
             ApiResponse.Success(
@@ -185,7 +185,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should return empty list given no trakt id and tmdb returns error`() = runTest(testDispatcher) {
-        seedParentShow(tmdbId = PARENT_TMDB_ID)
+        addParentShow(tmdbId = PARENT_TMDB_ID)
 
         tmdbSource.setRecommendedShows(
             ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "Internal error"),
@@ -201,7 +201,7 @@ internal class RecommendedShowsStoreTest : BaseDatabaseTest() {
         rows shouldHaveSize 0
     }
 
-    private fun seedParentShow(tmdbId: Long) {
+    private fun addParentShow(tmdbId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id(tmdbId),
             name = "Parent Show",

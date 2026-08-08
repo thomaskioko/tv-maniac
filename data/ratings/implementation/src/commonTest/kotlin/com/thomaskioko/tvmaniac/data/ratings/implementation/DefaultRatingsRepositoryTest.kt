@@ -68,7 +68,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
             dateTimeProvider = dateTimeProvider,
             dispatchers = dispatchers,
         )
-        seedShow(showId = SHOW_ID)
+        addShow(showId = SHOW_ID)
         tvShowsDao.upsert(
             ShowToPersist(
                 showId = Id(SHOW_ID),
@@ -197,7 +197,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should push the tmdb id resolved from the local show id given syncPendingRatings succeeds`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
-        val secondShowId = seedShow(showId = SECOND_TMDB_ID)
+        val secondShowId = addShow(showId = SECOND_TMDB_ID)
         tvShowsDao.setTmdbIdForLocalShowId(showId = secondShowId, tmdbId = DISTINCT_TMDB_ID)
         tvShowsDao.setLocalShowIdForTmdbId(tmdbId = DISTINCT_TMDB_ID, showId = secondShowId)
         remoteDataSource.setAddShowRatingResponse(ApiResponse.Success(Unit))
@@ -299,7 +299,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     fun `should save the provider user rating given refreshCommunityRating fetches it`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
         remoteDataSource.provider = SyncProviderSource.TRAKT
-        seedProviderShowId(SHOW_ID, SyncProviderSource.TRAKT, externalId = 555L)
+        addProviderShowId(SHOW_ID, SyncProviderSource.TRAKT, externalId = 555L)
         remoteDataSource.setUserRatingResponse(ApiResponse.Success(7))
 
         repository.refreshCommunityRating(TMDB_ID, forceRefresh = true)
@@ -316,7 +316,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
     fun `should keep the pending local rating given a provider user rating is fetched`() = runTest {
         val repository = buildRepository(FakeSyncObserver())
         remoteDataSource.provider = SyncProviderSource.TRAKT
-        seedProviderShowId(SHOW_ID, SyncProviderSource.TRAKT, externalId = 555L)
+        addProviderShowId(SHOW_ID, SyncProviderSource.TRAKT, externalId = 555L)
         ratingsDao.upsertShowUserRating(
             showId = SHOW_ID,
             userRating = 5L,
@@ -337,7 +337,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist show rating keyed by the local show id given rateShow receives the tmdb id`() = runTest {
-        val localShowId = seedShow(showId = THIRD_TMDB_ID)
+        val localShowId = addShow(showId = THIRD_TMDB_ID)
         tvShowsDao.setLocalShowIdForTmdbId(tmdbId = THIRD_TMDB_ID, showId = localShowId)
         val repository = buildRepository(FakeSyncObserver())
 
@@ -358,7 +358,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist pending action as upload immediately after rating a season`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
         val repository = buildRepository(FakeSyncObserver())
 
         repository.rateSeason(seasonId = SEASON_ID, rating = 7)
@@ -371,7 +371,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should flip season pending action to nothing given syncPendingRatings succeeds`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
         val repository = buildRepository(FakeSyncObserver())
         ratingsDao.upsertSeasonUserRating(
             seasonId = SEASON_ID,
@@ -392,7 +392,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should leave season pending action as upload and log background sync failure given syncPendingRatings fails`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
         val syncObserver = FakeSyncObserver()
         val repository = buildRepository(syncObserver)
         ratingsDao.upsertSeasonUserRating(
@@ -419,7 +419,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should emit season user rating given observeSeasonRating is collected`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
         val repository = buildRepository(FakeSyncObserver())
         ratingsDao.upsertSeasonUserRating(
             seasonId = SEASON_ID,
@@ -438,7 +438,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist locally and sync as no-op given active provider has no season rating api`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
         val repository = buildRepository(FakeSyncObserver())
         remoteDataSource.setAddSeasonRatingResponse(ApiResponse.Success(Unit))
 
@@ -455,8 +455,8 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist pending action as upload immediately after rating an episode`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
-        seedEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
+        addEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
         val repository = buildRepository(FakeSyncObserver())
 
         repository.rateEpisode(episodeId = EPISODE_ID, rating = 6)
@@ -469,8 +469,8 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should flip episode pending action to nothing given syncPendingRatings succeeds`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
-        seedEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
+        addEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
         val repository = buildRepository(FakeSyncObserver())
         ratingsDao.upsertEpisodeUserRating(
             episodeId = EPISODE_ID,
@@ -491,8 +491,8 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should leave episode pending action as upload and log background sync failure given syncPendingRatings fails`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
-        seedEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
+        addEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
         val syncObserver = FakeSyncObserver()
         val repository = buildRepository(syncObserver)
         ratingsDao.upsertEpisodeUserRating(
@@ -519,8 +519,8 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should emit episode user rating given observeEpisodeRating is collected`() = runTest {
-        seedSeason(seasonId = SEASON_ID)
-        seedEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
+        addSeason(seasonId = SEASON_ID)
+        addEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID)
         val repository = buildRepository(FakeSyncObserver())
         ratingsDao.upsertEpisodeUserRating(
             episodeId = EPISODE_ID,
@@ -549,7 +549,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
             logger = FakeLogger(),
         )
 
-    private fun seedProviderShowId(showId: Long, provider: SyncProviderSource, externalId: Long) {
+    private fun addProviderShowId(showId: Long, provider: SyncProviderSource, externalId: Long) {
         database.tvshowExternalIdQueries.insert(
             showId = Id(showId),
             provider = provider.toDbProvider(),
@@ -557,7 +557,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedShow(showId: Long): Long {
+    private fun addShow(showId: Long): Long {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = "Test Show",
@@ -576,7 +576,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         return database.tvShowQueries.getShowIdByTmdbId(Id(showId)).executeAsOne().id
     }
 
-    private fun seedSeason(seasonId: Long) {
+    private fun addSeason(seasonId: Long) {
         database.seasonsQueries.upsert(
             id = Id(seasonId),
             show_id = Id(SHOW_ID),
@@ -588,7 +588,7 @@ internal class DefaultRatingsRepositoryTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedEpisode(episodeId: Long, seasonId: Long) {
+    private fun addEpisode(episodeId: Long, seasonId: Long) {
         database.episodesQueries.upsert(
             id = Id(episodeId),
             season_id = Id(seasonId),

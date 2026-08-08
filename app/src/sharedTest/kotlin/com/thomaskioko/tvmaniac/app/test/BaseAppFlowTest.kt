@@ -73,7 +73,7 @@ internal abstract class BaseAppFlowTest {
 
     /**
      * Runs [block] inside `runAndroidComposeUiTest<TvManiacTestActivity>`, providing an
-     * [AppFlowScope] with all robots, the dependency graph, and pre-seeded scenarios.
+     * [AppFlowScope] with all robots, the dependency graph, and ready-made scenarios.
      *
      * The scope is rebuilt on every call. The application graph is reset before the activity
      * launches so the [kotlinx.coroutines.test.TestDispatcher] installed by
