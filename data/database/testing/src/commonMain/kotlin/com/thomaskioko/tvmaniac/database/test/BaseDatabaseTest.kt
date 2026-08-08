@@ -24,12 +24,12 @@ public abstract class BaseDatabaseTest {
     protected val showIdResolver: ShowIdResolver by lazy { DefaultShowIdResolver(database) }
 
     /**
-     * Links an already-seeded `tvshow` row to the identity layer and returns its internal
-     * `show_id`. Tests seed `tvshow` via `tvShowQueries.upsert` and then call this to create the
+     * Links a `tvshow` row that is already stored to the identity layer and returns its internal
+     * `show_id`. Tests store `tvshow` via `tvShowQueries.upsert` and then call this to create the
      * `TRAKT` `tvshow_external_id` row that [showIdResolver] reads, mirroring what
      * `DefaultTvShowsDao.upsert` does in production.
      *
-     * Pass [tmdbId] when the Trakt and TMDB ids differ (the test seeded the row by [tmdbId]).
+     * Pass [tmdbId] when the Trakt and TMDB ids differ (the test stored the row by [tmdbId]).
      * When omitted, [traktId] is used for the lookup (tests that use the same value for both).
      */
     protected fun showIdForTraktId(traktId: Long, tmdbId: Long = traktId): Id<ShowId> {

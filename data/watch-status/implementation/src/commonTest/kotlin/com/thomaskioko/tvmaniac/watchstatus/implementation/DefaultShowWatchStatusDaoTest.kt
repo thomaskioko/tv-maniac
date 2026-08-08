@@ -40,7 +40,7 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         dao = DefaultShowWatchStatusDao(database, dispatchers)
-        showId = seedShow(SHOW_TRAKT_ID)
+        showId = addShow(SHOW_TRAKT_ID)
     }
 
     @AfterTest
@@ -95,7 +95,7 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should delete all statuses`() {
-        val otherShowId = seedShow(OTHER_TRAKT_ID)
+        val otherShowId = addShow(OTHER_TRAKT_ID)
         dao.upsert(showId, WatchStatus.WATCHING, null, null)
         dao.upsert(otherShowId, WatchStatus.COMPLETED, null, null)
 
@@ -187,7 +187,7 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedShow(traktId: Long): Id<ShowId> {
+    private fun addShow(traktId: Long): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(traktId),
             name = "show-$traktId",

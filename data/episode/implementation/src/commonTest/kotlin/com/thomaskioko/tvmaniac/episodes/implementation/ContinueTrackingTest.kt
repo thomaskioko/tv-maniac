@@ -47,7 +47,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         fakeDateTimeProvider.setCurrentTimeMillis(now)
         watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
-        seedShow()
+        addShow()
     }
 
     @AfterTest
@@ -100,7 +100,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     @Test
     fun `should advance next episode given show is watched but not followed`() = runTest {
         val unfollowedShowId = 4L
-        seedShowWithSecondEpisodeAt(
+        addShowWithSecondEpisodeAt(
             showId = unfollowedShowId,
             seasonId = 41L,
             airedEpisodeId = 401L,
@@ -132,7 +132,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     @Test
     fun `should return unaired episode given all aired episodes watched`() = runTest {
         val futureShowId = 2L
-        seedShowWithSecondEpisodeAt(
+        addShowWithSecondEpisodeAt(
             showId = futureShowId,
             seasonId = 21L,
             airedEpisodeId = 201L,
@@ -158,7 +158,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     @Test
     fun `should return episode without air date given all aired episodes watched`() = runTest {
         val tbdShowId = 3L
-        seedShowWithSecondEpisodeAt(
+        addShowWithSecondEpisodeAt(
             showId = tbdShowId,
             seasonId = 31L,
             airedEpisodeId = 301L,
@@ -184,7 +184,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
     @Test
     fun `should return null given all episodes watched`() = runTest {
         val completedShowId = 5L
-        seedShowWithSecondEpisodeAt(
+        addShowWithSecondEpisodeAt(
             showId = completedShowId,
             seasonId = 51L,
             airedEpisodeId = 501L,
@@ -234,7 +234,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         }
     }
 
-    private fun seedShowWithSecondEpisodeAt(
+    private fun addShowWithSecondEpisodeAt(
         showId: Long,
         seasonId: Long,
         airedEpisodeId: Long,
@@ -303,7 +303,7 @@ internal class ContinueTrackingTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedShow() {
+    private fun addShow() {
         database.tvShowQueries.upsert(
             tmdb_id = Id(SHOW_ID),
             name = "Severance",

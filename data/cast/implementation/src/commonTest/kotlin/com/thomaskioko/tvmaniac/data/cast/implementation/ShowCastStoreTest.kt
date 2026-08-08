@@ -82,7 +82,7 @@ internal class ShowCastStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist cast from trakt and tmdb given trakt id is present`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
         showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_TMDB_ID)
 
         traktSource.setPeople(
@@ -130,7 +130,7 @@ internal class ShowCastStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist cast from tmdb only given no trakt id`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
 
         tmdbSource.setCredits(
             ApiResponse.Success(
@@ -163,7 +163,7 @@ internal class ShowCastStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist empty cast given no trakt id and tmdb credits are empty`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
 
         tmdbSource.setCredits(
             ApiResponse.Success(CreditsResponse(cast = arrayListOf())),
@@ -181,7 +181,7 @@ internal class ShowCastStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist empty cast given no trakt id and tmdb credits return error`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
 
         tmdbSource.setCredits(
             ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "error"),
@@ -197,7 +197,7 @@ internal class ShowCastStoreTest : BaseDatabaseTest() {
         cast shouldHaveSize 0
     }
 
-    private fun seedShow(tmdbId: Long) {
+    private fun addShow(tmdbId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
             name = "Test Show",

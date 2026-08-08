@@ -69,7 +69,7 @@ internal class ContinueWatchingFetcherTest {
 
     @BeforeTest
     fun setUp() {
-        seedBaselineFixtures()
+        addBaselineRows()
         nitroFetcher = NitroContinueWatchingFetcher(
             traktSyncDataSource = syncDataSource,
             traktUserDataSource = userDataSource,
@@ -242,7 +242,7 @@ internal class ContinueWatchingFetcherTest {
         return continueWatchingDao.entries()
     }
 
-    private fun seedBaselineFixtures() {
+    private fun addBaselineRows() {
         val playback: List<TraktPlaybackEpisodeResponse> = json.decodeFromString(load("playback_episodes.json"))
         val hidden: List<TraktHiddenItemResponse> = json.decodeFromString(load("hidden_progress.json"))
         val nitro: List<TraktUpNextNitroResponse> = json.decodeFromString(load("nitro_up_next.json"))

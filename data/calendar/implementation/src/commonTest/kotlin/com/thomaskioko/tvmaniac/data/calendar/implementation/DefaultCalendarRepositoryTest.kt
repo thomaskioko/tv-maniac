@@ -57,7 +57,7 @@ internal class DefaultCalendarRepositoryTest : BaseDatabaseTest() {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         calendarDao = DefaultCalendarDao(database, showIdResolver, dispatchers)
-        seedShow()
+        addShow()
     }
 
     @AfterTest
@@ -172,7 +172,7 @@ internal class DefaultCalendarRepositoryTest : BaseDatabaseTest() {
         followedAt = Instant.fromEpochMilliseconds(0),
     )
 
-    private fun seedShow() {
+    private fun addShow() {
         database.tvShowQueries.upsert(
             tmdb_id = Id(TMDB_ID),
             name = "Breaking Bad",

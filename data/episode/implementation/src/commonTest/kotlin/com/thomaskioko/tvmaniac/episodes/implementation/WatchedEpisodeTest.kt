@@ -57,7 +57,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
             dateTimeProvider = fakeDateTimeProvider,
         )
-        seedShow()
+        addShow()
     }
 
     @AfterTest
@@ -90,8 +90,8 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
 
     @Test
     fun `should remove a synced row absent from a fresh pull`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 901L)
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 2L, traktId = 902L)
+        addSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 901L)
+        addSyncedRow(seasonNumber = 1L, episodeNumber = 2L, traktId = 902L)
 
         dao.upsertBatchFromTrakt(
             showId = SHOW_ID,
@@ -126,7 +126,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
 
     @Test
     fun `should keep the later watched_at given a stale pull`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now)
+        addSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now)
 
         dao.upsertBatchFromTrakt(
             showId = SHOW_ID,
@@ -139,7 +139,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
 
     @Test
     fun `should adopt a newer watched_at given a re-watch pull`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now - 50_000L)
+        addSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now - 50_000L)
 
         dao.upsertBatchFromTrakt(
             showId = SHOW_ID,
@@ -172,7 +172,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
 
     @Test
     fun `should flip DELETE to UPLOAD when re-marked watched`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+        addSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         dao.markAsUnwatched(
             showId = SHOW_ID,
             episodeId = EPISODE_1_ID,
@@ -195,7 +195,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve trakt_id when synced row is re-marked watched`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now - 100_000L)
+        addSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L, watchedAt = now - 100_000L)
         readRow(seasonNumber = 1L, episodeNumber = 1L)!!.trakt_id shouldBe 555L
 
         dao.markAsWatched(
@@ -215,7 +215,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
 
     @Test
     fun `markSeasonAsUnwatched should flip synced rows to DELETE and hard-delete unsynced rows`() = runTest {
-        seedSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+        addSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
         dao.markAsWatched(
             showId = SHOW_ID,
             episodeId = EPISODE_2_ID,
@@ -260,7 +260,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
                 )
             }
 
-    private fun seedSyncedRow(
+    private fun addSyncedRow(
         seasonNumber: Long,
         episodeNumber: Long,
         traktId: Long,
@@ -295,7 +295,7 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         pendingAction = PendingAction.NOTHING,
     )
 
-    private fun seedShow() {
+    private fun addShow() {
         database.tvShowQueries.upsert(
             tmdb_id = Id(SHOW_ID),
             name = "Synced Delete Test",
