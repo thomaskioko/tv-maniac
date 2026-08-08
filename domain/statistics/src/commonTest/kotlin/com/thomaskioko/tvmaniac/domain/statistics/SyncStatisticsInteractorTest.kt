@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.domain.statistics
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -42,5 +43,16 @@ internal class SyncStatisticsInteractorTest {
         interactor.executeSync(SyncStatisticsInteractor.Params(forceRefresh = false))
 
         watchedEpisodeSyncRepository.syncAllInvocations() shouldBe listOf(false)
+    }
+
+    @Test
+    fun `should read the ratings given the watch sync failed`() = runTest(testDispatcher) {
+        watchedEpisodeSyncRepository.setSyncAllError(IllegalStateException("no connection"))
+
+        shouldThrow<IllegalStateException> {
+            interactor.executeSync(SyncStatisticsInteractor.Params(forceRefresh = true))
+        }
+
+        ratingsRepository.syncUserRatingsCount shouldBe 1
     }
 }

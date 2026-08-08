@@ -106,6 +106,69 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should count a followed show with no status as watchlist`() = runTest {
+        follow(showId)
+
+        dao.observeStatusCounts().test {
+            awaitItem() shouldBe mapOf(WatchStatus.WATCHLIST to 1L)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should count a followed show once given it also has a watchlist status`() = runTest {
+        follow(showId)
+        dao.upsert(showId, WatchStatus.WATCHLIST, null, null)
+
+        dao.observeStatusCounts().test {
+            awaitItem() shouldBe mapOf(WatchStatus.WATCHLIST to 1L)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should leave out a watchlist status given the show is being unfollowed`() = runTest {
+        follow(showId, pendingAction = "DELETE")
+        dao.upsert(showId, WatchStatus.WATCHLIST, null, null)
+
+        dao.observeStatusCounts().test {
+            awaitItem() shouldBe emptyMap()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should leave out a watchlist status given the show is no longer followed`() = runTest {
+        dao.upsert(showId, WatchStatus.WATCHLIST, null, null)
+
+        dao.observeStatusCounts().test {
+            awaitItem() shouldBe emptyMap()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should keep a completed status given the show is no longer followed`() = runTest {
+        dao.upsert(showId, WatchStatus.COMPLETED, null, null)
+
+        dao.observeStatusCounts().test {
+            awaitItem() shouldBe mapOf(WatchStatus.COMPLETED to 1L)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should count a followed show once given it is part way through`() = runTest {
+        follow(showId)
+        dao.upsert(showId, WatchStatus.WATCHING, null, null)
+
+        dao.observeStatusCounts().test {
+            awaitItem() shouldBe mapOf(WatchStatus.WATCHING to 1L)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should return zero watch progress for a show with no episodes`() {
         dao.getWatchProgress(showId) shouldBe ShowWatchProgress(watchedCount = 0, totalCount = 0)
     }
@@ -113,6 +176,15 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
     @Test
     fun `should return null watch progress for an unknown show`() {
         dao.getWatchProgress(Id(999_999L)).shouldBeNull()
+    }
+
+    private fun follow(showId: Id<ShowId>, pendingAction: String = "NOTHING") {
+        database.followedShowsQueries.upsert(
+            showId = showId,
+            tmdbId = null,
+            followedAt = 1_000L,
+            pendingAction = pendingAction,
+        )
     }
 
     private fun seedShow(traktId: Long): Id<ShowId> {

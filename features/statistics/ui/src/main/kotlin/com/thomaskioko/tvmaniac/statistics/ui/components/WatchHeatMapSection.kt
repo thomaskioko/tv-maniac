@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
@@ -43,7 +44,8 @@ internal fun WatchHeatMapSection(
         Row(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
-                .padding(horizontal = TvManiacSpacing.medium),
+                .padding(horizontal = TvManiacSpacing.medium)
+                .clearAndSetSemantics {},
             horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxxSmall),
         ) {
             heatMap.toColumns().forEach { column ->

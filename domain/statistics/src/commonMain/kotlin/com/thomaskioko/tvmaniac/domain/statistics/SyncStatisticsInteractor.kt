@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 
 @Inject
@@ -19,8 +20,18 @@ public class SyncStatisticsInteractor(
 
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            watchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = params.forceRefresh)
+            val episodeFailure = try {
+                watchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = params.forceRefresh)
+                null
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                throwable
+            }
+
             ratingsRepository.syncUserRatings()
+
+            if (episodeFailure != null) throw episodeFailure
         }
     }
 
