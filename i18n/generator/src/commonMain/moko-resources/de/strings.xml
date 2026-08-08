@@ -545,7 +545,7 @@
     <string name="label_statistics_genres">Genres, die Sie sehen</string>
     <string name="label_statistics_release_years">Serien nach Erscheinungsjahr</string>
     <string name="label_statistics_genre_other">Andere</string>
-    <string name="label_statistics_genres_unavailable">Simkl liefert keine Genres, daher ist dies nur mit einem Trakt-Konto verfügbar.</string>
+    <string name="label_statistics_genres_empty">Wir kennen die Genres der von Ihnen gesehenen Serien noch nicht.</string>
     <string name="label_statistics_current_streak">Aktuelle Serie</string>
     <string name="label_statistics_running_now">läuft gerade</string>
     <string name="label_statistics_watch_days_month">Sehtage diesen Monat</string>

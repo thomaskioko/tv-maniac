@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.shows.api.ShowReconciler
 import com.thomaskioko.tvmaniac.shows.api.ShowResolveOutcome
+import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
@@ -229,7 +230,7 @@ public class DefaultWatchedEpisodeSyncRepository(
                     tmdbId = show.tmdbId,
                     runtime = show.runtimeMinutes,
                     year = show.year,
-                    genres = show.genres,
+                    genres = show.genres?.map(::traktGenreName),
                 )
             }
             updated += metadata.size

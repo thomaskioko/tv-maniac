@@ -17,7 +17,7 @@ public data class StatisticsLabels(
     val weekdayActivityTitle: String = "",
     val genresTitle: String = "",
     val releaseYearsTitle: String = "",
-    val genresUnavailableNote: String = "",
+    val genresEmptyMessage: String = "",
     val lockedTitle: String = "",
     val lockedMessage: String = "",
     val lockedBadgeText: String = "",

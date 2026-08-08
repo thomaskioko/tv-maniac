@@ -80,9 +80,7 @@ public class TraktEpisodeWatchesDataSource(
                     tmdbId = tmdbId,
                     runtimeMinutes = entry.show.runtime,
                     year = entry.show.year?.toString(),
-                    genres = entry.show.genres
-                        ?.takeIf { it.isNotEmpty() }
-                        ?.map { genre -> genre.replaceFirstChar { char -> char.uppercase() } },
+                    genres = entry.show.genres?.takeIf { it.isNotEmpty() },
                 )
             }
             is ApiResponse.Unauthenticated -> emptyList()

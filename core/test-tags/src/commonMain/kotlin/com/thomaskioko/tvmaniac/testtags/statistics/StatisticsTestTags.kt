@@ -19,7 +19,7 @@ public object StatisticsTestTags {
     public const val WEEKDAY_ACTIVITY_TEST_TAG: String = "statistics_weekday_activity"
     public const val ACTIVITY_TOOLTIP_TEST_TAG: String = "statistics_activity_tooltip"
     public const val GENRES_SECTION_TEST_TAG: String = "statistics_genres_section"
-    public const val GENRES_UNAVAILABLE_NOTE_TEST_TAG: String = "statistics_genres_unavailable_note"
+    public const val GENRES_EMPTY_MESSAGE_TEST_TAG: String = "statistics_genres_empty_message"
     public const val RELEASE_YEARS_TEST_TAG: String = "statistics_release_years"
     public fun tile(id: String): String = "statistics_tile_$id"
     public fun mostWatchedShowCard(showId: Long): String = "statistics_most_watched_show_$showId"
