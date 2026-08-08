@@ -16,6 +16,9 @@ private let previewLabels = SwiftStatisticsLabels(
     yearlyActivityTitle: "Episodes by year",
     monthlyActivityTitle: "Episodes by month",
     weekdayActivityTitle: "Episodes by day of the week",
+    genresTitle: "Genres you watch",
+    releaseYearsTitle: "Shows by release year",
+    genresEmptyMessage: "We do not know the genres of the shows you have watched yet.",
     lockedTitle: "Statistics are a Premium feature",
     lockedMessage: "Upgrade to Premium to see how you watch.",
     lockedBadgeText: "Premium",
@@ -89,6 +92,25 @@ private let previewWeekdayActivity: [SwiftActivityBar] = [
     .init(label: "Sun", caption: "16 episodes", fraction: 0.8),
 ]
 
+private let previewGenreBreakdown: [SwiftGenreSlice] = [
+    .init(name: "Drama", showCount: 24, caption: "24 shows", fraction: 1),
+    .init(name: "Comedy", showCount: 11, caption: "11 shows", fraction: 0.45),
+    .init(name: "Crime", showCount: 9, caption: "9 shows", fraction: 0.37),
+    .init(name: "Science Fiction", showCount: 7, caption: "7 shows", fraction: 0.29),
+    .init(name: "Thriller", showCount: 5, caption: "5 shows", fraction: 0.2),
+    .init(name: "Action", showCount: 4, caption: "4 shows", fraction: 0.16),
+    .init(name: "Other", showCount: 12, caption: "12 shows", fraction: 0.5),
+]
+
+private let previewReleaseYears: [SwiftActivityBar] = [
+    .init(label: "2016", caption: "3 shows", fraction: 0.37),
+    .init(label: "2017", caption: "5 shows", fraction: 0.62),
+    .init(label: "2018", caption: "2 shows", fraction: 0.25),
+    .init(label: "2019", caption: "8 shows", fraction: 1),
+    .init(label: "2020", caption: "4 shows", fraction: 0.5),
+    .init(label: "2021", caption: "6 shows", fraction: 0.75),
+]
+
 private let previewHeatMap = SwiftWatchHeatMap(
     levels: (0 ..< 215).map { ($0 * 7) % 5 },
     leadingBlankCells: 3
@@ -106,6 +128,8 @@ private let previewContentState = StatisticsScreen.State(
     yearlyActivity: previewYearlyActivity,
     monthlyActivity: previewMonthlyActivity,
     weekdayActivity: previewWeekdayActivity,
+    genreBreakdown: previewGenreBreakdown,
+    releaseYears: previewReleaseYears,
     labels: previewLabels
 )
 

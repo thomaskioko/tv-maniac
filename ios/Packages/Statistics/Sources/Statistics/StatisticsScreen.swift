@@ -138,6 +138,24 @@ public struct StatisticsScreen: View {
                     )
                 }
 
+                if !state.releaseYears.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.releaseYears,
+                        title: state.labels.releaseYearsTitle,
+                        sectionTestTag: StatisticsTestTags.shared.RELEASE_YEARS_TEST_TAG,
+                        sectionName: "release_years",
+                        showAxisLabels: true
+                    )
+                }
+
+                if state.showContent {
+                    GenreSectionView(
+                        genres: state.genreBreakdown,
+                        title: state.labels.genresTitle,
+                        emptyMessage: state.labels.genresEmptyMessage
+                    )
+                }
+
                 if !state.mostWatchedShows.isEmpty {
                     MostWatchedShowsSectionView(
                         shows: state.mostWatchedShows,
