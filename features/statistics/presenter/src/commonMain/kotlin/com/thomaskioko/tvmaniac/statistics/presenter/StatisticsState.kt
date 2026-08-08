@@ -29,7 +29,6 @@ public data class StatisticsState(
     val weekdayActivity: ImmutableList<ActivityBar> = persistentListOf(),
     val genreBreakdown: ImmutableList<GenreSlice> = persistentListOf(),
     val releaseYears: ImmutableList<ActivityBar> = persistentListOf(),
-    val genresUnavailable: Boolean = false,
     val labels: StatisticsLabels = StatisticsLabels(),
     val message: UiMessage? = null,
 ) {

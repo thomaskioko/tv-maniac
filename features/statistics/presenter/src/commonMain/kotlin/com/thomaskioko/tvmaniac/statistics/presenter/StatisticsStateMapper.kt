@@ -248,7 +248,7 @@ public class StatisticsStateMapper(
         weekdayActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsWeekdayActivity),
         genresTitle = localizer.getString(StringResourceKey.LabelStatisticsGenres),
         releaseYearsTitle = localizer.getString(StringResourceKey.LabelStatisticsReleaseYears),
-        genresUnavailableNote = localizer.getString(StringResourceKey.LabelStatisticsGenresUnavailable),
+        genresEmptyMessage = localizer.getString(StringResourceKey.LabelStatisticsGenresEmpty),
         lockedTitle = localizer.getString(StringResourceKey.LabelStatisticsLockedTitle),
         lockedMessage = localizer.getString(StringResourceKey.LabelStatisticsLockedMessage),
         lockedBadgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),

@@ -80,7 +80,6 @@ public class StatisticsPresenter internal constructor(
             weekdayActivity = stateMapper.toWeekdayActivity(statistics),
             genreBreakdown = stateMapper.toGenreBreakdown(statistics),
             releaseYears = stateMapper.toReleaseYears(statistics),
-            genresUnavailable = activeProvider == SyncProviderSource.SIMKL,
             labels = stateMapper.toLabels(),
             message = message,
         )
