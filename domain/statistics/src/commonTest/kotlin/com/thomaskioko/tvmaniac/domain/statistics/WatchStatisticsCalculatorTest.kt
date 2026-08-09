@@ -58,6 +58,7 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
         showCountsByStatus = showWatchStatusDao.observeStatusCounts().first(),
         ratingCounts = ratingsDao.observeUserRatingDistribution().first(),
         showComposition = watchedEpisodeDao.observeWatchedShowComposition().first(),
+        highestRatedShows = ratingsDao.observeHighestRatedShows(10).first(),
     )
 
     @AfterTest

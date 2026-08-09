@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.statistics
 
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.db.WatchStatus
 import com.thomaskioko.tvmaniac.domain.statistics.model.AverageRating
 import com.thomaskioko.tvmaniac.domain.statistics.model.DailyWatchCount
@@ -43,6 +44,7 @@ public class WatchStatisticsCalculator(
         showCountsByStatus: Map<WatchStatus, Long>,
         ratingCounts: Map<Int, Long>,
         showComposition: List<WatchedShowComposition>,
+        highestRatedShows: List<HighestRatedShow>,
     ): WatchStatistics {
         val timeZone = dateTimeProvider.getTimeZone()
         val today = dateTimeProvider.now().toLocalDateTime(timeZone).date
@@ -72,6 +74,7 @@ public class WatchStatisticsCalculator(
             monthlyCounts = calculateMonthlyCounts(watchedDays),
             weekdayCounts = calculateWeekdayCounts(watchedDays),
             mostWatchedShows = mostWatchedShows,
+            highestRatedShows = highestRatedShows,
             showsByWatchStatus = getShowsByWatchStatus(showCountsByStatus),
             ratingDistribution = getRatingDistribution(ratingCounts),
             genreBreakdown = calculateGenreBreakdown(showComposition),

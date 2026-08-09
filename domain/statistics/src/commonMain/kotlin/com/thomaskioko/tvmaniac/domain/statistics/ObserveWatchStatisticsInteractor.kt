@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.statistics
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRepository
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
@@ -21,19 +22,31 @@ public class ObserveWatchStatisticsInteractor(
         episodeRepository.observeWatchedEpisodeRuntimes(),
         episodeRepository.observeMostWatchedShows(MOST_WATCHED_LIMIT),
         showWatchStatusRepository.observeShowCountsByStatus(),
-        ratingsRepository.observeUserRatingDistribution(),
+        observeRatings(),
         episodeRepository.observeWatchedShowComposition(),
-    ) { watches, mostWatchedShows, showCountsByStatus, ratingCounts, showComposition ->
+    ) { watches, mostWatchedShows, showCountsByStatus, ratings, showComposition ->
         calculator.calculate(
             watches = watches,
             mostWatchedShows = mostWatchedShows,
             showCountsByStatus = showCountsByStatus,
-            ratingCounts = ratingCounts,
+            ratingCounts = ratings.distribution,
             showComposition = showComposition,
+            highestRatedShows = ratings.highestRated,
         )
     }
 
+    private fun observeRatings(): Flow<Ratings> = combine(
+        ratingsRepository.observeUserRatingDistribution(),
+        ratingsRepository.observeHighestRatedShows(HIGHEST_RATED_LIMIT),
+    ) { distribution, highestRated -> Ratings(distribution, highestRated) }
+
+    private data class Ratings(
+        val distribution: Map<Int, Long>,
+        val highestRated: List<HighestRatedShow>,
+    )
+
     private companion object {
         const val MOST_WATCHED_LIMIT = 10L
+        const val HIGHEST_RATED_LIMIT = 10L
     }
 }
