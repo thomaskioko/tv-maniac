@@ -407,6 +407,7 @@
 
     <string name="label_episode_action_mark_watched">Mark watched</string>
     <string name="label_episode_action_mark_unwatched">Mark unwatched</string>
+    <string name="label_episode_action_watch_again">Watch again</string>
     <string name="label_episode_action_open_show">Open show</string>
     <string name="label_episode_action_open_season">Open season</string>
     <string name="label_episode_action_unfollow_show">Unfollow show</string>
@@ -528,12 +529,14 @@
     <string name="label_statistics_empty">Mark an episode as watched to start building your statistics.</string>
     <string name="label_statistics_activity">Your year of watching</string>
     <string name="label_statistics_marked_watched_note">Dates show when episodes were marked as watched, not when you watched them.</string>
+    <string name="label_statistics_rewatch_note">Totals count every viewing, not just the first.</string>
     <string name="label_statistics_watch_time">Total time watched</string>
     <string name="label_statistics_days">days</string>
     <string name="label_statistics_hours">hours</string>
     <string name="label_statistics_minutes">minutes</string>
     <string name="label_statistics_titles_tracked">Titles tracked</string>
     <string name="label_statistics_episodes">Episodes</string>
+    <string name="label_statistics_rewatches">Rewatches</string>
     <string name="label_statistics_average_rating">Average rating</string>
     <string name="label_statistics_peak_year">Peak year</string>
     <string name="label_statistics_top_weekday">Top weekday</string>
@@ -565,4 +568,9 @@
     <string name="label_watch_status_completed">Completed</string>
     <string name="label_watch_status_on_hold">On hold</string>
     <string name="label_watch_status_dropped">Dropped</string>
+
+    <string name="label_rewatch_start">Start rewatch</string>
+    <string name="label_rewatch_close">Close rewatch</string>
+    <string name="label_rewatch_in_progress">Rewatch in progress</string>
+    <string name="label_rewatch_simkl_free_tier">Simkl does not store rewatches without a paid plan, so this count stays on this device.</string>
 </resources>

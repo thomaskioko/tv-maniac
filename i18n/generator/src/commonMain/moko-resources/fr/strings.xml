@@ -391,6 +391,7 @@
 
     <string name="label_episode_action_mark_watched">Marquer comme vu</string>
     <string name="label_episode_action_mark_unwatched">Marquer comme non vu</string>
+    <string name="label_episode_action_watch_again">Revoir</string>
     <string name="label_episode_action_open_show">Ouvrir la série</string>
     <string name="label_episode_action_open_season">Ouvrir la saison</string>
     <string name="label_episode_action_unfollow_show">Ne plus suivre la série</string>
@@ -517,12 +518,14 @@
     <string name="label_statistics_empty">Marquez un épisode comme vu pour commencer vos statistiques.</string>
     <string name="label_statistics_activity">Votre année de visionnage</string>
     <string name="label_statistics_marked_watched_note">Les dates indiquent quand les épisodes ont été marqués comme vus, pas quand vous les avez regardés.</string>
+    <string name="label_statistics_rewatch_note">Les totaux comptent chaque visionnage, pas seulement le premier.</string>
     <string name="label_statistics_watch_time">Temps total de visionnage</string>
     <string name="label_statistics_days">jours</string>
     <string name="label_statistics_hours">heures</string>
     <string name="label_statistics_minutes">minutes</string>
     <string name="label_statistics_titles_tracked">Titres suivis</string>
     <string name="label_statistics_episodes">Épisodes</string>
+    <string name="label_statistics_rewatches">Revisionnages</string>
     <string name="label_statistics_average_rating">Note moyenne</string>
     <string name="label_statistics_peak_year">Année la plus active</string>
     <string name="label_statistics_top_weekday">Jour le plus fréquent</string>
@@ -554,4 +557,9 @@
     <string name="label_watch_status_completed">Terminées</string>
     <string name="label_watch_status_on_hold">En pause</string>
     <string name="label_watch_status_dropped">Abandonnées</string>
+
+    <string name="label_rewatch_start">Commencer un revisionnage</string>
+    <string name="label_rewatch_close">Terminer le revisionnage</string>
+    <string name="label_rewatch_in_progress">Revisionnage en cours</string>
+    <string name="label_rewatch_simkl_free_tier">Simkl n\'enregistre pas les revisionnages sans forfait payant. Ce décompte reste sur cet appareil.</string>
 </resources>
