@@ -73,6 +73,7 @@ public struct ProfileScreen: View {
         .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
+        .toolbar(.hidden, for: .navigationBar)
         .edgesIgnoringSafeArea(.top)
     }
 
