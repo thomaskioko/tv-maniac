@@ -118,6 +118,11 @@ public class DefaultWatchedEpisodeDao(
             database.tvShowQueries.countWatchedShowsMissingMetadata().executeAsOne()
         }
 
+    override suspend fun getWatchedShowsMissingGenres(): List<Long> =
+        withContext(dispatchers.databaseRead) {
+            database.tvShowQueries.watchedShowsMissingGenres().executeAsList().map { it.id }
+        }
+
     override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =
         database.watchedEpisodesQueries
             .mostWatchedShows(limit)

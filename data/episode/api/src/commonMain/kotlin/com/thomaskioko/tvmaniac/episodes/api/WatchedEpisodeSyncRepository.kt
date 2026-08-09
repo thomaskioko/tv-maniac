@@ -27,4 +27,6 @@ public interface WatchedEpisodeSyncRepository {
     public suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean = false)
 
     public suspend fun countPendingEpisodes(): Long
+
+    public suspend fun getWatchedShowsMissingGenres(): List<Long>
 }

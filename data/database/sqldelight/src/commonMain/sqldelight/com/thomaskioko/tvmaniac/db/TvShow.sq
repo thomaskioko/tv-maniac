@@ -77,6 +77,14 @@ WHERE (runtime IS NULL OR year IS NULL OR genres IS NULL)
     WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
   );
 
+watchedShowsMissingGenres:
+SELECT tmdb_id FROM tvshow
+WHERE genres IS NULL
+  AND id IN (
+    SELECT DISTINCT show_id FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+  );
+
 tvshowDetails:
 SELECT
     show_trakt.trakt_id,

@@ -39,6 +39,8 @@ public interface WatchedEpisodeDao {
 
     public suspend fun countWatchedShowsMissingMetadata(): Long
 
+    public suspend fun getWatchedShowsMissingGenres(): List<Long>
+
     public suspend fun markAsWatched(
         showId: Long,
         episodeId: Long,

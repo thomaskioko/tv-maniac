@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
+import com.thomaskioko.tvmaniac.data.showdetails.api.ShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
@@ -20,6 +21,8 @@ import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError as NetworkSyncError
@@ -33,6 +36,7 @@ public class SyncLibraryInteractor(
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
     private val showMetadataSyncHelper: ShowMetadataSyncHelper,
     private val watchedEpisodeSyncRepository: WatchedEpisodeSyncRepository,
+    private val showDetailsRepository: ShowDetailsRepository,
     private val syncRepository: ActivitySyncRepository,
     private val datastoreRepository: DatastoreRepository,
     private val dateTimeProvider: DateTimeProvider,
@@ -69,49 +73,75 @@ public class SyncLibraryInteractor(
                         consumerId = ActivitySyncTypes.LIBRARY_WATCHLIST,
                         activityType = ActivityType.SHOWS_WATCHLISTED,
                     )
-                if (!watchlistChanged) {
-                    logger.debug(TAG, "Metadata fan-out skipped — watchlist activity unchanged")
-                    return@withContext
-                }
+                if (watchlistChanged) {
+                    val followedShows = followedShowsRepository.getFollowedShows()
+                    logger.debug(TAG, "Syncing ${followedShows.size} followed shows")
 
-                val followedShows = followedShowsRepository.getFollowedShows()
-                logger.debug(TAG, "Syncing ${followedShows.size} followed shows")
+                    for (show in followedShows) {
+                        ensureActive()
+                        if (accountManager.getActiveProvider() == null) {
+                            logger.debug(TAG, "Stopping metadata fan-out - account logged out")
+                            break
+                        }
+                        val result = runCatching {
+                            if (showMetadataSyncHelper.shouldSync(show.showId)) {
+                                syncShowMetadataInteractor.executeSync(
+                                    SyncShowMetadataInteractor.Param(
+                                        showId = show.showId,
+                                        forceRefresh = params.isUserInitiated,
+                                        refreshLatestSeason = showMetadataSyncHelper.shouldRefreshLatestSeason(show.showId),
+                                    ),
+                                )
+                            } else {
+                                logger.debug(TAG, "Skipping metadata sync for ended show ${show.showId}")
+                            }
+                        }
+                        val failure = result.exceptionOrNull() ?: continue
 
-                for (show in followedShows) {
-                    ensureActive()
-                    if (accountManager.getActiveProvider() == null) {
-                        logger.debug(TAG, "Stopping metadata fan-out - account logged out")
-                        break
-                    }
-                    val result = runCatching {
-                        if (showMetadataSyncHelper.shouldSync(show.showId)) {
-                            syncShowMetadataInteractor.executeSync(
-                                SyncShowMetadataInteractor.Param(
-                                    showId = show.showId,
-                                    forceRefresh = params.isUserInitiated,
-                                    refreshLatestSeason = showMetadataSyncHelper.shouldRefreshLatestSeason(show.showId),
-                                ),
-                            )
-                        } else {
-                            logger.debug(TAG, "Skipping metadata sync for ended show ${show.showId}")
+                        logger.warning(TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
+                        syncObserver.log(SyncError.BackgroundSyncFailed(TAG, failure))
+
+                        if (failure.toSyncError() is NetworkSyncError.Retryable) {
+                            logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.showId}")
+                            break
                         }
                     }
-                    val failure = result.exceptionOrNull() ?: continue
-
-                    logger.warning(TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
-                    syncObserver.log(SyncError.BackgroundSyncFailed(TAG, failure))
-
-                    if (failure.toSyncError() is NetworkSyncError.Retryable) {
-                        logger.warning(TAG, "Backing off metadata fan-out after retryable failure on ${show.showId}")
-                        break
-                    }
+                } else {
+                    logger.debug(TAG, "Metadata fan-out skipped — watchlist activity unchanged")
                 }
+
+                backfillMissingGenres()
 
                 logger.debug(TAG, "Library sync complete")
             }
         }
 
         datastoreRepository.setLastSyncTimestamp(dateTimeProvider.nowMillis())
+    }
+
+    private suspend fun backfillMissingGenres() {
+        val showIds = watchedEpisodeSyncRepository.getWatchedShowsMissingGenres()
+        if (showIds.isEmpty()) return
+
+        logger.debug(TAG, "Backfilling genres for ${showIds.size} watched show(s)")
+
+        for (showId in showIds) {
+            currentCoroutineContext().ensureActive()
+            if (accountManager.getActiveProvider() == null) {
+                logger.debug(TAG, "Stopping genre backfill - account logged out")
+                break
+            }
+            val result = runCatching { showDetailsRepository.fetchShowDetails(showId) }
+            val failure = result.exceptionOrNull() ?: continue
+            if (failure is CancellationException) throw failure
+
+            logger.warning(TAG, "Genre backfill failed for $showId: ${failure.message}")
+
+            if (failure.toSyncError() is NetworkSyncError.Retryable) {
+                logger.warning(TAG, "Backing off genre backfill after retryable failure on $showId")
+                break
+            }
+        }
     }
 
     public data class Param(
