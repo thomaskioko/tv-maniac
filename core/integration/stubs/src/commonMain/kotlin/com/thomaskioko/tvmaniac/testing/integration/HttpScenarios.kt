@@ -38,7 +38,7 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowVideos)
 
         // Per-show TMDB endpoints — single canonical fixture for any tmdb id.
-        mockHandler.stubEndpoint(Endpoints.Tmdb.ShowDetails)
+        mockHandler.stubTmdbShowDetailsPattern()
         mockHandler.stubEndpoint(Endpoints.Tmdb.Credits)
         mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetails)
         mockHandler.stubEndpoint(Endpoints.Tmdb.SeasonDetailsS1)
@@ -102,7 +102,7 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         mockHandler.stubEndpoint(Endpoints.Trakt.UsersMeWatchlistShows)
         mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowDetails)
         mockHandler.stubEndpoint(Endpoints.PublicCatalog.ShowSeasons)
-        mockHandler.stubEndpoint(Endpoints.Tmdb.ShowDetails)
+        mockHandler.stubTmdbShowDetailsPattern()
         mockHandler.stubEndpoint(Endpoints.Tmdb.WatchProviders)
 
         stubShowsFrom(Endpoints.Trakt.SyncWatchedShows.successFixture)
