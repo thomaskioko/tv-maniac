@@ -13,6 +13,12 @@ public class FakeTraktEpisodeHistoryRemoteDataSource : TraktEpisodeHistoryRemote
     private var addResponse: ApiResponse<TraktSyncResponse> = ApiResponse.Success(TraktSyncResponse())
     private var removeResponse: ApiResponse<TraktSyncResponse> = ApiResponse.Success(TraktSyncResponse())
 
+    public var lastAddedItems: TraktSyncItems? = null
+        private set
+
+    public var lastRemovedItems: TraktSyncItems? = null
+        private set
+
     public fun setShowEpisodeWatches(response: ApiResponse<List<TraktHistoryEntry>>) {
         showEpisodeWatchesResponse = response
     }
@@ -28,9 +34,13 @@ public class FakeTraktEpisodeHistoryRemoteDataSource : TraktEpisodeHistoryRemote
     override suspend fun getShowEpisodeWatches(showId: Long): ApiResponse<List<TraktHistoryEntry>> =
         showEpisodeWatchesResponse
 
-    override suspend fun addEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse> =
-        addResponse
+    override suspend fun addEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse> {
+        lastAddedItems = items
+        return addResponse
+    }
 
-    override suspend fun removeEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse> =
-        removeResponse
+    override suspend fun removeEpisodeWatches(items: TraktSyncItems): ApiResponse<TraktSyncResponse> {
+        lastRemovedItems = items
+        return removeResponse
+    }
 }
