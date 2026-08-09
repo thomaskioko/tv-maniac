@@ -186,6 +186,7 @@ dependencies {
     implementation(projects.data.followedshows.implementation)
     implementation(projects.data.library.implementation)
     implementation(projects.data.ratings.implementation)
+    implementation(projects.data.rewatch.implementation)
     implementation(projects.data.syncActivity.implementation)
     implementation(projects.data.upnext.implementation)
     implementation(projects.data.continueWatching.implementation)
@@ -222,7 +223,9 @@ dependencies {
     implementation(projects.features.featureFlags.nav)
     implementation(projects.features.featureFlags.presenter)
     implementation(projects.data.ratings.api)
+    implementation(projects.data.rewatch.api)
     implementation(projects.domain.ratings)
+    implementation(projects.domain.rewatch)
     implementation(projects.features.ratingSheet.nav)
 
     implementation(libs.androidx.compose.activity)
