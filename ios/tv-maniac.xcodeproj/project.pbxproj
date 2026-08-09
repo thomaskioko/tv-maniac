@@ -149,7 +149,6 @@
 				7555FF79242A565900829871 /* Resources */,
 				D6CDA52D2F417A820021240C /* Copy GoogleService-Info.plist */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
-				D68A22332F4169A40034550F /* Crashlytics Upload dSYM */,
 			);
 			buildRules = (
 			);
@@ -268,28 +267,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		D68A22332F4169A40034550F /* Crashlytics Upload dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Crashlytics Upload dSYM";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "GSP_CHECK=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\nif [ ! -f \"$GSP_CHECK\" ]; then\n  echo \"warning: GoogleService-Info.plist not found — skipping dSYM upload\"\n  exit 0\nfi\n\nRUN_SCRIPT=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\nif [ ! -f \"$RUN_SCRIPT\" ]; then\n  echo \"warning: Crashlytics run script not found at $RUN_SCRIPT — skipping dSYM upload\"\n  exit 0\nfi\n\n\"$RUN_SCRIPT\"\n";
-		};
 		D693F87E2DCB93950060350C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
