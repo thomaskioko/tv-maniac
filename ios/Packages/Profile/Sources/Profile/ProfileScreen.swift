@@ -73,6 +73,7 @@ public struct ProfileScreen: View {
         .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarColor(backgroundColor: .clear)
+        .toolbar(.hidden, for: .navigationBar)
         .edgesIgnoringSafeArea(.top)
     }
 
@@ -227,16 +228,18 @@ public struct ProfileScreen: View {
 
                             Spacer()
 
-                            Button(action: onViewListsClicked) {
-                                Text(state.listsViewLabel)
-                                    .textStyle(appTheme.typography.labelMedium)
-                                    .foregroundStyle(.appOnSurface)
-                                    .padding(.horizontal, appTheme.spacing.small)
-                                    .padding(.vertical, appTheme.spacing.xxSmall)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: appTheme.shapes.small)
-                                            .stroke(appTheme.colors.onSurfaceVariant.opacity(0.5), lineWidth: 1)
-                                    )
+                            if stats.listCount > 0 {
+                                Button(action: onViewListsClicked) {
+                                    Text(state.listsViewLabel)
+                                        .textStyle(appTheme.typography.labelMedium)
+                                        .foregroundStyle(.appOnSurface)
+                                        .padding(.horizontal, appTheme.spacing.small)
+                                        .padding(.vertical, appTheme.spacing.xxSmall)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: appTheme.shapes.small)
+                                                .stroke(appTheme.colors.onSurfaceVariant.opacity(0.5), lineWidth: 1)
+                                        )
+                                }
                             }
                         }
                         .frame(maxWidth: .infinity)

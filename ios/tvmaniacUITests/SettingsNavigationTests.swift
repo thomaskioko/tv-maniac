@@ -7,7 +7,7 @@ final class SettingsNavigationTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func test_Settings_WalksItsPagesAndReturnsToProfile() {
+    func test_Settings_WalksItsPagesAndOpensAgainAfterReturningToProfile() {
         let app = XCUIApplication.launchTvManiac()
         app.openTab(.profile)
 
@@ -46,5 +46,8 @@ final class SettingsNavigationTests: XCTestCase {
 
         app.buttons[SettingsTestTags.shared.BACK_BUTTON_TEST_TAG].tap()
         app.awaitScreen(ProfileTestTags.shared.SCREEN_TEST_TAG)
+
+        settingsButton.tap()
+        app.awaitScreen(SettingsTestTags.shared.SCREEN_TEST_TAG)
     }
 }
