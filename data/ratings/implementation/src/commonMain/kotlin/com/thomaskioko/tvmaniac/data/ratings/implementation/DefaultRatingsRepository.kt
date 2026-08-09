@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRatingEntry
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.data.ratings.api.ProviderMetaDao
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsDao
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRemoteDataSource
@@ -53,6 +54,9 @@ public class DefaultRatingsRepository(
 
     override fun observeUserRatingDistribution(): Flow<Map<Int, Long>> =
         ratingsDao.observeUserRatingDistribution().distinctUntilChanged()
+
+    override fun observeHighestRatedShows(limit: Long): Flow<List<HighestRatedShow>> =
+        ratingsDao.observeHighestRatedShows(limit).distinctUntilChanged()
 
     override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
         val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return

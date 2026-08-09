@@ -536,7 +536,10 @@
     <string name="label_statistics_rated_count">von %1$d bewertet</string>
     <string name="label_statistics_longest_run">längste Serie</string>
     <string name="label_statistics_watch_days_caption">Tage mit Aktivität</string>
-    <string name="label_statistics_most_watched">Meistgesehene Serien</string>
+    <string name="label_statistics_most_watched">Folgen nach Serie</string>
+    <string name="label_statistics_highest_rated">Am besten bewertete Serien</string>
+    <string name="label_statistics_rating_whole">%1$d/5</string>
+    <string name="label_statistics_rating_half">%1$d,5/5</string>
     <string name="label_statistics_watch_status">Serien nach Status</string>
     <string name="label_statistics_ratings">Ihre Bewertungen</string>
     <string name="label_statistics_yearly_activity">Folgen nach Jahr</string>

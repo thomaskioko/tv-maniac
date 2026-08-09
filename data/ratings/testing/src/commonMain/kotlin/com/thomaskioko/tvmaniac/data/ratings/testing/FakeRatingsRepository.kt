@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.ratings.testing
 
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRating
 import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
@@ -33,6 +34,14 @@ public class FakeRatingsRepository : RatingsRepository {
     }
 
     override fun observeUserRatingDistribution(): Flow<Map<Int, Long>> = userRatingDistribution.asStateFlow()
+
+    private val highestRatedShows = MutableStateFlow<List<HighestRatedShow>>(emptyList())
+
+    public fun setHighestRatedShows(shows: List<HighestRatedShow>) {
+        highestRatedShows.value = shows
+    }
+
+    override fun observeHighestRatedShows(limit: Long): Flow<List<HighestRatedShow>> = highestRatedShows.asStateFlow()
 
     public fun setSyncPendingRatingsError(error: Throwable?) {
         syncPendingRatingsError = error

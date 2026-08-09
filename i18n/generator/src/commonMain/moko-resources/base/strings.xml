@@ -544,7 +544,10 @@
     <string name="label_statistics_rated_count">across %1$d rated</string>
     <string name="label_statistics_longest_run">longest run</string>
     <string name="label_statistics_watch_days_caption">days you watched something</string>
-    <string name="label_statistics_most_watched">Most watched shows</string>
+    <string name="label_statistics_most_watched">Episodes by show</string>
+    <string name="label_statistics_highest_rated">Highest rated shows</string>
+    <string name="label_statistics_rating_whole">%1$d/5</string>
+    <string name="label_statistics_rating_half">%1$d.5/5</string>
     <string name="label_statistics_watch_status">Shows by status</string>
     <string name="label_statistics_ratings">Your ratings</string>
     <string name="label_statistics_yearly_activity">Episodes by year</string>

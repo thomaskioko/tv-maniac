@@ -3,12 +3,14 @@ import DesignSystem
 import SwiftUI
 import TvManiac
 
-struct MostWatchedShowsSectionView: View {
+struct ShowRowSectionView: View {
     @Environment(\.appTheme) private var theme
     @Environment(\.widthSizeClass) private var widthSizeClass
 
-    let shows: [SwiftMostWatchedShowItem]
+    let shows: [SwiftShowRowItem]
     let title: String
+    let rowTestTag: String
+    let cardTestTag: (Int64) -> String
     let onShowClick: (Int64) -> Void
 
     private var posterWidth: CGFloat {
@@ -24,16 +26,16 @@ struct MostWatchedShowsSectionView: View {
                             card(show)
                         }
                         .buttonStyle(.plain)
-                        .testTag(StatisticsTestTags.shared.mostWatchedShowCard(showId: show.showId))
+                        .testTag(cardTestTag(show.showId))
                     }
                 }
                 .padding(.horizontal, theme.spacing.medium)
             }
-            .screenTag(StatisticsTestTags.shared.MOST_WATCHED_ROW_TEST_TAG)
+            .screenTag(rowTestTag)
         }
     }
 
-    private func card(_ show: SwiftMostWatchedShowItem) -> some View {
+    private func card(_ show: SwiftShowRowItem) -> some View {
         VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
             PosterItemView(
                 title: show.title,
@@ -58,12 +60,14 @@ struct MostWatchedShowsSectionView: View {
 }
 
 #Preview {
-    MostWatchedShowsSectionView(
+    ShowRowSectionView(
         shows: [
             .init(showId: 1396, title: "Breaking Bad", posterPath: nil, caption: "62 episodes"),
             .init(showId: 1399, title: "Game of Thrones", posterPath: nil, caption: "73 episodes"),
         ],
-        title: "Most watched shows",
+        title: "Episodes by show",
+        rowTestTag: StatisticsTestTags.shared.MOST_WATCHED_ROW_TEST_TAG,
+        cardTestTag: { StatisticsTestTags.shared.mostWatchedShowCard(showId: $0) },
         onShowClick: { _ in }
     )
 }

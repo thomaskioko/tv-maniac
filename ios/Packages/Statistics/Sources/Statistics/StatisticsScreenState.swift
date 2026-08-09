@@ -8,7 +8,8 @@ public extension StatisticsScreen {
         public let totalWatchTime: SwiftWatchTime?
         public let tiles: [SwiftStatisticTile]
         public let heatMap: SwiftWatchHeatMap?
-        public let mostWatchedShows: [SwiftMostWatchedShowItem]
+        public let mostWatchedShows: [SwiftShowRowItem]
+        public let highestRatedShows: [SwiftShowRowItem]
         public let watchStatusBreakdown: [SwiftWatchStatusItem]
         public let ratingBreakdown: [SwiftRatingBar]
         public let yearlyActivity: [SwiftActivityBar]
@@ -27,7 +28,8 @@ public extension StatisticsScreen {
             totalWatchTime: SwiftWatchTime? = nil,
             tiles: [SwiftStatisticTile] = [],
             heatMap: SwiftWatchHeatMap? = nil,
-            mostWatchedShows: [SwiftMostWatchedShowItem] = [],
+            mostWatchedShows: [SwiftShowRowItem] = [],
+            highestRatedShows: [SwiftShowRowItem] = [],
             watchStatusBreakdown: [SwiftWatchStatusItem] = [],
             ratingBreakdown: [SwiftRatingBar] = [],
             yearlyActivity: [SwiftActivityBar] = [],
@@ -46,6 +48,7 @@ public extension StatisticsScreen {
             self.tiles = tiles
             self.heatMap = heatMap
             self.mostWatchedShows = mostWatchedShows
+            self.highestRatedShows = highestRatedShows
             self.watchStatusBreakdown = watchStatusBreakdown
             self.ratingBreakdown = ratingBreakdown
             self.yearlyActivity = yearlyActivity

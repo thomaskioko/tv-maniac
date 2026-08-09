@@ -46,8 +46,8 @@ import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsPresenter
 import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsState
 import com.thomaskioko.tvmaniac.statistics.ui.components.ActivityChartSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.GenreSection
-import com.thomaskioko.tvmaniac.statistics.ui.components.MostWatchedShowsSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.RatingsSection
+import com.thomaskioko.tvmaniac.statistics.ui.components.ShowRowSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.StatisticTileGrid
 import com.thomaskioko.tvmaniac.statistics.ui.components.WatchHeatMapSection
 import com.thomaskioko.tvmaniac.statistics.ui.components.WatchStatusSection
@@ -318,16 +318,6 @@ private fun StatisticsContent(
             }
         }
 
-        if (state.mostWatchedShows.isNotEmpty()) {
-            item(key = "most_watched") {
-                MostWatchedShowsSection(
-                    shows = state.mostWatchedShows,
-                    title = state.labels.mostWatchedTitle,
-                    onShowClick = { onAction(StatisticsAction.ShowClicked(it)) },
-                )
-            }
-        }
-
         if (state.watchStatusBreakdown.isNotEmpty()) {
             item(key = "watch_status") {
                 WatchStatusSection(
@@ -342,6 +332,30 @@ private fun StatisticsContent(
                 RatingsSection(
                     ratings = state.ratingBreakdown,
                     title = state.labels.ratingsTitle,
+                )
+            }
+        }
+
+        if (state.highestRatedShows.isNotEmpty()) {
+            item(key = "highest_rated") {
+                ShowRowSection(
+                    shows = state.highestRatedShows,
+                    title = state.labels.highestRatedTitle,
+                    rowTestTag = StatisticsTestTags.HIGHEST_RATED_ROW_TEST_TAG,
+                    cardTestTag = StatisticsTestTags::highestRatedShowCard,
+                    onShowClick = { onAction(StatisticsAction.ShowClicked(it)) },
+                )
+            }
+        }
+
+        if (state.mostWatchedShows.isNotEmpty()) {
+            item(key = "most_watched") {
+                ShowRowSection(
+                    shows = state.mostWatchedShows,
+                    title = state.labels.mostWatchedTitle,
+                    rowTestTag = StatisticsTestTags.MOST_WATCHED_ROW_TEST_TAG,
+                    cardTestTag = StatisticsTestTags::mostWatchedShowCard,
+                    onShowClick = { onAction(StatisticsAction.ShowClicked(it)) },
                 )
             }
         }

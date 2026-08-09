@@ -152,3 +152,16 @@ FROM (
 )
 GROUP BY rating
 ORDER BY rating;
+
+highestRatedShows:
+SELECT
+    tvshow.tmdb_id AS show_id,
+    tvshow.name AS title,
+    tvshow.poster_path,
+    show_ratings.user_rating
+FROM show_ratings
+INNER JOIN tvshow ON tvshow.id = show_ratings.show_id
+WHERE show_ratings.user_rating IS NOT NULL
+  AND show_ratings.pending_action != 'DELETE'
+ORDER BY show_ratings.user_rating DESC, tvshow.name ASC
+LIMIT :limit;

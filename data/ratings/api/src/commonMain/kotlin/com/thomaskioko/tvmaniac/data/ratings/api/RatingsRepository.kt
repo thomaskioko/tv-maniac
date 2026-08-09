@@ -7,6 +7,8 @@ public interface RatingsRepository {
     public suspend fun removeShowRating(showId: Long)
     public fun observePendingRatings(): Flow<Boolean>
     public fun observeUserRatingDistribution(): Flow<Map<Int, Long>>
+
+    public fun observeHighestRatedShows(limit: Long): Flow<List<HighestRatedShow>>
     public suspend fun syncPendingRatings()
     public suspend fun syncUserRatings()
     public suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean)

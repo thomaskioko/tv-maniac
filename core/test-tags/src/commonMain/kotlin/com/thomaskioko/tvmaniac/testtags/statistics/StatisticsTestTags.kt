@@ -10,7 +10,9 @@ public object StatisticsTestTags {
     public const val WATCH_TIME_HERO_TEST_TAG: String = "statistics_watch_time_hero"
     public const val TILE_GRID_TEST_TAG: String = "statistics_tile_grid"
     public const val MARKED_WATCHED_NOTE_TEST_TAG: String = "statistics_marked_watched_note"
+    public const val HEAT_MAP_LEGEND_TEST_TAG: String = "statistics_heat_map_legend"
     public const val MOST_WATCHED_ROW_TEST_TAG: String = "statistics_most_watched_row"
+    public const val HIGHEST_RATED_ROW_TEST_TAG: String = "statistics_highest_rated_row"
     public const val WATCH_STATUS_SECTION_TEST_TAG: String = "statistics_watch_status_section"
     public const val RATINGS_SECTION_TEST_TAG: String = "statistics_ratings_section"
     public const val HEAT_MAP_TEST_TAG: String = "statistics_heat_map"
@@ -23,6 +25,8 @@ public object StatisticsTestTags {
     public const val RELEASE_YEARS_TEST_TAG: String = "statistics_release_years"
     public fun tile(id: String): String = "statistics_tile_$id"
     public fun mostWatchedShowCard(showId: Long): String = "statistics_most_watched_show_$showId"
+
+    public fun highestRatedShowCard(showId: Long): String = "statistics_highest_rated_show_$showId"
     public fun watchStatusRow(id: String): String = "statistics_watch_status_row_$id"
     public fun ratingRow(rating: Int): String = "statistics_rating_row_$rating"
     public fun activityBar(section: String, label: String): String = "statistics_${section}_bar_$label"

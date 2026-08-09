@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.statistics.model
 
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 
 public data class WatchStatistics(
@@ -18,6 +19,7 @@ public data class WatchStatistics(
     val monthlyCounts: List<MonthlyWatchCount>,
     val weekdayCounts: List<WeekdayWatchCount>,
     val mostWatchedShows: List<MostWatchedShow>,
+    val highestRatedShows: List<HighestRatedShow>,
     val showsByWatchStatus: List<WatchStatusCount>,
     val ratingDistribution: List<RatingCount>,
     val genreBreakdown: List<GenreCount>,
@@ -46,6 +48,7 @@ public data class WatchStatistics(
             monthlyCounts = emptyList(),
             weekdayCounts = emptyList(),
             mostWatchedShows = emptyList(),
+            highestRatedShows = emptyList(),
             showsByWatchStatus = emptyList(),
             ratingDistribution = emptyList(),
             genreBreakdown = emptyList(),

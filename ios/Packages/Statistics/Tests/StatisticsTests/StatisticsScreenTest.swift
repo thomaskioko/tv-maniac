@@ -17,7 +17,8 @@ class StatisticsScreenTest: SnapshotTestCase {
         minutesLabel: "minutes",
         episodesOverTimeTitle: "Your year of watching",
         markedWatchedNote: "Dates show when episodes were marked as watched, not when you watched them.",
-        mostWatchedTitle: "Most watched shows",
+        mostWatchedTitle: "Episodes by show",
+        highestRatedTitle: "Highest rated shows",
         watchStatusTitle: "Shows by status",
         ratingsTitle: "Your ratings",
         yearlyActivityTitle: "Episodes by year",
@@ -44,7 +45,13 @@ class StatisticsScreenTest: SnapshotTestCase {
         .init(id: "WatchStreak", label: "Watch streak", value: "9 days", caption: "longest run"),
     ]
 
-    private let mostWatchedShows: [SwiftMostWatchedShowItem] = [
+    private let highestRatedShows: [SwiftShowRowItem] = [
+        .init(showId: 1396, title: "Breaking Bad", posterPath: nil, caption: "5/5"),
+        .init(showId: 1399, title: "Game of Thrones", posterPath: nil, caption: "4.5/5"),
+        .init(showId: 66732, title: "Stranger Things", posterPath: nil, caption: "4/5"),
+    ]
+
+    private let mostWatchedShows: [SwiftShowRowItem] = [
         .init(showId: 1396, title: "Breaking Bad", posterPath: nil, caption: "62 episodes"),
         .init(showId: 1399, title: "Game of Thrones", posterPath: nil, caption: "73 episodes"),
         .init(showId: 66732, title: "Stranger Things", posterPath: nil, caption: "34 episodes"),
@@ -101,7 +108,8 @@ class StatisticsScreenTest: SnapshotTestCase {
 
     private let heatMap = SwiftWatchHeatMap(
         levels: (0 ..< 215).map { ($0 * 7) % 5 },
-        leadingBlankCells: 3
+        leadingBlankCells: 3,
+        busiestDayCount: 43
     )
 
     private let longRunOfYears: [SwiftActivityBar] = (2008 ... 2026).enumerated().map { index, year in
@@ -138,6 +146,7 @@ class StatisticsScreenTest: SnapshotTestCase {
             tiles: tiles,
             heatMap: heatMap,
             mostWatchedShows: mostWatchedShows,
+            highestRatedShows: highestRatedShows,
             watchStatusBreakdown: watchStatusBreakdown,
             ratingBreakdown: ratingBreakdown,
             yearlyActivity: yearlyActivity,
@@ -226,6 +235,22 @@ class StatisticsScreenTest: SnapshotTestCase {
             StatisticsScreen(state: state, backButtonAccessibilityLabel: "Back")
         }
         .appPreview()
+    }
+
+    func test_WatchHeatMapSection_LegendAndToday() {
+        WatchHeatMapSectionView(
+            heatMap: SwiftWatchHeatMap(
+                levels: (0 ..< 24).map { $0 % 5 },
+                leadingBlankCells: 2,
+                busiestDayCount: 12
+            ),
+            title: "Your year of watching"
+        )
+        .appPreview()
+        .assertSnapshot(
+            layout: .fixed(width: 390, height: 200),
+            testName: "WatchHeatMapSection_LegendAndToday"
+        )
     }
 
     func test_GenreSection_Content() {

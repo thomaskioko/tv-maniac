@@ -6,6 +6,7 @@ import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRatingEntry
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsDao
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRatingEntry
 import com.thomaskioko.tvmaniac.data.ratings.api.ShowRatingEntry
@@ -35,6 +36,20 @@ public class DefaultRatingsDao(
         .asFlow()
         .mapToList(dispatchers.databaseRead)
         .map { rows -> rows.associate { it.rating.toInt() to it.rating_count } }
+
+    override fun observeHighestRatedShows(limit: Long): Flow<List<HighestRatedShow>> = queries.highestRatedShows(limit)
+        .asFlow()
+        .mapToList(dispatchers.databaseRead)
+        .map { rows ->
+            rows.map { row ->
+                HighestRatedShow(
+                    showId = row.show_id.id,
+                    title = row.title,
+                    posterPath = row.poster_path,
+                    userRating = row.user_rating ?: 0L,
+                )
+            }
+        }
 
     override fun upsertShowUserRating(showId: Long, userRating: Long, ratedAt: Long, pendingAction: PendingAction) {
         queries.upsertShowUserRating(

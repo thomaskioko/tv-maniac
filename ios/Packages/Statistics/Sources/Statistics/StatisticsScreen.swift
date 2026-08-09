@@ -156,20 +156,32 @@ public struct StatisticsScreen: View {
                     )
                 }
 
-                if !state.mostWatchedShows.isEmpty {
-                    MostWatchedShowsSectionView(
-                        shows: state.mostWatchedShows,
-                        title: state.labels.mostWatchedTitle,
-                        onShowClick: onShowClicked
-                    )
-                }
-
                 if !state.watchStatusBreakdown.isEmpty {
                     WatchStatusSectionView(items: state.watchStatusBreakdown, title: state.labels.watchStatusTitle)
                 }
 
                 if !state.ratingBreakdown.isEmpty {
                     RatingsSectionView(ratings: state.ratingBreakdown, title: state.labels.ratingsTitle)
+                }
+
+                if !state.highestRatedShows.isEmpty {
+                    ShowRowSectionView(
+                        shows: state.highestRatedShows,
+                        title: state.labels.highestRatedTitle,
+                        rowTestTag: StatisticsTestTags.shared.HIGHEST_RATED_ROW_TEST_TAG,
+                        cardTestTag: { StatisticsTestTags.shared.highestRatedShowCard(showId: $0) },
+                        onShowClick: onShowClicked
+                    )
+                }
+
+                if !state.mostWatchedShows.isEmpty {
+                    ShowRowSectionView(
+                        shows: state.mostWatchedShows,
+                        title: state.labels.mostWatchedTitle,
+                        rowTestTag: StatisticsTestTags.shared.MOST_WATCHED_ROW_TEST_TAG,
+                        cardTestTag: { StatisticsTestTags.shared.mostWatchedShowCard(showId: $0) },
+                        onShowClick: onShowClicked
+                    )
                 }
             }
             .padding(.bottom, theme.spacing.large)
