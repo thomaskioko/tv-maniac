@@ -14,8 +14,8 @@ import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
 import com.thomaskioko.tvmaniac.statistics.presenter.model.GenreSlice
 import com.thomaskioko.tvmaniac.statistics.presenter.model.HeatMap
-import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
+import com.thomaskioko.tvmaniac.statistics.presenter.model.ShowRowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTile
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTileId
 import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchHeatMap
@@ -150,19 +150,38 @@ public class StatisticsStateMapper(
             leadingBlankCells = days.first().date.dayOfWeek.isoDayNumber % DAYS_IN_WEEK,
             activeDays = days.count { it.episodeCount > 0 },
             quietDays = days.count { it.episodeCount == 0 },
+            busiestDayCount = busiest,
         )
     }
 
-    public fun toMostWatchedShows(statistics: WatchStatistics): ImmutableList<MostWatchedShowItem> =
+    public fun toMostWatchedShows(statistics: WatchStatistics): ImmutableList<ShowRowItem> =
         statistics.mostWatchedShows.map { show ->
-            MostWatchedShowItem(
+            ShowRowItem(
                 showId = show.showId,
                 title = show.title,
                 posterPath = show.posterPath,
-                episodeCount = show.episodeCount,
                 caption = localizer.getPlural(PluralsResourceKey.EpisodeCount, show.episodeCount.toInt()),
             )
         }.toImmutableList()
+
+    public fun toHighestRatedShows(statistics: WatchStatistics): ImmutableList<ShowRowItem> =
+        statistics.highestRatedShows.map { show ->
+            ShowRowItem(
+                showId = show.showId,
+                title = show.title,
+                posterPath = show.posterPath,
+                caption = ratingCaption(show.userRating),
+            )
+        }.toImmutableList()
+
+    private fun ratingCaption(userRating: Long): String {
+        val stars = (userRating / POINTS_PER_STAR).toInt()
+        return if (userRating % POINTS_PER_STAR == 0L) {
+            localizer.getString(StringResourceKey.LabelStatisticsRatingWhole, stars)
+        } else {
+            localizer.getString(StringResourceKey.LabelStatisticsRatingHalf, stars)
+        }
+    }
 
     public fun toWatchStatusBreakdown(statistics: WatchStatistics): ImmutableList<WatchStatusItem> {
         val total = statistics.showsByWatchStatus.sumOf { it.showCount }
@@ -242,6 +261,7 @@ public class StatisticsStateMapper(
         episodesOverTimeTitle = localizer.getString(StringResourceKey.LabelStatisticsActivity),
         markedWatchedNote = localizer.getString(StringResourceKey.LabelStatisticsMarkedWatchedNote),
         mostWatchedTitle = localizer.getString(StringResourceKey.LabelStatisticsMostWatched),
+        highestRatedTitle = localizer.getString(StringResourceKey.LabelStatisticsHighestRated),
         watchStatusTitle = localizer.getString(StringResourceKey.LabelStatisticsWatchStatus),
         ratingsTitle = localizer.getString(StringResourceKey.LabelStatisticsRatings),
         yearlyActivityTitle = localizer.getString(StringResourceKey.LabelStatisticsYearlyActivity),
@@ -302,5 +322,6 @@ public class StatisticsStateMapper(
         const val HEAT_MAP_LEVELS = 4
         const val DAYS_IN_WEEK = 7
         const val NAMED_GENRE_LIMIT = 6
+        const val POINTS_PER_STAR = 2
     }
 }

@@ -10,7 +10,8 @@ private let previewLabels = SwiftStatisticsLabels(
     minutesLabel: "minutes",
     episodesOverTimeTitle: "Your year of watching",
     markedWatchedNote: "Dates show when episodes were marked as watched, not when you watched them.",
-    mostWatchedTitle: "Most watched shows",
+    mostWatchedTitle: "Episodes by show",
+    highestRatedTitle: "Highest rated shows",
     watchStatusTitle: "Shows by status",
     ratingsTitle: "Your ratings",
     yearlyActivityTitle: "Episodes by year",
@@ -37,7 +38,13 @@ private let previewTiles: [SwiftStatisticTile] = [
     .init(id: "WatchStreak", label: "Watch streak", value: "9 days", caption: "longest run"),
 ]
 
-private let previewMostWatchedShows: [SwiftMostWatchedShowItem] = [
+private let previewHighestRatedShows: [SwiftShowRowItem] = [
+    .init(showId: 1396, title: "Breaking Bad", posterPath: nil, caption: "5/5"),
+    .init(showId: 1399, title: "Game of Thrones", posterPath: nil, caption: "4.5/5"),
+    .init(showId: 66732, title: "Stranger Things", posterPath: nil, caption: "4/5"),
+]
+
+private let previewMostWatchedShows: [SwiftShowRowItem] = [
     .init(showId: 1396, title: "Breaking Bad", posterPath: nil, caption: "62 episodes"),
     .init(showId: 1399, title: "Game of Thrones", posterPath: nil, caption: "73 episodes"),
     .init(showId: 66732, title: "Stranger Things", posterPath: nil, caption: "34 episodes"),
@@ -113,7 +120,8 @@ private let previewReleaseYears: [SwiftActivityBar] = [
 
 private let previewHeatMap = SwiftWatchHeatMap(
     levels: (0 ..< 215).map { ($0 * 7) % 5 },
-    leadingBlankCells: 3
+    leadingBlankCells: 3,
+    busiestDayCount: 43
 )
 
 private let previewContentState = StatisticsScreen.State(
@@ -123,6 +131,7 @@ private let previewContentState = StatisticsScreen.State(
     tiles: previewTiles,
     heatMap: previewHeatMap,
     mostWatchedShows: previewMostWatchedShows,
+    highestRatedShows: previewHighestRatedShows,
     watchStatusBreakdown: previewWatchStatusBreakdown,
     ratingBreakdown: previewRatingBreakdown,
     yearlyActivity: previewYearlyActivity,

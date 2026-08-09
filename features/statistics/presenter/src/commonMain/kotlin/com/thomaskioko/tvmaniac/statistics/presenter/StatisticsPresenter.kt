@@ -73,6 +73,7 @@ public class StatisticsPresenter internal constructor(
             tiles = stateMapper.toTiles(statistics),
             heatMap = stateMapper.toHeatMap(statistics),
             mostWatchedShows = stateMapper.toMostWatchedShows(statistics),
+            highestRatedShows = stateMapper.toHighestRatedShows(statistics),
             watchStatusBreakdown = stateMapper.toWatchStatusBreakdown(statistics),
             ratingBreakdown = stateMapper.toRatingBreakdown(statistics),
             yearlyActivity = stateMapper.toYearlyActivity(statistics),

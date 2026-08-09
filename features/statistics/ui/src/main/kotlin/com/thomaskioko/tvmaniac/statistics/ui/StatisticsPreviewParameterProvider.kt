@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.statistics.presenter.StatisticsState
 import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
 import com.thomaskioko.tvmaniac.statistics.presenter.model.GenreSlice
 import com.thomaskioko.tvmaniac.statistics.presenter.model.HeatMap
-import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
+import com.thomaskioko.tvmaniac.statistics.presenter.model.ShowRowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTile
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTileId
 import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchHeatMap
@@ -26,7 +26,7 @@ internal val previewLabels: StatisticsLabels = StatisticsLabels(
     minutesLabel = "minutes",
     episodesOverTimeTitle = "Your year of watching",
     markedWatchedNote = "Dates show when episodes were marked as watched, not when you watched them.",
-    mostWatchedTitle = "Most watched shows",
+    mostWatchedTitle = "Episodes by show",
     watchStatusTitle = "Shows by status",
     ratingsTitle = "Your ratings",
     yearlyActivityTitle = "Episodes by year",
@@ -149,30 +149,28 @@ private val previewHeatMap: WatchHeatMap = WatchHeatMap(
     leadingBlankCells = 3,
     activeDays = 138,
     quietDays = 77,
+    busiestDayCount = 4,
 )
 
 private const val HEAT_MAP_PREVIEW_DAYS = 215
 
-private val previewMostWatchedShows: ImmutableList<MostWatchedShowItem> = persistentListOf(
-    MostWatchedShowItem(
+private val previewMostWatchedShows: ImmutableList<ShowRowItem> = persistentListOf(
+    ShowRowItem(
         showId = 1396,
         title = "Breaking Bad",
         posterPath = null,
-        episodeCount = 62,
         caption = "62 episodes",
     ),
-    MostWatchedShowItem(
+    ShowRowItem(
         showId = 1399,
         title = "Game of Thrones",
         posterPath = null,
-        episodeCount = 73,
         caption = "73 episodes",
     ),
-    MostWatchedShowItem(
+    ShowRowItem(
         showId = 66732,
         title = "Stranger Things",
         posterPath = null,
-        episodeCount = 34,
         caption = "34 episodes",
     ),
 )
@@ -204,6 +202,12 @@ internal val emptyState: StatisticsState = StatisticsState(
     labels = previewLabels,
 )
 
+private val previewHighestRatedShows: ImmutableList<ShowRowItem> = persistentListOf(
+    ShowRowItem(showId = 1396, title = "Breaking Bad", posterPath = null, caption = "5/5"),
+    ShowRowItem(showId = 1399, title = "Game of Thrones", posterPath = null, caption = "4.5/5"),
+    ShowRowItem(showId = 66732, title = "Stranger Things", posterPath = null, caption = "4/5"),
+)
+
 private val previewGenreBreakdown: ImmutableList<GenreSlice> = persistentListOf(
     GenreSlice(name = "Drama", showCount = 24, caption = "24 shows", fraction = 1f),
     GenreSlice(name = "Comedy", showCount = 11, caption = "11 shows", fraction = 0.45f),
@@ -229,6 +233,7 @@ internal val contentState: StatisticsState = StatisticsState(
     totalWatchTime = WatchTime(days = 12, hours = 4, minutes = 30),
     tiles = previewTiles,
     mostWatchedShows = previewMostWatchedShows,
+    highestRatedShows = previewHighestRatedShows,
     watchStatusBreakdown = previewWatchStatusBreakdown,
     ratingBreakdown = previewRatingBreakdown,
     yearlyActivity = previewYearlyActivity,

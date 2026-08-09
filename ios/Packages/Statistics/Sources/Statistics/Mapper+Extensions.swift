@@ -12,6 +12,7 @@ extension StatisticsState {
             tiles: tiles.map { $0.toSwift() },
             heatMap: heatMap?.toSwift(),
             mostWatchedShows: mostWatchedShows.map { $0.toSwift() },
+            highestRatedShows: highestRatedShows.map { $0.toSwift() },
             watchStatusBreakdown: watchStatusBreakdown.map { $0.toSwift() },
             ratingBreakdown: ratingBreakdown.map { $0.toSwift() },
             yearlyActivity: yearlyActivity.map { $0.toSwift() },
@@ -36,8 +37,8 @@ extension StatisticTile {
     }
 }
 
-extension MostWatchedShowItem {
-    func toSwift() -> SwiftMostWatchedShowItem {
+extension ShowRowItem {
+    func toSwift() -> SwiftShowRowItem {
         .init(showId: showId, title: title, posterPath: posterPath, caption: caption)
     }
 }
@@ -70,7 +71,8 @@ extension WatchHeatMap {
     func toSwift() -> SwiftWatchHeatMap {
         .init(
             levels: cells.map { Int($0.level) },
-            leadingBlankCells: Int(leadingBlankCells)
+            leadingBlankCells: Int(leadingBlankCells),
+            busiestDayCount: Int(busiestDayCount)
         )
     }
 }
@@ -87,6 +89,7 @@ extension StatisticsLabels {
             episodesOverTimeTitle: episodesOverTimeTitle,
             markedWatchedNote: markedWatchedNote,
             mostWatchedTitle: mostWatchedTitle,
+            highestRatedTitle: highestRatedTitle,
             watchStatusTitle: watchStatusTitle,
             ratingsTitle: ratingsTitle,
             yearlyActivityTitle: yearlyActivityTitle,

@@ -3,8 +3,8 @@ package com.thomaskioko.tvmaniac.statistics.presenter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.statistics.presenter.model.ActivityBar
 import com.thomaskioko.tvmaniac.statistics.presenter.model.GenreSlice
-import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.RatingBar
+import com.thomaskioko.tvmaniac.statistics.presenter.model.ShowRowItem
 import com.thomaskioko.tvmaniac.statistics.presenter.model.StatisticTile
 import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchHeatMap
 import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchStatusItem
@@ -21,7 +21,8 @@ public data class StatisticsState(
     val totalWatchTime: WatchTime? = null,
     val tiles: ImmutableList<StatisticTile> = persistentListOf(),
     val heatMap: WatchHeatMap? = null,
-    val mostWatchedShows: ImmutableList<MostWatchedShowItem> = persistentListOf(),
+    val mostWatchedShows: ImmutableList<ShowRowItem> = persistentListOf(),
+    val highestRatedShows: ImmutableList<ShowRowItem> = persistentListOf(),
     val watchStatusBreakdown: ImmutableList<WatchStatusItem> = persistentListOf(),
     val ratingBreakdown: ImmutableList<RatingBar> = persistentListOf(),
     val yearlyActivity: ImmutableList<ActivityBar> = persistentListOf(),

@@ -26,7 +26,7 @@ public struct SwiftStatisticTile: Identifiable, Equatable {
     }
 }
 
-public struct SwiftMostWatchedShowItem: Identifiable, Equatable {
+public struct SwiftShowRowItem: Identifiable, Equatable {
     public let showId: Int64
     public let title: String
     public let posterPath: String?
@@ -95,10 +95,12 @@ public struct SwiftActivityBar: Identifiable, Equatable {
 public struct SwiftWatchHeatMap: Equatable {
     public let levels: [Int]
     public let leadingBlankCells: Int
+    public let busiestDayCount: Int
 
-    public init(levels: [Int], leadingBlankCells: Int) {
+    public init(levels: [Int], leadingBlankCells: Int, busiestDayCount: Int = 0) {
         self.levels = levels
         self.leadingBlankCells = leadingBlankCells
+        self.busiestDayCount = busiestDayCount
     }
 }
 
@@ -128,6 +130,7 @@ public struct SwiftStatisticsLabels: Equatable {
     public let episodesOverTimeTitle: String
     public let markedWatchedNote: String
     public let mostWatchedTitle: String
+    public let highestRatedTitle: String
     public let watchStatusTitle: String
     public let ratingsTitle: String
     public let yearlyActivityTitle: String
@@ -152,6 +155,7 @@ public struct SwiftStatisticsLabels: Equatable {
         episodesOverTimeTitle: String = "",
         markedWatchedNote: String = "",
         mostWatchedTitle: String = "",
+        highestRatedTitle: String = "",
         watchStatusTitle: String = "",
         ratingsTitle: String = "",
         yearlyActivityTitle: String = "",
@@ -175,6 +179,7 @@ public struct SwiftStatisticsLabels: Equatable {
         self.episodesOverTimeTitle = episodesOverTimeTitle
         self.markedWatchedNote = markedWatchedNote
         self.mostWatchedTitle = mostWatchedTitle
+        self.highestRatedTitle = highestRatedTitle
         self.watchStatusTitle = watchStatusTitle
         self.ratingsTitle = ratingsTitle
         self.yearlyActivityTitle = yearlyActivityTitle

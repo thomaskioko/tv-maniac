@@ -21,15 +21,17 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.statistics.presenter.model.MostWatchedShowItem
+import com.thomaskioko.tvmaniac.statistics.presenter.model.ShowRowItem
 import com.thomaskioko.tvmaniac.testtags.statistics.StatisticsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun MostWatchedShowsSection(
-    shows: ImmutableList<MostWatchedShowItem>,
+internal fun ShowRowSection(
+    shows: ImmutableList<ShowRowItem>,
     title: String,
+    rowTestTag: String,
+    cardTestTag: (Long) -> String,
     onShowClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -38,19 +40,19 @@ internal fun MostWatchedShowsSection(
         modifier = modifier,
     ) {
         LazyRow(
-            modifier = Modifier.testTag(StatisticsTestTags.MOST_WATCHED_ROW_TEST_TAG),
+            modifier = Modifier.testTag(rowTestTag),
             contentPadding = PaddingValues(horizontal = TvManiacSpacing.medium),
             horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
         ) {
             items(
                 items = shows,
                 key = { it.showId },
-                contentType = { "most_watched_show" },
+                contentType = { "show_row" },
             ) { show ->
-                MostWatchedShowCard(
+                ShowRowCard(
                     show = show,
                     onClick = { onShowClick(show.showId) },
-                    modifier = Modifier.testTag(StatisticsTestTags.mostWatchedShowCard(show.showId)),
+                    modifier = Modifier.testTag(cardTestTag(show.showId)),
                 )
             }
         }
@@ -58,8 +60,8 @@ internal fun MostWatchedShowsSection(
 }
 
 @Composable
-private fun MostWatchedShowCard(
-    show: MostWatchedShowItem,
+private fun ShowRowCard(
+    show: ShowRowItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -95,25 +97,25 @@ private fun MostWatchedShowCard(
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun MostWatchedShowsSectionPreview() {
-    MostWatchedShowsSection(
+private fun ShowRowSectionPreview() {
+    ShowRowSection(
         shows = persistentListOf(
-            MostWatchedShowItem(
+            ShowRowItem(
                 showId = 1396,
                 title = "Breaking Bad",
                 posterPath = null,
-                episodeCount = 62,
                 caption = "62 episodes",
             ),
-            MostWatchedShowItem(
+            ShowRowItem(
                 showId = 1399,
                 title = "Game of Thrones",
                 posterPath = null,
-                episodeCount = 73,
                 caption = "73 episodes",
             ),
         ),
-        title = "Most watched shows",
+        title = "Episodes by show",
+        rowTestTag = StatisticsTestTags.MOST_WATCHED_ROW_TEST_TAG,
+        cardTestTag = StatisticsTestTags::mostWatchedShowCard,
         onShowClick = {},
     )
 }

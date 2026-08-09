@@ -10,6 +10,7 @@ public data class StatisticsLabels(
     val episodesOverTimeTitle: String = "",
     val markedWatchedNote: String = "",
     val mostWatchedTitle: String = "",
+    val highestRatedTitle: String = "",
     val watchStatusTitle: String = "",
     val ratingsTitle: String = "",
     val yearlyActivityTitle: String = "",
