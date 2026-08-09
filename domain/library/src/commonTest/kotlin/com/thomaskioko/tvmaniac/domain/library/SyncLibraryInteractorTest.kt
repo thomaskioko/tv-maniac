@@ -22,9 +22,11 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -189,6 +191,26 @@ class SyncLibraryInteractorTest {
         interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
 
         showDetailsRepository.fetchInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should propagate cancellation given the metadata fan-out is cancelled`() = runTest(testDispatcher) {
+        followedShowsRepository.setEntries(listOf(followedShow(showId = 7L)))
+        showDetailsRepository.setFetchError(CancellationException("cancelled"))
+
+        shouldThrow<CancellationException> {
+            interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+        }
+    }
+
+    @Test
+    fun `should propagate cancellation given the genre backfill is cancelled`() = runTest(testDispatcher) {
+        watchedEpisodeSyncRepository.setWatchedShowsMissingGenres(listOf(11L))
+        showDetailsRepository.setFetchError(CancellationException("cancelled"))
+
+        shouldThrow<CancellationException> {
+            interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+        }
     }
 
     private fun followedShow(showId: Long): FollowedShowEntry = FollowedShowEntry(
