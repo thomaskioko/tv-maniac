@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS rewatch_session(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    started_at INTEGER NOT NULL,
+    closed_at INTEGER DEFAULT NULL,
+    provider_session_id INTEGER DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_rewatch_session_show_id ON rewatch_session(show_id);
+
+CREATE TABLE IF NOT EXISTS rewatch_session_episode(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id INTEGER NOT NULL,
+    episode_id INTEGER AS Id<EpisodeId> NOT NULL,
+    watched_at INTEGER NOT NULL,
+    synced_at INTEGER DEFAULT NULL,
+    FOREIGN KEY(session_id) REFERENCES rewatch_session(id) ON DELETE CASCADE,
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_rewatch_session_episode_session_id ON rewatch_session_episode(session_id);
+CREATE INDEX IF NOT EXISTS idx_rewatch_session_episode_episode_id ON rewatch_session_episode(episode_id);
