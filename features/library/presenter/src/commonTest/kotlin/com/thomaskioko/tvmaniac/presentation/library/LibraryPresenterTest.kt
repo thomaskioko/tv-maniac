@@ -208,6 +208,7 @@ internal class LibraryPresenterTest {
                 ),
                 showMetadataSyncHelper = ShowMetadataSyncHelper(FakeEpisodeRepository()),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                showDetailsRepository = showDetailsRepository,
                 syncRepository = FakeActivitySyncRepository(),
                 datastoreRepository = FakeDatastoreRepository(),
                 dateTimeProvider = FakeDateTimeProvider(),

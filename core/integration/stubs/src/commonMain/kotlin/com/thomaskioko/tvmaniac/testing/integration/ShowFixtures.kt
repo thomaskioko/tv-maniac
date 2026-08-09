@@ -1,7 +1,10 @@
 package com.thomaskioko.tvmaniac.testing.integration
 
 import com.thomaskioko.tvmaniac.testing.integration.util.FixtureLoader
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
@@ -151,31 +154,67 @@ private fun rewriteTraktShowIds(template: String, show: ShowFixture): String {
     return Json.encodeToString(JsonObject.serializer(), updated)
 }
 
+/**
+ * Registers the TMDB show-details catch-all so an unregistered show gets its own season ids.
+ *
+ * The raw fixture carries the canonical show's season ids. Served unchanged for an arbitrary id,
+ * any pipeline that fetches details for a show [stubShow] never registered upserts season rows
+ * under the canonical show's season ids and takes ownership of them. The canonical show is then
+ * left with no seasons, its watched episodes stop counting, and it drops out of every
+ * `watched_count > 0` query. The per-show ids here match what [stubShow] writes, so both paths
+ * agree. The canonical show keeps the untouched body.
+ */
+public fun MockEngineHandler.stubTmdbShowDetailsPattern() {
+    val template = FixtureLoader.load(Endpoints.Tmdb.ShowDetails.successFixture)
+    stubPattern(
+        pathRegex = Endpoints.Tmdb.ShowDetails.pathRegex,
+        host = Endpoints.Tmdb.ShowDetails.host,
+    ) { request ->
+        val tmdbId = request.url.encodedPath.substringAfterLast('/').toLongOrNull()
+        respond(
+            content = if (tmdbId == null || tmdbId == CANONICAL_SHOW_TMDB_ID) {
+                template
+            } else {
+                rewriteTmdbSeasonIdsFor(template, tmdbId)
+            },
+            status = HttpStatusCode.OK,
+            headers = jsonHeaders,
+        )
+    }
+}
+
+private fun rewriteTmdbSeasonIdsFor(template: String, tmdbId: Long): String {
+    val obj = Json.parseToJsonElement(template).jsonObject
+    val updated = JsonObject(
+        obj.toMutableMap().apply {
+            this["id"] = JsonPrimitive(tmdbId)
+            this["seasons"] = perShowSeasons(obj, tmdbId)
+        },
+    )
+    return Json.encodeToString(JsonObject.serializer(), updated)
+}
+
+private fun perShowSeasons(obj: JsonObject, tmdbId: Long): JsonArray =
+    JsonArray(
+        obj.getValue("seasons").jsonArray.map { season ->
+            val seasonObj = season.jsonObject
+            val seasonNumber = seasonObj.getValue("season_number").jsonPrimitive.int
+            JsonObject(
+                seasonObj.toMutableMap().apply {
+                    this["id"] = JsonPrimitive(tmdbId * 100 + seasonNumber)
+                },
+            )
+        },
+    )
+
 private fun rewriteRootId(template: String, id: Long): String {
     val obj = Json.parseToJsonElement(template).jsonObject
     val updated = JsonObject(obj.toMutableMap().apply { this["id"] = JsonPrimitive(id) })
     return Json.encodeToString(JsonObject.serializer(), updated)
 }
 
-private fun rewriteTmdbShowSeasonIds(template: String, show: ShowFixture): String {
-    val obj = Json.parseToJsonElement(template).jsonObject
-    val rewrittenSeasons = obj.getValue("seasons").jsonArray.map { season ->
-        val seasonObj = season.jsonObject
-        val seasonNumber = seasonObj.getValue("season_number").jsonPrimitive.int
-        JsonObject(
-            seasonObj.toMutableMap().apply {
-                this["id"] = JsonPrimitive(show.tmdbId * 100 + seasonNumber)
-            },
-        )
-    }
-    val updated = JsonObject(
-        obj.toMutableMap().apply {
-            this["id"] = JsonPrimitive(show.tmdbId)
-            this["seasons"] = kotlinx.serialization.json.JsonArray(rewrittenSeasons)
-        },
-    )
-    return Json.encodeToString(JsonObject.serializer(), updated)
-}
+private fun rewriteTmdbShowSeasonIds(template: String, show: ShowFixture): String =
+    rewriteTmdbSeasonIdsFor(template, show.tmdbId)
 
 private fun rewriteTmdbSeasonDetailIds(template: String, show: ShowFixture): String {
     val obj = Json.parseToJsonElement(template).jsonObject
@@ -194,7 +233,7 @@ private fun rewriteTmdbSeasonDetailIds(template: String, show: ShowFixture): Str
     val updated = JsonObject(
         obj.toMutableMap().apply {
             this["id"] = JsonPrimitive(perShowSeasonId)
-            this["episodes"] = kotlinx.serialization.json.JsonArray(rewrittenEpisodes)
+            this["episodes"] = JsonArray(rewrittenEpisodes)
         },
     )
     return Json.encodeToString(JsonObject.serializer(), updated)
@@ -202,7 +241,7 @@ private fun rewriteTmdbSeasonDetailIds(template: String, show: ShowFixture): Str
 
 private fun rewriteTraktSeasonIds(template: String, show: ShowFixture): String {
     val seasons = Json.parseToJsonElement(template).jsonArray
-    val rewritten = kotlinx.serialization.json.JsonArray(
+    val rewritten = JsonArray(
         seasons.map { season ->
             val seasonObj = season.jsonObject
             val seasonNumber = seasonObj.getValue("number").jsonPrimitive.int
@@ -215,5 +254,5 @@ private fun rewriteTraktSeasonIds(template: String, show: ShowFixture): String {
             JsonObject(seasonObj.toMutableMap().apply { this["ids"] = updatedIds })
         },
     )
-    return Json.encodeToString(kotlinx.serialization.json.JsonArray.serializer(), rewritten)
+    return Json.encodeToString(JsonArray.serializer(), rewritten)
 }

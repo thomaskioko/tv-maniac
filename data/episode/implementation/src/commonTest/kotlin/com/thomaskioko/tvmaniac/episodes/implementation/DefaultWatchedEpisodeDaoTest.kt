@@ -40,6 +40,8 @@ import kotlin.time.Clock
 private fun LocalDate.toEpochMillis(): Long =
     atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
+private const val OTHER_SHOW_TMDB_ID = 4242L
+
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
@@ -781,6 +783,69 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         watchedEpisodeDao.observeWatchedEpisodes(unfollowedShowId).test {
             awaitItem() shouldHaveSize 1
         }
+    }
+
+    @Test
+    fun `should return watched shows whose genres are unknown`() = runTest {
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.getWatchedShowsMissingGenres().shouldBeEmpty()
+
+        clearGenres()
+
+        watchedEpisodeDao.getWatchedShowsMissingGenres() shouldBe listOf(TEST_SHOW_ID)
+    }
+
+    @Test
+    fun `should return the tmdb id given it differs from the local row id`() = runTest {
+        addShowWithoutGenres(tmdbId = OTHER_SHOW_TMDB_ID)
+        watchedEpisodeDao.markAsWatched(
+            showId = OTHER_SHOW_TMDB_ID,
+            episodeId = 501L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+        )
+
+        watchedEpisodeDao.getWatchedShowsMissingGenres() shouldBe listOf(OTHER_SHOW_TMDB_ID)
+    }
+
+    @Test
+    fun `should not return shows with no watched episodes`() = runTest {
+        clearGenres()
+
+        watchedEpisodeDao.getWatchedShowsMissingGenres().shouldBeEmpty()
+    }
+
+    private fun addShowWithoutGenres(tmdbId: Long) {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id(tmdbId),
+            name = "show-$tmdbId",
+            overview = "overview",
+            language = "en",
+            year = "2020-01-01",
+            ratings = 5.0,
+            vote_count = 10,
+            genres = null,
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+    }
+
+    private fun clearGenres() {
+        database.tvShowQueries.updateWatchedShowGenres(
+            genres = null,
+            tmdbId = Id(TEST_SHOW_ID),
+        )
     }
 
     private fun insertTestData() {

@@ -106,6 +106,8 @@ public class DefaultWatchedEpisodeSyncRepository(
 
     override suspend fun countPendingEpisodes(): Long = dao.countPendingActions()
 
+    override suspend fun getWatchedShowsMissingGenres(): List<Long> = dao.getWatchedShowsMissingGenres()
+
     private suspend fun processPendingEpisodesToUploads() {
         val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
         if (pending.isEmpty()) return
