@@ -178,20 +178,22 @@ internal fun ListsCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             StatValueText(count = count)
-            Text(
-                text = viewButtonLabel,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable(onClick = onViewLists)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        shape = MaterialTheme.shapes.small,
-                    )
-                    .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xxSmall),
-            )
+            if (count > 0) {
+                Text(
+                    text = viewButtonLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable(onClick = onViewLists)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            shape = MaterialTheme.shapes.small,
+                        )
+                        .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xxSmall),
+                )
+            }
         }
     }
 }
