@@ -97,6 +97,7 @@ public class SyncLibraryInteractor(
                             }
                         }
                         val failure = result.exceptionOrNull() ?: continue
+                        if (failure is CancellationException) throw failure
 
                         logger.warning(TAG, "syncShowMetadata failed for ${show.showId}: ${failure.message}")
                         syncObserver.log(SyncError.BackgroundSyncFailed(TAG, failure))
