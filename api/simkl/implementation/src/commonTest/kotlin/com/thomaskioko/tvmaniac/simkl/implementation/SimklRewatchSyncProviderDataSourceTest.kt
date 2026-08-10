@@ -3,14 +3,18 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAccount
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchEpisode
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryAdded
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryStatus
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryStatusResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchItemsResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchSeason
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchShow
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowEntry
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowIds
@@ -24,6 +28,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.time.Instant
 
 internal class SimklRewatchSyncProviderDataSourceTest {
 
@@ -226,6 +231,93 @@ internal class SimklRewatchSyncProviderDataSourceTest {
         sessions shouldBe emptyList()
     }
 
+    @Test
+    fun `should send a close carrying the session id and the closed status given the account tier is vip`() = runTest {
+        userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "vip")))
+
+        source.closeRewatch(RemoteRewatchClose(providerShowId = 1396L, providerSessionId = 7482L))
+
+        val request = checkNotNull(rewatchRemoteDataSource.lastCloseRewatchSessionRequest)
+        request.shows.first().rewatchId shouldBe 7482L
+        request.shows.first().rewatchStatus shouldBe "closed"
+        request.shows.first().isRewatch shouldBe true
+        request.shows.first().ids.tmdb shouldBe "1396"
+    }
+
+    @Test
+    fun `should not send a close given the account tier is free`() = runTest {
+        userRemoteDataSource.setUserSettings(ApiResponse.Success(userSettings(type = "free")))
+
+        source.closeRewatch(RemoteRewatchClose(providerShowId = 1396L, providerSessionId = 7482L))
+
+        rewatchRemoteDataSource.lastCloseRewatchSessionRequest.shouldBeNull()
+    }
+
+    @Test
+    fun `should not send a close given the tier lookup fails`() = runTest {
+        userRemoteDataSource.setUserSettings(ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "boom"))
+
+        val result = source.closeRewatch(RemoteRewatchClose(providerShowId = 1396L, providerSessionId = 7482L))
+
+        rewatchRemoteDataSource.lastCloseRewatchSessionRequest.shouldBeNull()
+        result.shouldBeInstanceOf<ApiResponse.Error.HttpError<Unit>>()
+    }
+
+    @Test
+    fun `should read the session status given sessions are read`() = runTest {
+        rewatchRemoteDataSource.setRewatchSessionsResponse(
+            ApiResponse.Success(
+                SimklRewatchItemsResponse(
+                    shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5, rewatchStatus = "completed")),
+                ),
+            ),
+        )
+
+        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+
+        sessions.first().status shouldBe RemoteRewatchSessionStatus.COMPLETED
+    }
+
+    @Test
+    fun `should take the earliest episode date as the start given the extended payload carries episodes`() = runTest {
+        rewatchRemoteDataSource.setRewatchSessionsResponse(
+            ApiResponse.Success(
+                SimklRewatchItemsResponse(
+                    shows = listOf(
+                        rewatchShow(
+                            tmdbId = "1396",
+                            watchedEpisodesCount = 2,
+                            seasons = listOf(
+                                SimklRewatchSeason(
+                                    number = 1,
+                                    episodes = listOf(
+                                        SimklRewatchEpisode(number = 2, watchedAt = "2026-02-01T00:00:00Z"),
+                                        SimklRewatchEpisode(number = 1, watchedAt = "2026-01-15T00:00:00Z"),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+
+        sessions.first().startedAt shouldBe Instant.parse("2026-01-15T00:00:00Z").toEpochMilliseconds()
+    }
+
+    @Test
+    fun `should report no start given the payload carries no episode dates`() = runTest {
+        rewatchRemoteDataSource.setRewatchSessionsResponse(
+            ApiResponse.Success(SimklRewatchItemsResponse(shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5)))),
+        )
+
+        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+
+        sessions.first().startedAt.shouldBeNull()
+    }
+
     private fun write(providerSessionId: Long?, episodeNumber: Long = 1L): RemoteRewatchWrite = RemoteRewatchWrite(
         localSessionId = 7L,
         providerShowId = 1396L,
@@ -256,12 +348,15 @@ internal class SimklRewatchSyncProviderDataSourceTest {
         watchedEpisodesCount: Int?,
         isRewatch: Boolean = true,
         rewatchId: Long? = 1001L,
+        rewatchStatus: String = "active",
+        seasons: List<SimklRewatchSeason> = emptyList(),
     ): SimklRewatchShow = SimklRewatchShow(
         isRewatch = isRewatch,
         rewatchId = rewatchId,
-        rewatchStatus = "active",
+        rewatchStatus = rewatchStatus,
         lastWatchedAt = "2026-01-01T00:00:00Z",
         watchedEpisodesCount = watchedEpisodesCount,
+        seasons = seasons,
         show = SimklShowEntry(ids = SimklShowIds(simkl = 39687L, tmdb = tmdbId)),
     )
 }

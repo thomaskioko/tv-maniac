@@ -3,6 +3,7 @@ package com.thomaskioko.trakt.service.implementation.sync
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
@@ -57,6 +58,8 @@ public class TraktRewatchSyncProviderDataSource(
                 ),
             ),
         ).map { RemoteRewatchWriteResult() }
+
+    override suspend fun closeRewatch(close: RemoteRewatchClose): ApiResponse<Unit> = ApiResponse.Success(Unit)
 }
 
 private fun TraktWatchedShowResponse.toRemoteRewatchSessions(): List<RemoteRewatchSession> =

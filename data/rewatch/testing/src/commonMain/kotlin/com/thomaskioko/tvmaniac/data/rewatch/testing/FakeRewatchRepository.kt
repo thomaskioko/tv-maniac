@@ -20,6 +20,9 @@ public class FakeRewatchRepository : RewatchRepository {
     public var lastAddEpisodeSessionId: Long? = null
         private set
 
+    public var finishedSessionId: Long? = null
+        private set
+
     public fun setSessionsForShow(showId: Long, sessions: List<RewatchSession>) {
         sessionsByShow.value += (showId to sessions)
     }
@@ -64,6 +67,11 @@ public class FakeRewatchRepository : RewatchRepository {
             if (session.id == sessionId) session.copy(closedAt = closedAt) else session
         }
         setSessionsForShow(showId, updated)
+    }
+
+    override suspend fun finishSession(sessionId: Long, closedAt: Long) {
+        finishedSessionId = sessionId
+        closeSession(sessionId = sessionId, closedAt = closedAt)
     }
 
     override fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>> =

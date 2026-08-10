@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
 import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchSyncProviderDataSource
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -21,6 +22,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -540,6 +542,179 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
             repository.syncRewatchSessions(TMDB_ID)
         }
     }
+
+    @Test
+    fun `should close the session given the rewatch covers every aired episode`() = runTest {
+        val repository = buildRepository()
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            watchedAt = REWATCHED_AT,
+        )
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = SECOND_EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            watchedAt = SECOND_REWATCHED_AT,
+        )
+
+        rewatchSessionDao.sessionById(sessionId)?.closedAt shouldBe SECOND_REWATCHED_AT
+    }
+
+    @Test
+    fun `should leave the session open given the rewatch covers only some aired episodes`() = runTest {
+        val repository = buildRepository()
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            watchedAt = REWATCHED_AT,
+        )
+
+        rewatchSessionDao.sessionById(sessionId)?.closedAt.shouldBeNull()
+    }
+
+    @Test
+    fun `should send a close to the active source given a session with a provider id is finished`() = runTest {
+        val repository = buildRepository()
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+        rewatchSessionDao.setProviderSessionId(sessionId = sessionId, providerSessionId = PROVIDER_SESSION_ID)
+
+        repository.finishSession(sessionId = sessionId, closedAt = CLOSED_AT)
+
+        rewatchSyncProviderDataSource.lastClose.shouldNotBeNull().providerSessionId shouldBe PROVIDER_SESSION_ID
+        rewatchSessionDao.sessionById(sessionId)?.closedAt shouldBe CLOSED_AT
+    }
+
+    @Test
+    fun `should not send a close given the finished session has no provider id`() = runTest {
+        val repository = buildRepository()
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+
+        repository.finishSession(sessionId = sessionId, closedAt = CLOSED_AT)
+
+        rewatchSyncProviderDataSource.lastClose.shouldBeNull()
+        rewatchSessionDao.sessionById(sessionId)?.closedAt shouldBe CLOSED_AT
+    }
+
+    @Test
+    fun `should not send a close given the session was closed by covering the show`() = runTest {
+        val repository = buildRepository()
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+        rewatchSessionDao.setProviderSessionId(sessionId = sessionId, providerSessionId = PROVIDER_SESSION_ID)
+
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            watchedAt = REWATCHED_AT,
+        )
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = SECOND_EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 2L,
+            watchedAt = SECOND_REWATCHED_AT,
+        )
+
+        rewatchSyncProviderDataSource.lastClose.shouldBeNull()
+    }
+
+    @Test
+    fun `should log a sync error given the close to the active source fails`() = runTest {
+        val repository = buildRepository()
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+        rewatchSessionDao.setProviderSessionId(sessionId = sessionId, providerSessionId = PROVIDER_SESSION_ID)
+        rewatchSyncProviderDataSource.setCloseRewatchResponse(
+            ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "boom"),
+        )
+
+        syncObserver.errors.test {
+            repository.finishSession(sessionId = sessionId, closedAt = CLOSED_AT)
+
+            awaitItem()
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should write a local session given the provider reports one carrying a session id`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(status = RemoteRewatchSessionStatus.CLOSED))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+
+        val stored = rewatchSessionDao.observeSessionsForShow(localShowId).first()
+        stored.single().providerSessionId shouldBe PROVIDER_SESSION_ID
+        stored.single().startedAt shouldBe STARTED_AT
+        stored.single().closedAt shouldBe REWATCHED_AT
+    }
+
+    @Test
+    fun `should keep one local session given the same provider session syncs twice`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(status = RemoteRewatchSessionStatus.CLOSED))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeSessionsForShow(localShowId).first().size shouldBe 1
+    }
+
+    @Test
+    fun `should leave a backfilled session open given the provider reports it active`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(status = RemoteRewatchSessionStatus.ACTIVE))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeSessionsForShow(localShowId).first().single().closedAt.shouldBeNull()
+    }
+
+    @Test
+    fun `should write no local session given the provider reports one without a session id`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(providerSessionId = null))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeSessionsForShow(localShowId).first().shouldBeEmpty()
+    }
+
+    private fun remoteSession(
+        providerSessionId: Long? = PROVIDER_SESSION_ID,
+        status: RemoteRewatchSessionStatus = RemoteRewatchSessionStatus.CLOSED,
+    ): RemoteRewatchSession = RemoteRewatchSession(
+        providerSessionId = providerSessionId,
+        seasonNumber = null,
+        episodeNumber = null,
+        episodeCount = 2L,
+        lastWatchedAt = REWATCHED_AT,
+        status = status,
+        startedAt = STARTED_AT,
+    )
 
     private fun buildRepository(
         activeSource: () -> FakeRewatchSyncProviderDataSource? = { rewatchSyncProviderDataSource },

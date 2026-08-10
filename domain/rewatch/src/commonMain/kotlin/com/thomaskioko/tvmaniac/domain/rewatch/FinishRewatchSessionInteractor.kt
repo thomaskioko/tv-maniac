@@ -10,7 +10,7 @@ public class FinishRewatchSessionInteractor(
 ) : Interactor<FinishRewatchSessionInteractor.Param>() {
 
     override suspend fun doWork(params: Param) {
-        rewatchRepository.closeSession(sessionId = params.sessionId, closedAt = params.closedAt)
+        rewatchRepository.finishSession(sessionId = params.sessionId, closedAt = params.closedAt)
     }
 
     public data class Param(

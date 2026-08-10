@@ -3,13 +3,17 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSyncProviderDataSource
 import com.thomaskioko.tvmaniac.simkl.api.SimklRewatchRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.SimklUserRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAccountTier
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchCloseRequest
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchCloseShow
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryEpisode
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryRequest
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistorySeason
@@ -74,6 +78,23 @@ public class SimklRewatchSyncProviderDataSource(
         }
     }
 
+    override suspend fun closeRewatch(close: RemoteRewatchClose): ApiResponse<Unit> {
+        val tierResponse = currentTier()
+        if (tierResponse !is ApiResponse.Success) return tierResponse.map { }
+        if (tierResponse.body != SimklAccountTier.PREMIUM) return ApiResponse.Success(Unit)
+
+        return rewatchRemoteDataSource.closeRewatchSession(
+            SimklRewatchCloseRequest(
+                shows = listOf(
+                    SimklRewatchCloseShow(
+                        ids = SimklShowIds(tmdb = close.providerShowId.toString()),
+                        rewatchId = close.providerSessionId,
+                    ),
+                ),
+            ),
+        ).map { }
+    }
+
     private suspend fun currentTier(): ApiResponse<SimklAccountTier> {
         cachedTier?.let { return ApiResponse.Success(it) }
         return userRemoteDataSource.getUserSettings()
@@ -87,5 +108,12 @@ private fun SimklRewatchShow.toRemoteRewatchSession(): RemoteRewatchSession = Re
     seasonNumber = null,
     episodeNumber = null,
     episodeCount = watchedEpisodesCount?.toLong()?.takeIf { it > 0 },
-    lastWatchedAt = lastWatchedAt?.let { runCatching { Instant.parse(it).toEpochMilliseconds() }.getOrNull() },
+    lastWatchedAt = lastWatchedAt?.toEpochMillis(),
+    status = RemoteRewatchSessionStatus.fromRaw(rewatchStatus),
+    startedAt = seasons
+        .flatMap { season -> season.episodes }
+        .mapNotNull { episode -> episode.watchedAt?.toEpochMillis() }
+        .minOrNull(),
 )
+
+private fun String.toEpochMillis(): Long? = runCatching { Instant.parse(this).toEpochMilliseconds() }.getOrNull()

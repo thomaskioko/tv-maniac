@@ -3,6 +3,7 @@ package com.thomaskioko.trakt.service.implementation.sync
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.getOrThrow
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowResponse
@@ -13,6 +14,7 @@ import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktEpisodeHistoryRemoteDataS
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktSyncRemoteDataSource
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.test.runTest
@@ -36,6 +38,15 @@ internal class TraktRewatchSyncProviderDataSourceTest {
     @Test
     fun `should always support rewatch`() = runTest {
         source.supportsRewatch() shouldBe true
+    }
+
+    @Test
+    fun `should send nothing given a rewatch session is closed`() = runTest {
+        val result = source.closeRewatch(RemoteRewatchClose(providerShowId = 1396L, providerSessionId = 7482L))
+
+        result.shouldBeInstanceOf<ApiResponse.Success<Unit>>()
+        episodeHistoryRemoteDataSource.lastAddedItems.shouldBeNull()
+        episodeHistoryRemoteDataSource.lastRemovedItems.shouldBeNull()
     }
 
     @Test
