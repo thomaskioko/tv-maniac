@@ -16,6 +16,8 @@ public interface RewatchRepository {
 
     public suspend fun closeSession(sessionId: Long, closedAt: Long)
 
+    public suspend fun finishSession(sessionId: Long, closedAt: Long)
+
     public fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>>
 
     public suspend fun openSessionForShow(showId: Long): RewatchSession?

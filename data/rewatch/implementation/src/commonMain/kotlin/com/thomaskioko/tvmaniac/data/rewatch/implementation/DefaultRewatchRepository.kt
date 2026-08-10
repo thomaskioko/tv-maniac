@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.data.rewatch.implementation
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
@@ -55,11 +57,36 @@ public class DefaultRewatchRepository(
                 episodeNumber = episodeNumber,
                 watchedAt = watchedAt,
             )
+            closeIfShowCovered(sessionId = sessionId, closedAt = watchedAt)
         }
     }
 
     override suspend fun closeSession(sessionId: Long, closedAt: Long) {
         rewatchSessionDao.closeSession(sessionId = sessionId, closedAt = closedAt)
+    }
+
+    override suspend fun finishSession(sessionId: Long, closedAt: Long) {
+        val session = rewatchSessionDao.sessionById(sessionId)
+        rewatchSessionDao.closeSession(sessionId = sessionId, closedAt = closedAt)
+
+        val providerSessionId = session?.providerSessionId ?: return
+        val providerShowId = tvShowsDao.getTmdbIdForLocalShowId(session.showId) ?: return
+
+        syncMutex.withLock {
+            val source = activeSource() ?: return@withLock
+            try {
+                val response = source.closeRewatch(
+                    RemoteRewatchClose(providerShowId = providerShowId, providerSessionId = providerSessionId),
+                )
+                if (response is ApiResponse.Error) {
+                    syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = response.toThrowable()))
+                }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = throwable))
+            }
+        }
     }
 
     override fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>> {
@@ -84,7 +111,7 @@ public class DefaultRewatchRepository(
         val source = activeSource() ?: return@withLock emptyList()
         try {
             when (val response = source.readRewatchSessions(showId)) {
-                is ApiResponse.Success -> response.body
+                is ApiResponse.Success -> response.body.also { backfillSessions(showId = showId, sessions = it) }
                 is ApiResponse.Unauthenticated -> emptyList()
                 is ApiResponse.Error -> {
                     syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = response.toThrowable()))
@@ -96,6 +123,33 @@ public class DefaultRewatchRepository(
         } catch (throwable: Throwable) {
             syncObserver.log(SyncError.BackgroundSyncFailed(operationId = TAG, cause = throwable))
             emptyList()
+        }
+    }
+
+    private fun closeIfShowCovered(sessionId: Long, closedAt: Long) {
+        val coverage = rewatchSessionDao.sessionCoverage(sessionId) ?: return
+        if (coverage.coversShow) {
+            rewatchSessionDao.closeSession(sessionId = sessionId, closedAt = closedAt)
+        }
+    }
+
+    private fun backfillSessions(showId: Long, sessions: List<RemoteRewatchSession>) {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
+
+        for (session in sessions) {
+            val providerSessionId = session.providerSessionId ?: continue
+            val startedAt = session.startedAt ?: session.lastWatchedAt ?: continue
+            rewatchSessionDao.upsertProviderSession(
+                showId = localShowId,
+                providerSessionId = providerSessionId,
+                startedAt = startedAt,
+                closedAt = when (session.status) {
+                    RemoteRewatchSessionStatus.ACTIVE -> null
+                    RemoteRewatchSessionStatus.CLOSED,
+                    RemoteRewatchSessionStatus.COMPLETED,
+                    -> session.lastWatchedAt ?: startedAt
+                },
+            )
         }
     }
 
