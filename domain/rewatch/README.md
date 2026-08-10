@@ -1,4 +1,4 @@
-# `:data:logout:implementation`
+# `:domain:rewatch`
 
 ## Module dependency graph
 
@@ -30,34 +30,13 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
-  subgraph :data:followedshows
-    direction TB
-    :data:followedshows:api[api]:::multiplatform
-  end
-  subgraph :data:logout
-    direction TB
-    :data:logout:api[api]:::multiplatform
-    :data:logout:implementation[implementation]:::multiplatform
-  end
-  subgraph :data:ratings
-    direction TB
-    :data:ratings:api[api]:::multiplatform
-  end
-  subgraph :data:request-manager
-    direction TB
-    :data:request-manager:api[api]:::multiplatform
-  end
   subgraph :data:rewatch
     direction TB
     :data:rewatch:api[api]:::multiplatform
   end
-  subgraph :data:sync-activity
+  subgraph :domain
     direction TB
-    :data:sync-activity:api[api]:::multiplatform
-  end
-  subgraph :data:user
-    direction TB
-    :data:user:api[api]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
   end
 
   :core:base --> :core:logger:api
@@ -66,25 +45,10 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
-  :data:logout:implementation --> :core:base
-  :data:logout:implementation --> :data:database:sqldelight
-  :data:logout:implementation --> :data:logout:api
-  :data:logout:implementation --> :data:ratings:api
-  :data:logout:implementation --> :data:request-manager:api
-  :data:logout:implementation --> :data:rewatch:api
-  :data:logout:implementation --> :data:sync-activity:api
-  :data:logout:implementation --> :data:user:api
-  :data:ratings:api --> :core:network-util:api
-  :data:ratings:api --> :data:account-manager:api
-  :data:ratings:api --> :data:database:sqldelight
-  :data:ratings:api --> :data:followedshows:api
   :data:rewatch:api --> :core:network-util:api
   :data:rewatch:api --> :data:account-manager:api
-  :data:sync-activity:api --> :core:network-util:api
-  :data:sync-activity:api --> :data:account-manager:api
-  :data:user:api --> :core:network-util:api
-  :data:user:api --> :data:account-manager:api
-  :data:user:api --> :data:database:sqldelight
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :data:rewatch:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

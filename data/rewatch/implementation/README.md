@@ -1,4 +1,4 @@
-# `:data:logout:implementation`
+# `:data:rewatch:implementation`
 
 ## Module dependency graph
 
@@ -22,6 +22,14 @@ graph TB
     direction TB
     :core:network-util:api[api]:::multiplatform
   end
+  subgraph :core:syncstate
+    direction TB
+    :core:syncstate:api[api]:::multiplatform
+  end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
   subgraph :data:account-manager
     direction TB
     :data:account-manager:api[api]:::multiplatform
@@ -30,34 +38,14 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
-  subgraph :data:followedshows
-    direction TB
-    :data:followedshows:api[api]:::multiplatform
-  end
-  subgraph :data:logout
-    direction TB
-    :data:logout:api[api]:::multiplatform
-    :data:logout:implementation[implementation]:::multiplatform
-  end
-  subgraph :data:ratings
-    direction TB
-    :data:ratings:api[api]:::multiplatform
-  end
-  subgraph :data:request-manager
-    direction TB
-    :data:request-manager:api[api]:::multiplatform
-  end
   subgraph :data:rewatch
     direction TB
     :data:rewatch:api[api]:::multiplatform
+    :data:rewatch:implementation[implementation]:::multiplatform
   end
-  subgraph :data:sync-activity
+  subgraph :data:shows
     direction TB
-    :data:sync-activity:api[api]:::multiplatform
-  end
-  subgraph :data:user
-    direction TB
-    :data:user:api[api]:::multiplatform
+    :data:shows:api[api]:::multiplatform
   end
 
   :core:base --> :core:logger:api
@@ -66,25 +54,17 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
-  :data:logout:implementation --> :core:base
-  :data:logout:implementation --> :data:database:sqldelight
-  :data:logout:implementation --> :data:logout:api
-  :data:logout:implementation --> :data:ratings:api
-  :data:logout:implementation --> :data:request-manager:api
-  :data:logout:implementation --> :data:rewatch:api
-  :data:logout:implementation --> :data:sync-activity:api
-  :data:logout:implementation --> :data:user:api
-  :data:ratings:api --> :core:network-util:api
-  :data:ratings:api --> :data:account-manager:api
-  :data:ratings:api --> :data:database:sqldelight
-  :data:ratings:api --> :data:followedshows:api
   :data:rewatch:api --> :core:network-util:api
   :data:rewatch:api --> :data:account-manager:api
-  :data:sync-activity:api --> :core:network-util:api
-  :data:sync-activity:api --> :data:account-manager:api
-  :data:user:api --> :core:network-util:api
-  :data:user:api --> :data:account-manager:api
-  :data:user:api --> :data:database:sqldelight
+  :data:rewatch:implementation --> :core:base
+  :data:rewatch:implementation --> :core:syncstate:api
+  :data:rewatch:implementation --> :core:util:api
+  :data:rewatch:implementation --> :data:account-manager:api
+  :data:rewatch:implementation --> :data:database:sqldelight
+  :data:rewatch:implementation --> :data:rewatch:api
+  :data:rewatch:implementation --> :data:shows:api
+  :data:shows:api --> :data:account-manager:api
+  :data:shows:api --> :data:database:sqldelight
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;
