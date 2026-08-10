@@ -292,7 +292,6 @@ graph TB
     :domain:notifications[notifications]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
     :domain:recently-watched[recently-watched]:::multiplatform
-    :domain:rewatch[rewatch]:::multiplatform
     :domain:seasondetails[seasondetails]:::multiplatform
     :domain:settings[settings]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
@@ -550,7 +549,6 @@ graph TB
   :app -.-> :data:ratings:api
   :app -.-> :data:ratings:implementation
   :app -.-> :data:request-manager:implementation
-  :app -.-> :data:rewatch:api
   :app -.-> :data:rewatch:implementation
   :app -.-> :data:search:api
   :app -.-> :data:search:implementation
@@ -602,7 +600,6 @@ graph TB
   :app -.-> :domain:notifications
   :app -.-> :domain:ratings
   :app -.-> :domain:recently-watched
-  :app -.-> :domain:rewatch
   :app -.-> :domain:seasondetails
   :app -.-> :domain:settings
   :app -.-> :domain:showdetails
@@ -1158,8 +1155,6 @@ graph TB
   :domain:ratings --> :data:subscription:api
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api
-  :domain:rewatch --> :core:base
-  :domain:rewatch --> :data:rewatch:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
