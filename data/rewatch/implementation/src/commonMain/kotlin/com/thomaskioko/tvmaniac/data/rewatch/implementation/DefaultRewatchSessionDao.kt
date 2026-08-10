@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.rewatch.implementation
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchCoverage
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.data.rewatch.api.UnsentRewatchEpisode
@@ -66,6 +67,40 @@ public class DefaultRewatchSessionDao(
 
     override fun markEpisodeSynced(rowId: Long, syncedAt: Long) {
         queries.markEpisodeSynced(rowId = rowId, syncedAt = syncedAt)
+    }
+
+    override fun sessionCoverage(sessionId: Long): RewatchCoverage? =
+        queries.sessionCoverage(sessionId).executeAsOneOrNull()?.let { row ->
+            RewatchCoverage(watchedInSession = row.watched_in_session, airedTotal = row.aired_total)
+        }
+
+    override fun upsertProviderSession(
+        showId: Long,
+        providerSessionId: Long,
+        startedAt: Long,
+        closedAt: Long?,
+    ) {
+        queries.transaction {
+            val existing = queries.sessionByProviderSessionId(
+                showId = Id(showId),
+                providerSessionId = providerSessionId,
+            ).executeAsOneOrNull()
+
+            if (existing == null) {
+                queries.insertProviderSession(
+                    showId = Id(showId),
+                    startedAt = startedAt,
+                    closedAt = closedAt,
+                    providerSessionId = providerSessionId,
+                )
+            } else {
+                queries.mergeProviderSession(
+                    startedAt = startedAt,
+                    closedAt = closedAt,
+                    sessionId = existing.id,
+                )
+            }
+        }
     }
 
     override fun clearAll() {

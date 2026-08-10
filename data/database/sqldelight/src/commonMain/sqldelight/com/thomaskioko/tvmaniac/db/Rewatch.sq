@@ -65,6 +65,39 @@ UPDATE rewatch_session
 SET provider_session_id = :providerSessionId
 WHERE id = :sessionId;
 
+sessionByProviderSessionId:
+SELECT *
+FROM rewatch_session
+WHERE show_id = :showId AND provider_session_id = :providerSessionId;
+
+insertProviderSession:
+INSERT INTO rewatch_session(show_id, started_at, closed_at, provider_session_id)
+VALUES (:showId, :startedAt, :closedAt, :providerSessionId);
+
+mergeProviderSession:
+UPDATE rewatch_session
+SET started_at = MIN(started_at, :startedAt),
+    closed_at = COALESCE(:closedAt, closed_at)
+WHERE id = :sessionId;
+
+sessionCoverage:
+SELECT
+    (SELECT COUNT(DISTINCT rse.episode_id)
+     FROM rewatch_session_episode rse
+     INNER JOIN episode e ON rse.episode_id = e.id
+     INNER JOIN season s ON e.season_id = s.id
+     WHERE rse.session_id = rs.id
+       AND (s.season_number > 0 OR s.title != 'Specials')
+       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS watched_in_session,
+    (SELECT COUNT(*)
+     FROM episode e
+     INNER JOIN season s ON e.season_id = s.id
+     WHERE e.show_id = rs.show_id
+       AND (s.season_number > 0 OR s.title != 'Specials')
+       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS aired_total
+FROM rewatch_session rs
+WHERE rs.id = :sessionId;
+
 playCountForEpisode:
 SELECT COUNT(*) + 1 AS play_count
 FROM rewatch_session_episode

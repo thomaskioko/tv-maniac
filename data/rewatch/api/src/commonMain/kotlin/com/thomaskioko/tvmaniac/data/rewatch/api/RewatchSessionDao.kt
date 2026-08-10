@@ -23,5 +23,14 @@ public interface RewatchSessionDao {
 
     public fun markEpisodeSynced(rowId: Long, syncedAt: Long)
 
+    public fun sessionCoverage(sessionId: Long): RewatchCoverage?
+
+    public fun upsertProviderSession(
+        showId: Long,
+        providerSessionId: Long,
+        startedAt: Long,
+        closedAt: Long?,
+    )
+
     public fun clearAll()
 }
