@@ -78,6 +78,7 @@ kotlin {
             api(projects.data.followedshows.implementation)
             api(projects.data.library.implementation)
             api(projects.data.ratings.implementation)
+            api(projects.data.rewatch.implementation)
             api(projects.data.requestManager.implementation)
             api(projects.data.seasondetails.implementation)
             api(projects.data.seasons.implementation)

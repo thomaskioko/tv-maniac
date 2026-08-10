@@ -67,6 +67,10 @@ graph TB
     direction TB
     :data:ratings:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:start-watching
     direction TB
     :data:start-watching:api[api]:::multiplatform
@@ -102,6 +106,7 @@ graph TB
   :api:trakt:implementation --> :data:library:api
   :api:trakt:implementation --> :data:oauth:api
   :api:trakt:implementation --> :data:ratings:api
+  :api:trakt:implementation --> :data:rewatch:api
   :api:trakt:implementation --> :data:start-watching:api
   :api:trakt:implementation --> :data:sync-activity:api
   :api:trakt:implementation --> :data:user:api
@@ -127,6 +132,8 @@ graph TB
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:start-watching:api --> :core:network-util:api
   :data:start-watching:api --> :data:account-manager:api
   :data:sync-activity:api --> :core:network-util:api

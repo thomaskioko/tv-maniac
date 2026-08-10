@@ -156,5 +156,11 @@ public class DatabaseFactory(private val sqlDriver: SqlDriver) {
         watched_show_sync_logAdapter = Watched_show_sync_log.Adapter(
             show_idAdapter = IdAdapter(),
         ),
+        rewatch_sessionAdapter = Rewatch_session.Adapter(
+            show_idAdapter = IdAdapter(),
+        ),
+        rewatch_session_episodeAdapter = Rewatch_session_episode.Adapter(
+            episode_idAdapter = IdAdapter(),
+        ),
     )
 }

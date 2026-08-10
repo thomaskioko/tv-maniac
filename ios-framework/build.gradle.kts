@@ -235,6 +235,7 @@ kotlin {
                 implementation(projects.data.user.api)
                 implementation(projects.data.user.implementation)
                 implementation(projects.data.logout.implementation)
+                implementation(projects.data.rewatch.implementation)
                 implementation(projects.domain.user)
                 implementation(projects.domain.followedshows)
                 implementation(projects.domain.logout)

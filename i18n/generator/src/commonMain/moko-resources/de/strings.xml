@@ -394,6 +394,7 @@
 
     <string name="label_episode_action_mark_watched">Als gesehen markieren</string>
     <string name="label_episode_action_mark_unwatched">Als ungesehen markieren</string>
+    <string name="label_episode_action_watch_again">Erneut ansehen</string>
     <string name="label_episode_action_open_show">Serie öffnen</string>
     <string name="label_episode_action_open_season">Staffel öffnen</string>
     <string name="label_episode_action_unfollow_show">Serie nicht mehr folgen</string>
@@ -520,12 +521,14 @@
     <string name="label_statistics_empty">Markieren Sie eine Episode als gesehen, um Ihre Statistiken aufzubauen.</string>
     <string name="label_statistics_activity">Ihr Jahr im Überblick</string>
     <string name="label_statistics_marked_watched_note">Die Daten zeigen, wann Episoden als gesehen markiert wurden, nicht wann Sie sie geschaut haben.</string>
+    <string name="label_statistics_rewatch_note">Die Summen zählen jedes Ansehen, nicht nur das erste.</string>
     <string name="label_statistics_watch_time">Gesamte Sehdauer</string>
     <string name="label_statistics_days">Tage</string>
     <string name="label_statistics_hours">Stunden</string>
     <string name="label_statistics_minutes">Minuten</string>
     <string name="label_statistics_titles_tracked">Verfolgte Titel</string>
     <string name="label_statistics_episodes">Episoden</string>
+    <string name="label_statistics_rewatches">Wiederholungen</string>
     <string name="label_statistics_average_rating">Durchschnittliche Bewertung</string>
     <string name="label_statistics_peak_year">Aktivstes Jahr</string>
     <string name="label_statistics_top_weekday">Häufigster Wochentag</string>
@@ -557,4 +560,9 @@
     <string name="label_watch_status_completed">Abgeschlossen</string>
     <string name="label_watch_status_on_hold">Pausiert</string>
     <string name="label_watch_status_dropped">Abgebrochen</string>
+
+    <string name="label_rewatch_start">Erneutes Ansehen starten</string>
+    <string name="label_rewatch_close">Erneutes Ansehen beenden</string>
+    <string name="label_rewatch_in_progress">Wird erneut angesehen</string>
+    <string name="label_rewatch_simkl_free_tier">Simkl speichert wiederholtes Ansehen nur mit einem kostenpflichtigen Tarif. Diese Zählung bleibt auf diesem Gerät.</string>
 </resources>
