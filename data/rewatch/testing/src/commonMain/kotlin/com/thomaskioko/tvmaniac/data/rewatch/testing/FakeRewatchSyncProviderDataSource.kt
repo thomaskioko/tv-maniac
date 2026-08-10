@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.rewatch.testing
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
@@ -17,8 +18,13 @@ public class FakeRewatchSyncProviderDataSource(
     private var writeHandler: ((RemoteRewatchWrite) -> ApiResponse<RemoteRewatchWriteResult>)? = null
     private var readException: Throwable? = null
     private var writeException: Throwable? = null
+    private var closeResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
+    private var closeException: Throwable? = null
 
     public var lastWrite: RemoteRewatchWrite? = null
+        private set
+
+    public var lastClose: RemoteRewatchClose? = null
         private set
 
     public fun setSupportsRewatch(value: Boolean) {
@@ -45,6 +51,14 @@ public class FakeRewatchSyncProviderDataSource(
         writeException = exception
     }
 
+    public fun setCloseRewatchResponse(response: ApiResponse<Unit>) {
+        closeResponse = response
+    }
+
+    public fun setCloseRewatchException(exception: Throwable) {
+        closeException = exception
+    }
+
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
 
     override suspend fun readRewatchSessions(providerShowId: Long): ApiResponse<List<RemoteRewatchSession>> {
@@ -56,5 +70,11 @@ public class FakeRewatchSyncProviderDataSource(
         lastWrite = write
         writeException?.let { throw it }
         return writeHandler?.invoke(write) ?: writeResponse
+    }
+
+    override suspend fun closeRewatch(close: RemoteRewatchClose): ApiResponse<Unit> {
+        lastClose = close
+        closeException?.let { throw it }
+        return closeResponse
     }
 }

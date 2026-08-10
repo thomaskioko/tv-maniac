@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.SimklApi
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.simkl.api.SimklRewatchRemoteDataSource
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchCloseRequest
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryRequest
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchHistoryResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRewatchItemsResponse
@@ -36,6 +37,17 @@ public class DefaultSimklRewatchRemoteDataSource(
         }
 
     override suspend fun addRewatchHistory(request: SimklRewatchHistoryRequest): ApiResponse<SimklRewatchHistoryResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Post
+                path("sync/history")
+                parameter("allow_rewatch", "yes")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+
+    override suspend fun closeRewatchSession(request: SimklRewatchCloseRequest): ApiResponse<SimklRewatchHistoryResponse> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Post

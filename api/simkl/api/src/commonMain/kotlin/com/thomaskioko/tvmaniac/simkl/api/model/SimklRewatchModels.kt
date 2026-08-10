@@ -15,7 +15,20 @@ public data class SimklRewatchShow(
     @SerialName("rewatch_status") val rewatchStatus: String? = null,
     @SerialName("last_watched_at") val lastWatchedAt: String? = null,
     @SerialName("watched_episodes_count") val watchedEpisodesCount: Int? = null,
+    @SerialName("seasons") val seasons: List<SimklRewatchSeason> = emptyList(),
     @SerialName("show") val show: SimklShowEntry,
+)
+
+@Serializable
+public data class SimklRewatchSeason(
+    @SerialName("number") val number: Int? = null,
+    @SerialName("episodes") val episodes: List<SimklRewatchEpisode> = emptyList(),
+)
+
+@Serializable
+public data class SimklRewatchEpisode(
+    @SerialName("number") val number: Int? = null,
+    @SerialName("watched_at") val watchedAt: String? = null,
 )
 
 @Serializable
@@ -30,6 +43,19 @@ public data class SimklRewatchHistoryShow(
     @SerialName("rewatch_id") val rewatchId: Long? = null,
     @SerialName("rewatch_status") val rewatchStatus: String = "active",
     @SerialName("seasons") val seasons: List<SimklRewatchHistorySeason>,
+)
+
+@Serializable
+public data class SimklRewatchCloseRequest(
+    @SerialName("shows") val shows: List<SimklRewatchCloseShow>,
+)
+
+@Serializable
+public data class SimklRewatchCloseShow(
+    @SerialName("ids") val ids: SimklShowIds,
+    @SerialName("is_rewatch") val isRewatch: Boolean = true,
+    @SerialName("rewatch_id") val rewatchId: Long,
+    @SerialName("rewatch_status") val rewatchStatus: String = "closed",
 )
 
 @Serializable
