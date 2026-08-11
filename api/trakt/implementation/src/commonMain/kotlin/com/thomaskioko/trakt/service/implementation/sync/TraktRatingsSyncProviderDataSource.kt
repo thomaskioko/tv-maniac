@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRemoteDataSource
+import com.thomaskioko.tvmaniac.data.ratings.api.RemoteShowRating
 import com.thomaskioko.tvmaniac.trakt.api.TraktRatingsRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodeIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktEpisodeRatingIdItem
@@ -53,6 +54,15 @@ public class TraktRatingsSyncProviderDataSource(
     override suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?> =
         remoteDataSource.getUserShowRatings().map { items ->
             items.firstOrNull { it.show.ids.traktId == providerShowId }?.rating
+        }
+
+    override suspend fun getShowUserRatings(): ApiResponse<List<RemoteShowRating>> =
+        remoteDataSource.getUserShowRatings().map { items ->
+            items.mapNotNull { item ->
+                item.show.ids.tmdbId?.let { tmdbId ->
+                    RemoteShowRating(tmdbId = tmdbId, userRating = item.rating)
+                }
+            }
         }
 
     override suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit> =

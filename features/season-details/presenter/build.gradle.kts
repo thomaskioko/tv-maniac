@@ -39,10 +39,11 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.cast.testing)
-                implementation(projects.data.database.sqldelight)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.testing)
                 implementation(projects.data.seasondetails.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.subscription.testing)
                 implementation(projects.navigation.testing)
             }
         }

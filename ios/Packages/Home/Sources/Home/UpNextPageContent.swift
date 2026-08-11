@@ -22,7 +22,7 @@ struct UpNextPageContent: View {
     var body: some View {
         contentView
             .refreshable {
-                presenter.dispatch(action: RefreshUpNext())
+                try? await presenter.refresh()
             }
     }
 

@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.shows.api.ShowReconciler
 import com.thomaskioko.tvmaniac.shows.api.ShowResolveOutcome
+import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.api.ActivitySyncTypes
 import com.thomaskioko.tvmaniac.syncactivity.api.model.ActivityType
@@ -104,6 +105,8 @@ public class DefaultWatchedEpisodeSyncRepository(
     }
 
     override suspend fun countPendingEpisodes(): Long = dao.countPendingActions()
+
+    override suspend fun getWatchedShowsMissingGenres(): List<Long> = dao.getWatchedShowsMissingGenres()
 
     private suspend fun processPendingEpisodesToUploads() {
         val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
@@ -203,10 +206,41 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         logger.debug(TAG, "Bulk watched-shows sync drained $totalShows shows across $page page(s)")
 
+        fetchMissingShowMetadata()
+
         firstFailure?.let { failure ->
             logger.error(TAG, "Bulk watched-shows sync failed for $failedShows of $totalShows shows")
             throw failure
         }
+    }
+
+    private suspend fun fetchMissingShowMetadata() {
+        val source = activeSource() ?: return
+        val missing = dao.countWatchedShowsMissingMetadata()
+        if (missing == 0L) return
+
+        logger.debug(TAG, "Fetching metadata for $missing watched show(s)")
+        var page = 1
+        var updated = 0
+        while (true) {
+            currentCoroutineContext().ensureActive()
+            val metadata = source.getWatchedShowMetadata(page = page, limit = PAGE_LIMIT)
+            if (metadata.isEmpty()) break
+
+            metadata.forEach { show ->
+                dao.updateShowMetadata(
+                    tmdbId = show.tmdbId,
+                    runtime = show.runtimeMinutes,
+                    year = show.year,
+                    genres = show.genres?.map(::traktGenreName),
+                )
+            }
+            updated += metadata.size
+
+            if (metadata.size < PAGE_LIMIT) break
+            page++
+        }
+        logger.debug(TAG, "Stored metadata for $updated show(s)")
     }
 
     private suspend fun upsertBatch(batch: WatchedShowBatch, includeSpecials: Boolean) {
@@ -224,6 +258,10 @@ public class DefaultWatchedEpisodeSyncRepository(
         val tmdbId = when (outcome) {
             is ShowResolveOutcome.Resolved -> outcome.tmdbId
             is ShowResolveOutcome.Skipped -> return
+        }
+
+        if (batch.runtime != null || batch.year != null) {
+            dao.updateShowMetadata(tmdbId = tmdbId, runtime = batch.runtime, year = batch.year)
         }
 
         val remoteUpdatedAt = batch.lastUpdatedAt?.toEpochMilliseconds()

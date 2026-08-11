@@ -119,12 +119,7 @@ public struct MyShowsTab: View {
         } else {
             if uiState.selectedPage == 0 {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    let image = uiState.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
-                    GlassButton(icon: image) {
-                        withAnimation {
-                            presenter.dispatch(action: MyShowsActionChangeListStyle(isGridMode: uiState.isGridMode))
-                        }
-                    }
+                    layoutMenu
                 }
             }
             ToolbarItem(placement: .principal) {
@@ -157,6 +152,71 @@ public struct MyShowsTab: View {
                 }
             }
         }
+    }
+
+    private var layoutMenu: some View {
+        Menu {
+            layoutMenuRow(.grid)
+            layoutMenuRow(.list)
+            Section(String(\.label_premium_badge)) {
+                layoutMenuRow(.compact)
+                layoutMenuRow(.detailed)
+            }
+        } label: {
+            GlassButton(icon: layoutIcon(uiState.listStyle), action: {})
+        }
+        .testTag(MyShowsTestTags.shared.LAYOUT_MENU_BUTTON_TEST_TAG)
+    }
+
+    private func isPremiumLayout(_ layout: ApiListStyle) -> Bool {
+        layout == ApiListStyle.compact || layout == ApiListStyle.detailed
+    }
+
+    @ViewBuilder
+    private func layoutMenuRow(_ layout: ApiListStyle) -> some View {
+        let label = layoutLabel(layout)
+        if isPremiumLayout(layout), uiState.isListStyleLocked {
+            Button {
+                presenter.dispatch(action: MyShowsActionUpgradeClicked())
+            } label: {
+                Label(label, systemImage: "lock.fill")
+            }
+            .accessibilityLabel("\(label), \(String(\.cd_locked))")
+            .accessibilityHint("\(String(\.label_layouts_locked_title)). \(String(\.label_layouts_locked_message))")
+            .accessibilityAction(named: Text(String(\.label_upgrade_to_premium))) {
+                presenter.dispatch(action: MyShowsActionUpgradeClicked())
+            }
+            .testTag(layoutOptionTestTag(layout))
+        } else {
+            Button(label, systemImage: layoutIcon(layout)) {
+                withAnimation {
+                    presenter.dispatch(action: MyShowsActionChangeListStyle(listStyle: layout))
+                }
+            }
+            .accessibilityAddTraits(layout == uiState.listStyle ? .isSelected : [])
+            .testTag(layoutOptionTestTag(layout))
+        }
+    }
+
+    private func layoutLabel(_ layout: ApiListStyle) -> String {
+        if layout == ApiListStyle.grid { return String(\.label_layout_grid) }
+        if layout == ApiListStyle.list { return String(\.label_layout_list) }
+        if layout == ApiListStyle.compact { return String(\.label_layout_compact) }
+        return String(\.label_layout_detailed)
+    }
+
+    private func layoutIcon(_ layout: ApiListStyle) -> String {
+        if layout == ApiListStyle.grid { return "rectangle.grid.2x2" }
+        if layout == ApiListStyle.list { return "list.bullet" }
+        if layout == ApiListStyle.compact { return "rectangle.compress.vertical" }
+        return "rectangle.expand.vertical"
+    }
+
+    private func layoutOptionTestTag(_ layout: ApiListStyle) -> String {
+        if layout == ApiListStyle.grid { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_GRID_TEST_TAG }
+        if layout == ApiListStyle.list { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_LIST_TEST_TAG }
+        if layout == ApiListStyle.compact { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG }
+        return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG
     }
 
     private var expandedSearchBar: some View {
@@ -225,7 +285,7 @@ public struct MyShowsTab: View {
                     episodeNumber: episode.episodeNumberValue
                 ))
             },
-            onRefresh: { continueWatchingPresenter.dispatch(action: RefreshContinueWatching(forceRefresh: true)) }
+            onRefresh: { try? await continueWatchingPresenter.refresh() }
         )
     }
 
@@ -268,7 +328,7 @@ private extension ContinueWatchingState {
             premiereLabel: labels.premiereBadge,
             newLabel: labels.newBadge,
             isLoading: showLoading,
-            isGridMode: isGridMode,
+            layout: listStyle.toSwift(),
             query: query,
             watchNextGridItems: Array(watchNextItems).map {
                 MyShowsGridItem(

@@ -430,4 +430,18 @@ public interface DatastoreRepository {
      * @return A Flow of [PosterCornerStyle]. Defaults to [PosterCornerStyle.SHARP]; unknown stored names fall back to the default.
      */
     public fun observePosterCornerStyle(): Flow<PosterCornerStyle>
+
+    /**
+     * Saves whether the rating sheet opens after an episode is marked watched.
+     *
+     * @param enabled Whether the rating prompt is enabled.
+     */
+    public suspend fun saveQuickRateEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether the rating sheet opens after an episode is marked watched.
+     *
+     * @return A Flow of Boolean, true if the rating prompt is enabled. Defaults to false.
+     */
+    public fun observeQuickRateEnabled(): Flow<Boolean>
 }

@@ -8,6 +8,7 @@ public interface RatingsRemoteDataSource : SyncProvider {
     public suspend fun removeShowRating(tmdbId: Long): ApiResponse<Unit>
     public suspend fun getShowCommunityRating(providerShowId: Long): ApiResponse<CommunityRating>
     public suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?>
+    public suspend fun getShowUserRatings(): ApiResponse<List<RemoteShowRating>>
     public suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit>
     public suspend fun removeSeasonRating(seasonTmdbId: Long): ApiResponse<Unit>
     public suspend fun addEpisodeRating(episodeTmdbId: Long, rating: Int): ApiResponse<Unit>

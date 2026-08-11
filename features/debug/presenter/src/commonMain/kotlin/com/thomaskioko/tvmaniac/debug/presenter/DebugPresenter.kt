@@ -44,7 +44,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleDebugEpi
     kind = DestinationKind.SCREEN,
 )
 @Inject
-public class DebugPresenter(
+public class DebugPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val datastoreRepository: DatastoreRepository,

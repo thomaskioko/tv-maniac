@@ -169,15 +169,20 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .scrollToUpNextEpisode(breakingBadTmdbId)
             .assertUpNextEpisodeDisplayed(breakingBadTmdbId)
 
-        // Trigger token refresh round-trip
-        scenarios.stubTokenRefresh()
-
         homeRobot
             .clickProfileTab()
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
         profileRobot
             .assertUserNameDisplayed()
+            .clickStatisticsRow(slug = TEST_PROFILE_SLUG)
+
+        statisticsRobot
+            .assertStatisticsScreenDisplayed()
+            .clickBackButton()
+
+        profileRobot
+            .assertProfileScreenDisplayed()
             .scrollToUserLists(slug = TEST_PROFILE_SLUG)
             .assertUserListsRowDisplayed()
             .assertListCardDisplayed(favoritesListId)

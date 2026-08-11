@@ -27,6 +27,7 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInte
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
@@ -64,6 +65,7 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -102,6 +104,11 @@ internal class ShowDetailsPresenterTest {
     private val traktListRepository = FakeTraktListRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
+    private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
+        datastoreRepository = datastoreRepository,
+        subscriptionManager = FakeSubscriptionManager(),
+        ratingsRepository = ratingsRepository,
+    )
     private val notificationManager = FakeNotificationManager()
     private val seasonsRepository = FakeSeasonsRepository()
     private val castRepository = FakeCastRepository()
@@ -354,6 +361,7 @@ internal class ShowDetailsPresenterTest {
                 episodeRepository = episodeRepository,
             ),
             datastoreRepository = datastoreRepository,
+            shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
             navigator = navigator,
             accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
@@ -424,6 +432,7 @@ internal class ShowDetailsPresenterTest {
             navigator = navigator,
             accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            localizer = FakeLocalizer(),
             logger = FakeLogger(),
         )
 

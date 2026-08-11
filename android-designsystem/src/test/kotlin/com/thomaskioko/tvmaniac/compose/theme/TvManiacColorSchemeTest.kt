@@ -32,7 +32,7 @@ internal class TvManiacColorSchemeTest {
     }
 
     @Test
-    fun `should seed buttonBackground and onButtonBackground from the material secondary roles`() {
+    fun `should take buttonBackground and onButtonBackground from the material secondary roles`() {
         allThemes.forEach { scheme ->
             scheme.buttonBackground shouldBe scheme.material.secondary
             scheme.onButtonBackground shouldBe scheme.material.onSecondary

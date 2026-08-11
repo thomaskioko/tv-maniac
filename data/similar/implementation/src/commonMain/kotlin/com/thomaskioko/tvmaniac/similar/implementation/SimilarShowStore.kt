@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SIMILAR_SHOWS
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.similar.api.SimilarShowsDao
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
@@ -140,7 +141,7 @@ private fun SimilarShowResult.toTvshow(
         posterPath = tmdb?.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         backdropPath = tmdb?.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         status = tmdb?.status ?: trakt.status,
-        genres = trakt.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+        genres = trakt.genres?.map(::traktGenreName),
         episodeNumbers = trakt.airedEpisodes?.toString(),
         seasonNumbers = null,
     )

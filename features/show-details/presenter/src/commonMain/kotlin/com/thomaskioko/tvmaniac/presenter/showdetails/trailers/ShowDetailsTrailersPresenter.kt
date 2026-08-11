@@ -12,6 +12,8 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveTrailersInteractor
+import com.thomaskioko.tvmaniac.i18n.StringResourceKey
+import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.toTrailerModels
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -32,7 +34,7 @@ import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = ShowDetailsChildScope::class, parentScope = ShowDetailsRoute::class)
 @AssistedInject
-public class ShowDetailsTrailersPresenter(
+public class ShowDetailsTrailersPresenter internal constructor(
     componentContext: ComponentContext,
     @Assisted private val showId: Long,
     @Assisted private val forceRefresh: Boolean,
@@ -41,12 +43,14 @@ public class ShowDetailsTrailersPresenter(
     private val navigator: Navigator,
     private val accountManager: AccountManager,
     private val errorToStringMapper: ErrorToStringMapper,
+    private val localizer: Localizer,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
     private val loadingState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
+    private val title = localizer.getString(StringResourceKey.TitleTrailer)
 
     init {
         observeTrailersInteractor(showId)
@@ -60,6 +64,7 @@ public class ShowDetailsTrailersPresenter(
         uiMessageManager.message,
     ) { isLoading, trailers, message ->
         ShowDetailsTrailersState(
+            title = title,
             trailersList = trailers.trailers.toTrailerModels(),
             hasWebViewInstalled = trailers.hasWebViewInstalled,
             isRefreshing = isLoading,
@@ -68,7 +73,7 @@ public class ShowDetailsTrailersPresenter(
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = ShowDetailsTrailersState(),
+        initialValue = ShowDetailsTrailersState(title = title),
     )
 
     public val stateValue: Value<ShowDetailsTrailersState> = state.asValue(coroutineScope)

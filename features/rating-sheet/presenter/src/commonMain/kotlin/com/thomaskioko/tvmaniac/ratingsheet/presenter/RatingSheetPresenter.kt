@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.stateIn
     kind = DestinationKind.OVERLAY,
 )
 @AssistedInject
-public class RatingSheetPresenter(
+public class RatingSheetPresenter internal constructor(
     @Assisted private val param: RatingSheetParam,
     componentContext: ComponentContext,
     observeRatingInteractor: ObserveRatingInteractor,

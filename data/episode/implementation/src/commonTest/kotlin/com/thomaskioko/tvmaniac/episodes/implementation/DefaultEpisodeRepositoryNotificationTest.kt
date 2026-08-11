@@ -47,7 +47,7 @@ internal class DefaultEpisodeRepositoryNotificationTest : BaseDatabaseTest() {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        seedShow()
+        addShow()
     }
 
     @AfterTest
@@ -134,7 +134,7 @@ internal class DefaultEpisodeRepositoryNotificationTest : BaseDatabaseTest() {
         message = "message",
     )
 
-    private fun seedShow() {
+    private fun addShow() {
         database.tvShowQueries.upsert(
             tmdb_id = Id(SHOW_ID),
             name = "Test Show",

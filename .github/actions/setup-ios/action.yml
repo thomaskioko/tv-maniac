@@ -13,6 +13,10 @@ inputs:
     description: 'Forwarded to setup-gradle. Defaults to read-only on pull requests; set false for the cache-writing job.'
     required: false
     default: ${{ github.event_name == 'pull_request' }}
+  kotlin-tooling:
+    description: 'Set false for jobs that never call Gradle, so they skip the Kotlin/Native and Gradle caches.'
+    required: false
+    default: 'true'
 
 runs:
   using: 'composite'
@@ -45,6 +49,7 @@ runs:
           ${{ runner.os }}-spm-
 
     - name: 🗂️ Cache Kotlin/Native (konan)
+      if: inputs.kotlin-tooling == 'true'
       uses: actions/cache@v6
       with:
         path: ~/.konan
@@ -53,6 +58,7 @@ runs:
           ${{ runner.os }}-konan-
 
     - name: 🐘 Setup Gradle
+      if: inputs.kotlin-tooling == 'true'
       uses: ./.github/actions/setup-gradle
       with:
         gradle-cache-read-only: ${{ inputs.gradle-cache-read-only }}

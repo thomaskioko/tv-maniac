@@ -351,6 +351,7 @@ class DebugPresenterTest {
                 ),
                 showMetadataSyncHelper = ShowMetadataSyncHelper(FakeEpisodeRepository()),
                 watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+                showDetailsRepository = FakeShowDetailsRepository(),
                 syncRepository = FakeActivitySyncRepository(),
                 datastoreRepository = datastoreRepository,
                 dateTimeProvider = dateTimeProvider,

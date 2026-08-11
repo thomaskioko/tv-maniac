@@ -47,6 +47,10 @@ graph TB
     direction TB
     :data:request-manager:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -67,12 +71,15 @@ graph TB
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api
   :data:logout:implementation --> :data:request-manager:api
+  :data:logout:implementation --> :data:rewatch:api
   :data:logout:implementation --> :data:sync-activity:api
   :data:logout:implementation --> :data:user:api
   :data:ratings:api --> :core:network-util:api
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
   :data:user:api --> :core:network-util:api

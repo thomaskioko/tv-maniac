@@ -15,6 +15,8 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.SHOW_DETAI
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
+import com.thomaskioko.tvmaniac.shows.api.traktGenreName
+import com.thomaskioko.tvmaniac.shows.api.traktGenreNames
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowDetailsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -59,7 +61,7 @@ public class ShowDetailsStore(
                 seasonNumbers = tmdbDetails.seasons.size.toString(),
                 ratings = traktShow.rating ?: 0.0,
                 voteCount = traktShow.votes ?: 0L,
-                genres = traktShow.genres?.map { it.replaceFirstChar { c -> c.uppercase() } },
+                genres = traktShow.genres?.map(::traktGenreName),
                 posterPath = tmdbDetails.posterPath,
                 backdropPath = tmdbDetails.backdropPath,
                 tmdbSeasons = tmdbDetails.seasons,
@@ -79,7 +81,7 @@ public class ShowDetailsStore(
                 seasonNumbers = tmdbShow.numberOfSeasons.toString(),
                 ratings = tmdbShow.voteAverage,
                 voteCount = tmdbShow.voteCount.toLong(),
-                genres = tmdbShow.genres.map { it.name.replaceFirstChar { c -> c.uppercase() } },
+                genres = tmdbShow.genres.flatMap { traktGenreNames(it.name) }.distinct(),
                 posterPath = tmdbShow.posterPath,
                 backdropPath = tmdbShow.backdropPath,
                 tmdbSeasons = tmdbShow.seasons,

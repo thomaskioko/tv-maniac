@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRemoteDataSource
+import com.thomaskioko.tvmaniac.data.ratings.api.RemoteShowRating
 
 public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
 
@@ -17,6 +18,7 @@ public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
         private set
     private var communityRatingResponse: ApiResponse<CommunityRating> = ApiResponse.Success(CommunityRating(rating = 0.0, votes = 0))
     private var userRatingResponse: ApiResponse<Int?> = ApiResponse.Success(null)
+    private var userRatingsResponse: ApiResponse<List<RemoteShowRating>> = ApiResponse.Success(emptyList())
     private var addSeasonRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
     private var removeSeasonRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
     private var addEpisodeRatingResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
@@ -36,6 +38,10 @@ public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
 
     public fun setUserRatingResponse(response: ApiResponse<Int?>) {
         userRatingResponse = response
+    }
+
+    public fun setUserRatingsResponse(response: ApiResponse<List<RemoteShowRating>>) {
+        userRatingsResponse = response
     }
 
     public fun setAddSeasonRatingResponse(response: ApiResponse<Unit>) {
@@ -67,6 +73,8 @@ public class FakeRatingsRemoteDataSource : RatingsRemoteDataSource {
     override suspend fun getShowCommunityRating(providerShowId: Long): ApiResponse<CommunityRating> = communityRatingResponse
 
     override suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?> = userRatingResponse
+
+    override suspend fun getShowUserRatings(): ApiResponse<List<RemoteShowRating>> = userRatingsResponse
 
     override suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit> = addSeasonRatingResponse
 

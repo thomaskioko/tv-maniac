@@ -4,4 +4,7 @@ plugins {
 
 scaffold {
     addAndroidTarget()
+    addIosTargetsWithXcFramework(frameworkName = "TvManiacTestTags") { framework ->
+        framework.isStatic = true
+    }
 }

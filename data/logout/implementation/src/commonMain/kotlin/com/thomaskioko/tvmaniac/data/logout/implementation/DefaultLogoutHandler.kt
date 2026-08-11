@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.coroutines.SyncCoroutineScope
 import com.thomaskioko.tvmaniac.data.logout.api.LogoutHandler
 import com.thomaskioko.tvmaniac.data.ratings.api.ProviderMetaDao
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsDao
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -24,6 +25,7 @@ public class DefaultLogoutHandler(
     private val requestManagerRepository: RequestManagerRepository,
     private val ratingsDao: RatingsDao,
     private val providerMetaDao: ProviderMetaDao,
+    private val rewatchSessionDao: RewatchSessionDao,
     private val database: TvManiacDatabase,
     private val transactionRunner: DatabaseTransactionRunner,
 ) : LogoutHandler {
@@ -48,6 +50,7 @@ public class DefaultLogoutHandler(
             database.calendarQueries.deleteAll()
             ratingsDao.clearAll()
             providerMetaDao.clearAll()
+            rewatchSessionDao.clearAll()
         }
     }
 }

@@ -20,6 +20,7 @@ scaffold {
         with(framework) {
             isStatic = true
             if (debuggable) freeCompilerArgs += "-Xadd-light-debug=enable"
+            if (!debuggable) freeCompilerArgs += "-Xbinary=smallBinary=true"
             freeCompilerArgs += listOf("-Xbinary=bundleId=Kotlin", "-Xexport-kdoc")
 
             disableNativeCache(
@@ -50,6 +51,7 @@ scaffold {
             export(projects.features.search.presenter)
             export(projects.features.seasonDetails.presenter)
             export(projects.features.settings.presenter)
+            export(projects.features.statistics.presenter)
             export(projects.features.showDetails.nav)
             export(projects.features.showDetails.presenter)
             export(projects.features.showList.presenter)
@@ -99,6 +101,7 @@ kotlin {
                 api(projects.features.search.presenter)
                 api(projects.features.seasonDetails.presenter)
                 api(projects.features.settings.presenter)
+                api(projects.features.statistics.presenter)
                 api(projects.features.showDetails.presenter)
                 implementation(projects.features.showList.nav)
                 api(projects.features.showList.presenter)
@@ -232,6 +235,7 @@ kotlin {
                 implementation(projects.data.user.api)
                 implementation(projects.data.user.implementation)
                 implementation(projects.data.logout.implementation)
+                implementation(projects.data.rewatch.implementation)
                 implementation(projects.domain.user)
                 implementation(projects.domain.followedshows)
                 implementation(projects.domain.logout)

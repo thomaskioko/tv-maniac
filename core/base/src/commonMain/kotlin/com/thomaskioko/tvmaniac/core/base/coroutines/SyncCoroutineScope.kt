@@ -22,7 +22,7 @@ public class SyncCoroutineScope(
 ) {
     private val job = SupervisorJob()
 
-    public val scope: CoroutineScope = CoroutineScope(job + dispatchers.io)
+    public val scope: CoroutineScope = CoroutineScope(job + dispatchers.io + CoroutineCrashUtil.handler)
 
     public suspend fun cancelActiveWork() {
         job.cancelChildren()

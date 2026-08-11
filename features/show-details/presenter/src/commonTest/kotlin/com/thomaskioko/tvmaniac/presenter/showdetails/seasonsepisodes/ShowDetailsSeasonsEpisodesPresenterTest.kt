@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -16,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
@@ -28,12 +30,15 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.testContinueTrackingResult
 import com.thomaskioko.tvmaniac.presenter.showdetails.testSeasonWatchProgress
 import com.thomaskioko.tvmaniac.presenter.showdetails.testSeasonsWithProgress
 import com.thomaskioko.tvmaniac.presenter.showdetails.testShowWatchProgress
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +70,12 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     private val navigator = FakeNavigator()
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val datastoreRepository = FakeDatastoreRepository()
+    private val ratingsRepository = FakeRatingsRepository()
+    private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
+        datastoreRepository = datastoreRepository,
+        subscriptionManager = FakeSubscriptionManager(),
+        ratingsRepository = ratingsRepository,
+    )
 
     @BeforeTest
     fun setUp() {
@@ -213,6 +224,45 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     }
 
     @Test
+    fun `should open the rating sheet given quick rate is on and an episode is marked watched`() = runTest {
+        datastoreRepository.saveQuickRateEnabled(true)
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            presenter.dispatch(
+                ShowDetailsMarkEpisodeWatched(showId = SHOW_ID, episodeId = 1001L, seasonNumber = 1L, episodeNumber = 1L),
+            )
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+            route.param.id shouldBe 1001L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not open the rating sheet given quick rate is off`() = runTest {
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            presenter.dispatch(
+                ShowDetailsMarkEpisodeWatched(showId = SHOW_ID, episodeId = 1001L, seasonNumber = 1L, episodeNumber = 1L),
+            )
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall.shouldNotBeNull()
+            navigator.activatedOverlays.shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should clear updating flag after mark watched completes`() = runTest {
         seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
         val presenter = buildPresenter()
@@ -301,6 +351,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
                 episodeRepository = episodeRepository,
             ),
             datastoreRepository = datastoreRepository,
+            shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
             navigator = navigator,
             accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },

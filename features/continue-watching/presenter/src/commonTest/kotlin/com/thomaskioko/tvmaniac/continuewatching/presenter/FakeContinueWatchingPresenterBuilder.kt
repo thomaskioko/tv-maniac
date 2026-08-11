@@ -9,14 +9,17 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.UpNextSectionsMapper
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowMetadataSyncHelper
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.syncactivity.SyncActivityInteractor
@@ -29,6 +32,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
@@ -52,6 +56,9 @@ class FakeContinueWatchingPresenterBuilder {
     val syncObserver = FakeSyncObserver()
     val nitroFlag = FakeFeatureFlag(initial = false)
     val localizer = FakeLocalizer()
+    val subscriptionManager = FakeSubscriptionManager()
+    val datastoreRepository = FakeDatastoreRepository()
+    val ratingsRepository = FakeRatingsRepository()
 
     val testDispatcher = UnconfinedTestDispatcher()
 
@@ -119,6 +126,7 @@ class FakeContinueWatchingPresenterBuilder {
         componentContext = componentContext,
         navigator = navigator,
         repository = repository,
+        subscriptionManager = subscriptionManager,
         unfollowShowInteractor = UnfollowShowInteractor(
             followedShowsRepository = fakeFollowedShowsRepository,
             libraryRepository = FakeLibraryRepository(),
@@ -127,6 +135,11 @@ class FakeContinueWatchingPresenterBuilder {
         observeWatchlistSectionsInteractor = observeWatchlistSectionsInteractor,
         observeUpNextSectionsInteractor = observeUpNextSectionsInteractor,
         markEpisodeWatchedInteractor = fakeMarkEpisodeWatchedInteractor,
+        shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
+            datastoreRepository = datastoreRepository,
+            subscriptionManager = subscriptionManager,
+            ratingsRepository = ratingsRepository,
+        ),
         syncContinueWatchingInteractor = syncContinueWatchingInteractor,
         nitroFlag = nitroFlag,
         syncObserver = syncObserver,

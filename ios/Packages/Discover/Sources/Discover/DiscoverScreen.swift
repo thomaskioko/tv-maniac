@@ -75,7 +75,9 @@ public struct DiscoverScreen: View {
             } else if state.showError {
                 EmptyStateView(
                     systemName: "exclamationmark.arrow.triangle.2.circlepath",
-                    title: state.errorMessage ?? "Something went wrong"
+                    title: state.errorMessage ?? "Something went wrong",
+                    buttonText: state.retryText,
+                    action: onRefresh
                 )
             } else {
                 discoverLoadedContent
@@ -289,7 +291,9 @@ private struct DiscoverScreenScaffoldPreview: View {
             } else if state.showError {
                 EmptyStateView(
                     systemName: "exclamationmark.arrow.triangle.2.circlepath",
-                    title: state.errorMessage ?? "Something went wrong"
+                    title: state.errorMessage ?? "Something went wrong",
+                    buttonText: state.retryText,
+                    action: {}
                 )
             }
         }

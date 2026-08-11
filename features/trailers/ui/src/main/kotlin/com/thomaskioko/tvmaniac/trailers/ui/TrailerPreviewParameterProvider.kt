@@ -21,8 +21,16 @@ internal class TrailerPreviewParameterProvider : PreviewParameterProvider<Traile
     override val values: Sequence<TrailersState>
         get() {
             return sequenceOf(
-                TrailersContent(trailersList = trailersList),
-                TrailerError(errorMessage = "Opps! Something went wrong"),
+                TrailersContent(
+                    title = "Trailers",
+                    moreTrailersTitle = "More Trailers",
+                    trailersList = trailersList,
+                ),
+                TrailerError(
+                    title = "Trailers",
+                    errorMessage = "Opps! Something went wrong",
+                    retryLabel = "Retry",
+                ),
             )
         }
 }

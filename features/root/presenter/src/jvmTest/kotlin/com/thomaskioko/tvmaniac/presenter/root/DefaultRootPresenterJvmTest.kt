@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.presenter.root
 
+import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
@@ -22,4 +23,7 @@ internal class DefaultRootPresenterJvmTest : DefaultRootPresenterTest() {
 
     override val syncObserver: SyncObserver
         get() = testComponent.syncObserver
+
+    override val internetConnectionChecker: FakeInternetConnectionChecker
+        get() = testComponent.fakeInternetConnectionChecker
 }

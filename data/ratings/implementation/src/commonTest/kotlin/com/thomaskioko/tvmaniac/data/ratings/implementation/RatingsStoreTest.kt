@@ -74,7 +74,7 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist community rating given trakt fetch succeeds`() = runTest(testDispatcher) {
-        val showId = seedShow(tmdbId = TMDB_ID)
+        val showId = addShow(tmdbId = TMDB_ID)
         database.tvshowExternalIdQueries.insert(showId = showId, provider = Provider.TRAKT, externalId = TRAKT_ID.toString())
         remoteDataSource.provider = SyncProviderSource.TRAKT
         remoteDataSource.setCommunityRatingResponse(ApiResponse.Success(CommunityRating(rating = 8.5, votes = 100)))
@@ -94,7 +94,7 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist community rating given simkl fetch succeeds`() = runTest(testDispatcher) {
-        val showId = seedShow(tmdbId = TMDB_ID)
+        val showId = addShow(tmdbId = TMDB_ID)
         database.tvshowExternalIdQueries.insert(showId = showId, provider = Provider.SIMKL, externalId = SIMKL_ID)
         remoteDataSource.provider = SyncProviderSource.SIMKL
         remoteDataSource.setCommunityRatingResponse(ApiResponse.Success(CommunityRating(rating = 7.2, votes = 42)))
@@ -114,7 +114,7 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should throw given show has no provider id for the active provider`() = runTest(testDispatcher) {
-        val showId = seedShow(tmdbId = TMDB_ID)
+        val showId = addShow(tmdbId = TMDB_ID)
         remoteDataSource.provider = SyncProviderSource.SIMKL
         val store = buildStore()
 
@@ -125,7 +125,7 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should throw given no active sync provider`() = runTest(testDispatcher) {
-        val showId = seedShow(tmdbId = TMDB_ID)
+        val showId = addShow(tmdbId = TMDB_ID)
         activeRemoteSource = null
         val store = buildStore()
 
@@ -134,7 +134,7 @@ internal class RatingsStoreTest : BaseDatabaseTest() {
         }
     }
 
-    private fun seedShow(tmdbId: Long): Id<ShowId> {
+    private fun addShow(tmdbId: Long): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
             name = "Test Show",

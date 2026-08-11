@@ -1,9 +1,15 @@
 package com.thomaskioko.tvmaniac.ui.library.roborrazi
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
+import com.thomaskioko.tvmaniac.ui.library.LayoutMenu
 import com.thomaskioko.tvmaniac.ui.library.LibraryScreen
 import com.thomaskioko.tvmaniac.ui.library.preview.LibraryStatePreviewParameterProvider
 import org.junit.Rule
@@ -13,6 +19,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import org.robolectric.annotation.LooperMode
+
+private val TopBarAnchorInset = 120.dp
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
@@ -69,6 +77,64 @@ class LibraryScreenTest {
                     state = states[3],
                     onAction = {},
                 )
+            }
+        }
+    }
+
+    @Test
+    fun libraryScreenCompactMode() {
+        composeTestRule.captureMultiDevice("LibraryCompactMode") {
+            TvManiacBackground {
+                LibraryScreen(
+                    state = states[4],
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun libraryScreenDetailedMode() {
+        composeTestRule.captureMultiDevice("LibraryDetailedMode") {
+            TvManiacBackground {
+                LibraryScreen(
+                    state = states[5],
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun libraryScreenLayoutMenuUnlocked() {
+        composeTestRule.captureMultiDevice("LibraryLayoutMenuUnlocked") {
+            TvManiacBackground {
+                Box(modifier = Modifier.padding(top = TopBarAnchorInset)) {
+                    LayoutMenu(
+                        currentStyle = ListStyle.GRID,
+                        isLocked = false,
+                        expanded = true,
+                        onExpandedChange = {},
+                        onAction = {},
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun libraryScreenLayoutMenuLocked() {
+        composeTestRule.captureMultiDevice("LibraryLayoutMenuLocked") {
+            TvManiacBackground {
+                Box(modifier = Modifier.padding(top = TopBarAnchorInset)) {
+                    LayoutMenu(
+                        currentStyle = ListStyle.LIST,
+                        isLocked = true,
+                        expanded = true,
+                        onExpandedChange = {},
+                        onAction = {},
+                    )
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.UPCOMING_S
 import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.shows.api.traktGenreName
 import com.thomaskioko.tvmaniac.tmdb.api.TmdbShowsNetworkDataSource
 import com.thomaskioko.tvmaniac.trakt.api.TraktShowsRemoteDataSource
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
@@ -150,7 +151,7 @@ private fun UpcomingShowResult.toTvshow(
         posterPath = tmdb.posterPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         backdropPath = tmdb.backdropPath?.let { formatterUtil.formatTmdbPosterPath(it) },
         status = trakt?.status,
-        genres = trakt?.genres?.map { it.replaceFirstChar { char -> char.uppercase() } },
+        genres = trakt?.genres?.map(::traktGenreName),
         episodeNumbers = trakt?.airedEpisodes?.toString(),
         seasonNumbers = null,
     )

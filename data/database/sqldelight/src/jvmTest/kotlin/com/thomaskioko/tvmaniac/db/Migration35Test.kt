@@ -15,7 +15,7 @@ import kotlin.test.Test
 class Migration35Test {
 
     @Test
-    fun `should add an internal id and seed a TRAKT external id per show`() {
+    fun `should add an internal id and a TRAKT external id per show`() {
         openSnapshot(version = 35).use { driver ->
             driver.insertShow(traktId = 100, tmdbId = 200, ratings = 8.5, voteCount = 1234)
             driver.insertShow(traktId = 101, tmdbId = 201, ratings = 9.1, voteCount = 99)

@@ -57,7 +57,7 @@ public struct SearchItemView: View {
                             .foregroundStyle(.appSecondary)
                             .textStyle(theme.typography.bodySmall)
 
-                        Text(String(format: "%.1f", voteAverage))
+                        Text(voteAverage.formatted(.number.precision(.fractionLength(1))))
                             .textStyle(theme.typography.bodySmall)
                             .foregroundStyle(.appOnSurface)
 

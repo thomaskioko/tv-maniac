@@ -126,6 +126,17 @@ public extension TvManiac.TrailerModel {
     }
 }
 
+public extension TvManiac.Trailer {
+    func toSwift() -> SwiftTrailer {
+        .init(
+            showId: showId,
+            key: key,
+            name: name,
+            youtubeThumbnailUrl: youtubeThumbnailUrl
+        )
+    }
+}
+
 public extension TvManiac.CastModel {
     func toSwift() -> SwiftCast {
         .init(
@@ -343,5 +354,25 @@ public extension TvManiac.DiscoverStartWatchingState {
 public extension TvManiac.WatchProviderUiModel {
     func toSwift() -> SwiftProviders {
         .init(providerId: id, logoUrl: logoUrl)
+    }
+}
+
+public extension ApiListStyle {
+    func toSwift() -> SwiftListStyle {
+        if self == ApiListStyle.grid { return .grid }
+        if self == ApiListStyle.list { return .list }
+        if self == ApiListStyle.compact { return .compact }
+        return .detailed
+    }
+}
+
+public extension SwiftListStyle {
+    var toApiListStyle: ApiListStyle {
+        switch self {
+        case .grid: ApiListStyle.grid
+        case .list: ApiListStyle.list
+        case .compact: ApiListStyle.compact
+        case .detailed: ApiListStyle.detailed
+        }
     }
 }

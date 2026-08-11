@@ -128,6 +128,7 @@ internal fun ProfileScreen(
                     authProviders = state.authProviders,
                     onProviderClick = { onAction(LoginClicked(it)) },
                     onViewLists = { onAction(ProfileAction.ViewListsClicked) },
+                    onViewStatistics = { onAction(ProfileAction.StatisticsClicked) },
                     onListClick = {},
                     onShowClick = { onAction(ProfileAction.ShowClicked(it)) },
                     onRetry = { onAction(ProfileAction.RefreshProfile) },
@@ -204,6 +205,7 @@ private fun ProfileContent(
     authProviders: ImmutableList<AuthProviderOption>,
     onProviderClick: (SyncProviderSource) -> Unit,
     onViewLists: () -> Unit,
+    onViewStatistics: () -> Unit,
     onListClick: (Long) -> Unit,
     onShowClick: (Long) -> Unit,
     onRetry: () -> Unit,
@@ -263,6 +265,7 @@ private fun ProfileContent(
                                 labels = labels,
                                 listCount = listCount,
                                 onViewLists = onViewLists,
+                                onViewStatistics = onViewStatistics,
                             )
                         }
                     }

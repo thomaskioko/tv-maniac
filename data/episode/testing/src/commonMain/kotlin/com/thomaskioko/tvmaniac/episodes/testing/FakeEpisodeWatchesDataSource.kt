@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
+import com.thomaskioko.tvmaniac.episodes.api.WatchedShowMetadata
 
 public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     override var provider: SyncProviderSource = SyncProviderSource.TRAKT
@@ -12,6 +13,19 @@ public class FakeEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     private val addEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
     private val removeEpisodeWatchesInvocations = mutableListOf<List<WatchedEpisodeEntry>>()
     private var allWatchedShowsError: Throwable? = null
+    private val showMetadataPages = mutableMapOf<Int, List<WatchedShowMetadata>>()
+    private val metadataRequestPages = mutableListOf<Int>()
+
+    public fun setShowMetadataPage(page: Int, metadata: List<WatchedShowMetadata>) {
+        showMetadataPages[page] = metadata
+    }
+
+    public fun metadataRequestPages(): List<Int> = metadataRequestPages.toList()
+
+    override suspend fun getWatchedShowMetadata(page: Int, limit: Int): List<WatchedShowMetadata> {
+        metadataRequestPages.add(page)
+        return showMetadataPages[page].orEmpty()
+    }
 
     public fun setShowEpisodeWatches(showId: Long, watches: List<WatchedEpisodeEntry>) {
         watchesMap[showId] = watches

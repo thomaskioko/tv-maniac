@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.myshows
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.subscription.api.AccountType
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import org.junit.Test
 
 internal class MyShowsFlowTest : BaseAppFlowTest() {
@@ -162,7 +164,7 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenWatchlistGrid_whenToggleListStyleClicked_thenSwitchesToListMode() = runAppFlowTest {
+    fun givenWatchlistGrid_whenLayoutMenuOpened_thenSelectingFreeLayoutSwitchesRendering() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
 
         rootRobot.dismissNotificationRationale()
@@ -174,9 +176,57 @@ internal class MyShowsFlowTest : BaseAppFlowTest() {
 
         watchlistRobot
             .assertGridDisplayed()
-            .clickToggleListStyleButton()
+            .clickLayoutMenuButton()
+            .assertLayoutMenuDisplayed()
+            .clickLayoutMenuItem(MyShowsTestTags.LAYOUT_MENU_ITEM_LIST_TEST_TAG)
             .assertListDisplayed()
-            .clickToggleListStyleButton()
+            .clickLayoutMenuButton()
+            .clickLayoutMenuItem(MyShowsTestTags.LAYOUT_MENU_ITEM_GRID_TEST_TAG)
+            .assertGridDisplayed()
+    }
+
+    @Test
+    fun givenPaywallEnabledAndFreeAccount_whenLayoutMenuOpened_thenPremiumLayoutsAreLocked() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+        scenarios.flags.enablePaywall()
+
+        rootRobot.dismissNotificationRationale()
+        discoverRobot.assertDiscoverScreenDisplayed()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot.clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openDebugMenu()
+
+        debugRobot
+            .assertDebugMenuScreenDisplayed()
+            .scrollToAccountTypeRow()
+            .clickAccountTypeRow()
+            .assertAccountTypeDialogDisplayed()
+            .selectAccountType(AccountType.Free)
+            .pressBack()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .clickBackButton()
+            .clickBackButton()
+
+        homeRobot
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
+
+        watchlistRobot
+            .assertGridDisplayed()
+            .clickLayoutMenuButton()
+            .assertLayoutMenuLockedSectionDisplayed()
+            .assertDoesNotExist(MyShowsTestTags.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG)
+            .assertDoesNotExist(MyShowsTestTags.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG)
+            .clickText("Upgrade to Premium")
             .assertGridDisplayed()
     }
 

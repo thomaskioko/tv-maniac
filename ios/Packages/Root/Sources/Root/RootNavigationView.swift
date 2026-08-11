@@ -14,6 +14,7 @@ public struct RootNavigationView: View {
     @StateValue private var notificationPermissionState: NotificationPermissionState
     @StateValue private var episodeSheetSlot: ChildSlot<AnyObject, SheetChild>
     @StateValue private var accountLimitBannerVisible: KotlinBoolean
+    @StateValue private var connectivityBannerState: ConnectivityBannerState
     @StateObject private var store = SettingsAppStorage.shared
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var rationaleActionTaken = false
@@ -26,6 +27,7 @@ public struct RootNavigationView: View {
         _notificationPermissionState = .init(rootPresenter.notificationPermissionStateValue)
         _episodeSheetSlot = .init(rootPresenter.episodeSheetSlotValue)
         _accountLimitBannerVisible = .init(rootPresenter.accountLimitBannerVisibleValue)
+        _connectivityBannerState = .init(rootPresenter.connectivityBannerStateValue)
     }
 
     public var body: some View {
@@ -42,6 +44,16 @@ public struct RootNavigationView: View {
                 }
             }
             .animation(.spring(), value: accountLimitBannerVisible.boolValue)
+            .overlay(alignment: .top) {
+                if connectivityBannerState != ConnectivityBannerState.hidden {
+                    OfflineBanner(
+                        isBackOnline: connectivityBannerState == ConnectivityBannerState.backonline,
+                        onDismiss: { rootPresenter.onDismissOfflineBanner() }
+                    )
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .animation(.spring(), value: connectivityBannerState)
         }
         .appTheme()
         .hapticFeedbackEnabled(appUiState.hapticFeedbackEnabled)
@@ -87,7 +99,10 @@ public struct RootNavigationView: View {
                 onDismiss: {
                     rationaleActionTaken = true
                     rootPresenter.onRationaleDismissed()
-                }
+                },
+                sheetTestTag: NotificationRationaleTestTags.shared.BOTTOM_SHEET,
+                enableButtonTestTag: NotificationRationaleTestTags.shared.ENABLE_BUTTON,
+                dismissButtonTestTag: NotificationRationaleTestTags.shared.DISMISS_BUTTON
             )
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)

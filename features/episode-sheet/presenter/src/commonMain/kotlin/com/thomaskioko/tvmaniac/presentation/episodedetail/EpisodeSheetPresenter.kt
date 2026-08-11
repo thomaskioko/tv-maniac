@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -47,13 +48,14 @@ import kotlinx.coroutines.launch
     kind = DestinationKind.OVERLAY,
 )
 @AssistedInject
-public class EpisodeSheetPresenter(
+public class EpisodeSheetPresenter internal constructor(
     @Assisted private val param: EpisodeSheetParam,
     componentContext: ComponentContext,
     observeEpisodeByIdInteractor: ObserveEpisodeByIdInteractor,
     observeRatingInteractor: ObserveRatingInteractor,
     private val navigator: Navigator,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -115,8 +117,9 @@ public class EpisodeSheetPresenter(
     private fun toggleWatched() {
         val episode = currentEpisode ?: return
         if (state.value.isTogglingWatched) return
+        val wasWatched = episode.is_watched != 0L
         appScopeLauncher.launch(TAG) {
-            val markStatus = if (episode.is_watched != 0L) {
+            val markStatus = if (wasWatched) {
                 markEpisodeUnwatchedInteractor(
                     MarkEpisodeUnwatchedParams(
                         showId = episode.show_id.id,
@@ -134,7 +137,25 @@ public class EpisodeSheetPresenter(
                 )
             }
             markStatus.collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-            coroutineScope.launch { navigator.dismissOverlay() }
+            val shouldRate = !wasWatched && shouldPromptForRatingInteractor(
+                ShouldPromptForRatingInteractor.Param(
+                    showId = episode.show_id.id,
+                    episodeId = episode.episode_id.id,
+                ),
+            )
+            coroutineScope.launch {
+                navigator.dismissOverlay()
+                if (shouldRate) {
+                    navigator.navigateTo(
+                        RatingSheetRoute(
+                            RatingSheetParam(
+                                ratingType = RatingEntityType.EPISODE,
+                                id = episode.episode_id.id,
+                            ),
+                        ),
+                    )
+                }
+            }
         }
     }
 

@@ -22,8 +22,11 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -47,6 +50,7 @@ class SyncLibraryInteractorTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val accountManager = FakeAccountManager().apply { setActiveProvider(SyncProviderSource.TRAKT) }
     private val syncObserver = FakeSyncObserver()
+    private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
 
     private val interactor = SyncLibraryInteractor(
         accountManager = accountManager,
@@ -63,7 +67,8 @@ class SyncLibraryInteractorTest {
             dispatchers = dispatchers,
         ),
         showMetadataSyncHelper = ShowMetadataSyncHelper(episodeRepository),
-        watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository(),
+        watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+        showDetailsRepository = showDetailsRepository,
         syncRepository = FakeActivitySyncRepository(),
         datastoreRepository = FakeDatastoreRepository(),
         dateTimeProvider = FakeDateTimeProvider(),
@@ -149,6 +154,63 @@ class SyncLibraryInteractorTest {
             expectNoEvents()
         }
         syncObserver.isSyncing.value shouldBe false
+    }
+
+    @Test
+    fun `should fetch show details for watched shows missing genres`() = runTest(testDispatcher) {
+        watchedEpisodeSyncRepository.setWatchedShowsMissingGenres(listOf(11L, 22L))
+
+        interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldContainAll listOf(11L, 22L)
+    }
+
+    @Test
+    fun `should not fetch show details given no watched show is missing genres`() = runTest(testDispatcher) {
+        watchedEpisodeSyncRepository.setWatchedShowsMissingGenres(emptyList())
+
+        interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+
+        showDetailsRepository.fetchInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should backfill genres given the watchlist has not changed`() = runTest(testDispatcher) {
+        watchedEpisodeSyncRepository.setWatchedShowsMissingGenres(listOf(11L))
+
+        interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = false))
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldContainAll listOf(11L)
+    }
+
+    @Test
+    fun `should stop the genre backfill given the account is logged out`() = runTest(testDispatcher) {
+        accountManager.setActiveProvider(null)
+        watchedEpisodeSyncRepository.setWatchedShowsMissingGenres(listOf(11L, 22L))
+
+        interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+
+        showDetailsRepository.fetchInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should propagate cancellation given the metadata fan-out is cancelled`() = runTest(testDispatcher) {
+        followedShowsRepository.setEntries(listOf(followedShow(showId = 7L)))
+        showDetailsRepository.setFetchError(CancellationException("cancelled"))
+
+        shouldThrow<CancellationException> {
+            interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+        }
+    }
+
+    @Test
+    fun `should propagate cancellation given the genre backfill is cancelled`() = runTest(testDispatcher) {
+        watchedEpisodeSyncRepository.setWatchedShowsMissingGenres(listOf(11L))
+        showDetailsRepository.setFetchError(CancellationException("cancelled"))
+
+        shouldThrow<CancellationException> {
+            interactor.executeSync(SyncLibraryInteractor.Param(forceRefresh = true))
+        }
     }
 
     private fun followedShow(showId: Long): FollowedShowEntry = FollowedShowEntry(

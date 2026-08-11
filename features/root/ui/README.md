@@ -224,6 +224,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
@@ -351,6 +352,7 @@ graph TB
   :features:progress:nav --> :navigation:api
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
+  :features:root:presenter --> :core:connectivity:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view

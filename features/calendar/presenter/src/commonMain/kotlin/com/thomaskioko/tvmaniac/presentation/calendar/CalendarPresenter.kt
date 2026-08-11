@@ -45,7 +45,7 @@ import kotlinx.coroutines.flow.combine as combineFlows
 
 @ChildPresenter(scope = ProgressChildScope::class, parentScope = ProgressRoot::class)
 @Inject
-public class CalendarPresenter(
+public class CalendarPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val observeCalendarInteractor: ObserveCalendarInteractor,
