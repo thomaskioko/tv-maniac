@@ -224,6 +224,7 @@ dependencies {
     implementation(projects.features.featureFlags.presenter)
     implementation(projects.data.ratings.api)
     implementation(projects.domain.ratings)
+    implementation(projects.domain.rewatch)
     implementation(projects.features.ratingSheet.nav)
 
     implementation(libs.androidx.compose.activity)
