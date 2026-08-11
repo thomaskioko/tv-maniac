@@ -15,11 +15,15 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.FinishRewatchSessionInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -65,6 +69,10 @@ public class ShowDetailsHeaderPresenter internal constructor(
     observeRatingInteractor: ObserveRatingInteractor,
     observeCommunityRatingInteractor: ObserveCommunityRatingInteractor,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
+    observeRewatchStatusInteractor: ObserveRewatchStatusInteractor,
+    private val startRewatchSessionInteractor: StartRewatchSessionInteractor,
+    private val finishRewatchSessionInteractor: FinishRewatchSessionInteractor,
+    private val rewatchRepository: RewatchRepository,
     private val syncCalendarInteractor: SyncCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
@@ -87,11 +95,13 @@ public class ShowDetailsHeaderPresenter internal constructor(
         observeRatingInteractor(ObserveRatingInteractor.Param(RatingEntityType.SHOW, showId))
         observeCommunityRatingInteractor(showId)
         observeTraktListsInteractor(showId)
+        observeRewatchStatusInteractor(showId)
 
         fetchShowDetails(forceRefresh = forceRefresh)
         refreshCommunityRating(forceRefresh = forceRefresh)
         observeAuthState()
         updateListAvailability()
+        updateRewatchSyncNotice()
     }
 
     public val state: StateFlow<ShowDetailsHeaderState> = combine(
@@ -99,11 +109,13 @@ public class ShowDetailsHeaderPresenter internal constructor(
         observeRatingInteractor.flow,
         observeCommunityRatingInteractor.flow,
         observeTraktListsInteractor.flow,
+        observeRewatchStatusInteractor.flow,
         loadingState.observable,
         uiMessageManager.message,
         _state,
-    ) { details, userRating, communityRating, traktLists, isRefreshing, message, current ->
+    ) { details, userRating, communityRating, traktLists, rewatchStatus, isRefreshing, message, current ->
         val isInList = traktLists.any { it.isShowInList }
+        val openSession = rewatchStatus.openSession
         details.toHeaderState(localizer).copy(
             communityRating = communityRating?.rating,
             communityVotes = communityRating?.votes,
@@ -115,6 +127,14 @@ public class ShowDetailsHeaderPresenter internal constructor(
             listActionLabel = localizer.getString(
                 if (isInList) StringResourceKey.BtnInList else StringResourceKey.BtnAddToList,
             ),
+            rewatchCount = rewatchStatus.finishedCount,
+            isRewatching = openSession != null,
+            rewatchWatchedEpisodes = openSession?.watchedEpisodes ?: 0,
+            rewatchAiredEpisodes = openSession?.airedEpisodes ?: 0,
+            rewatchActionLabel = localizer.getString(
+                if (openSession != null) StringResourceKey.LabelRewatchClose else StringResourceKey.LabelRewatchStart,
+            ),
+            rewatchSyncNotice = current.rewatchSyncNotice,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -133,6 +153,8 @@ public class ShowDetailsHeaderPresenter internal constructor(
             ShowRatingClicked -> navigator.navigateTo(
                 RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.SHOW, id = showId)),
             )
+            StartRewatchClicked -> onStartRewatchClicked()
+            FinishRewatchClicked -> onFinishRewatchClicked()
         }
     }
 
@@ -190,8 +212,34 @@ public class ShowDetailsHeaderPresenter internal constructor(
                 .filter { it }
                 .collect {
                     updateListAvailability()
+                    updateRewatchSyncNotice()
                     fetchShowDetails(forceRefresh = true)
                 }
+        }
+    }
+
+    private fun onStartRewatchClicked() {
+        coroutineScope.launch {
+            startRewatchSessionInteractor(StartRewatchSessionInteractor.Param(showId = showId))
+                .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        }
+    }
+
+    private fun onFinishRewatchClicked() {
+        coroutineScope.launch {
+            finishRewatchSessionInteractor(FinishRewatchSessionInteractor.Param(showId = showId))
+                .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+        }
+    }
+
+    private fun updateRewatchSyncNotice() {
+        coroutineScope.launch {
+            val notice = if (rewatchRepository.supportsRewatch()) {
+                null
+            } else {
+                localizer.getString(StringResourceKey.LabelRewatchSimklFreeTier)
+            }
+            _state.update { it.copy(rewatchSyncNotice = notice) }
         }
     }
 

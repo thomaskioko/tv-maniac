@@ -23,6 +23,12 @@ public data class ShowDetailsHeaderState(
     val canAddToList: Boolean = false,
     val isInList: Boolean = false,
     val listActionLabel: String = "",
+    val rewatchCount: Int = 0,
+    val isRewatching: Boolean = false,
+    val rewatchWatchedEpisodes: Int = 0,
+    val rewatchAiredEpisodes: Int = 0,
+    val rewatchActionLabel: String = "",
+    val rewatchSyncNotice: String? = null,
     val isRefreshing: Boolean = false,
     val message: UiMessage? = null,
 )

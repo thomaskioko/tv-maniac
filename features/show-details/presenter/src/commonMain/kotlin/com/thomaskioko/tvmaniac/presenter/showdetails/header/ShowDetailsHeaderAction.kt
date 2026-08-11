@@ -7,3 +7,7 @@ public data class ShowDetailsFollowClicked(val isInLibrary: Boolean) : ShowDetai
 public data object ShowDetailsOpenShowList : ShowDetailsHeaderAction
 
 public data object ShowRatingClicked : ShowDetailsHeaderAction
+
+public data object StartRewatchClicked : ShowDetailsHeaderAction
+
+public data object FinishRewatchClicked : ShowDetailsHeaderAction

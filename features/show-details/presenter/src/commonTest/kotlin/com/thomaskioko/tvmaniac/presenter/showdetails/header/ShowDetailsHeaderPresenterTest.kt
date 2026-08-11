@@ -16,6 +16,9 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.api.OpenRewatchSession
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -24,6 +27,9 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInte
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.FinishRewatchSessionInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -45,6 +51,7 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
@@ -81,6 +88,7 @@ internal class ShowDetailsHeaderPresenterTest {
     private val notificationManager = FakeNotificationManager()
     private val accountManager = FakeAccountManager()
     private val traktListRepository = FakeTraktListRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val localizer = FakeLocalizer()
     private val formatterUtil = FakeFormatterUtil()
     private val dateTimeProvider = FakeDateTimeProvider()
@@ -248,6 +256,137 @@ internal class ShowDetailsHeaderPresenterTest {
         navigator.lastActivatedOverlay.shouldBeNull()
     }
 
+    @Test
+    fun `should return no rewatches given the show has none`() = runTest {
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.rewatchCount shouldBe 0
+            state.isRewatching shouldBe false
+        }
+    }
+
+    @Test
+    fun `should return the finished count given the show has past rewatches`() = runTest {
+        rewatchRepository.setRewatchStatusForShow(SHOW_ID, RewatchStatus(finishedCount = 2))
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.rewatchCount shouldBe 2
+            state.isRewatching shouldBe false
+        }
+    }
+
+    @Test
+    fun `should return the session progress given a rewatch is in progress`() = runTest {
+        rewatchRepository.setRewatchStatusForShow(
+            SHOW_ID,
+            RewatchStatus(
+                finishedCount = 1,
+                openSession = OpenRewatchSession(id = 7L, watchedEpisodes = 3, airedEpisodes = 12),
+            ),
+        )
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.isRewatching shouldBe true
+            state.rewatchWatchedEpisodes shouldBe 3
+            state.rewatchAiredEpisodes shouldBe 12
+            state.rewatchCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should open a session given start rewatch is clicked`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(StartRewatchClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        rewatchRepository.openSessionForShow(SHOW_ID).shouldNotBeNull()
+    }
+
+    @Test
+    fun `should finish the open session given finish rewatch is clicked`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+        presenter.dispatch(StartRewatchClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(FinishRewatchClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        rewatchRepository.finishedSessionId.shouldNotBeNull()
+        rewatchRepository.openSessionForShow(SHOW_ID).shouldBeNull()
+    }
+
+    @Test
+    fun `should finish nothing given finish rewatch is clicked with no open session`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(FinishRewatchClicked)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        rewatchRepository.finishedSessionId.shouldBeNull()
+    }
+
+    @Test
+    fun `should return a storage notice given the provider will not store rewatches`() = runTest {
+        rewatchRepository.setSupportsRewatch(false)
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().rewatchSyncNotice shouldBe
+                localizer.getString(StringResourceKey.LabelRewatchSimklFreeTier)
+        }
+    }
+
+    @Test
+    fun `should clear the storage notice given the account switches to one that stores rewatches`() = runTest {
+        rewatchRepository.setSupportsRewatch(false)
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().rewatchSyncNotice.shouldNotBeNull()
+
+            rewatchRepository.setSupportsRewatch(true)
+            accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().rewatchSyncNotice.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should return no storage notice given the provider stores rewatches`() = runTest {
+        rewatchRepository.setSupportsRewatch(true)
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().rewatchSyncNotice.shouldBeNull()
+        }
+    }
+
     private fun buildPresenter(
         forceRefresh: Boolean = false,
         supportsLists: Boolean = true,
@@ -286,6 +425,10 @@ internal class ShowDetailsHeaderPresenterTest {
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
             observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
+            observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
+            startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            finishRewatchSessionInteractor = FinishRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            rewatchRepository = rewatchRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,

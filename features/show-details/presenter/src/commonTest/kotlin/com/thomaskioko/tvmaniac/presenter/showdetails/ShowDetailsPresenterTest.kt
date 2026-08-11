@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -28,6 +29,9 @@ import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.FinishRewatchSessionInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
@@ -102,6 +106,7 @@ internal class ShowDetailsPresenterTest {
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val ratingsRepository = FakeRatingsRepository()
     private val traktListRepository = FakeTraktListRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
     private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
@@ -297,6 +302,10 @@ internal class ShowDetailsPresenterTest {
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
             observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
+            observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
+            startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            finishRewatchSessionInteractor = FinishRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            rewatchRepository = rewatchRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,
