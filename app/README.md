@@ -601,6 +601,7 @@ graph TB
   :app -.-> :domain:notifications
   :app -.-> :domain:ratings
   :app -.-> :domain:recently-watched
+  :app -.-> :domain:rewatch
   :app -.-> :domain:seasondetails
   :app -.-> :domain:settings
   :app -.-> :domain:showdetails
