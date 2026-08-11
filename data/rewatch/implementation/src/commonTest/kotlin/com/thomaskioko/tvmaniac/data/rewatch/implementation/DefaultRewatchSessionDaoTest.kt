@@ -283,6 +283,43 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
         )
     }
 
+    @Test
+    fun `should emit an empty status given the show has no sessions`() = runTest {
+        dao.observeRewatchStatus(showId).test {
+            val status = awaitItem()
+
+            status.finishedCount shouldBe 0
+            status.openSession.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should emit the open session given one is under way`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        dao.observeRewatchStatus(showId).test {
+            val status = awaitItem()
+
+            status.openSession.shouldNotBeNull().id shouldBe sessionId
+            status.openSession.shouldNotBeNull().watchedEpisodes shouldBe 1
+            status.finishedCount shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should emit the finished count given a session was closed`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.closeSession(sessionId = sessionId, closedAt = CLOSED_AT)
+
+        dao.observeRewatchStatus(showId).test {
+            val status = awaitItem()
+
+            status.finishedCount shouldBe 1
+            status.openSession.shouldBeNull()
+        }
+    }
+
     private companion object {
         private const val TMDB_ID = 555L
         private const val SEASON_ID = 100L

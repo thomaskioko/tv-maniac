@@ -123,6 +123,32 @@ UPDATE rewatch_session_episode
 SET synced_at = :syncedAt
 WHERE id = :rowId;
 
+rewatchStatusForShow:
+SELECT
+    (SELECT COUNT(*)
+     FROM rewatch_session
+     WHERE show_id = :showId AND closed_at IS NOT NULL) AS finished_count,
+    open_session.id AS open_session_id,
+    (SELECT COUNT(DISTINCT rse.episode_id)
+     FROM rewatch_session_episode rse
+     INNER JOIN episode e ON rse.episode_id = e.id
+     INNER JOIN season s ON e.season_id = s.id
+     WHERE rse.session_id = open_session.id
+       AND (s.season_number > 0 OR s.title != 'Specials')
+       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS watched_in_session,
+    (SELECT COUNT(*)
+     FROM episode e
+     INNER JOIN season s ON e.season_id = s.id
+     WHERE e.show_id = :showId
+       AND (s.season_number > 0 OR s.title != 'Specials')
+       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS aired_total
+FROM tvshow
+LEFT JOIN rewatch_session AS open_session
+    ON open_session.show_id = tvshow.id AND open_session.closed_at IS NULL
+WHERE tvshow.id = :showId
+ORDER BY open_session.started_at DESC
+LIMIT 1;
+
 clearAllSessionEpisodes:
 DELETE FROM rewatch_session_episode;
 

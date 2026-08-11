@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.data.rewatch.implementation
 
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
@@ -8,6 +9,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSyncProviderDataSource
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
@@ -18,7 +20,9 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -30,6 +34,7 @@ public class DefaultRewatchRepository(
     private val activeSource: () -> RewatchSyncProviderDataSource?,
     private val syncObserver: SyncObserver,
     private val dateTimeProvider: DateTimeProvider,
+    private val dispatchers: AppCoroutineDispatchers,
 ) : RewatchRepository {
 
     private val syncMutex = Mutex()
@@ -89,10 +94,23 @@ public class DefaultRewatchRepository(
         }
     }
 
-    override fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>> {
-        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return flowOf(emptyList())
-        return rewatchSessionDao.observeSessionsForShow(localShowId)
-    }
+    override fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>> = flow {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId)
+        if (localShowId == null) {
+            emit(emptyList())
+        } else {
+            emitAll(rewatchSessionDao.observeSessionsForShow(localShowId))
+        }
+    }.flowOn(dispatchers.databaseRead)
+
+    override fun observeRewatchStatus(showId: Long): Flow<RewatchStatus> = flow {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId)
+        if (localShowId == null) {
+            emit(RewatchStatus())
+        } else {
+            emitAll(rewatchSessionDao.observeRewatchStatus(localShowId))
+        }
+    }.flowOn(dispatchers.databaseRead)
 
     override suspend fun openSessionForShow(showId: Long): RewatchSession? {
         val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return null
