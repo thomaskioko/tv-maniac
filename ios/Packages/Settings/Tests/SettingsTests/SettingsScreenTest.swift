@@ -43,6 +43,20 @@ class SettingsScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Layout_FontScaled")
     }
 
+    func test_SettingsScreen_Root_DynamicTypeXXXLarge() {
+        SettingsScreen(state: makeState(page: .root, authenticated: true), onBack: {})
+            .appPreview()
+            .environment(\.dynamicTypeSize, .xxxLarge)
+            .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "SettingsScreen_Root_DynamicTypeXXXLarge")
+    }
+
+    func test_SettingsScreen_Root_DynamicTypeAX3() {
+        SettingsScreen(state: makeState(page: .root, authenticated: true), onBack: {})
+            .appPreview()
+            .environment(\.dynamicTypeSize, .accessibility3)
+            .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "SettingsScreen_Root_DynamicTypeAX3")
+    }
+
     func test_SettingsScreen_DiscoverSections() {
         SettingsScreen(state: makeState(page: .discoverSections, authenticated: true), onBack: {})
             .appPreview()
@@ -91,6 +105,19 @@ class SettingsScreenTest: SnapshotTestCase {
         SettingsScreen(state: makeState(page: .behavior, authenticated: true), onBack: {})
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Behavior")
+    }
+
+    func test_SettingsScreen_Behavior_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .behavior,
+                authenticated: true,
+                customBehaviorToggles: behaviorLockedToggles
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Behavior_Locked")
     }
 
     func test_SettingsScreen_Notifications() {

@@ -20,6 +20,7 @@ graph TB
   end
 
   :data:datastore:api --> :i18n:generator
+  :data:watchlist-prefs:api --> :data:datastore:api
   :data:watchlist-prefs:implementation --> :data:datastore:api
   :data:watchlist-prefs:implementation --> :data:watchlist-prefs:api
 

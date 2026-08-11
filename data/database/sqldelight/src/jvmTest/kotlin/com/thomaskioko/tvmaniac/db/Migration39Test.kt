@@ -61,9 +61,9 @@ class Migration39Test {
     @Test
     fun `should convert show_trakt_id to internal show_id when mapping exists`() {
         openSnapshot(version = 38).use { driver ->
-            driver.seedTvshow(internalId = 1L, tmdbId = 200L)
-            driver.seedExternalId(internalId = 1L, traktId = 100L)
-            driver.seedCalendarEntry(showTraktId = 100L, episodeTraktId = 500L)
+            driver.addTvshow(internalId = 1L, tmdbId = 200L)
+            driver.addExternalId(internalId = 1L, traktId = 100L)
+            driver.addCalendarEntry(showTraktId = 100L, episodeTraktId = 500L)
 
             migrateToVersion(driver, oldVersion = 38, newVersion = 39)
 
@@ -74,7 +74,7 @@ class Migration39Test {
     @Test
     fun `should delete calendar_entry when no mapping exists for show_trakt_id`() {
         openSnapshot(version = 38).use { driver ->
-            driver.seedCalendarEntry(showTraktId = 999L, episodeTraktId = 501L)
+            driver.addCalendarEntry(showTraktId = 999L, episodeTraktId = 501L)
 
             migrateToVersion(driver, oldVersion = 38, newVersion = 39)
 
@@ -83,7 +83,7 @@ class Migration39Test {
     }
 }
 
-private fun SqlDriver.seedTvshow(internalId: Long, tmdbId: Long) {
+private fun SqlDriver.addTvshow(internalId: Long, tmdbId: Long) {
     execute(
         identifier = null,
         sql = """
@@ -94,7 +94,7 @@ private fun SqlDriver.seedTvshow(internalId: Long, tmdbId: Long) {
     )
 }
 
-private fun SqlDriver.seedExternalId(internalId: Long, traktId: Long) {
+private fun SqlDriver.addExternalId(internalId: Long, traktId: Long) {
     execute(
         identifier = null,
         sql = """
@@ -105,7 +105,7 @@ private fun SqlDriver.seedExternalId(internalId: Long, traktId: Long) {
     )
 }
 
-private fun SqlDriver.seedCalendarEntry(showTraktId: Long, episodeTraktId: Long) {
+private fun SqlDriver.addCalendarEntry(showTraktId: Long, episodeTraktId: Long) {
     execute(
         identifier = null,
         sql = """

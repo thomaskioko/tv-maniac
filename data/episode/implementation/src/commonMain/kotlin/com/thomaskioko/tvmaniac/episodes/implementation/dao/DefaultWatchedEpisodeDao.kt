@@ -13,9 +13,12 @@ import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
+import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
@@ -67,6 +70,76 @@ public class DefaultWatchedEpisodeDao(
             }
             .catch { emit(emptyList()) }
     }
+
+    override fun observeWatchedAtWithRuntime(): Flow<List<WatchedEpisodeRuntime>> =
+        database.watchedEpisodesQueries
+            .watchedAtWithRuntime()
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows ->
+                rows.map { row ->
+                    WatchedEpisodeRuntime(watchedAt = row.watched_at, runtimeMinutes = row.runtime)
+                }
+            }
+            .catch { emit(emptyList()) }
+
+    override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> =
+        database.watchedEpisodesQueries
+            .watchedShowComposition()
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows ->
+                rows.map { row ->
+                    WatchedShowComposition(year = row.year, genres = row.genres)
+                }
+            }
+            .catch { emit(emptyList()) }
+
+    override suspend fun updateShowMetadata(
+        tmdbId: Long,
+        runtime: Long?,
+        year: String?,
+        genres: List<String>?,
+    ) {
+        withContext(dispatchers.databaseWrite) {
+            database.tvShowQueries.updateWatchedShowMetadata(
+                runtime = runtime,
+                year = year,
+                tmdbId = Id(tmdbId),
+            )
+            if (genres != null) {
+                database.tvShowQueries.updateWatchedShowGenres(genres = genres, tmdbId = Id(tmdbId))
+            }
+        }
+    }
+
+    override suspend fun countWatchedShowsMissingMetadata(): Long =
+        withContext(dispatchers.databaseRead) {
+            database.tvShowQueries.countWatchedShowsMissingMetadata().executeAsOne()
+        }
+
+    override suspend fun getWatchedShowsMissingGenres(): List<Long> =
+        withContext(dispatchers.databaseRead) {
+            database.tvShowQueries.watchedShowsMissingGenres().executeAsList().map { it.id }
+        }
+
+    override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =
+        database.watchedEpisodesQueries
+            .mostWatchedShows(limit)
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows ->
+                rows.map { row ->
+                    MostWatchedShow(
+                        showId = row.show_id.id,
+                        title = row.title,
+                        posterPath = row.poster_path,
+                        episodeCount = row.episode_count,
+                        totalRuntimeMinutes = row.total_runtime ?: 0L,
+                    )
+                }
+            }
+            .catch { emit(emptyList()) }
 
     override suspend fun markAsWatched(
         showId: Long,

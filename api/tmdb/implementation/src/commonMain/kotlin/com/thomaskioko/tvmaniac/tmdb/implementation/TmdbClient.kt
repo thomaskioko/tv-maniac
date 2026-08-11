@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.tmdb.implementation
 
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.ApiErrorReportingPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -32,6 +33,10 @@ internal fun tmdbHttpClient(
 ) =
     HttpClient(httpClientEngine) {
         install(ContentNegotiation) { json(json = json) }
+
+        install(ApiErrorReportingPlugin) {
+            onError = { message, throwable -> kermitLogger.error("Network Error : TmdbApi", message, throwable) }
+        }
 
         install(InternetConnectionPlugin) {
             this.internetConnectionChecker = internetConnectionChecker

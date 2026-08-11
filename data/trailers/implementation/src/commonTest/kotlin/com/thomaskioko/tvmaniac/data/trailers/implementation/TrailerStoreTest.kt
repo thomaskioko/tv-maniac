@@ -82,7 +82,7 @@ internal class TrailerStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist trailers from trakt given trakt id is present`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
         showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_TMDB_ID)
 
         traktSource.setVideos(
@@ -114,7 +114,7 @@ internal class TrailerStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should persist trailers from tmdb given no trakt id`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
 
         tmdbSource.setShowDetails(
             ApiResponse.Success(
@@ -153,7 +153,7 @@ internal class TrailerStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should skip non-youtube videos given no trakt id`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
 
         tmdbSource.setShowDetails(
             ApiResponse.Success(
@@ -200,7 +200,7 @@ internal class TrailerStoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should return empty list given no trakt id and tmdb returns error`() = runTest(testDispatcher) {
-        seedShow(tmdbId = SHOW_TMDB_ID)
+        addShow(tmdbId = SHOW_TMDB_ID)
 
         tmdbSource.setShowDetails(
             ApiResponse.Error.HttpError(code = 500, errorBody = null, errorMessage = "Internal error"),
@@ -216,7 +216,7 @@ internal class TrailerStoreTest : BaseDatabaseTest() {
         trailers shouldHaveSize 0
     }
 
-    private fun seedShow(tmdbId: Long) {
+    private fun addShow(tmdbId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
             name = "Test Show",

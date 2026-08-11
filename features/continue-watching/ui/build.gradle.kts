@@ -25,6 +25,7 @@ dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
     implementation(projects.core.view)
+    implementation(projects.data.datastore.api)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.compose.material3)

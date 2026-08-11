@@ -20,4 +20,5 @@ public data class SimklUser(
 @Serializable
 public data class SimklAccount(
     @SerialName("id") val id: Long,
+    @SerialName("type") val type: String? = null,
 )

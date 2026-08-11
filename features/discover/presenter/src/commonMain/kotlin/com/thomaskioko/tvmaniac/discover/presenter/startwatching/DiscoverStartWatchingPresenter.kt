@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.stateIn
 
 @ChildPresenter(scope = DiscoverChildScope::class, parentScope = DiscoverRoot::class)
 @Inject
-public class DiscoverStartWatchingPresenter(
+public class DiscoverStartWatchingPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val observeStartWatchingInteractor: ObserveStartWatchingInteractor,

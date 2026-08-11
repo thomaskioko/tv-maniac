@@ -27,7 +27,7 @@ class Migration41Test {
     @Test
     fun `should preserve existing rows given calendar entries with non-zero trakt_id`() {
         openSnapshot(version = 40).use { driver ->
-            driver.seedCalendarEntry(
+            driver.addCalendarEntry(
                 showTitle = "Breaking Bad",
                 episodeTraktId = 73640L,
                 seasonNumber = 1,
@@ -46,7 +46,7 @@ class Migration41Test {
     @Test
     fun `should convert zero sentinel to null given calendar entries with trakt_id zero`() {
         openSnapshot(version = 40).use { driver ->
-            driver.seedCalendarEntry(
+            driver.addCalendarEntry(
                 showTitle = "Simkl Show",
                 episodeTraktId = 0L,
                 seasonNumber = 1,
@@ -88,7 +88,7 @@ class Migration41Test {
 
 private data class CalendarRow(val traktId: Long?, val showTitle: String)
 
-private fun SqlDriver.seedCalendarEntry(
+private fun SqlDriver.addCalendarEntry(
     showTitle: String,
     episodeTraktId: Long,
     seasonNumber: Long,

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.core.base.di
 import com.thomaskioko.tvmaniac.core.base.ComputationCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.MainCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.coroutines.CoroutineCrashUtil
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
@@ -32,19 +33,19 @@ public object BaseBindingContainer {
     @IoCoroutineScope
     @SingleIn(AppScope::class)
     public fun provideIoCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatchers.io)
+        CoroutineScope(SupervisorJob() + dispatchers.io + CoroutineCrashUtil.handler)
 
     @Provides
     @MainCoroutineScope
     @SingleIn(AppScope::class)
     public fun provideMainCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatchers.main)
+        CoroutineScope(SupervisorJob() + dispatchers.main + CoroutineCrashUtil.handler)
 
     @Provides
     @ComputationCoroutineScope
     @SingleIn(AppScope::class)
     public fun provideComputationCoroutineScope(dispatchers: AppCoroutineDispatchers): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatchers.computation)
+        CoroutineScope(SupervisorJob() + dispatchers.computation + CoroutineCrashUtil.handler)
 
     @Provides
     public fun provideCoroutineScope(@MainCoroutineScope scope: CoroutineScope): CoroutineScope =

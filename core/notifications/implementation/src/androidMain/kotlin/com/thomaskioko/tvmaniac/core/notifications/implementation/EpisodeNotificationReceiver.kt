@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.thomaskioko.tvmaniac.core.base.coroutines.CoroutineCrashUtil
 import com.thomaskioko.tvmaniac.core.notifications.api.EpisodeNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,7 @@ public class EpisodeNotificationReceiver : BroadcastReceiver() {
 
         val pendingResult = goAsync()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + CoroutineCrashUtil.handler).launch {
             try {
                 val store = PendingNotificationsStore(context)
                 val notification = store.getNotificationById(notificationId)

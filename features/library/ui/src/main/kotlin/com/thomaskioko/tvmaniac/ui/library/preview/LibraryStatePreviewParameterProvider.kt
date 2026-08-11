@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.ui.library.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.presentation.library.LibraryState
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
@@ -22,14 +23,14 @@ internal class LibraryStatePreviewParameterProvider : PreviewParameterProvider<L
         ),
         LibraryState(
             isRefreshing = false,
-            isGridMode = true,
+            listStyle = ListStyle.GRID,
             items = previewLibraryItems(),
             availableGenres = previewGenres(),
             availableStatuses = previewStatuses(),
         ),
         LibraryState(
             isRefreshing = false,
-            isGridMode = false,
+            listStyle = ListStyle.LIST,
             items = previewLibraryItems(),
             availableGenres = previewGenres(),
             availableStatuses = previewStatuses(),
@@ -37,15 +38,29 @@ internal class LibraryStatePreviewParameterProvider : PreviewParameterProvider<L
             selectedStatuses = persistentSetOf(ShowStatus.ENDED),
         ),
         LibraryState(
+            isRefreshing = false,
+            listStyle = ListStyle.COMPACT,
+            items = previewLibraryItems(),
+            availableGenres = previewGenres(),
+            availableStatuses = previewStatuses(),
+        ),
+        LibraryState(
+            isRefreshing = false,
+            listStyle = ListStyle.DETAILED,
+            items = previewLibraryItems(),
+            availableGenres = previewGenres(),
+            availableStatuses = previewStatuses(),
+        ),
+        LibraryState(
             isRefreshing = true,
-            isGridMode = true,
+            listStyle = ListStyle.GRID,
             items = previewLibraryItems(),
         ),
         LibraryState(
             query = "Breaking",
             isSearchActive = true,
             isRefreshing = false,
-            isGridMode = false,
+            listStyle = ListStyle.LIST,
             items = persistentListOf(
                 LibraryShowItem(
                     showId = 1,
@@ -55,7 +70,7 @@ internal class LibraryStatePreviewParameterProvider : PreviewParameterProvider<L
                     status = "Ended",
                     year = "2008",
                     rating = 9.5,
-                    genres = listOf("Drama", "Crime"),
+                    genres = persistentListOf("Drama", "Crime"),
                     seasonCount = 5,
                     episodeCount = 62,
                     isFollowed = true,
@@ -93,7 +108,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         status = "Ended",
         year = "2008",
         rating = 9.5,
-        genres = listOf("Drama", "Crime"),
+        genres = persistentListOf("Drama", "Crime"),
         seasonCount = 5,
         episodeCount = 62,
         isFollowed = true,
@@ -110,7 +125,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         status = "Ended",
         year = "2011",
         rating = 9.2,
-        genres = listOf("Drama", "Fantasy"),
+        genres = persistentListOf("Drama", "Fantasy"),
         seasonCount = 8,
         episodeCount = 73,
         isFollowed = true,
@@ -126,7 +141,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         status = "Returning Series",
         year = "2016",
         rating = 8.7,
-        genres = listOf("Drama", "Sci-Fi"),
+        genres = persistentListOf("Drama", "Sci-Fi"),
         seasonCount = 4,
         episodeCount = 34,
         isFollowed = true,
@@ -142,7 +157,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         status = "Returning Series",
         year = "2022",
         rating = 8.4,
-        genres = listOf("Drama", "Fantasy"),
+        genres = persistentListOf("Drama", "Fantasy"),
         seasonCount = 2,
         episodeCount = 18,
         isFollowed = false,
@@ -156,7 +171,7 @@ private fun previewLibraryItems(): ImmutableList<LibraryShowItem> = listOf(
         status = "Returning Series",
         year = "2013",
         rating = 9.1,
-        genres = listOf("Animation", "Comedy"),
+        genres = persistentListOf("Animation", "Comedy"),
         seasonCount = 7,
         episodeCount = 71,
         isFollowed = true,

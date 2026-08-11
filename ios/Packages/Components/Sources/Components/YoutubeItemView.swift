@@ -4,7 +4,6 @@ import YouTubePlayerKit
 
 public struct YoutubeItemView: View {
     @Environment(\.appTheme) private var theme
-    @State private var isLoading = false
     @State private var player: YouTubePlayer?
 
     private let openInYouTube: Bool
@@ -36,16 +35,20 @@ public struct YoutubeItemView: View {
     }
 
     public var body: some View {
-        ZStack {
+        VStack {
             if let player {
                 YouTubePlayerView(player)
                     .frame(
                         width: scaledImageWidth,
                         height: scaledImageHeight
                     )
-            }
-
-            VStack {
+                    .clipShape(
+                        RoundedRectangle(
+                            cornerRadius: theme.shapes.medium,
+                            style: .continuous
+                        )
+                    )
+            } else {
                 LazyResizableImage(
                     url: thumbnailUrl,
                     size: CGSize(width: scaledImageWidth, height: scaledImageHeight),
@@ -66,58 +69,40 @@ public struct YoutubeItemView: View {
                     overlay
                 }
                 .appShadow(theme.shadows.small)
-
-                HStack {
-                    Text(name)
-                        .textStyle(theme.typography.bodyMedium)
-                        .foregroundStyle(.appOnSurfaceVariant)
-                        .lineLimit(DimensionConstants.lineLimits)
-                        .padding([.trailing], theme.spacing.medium)
-
-                    Spacer()
-                }
+                .onTapGesture(perform: openVideo)
             }
-            .frame(width: scaledImageWidth)
+
+            HStack {
+                Text(name)
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundStyle(.appOnSurfaceVariant)
+                    .lineLimit(DimensionConstants.lineLimits)
+                    .padding([.trailing], theme.spacing.medium)
+
+                Spacer()
+            }
         }
         .frame(width: scaledImageWidth)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(name)
-        .onTapGesture(perform: openVideo)
     }
 
     private var overlay: some View {
         ZStack {
             theme.colors.scrim.opacity(DimensionConstants.overlayOpacity)
-            if isLoading {
-                ProgressView()
-                    .tint(theme.colors.onScrim)
-                    .frame(
-                        width: DimensionConstants.overlayWidth,
-                        height: DimensionConstants.overlayHeight,
-                        alignment: .center
-                    )
-                    .padding(theme.spacing.medium)
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-                            withAnimation {
-                                isLoading = false
-                            }
-                        }
-                    }
-            } else {
-                Image(systemName: "play.circle.fill")
-                    .resizable()
-                    .frame(
-                        width: DimensionConstants.overlayWidth,
-                        height: DimensionConstants.overlayHeight,
-                        alignment: .center
-                    )
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.appOnScrim, .appScrim.opacity(0.5))
-                    .scaledToFit()
-                    .imageScale(.medium)
-                    .padding(theme.spacing.medium)
-            }
+
+            Image(systemName: "play.circle.fill")
+                .resizable()
+                .frame(
+                    width: DimensionConstants.overlayWidth,
+                    height: DimensionConstants.overlayHeight,
+                    alignment: .center
+                )
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.appOnScrim, .appScrim.opacity(0.5))
+                .scaledToFit()
+                .imageScale(.medium)
+                .padding(theme.spacing.medium)
         }
         .frame(
             width: scaledImageWidth,
@@ -137,7 +122,6 @@ public struct YoutubeItemView: View {
                 UIApplication.shared.open(url)
             }
         } else {
-            isLoading = true
             let newPlayer = YouTubePlayer(
                 source: .video(id: key),
                 parameters: .init(
@@ -156,8 +140,7 @@ public struct YoutubeItemView: View {
                 do {
                     try await newPlayer.play()
                 } catch {
-                    print("Failed to play video: \(error)")
-                    isLoading = false
+                    player = nil
                     onError?(error)
                 }
             }

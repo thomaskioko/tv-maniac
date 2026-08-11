@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
@@ -38,7 +39,6 @@ import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
-import com.thomaskioko.tvmaniac.seasondetails.presenter.WatchOperation.MarkSeasonWatched
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -58,13 +58,14 @@ import kotlinx.coroutines.launch
     kind = DestinationKind.SCREEN,
 )
 @AssistedInject
-public class SeasonDetailsPresenter(
+public class SeasonDetailsPresenter internal constructor(
     componentContext: ComponentContext,
     @Assisted private val param: SeasonDetailsUiParam,
     private val navigator: Navigator,
     observableSeasonDetailsInteractor: ObservableSeasonDetailsInteractor,
     private val seasonDetailsInteractor: SeasonDetailsInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val markSeasonWatchedInteractor: MarkSeasonWatchedInteractor,
     private val markSeasonUnwatchedInteractor: MarkSeasonUnwatchedInteractor,
@@ -166,7 +167,7 @@ public class SeasonDetailsPresenter(
                 is MarkEpisodeUnwatched -> updateState {
                     copy(
                         dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
-                            primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showId, action.episodeId),
+                            primaryChange = WatchChange.UnwatchEpisode(param.showId, action.episodeId),
                         ),
                     )
                 }
@@ -194,13 +195,13 @@ public class SeasonDetailsPresenter(
             updateState {
                 copy(
                     dialogState = SeasonDialogState.MarkPreviousEpisodesConfirmation(
-                        primaryOperation = WatchOperation.MarkEpisodeWatched(params.copy(markPreviousEpisodes = true)),
-                        secondaryOperation = WatchOperation.MarkEpisodeWatched(params),
+                        primaryChange = WatchChange.WatchEpisode(params.copy(markPreviousEpisodes = true)),
+                        secondaryChange = WatchChange.WatchEpisode(params),
                     ),
                 )
             }
         } else {
-            execute(WatchOperation.MarkEpisodeWatched(params))
+            execute(WatchChange.WatchEpisode(params))
         }
     }
 
@@ -208,19 +209,19 @@ public class SeasonDetailsPresenter(
         updateState {
             copy(
                 dialogState = SeasonDialogState.UnwatchSeasonConfirmation(
-                    primaryOperation = WatchOperation.MarkSeasonUnwatched(param.showId, param.seasonNumber),
+                    primaryChange = WatchChange.UnwatchSeason(param.showId, param.seasonNumber),
                 ),
             )
         }
     }
 
-    private suspend fun handleMarkSeasonAsWatched(hasUnwatchedInPreviousSeasons: Boolean) {
+    private fun handleMarkSeasonAsWatched(hasUnwatchedInPreviousSeasons: Boolean) {
         if (hasUnwatchedInPreviousSeasons) {
             updateState {
                 copy(
                     dialogState = SeasonDialogState.MarkPreviousSeasonsConfirmation(
-                        primaryOperation = MarkSeasonWatched(param.showId, param.seasonNumber, markPreviousSeasons = true),
-                        secondaryOperation = MarkSeasonWatched(param.showId, param.seasonNumber, markPreviousSeasons = false),
+                        primaryChange = WatchChange.WatchSeason(param.showId, param.seasonNumber, markPreviousSeasons = true),
+                        secondaryChange = WatchChange.WatchSeason(param.showId, param.seasonNumber, markPreviousSeasons = false),
                     ),
                 )
             }
@@ -229,7 +230,7 @@ public class SeasonDetailsPresenter(
         updateState {
             copy(
                 dialogState = SeasonDialogState.WatchSeasonConfirmation(
-                    primaryOperation = MarkSeasonWatched(param.showId, param.seasonNumber),
+                    primaryChange = WatchChange.WatchSeason(param.showId, param.seasonNumber),
                 ),
             )
         }
@@ -244,7 +245,7 @@ public class SeasonDetailsPresenter(
             updateState {
                 copy(
                     dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
-                        primaryOperation = WatchOperation.MarkEpisodeUnwatched(param.showId, episodeId),
+                        primaryChange = WatchChange.UnwatchEpisode(param.showId, episodeId),
                     ),
                 )
             }
@@ -275,46 +276,62 @@ public class SeasonDetailsPresenter(
     }
 
     private suspend fun handleConfirmDialogAction() {
-        val operation = (state.value.dialogState as? SeasonDialogState.Confirmation)?.primaryOperation ?: return
+        val change = (state.value.dialogState as? SeasonDialogState.Confirmation)?.primaryChange ?: return
         updateState { copy(dialogState = SeasonDialogState.Hidden) }
-        execute(operation)
+        execute(change)
     }
 
     private suspend fun handleSecondaryDialogAction() {
-        val operation = (state.value.dialogState as? SeasonDialogState.Confirmation)?.secondaryOperation ?: return
+        val change = (state.value.dialogState as? SeasonDialogState.Confirmation)?.secondaryChange ?: return
         updateState { copy(dialogState = SeasonDialogState.Hidden) }
-        execute(operation)
+        execute(change)
     }
 
-    private suspend fun execute(operation: WatchOperation) {
-        val trackedEpisodeId = when (operation) {
-            is WatchOperation.MarkEpisodeWatched -> operation.params.episodeId
-            is WatchOperation.MarkEpisodeUnwatched -> operation.episodeId
-            is MarkSeasonWatched, is WatchOperation.MarkSeasonUnwatched -> null
+    private suspend fun execute(change: WatchChange) {
+        val trackedEpisodeId = when (change) {
+            is WatchChange.WatchEpisode -> change.params.episodeId
+            is WatchChange.UnwatchEpisode -> change.episodeId
+            is WatchChange.WatchSeason, is WatchChange.UnwatchSeason -> null
         }
         if (trackedEpisodeId != null) {
             updateState { copy(updatingEpisodeIds = (updatingEpisodeIds + trackedEpisodeId).toPersistentSet()) }
         }
-        try {
-            when (operation) {
-                is WatchOperation.MarkEpisodeWatched ->
-                    markEpisodeWatchedInteractor(operation.params)
-                is WatchOperation.MarkEpisodeUnwatched ->
-                    markEpisodeUnwatchedInteractor(
-                        MarkEpisodeUnwatchedParams(operation.showId, operation.episodeId),
-                    )
-                is MarkSeasonWatched ->
-                    markSeasonWatchedInteractor(
-                        MarkSeasonWatchedParams(operation.showId, operation.seasonNumber, operation.markPreviousSeasons),
-                    )
-                is WatchOperation.MarkSeasonUnwatched ->
-                    markSeasonUnwatchedInteractor(
-                        MarkSeasonUnwatchedParams(operation.showId, operation.seasonNumber),
-                    )
-            }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-        } finally {
-            if (trackedEpisodeId != null) {
-                updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
+
+        when (change) {
+            is WatchChange.WatchEpisode ->
+                markEpisodeWatchedInteractor(change.params)
+            is WatchChange.UnwatchEpisode ->
+                markEpisodeUnwatchedInteractor(
+                    MarkEpisodeUnwatchedParams(change.showId, change.episodeId),
+                )
+            is WatchChange.WatchSeason ->
+                markSeasonWatchedInteractor(
+                    MarkSeasonWatchedParams(change.showId, change.seasonNumber, change.markPreviousSeasons),
+                )
+            is WatchChange.UnwatchSeason ->
+                markSeasonUnwatchedInteractor(
+                    MarkSeasonUnwatchedParams(change.showId, change.seasonNumber),
+                )
+        }.collectStatus(episodeLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+
+        if (trackedEpisodeId != null) {
+            updateState { copy(updatingEpisodeIds = (updatingEpisodeIds - trackedEpisodeId).toPersistentSet()) }
+        }
+
+        if (change is WatchChange.WatchEpisode && !change.params.markPreviousEpisodes) {
+            val params = change.params
+            val shouldPrompt = shouldPromptForRatingInteractor(
+                ShouldPromptForRatingInteractor.Param(
+                    showId = params.showId,
+                    episodeId = params.episodeId,
+                ),
+            )
+            if (shouldPrompt) {
+                navigator.navigateTo(
+                    RatingSheetRoute(
+                        RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = params.episodeId),
+                    ),
+                )
             }
         }
     }

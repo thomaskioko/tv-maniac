@@ -9,6 +9,7 @@ import XCTest
 class TrailerListViewTest: SnapshotTestCase {
     func test_TrailerListView() {
         TrailerListView(
+            title: "Trailers",
             trailers: [
                 .init(
                     showId: 123,
@@ -23,7 +24,8 @@ class TrailerListViewTest: SnapshotTestCase {
                     youtubeThumbnailUrl: ""
                 ),
             ],
-            openInYouTube: false
+            openInYouTube: false,
+            onMoreClicked: {}
         )
         .appPreview()
         .assertSnapshot(testName: "TrailerListView")

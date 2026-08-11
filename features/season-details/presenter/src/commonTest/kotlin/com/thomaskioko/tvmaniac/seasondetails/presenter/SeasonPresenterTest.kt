@@ -10,11 +10,13 @@ import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRating
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.MarkSeasonWatchedInteractor
@@ -36,7 +38,9 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsL
 import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsWithEpisodes
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
@@ -65,6 +69,12 @@ class SeasonPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val ratingsRepository = FakeRatingsRepository()
     private val navigator = FakeNavigator()
+    private val datastoreRepository = FakeDatastoreRepository()
+    private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
+        datastoreRepository = datastoreRepository,
+        subscriptionManager = FakeSubscriptionManager(),
+        ratingsRepository = ratingsRepository,
+    )
     private val coroutineDispatcher = AppCoroutineDispatchers(
         main = testDispatcher,
         io = testDispatcher,
@@ -411,6 +421,96 @@ class SeasonPresenterTest {
     }
 
     @Test
+    fun `should open the rating sheet given quick rate is on and a single episode is marked watched`() = runTest {
+        datastoreRepository.saveQuickRateEnabled(true)
+        seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
+        castRepository.setSeasonCast(emptyList())
+
+        presenter.dispatch(
+            MarkEpisodeWatched(
+                episodeId = 12345,
+                seasonNumber = 1,
+                episodeNumber = 1,
+                hasPreviousUnwatched = false,
+            ),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.id shouldBe 12345L
+    }
+
+    @Test
+    fun `should not open the rating sheet given quick rate is off`() = runTest {
+        seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
+        castRepository.setSeasonCast(emptyList())
+
+        presenter.dispatch(
+            MarkEpisodeWatched(
+                episodeId = 12345,
+                seasonNumber = 1,
+                episodeNumber = 1,
+                hasPreviousUnwatched = false,
+            ),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        episodeRepository.lastMarkEpisodeWatchedCall.shouldNotBeNull()
+        navigator.activatedOverlays.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should not open the rating sheet given previous episodes are marked watched too`() = runTest {
+        datastoreRepository.saveQuickRateEnabled(true)
+        seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
+        castRepository.setSeasonCast(emptyList())
+
+        presenter.state.test {
+            awaitItem() shouldBe SeasonDetailsModel.Empty
+            awaitItem()
+
+            presenter.dispatch(
+                MarkEpisodeWatched(
+                    episodeId = 12345,
+                    seasonNumber = 1,
+                    episodeNumber = 5,
+                    hasPreviousUnwatched = true,
+                ),
+            )
+            awaitItem()
+
+            presenter.dispatch(ConfirmDialogAction)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall?.markPreviousEpisodes shouldBe true
+            navigator.activatedOverlays.shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not open the rating sheet given a whole season is marked watched`() = runTest {
+        datastoreRepository.saveQuickRateEnabled(true)
+        seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
+        castRepository.setSeasonCast(emptyList())
+
+        presenter.state.test {
+            awaitItem() shouldBe SeasonDetailsModel.Empty
+            awaitItem()
+
+            presenter.dispatch(MarkSeasonAsWatched(hasUnwatchedInPreviousSeasons = false))
+            awaitItem()
+
+            presenter.dispatch(ConfirmDialogAction)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkSeasonWatchedCall.shouldNotBeNull()
+            navigator.activatedOverlays.shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should mark episode as watched when MarkEpisodeWatched is dispatched with no prior unwatched`() = runTest {
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
@@ -456,7 +556,7 @@ class SeasonPresenterTest {
             val state = awaitItem()
             val dialog = state.dialogState
             dialog.shouldBeInstanceOf<SeasonDialogState.UnwatchEpisodeConfirmation>()
-            dialog.primaryOperation.episodeId shouldBe 12345
+            dialog.primaryChange.episodeId shouldBe 12345
         }
     }
 
@@ -644,7 +744,7 @@ class SeasonPresenterTest {
             val dialogState = awaitItem()
             val dialog = dialogState.dialogState
             dialog.shouldBeInstanceOf<SeasonDialogState.UnwatchEpisodeConfirmation>()
-            dialog.primaryOperation.episodeId shouldBe 12345
+            dialog.primaryChange.episodeId shouldBe 12345
 
             presenter.dispatch(ConfirmDialogAction)
 
@@ -1293,6 +1393,7 @@ class SeasonPresenterTest {
                 episodeRepository = episodeRepository,
             ),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
+            shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )

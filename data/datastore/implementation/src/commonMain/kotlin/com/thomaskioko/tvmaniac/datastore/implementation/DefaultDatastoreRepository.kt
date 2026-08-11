@@ -74,10 +74,7 @@ public class DefaultDatastoreRepository(
 
     override fun observeListStyle(): Flow<ListStyle> =
         dataStore.data.map { preferences ->
-            when (preferences[KEY_LIST_STYLE]) {
-                ListStyle.LIST.name -> ListStyle.LIST
-                else -> ListStyle.GRID // Default to GRID
-            }
+            ListStyle.entries.find { it.name == preferences[KEY_LIST_STYLE] } ?: ListStyle.GRID
         }
 
     override suspend fun saveImageQuality(quality: ImageQuality) {
@@ -421,6 +418,17 @@ public class DefaultDatastoreRepository(
             }
         }
 
+    override suspend fun saveQuickRateEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_QUICK_RATE_ENABLED] = enabled
+        }
+    }
+
+    override fun observeQuickRateEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_QUICK_RATE_ENABLED] ?: false
+        }
+
     private fun String?.toPosterWidth(): PosterWidth =
         when (this) {
             PosterWidth.COMPACT.name -> PosterWidth.COMPACT
@@ -466,5 +474,6 @@ public class DefaultDatastoreRepository(
         public val KEY_POSTER_WIDTH: Preferences.Key<String> = stringPreferencesKey("poster_width")
         public val KEY_LANDSCAPE_WIDTH: Preferences.Key<String> = stringPreferencesKey("landscape_width")
         public val KEY_POSTER_CORNER_STYLE: Preferences.Key<String> = stringPreferencesKey("poster_corner_style")
+        public val KEY_QUICK_RATE_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("quick_rate_enabled")
     }
 }

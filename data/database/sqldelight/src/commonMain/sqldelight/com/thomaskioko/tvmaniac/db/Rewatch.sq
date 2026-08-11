@@ -1,0 +1,130 @@
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.ShowId;
+
+CREATE TABLE IF NOT EXISTS rewatch_session(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    show_id INTEGER AS Id<ShowId> NOT NULL,
+    started_at INTEGER NOT NULL,
+    closed_at INTEGER DEFAULT NULL,
+    provider_session_id INTEGER DEFAULT NULL,
+    FOREIGN KEY(show_id) REFERENCES tvshow(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_rewatch_session_show_id ON rewatch_session(show_id);
+
+CREATE TABLE IF NOT EXISTS rewatch_session_episode(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id INTEGER NOT NULL,
+    episode_id INTEGER AS Id<EpisodeId> NOT NULL,
+    watched_at INTEGER NOT NULL,
+    synced_at INTEGER DEFAULT NULL,
+    FOREIGN KEY(session_id) REFERENCES rewatch_session(id) ON DELETE CASCADE,
+    FOREIGN KEY(episode_id) REFERENCES episode(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_rewatch_session_episode_session_id ON rewatch_session_episode(session_id);
+CREATE INDEX IF NOT EXISTS idx_rewatch_session_episode_episode_id ON rewatch_session_episode(episode_id);
+
+openSession:
+INSERT INTO rewatch_session(show_id, started_at, closed_at)
+VALUES (:showId, :startedAt, NULL);
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+addEpisodeToSession:
+INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at)
+VALUES (:sessionId, :episodeId, :watchedAt);
+
+closeSession:
+UPDATE rewatch_session
+SET closed_at = :closedAt
+WHERE id = :sessionId;
+
+sessionsForShow:
+SELECT *
+FROM rewatch_session
+WHERE show_id = :showId
+ORDER BY started_at DESC;
+
+openSessionForShow:
+SELECT *
+FROM rewatch_session
+WHERE show_id = :showId AND closed_at IS NULL
+ORDER BY started_at DESC
+LIMIT 1;
+
+sessionById:
+SELECT *
+FROM rewatch_session
+WHERE id = :sessionId;
+
+setProviderSessionId:
+UPDATE rewatch_session
+SET provider_session_id = :providerSessionId
+WHERE id = :sessionId;
+
+sessionByProviderSessionId:
+SELECT *
+FROM rewatch_session
+WHERE show_id = :showId AND provider_session_id = :providerSessionId;
+
+insertProviderSession:
+INSERT INTO rewatch_session(show_id, started_at, closed_at, provider_session_id)
+VALUES (:showId, :startedAt, :closedAt, :providerSessionId);
+
+mergeProviderSession:
+UPDATE rewatch_session
+SET started_at = MIN(started_at, :startedAt),
+    closed_at = COALESCE(:closedAt, closed_at)
+WHERE id = :sessionId;
+
+sessionCoverage:
+SELECT
+    (SELECT COUNT(DISTINCT rse.episode_id)
+     FROM rewatch_session_episode rse
+     INNER JOIN episode e ON rse.episode_id = e.id
+     INNER JOIN season s ON e.season_id = s.id
+     WHERE rse.session_id = rs.id
+       AND (s.season_number > 0 OR s.title != 'Specials')
+       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS watched_in_session,
+    (SELECT COUNT(*)
+     FROM episode e
+     INNER JOIN season s ON e.season_id = s.id
+     WHERE e.show_id = rs.show_id
+       AND (s.season_number > 0 OR s.title != 'Specials')
+       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS aired_total
+FROM rewatch_session rs
+WHERE rs.id = :sessionId;
+
+playCountForEpisode:
+SELECT COUNT(*) + 1 AS play_count
+FROM rewatch_session_episode
+WHERE episode_id = :episodeId;
+
+unsentEpisodes:
+SELECT
+    rse.id AS row_id,
+    rse.session_id,
+    rs.show_id,
+    season.season_number,
+    episode.episode_number,
+    rse.watched_at
+FROM rewatch_session_episode rse
+INNER JOIN rewatch_session rs ON rse.session_id = rs.id
+INNER JOIN episode ON rse.episode_id = episode.id
+INNER JOIN season ON episode.season_id = season.id
+WHERE rse.synced_at IS NULL
+ORDER BY rse.id ASC;
+
+markEpisodeSynced:
+UPDATE rewatch_session_episode
+SET synced_at = :syncedAt
+WHERE id = :rowId;
+
+clearAllSessionEpisodes:
+DELETE FROM rewatch_session_episode;
+
+clearAllSessions:
+DELETE FROM rewatch_session;

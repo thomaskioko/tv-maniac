@@ -19,6 +19,8 @@ public data class SettingsLabels(
     val lastSync: String? = null,
     val includeSpecialsTitle: String = "",
     val includeSpecialsDescription: String = "",
+    val quickRateTitle: String = "",
+    val quickRateDescription: String = "",
     val youtubeTitle: String = "",
     val youtubeDescription: String = "",
     val episodeNotificationsTitle: String = "",

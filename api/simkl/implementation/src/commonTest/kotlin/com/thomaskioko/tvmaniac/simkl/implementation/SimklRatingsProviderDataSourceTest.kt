@@ -51,11 +51,48 @@ class SimklRatingsProviderDataSourceTest {
         source.getShowUserRating(providerShowId = 99).getOrThrow().shouldBeNull()
     }
 
-    private fun userRatedShow(simklId: Long, rating: Int): SimklUserRatedShow = SimklUserRatedShow(
-        userRating = rating,
-        ratedAt = "2026-01-01T00:00:00Z",
-        show = SimklShowEntry(ids = SimklShowIds(simkl = simklId)),
-    )
+    @Test
+    fun `should key every user rating by its tmdb id`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(
+                SimklUserRatingsResponse(
+                    shows = listOf(
+                        userRatedShow(simklId = 10, rating = 6, tmdbId = "111"),
+                        userRatedShow(simklId = 20, rating = 9, tmdbId = "222"),
+                    ),
+                ),
+            ),
+        )
+
+        val ratings = source.getShowUserRatings().getOrThrow()
+
+        ratings.map { it.tmdbId } shouldBe listOf(111L, 222L)
+        ratings.map { it.userRating } shouldBe listOf(6, 9)
+    }
+
+    @Test
+    fun `should leave out a user rating whose tmdb id is missing or not a number`() = runTest {
+        remoteDataSource.setUserShowRatingsResponse(
+            ApiResponse.Success(
+                SimklUserRatingsResponse(
+                    shows = listOf(
+                        userRatedShow(simklId = 10, rating = 6),
+                        userRatedShow(simklId = 20, rating = 7, tmdbId = "not-a-number"),
+                        userRatedShow(simklId = 30, rating = 9, tmdbId = "333"),
+                    ),
+                ),
+            ),
+        )
+
+        source.getShowUserRatings().getOrThrow().map { it.tmdbId } shouldBe listOf(333L)
+    }
+
+    private fun userRatedShow(simklId: Long, rating: Int, tmdbId: String? = null): SimklUserRatedShow =
+        SimklUserRatedShow(
+            userRating = rating,
+            ratedAt = "2026-01-01T00:00:00Z",
+            show = SimklShowEntry(ids = SimklShowIds(simkl = simklId, tmdb = tmdbId)),
+        )
 
     @Test
     fun `should report simkl as its provider`() {

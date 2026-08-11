@@ -15,9 +15,16 @@ struct ShowDetailsTrailersSection: View {
     }
 
     var body: some View {
+        let trailers = Array(state.trailersList).map { $0.toSwift() }
         TrailerListView(
-            trailers: Array(state.trailersList).map { $0.toSwift() },
+            title: state.title,
+            trailers: trailers,
             openInYouTube: state.hasWebViewInstalled,
+            onMoreClicked: {
+                if let id = trailers.first?.showId {
+                    presenter.dispatch(action: ShowDetailsWatchTrailerClicked(id: id))
+                }
+            },
             onError: { error in
                 toast = Toast(
                     type: .error,

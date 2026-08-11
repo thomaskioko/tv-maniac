@@ -26,6 +26,14 @@ extension SettingsScreenTest {
                 onToggle: { _ in }
             ),
             SettingsToggleItem(
+                id: "quick-rate",
+                icon: "star.fill",
+                title: "Quick Rate",
+                subtitle: "Ask for a rating after you mark an episode as watched",
+                isOn: false,
+                onToggle: { _ in }
+            ),
+            SettingsToggleItem(
                 id: "youtube",
                 icon: "tv",
                 title: "Open in YouTube",
@@ -34,6 +42,23 @@ extension SettingsScreenTest {
                 onToggle: { _ in }
             ),
         ]
+    }
+
+    var behaviorLockedToggles: [SettingsToggleItem] {
+        behaviorToggles.map { toggle in
+            guard toggle.id == "quick-rate" else { return toggle }
+            return SettingsToggleItem(
+                id: toggle.id,
+                icon: toggle.icon,
+                title: toggle.title,
+                subtitle: toggle.subtitle,
+                isOn: toggle.isOn,
+                isLocked: true,
+                lockedBadgeText: "Premium",
+                lockedAccessibilityLabel: "Locked",
+                onToggle: { _ in }
+            )
+        }
     }
 
     var notificationToggles: [SettingsToggleItem] {
@@ -215,6 +240,7 @@ extension SettingsScreenTest {
         customAccountContent: SettingsAccountContent? = nil,
         customThemeItem: SettingsThemeItem<ThemeItemModel>? = nil,
         customNotificationToggles: [SettingsToggleItem]? = nil,
+        customBehaviorToggles: [SettingsToggleItem]? = nil,
         fontSizePercent: Int = 100,
         customPosterStyleItem: SettingsPosterStyleItem? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
@@ -231,7 +257,7 @@ extension SettingsScreenTest {
             discoverSectionToggles: discoverSectionToggles,
             posterStyleNavItem: posterStyleNavItem,
             posterStyleItem: customPosterStyleItem ?? posterStyleItem(),
-            behaviorToggles: behaviorToggles,
+            behaviorToggles: customBehaviorToggles ?? behaviorToggles,
             notificationToggles: customNotificationToggles ?? notificationToggles,
             privacyToggles: privacyToggles,
             privacyLinks: privacyLinks,

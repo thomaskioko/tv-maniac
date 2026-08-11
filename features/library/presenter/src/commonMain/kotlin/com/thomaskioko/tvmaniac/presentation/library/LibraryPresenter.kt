@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
 import com.thomaskioko.tvmaniac.domain.library.SyncLibraryInteractor
 import com.thomaskioko.tvmaniac.library.nav.LibraryRoot
@@ -24,6 +25,8 @@ import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -46,13 +49,14 @@ import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption as DataLibr
     parentScope = ActivityScope::class,
     kind = DestinationKind.TAB_ROOT,
 )
-public class LibraryPresenter(
+public class LibraryPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val repository: LibraryRepository,
     private val observeLibraryInteractor: ObserveLibraryInteractor,
     private val syncLibraryInteractor: SyncLibraryInteractor,
     private val accountManager: AccountManager,
+    private val subscriptionManager: SubscriptionManager,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -84,8 +88,9 @@ public class LibraryPresenter(
         selectedGenresFlow,
         selectedStatusesFlow,
         loadingState.observable,
-    ) { currentState, items, isGridMode, sortOption, message, query, followedOnly, selectedGenres,
-        selectedStatuses, isLoading,
+        subscriptionManager.observeAccess(SubscriptionFeature.ListViewTypes),
+    ) { currentState, items, listStyle, sortOption, message, query, followedOnly, selectedGenres,
+        selectedStatuses, isLoading, hasListViewTypesAccess,
         ->
 
         val availableGenres = getAvailableGenres(items)
@@ -95,7 +100,8 @@ public class LibraryPresenter(
 
         currentState.copy(
             query = query,
-            isGridMode = isGridMode,
+            listStyle = if (hasListViewTypesAccess) listStyle else listStyle.freeFallback,
+            isListStyleLocked = !hasListViewTypesAccess,
             isRefreshing = isLoading,
             sortOption = sortOption,
             followedOnly = followedOnly,
@@ -120,7 +126,8 @@ public class LibraryPresenter(
             is LibraryQueryChanged -> updateQuery(action.query)
             is ClearLibraryQuery -> clearQuery()
             is ToggleSearchActive -> toggleSearchActive()
-            is ChangeListStyleClicked -> toggleListStyle(action.isGridMode)
+            is ChangeListStyleClicked -> changeListStyle(action.listStyle)
+            is LibraryUpgradeClicked -> Unit
             is ChangeSortOption -> changeSortOption(action.sortOption)
             is ToggleGenreFilter -> toggleGenreFilter(action.genre)
             is ToggleStatusFilter -> toggleStatusFilter(action.status)
@@ -234,9 +241,10 @@ public class LibraryPresenter(
         _state.update { it.copy(isSearchActive = !it.isSearchActive) }
     }
 
-    private fun toggleListStyle(currentIsGridMode: Boolean) {
+    private fun changeListStyle(listStyle: ListStyle) {
+        if (listStyle.isPremium && state.value.isListStyleLocked) return
         coroutineScope.launch {
-            repository.saveListStyle(!currentIsGridMode)
+            repository.saveListStyle(listStyle)
         }
     }
 
@@ -295,7 +303,7 @@ private fun LibraryItem.toLibraryShowItem(): LibraryShowItem = LibraryShowItem(
     status = status,
     year = year,
     rating = rating,
-    genres = genres,
+    genres = genres?.toImmutableList(),
     seasonCount = seasonCount,
     episodeCount = episodeCount,
     isFollowed = isFollowed,

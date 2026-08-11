@@ -35,6 +35,7 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
         pendingError = null
         syncAllError = null
         syncPendingCallCount = 0
+        showsMissingGenres = emptyList()
     }
 
     override suspend fun syncShowEpisodeWatches(showId: Long, forceRefresh: Boolean) {
@@ -59,4 +60,12 @@ public class FakeWatchedEpisodeSyncRepository : WatchedEpisodeSyncRepository {
     }
 
     override suspend fun countPendingEpisodes(): Long = pendingEpisodesCount
+
+    private var showsMissingGenres = emptyList<Long>()
+
+    public fun setWatchedShowsMissingGenres(showIds: List<Long>) {
+        showsMissingGenres = showIds.toList()
+    }
+
+    override suspend fun getWatchedShowsMissingGenres(): List<Long> = showsMissingGenres.toList()
 }

@@ -19,6 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
+                api(projects.core.connectivity.api)
                 api(projects.core.logger.api)
                 api(projects.core.syncstate.api)
                 api(projects.data.accountManager.api)

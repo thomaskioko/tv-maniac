@@ -146,6 +146,11 @@ graph TB
     :data:request-manager:api[api]:::multiplatform
     :data:request-manager:implementation[implementation]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+    :data:rewatch:implementation[implementation]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -306,6 +311,7 @@ graph TB
   :api:simkl:implementation --> :data:library:api
   :api:simkl:implementation --> :data:oauth:api
   :api:simkl:implementation --> :data:ratings:api
+  :api:simkl:implementation --> :data:rewatch:api
   :api:simkl:implementation --> :data:start-watching:api
   :api:simkl:implementation --> :data:sync-activity:api
   :api:simkl:implementation --> :data:user:api
@@ -330,6 +336,7 @@ graph TB
   :api:trakt:implementation --> :data:library:api
   :api:trakt:implementation --> :data:oauth:api
   :api:trakt:implementation --> :data:ratings:api
+  :api:trakt:implementation --> :data:rewatch:api
   :api:trakt:implementation --> :data:start-watching:api
   :api:trakt:implementation --> :data:sync-activity:api
   :api:trakt:implementation --> :data:user:api
@@ -382,6 +389,7 @@ graph TB
   :core:integration:infra --> :data:oauth:implementation
   :core:integration:infra --> :data:ratings:implementation
   :core:integration:infra --> :data:request-manager:implementation
+  :core:integration:infra --> :data:rewatch:implementation
   :core:integration:infra --> :data:seasondetails:implementation
   :core:integration:infra --> :data:seasons:implementation
   :core:integration:infra --> :data:showdetails:implementation
@@ -496,6 +504,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:library:implementation --> :api:tmdb:api
   :data:library:implementation --> :core:base
   :data:library:implementation --> :core:logger:api
@@ -516,6 +525,7 @@ graph TB
   :data:logout:implementation --> :data:logout:api
   :data:logout:implementation --> :data:ratings:api
   :data:logout:implementation --> :data:request-manager:api
+  :data:logout:implementation --> :data:rewatch:api
   :data:logout:implementation --> :data:sync-activity:api
   :data:logout:implementation --> :data:user:api
   :data:oauth:api --> :data:account-manager:api
@@ -544,6 +554,15 @@ graph TB
   :data:request-manager:implementation --> :core:util:api
   :data:request-manager:implementation --> :data:database:sqldelight
   :data:request-manager:implementation --> :data:request-manager:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
+  :data:rewatch:implementation --> :core:base
+  :data:rewatch:implementation --> :core:syncstate:api
+  :data:rewatch:implementation --> :core:util:api
+  :data:rewatch:implementation --> :data:account-manager:api
+  :data:rewatch:implementation --> :data:database:sqldelight
+  :data:rewatch:implementation --> :data:rewatch:api
+  :data:rewatch:implementation --> :data:shows:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasondetails:implementation --> :api:tmdb:api
   :data:seasondetails:implementation --> :core:base
@@ -748,6 +767,7 @@ graph TB
   :features:progress:nav --> :navigation:api
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
+  :features:root:presenter --> :core:connectivity:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view

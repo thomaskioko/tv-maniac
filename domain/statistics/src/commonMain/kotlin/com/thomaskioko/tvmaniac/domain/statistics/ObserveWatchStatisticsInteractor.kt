@@ -1,0 +1,52 @@
+package com.thomaskioko.tvmaniac.domain.statistics
+
+import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRepository
+import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+
+@Inject
+public class ObserveWatchStatisticsInteractor(
+    private val episodeRepository: EpisodeRepository,
+    private val showWatchStatusRepository: ShowWatchStatusRepository,
+    private val ratingsRepository: RatingsRepository,
+    private val calculator: WatchStatisticsCalculator,
+) : SubjectInteractor<Unit, WatchStatistics>() {
+
+    override fun createObservable(params: Unit): Flow<WatchStatistics> = combine(
+        episodeRepository.observeWatchedEpisodeRuntimes(),
+        episodeRepository.observeMostWatchedShows(MOST_WATCHED_LIMIT),
+        showWatchStatusRepository.observeShowCountsByStatus(),
+        observeRatings(),
+        episodeRepository.observeWatchedShowComposition(),
+    ) { watches, mostWatchedShows, showCountsByStatus, ratings, showComposition ->
+        calculator.calculate(
+            watches = watches,
+            mostWatchedShows = mostWatchedShows,
+            showCountsByStatus = showCountsByStatus,
+            ratingCounts = ratings.distribution,
+            showComposition = showComposition,
+            highestRatedShows = ratings.highestRated,
+        )
+    }
+
+    private fun observeRatings(): Flow<Ratings> = combine(
+        ratingsRepository.observeUserRatingDistribution(),
+        ratingsRepository.observeHighestRatedShows(HIGHEST_RATED_LIMIT),
+    ) { distribution, highestRated -> Ratings(distribution, highestRated) }
+
+    private data class Ratings(
+        val distribution: Map<Int, Long>,
+        val highestRated: List<HighestRatedShow>,
+    )
+
+    private companion object {
+        const val MOST_WATCHED_LIMIT = 10L
+        const val HIGHEST_RATED_LIMIT = 10L
+    }
+}

@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = DiscoverChildScope::class, parentScope = DiscoverRoot::class)
 @Inject
-public class DiscoverCatalogPresenter(
+public class DiscoverCatalogPresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val observeTrendingShowsInteractor: ObserveTrendingShowsInteractor,

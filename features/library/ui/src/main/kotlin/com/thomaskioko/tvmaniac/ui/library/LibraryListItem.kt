@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -30,6 +31,8 @@ import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.components.metadataWithAccentDots
+import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
@@ -47,9 +50,7 @@ internal fun LibraryListItem(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(200.dp),
+        modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = TvManiacElevation.medium,
         onClick = { onItemClicked(item.showId) },
@@ -59,7 +60,7 @@ internal fun LibraryListItem(
                 imageUrl = item.posterImageUrl,
                 title = item.title,
                 imageWidth = Layout.posterWidthFixed,
-                aspectRatio = 120f / 200f,
+                aspectRatio = ImageType.Poster.aspect,
             )
 
             Column(
@@ -139,26 +140,21 @@ internal fun LibraryListItem(
 }
 
 @Composable
-private fun buildMetadataString(item: LibraryShowItem): String = buildString {
-    item.year?.let { append(it) }
-    item.status?.let {
-        if (isNotEmpty()) append(" · ")
-        append(it)
+internal fun buildMetadataString(item: LibraryShowItem): AnnotatedString {
+    val parts = buildList {
+        item.year?.let { add(it) }
+        item.status?.let { add(it) }
+        if (item.seasonCount > 0) {
+            val seasonNumber = item.seasonCount.toInt()
+            add(pluralStringResource(season_count.resourceId, seasonNumber, seasonNumber))
+        }
+        if (item.episodeCount > 0) {
+            val episodeNumber = item.episodeCount.toInt()
+            add(pluralStringResource(episode_count.resourceId, episodeNumber, episodeNumber))
+        }
+        item.genres?.firstOrNull()?.let { add(it) }
     }
-    if (item.seasonCount > 0) {
-        val seasonNumber = item.seasonCount.toInt()
-        if (isNotEmpty()) append(" · ")
-        append(pluralStringResource(season_count.resourceId, seasonNumber, seasonNumber))
-    }
-    if (item.episodeCount > 0) {
-        val episodeNumber = item.episodeCount.toInt()
-        if (isNotEmpty()) append(" · ")
-        append(pluralStringResource(episode_count.resourceId, episodeNumber, episodeNumber))
-    }
-    item.genres?.firstOrNull()?.let { genre ->
-        if (isNotEmpty()) append(" · ")
-        append(genre)
-    }
+    return metadataWithAccentDots(parts)
 }
 
 @ThemePreviews

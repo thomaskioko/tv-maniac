@@ -14,7 +14,7 @@ public struct MyShowsScreen: View {
         public let premiereLabel: String
         public let newLabel: String
         public let isLoading: Bool
-        public let isGridMode: Bool
+        public let layout: SwiftListStyle
         public let query: String
         public let watchNextGridItems: [MyShowsGridItem]
         public let staleGridItems: [MyShowsGridItem]
@@ -30,7 +30,7 @@ public struct MyShowsScreen: View {
             premiereLabel: String,
             newLabel: String,
             isLoading: Bool,
-            isGridMode: Bool,
+            layout: SwiftListStyle,
             query: String,
             watchNextGridItems: [MyShowsGridItem],
             staleGridItems: [MyShowsGridItem],
@@ -45,7 +45,7 @@ public struct MyShowsScreen: View {
             self.premiereLabel = premiereLabel
             self.newLabel = newLabel
             self.isLoading = isLoading
-            self.isGridMode = isGridMode
+            self.layout = layout
             self.query = query
             self.watchNextGridItems = watchNextGridItems
             self.staleGridItems = staleGridItems
@@ -63,7 +63,7 @@ public struct MyShowsScreen: View {
     private let onEpisodeClicked: (Int64, Int64) -> Void
     private let onShowTitleClicked: (Int64) -> Void
     private let onMarkWatched: (SwiftNextEpisode) -> Void
-    private let onRefresh: () -> Void
+    private let onRefresh: () async -> Void
 
     @Namespace private var animation
 
@@ -73,7 +73,7 @@ public struct MyShowsScreen: View {
         onEpisodeClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping (SwiftNextEpisode) -> Void,
-        onRefresh: @escaping () -> Void
+        onRefresh: @escaping () async -> Void
     ) {
         self.state = state
         self.onShowClicked = onShowClicked
@@ -85,7 +85,7 @@ public struct MyShowsScreen: View {
 
     public var body: some View {
         contentView
-            .refreshable { onRefresh() }
+            .refreshable { await onRefresh() }
     }
 
     @ViewBuilder
@@ -99,42 +99,40 @@ public struct MyShowsScreen: View {
                     .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
                     .scaleEffect(1.5)
             }
-        } else if state.isGridMode {
+        } else if state.layout == .grid {
             if hasNoGridItems {
                 gridEmptyView
             } else {
                 sectionedGridContent
             }
+        } else if hasNoEpisodes {
+            upNextEmptyView
         } else {
-            if hasNoEpisodes {
-                upNextEmptyView
-            } else {
-                sectionedListContent
-            }
+            sectionedEpisodeContent
         }
     }
 
-    private var sectionedListContent: some View {
+    /// Compact and detailed rows are cards and sit further apart than the list rows they replace.
+    private var episodeRowSpacing: CGFloat {
+        switch state.layout {
+        case .compact, .detailed: appTheme.spacing.small
+        default: appTheme.spacing.xSmall
+        }
+    }
+
+    private var sectionedEpisodeContent: some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: appTheme.spacing.xSmall, pinnedViews: [.sectionHeaders]) {
+            LazyVStack(spacing: episodeRowSpacing, pinnedViews: [.sectionHeaders]) {
                 if !state.watchNextEpisodes.isEmpty {
                     Section {
                         ForEach(state.watchNextEpisodes, id: \.episodeId) { episode in
-                            WatchListItemView(
-                                episode: episode,
-                                premiereLabel: state.premiereLabel,
-                                newLabel: state.newLabel,
-                                onItemClicked: onEpisodeClicked,
-                                onShowTitleClicked: onShowTitleClicked,
-                                onMarkWatched: { onMarkWatched(episode) },
-                                isUpdating: state.updatingEpisodeIds.contains(episode.episodeId)
-                            )
-                            .transition(
-                                .asymmetric(
-                                    insertion: .scale(scale: 0.9).combined(with: .opacity),
-                                    removal: .scale(scale: 1.1).combined(with: .opacity)
+                            episodeRow(episode)
+                                .transition(
+                                    .asymmetric(
+                                        insertion: .scale(scale: 0.9).combined(with: .opacity),
+                                        removal: .scale(scale: 1.1).combined(with: .opacity)
+                                    )
                                 )
-                            )
                         }
                     } header: {
                         SectionHeaderView(title: state.upNextSectionTitle)
@@ -144,21 +142,13 @@ public struct MyShowsScreen: View {
                 if !state.staleEpisodes.isEmpty {
                     Section {
                         ForEach(state.staleEpisodes, id: \.episodeId) { episode in
-                            WatchListItemView(
-                                episode: episode,
-                                premiereLabel: state.premiereLabel,
-                                newLabel: state.newLabel,
-                                onItemClicked: onEpisodeClicked,
-                                onShowTitleClicked: onShowTitleClicked,
-                                onMarkWatched: { onMarkWatched(episode) },
-                                isUpdating: state.updatingEpisodeIds.contains(episode.episodeId)
-                            )
-                            .transition(
-                                .asymmetric(
-                                    insertion: .scale(scale: 0.9).combined(with: .opacity),
-                                    removal: .scale(scale: 1.1).combined(with: .opacity)
+                            episodeRow(episode)
+                                .transition(
+                                    .asymmetric(
+                                        insertion: .scale(scale: 0.9).combined(with: .opacity),
+                                        removal: .scale(scale: 1.1).combined(with: .opacity)
+                                    )
                                 )
-                            )
                         }
                     } header: {
                         SectionHeaderView(title: state.staleSectionTitle)
@@ -166,7 +156,31 @@ public struct MyShowsScreen: View {
                 }
             }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.layout)
+    }
+
+    @ViewBuilder
+    private func episodeRow(_ episode: SwiftNextEpisode) -> some View {
+        switch state.layout {
+        case .compact:
+            MyShowsCompactRowView(episode: episode) {
+                onEpisodeClicked(episode.showId, episode.episodeId)
+            }
+        case .detailed:
+            MyShowsDetailedCardView(episode: episode) {
+                onEpisodeClicked(episode.showId, episode.episodeId)
+            }
+        case .grid, .list:
+            WatchListItemView(
+                episode: episode,
+                premiereLabel: state.premiereLabel,
+                newLabel: state.newLabel,
+                onItemClicked: onEpisodeClicked,
+                onShowTitleClicked: onShowTitleClicked,
+                onMarkWatched: { onMarkWatched(episode) },
+                isUpdating: state.updatingEpisodeIds.contains(episode.episodeId)
+            )
+        }
     }
 
     private var sectionedGridContent: some View {
@@ -189,7 +203,7 @@ public struct MyShowsScreen: View {
                 }
             }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.layout)
     }
 
     private func gridItemsView(items: [MyShowsGridItem]) -> some View {
@@ -237,4 +251,73 @@ public struct MyShowsScreen: View {
         )
         .screenTag(MyShowsTestTags.shared.EMPTY_STATE_TEST_TAG)
     }
+}
+
+private let previewEpisodes: [SwiftNextEpisode] = [
+    SwiftNextEpisode(
+        showId: 1,
+        showName: "The Walking Dead: Daryl Dixon",
+        imageUrl: nil,
+        episodeId: 123,
+        episodeTitle: "L'ame Perdue",
+        episodeNumber: "S02 | E01",
+        runtime: "45 min",
+        overview: "Daryl washes ashore in France.",
+        watchedCount: 3,
+        totalCount: 8
+    ),
+    SwiftNextEpisode(
+        showId: 2,
+        showName: "Severance",
+        imageUrl: nil,
+        episodeId: 456,
+        episodeTitle: "Woe's Hollow",
+        episodeNumber: "S02 | E05",
+        runtime: "52 min",
+        overview: "The severed team goes on a retreat.",
+        watchedCount: 5,
+        totalCount: 10
+    ),
+]
+
+private func previewState(layout: SwiftListStyle) -> MyShowsScreen.State {
+    MyShowsScreen.State(
+        emptyText: "Nothing in progress",
+        upToDateText: "Up to date",
+        upNextSectionTitle: "Up Next",
+        staleSectionTitle: "Not watched for a while",
+        premiereLabel: "Premiere",
+        newLabel: "New",
+        isLoading: false,
+        layout: layout,
+        query: "",
+        watchNextGridItems: [],
+        staleGridItems: [],
+        watchNextEpisodes: previewEpisodes,
+        staleEpisodes: []
+    )
+}
+
+#Preview("Compact") {
+    MyShowsScreen(
+        state: previewState(layout: .compact),
+        onShowClicked: { _ in },
+        onEpisodeClicked: { _, _ in },
+        onShowTitleClicked: { _ in },
+        onMarkWatched: { _ in },
+        onRefresh: {}
+    )
+    .appPreview()
+}
+
+#Preview("Detailed") {
+    MyShowsScreen(
+        state: previewState(layout: .detailed),
+        onShowClicked: { _ in },
+        onEpisodeClicked: { _, _ in },
+        onShowTitleClicked: { _ in },
+        onMarkWatched: { _ in },
+        onRefresh: {}
+    )
+    .appPreview()
 }

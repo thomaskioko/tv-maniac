@@ -12,27 +12,35 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.ViewAgenda
+import androidx.compose.material.icons.outlined.ViewHeadline
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -63,6 +72,7 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
+import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.components.SearchBar
 import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -74,10 +84,19 @@ import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.Layout
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_filter
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_search
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_toggle_list_style
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_empty_content
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_compact
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_detailed
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_grid
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layout_list
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layouts_locked_message
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_layouts_locked_title
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_premium_badge
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upgrade_to_premium
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_watchlist_empty_result
 import com.thomaskioko.tvmaniac.i18n.MR.strings.menu_item_library
 import com.thomaskioko.tvmaniac.i18n.MR.strings.msg_search_show_hint
@@ -91,6 +110,7 @@ import com.thomaskioko.tvmaniac.presentation.library.LibraryPresenter
 import com.thomaskioko.tvmaniac.presentation.library.LibraryQueryChanged
 import com.thomaskioko.tvmaniac.presentation.library.LibraryShowClicked
 import com.thomaskioko.tvmaniac.presentation.library.LibraryState
+import com.thomaskioko.tvmaniac.presentation.library.LibraryUpgradeClicked
 import com.thomaskioko.tvmaniac.presentation.library.MessageShown
 import com.thomaskioko.tvmaniac.presentation.library.ToggleGenreFilter
 import com.thomaskioko.tvmaniac.presentation.library.ToggleSearchActive
@@ -101,6 +121,9 @@ import com.thomaskioko.tvmaniac.ui.library.preview.LibraryStatePreviewParameterP
 import io.github.thomaskioko.codegen.annotations.TabUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
+
+private val PremiumLockCardWidth = 280.dp
+private val PremiumLockCardMinHeight = 240.dp
 
 @TabUi(presenter = LibraryPresenter::class, parentScope = ActivityScope::class)
 @Composable
@@ -132,6 +155,7 @@ internal fun LibraryScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var showSortOptions by remember { mutableStateOf(false) }
+    var layoutMenuExpanded by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
@@ -145,6 +169,8 @@ internal fun LibraryScreen(
                 state = state,
                 scrollBehavior = scrollBehavior,
                 onFilterClick = { showSortOptions = true },
+                layoutMenuExpanded = layoutMenuExpanded,
+                onLayoutMenuExpandedChange = { layoutMenuExpanded = it },
             )
         },
         content = { contentPadding ->
@@ -153,13 +179,13 @@ internal fun LibraryScreen(
                 modifier = Modifier
                     .padding(contentPadding.copy(copyBottom = false))
                     .padding(horizontal = TvManiacSpacing.xSmall),
-                targetState = state.isGridMode,
+                targetState = state.listStyle,
                 transitionSpec = {
                     (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
                         (scaleOut(animationSpec = spring()) + fadeOut())
                 },
                 label = "list_style_animation",
-            ) { isGridMode ->
+            ) { listStyle ->
                 when {
                     state.showLoading -> {
                         Box(
@@ -182,15 +208,29 @@ internal fun LibraryScreen(
                             message = message,
                         )
                     }
-                    isGridMode -> {
+                    listStyle == ListStyle.GRID -> {
                         LibraryGridContent(
                             items = state.items,
                             scrollBehavior = scrollBehavior,
                             onItemClicked = { onAction(LibraryShowClicked(it)) },
                         )
                     }
-                    else -> {
+                    listStyle == ListStyle.LIST -> {
                         LibraryListContent(
+                            items = state.items,
+                            scrollBehavior = scrollBehavior,
+                            onItemClicked = { onAction(LibraryShowClicked(it)) },
+                        )
+                    }
+                    listStyle == ListStyle.COMPACT -> {
+                        LibraryCompactContent(
+                            items = state.items,
+                            scrollBehavior = scrollBehavior,
+                            onItemClicked = { onAction(LibraryShowClicked(it)) },
+                        )
+                    }
+                    else -> {
+                        LibraryDetailedContent(
                             items = state.items,
                             scrollBehavior = scrollBehavior,
                             onItemClicked = { onAction(LibraryShowClicked(it)) },
@@ -238,6 +278,8 @@ private fun TopBar(
     state: LibraryState,
     scrollBehavior: TopAppBarScrollBehavior,
     onFilterClick: () -> Unit,
+    layoutMenuExpanded: Boolean,
+    onLayoutMenuExpandedChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -273,6 +315,8 @@ private fun TopBar(
                         onAction = onAction,
                         onSearchClick = { onAction(ToggleSearchActive) },
                         onFilterClick = onFilterClick,
+                        layoutMenuExpanded = layoutMenuExpanded,
+                        onLayoutMenuExpandedChange = onLayoutMenuExpandedChange,
                     )
                 }
             }
@@ -291,6 +335,8 @@ private fun CollapsedTopBarContent(
     onAction: (LibraryAction) -> Unit,
     onSearchClick: () -> Unit,
     onFilterClick: () -> Unit,
+    layoutMenuExpanded: Boolean,
+    onLayoutMenuExpandedChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -299,21 +345,14 @@ private fun CollapsedTopBarContent(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(
+        LayoutMenu(
+            currentStyle = state.listStyle,
+            isLocked = state.isListStyleLocked,
+            expanded = layoutMenuExpanded,
+            onExpandedChange = onLayoutMenuExpandedChange,
+            onAction = onAction,
             modifier = Modifier.padding(end = TvManiacSpacing.xSmall),
-            onClick = { onAction(ChangeListStyleClicked(state.isGridMode)) },
-        ) {
-            val image = if (state.isGridMode) {
-                Icons.AutoMirrored.Outlined.List
-            } else {
-                Icons.Outlined.GridView
-            }
-            Icon(
-                imageVector = image,
-                contentDescription = cd_toggle_list_style.resolve(context),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        )
 
         Text(
             text = menu_item_library.resolve(context),
@@ -354,6 +393,125 @@ private fun CollapsedTopBarContent(
             }
         }
     }
+}
+
+@Composable
+internal fun LayoutMenu(
+    currentStyle: ListStyle,
+    isLocked: Boolean,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onAction: (LibraryAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+
+    Box(modifier = modifier) {
+        IconButton(
+            onClick = { onExpandedChange(true) },
+            modifier = Modifier.testTag(LibraryTestTags.LAYOUT_MENU_BUTTON_TEST_TAG),
+        ) {
+            Icon(
+                imageVector = currentStyle.icon(),
+                contentDescription = cd_toggle_list_style.resolve(context),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { onExpandedChange(false) },
+            modifier = Modifier.testTag(LibraryTestTags.LAYOUT_MENU_TEST_TAG),
+        ) {
+            LayoutMenuItem(
+                label = label_layout_grid.resolve(context),
+                style = ListStyle.GRID,
+                currentStyle = currentStyle,
+                tag = LibraryTestTags.LAYOUT_MENU_ITEM_GRID_TEST_TAG,
+                onClick = {
+                    onAction(ChangeListStyleClicked(ListStyle.GRID))
+                    onExpandedChange(false)
+                },
+            )
+            LayoutMenuItem(
+                label = label_layout_list.resolve(context),
+                style = ListStyle.LIST,
+                currentStyle = currentStyle,
+                tag = LibraryTestTags.LAYOUT_MENU_ITEM_LIST_TEST_TAG,
+                onClick = {
+                    onAction(ChangeListStyleClicked(ListStyle.LIST))
+                    onExpandedChange(false)
+                },
+            )
+
+            PremiumOverlay(
+                locked = isLocked,
+                badgeText = label_premium_badge.resolve(context),
+                title = label_layouts_locked_title.resolve(context),
+                message = label_layouts_locked_message.resolve(context),
+                actionText = label_upgrade_to_premium.resolve(context),
+                onActionClick = {
+                    onAction(LibraryUpgradeClicked)
+                    onExpandedChange(false)
+                },
+                modifier = Modifier
+                    .width(PremiumLockCardWidth)
+                    .testTag(LibraryTestTags.LAYOUT_MENU_LOCKED_SECTION_TEST_TAG)
+                    .then(if (isLocked) Modifier.heightIn(min = PremiumLockCardMinHeight) else Modifier),
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    LayoutMenuItem(
+                        label = label_layout_compact.resolve(context),
+                        style = ListStyle.COMPACT,
+                        currentStyle = currentStyle,
+                        tag = LibraryTestTags.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG,
+                        onClick = {
+                            onAction(ChangeListStyleClicked(ListStyle.COMPACT))
+                            onExpandedChange(false)
+                        },
+                    )
+                    LayoutMenuItem(
+                        label = label_layout_detailed.resolve(context),
+                        style = ListStyle.DETAILED,
+                        currentStyle = currentStyle,
+                        tag = LibraryTestTags.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG,
+                        onClick = {
+                            onAction(ChangeListStyleClicked(ListStyle.DETAILED))
+                            onExpandedChange(false)
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LayoutMenuItem(
+    label: String,
+    style: ListStyle,
+    currentStyle: ListStyle,
+    tag: String,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = { Text(text = label) },
+        leadingIcon = { Icon(imageVector = style.icon(), contentDescription = null) },
+        trailingIcon = if (style == currentStyle) {
+            { Icon(imageVector = Icons.Filled.Check, contentDescription = null) }
+        } else {
+            null
+        },
+        onClick = onClick,
+        modifier = Modifier.testTag(tag),
+    )
+}
+
+private fun ListStyle.icon(): ImageVector = when (this) {
+    ListStyle.GRID -> Icons.Outlined.GridView
+    ListStyle.LIST -> Icons.AutoMirrored.Outlined.List
+    ListStyle.COMPACT -> Icons.Outlined.ViewHeadline
+    ListStyle.DETAILED -> Icons.Outlined.ViewAgenda
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -429,6 +587,72 @@ private fun LibraryListContent(
             contentType = { "LibraryListItem" },
         ) { index ->
             LibraryListItem(
+                item = items[index],
+                onItemClicked = onItemClicked,
+                modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].showId)),
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.navigationBarsPadding())
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LibraryCompactContent(
+    items: ImmutableList<LibraryShowItem>,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onItemClicked: (Long) -> Unit,
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
+        contentPadding = PaddingValues(vertical = TvManiacSpacing.xSmall),
+        modifier = Modifier
+            .testTag(LibraryTestTags.LIBRARY_COMPACT_LIST_TEST_TAG)
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) {
+        items(
+            count = items.size,
+            key = { items[it].showId },
+            contentType = { "LibraryCompactItem" },
+        ) { index ->
+            LibraryCompactItem(
+                item = items[index],
+                onItemClicked = onItemClicked,
+                modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].showId)),
+            )
+        }
+
+        item {
+            Spacer(modifier = Modifier.navigationBarsPadding())
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LibraryDetailedContent(
+    items: ImmutableList<LibraryShowItem>,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onItemClicked: (Long) -> Unit,
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
+        contentPadding = PaddingValues(top = TvManiacSpacing.xSmall),
+        modifier = Modifier
+            .testTag(LibraryTestTags.LIBRARY_DETAILED_LIST_TEST_TAG)
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) {
+        items(
+            count = items.size,
+            key = { items[it].showId },
+            contentType = { "LibraryDetailedItem" },
+        ) { index ->
+            LibraryDetailedItem(
                 item = items[index],
                 onItemClicked = onItemClicked,
                 modifier = Modifier.testTag(LibraryTestTags.showRow(items[index].showId)),

@@ -3,7 +3,14 @@ name: iOS Binary Size
 on:
     push:
         branches: [ main ]
+    schedule:
+        -   cron: '30 4 * * *'
     workflow_dispatch:
+        inputs:
+            append_to_sheet:
+                description: Append this run's measurements to the size sheet
+                type: boolean
+                default: false
 
 env:
     XCODE_VERSION: 26.5
@@ -14,6 +21,7 @@ env:
     SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
     SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
     SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
+    SHEET_SECRETS_PRESENT: ${{ secrets.GCP_SA_KEY != '' && secrets.GSHEET_ID != '' }}
 
 jobs:
     measure:
@@ -47,3 +55,34 @@ jobs:
                 with:
                     name: ios-framework-size
                     path: framework-size.txt
+
+            -   name: 🔐 Authenticate for the size sheet
+                id: sheet-auth
+                if: ${{ (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.append_to_sheet)) && env.SHEET_SECRETS_PRESENT == 'true' }}
+                uses: google-github-actions/auth@v3
+                with:
+                    credentials_json: ${{ secrets.GCP_SA_KEY }}
+                    token_format: access_token
+                    access_token_scopes: https://www.googleapis.com/auth/spreadsheets
+
+            -   name: 📈 Append rows to the size sheet
+                if: ${{ steps.sheet-auth.outcome == 'success' }}
+                shell: bash
+                run: |
+                    {
+                      ./scripts/ios-framework-size.sh --csv
+                      python3 scripts/ios-framework-size-analysis.py --csv
+                    } > metrics.csv
+                    ROWS="$(awk -F, \
+                      -v ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+                      -v sha="$GITHUB_SHA" \
+                      -v ev="${{ github.event_name }}" \
+                      '{printf "%s[\"%s\",\"%s\",\"%s\",\"%s\",%s]", (NR > 1 ? "," : ""), ts, sha, ev, $1, $2}' metrics.csv)"
+                    RESPONSE="$(curl -sSf -X POST \
+                      -H "Authorization: Bearer ${{ steps.sheet-auth.outputs.access_token }}" \
+                      -H "Content-Type: application/json" \
+                      "https://sheets.googleapis.com/v4/spreadsheets/${{ secrets.GSHEET_ID }}/values/A1:append?valueInputOption=RAW" \
+                      -d "{\"values\": [$ROWS]}")"
+                    printf '%s\n' "$RESPONSE"
+                    RANGE="$(printf '%s' "$RESPONSE" | python3 -c 'import json, sys; print(json.load(sys.stdin)["updates"]["updatedRange"])')"
+                    echo "Appended to the size sheet: $RANGE" >> "$GITHUB_STEP_SUMMARY"

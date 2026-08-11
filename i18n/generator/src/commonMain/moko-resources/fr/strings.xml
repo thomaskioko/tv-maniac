@@ -329,6 +329,9 @@
     <string name="label_settings_include_specials">Saisons Spéciales</string>
     <string name="label_settings_include_specials_description">Afficher les Specials et saisons bonus</string>
 
+    <string name="label_settings_quick_rate">Notation Rapide</string>
+    <string name="label_settings_quick_rate_description">Demander une note dès qu\'un épisode est marqué comme vu</string>
+
     <string name="label_up_to_date">Tout vu</string>
 
     <string name="label_settings_episode_notifications">Notifications d\'épisodes</string>
@@ -388,6 +391,7 @@
 
     <string name="label_episode_action_mark_watched">Marquer comme vu</string>
     <string name="label_episode_action_mark_unwatched">Marquer comme non vu</string>
+    <string name="label_episode_action_watch_again">Revoir</string>
     <string name="label_episode_action_open_show">Ouvrir la série</string>
     <string name="label_episode_action_open_season">Ouvrir la saison</string>
     <string name="label_episode_action_unfollow_show">Ne plus suivre la série</string>
@@ -500,4 +504,62 @@
     <string name="label_action_rate">Noter</string>
     <string name="label_action_rate_episode">Noter l\'épisode</string>
     <string name="label_action_remove_rating">Supprimer la note</string>
+    <string name="label_layout_grid">Grille</string>
+    <string name="label_layout_list">Liste</string>
+    <string name="label_layout_compact">Compact</string>
+    <string name="label_layout_detailed">Détaillé</string>
+    <string name="label_layouts_locked_title">Compact et Détaillé sont des mises en page Premium</string>
+    <string name="label_layouts_locked_message">Passez à Premium pour utiliser ces mises en page.</string>
+
+    <string name="label_statistics_title">Statistiques</string>
+    <string name="cd_statistics_open">Ouvrir les statistiques</string>
+    <string name="label_statistics_locked_title">Les statistiques sont une fonctionnalité Premium</string>
+    <string name="label_statistics_locked_message">Passez à Premium pour voir comment vous regardez.</string>
+    <string name="label_statistics_empty">Marquez un épisode comme vu pour commencer vos statistiques.</string>
+    <string name="label_statistics_activity">Votre année de visionnage</string>
+    <string name="label_statistics_marked_watched_note">Les dates indiquent quand les épisodes ont été marqués comme vus, pas quand vous les avez regardés.</string>
+    <string name="label_statistics_rewatch_note">Les totaux comptent chaque visionnage, pas seulement le premier.</string>
+    <string name="label_statistics_watch_time">Temps total de visionnage</string>
+    <string name="label_statistics_days">jours</string>
+    <string name="label_statistics_hours">heures</string>
+    <string name="label_statistics_minutes">minutes</string>
+    <string name="label_statistics_titles_tracked">Titres suivis</string>
+    <string name="label_statistics_episodes">Épisodes</string>
+    <string name="label_statistics_rewatches">Revisionnages</string>
+    <string name="label_statistics_average_rating">Note moyenne</string>
+    <string name="label_statistics_peak_year">Année la plus active</string>
+    <string name="label_statistics_top_weekday">Jour le plus fréquent</string>
+    <string name="label_statistics_streak">Série de visionnage</string>
+    <string name="label_statistics_last_thirty_days">30 derniers jours</string>
+    <string name="label_statistics_watch_days">Jours de visionnage cette année</string>
+    <string name="label_statistics_completed_count">%1$d terminées</string>
+    <string name="label_statistics_rated_count">sur %1$d notées</string>
+    <string name="label_statistics_longest_run">plus longue série</string>
+    <string name="label_statistics_watch_days_caption">jours avec une activité</string>
+    <string name="label_statistics_most_watched">Épisodes par série</string>
+    <string name="label_statistics_highest_rated">Séries les mieux notées</string>
+    <string name="label_statistics_rating_whole">%1$d/5</string>
+    <string name="label_statistics_rating_half">%1$d,5/5</string>
+    <string name="label_statistics_watch_status">Séries par statut</string>
+    <string name="label_statistics_ratings">Vos notes</string>
+    <string name="label_statistics_yearly_activity">Épisodes par année</string>
+    <string name="label_statistics_monthly_activity">Épisodes par mois</string>
+    <string name="label_statistics_weekday_activity">Épisodes par jour de la semaine</string>
+    <string name="label_statistics_genres">Genres que vous regardez</string>
+    <string name="label_statistics_release_years">Séries par année de sortie</string>
+    <string name="label_statistics_genre_other">Autres</string>
+    <string name="label_statistics_genres_empty">Nous ne connaissons pas encore les genres des séries que vous avez regardées.</string>
+    <string name="label_statistics_current_streak">Série en cours</string>
+    <string name="label_statistics_running_now">en cours</string>
+    <string name="label_statistics_watch_days_month">Jours de visionnage ce mois-ci</string>
+    <string name="label_watch_status_watchlist">Liste de suivi</string>
+    <string name="label_watch_status_watching">En cours de visionnage</string>
+    <string name="label_watch_status_completed">Terminées</string>
+    <string name="label_watch_status_on_hold">En pause</string>
+    <string name="label_watch_status_dropped">Abandonnées</string>
+
+    <string name="label_rewatch_start">Commencer un revisionnage</string>
+    <string name="label_rewatch_close">Terminer le revisionnage</string>
+    <string name="label_rewatch_in_progress">Revisionnage en cours</string>
+    <string name="label_rewatch_simkl_free_tier">Simkl n\'enregistre pas les revisionnages sans forfait payant. Ce décompte reste sur cet appareil.</string>
 </resources>

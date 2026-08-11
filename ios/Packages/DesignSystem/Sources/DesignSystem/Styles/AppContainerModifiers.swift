@@ -11,11 +11,12 @@ public struct AppScreenStyle: ViewModifier {
 
 public struct AppCardStyle: ViewModifier {
     @Environment(\.appTheme) private var theme
+    @ScaledMetric(relativeTo: .body) private var padding: CGFloat = 16
 
     public func body(content: Content) -> some View {
         content
             .foregroundStyle(.appOnSurface)
-            .padding(theme.spacing.medium)
+            .padding(padding)
             .background(
                 .appSurface,
                 in: RoundedRectangle(cornerRadius: theme.shapes.medium)

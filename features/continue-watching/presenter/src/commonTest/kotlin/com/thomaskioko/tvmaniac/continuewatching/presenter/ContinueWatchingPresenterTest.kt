@@ -5,8 +5,14 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.EpisodeBadge
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
+import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -43,6 +49,40 @@ class ContinueWatchingPresenterTest {
     @AfterTest
     fun tearDown() {
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `should open the rating sheet given quick rate is on and an episode is marked watched`() = runTest {
+        val navigator = FakeNavigator()
+        factory.datastoreRepository.saveQuickRateEnabled(true)
+        val presenter = factory.create(
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            navigator = navigator,
+        )
+
+        presenter.dispatch(
+            MarkUpNextEpisodeWatched(showId = 1L, episodeId = 2L, seasonNumber = 1L, episodeNumber = 3L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
+        route.param.id shouldBe 2L
+    }
+
+    @Test
+    fun `should not open the rating sheet given quick rate is off`() = runTest {
+        val navigator = FakeNavigator()
+        val presenter = factory.create(
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            navigator = navigator,
+        )
+
+        presenter.dispatch(
+            MarkUpNextEpisodeWatched(showId = 1L, episodeId = 2L, seasonNumber = 1L, episodeNumber = 3L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        navigator.activatedOverlays.shouldBeEmpty()
     }
 
     @Test
@@ -98,7 +138,7 @@ class ContinueWatchingPresenterTest {
 
             val state = awaitItem()
             state.query shouldBe ""
-            state.isGridMode shouldBe true
+            state.listStyle shouldBe ListStyle.GRID
             state.watchNextItems shouldBe expectedUiResult(cachedNextEpisodes)
 
             factory.upNextRepository.setNextEpisodesForWatchlist(updatedNextEpisodes)
@@ -229,6 +269,22 @@ class ContinueWatchingPresenterTest {
             state.watchNextEpisodes[0].showName shouldBe "Active Show"
             state.staleEpisodes.size shouldBe 1
             state.staleEpisodes[0].showName shouldBe "Stale Show"
+        }
+    }
+
+    @Test
+    fun `should emit the free fallback layout when list view types access is revoked`() = runTest {
+        presenter.state.test {
+            awaitItem() shouldBe ContinueWatchingState()
+
+            factory.repository.setListStyle(ListStyle.COMPACT)
+            awaitItem().listStyle shouldBe ListStyle.COMPACT
+
+            factory.subscriptionManager.setAccess(SubscriptionFeature.ListViewTypes, false)
+            awaitItem().listStyle shouldBe ListStyle.LIST
+
+            factory.subscriptionManager.setAccess(SubscriptionFeature.ListViewTypes, true)
+            awaitItem().listStyle shouldBe ListStyle.COMPACT
         }
     }
 

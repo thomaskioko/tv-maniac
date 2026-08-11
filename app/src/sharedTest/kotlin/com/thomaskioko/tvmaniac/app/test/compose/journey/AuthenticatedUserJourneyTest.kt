@@ -175,6 +175,14 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         profileRobot
             .assertUserNameDisplayed()
+            .clickStatisticsRow(slug = TEST_PROFILE_SLUG)
+
+        statisticsRobot
+            .assertStatisticsScreenDisplayed()
+            .clickBackButton()
+
+        profileRobot
+            .assertProfileScreenDisplayed()
             .scrollToUserLists(slug = TEST_PROFILE_SLUG)
             .assertUserListsRowDisplayed()
             .assertListCardDisplayed(favoritesListId)

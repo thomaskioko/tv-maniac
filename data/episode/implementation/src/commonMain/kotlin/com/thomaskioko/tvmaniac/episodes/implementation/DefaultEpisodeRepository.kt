@@ -11,11 +11,14 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
@@ -48,6 +51,18 @@ public class DefaultEpisodeRepository(
 
     override fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>> =
         watchedEpisodeDao.observeRecentlyWatched(limit)
+            .distinctUntilChanged()
+
+    override fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>> =
+        watchedEpisodeDao.observeWatchedAtWithRuntime()
+            .distinctUntilChanged()
+
+    override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> =
+        watchedEpisodeDao.observeWatchedShowComposition()
+            .distinctUntilChanged()
+
+    override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> =
+        watchedEpisodeDao.observeMostWatchedShows(limit)
             .distinctUntilChanged()
 
     override suspend fun markEpisodeAsWatched(

@@ -137,3 +137,31 @@ DELETE FROM episode_ratings WHERE episode_id = :episodeId;
 
 deleteAllEpisodeRatings:
 DELETE FROM episode_ratings;
+
+userRatingDistribution:
+SELECT rating, COUNT(*) AS rating_count
+FROM (
+    SELECT user_rating AS rating FROM show_ratings
+    WHERE user_rating IS NOT NULL AND pending_action != 'DELETE'
+    UNION ALL
+    SELECT user_rating AS rating FROM season_ratings
+    WHERE user_rating IS NOT NULL AND pending_action != 'DELETE'
+    UNION ALL
+    SELECT user_rating AS rating FROM episode_ratings
+    WHERE user_rating IS NOT NULL AND pending_action != 'DELETE'
+)
+GROUP BY rating
+ORDER BY rating;
+
+highestRatedShows:
+SELECT
+    tvshow.tmdb_id AS show_id,
+    tvshow.name AS title,
+    tvshow.poster_path,
+    show_ratings.user_rating
+FROM show_ratings
+INNER JOIN tvshow ON tvshow.id = show_ratings.show_id
+WHERE show_ratings.user_rating IS NOT NULL
+  AND show_ratings.pending_action != 'DELETE'
+ORDER BY show_ratings.user_rating DESC, tvshow.name ASC
+LIMIT :limit;

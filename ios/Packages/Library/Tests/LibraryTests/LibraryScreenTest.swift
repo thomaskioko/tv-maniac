@@ -14,84 +14,6 @@ class LibraryScreenTest: SnapshotTestCase {
         LibraryGridItem(showId: 4, title: "Stranger Things", posterImageUrl: nil),
     ]
 
-    func test_LibraryScreen_Loading() {
-        LibraryScreen(
-            state: LibraryScreen.State(
-                title: "Library",
-                searchPlaceholder: "Search shows",
-                emptyText: "No content",
-                isLoading: true,
-                isRefreshing: false,
-                isEmpty: false,
-                isGridMode: true,
-                isSearchActive: false,
-                query: "",
-                gridItems: [],
-                listItems: []
-            ),
-            onQueryChanged: { _ in },
-            onQueryCleared: {},
-            onToggleListStyle: {},
-            onToggleSearch: {},
-            onSortClicked: {},
-            onShowClicked: { _ in }
-        )
-        .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Loading")
-    }
-
-    func test_LibraryScreen_Empty() {
-        LibraryScreen(
-            state: LibraryScreen.State(
-                title: "Library",
-                searchPlaceholder: "Search shows",
-                emptyText: "No content",
-                isLoading: false,
-                isRefreshing: false,
-                isEmpty: true,
-                isGridMode: true,
-                isSearchActive: false,
-                query: "",
-                gridItems: [],
-                listItems: []
-            ),
-            onQueryChanged: { _ in },
-            onQueryCleared: {},
-            onToggleListStyle: {},
-            onToggleSearch: {},
-            onSortClicked: {},
-            onShowClicked: { _ in }
-        )
-        .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Empty")
-    }
-
-    func test_LibraryScreen_GridMode() {
-        LibraryScreen(
-            state: LibraryScreen.State(
-                title: "Library",
-                searchPlaceholder: "Search shows",
-                emptyText: "No content",
-                isLoading: false,
-                isRefreshing: false,
-                isEmpty: false,
-                isGridMode: true,
-                isSearchActive: false,
-                query: "",
-                gridItems: sampleGridItems,
-                listItems: []
-            ),
-            onQueryChanged: { _ in },
-            onQueryCleared: {},
-            onToggleListStyle: {},
-            onToggleSearch: {},
-            onSortClicked: {},
-            onShowClicked: { _ in }
-        )
-        .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_GridMode")
-    }
-
     private let sampleListItems: [SwiftLibraryItem] = [
         SwiftLibraryItem(
             showId: 1,
@@ -143,29 +65,100 @@ class LibraryScreenTest: SnapshotTestCase {
         ),
     ]
 
-    func test_LibraryScreen_ListMode() {
+    private let menuCopy = LayoutMenuCopy(
+        grid: "Grid",
+        list: "List",
+        compact: "Compact",
+        detailed: "Detailed",
+        premiumSectionTitle: "Premium",
+        lockedAccessibilitySuffix: "Locked",
+        lockedHint: "Compact and Detailed are Premium layouts. Upgrade to Premium to use these layouts.",
+        upgradeActionName: "Upgrade to Premium"
+    )
+
+    private func makeState(
+        isLoading: Bool = false,
+        isEmpty: Bool = false,
+        layout: SwiftListStyle = .grid,
+        isLayoutLocked: Bool = false,
+        gridItems: [LibraryGridItem] = [],
+        listItems: [SwiftLibraryItem] = []
+    ) -> LibraryScreen.State {
+        LibraryScreen.State(
+            title: "Library",
+            searchPlaceholder: "Search shows",
+            emptyText: "No content",
+            isLoading: isLoading,
+            isRefreshing: false,
+            isEmpty: isEmpty,
+            layout: layout,
+            isLayoutLocked: isLayoutLocked,
+            layoutMenuCopy: menuCopy,
+            isSearchActive: false,
+            query: "",
+            gridItems: gridItems,
+            listItems: listItems
+        )
+    }
+
+    private func screen(state: LibraryScreen.State) -> some View {
         LibraryScreen(
-            state: LibraryScreen.State(
-                title: "Library",
-                searchPlaceholder: "Search shows",
-                emptyText: "No content",
-                isLoading: false,
-                isRefreshing: false,
-                isEmpty: false,
-                isGridMode: false,
-                isSearchActive: false,
-                query: "",
-                gridItems: [],
-                listItems: sampleListItems
-            ),
+            state: state,
             onQueryChanged: { _ in },
             onQueryCleared: {},
-            onToggleListStyle: {},
+            onLayoutSelected: { _ in },
+            onUpgradeRequested: {},
             onToggleSearch: {},
             onSortClicked: {},
             onShowClicked: { _ in }
         )
-        .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_ListMode")
+    }
+
+    func test_LibraryScreen_Loading() {
+        screen(state: makeState(isLoading: true))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Loading")
+    }
+
+    func test_LibraryScreen_Empty() {
+        screen(state: makeState(isEmpty: true))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Empty")
+    }
+
+    func test_LibraryScreen_GridMode() {
+        screen(state: makeState(layout: .grid, gridItems: sampleGridItems))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_GridMode")
+    }
+
+    func test_LibraryScreen_ListMode() {
+        screen(state: makeState(layout: .list, listItems: sampleListItems))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_ListMode")
+    }
+
+    func test_LibraryScreen_CompactMode() {
+        screen(state: makeState(layout: .compact, listItems: sampleListItems))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_CompactMode")
+    }
+
+    func test_LibraryScreen_DetailedMode() {
+        screen(state: makeState(layout: .detailed, listItems: sampleListItems))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_DetailedMode")
+    }
+
+    func test_LibraryScreen_MenuUnlocked() {
+        screen(state: makeState(layout: .grid, isLayoutLocked: false, gridItems: sampleGridItems))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_MenuUnlocked")
+    }
+
+    func test_LibraryScreen_MenuLocked() {
+        screen(state: makeState(layout: .grid, isLayoutLocked: true, gridItems: sampleGridItems))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_MenuLocked")
     }
 }

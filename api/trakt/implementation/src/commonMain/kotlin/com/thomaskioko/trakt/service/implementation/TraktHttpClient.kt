@@ -2,6 +2,7 @@ package com.thomaskioko.trakt.service.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.ApiErrorReportingPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
@@ -47,6 +48,10 @@ internal fun traktHttpClient(
 ): HttpClient {
     val client = HttpClient(httpClientEngine) {
         install(ContentNegotiation) { json(json = json) }
+
+        install(ApiErrorReportingPlugin) {
+            onError = { message, throwable -> kermitLogger.error("Network Error : TraktApi", message, throwable) }
+        }
 
         install(InternetConnectionPlugin) {
             this.internetConnectionChecker = internetConnectionChecker

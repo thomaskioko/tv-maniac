@@ -42,7 +42,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
      * before the activity launches. The interface counterpart [setNotificationPermissionAsked] is
      * suspend, which deadlocks under `runBlocking` when the Compose Robolectric harness installs a
      * `TestDispatcher` as `Dispatchers.Main` (every dispatcher role binds to Main via
-     * `IntegrationTestDispatcherBindings`). Use this from `@Before` to seed state synchronously.
+     * `IntegrationTestDispatcherBindings`). Use this from `@Before` to store state synchronously.
      */
     public fun setNotificationPermissionAskedNow(asked: Boolean) {
         notificationPermissionAskedFlow.value = asked
@@ -157,6 +157,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val posterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
     private val landscapeWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
     private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.SHARP)
+    private val quickRateEnabledFlow = MutableStateFlow(false)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -260,4 +261,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observePosterCornerStyle(): Flow<PosterCornerStyle> = posterCornerStyleFlow.asStateFlow()
+
+    override suspend fun saveQuickRateEnabled(enabled: Boolean) {
+        quickRateEnabledFlow.value = enabled
+    }
+
+    override fun observeQuickRateEnabled(): Flow<Boolean> = quickRateEnabledFlow.asStateFlow()
 }

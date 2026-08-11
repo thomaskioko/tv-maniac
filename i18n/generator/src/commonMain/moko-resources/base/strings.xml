@@ -217,6 +217,9 @@
     <string name="label_settings_include_specials">Special Seasons</string>
     <string name="label_settings_include_specials_description">Display Specials and bonus seasons</string>
 
+    <string name="label_settings_quick_rate">Quick Rate</string>
+    <string name="label_settings_quick_rate_description">Show rating prompt after marking an episode as watched</string>
+
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>
     <string name="btn_add_to_list">Add To List</string>
@@ -404,6 +407,7 @@
 
     <string name="label_episode_action_mark_watched">Mark watched</string>
     <string name="label_episode_action_mark_unwatched">Mark unwatched</string>
+    <string name="label_episode_action_watch_again">Watch again</string>
     <string name="label_episode_action_open_show">Open show</string>
     <string name="label_episode_action_open_season">Open season</string>
     <string name="label_episode_action_unfollow_show">Unfollow show</string>
@@ -511,4 +515,62 @@
     <string name="label_action_rate">Rate</string>
     <string name="label_action_rate_episode">Rate episode</string>
     <string name="label_action_remove_rating">Remove rating</string>
+    <string name="label_layout_grid">Grid</string>
+    <string name="label_layout_list">List</string>
+    <string name="label_layout_compact">Compact</string>
+    <string name="label_layout_detailed">Detailed</string>
+    <string name="label_layouts_locked_title">Compact and Detailed are Premium layouts</string>
+    <string name="label_layouts_locked_message">Upgrade to Premium to use these layouts.</string>
+
+    <string name="label_statistics_title">Statistics</string>
+    <string name="cd_statistics_open">Open statistics</string>
+    <string name="label_statistics_locked_title">Statistics are a Premium feature</string>
+    <string name="label_statistics_locked_message">Upgrade to Premium to see how you watch.</string>
+    <string name="label_statistics_empty">Mark an episode as watched to start building your statistics.</string>
+    <string name="label_statistics_activity">Your year of watching</string>
+    <string name="label_statistics_marked_watched_note">Dates show when episodes were marked as watched, not when you watched them.</string>
+    <string name="label_statistics_rewatch_note">Totals count every viewing, not just the first.</string>
+    <string name="label_statistics_watch_time">Total time watched</string>
+    <string name="label_statistics_days">days</string>
+    <string name="label_statistics_hours">hours</string>
+    <string name="label_statistics_minutes">minutes</string>
+    <string name="label_statistics_titles_tracked">Titles tracked</string>
+    <string name="label_statistics_episodes">Episodes</string>
+    <string name="label_statistics_rewatches">Rewatches</string>
+    <string name="label_statistics_average_rating">Average rating</string>
+    <string name="label_statistics_peak_year">Peak year</string>
+    <string name="label_statistics_top_weekday">Top weekday</string>
+    <string name="label_statistics_streak">Watch streak</string>
+    <string name="label_statistics_last_thirty_days">Last 30 days</string>
+    <string name="label_statistics_watch_days">Watch days this year</string>
+    <string name="label_statistics_completed_count">%1$d completed</string>
+    <string name="label_statistics_rated_count">across %1$d rated</string>
+    <string name="label_statistics_longest_run">longest run</string>
+    <string name="label_statistics_watch_days_caption">days you watched something</string>
+    <string name="label_statistics_most_watched">Episodes by show</string>
+    <string name="label_statistics_highest_rated">Highest rated shows</string>
+    <string name="label_statistics_rating_whole">%1$d/5</string>
+    <string name="label_statistics_rating_half">%1$d.5/5</string>
+    <string name="label_statistics_watch_status">Shows by status</string>
+    <string name="label_statistics_ratings">Your ratings</string>
+    <string name="label_statistics_yearly_activity">Episodes by year</string>
+    <string name="label_statistics_monthly_activity">Episodes by month</string>
+    <string name="label_statistics_weekday_activity">Episodes by day of the week</string>
+    <string name="label_statistics_genres">Genres you watch</string>
+    <string name="label_statistics_release_years">Shows by release year</string>
+    <string name="label_statistics_genre_other">Other</string>
+    <string name="label_statistics_genres_empty">We do not know the genres of the shows you have watched yet.</string>
+    <string name="label_statistics_current_streak">Current streak</string>
+    <string name="label_statistics_running_now">running now</string>
+    <string name="label_statistics_watch_days_month">Watch days this month</string>
+    <string name="label_watch_status_watchlist">Watchlist</string>
+    <string name="label_watch_status_watching">Watching</string>
+    <string name="label_watch_status_completed">Completed</string>
+    <string name="label_watch_status_on_hold">On hold</string>
+    <string name="label_watch_status_dropped">Dropped</string>
+
+    <string name="label_rewatch_start">Start rewatch</string>
+    <string name="label_rewatch_close">Close rewatch</string>
+    <string name="label_rewatch_in_progress">Rewatch in progress</string>
+    <string name="label_rewatch_simkl_free_tier">Simkl does not store rewatches without a paid plan, so this count stays on this device.</string>
 </resources>

@@ -11,6 +11,9 @@ public struct NotificationRationaleSheet: View {
     private let dismissButtonText: String
     private let onEnable: () -> Void
     private let onDismiss: () -> Void
+    private let sheetTestTag: String?
+    private let enableButtonTestTag: String?
+    private let dismissButtonTestTag: String?
 
     public init(
         title: String,
@@ -18,7 +21,10 @@ public struct NotificationRationaleSheet: View {
         enableButtonText: String,
         dismissButtonText: String,
         onEnable: @escaping () -> Void,
-        onDismiss: @escaping () -> Void
+        onDismiss: @escaping () -> Void,
+        sheetTestTag: String? = nil,
+        enableButtonTestTag: String? = nil,
+        dismissButtonTestTag: String? = nil
     ) {
         self.title = title
         self.message = message
@@ -26,6 +32,9 @@ public struct NotificationRationaleSheet: View {
         self.dismissButtonText = dismissButtonText
         self.onEnable = onEnable
         self.onDismiss = onDismiss
+        self.sheetTestTag = sheetTestTag
+        self.enableButtonTestTag = enableButtonTestTag
+        self.dismissButtonTestTag = dismissButtonTestTag
     }
 
     public var body: some View {
@@ -63,6 +72,7 @@ public struct NotificationRationaleSheet: View {
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
             .controlSize(.large)
             .padding(.horizontal, theme.spacing.large)
+            .testTag(enableButtonTestTag)
 
             Button(action: onDismiss) {
                 Text(dismissButtonText)
@@ -72,6 +82,7 @@ public struct NotificationRationaleSheet: View {
             .buttonStyle(.borderless)
             .controlSize(.large)
             .padding(.horizontal, theme.spacing.large)
+            .testTag(dismissButtonTestTag)
 
             Spacer()
                 .frame(height: theme.spacing.medium)
@@ -79,6 +90,7 @@ public struct NotificationRationaleSheet: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.appSurface)
         .tint(theme.colors.buttonBackground)
+        .screenTag(sheetTestTag)
     }
 
     private var episodeDateSection: some View {

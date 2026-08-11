@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.showdetails.ui.section
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +16,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,7 +33,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,8 +47,6 @@ import com.thomaskioko.tvmaniac.compose.theme.LocalLandscapeWidthScale
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacElevation
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
-import com.thomaskioko.tvmaniac.i18n.MR.strings.title_trailer
-import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.ShowDetailsTrailersAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.trailers.ShowDetailsTrailersPresenter
@@ -69,6 +69,7 @@ internal fun ShowDetailsTrailersSection(
 ) {
     TrailersContent(
         modifier = Modifier.testTag(ShowDetailsTestTags.TRAILERS_LIST_TEST_TAG),
+        title = state.title,
         trailersList = state.trailersList,
         onTrailerClicked = { id -> onAction(ShowDetailsWatchTrailerClicked(id)) },
     )
@@ -76,6 +77,7 @@ internal fun ShowDetailsTrailersSection(
 
 @Composable
 private fun TrailersContent(
+    title: String,
     trailersList: ImmutableList<TrailerModel>,
     onTrailerClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -85,7 +87,7 @@ private fun TrailersContent(
     Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
 
     TextLoadingItem(
-        title = title_trailer.resolve(LocalContext.current),
+        title = title,
         modifier = modifier,
     ) {
         val lazyListState = rememberLazyListState()
@@ -115,6 +117,7 @@ private fun TrailersContent(
                             AsyncImageComposable(
                                 model = trailer.youtubeThumbnailUrl,
                                 contentDescription = trailer.name,
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .height(140.dp * LocalLandscapeWidthScale.current)
                                     .aspectRatio(3 / 1.5f)
@@ -132,12 +135,17 @@ private fun TrailersContent(
                             )
 
                             Icon(
-                                imageVector = Icons.Filled.PlayCircle,
+                                imageVector = Icons.Filled.PlayArrow,
                                 contentDescription = trailer.name,
-                                tint = MaterialTheme.colorScheme.onSecondary,
+                                tint = TvManiacTheme.colorScheme.onScrim,
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .size(48.dp),
+                                    .size(48.dp)
+                                    .background(
+                                        color = TvManiacTheme.colorScheme.scrim.copy(alpha = 0.5f),
+                                        shape = CircleShape,
+                                    )
+                                    .padding(8.dp),
                             )
                         }
                     }

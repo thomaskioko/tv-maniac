@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveTrailersInteractor
+import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
@@ -120,6 +121,7 @@ internal class ShowDetailsTrailersPresenterTest {
             navigator = navigator,
             accountManager = accountManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
+            localizer = FakeLocalizer(),
             logger = FakeLogger(),
         )
 

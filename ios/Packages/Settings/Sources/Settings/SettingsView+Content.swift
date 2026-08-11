@@ -32,6 +32,18 @@ extension SettingsView {
         ))
 
         toggles.append(SettingsToggleItem(
+            id: "quick-rate",
+            icon: "star.fill",
+            title: uiState.labels.quickRateTitle,
+            subtitle: uiState.labels.quickRateDescription,
+            isOn: uiState.quickRateEnabled,
+            isLocked: uiState.locks.quickRateLocked,
+            lockedBadgeText: uiState.locks.badgeText,
+            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            onToggle: { presenter.dispatch(action: QuickRateToggled(enabled: $0)) }
+        ))
+
+        toggles.append(SettingsToggleItem(
             id: "youtube",
             icon: "tv",
             title: uiState.labels.youtubeTitle,

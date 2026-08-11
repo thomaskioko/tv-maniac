@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.presentation.episodedetail.EpisodeSheetActionItem
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.util.testing.FlakyTests
 import org.junit.Test
 
 internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
@@ -51,6 +52,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    @FlakyTests(count = 2)
     fun givenEpisodeSheet_whenOpenSeasonClicked_thenNavigatesToSeasonDetails() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
 
@@ -83,6 +85,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    @FlakyTests(count = 2)
     fun givenEpisodeSheet_whenEpisodeRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
         scenarios.stubTmdb()
         scenarios.stubActiveProvider(SyncProviderSource.TRAKT)

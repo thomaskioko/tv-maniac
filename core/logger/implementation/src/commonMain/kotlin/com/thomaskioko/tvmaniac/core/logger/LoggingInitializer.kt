@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.Initializer
 import com.thomaskioko.tvmaniac.core.base.Initializers
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.coroutines.CoroutineCrashUtil
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Inject
@@ -11,6 +12,8 @@ import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+private const val LOG_TAG = "UncaughtCoroutineException"
 
 @Inject
 public class LoggingInitializer(
@@ -23,6 +26,10 @@ public class LoggingInitializer(
 
     public fun init() {
         logger.setup(debugConfig.isDebug)
+
+        CoroutineCrashUtil.setUncaughtException { throwable ->
+            logger.error(LOG_TAG, "Uncaught coroutine exception", throwable)
+        }
 
         scope.launch {
             crashReportingPreference.observeCrashReportingEnabled()

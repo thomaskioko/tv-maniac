@@ -42,6 +42,16 @@ class IosFormatterUtilTest {
     }
 
     @Test
+    fun `should round negative double away from zero`() {
+        val number = -3.14159
+        val expected = -3.2
+
+        val result = formatterUtil.formatDouble(number, 1)
+
+        result shouldBeEqual expected
+    }
+
+    @Test
     fun formatDouble_withNull_returnsZero() {
         val number: Double? = null
         val scale = 2

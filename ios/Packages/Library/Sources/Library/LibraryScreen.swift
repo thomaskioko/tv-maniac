@@ -11,7 +11,9 @@ public struct LibraryScreen: View {
         public let isLoading: Bool
         public let isRefreshing: Bool
         public let isEmpty: Bool
-        public let isGridMode: Bool
+        public let layout: SwiftListStyle
+        public let isLayoutLocked: Bool
+        public let layoutMenuCopy: LayoutMenuCopy
         public let isSearchActive: Bool
         public let query: String
         public let gridItems: [LibraryGridItem]
@@ -24,7 +26,9 @@ public struct LibraryScreen: View {
             isLoading: Bool,
             isRefreshing: Bool,
             isEmpty: Bool,
-            isGridMode: Bool,
+            layout: SwiftListStyle,
+            isLayoutLocked: Bool,
+            layoutMenuCopy: LayoutMenuCopy,
             isSearchActive: Bool,
             query: String,
             gridItems: [LibraryGridItem],
@@ -36,7 +40,9 @@ public struct LibraryScreen: View {
             self.isLoading = isLoading
             self.isRefreshing = isRefreshing
             self.isEmpty = isEmpty
-            self.isGridMode = isGridMode
+            self.layout = layout
+            self.isLayoutLocked = isLayoutLocked
+            self.layoutMenuCopy = layoutMenuCopy
             self.isSearchActive = isSearchActive
             self.query = query
             self.gridItems = gridItems
@@ -51,7 +57,8 @@ public struct LibraryScreen: View {
     private let emptySearchResultFormat: ((String) -> String)?
     private let onQueryChanged: (String) -> Void
     private let onQueryCleared: () -> Void
-    private let onToggleListStyle: () -> Void
+    private let onLayoutSelected: (SwiftListStyle) -> Void
+    private let onUpgradeRequested: () -> Void
     private let onToggleSearch: () -> Void
     private let onSortClicked: () -> Void
     private let onShowClicked: (Int64) -> Void
@@ -61,7 +68,8 @@ public struct LibraryScreen: View {
         emptySearchResultFormat: ((String) -> String)? = nil,
         onQueryChanged: @escaping (String) -> Void,
         onQueryCleared: @escaping () -> Void,
-        onToggleListStyle: @escaping () -> Void,
+        onLayoutSelected: @escaping (SwiftListStyle) -> Void,
+        onUpgradeRequested: @escaping () -> Void,
         onToggleSearch: @escaping () -> Void,
         onSortClicked: @escaping () -> Void,
         onShowClicked: @escaping (Int64) -> Void
@@ -70,7 +78,8 @@ public struct LibraryScreen: View {
         self.emptySearchResultFormat = emptySearchResultFormat
         self.onQueryChanged = onQueryChanged
         self.onQueryCleared = onQueryCleared
-        self.onToggleListStyle = onToggleListStyle
+        self.onLayoutSelected = onLayoutSelected
+        self.onUpgradeRequested = onUpgradeRequested
         self.onToggleSearch = onToggleSearch
         self.onSortClicked = onSortClicked
         self.onShowClicked = onShowClicked
@@ -123,25 +132,24 @@ public struct LibraryScreen: View {
             }
         } else if state.isEmpty {
             emptyView
-        } else if state.isGridMode {
+        } else if state.layout == .grid {
             gridContent
-        } else {
+        } else if state.layout == .list {
             listContent
+        } else if state.layout == .compact {
+            compactContent
+        } else {
+            detailedContent
         }
     }
 
     private var libraryToolbar: some View {
-        let image = state.isGridMode ? "list.bullet" : "rectangle.grid.2x2"
-        return GlassToolbar(
+        GlassToolbar(
             title: state.title,
             opacity: 1.0,
             isLoading: state.isRefreshing,
             leadingIcon: {
-                GlassButton(icon: image) {
-                    withAnimation {
-                        onToggleListStyle()
-                    }
-                }
+                layoutMenu
             },
             trailingIcon: {
                 HStack(spacing: appTheme.spacing.xSmall) {
@@ -155,6 +163,51 @@ public struct LibraryScreen: View {
                 }
             }
         )
+    }
+
+    private var layoutMenu: some View {
+        let copy = state.layoutMenuCopy
+        return Menu {
+            layoutMenuRow(.grid, copy: copy)
+            layoutMenuRow(.list, copy: copy)
+            Section(copy.premiumSectionTitle) {
+                layoutMenuRow(.compact, copy: copy)
+                layoutMenuRow(.detailed, copy: copy)
+            }
+        } label: {
+            GlassButton(icon: icon(for: state.layout), action: {})
+        }
+    }
+
+    @ViewBuilder
+    private func layoutMenuRow(_ layout: SwiftListStyle, copy: LayoutMenuCopy) -> some View {
+        let label = copy.label(for: layout)
+        if layout.isPremium, state.isLayoutLocked {
+            Button {
+                onUpgradeRequested()
+            } label: {
+                Label(label, systemImage: "lock.fill")
+            }
+            .accessibilityLabel("\(label), \(copy.lockedAccessibilitySuffix)")
+            .accessibilityHint(copy.lockedHint)
+            .accessibilityAction(named: Text(copy.upgradeActionName)) {
+                onUpgradeRequested()
+            }
+        } else {
+            Button(label, systemImage: icon(for: layout)) {
+                withAnimation { onLayoutSelected(layout) }
+            }
+            .accessibilityAddTraits(layout == state.layout ? .isSelected : [])
+        }
+    }
+
+    private func icon(for layout: SwiftListStyle) -> String {
+        switch layout {
+        case .grid: "rectangle.grid.2x2"
+        case .list: "list.bullet"
+        case .compact: "rectangle.compress.vertical"
+        case .detailed: "rectangle.expand.vertical"
+        }
     }
 
     private var searchBarOverlay: some View {
@@ -230,7 +283,7 @@ public struct LibraryScreen: View {
             .padding(.horizontal, appTheme.spacing.xSmall)
             .padding(.top, appTheme.spacing.large)
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.layout)
     }
 
     private var listContent: some View {
@@ -248,7 +301,43 @@ public struct LibraryScreen: View {
             .padding(.horizontal, appTheme.spacing.xSmall)
             .padding(.top, appTheme.spacing.large)
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isGridMode)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.layout)
+    }
+
+    private var compactContent: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: appTheme.spacing.small) {
+                ForEach(state.listItems) { item in
+                    LibraryCompactRowView(
+                        item: item,
+                        onItemClicked: {
+                            onShowClicked(item.showId)
+                        }
+                    )
+                }
+            }
+            .padding(.horizontal, appTheme.spacing.small)
+            .padding(.top, appTheme.spacing.large)
+        }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.layout)
+    }
+
+    private var detailedContent: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: appTheme.spacing.small) {
+                ForEach(state.listItems) { item in
+                    LibraryDetailedCardView(
+                        item: item,
+                        onItemClicked: {
+                            onShowClicked(item.showId)
+                        }
+                    )
+                }
+            }
+            .padding(.horizontal, appTheme.spacing.small)
+            .padding(.top, appTheme.spacing.large)
+        }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.layout)
     }
 
     @ViewBuilder
