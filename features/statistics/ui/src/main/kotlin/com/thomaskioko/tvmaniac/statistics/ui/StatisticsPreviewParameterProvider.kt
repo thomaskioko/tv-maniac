@@ -16,6 +16,9 @@ import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchStatusItemId
 import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchTime
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
 internal val previewLabels: StatisticsLabels = StatisticsLabels(
     screenTitle = "Statistics",
@@ -138,18 +141,20 @@ private val previewWeekdayActivity: ImmutableList<ActivityBar> = persistentListO
     ActivityBar(label = "Sun", count = 16, caption = "16 episodes", fraction = 0.8f),
 )
 
+private val HEAT_MAP_PREVIEW_START = LocalDate(2026, 1, 1)
+
 private val previewHeatMap: WatchHeatMap = WatchHeatMap(
     cells = List(HEAT_MAP_PREVIEW_DAYS) { index ->
         HeatMap(
-            date = "2026-01-01",
+            date = HEAT_MAP_PREVIEW_START.plus(index, DateTimeUnit.DAY).toString(),
             level = (index * 7) % 5,
             episodeCount = (index * 7) % 5,
+            isToday = index == HEAT_MAP_PREVIEW_DAYS - 1,
         )
     },
     leadingBlankCells = 3,
     activeDays = 138,
     quietDays = 77,
-    busiestDayCount = 4,
 )
 
 private const val HEAT_MAP_PREVIEW_DAYS = 215

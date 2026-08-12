@@ -51,26 +51,19 @@ struct WatchHeatMapSectionView: View {
 
     private var legend: some View {
         HStack(spacing: theme.spacing.xxxSmall) {
-            Text("0")
-                .textStyle(theme.typography.labelSmall)
-                .foregroundStyle(theme.colors.onSurfaceVariant)
-
             ForEach(0 ... Int(Self.maxLevel), id: \.self) { level in
                 RoundedRectangle(cornerRadius: theme.shapes.small)
                     .fill(color(for: level))
                     .frame(width: Self.cellSize, height: Self.cellSize)
             }
-
-            Text("\(heatMap.busiestDayCount)")
-                .textStyle(theme.typography.labelSmall)
-                .foregroundStyle(theme.colors.onSurfaceVariant)
         }
         .testTag(StatisticsTestTags.shared.HEAT_MAP_LEGEND_TEST_TAG)
     }
 
     private func isToday(_ columnIndex: Int, _ rowIndex: Int) -> Bool {
+        guard let todayIndex = heatMap.todayIndex else { return false }
         let index = columnIndex * Self.daysInWeek + rowIndex - heatMap.leadingBlankCells
-        return index == heatMap.levels.count - 1
+        return index == todayIndex
     }
 
     private var columns: [[Int?]] {
@@ -96,7 +89,7 @@ struct WatchHeatMapSectionView: View {
         heatMap: SwiftWatchHeatMap(
             levels: (0 ..< 70).map { $0 % 5 },
             leadingBlankCells: 3,
-            busiestDayCount: 4
+            todayIndex: 69
         ),
         title: "Your year of watching"
     )

@@ -138,19 +138,20 @@ public class StatisticsStateMapper(
     public fun toHeatMap(statistics: WatchStatistics): WatchHeatMap? {
         val days = statistics.dailyCounts
         if (days.isEmpty()) return null
-        val busiest = days.maxOf { it.episodeCount }
+        val today = dateTimeProvider.todayAsIsoDate(dateTimeProvider.getTimeZone())
         return WatchHeatMap(
             cells = days.map { day ->
+                val date = day.date.toString()
                 HeatMap(
-                    date = day.date.toString(),
-                    level = levelFor(day, busiest),
+                    date = date,
+                    level = levelFor(day),
                     episodeCount = day.episodeCount,
+                    isToday = date == today,
                 )
             },
             leadingBlankCells = days.first().date.dayOfWeek.isoDayNumber % DAYS_IN_WEEK,
             activeDays = days.count { it.episodeCount > 0 },
             quietDays = days.count { it.episodeCount == 0 },
-            busiestDayCount = busiest,
         )
     }
 
@@ -291,14 +292,12 @@ public class StatisticsStateMapper(
         }.toImmutableList()
     }
 
-    private fun levelFor(day: DailyWatchCount, busiest: Int): Int = when {
-        day.episodeCount == 0 -> 0
-        busiest <= 0 -> 0
-        else -> {
-            val share = day.episodeCount.toFloat() / busiest
-            val level = kotlin.math.ceil(share * HEAT_MAP_LEVELS).toInt()
-            level.coerceIn(1, HEAT_MAP_LEVELS)
-        }
+    private fun levelFor(day: DailyWatchCount): Int = when {
+        day.episodeCount <= 0 -> 0
+        day.episodeCount <= HEAT_MAP_LIGHT_DAY -> 1
+        day.episodeCount <= HEAT_MAP_STEADY_DAY -> 2
+        day.episodeCount <= HEAT_MAP_HEAVY_DAY -> 3
+        else -> HEAT_MAP_LEVELS
     }
 
     private fun WatchStatus.toItemId(): WatchStatusItemId = when (this) {
@@ -320,6 +319,9 @@ public class StatisticsStateMapper(
     private companion object {
         const val RATING_DECIMALS = 1
         const val HEAT_MAP_LEVELS = 4
+        const val HEAT_MAP_LIGHT_DAY = 2
+        const val HEAT_MAP_STEADY_DAY = 5
+        const val HEAT_MAP_HEAVY_DAY = 9
         const val DAYS_IN_WEEK = 7
         const val NAMED_GENRE_LIMIT = 6
         const val POINTS_PER_STAR = 2

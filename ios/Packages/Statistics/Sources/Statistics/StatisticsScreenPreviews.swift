@@ -121,7 +121,7 @@ private let previewReleaseYears: [SwiftActivityBar] = [
 private let previewHeatMap = SwiftWatchHeatMap(
     levels: (0 ..< 215).map { ($0 * 7) % 5 },
     leadingBlankCells: 3,
-    busiestDayCount: 43
+    todayIndex: 214
 )
 
 private let previewContentState = StatisticsScreen.State(

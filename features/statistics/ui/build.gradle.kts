@@ -36,6 +36,7 @@ dependencies {
 
     implementation(libs.androidx.compose.material3)
     implementation(libs.kotlinx.collections)
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.robolectric.annotations)
     testImplementation(projects.core.screenshotTests)

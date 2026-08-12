@@ -95,12 +95,16 @@ public struct SwiftActivityBar: Identifiable, Equatable {
 public struct SwiftWatchHeatMap: Equatable {
     public let levels: [Int]
     public let leadingBlankCells: Int
-    public let busiestDayCount: Int
+    public let todayIndex: Int?
 
-    public init(levels: [Int], leadingBlankCells: Int, busiestDayCount: Int = 0) {
+    public init(
+        levels: [Int],
+        leadingBlankCells: Int,
+        todayIndex: Int? = nil
+    ) {
         self.levels = levels
         self.leadingBlankCells = leadingBlankCells
-        self.busiestDayCount = busiestDayCount
+        self.todayIndex = todayIndex
     }
 }
 
