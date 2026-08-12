@@ -20,6 +20,8 @@ public interface RewatchRepository {
 
     public fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>>
 
+    public fun observeRewatchStatus(showId: Long): Flow<RewatchStatus>
+
     public suspend fun openSessionForShow(showId: Long): RewatchSession?
 
     public fun playCountForEpisode(episodeId: Long): Long

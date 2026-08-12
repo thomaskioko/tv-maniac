@@ -292,6 +292,7 @@ graph TB
     :domain:notifications[notifications]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
     :domain:recently-watched[recently-watched]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:seasondetails[seasondetails]:::multiplatform
     :domain:settings[settings]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
@@ -549,6 +550,7 @@ graph TB
   :app -.-> :data:ratings:api
   :app -.-> :data:ratings:implementation
   :app -.-> :data:request-manager:implementation
+  :app -.-> :data:rewatch:api
   :app -.-> :data:rewatch:implementation
   :app -.-> :data:search:api
   :app -.-> :data:search:implementation
@@ -600,6 +602,7 @@ graph TB
   :app -.-> :domain:notifications
   :app -.-> :domain:ratings
   :app -.-> :domain:recently-watched
+  :app -.-> :domain:rewatch
   :app -.-> :domain:seasondetails
   :app -.-> :domain:settings
   :app -.-> :domain:showdetails
@@ -1155,6 +1158,9 @@ graph TB
   :domain:ratings --> :data:subscription:api
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
@@ -1558,6 +1564,7 @@ graph TB
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
   :features:settings:presenter --> :data:datastore:api
+  :features:settings:presenter --> :data:rewatch:api
   :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
@@ -1585,15 +1592,18 @@ graph TB
   :features:show-details:presenter --> :core:base
   :features:show-details:presenter --> :core:logger:api
   :features:show-details:presenter --> :core:notifications:api
+  :features:show-details:presenter --> :core:util:api
   :features:show-details:presenter --> :core:view
   :features:show-details:presenter --> :data:account-manager:api
   :features:show-details:presenter --> :data:datastore:api
   :features:show-details:presenter --> :data:episode:api
   :features:show-details:presenter --> :data:followedshows:api
+  :features:show-details:presenter --> :data:rewatch:api
   :features:show-details:presenter --> :data:seasondetails:api
   :features:show-details:presenter --> :domain:episode
   :features:show-details:presenter --> :domain:notifications
   :features:show-details:presenter --> :domain:ratings
+  :features:show-details:presenter --> :domain:rewatch
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
   :features:show-details:presenter --> :domain:traktlists

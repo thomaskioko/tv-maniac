@@ -22,6 +22,10 @@ graph TB
     direction TB
     :core:network-util:api[api]:::multiplatform
   end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
   subgraph :data:account-manager
     direction TB
     :data:account-manager:api[api]:::multiplatform
@@ -48,6 +52,7 @@ graph TB
   :data:rewatch:api --> :core:network-util:api
   :data:rewatch:api --> :data:account-manager:api
   :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
   :domain:rewatch --> :data:rewatch:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

@@ -429,6 +429,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_QUICK_RATE_ENABLED] ?: false
         }
 
+    override suspend fun saveMultiplePlaysEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_MULTIPLE_PLAYS_ENABLED] = enabled
+        }
+    }
+
+    override fun observeMultiplePlaysEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_MULTIPLE_PLAYS_ENABLED] ?: true
+        }
+
     private fun String?.toPosterWidth(): PosterWidth =
         when (this) {
             PosterWidth.COMPACT.name -> PosterWidth.COMPACT
@@ -475,5 +486,7 @@ public class DefaultDatastoreRepository(
         public val KEY_LANDSCAPE_WIDTH: Preferences.Key<String> = stringPreferencesKey("landscape_width")
         public val KEY_POSTER_CORNER_STYLE: Preferences.Key<String> = stringPreferencesKey("poster_corner_style")
         public val KEY_QUICK_RATE_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("quick_rate_enabled")
+        public val KEY_MULTIPLE_PLAYS_ENABLED: Preferences.Key<Boolean> =
+            booleanPreferencesKey("multiple_plays_enabled")
     }
 }

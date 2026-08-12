@@ -444,4 +444,18 @@ public interface DatastoreRepository {
      * @return A Flow of Boolean, true if the rating prompt is enabled. Defaults to false.
      */
     public fun observeQuickRateEnabled(): Flow<Boolean>
+
+    /**
+     * Saves whether a show can be marked watched more than once.
+     *
+     * @param enabled Whether more than one play is allowed.
+     */
+    public suspend fun saveMultiplePlaysEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether a show can be marked watched more than once.
+     *
+     * @return A Flow of Boolean, true when more than one play is allowed. Defaults to true.
+     */
+    public fun observeMultiplePlaysEnabled(): Flow<Boolean>
 }
