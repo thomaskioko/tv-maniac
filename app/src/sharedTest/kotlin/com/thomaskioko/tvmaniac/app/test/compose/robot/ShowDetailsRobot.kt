@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
@@ -157,5 +158,42 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<ShowDetail
             itemTag = ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG,
         )
         assertDisplayed(ShowDetailsTestTags.CONTINUE_TRACKING_SECTION_TEST_TAG)
+    }
+
+    fun assertRewatchSectionDisplayed() = apply {
+        scrollToRewatchSection()
+        assertDisplayed(ShowDetailsTestTags.REWATCH_SECTION_TEST_TAG)
+    }
+
+    fun assertRewatchSectionDoesNotExist() = apply {
+        assertDoesNotExist(ShowDetailsTestTags.REWATCH_SECTION_TEST_TAG)
+    }
+
+    fun clickRewatchActionButton() = apply {
+        scrollToRewatchSection()
+        click(ShowDetailsTestTags.REWATCH_ACTION_BUTTON_TEST_TAG)
+    }
+
+    fun assertRewatchProgressDisplayed() = apply {
+        scrollToRewatchSection()
+        assertDisplayed(ShowDetailsTestTags.REWATCH_PROGRESS_TEST_TAG)
+    }
+
+    fun assertRewatchProgressDoesNotExist() = apply {
+        scrollToRewatchSection()
+        assertDoesNotExist(ShowDetailsTestTags.REWATCH_PROGRESS_TEST_TAG)
+    }
+
+    fun assertRewatchCountText(text: String) = apply {
+        scrollToRewatchSection()
+        composeUi.onNodeWithTag(ShowDetailsTestTags.REWATCH_COUNT_TEST_TAG).assertTextEquals(text)
+    }
+
+    private fun scrollToRewatchSection() {
+        scrollDownUntilTag(
+            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
+            itemTag = ShowDetailsTestTags.REWATCH_SECTION_TEST_TAG,
+        )
+        waitForIdle()
     }
 }

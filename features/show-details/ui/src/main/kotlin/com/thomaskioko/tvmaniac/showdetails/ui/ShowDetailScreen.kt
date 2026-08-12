@@ -48,6 +48,7 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsState
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsCastSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsHeaderSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsProvidersSection
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsRewatchSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsSeasonEpisodesSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsSimilarSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsTrailersSection
@@ -74,6 +75,12 @@ public fun ShowDetailsScreen(
     ) {
         item(key = "header") {
             ShowDetailsHeaderSection(presenter = presenter.headerPresenter)
+        }
+        item(key = "rewatch") {
+            ShowDetailsRewatchSection(
+                state = headerState,
+                onAction = presenter.headerPresenter::dispatch,
+            )
         }
         item(key = "season_episodes") {
             ShowDetailsSeasonEpisodesSection(

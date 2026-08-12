@@ -15,6 +15,9 @@ import com.thomaskioko.tvmaniac.showdetails.ui.previewCastState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateInList
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRated
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRewatchFinished
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRewatchInProgress
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRewatchSimklFreeTier
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateSimkl
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHostState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHostStateWithMessage
@@ -25,6 +28,7 @@ import com.thomaskioko.tvmaniac.showdetails.ui.previewTrailersState
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsCastSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsHeaderSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsProvidersSection
+import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsRewatchSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsSeasonEpisodesSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsSimilarSection
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsTrailersSection
@@ -92,6 +96,59 @@ class ShowDetailsScreenScreenshotTest {
             TvManiacBackground {
                 Column {
                     ShowDetailsTrailersSection(state = previewTrailersState, onAction = {})
+                }
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsRewatchSectionNoRewatches() {
+        composeTestRule.captureMultiDevice("ShowDetailsRewatchSectionNoRewatches") {
+            TvManiacBackground {
+                Column {
+                    ShowDetailsRewatchSection(state = previewHeaderState, onAction = {})
+                }
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsRewatchSectionInProgress() {
+        composeTestRule.captureMultiDevice("ShowDetailsRewatchSectionInProgress") {
+            TvManiacBackground {
+                Column {
+                    ShowDetailsRewatchSection(
+                        state = previewHeaderStateRewatchInProgress,
+                        onAction = {},
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsRewatchSectionFinished() {
+        composeTestRule.captureMultiDevice("ShowDetailsRewatchSectionFinished") {
+            TvManiacBackground {
+                Column {
+                    ShowDetailsRewatchSection(
+                        state = previewHeaderStateRewatchFinished,
+                        onAction = {},
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsRewatchSectionSimklFreeTier() {
+        composeTestRule.captureMultiDevice("ShowDetailsRewatchSectionSimklFreeTier") {
+            TvManiacBackground {
+                Column {
+                    ShowDetailsRewatchSection(
+                        state = previewHeaderStateRewatchSimklFreeTier,
+                        onAction = {},
+                    )
                 }
             }
         }

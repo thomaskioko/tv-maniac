@@ -48,6 +48,10 @@
         <item quantity="one">%d Folge noch anzusehen</item>
         <item quantity="other">%d Folgen noch anzusehen</item>
     </plurals>
+    <plurals name="rewatch_count">
+        <item quantity="one">%d Mal erneut angesehen</item>
+        <item quantity="other">%d Mal erneut angesehen</item>
+    </plurals>
     <plurals name="show_count">
         <item quantity="one">%d Serie</item>
         <item quantity="other">%d Serien</item>
