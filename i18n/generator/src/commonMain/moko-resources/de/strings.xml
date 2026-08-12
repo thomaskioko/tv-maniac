@@ -567,9 +567,5 @@
     <string name="label_watch_status_on_hold">Pausiert</string>
     <string name="label_watch_status_dropped">Abgebrochen</string>
 
-    <string name="label_rewatch_start">Erneutes Ansehen starten</string>
-    <string name="label_rewatch_close">Erneutes Ansehen beenden</string>
-    <string name="label_rewatch_in_progress">Wird erneut angesehen</string>
-    <string name="label_rewatch_none">Noch nicht erneut angesehen</string>
     <string name="label_rewatch_simkl_free_tier">Simkl speichert wiederholtes Ansehen nur mit einem kostenpflichtigen Tarif. Diese Zählung bleibt auf diesem Gerät.</string>
 </resources>

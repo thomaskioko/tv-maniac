@@ -52,10 +52,6 @@
         <item quantity="one">%d épisode restant à regarder</item>
         <item quantity="other">%d épisodes restants à regarder</item>
     </plurals>
-    <plurals name="rewatch_count">
-        <item quantity="one">Revisionné %d fois</item>
-        <item quantity="other">Revisionné %d fois</item>
-    </plurals>
     <plurals name="show_count">
         <item quantity="one">%d émission</item>
         <item quantity="other">%d émissions</item>
