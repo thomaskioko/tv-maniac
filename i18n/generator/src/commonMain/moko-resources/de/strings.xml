@@ -334,6 +334,8 @@
 
     <string name="label_settings_quick_rate">Schnellbewertung</string>
     <string name="label_settings_quick_rate_description">Nach einer Bewertung fragen, sobald eine Episode als gesehen markiert wird</string>
+    <string name="label_settings_multiple_plays">Mehrfaches Ansehen</string>
+    <string name="label_settings_multiple_plays_description">Eine Serie mehr als einmal als gesehen markieren und die Wiederholungen zählen</string>
 
     <string name="label_up_to_date">Alles gesehen</string>
 
@@ -564,5 +566,6 @@
     <string name="label_rewatch_start">Erneutes Ansehen starten</string>
     <string name="label_rewatch_close">Erneutes Ansehen beenden</string>
     <string name="label_rewatch_in_progress">Wird erneut angesehen</string>
+    <string name="label_rewatch_none">Noch nicht erneut angesehen</string>
     <string name="label_rewatch_simkl_free_tier">Simkl speichert wiederholtes Ansehen nur mit einem kostenpflichtigen Tarif. Diese Zählung bleibt auf diesem Gerät.</string>
 </resources>

@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
@@ -148,6 +149,7 @@ class SettingsPresenterTest {
                 resyncContinueWatching = {},
                 appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
             ),
+            rewatchRepository = FakeRewatchRepository(),
         )
     }
 
