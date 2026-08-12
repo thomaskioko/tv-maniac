@@ -51,11 +51,19 @@ struct WatchHeatMapSectionView: View {
 
     private var legend: some View {
         HStack(spacing: theme.spacing.xxxSmall) {
-            ForEach(0 ... Int(Self.maxLevel), id: \.self) { level in
+            Text("\(heatMap.scaleFloorCount)")
+                .textStyle(theme.typography.labelSmall)
+                .foregroundStyle(theme.colors.onSurfaceVariant)
+
+            ForEach(1 ... Int(Self.maxLevel), id: \.self) { level in
                 RoundedRectangle(cornerRadius: theme.shapes.small)
                     .fill(color(for: level))
                     .frame(width: Self.cellSize, height: Self.cellSize)
             }
+
+            Text("\(heatMap.scaleTopCount)+")
+                .textStyle(theme.typography.labelSmall)
+                .foregroundStyle(theme.colors.onSurfaceVariant)
         }
         .testTag(StatisticsTestTags.shared.HEAT_MAP_LEGEND_TEST_TAG)
     }
@@ -89,6 +97,8 @@ struct WatchHeatMapSectionView: View {
         heatMap: SwiftWatchHeatMap(
             levels: (0 ..< 70).map { $0 % 5 },
             leadingBlankCells: 3,
+            scaleFloorCount: 1,
+            scaleTopCount: 10,
             todayIndex: 69
         ),
         title: "Your year of watching"

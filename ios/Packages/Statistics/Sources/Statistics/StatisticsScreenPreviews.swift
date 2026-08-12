@@ -121,6 +121,8 @@ private let previewReleaseYears: [SwiftActivityBar] = [
 private let previewHeatMap = SwiftWatchHeatMap(
     levels: (0 ..< 215).map { ($0 * 7) % 5 },
     leadingBlankCells: 3,
+    scaleFloorCount: 1,
+    scaleTopCount: 10,
     todayIndex: 214
 )
 

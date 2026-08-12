@@ -152,6 +152,8 @@ public class StatisticsStateMapper(
             leadingBlankCells = days.first().date.dayOfWeek.isoDayNumber % DAYS_IN_WEEK,
             activeDays = days.count { it.episodeCount > 0 },
             quietDays = days.count { it.episodeCount == 0 },
+            scaleFloorCount = HEAT_MAP_FLOOR_DAY,
+            scaleTopCount = HEAT_MAP_HEAVY_DAY + 1,
         )
     }
 
@@ -319,6 +321,7 @@ public class StatisticsStateMapper(
     private companion object {
         const val RATING_DECIMALS = 1
         const val HEAT_MAP_LEVELS = 4
+        const val HEAT_MAP_FLOOR_DAY = 1
         const val HEAT_MAP_LIGHT_DAY = 2
         const val HEAT_MAP_STEADY_DAY = 5
         const val HEAT_MAP_HEAVY_DAY = 9

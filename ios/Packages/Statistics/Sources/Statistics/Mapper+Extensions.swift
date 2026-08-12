@@ -72,6 +72,8 @@ extension WatchHeatMap {
         .init(
             levels: cells.map { Int($0.level) },
             leadingBlankCells: Int(leadingBlankCells),
+            scaleFloorCount: Int(scaleFloorCount),
+            scaleTopCount: Int(scaleTopCount),
             todayIndex: cells.firstIndex { $0.isToday }
         )
     }

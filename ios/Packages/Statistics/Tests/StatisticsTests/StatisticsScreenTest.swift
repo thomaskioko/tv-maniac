@@ -109,6 +109,8 @@ class StatisticsScreenTest: SnapshotTestCase {
     private let heatMap = SwiftWatchHeatMap(
         levels: (0 ..< 215).map { ($0 * 7) % 5 },
         leadingBlankCells: 3,
+        scaleFloorCount: 1,
+        scaleTopCount: 10,
         todayIndex: 214
     )
 
@@ -242,6 +244,8 @@ class StatisticsScreenTest: SnapshotTestCase {
             heatMap: SwiftWatchHeatMap(
                 levels: (0 ..< 24).map { $0 % 5 },
                 leadingBlankCells: 2,
+                scaleFloorCount: 1,
+                scaleTopCount: 10,
                 todayIndex: 23
             ),
             title: "Your year of watching"

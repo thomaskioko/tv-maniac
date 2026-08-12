@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +67,8 @@ internal fun WatchHeatMapSection(
             }
 
             HeatMapLegend(
+                scaleFloorCount = heatMap.scaleFloorCount,
+                scaleTopCount = heatMap.scaleTopCount,
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
@@ -76,6 +79,8 @@ internal fun WatchHeatMapSection(
 
 @Composable
 private fun HeatMapLegend(
+    scaleFloorCount: Int,
+    scaleTopCount: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -83,7 +88,9 @@ private fun HeatMapLegend(
         horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxxSmall),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        (0..MAX_LEVEL.toInt()).forEach { level ->
+        LegendLabel(text = "$scaleFloorCount")
+
+        (1..MAX_LEVEL.toInt()).forEach { level ->
             Box(
                 modifier = Modifier
                     .size(CellSize)
@@ -91,7 +98,18 @@ private fun HeatMapLegend(
                     .background(levelColor(level)),
             )
         }
+
+        LegendLabel(text = "$scaleTopCount+")
     }
+}
+
+@Composable
+private fun LegendLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable
@@ -157,6 +175,8 @@ private fun WatchHeatMapSectionPreview() {
             leadingBlankCells = 3,
             activeDays = 56,
             quietDays = 14,
+            scaleFloorCount = 1,
+            scaleTopCount = 10,
         ),
         title = "Your last year of watching",
     )

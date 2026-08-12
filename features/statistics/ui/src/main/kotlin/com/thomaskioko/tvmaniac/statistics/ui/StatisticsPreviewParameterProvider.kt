@@ -155,6 +155,8 @@ private val previewHeatMap: WatchHeatMap = WatchHeatMap(
     leadingBlankCells = 3,
     activeDays = 138,
     quietDays = 77,
+    scaleFloorCount = 1,
+    scaleTopCount = 10,
 )
 
 private const val HEAT_MAP_PREVIEW_DAYS = 215

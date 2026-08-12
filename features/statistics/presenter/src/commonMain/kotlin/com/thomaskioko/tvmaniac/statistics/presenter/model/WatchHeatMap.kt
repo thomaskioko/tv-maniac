@@ -5,4 +5,6 @@ public data class WatchHeatMap(
     val leadingBlankCells: Int,
     val activeDays: Int,
     val quietDays: Int,
+    val scaleFloorCount: Int = 0,
+    val scaleTopCount: Int = 0,
 )
