@@ -120,10 +120,10 @@ androidx.navigationevent:navigationevent-android:1.0.0
 androidx.navigationevent:navigationevent-compose-android:1.0.0
 androidx.navigationevent:navigationevent-compose:1.0.0
 androidx.navigationevent:navigationevent:1.0.0
-androidx.paging:paging-common-android:3.5.0
-androidx.paging:paging-common:3.5.0
-androidx.paging:paging-compose-android:3.5.0
-androidx.paging:paging-compose:3.5.0
+androidx.paging:paging-common-android:3.5.1
+androidx.paging:paging-common:3.5.1
+androidx.paging:paging-compose-android:3.5.1
+androidx.paging:paging-compose:3.5.1
 androidx.palette:palette:1.0.0
 androidx.print:print:1.0.0
 androidx.profileinstaller:profileinstaller:1.4.1
