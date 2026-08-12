@@ -29,7 +29,6 @@ import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
-import com.thomaskioko.tvmaniac.domain.rewatch.FinishRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
@@ -304,8 +303,7 @@ internal class ShowDetailsPresenterTest {
             observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
             observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
             startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
-            finishRewatchSessionInteractor = FinishRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
-            rewatchRepository = rewatchRepository,
+            datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,

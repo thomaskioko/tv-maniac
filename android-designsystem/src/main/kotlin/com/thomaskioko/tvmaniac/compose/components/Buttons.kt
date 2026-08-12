@@ -168,6 +168,41 @@ public fun FilledHorizontalIconButton(
 }
 
 @Composable
+public fun FilledIconOnlyButton(
+    contentDescription: String,
+    onClick: () -> Unit,
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = RectangleShape,
+    containerColor: Color = MaterialTheme.colorScheme.secondary,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
+    hapticEnabled: Boolean = LocalHapticFeedbackEnabled.current,
+) {
+    val haptics = LocalHapticFeedback.current
+    TextButtonContent(
+        onClick = {
+            if (hapticEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            onClick()
+        },
+        modifier = modifier,
+        enabled = enabled,
+        containerColor = containerColor,
+        shape = shape,
+        content = {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = contentDescription,
+                tint = when {
+                    enabled -> contentColor
+                    else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                },
+            )
+        },
+    )
+}
+
+@Composable
 private fun TextButtonContent(
     onClick: () -> Unit,
     enabled: Boolean,

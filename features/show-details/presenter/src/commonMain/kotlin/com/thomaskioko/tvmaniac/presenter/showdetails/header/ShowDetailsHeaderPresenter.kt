@@ -15,13 +15,12 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
-import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
-import com.thomaskioko.tvmaniac.domain.rewatch.FinishRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
@@ -71,8 +70,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     observeRewatchStatusInteractor: ObserveRewatchStatusInteractor,
     private val startRewatchSessionInteractor: StartRewatchSessionInteractor,
-    private val finishRewatchSessionInteractor: FinishRewatchSessionInteractor,
-    private val rewatchRepository: RewatchRepository,
+    private val datastoreRepository: DatastoreRepository,
     private val syncCalendarInteractor: SyncCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
@@ -101,7 +99,6 @@ public class ShowDetailsHeaderPresenter internal constructor(
         refreshCommunityRating(forceRefresh = forceRefresh)
         observeAuthState()
         updateListAvailability()
-        updateRewatchSyncNotice()
     }
 
     public val state: StateFlow<ShowDetailsHeaderState> = combine(
@@ -110,12 +107,14 @@ public class ShowDetailsHeaderPresenter internal constructor(
         observeCommunityRatingInteractor.flow,
         observeTraktListsInteractor.flow,
         observeRewatchStatusInteractor.flow,
+        datastoreRepository.observeMultiplePlaysEnabled(),
         loadingState.observable,
         uiMessageManager.message,
         _state,
-    ) { details, userRating, communityRating, traktLists, rewatchStatus, isRefreshing, message, current ->
+    ) { details, userRating, communityRating, traktLists, rewatchStatus, multiplePlaysEnabled,
+        isRefreshing, message, current,
+        ->
         val isInList = traktLists.any { it.isShowInList }
-        val openSession = rewatchStatus.openSession
         details.toHeaderState(localizer).copy(
             communityRating = communityRating?.rating,
             communityVotes = communityRating?.votes,
@@ -128,13 +127,9 @@ public class ShowDetailsHeaderPresenter internal constructor(
                 if (isInList) StringResourceKey.BtnInList else StringResourceKey.BtnAddToList,
             ),
             rewatchCount = rewatchStatus.finishedCount,
-            isRewatching = openSession != null,
-            rewatchWatchedEpisodes = openSession?.watchedEpisodes ?: 0,
-            rewatchAiredEpisodes = openSession?.airedEpisodes ?: 0,
-            rewatchActionLabel = localizer.getString(
-                if (openSession != null) StringResourceKey.LabelRewatchClose else StringResourceKey.LabelRewatchStart,
-            ),
-            rewatchSyncNotice = current.rewatchSyncNotice,
+            canWatchAgain = multiplePlaysEnabled && details.isInLibrary,
+            showMoreSheet = current.showMoreSheet,
+            showWatchAgainConfirmation = current.showWatchAgainConfirmation,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -153,8 +148,13 @@ public class ShowDetailsHeaderPresenter internal constructor(
             ShowRatingClicked -> navigator.navigateTo(
                 RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.SHOW, id = showId)),
             )
-            StartRewatchClicked -> onStartRewatchClicked()
-            FinishRewatchClicked -> onFinishRewatchClicked()
+            ShowDetailsMoreClicked -> _state.update { it.copy(showMoreSheet = true) }
+            ShowDetailsMoreDismissed -> _state.update { it.copy(showMoreSheet = false) }
+            WatchAgainClicked -> _state.update {
+                it.copy(showMoreSheet = false, showWatchAgainConfirmation = true)
+            }
+            WatchAgainDismissed -> _state.update { it.copy(showWatchAgainConfirmation = false) }
+            WatchAgainConfirmed -> onWatchAgainConfirmed()
         }
     }
 
@@ -212,34 +212,16 @@ public class ShowDetailsHeaderPresenter internal constructor(
                 .filter { it }
                 .collect {
                     updateListAvailability()
-                    updateRewatchSyncNotice()
                     fetchShowDetails(forceRefresh = true)
                 }
         }
     }
 
-    private fun onStartRewatchClicked() {
+    private fun onWatchAgainConfirmed() {
+        _state.update { it.copy(showWatchAgainConfirmation = false) }
         coroutineScope.launch {
             startRewatchSessionInteractor(StartRewatchSessionInteractor.Param(showId = showId))
                 .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-        }
-    }
-
-    private fun onFinishRewatchClicked() {
-        coroutineScope.launch {
-            finishRewatchSessionInteractor(FinishRewatchSessionInteractor.Param(showId = showId))
-                .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-        }
-    }
-
-    private fun updateRewatchSyncNotice() {
-        coroutineScope.launch {
-            val notice = if (rewatchRepository.supportsRewatch()) {
-                null
-            } else {
-                localizer.getString(StringResourceKey.LabelRewatchSimklFreeTier)
-            }
-            _state.update { it.copy(rewatchSyncNotice = notice) }
         }
     }
 

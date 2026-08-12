@@ -514,6 +514,10 @@
     <string name="label_account_switching">Switching…</string>
     <string name="label_account_switch_failed">Couldn\'t switch accounts. Please try again.</string>
     <string name="label_rating_sheet_title">Your rating</string>
+    <string name="label_action_more">More</string>
+    <string name="label_action_watch_again">Watch again</string>
+    <string name="label_watch_again_confirm_title">Watch again?</string>
+    <string name="label_watch_again_confirm_message">Episodes you mark from now on count towards a new rewatch of \"%1$s\".</string>
     <string name="label_action_rate">Rate</string>
     <string name="label_action_rate_episode">Rate episode</string>
     <string name="label_action_remove_rating">Remove rating</string>

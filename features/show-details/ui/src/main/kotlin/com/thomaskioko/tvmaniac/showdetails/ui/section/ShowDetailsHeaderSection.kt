@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,10 +18,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.LibraryAddCheck
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ExpandingText
+import com.thomaskioko.tvmaniac.compose.components.FilledIconOnlyButton
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
 import com.thomaskioko.tvmaniac.compose.components.FilledVerticalIconButton
 import com.thomaskioko.tvmaniac.compose.components.KenBurnsViewImage
@@ -53,15 +56,15 @@ import com.thomaskioko.tvmaniac.compose.extensions.backgroundGradient
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.i18n.MR.strings.following
-import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_rate
+import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_more
 import com.thomaskioko.tvmaniac.i18n.MR.strings.unfollow
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsFollowClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderAction
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderState
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsMoreClicked
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsOpenShowList
-import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowRatingClicked
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRated
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
@@ -165,10 +168,10 @@ private fun ShowBody(
                 canAddToList = state.canAddToList,
                 isInList = state.isInList,
                 listActionLabel = state.listActionLabel,
-                userRating = state.userRating,
                 onTrackShowClicked = { onAction(ShowDetailsFollowClicked(state.isInLibrary)) },
                 onAddToList = { onAction(ShowDetailsOpenShowList) },
-                onRateClicked = { onAction(ShowRatingClicked) },
+                onMoreClicked = { onAction(ShowDetailsMoreClicked) },
+                moreMenu = { ShowDetailsMoreMenu(state = state, onAction = onAction) },
             )
         }
 
@@ -341,15 +344,16 @@ internal fun ShowDetailButtons(
     canAddToList: Boolean,
     isInList: Boolean,
     listActionLabel: String,
-    userRating: Int?,
     onTrackShowClicked: (Boolean) -> Unit,
     onAddToList: () -> Unit,
-    onRateClicked: () -> Unit,
+    onMoreClicked: () -> Unit,
+    moreMenu: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(IntrinsicSize.Min)
             .padding(top = TvManiacSpacing.xSmall),
         horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
@@ -390,17 +394,20 @@ internal fun ShowDetailButtons(
             onClick = onAddToList,
         )
 
-        FilledVerticalIconButton(
-            modifier = Modifier
-                .weight(1f)
-                .testTag(ShowDetailsTestTags.RATE_BUTTON_TEST_TAG),
-            shape = MaterialTheme.shapes.medium,
-            text = label_action_rate.resolve(context),
-            imageVector = if (userRating != null) Icons.Filled.Star else Icons.Outlined.StarOutline,
-            containerColor = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.labelMedium,
-            onClick = onRateClicked,
-        )
+        Box(modifier = Modifier.fillMaxHeight()) {
+            FilledIconOnlyButton(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .testTag(ShowDetailsTestTags.MORE_BUTTON_TEST_TAG),
+                shape = MaterialTheme.shapes.medium,
+                contentDescription = label_action_more.resolve(context),
+                imageVector = Icons.Filled.MoreHoriz,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                onClick = onMoreClicked,
+            )
+
+            moreMenu()
+        }
     }
 }
 

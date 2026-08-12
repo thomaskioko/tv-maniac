@@ -36,7 +36,6 @@ internal val previewHeaderState = ShowDetailsHeaderState(
     genres = persistentListOf("Horror", "Action"),
     canAddToList = true,
     listActionLabel = "Add To List",
-    rewatchActionLabel = "Start rewatch",
 )
 
 internal val previewHeaderStateSimkl = previewHeaderState.copy(canAddToList = false)
@@ -46,23 +45,6 @@ internal val previewHeaderStateRated = previewHeaderState.copy(userRating = 9)
 internal val previewHeaderStateInList = previewHeaderState.copy(
     isInList = true,
     listActionLabel = "In List",
-)
-
-internal val previewHeaderStateRewatchInProgress = previewHeaderState.copy(
-    rewatchCount = 1,
-    isRewatching = true,
-    rewatchWatchedEpisodes = 4,
-    rewatchAiredEpisodes = 12,
-    rewatchActionLabel = "Close rewatch",
-)
-
-internal val previewHeaderStateRewatchFinished = previewHeaderState.copy(
-    rewatchCount = 3,
-    rewatchActionLabel = "Start rewatch",
-)
-
-internal val previewHeaderStateRewatchSimklFreeTier = previewHeaderStateRewatchInProgress.copy(
-    rewatchSyncNotice = "Simkl does not store rewatches without a paid plan, so this count stays on this device.",
 )
 
 internal val previewSeasonsEpisodesState = ShowDetailsSeasonsEpisodesState(
