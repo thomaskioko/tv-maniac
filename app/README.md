@@ -550,6 +550,7 @@ graph TB
   :app -.-> :data:ratings:api
   :app -.-> :data:ratings:implementation
   :app -.-> :data:request-manager:implementation
+  :app -.-> :data:rewatch:api
   :app -.-> :data:rewatch:implementation
   :app -.-> :data:search:api
   :app -.-> :data:search:implementation
