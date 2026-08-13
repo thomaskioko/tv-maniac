@@ -14,9 +14,11 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
+import kotlinx.datetime.plus
 import kotlin.test.Test
 
 internal class StatisticsStateMapperTest {
@@ -37,12 +39,39 @@ internal class StatisticsStateMapperTest {
     }
 
     @Test
-    fun `should scale heat map levels against the busiest day`() {
+    fun `should shade heat map days by how many episodes they carry`() {
         val heatMap = mapper.toHeatMap(statisticsWithDailyCounts()).shouldNotBeNull()
 
-        heatMap.cells.map { it.level } shouldBe listOf(0, 2, 4)
+        heatMap.cells.map { it.level } shouldBe listOf(0, 1, 2)
         heatMap.cells.map { it.episodeCount } shouldBe listOf(0, 2, 4)
         heatMap.cells.map { it.date } shouldBe listOf("2026-08-01", "2026-08-02", "2026-08-03")
+    }
+
+    @Test
+    fun `should keep ordinary days readable given one import day carries hundreds of episodes`() {
+        val statistics = WatchStatistics.EMPTY.copy(
+            dailyCounts = List(20) { index ->
+                DailyWatchCount(
+                    date = LocalDate(2026, 8, 1).plus(index, DateTimeUnit.DAY),
+                    episodeCount = if (index == 0) 285 else 3,
+                    minutes = 60,
+                )
+            },
+        )
+
+        val heatMap = mapper.toHeatMap(statistics).shouldNotBeNull()
+
+        heatMap.cells.first().level shouldBe 4
+        heatMap.cells.drop(1).map { it.level }.toSet() shouldBe setOf(2)
+    }
+
+    @Test
+    fun `should outline today rather than the last day in the series`() {
+        dateTimeProvider.setFakeToday(year = 2026, month = 8, day = 2)
+
+        val heatMap = mapper.toHeatMap(statisticsWithDailyCounts()).shouldNotBeNull()
+
+        heatMap.cells.filter { it.isToday }.map { it.date } shouldBe listOf("2026-08-02")
     }
 
     @Test
