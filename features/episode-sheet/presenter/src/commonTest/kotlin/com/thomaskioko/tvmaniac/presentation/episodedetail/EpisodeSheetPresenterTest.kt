@@ -537,7 +537,7 @@ internal class EpisodeSheetPresenterTest {
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
-            markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),
+            markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository, rewatchRepository),
             observeEpisodeRewatchesInteractor = ObserveEpisodeRewatchesInteractor(rewatchRepository),
             watchAgainInteractor = WatchAgainInteractor(rewatchRepository, dateTimeProvider),
             datastoreRepository = datastoreRepository,

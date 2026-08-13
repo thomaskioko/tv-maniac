@@ -21,6 +21,8 @@ public interface RewatchSessionDao {
 
     public fun observeEpisodeRewatches(episodeId: Long): Flow<Long>
 
+    public fun removeEpisodeRewatches(episodeId: Long)
+
     public fun unsentEpisodes(): List<UnsentRewatchEpisode>
 
     public fun markEpisodeSynced(rowId: Long, syncedAt: Long)

@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRating
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
@@ -67,6 +68,7 @@ class SeasonPresenterTest {
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val castRepository = FakeCastRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val ratingsRepository = FakeRatingsRepository()
     private val navigator = FakeNavigator()
     private val datastoreRepository = FakeDatastoreRepository()
@@ -1376,6 +1378,7 @@ class SeasonPresenterTest {
             ),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
+                rewatchRepository = rewatchRepository,
             ),
             markSeasonWatchedInteractor = MarkSeasonWatchedInteractor(
                 episodeRepository = episodeRepository,

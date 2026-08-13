@@ -26,6 +26,8 @@ public interface RewatchRepository {
 
     public fun observeEpisodeRewatches(episodeId: Long): Flow<Long>
 
+    public suspend fun removeEpisodeRewatches(episodeId: Long)
+
     public suspend fun supportsRewatch(): Boolean
 
     public suspend fun syncPendingRewatches()

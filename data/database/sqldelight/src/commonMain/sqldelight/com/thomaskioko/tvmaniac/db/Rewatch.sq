@@ -103,6 +103,10 @@ SELECT COUNT(*) AS rewatch_count
 FROM rewatch_session_episode
 WHERE episode_id = :episodeId;
 
+removeEpisodeRewatches:
+DELETE FROM rewatch_session_episode
+WHERE episode_id = :episodeId;
+
 unsentEpisodes:
 SELECT
     rse.id AS row_id,

@@ -119,6 +119,10 @@ public class DefaultRewatchRepository(
 
     override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> = rewatchSessionDao.observeEpisodeRewatches(episodeId)
 
+    override suspend fun removeEpisodeRewatches(episodeId: Long) {
+        rewatchSessionDao.removeEpisodeRewatches(episodeId)
+    }
+
     override suspend fun supportsRewatch(): Boolean = activeSource()?.supportsRewatch() ?: true
 
     override suspend fun syncPendingRewatches() {
