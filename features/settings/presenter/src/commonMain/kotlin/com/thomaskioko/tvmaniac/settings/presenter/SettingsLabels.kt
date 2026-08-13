@@ -21,6 +21,8 @@ public data class SettingsLabels(
     val includeSpecialsDescription: String = "",
     val quickRateTitle: String = "",
     val quickRateDescription: String = "",
+    val multiplePlaysTitle: String = "",
+    val multiplePlaysDescription: String = "",
     val youtubeTitle: String = "",
     val youtubeDescription: String = "",
     val episodeNotificationsTitle: String = "",

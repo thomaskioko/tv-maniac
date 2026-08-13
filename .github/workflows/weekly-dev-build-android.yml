@@ -121,7 +121,7 @@ jobs:
         run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
 
       - name: Download AAB artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: android-dev-aab
           path: app/build/outputs/bundle/release
@@ -152,7 +152,7 @@ jobs:
         run: openssl aes-256-cbc -d -pbkdf2 -in release/firebase-sa.aes -out release/firebase-sa.json -k "$SIGNING_ENCRYPT_KEY"
 
       - name: Download APK artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: android-dev-apk
           path: app/build/outputs/apk/release

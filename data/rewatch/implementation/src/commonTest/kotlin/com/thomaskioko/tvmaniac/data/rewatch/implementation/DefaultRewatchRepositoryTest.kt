@@ -724,6 +724,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
         activeSource = activeSource,
         syncObserver = syncObserver,
         dateTimeProvider = dateTimeProvider,
+        dispatchers = dispatchers,
     )
 
     private fun addShow(tmdbId: Long): Long {

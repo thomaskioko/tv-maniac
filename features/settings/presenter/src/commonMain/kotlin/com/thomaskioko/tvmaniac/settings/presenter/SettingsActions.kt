@@ -52,6 +52,10 @@ public data class QuickRateToggled(
     val enabled: Boolean,
 ) : SettingsActions
 
+public data class MultiplePlaysToggled(
+    val enabled: Boolean,
+) : SettingsActions
+
 public data class BackgroundSyncToggled(
     val enabled: Boolean,
 ) : SettingsActions

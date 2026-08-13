@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.rewatch.testing
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +14,7 @@ public class FakeRewatchRepository : RewatchRepository {
     private var nextSessionId: Long = 1
     private val sessionsByShow = MutableStateFlow<Map<Long, List<RewatchSession>>>(emptyMap())
     private val playCountsByEpisode = MutableStateFlow<Map<Long, Long>>(emptyMap())
+    private val statusByShow = MutableStateFlow<Map<Long, RewatchStatus>>(emptyMap())
     private var supportsRewatchValue: Boolean = true
     private var remoteSessionsByShow: Map<Long, List<RemoteRewatchSession>> = emptyMap()
     private var syncException: Throwable? = null
@@ -29,6 +31,10 @@ public class FakeRewatchRepository : RewatchRepository {
 
     public fun setPlayCountForEpisode(episodeId: Long, playCount: Long) {
         playCountsByEpisode.value += (episodeId to playCount)
+    }
+
+    public fun setRewatchStatusForShow(showId: Long, status: RewatchStatus) {
+        statusByShow.value += (showId to status)
     }
 
     public fun setSupportsRewatch(value: Boolean) {
@@ -76,6 +82,9 @@ public class FakeRewatchRepository : RewatchRepository {
 
     override fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>> =
         sessionsByShow.asStateFlow().map { it[showId].orEmpty() }
+
+    override fun observeRewatchStatus(showId: Long): Flow<RewatchStatus> =
+        statusByShow.asStateFlow().map { it[showId] ?: RewatchStatus() }
 
     override suspend fun openSessionForShow(showId: Long): RewatchSession? =
         sessionsByShow.value[showId].orEmpty().firstOrNull { it.closedAt == null }
