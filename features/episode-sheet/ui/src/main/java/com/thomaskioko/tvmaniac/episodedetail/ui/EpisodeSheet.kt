@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -61,6 +62,19 @@ public fun EpisodeSheet(
                 actions = { EpisodeSheetActions(state, presenter::dispatch) },
             )
         }
+    }
+
+    state.removeWatchConfirmation?.let { confirmation ->
+        TvManiacAlertDialog(
+            title = confirmation.title,
+            message = confirmation.message,
+            confirmButtonText = confirmation.confirmLabel,
+            dismissButtonText = confirmation.dismissLabel,
+            confirmButtonTestTag = EpisodeSheetTestTags.REMOVE_WATCH_CONFIRM_TEST_TAG,
+            dismissButtonTestTag = EpisodeSheetTestTags.REMOVE_WATCH_DISMISS_TEST_TAG,
+            onConfirm = { presenter.dispatch(EpisodeSheetAction.RemoveWatchConfirmed) },
+            onDismiss = { presenter.dispatch(EpisodeSheetAction.RemoveWatchDismissed) },
+        )
     }
 }
 

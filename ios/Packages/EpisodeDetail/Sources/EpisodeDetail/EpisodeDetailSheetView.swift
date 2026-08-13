@@ -63,6 +63,26 @@ public struct EpisodeDetailSheetView: View {
                 presenter.dispatch(action: EpisodeSheetActionMessageShown(id: message.id))
             }
         }
+        .alert(
+            state.removeWatchConfirmation?.title ?? "",
+            isPresented: Binding(
+                get: { state.removeWatchConfirmation != nil },
+                set: { isPresented in
+                    if !isPresented { presenter.dispatch(action: EpisodeSheetActionRemoveWatchDismissed()) }
+                }
+            )
+        ) {
+            if let confirmation = state.removeWatchConfirmation {
+                Button(confirmation.confirmLabel, role: .destructive) {
+                    presenter.dispatch(action: EpisodeSheetActionRemoveWatchConfirmed())
+                }
+                Button(confirmation.dismissLabel, role: .cancel) {
+                    presenter.dispatch(action: EpisodeSheetActionRemoveWatchDismissed())
+                }
+            }
+        } message: {
+            Text(state.removeWatchConfirmation?.message ?? "")
+        }
     }
 
     private var rateActionLabel: String {
