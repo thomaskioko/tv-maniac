@@ -187,7 +187,6 @@ private fun EpisodeDetailContentLayout(
 
         if (playCount != null && playCount > 1) {
             Row(
-                modifier = Modifier.testTag(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
             ) {
@@ -199,6 +198,7 @@ private fun EpisodeDetailContentLayout(
                 )
 
                 Text(
+                    modifier = Modifier.testTag(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG),
                     text = "$playCount",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary,

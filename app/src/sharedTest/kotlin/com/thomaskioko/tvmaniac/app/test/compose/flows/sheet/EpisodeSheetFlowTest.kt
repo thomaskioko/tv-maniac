@@ -86,6 +86,31 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
     @Test
     @FlakyTests(count = 2)
+    fun givenWatchedEpisode_whenMarkedWatchedAgain_thenSheetShowsPlayCount() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
+        rootRobot.dismissNotificationRationale()
+        discoverRobot.assertDiscoverScreenDisplayed()
+
+        openSeasonDetails()
+
+        seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
+        episodeSheetRobot
+            .assertEpisodeSheetDisplayed()
+            .assertPlayCountDoesNotExist()
+            .clickActionItem(EpisodeSheetActionItem.MARK_WATCHED)
+
+        seasonDetailsRobot
+            .assertSeasonDetailsDisplayed()
+            .clickEpisodeRow(pilotEpisodeTraktId)
+
+        episodeSheetRobot
+            .assertEpisodeSheetDisplayed()
+            .assertPlayCountDisplayed(count = 2)
+    }
+
+    @Test
+    @FlakyTests(count = 2)
     fun givenEpisodeSheet_whenEpisodeRated_thenRatingPersistsAndCanBeCleared() = runAppFlowTest {
         scenarios.stubTmdb()
         scenarios.stubActiveProvider(SyncProviderSource.TRAKT)
@@ -102,6 +127,24 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .assertClearRatingButtonDisplayed()
             .clickClearRatingButton()
             .assertClearRatingButtonDoesNotExist()
+    }
+
+    private fun AppFlowScope.openSeasonDetails() {
+        homeRobot
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
+
+        watchlistRobot
+            .scrollToShowCard(breakingBadTmdbId)
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickSeasonChip(seasonNumber = pilotSeasonNumber)
+
+        seasonDetailsRobot
+            .assertSeasonDetailsDisplayed()
+            .assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     private fun AppFlowScope.openEpisodeSheetFromUpNextCard() {
