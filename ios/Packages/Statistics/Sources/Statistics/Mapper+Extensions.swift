@@ -72,7 +72,9 @@ extension WatchHeatMap {
         .init(
             levels: cells.map { Int($0.level) },
             leadingBlankCells: Int(leadingBlankCells),
-            busiestDayCount: Int(busiestDayCount)
+            scaleFloorCount: Int(scaleFloorCount),
+            scaleTopCount: Int(scaleTopCount),
+            todayIndex: cells.firstIndex { $0.isToday }
         )
     }
 }
