@@ -40,6 +40,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -309,7 +310,7 @@ internal class EpisodeSheetPresenterTest {
     }
 
     @Test
-    fun `should mark episode as unwatched given MarkUnwatched is dispatched`() = runTest {
+    fun `should ask for confirmation given MarkUnwatched is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = true))
 
         val presenter = createPresenter()
@@ -322,12 +323,60 @@ internal class EpisodeSheetPresenterTest {
             presenter.dispatch(EpisodeSheetAction.MarkUnwatched)
             testDispatcher.scheduler.advanceUntilIdle()
 
+            awaitItem().removeWatchConfirmation shouldNotBe null
+            episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe null
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should mark episode as unwatched given RemoveWatchConfirmed is dispatched`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.MarkUnwatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.RemoveWatchConfirmed)
+            testDispatcher.scheduler.advanceUntilIdle()
+
             val call = episodeRepository.lastMarkEpisodeUnwatchedCall
             call shouldBe com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall(
                 showId = 100L,
                 episodeId = 1L,
             )
             navigator.overlayDismissCount shouldBe 1
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should keep episode watched given RemoveWatchDismissed is dispatched`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.MarkUnwatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.RemoveWatchDismissed)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            awaitItem().removeWatchConfirmation shouldBe null
+            episodeRepository.lastMarkEpisodeUnwatchedCall shouldBe null
             cancelAndIgnoreRemainingEvents()
         }
     }

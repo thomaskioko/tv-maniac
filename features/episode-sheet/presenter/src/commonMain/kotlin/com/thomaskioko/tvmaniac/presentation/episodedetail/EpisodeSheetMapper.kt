@@ -28,6 +28,16 @@ internal fun EpisodeById.toState(
     )
 }
 
+internal fun removeWatchConfirmation(
+    episodeTitle: String,
+    localizer: Localizer,
+): RemoveWatchConfirmation = RemoveWatchConfirmation(
+    title = localizer.getString(StringResourceKey.LabelRemoveWatchConfirmTitle),
+    message = localizer.getString(StringResourceKey.LabelRemoveWatchConfirmMessage, episodeTitle),
+    confirmLabel = localizer.getString(StringResourceKey.DialogButtonYes),
+    dismissLabel = localizer.getString(StringResourceKey.DialogButtonNo),
+)
+
 private fun availableActions(
     source: ScreenSource,
     isWatched: Boolean,
