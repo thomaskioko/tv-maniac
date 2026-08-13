@@ -138,6 +138,7 @@ graph TB
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api

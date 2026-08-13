@@ -207,6 +207,7 @@ graph TB
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
   :domain:notifications --> :core:base
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
