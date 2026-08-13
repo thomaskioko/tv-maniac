@@ -13,7 +13,7 @@ public class FakeRewatchRepository : RewatchRepository {
 
     private var nextSessionId: Long = 1
     private val sessionsByShow = MutableStateFlow<Map<Long, List<RewatchSession>>>(emptyMap())
-    private val playCountsByEpisode = MutableStateFlow<Map<Long, Long>>(emptyMap())
+    private val rewatchesByEpisode = MutableStateFlow<Map<Long, Long>>(emptyMap())
     private val statusByShow = MutableStateFlow<Map<Long, RewatchStatus>>(emptyMap())
     private var supportsRewatchValue: Boolean = true
     private var remoteSessionsByShow: Map<Long, List<RemoteRewatchSession>> = emptyMap()
@@ -29,8 +29,8 @@ public class FakeRewatchRepository : RewatchRepository {
         sessionsByShow.value += (showId to sessions)
     }
 
-    public fun setPlayCountForEpisode(episodeId: Long, playCount: Long) {
-        playCountsByEpisode.value += (episodeId to playCount)
+    public fun setRewatchesForEpisode(episodeId: Long, rewatches: Long) {
+        rewatchesByEpisode.value += (episodeId to rewatches)
     }
 
     public fun setRewatchStatusForShow(showId: Long, status: RewatchStatus) {
@@ -89,7 +89,8 @@ public class FakeRewatchRepository : RewatchRepository {
     override suspend fun openSessionForShow(showId: Long): RewatchSession? =
         sessionsByShow.value[showId].orEmpty().firstOrNull { it.closedAt == null }
 
-    override fun playCountForEpisode(episodeId: Long): Long = playCountsByEpisode.value[episodeId] ?: 1L
+    override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> =
+        rewatchesByEpisode.asStateFlow().map { it[episodeId] ?: 0L }
 
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
 

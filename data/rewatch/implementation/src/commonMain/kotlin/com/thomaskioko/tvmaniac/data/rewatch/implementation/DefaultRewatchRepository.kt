@@ -117,7 +117,7 @@ public class DefaultRewatchRepository(
         return rewatchSessionDao.openSessionForShow(localShowId)
     }
 
-    override fun playCountForEpisode(episodeId: Long): Long = rewatchSessionDao.playCountForEpisode(episodeId)
+    override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> = rewatchSessionDao.observeEpisodeRewatches(episodeId)
 
     override suspend fun supportsRewatch(): Boolean = activeSource()?.supportsRewatch() ?: true
 

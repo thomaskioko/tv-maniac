@@ -19,7 +19,7 @@ public interface RewatchSessionDao {
 
     public fun setProviderSessionId(sessionId: Long, providerSessionId: Long)
 
-    public fun playCountForEpisode(episodeId: Long): Long
+    public fun observeEpisodeRewatches(episodeId: Long): Flow<Long>
 
     public fun unsentEpisodes(): List<UnsentRewatchEpisode>
 

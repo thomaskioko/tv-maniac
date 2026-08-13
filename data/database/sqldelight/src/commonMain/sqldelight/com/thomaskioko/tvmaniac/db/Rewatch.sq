@@ -98,8 +98,8 @@ SELECT
 FROM rewatch_session rs
 WHERE rs.id = :sessionId;
 
-playCountForEpisode:
-SELECT COUNT(*) + 1 AS play_count
+observeEpisodeRewatches:
+SELECT COUNT(*) AS rewatch_count
 FROM rewatch_session_episode
 WHERE episode_id = :episodeId;
 

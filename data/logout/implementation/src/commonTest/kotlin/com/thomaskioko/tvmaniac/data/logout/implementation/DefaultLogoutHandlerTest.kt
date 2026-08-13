@@ -22,6 +22,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -173,10 +174,10 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should reset the play count given clear called`() = runTest(testDispatcher) {
+    fun `should reset the rewatch count given clear called`() = runTest(testDispatcher) {
         cleaner.clear()
 
-        rewatchSessionDao.playCountForEpisode(REWATCHED_EPISODE_ID) shouldBe 1L
+        rewatchSessionDao.observeEpisodeRewatches(REWATCHED_EPISODE_ID).first() shouldBe 0L
     }
 
     @Test

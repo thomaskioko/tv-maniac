@@ -24,7 +24,7 @@ public interface RewatchRepository {
 
     public suspend fun openSessionForShow(showId: Long): RewatchSession?
 
-    public fun playCountForEpisode(episodeId: Long): Long
+    public fun observeEpisodeRewatches(episodeId: Long): Flow<Long>
 
     public suspend fun supportsRewatch(): Boolean
 
