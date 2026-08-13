@@ -30,6 +30,9 @@ import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.statistics.presenter.model.HeatMap
 import com.thomaskioko.tvmaniac.statistics.presenter.model.WatchHeatMap
 import com.thomaskioko.tvmaniac.testtags.statistics.StatisticsTestTags
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
 private val CellSize = 10.dp
 private val TodayBorderWidth = 1.dp
@@ -46,8 +49,6 @@ internal fun WatchHeatMapSection(
         title = title,
         modifier = modifier.testTag(StatisticsTestTags.HEAT_MAP_TEST_TAG),
     ) {
-        val today = heatMap.cells.lastOrNull()?.date
-
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
@@ -59,14 +60,15 @@ internal fun WatchHeatMapSection(
                 heatMap.toColumns().forEach { column ->
                     Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxxSmall)) {
                         column.forEach { cell ->
-                            HeatMapCell(cell = cell, isToday = cell != null && cell.date == today)
+                            HeatMapCell(cell = cell, isToday = cell?.isToday == true)
                         }
                     }
                 }
             }
 
             HeatMapLegend(
-                busiestDayCount = heatMap.busiestDayCount,
+                scaleFloorCount = heatMap.scaleFloorCount,
+                scaleTopCount = heatMap.scaleTopCount,
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
@@ -77,7 +79,8 @@ internal fun WatchHeatMapSection(
 
 @Composable
 private fun HeatMapLegend(
-    busiestDayCount: Int,
+    scaleFloorCount: Int,
+    scaleTopCount: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -85,12 +88,9 @@ private fun HeatMapLegend(
         horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxxSmall),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = "0",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        (0..MAX_LEVEL.toInt()).forEach { level ->
+        LegendLabel(text = "$scaleFloorCount")
+
+        (1..MAX_LEVEL.toInt()).forEach { level ->
             Box(
                 modifier = Modifier
                     .size(CellSize)
@@ -98,12 +98,18 @@ private fun HeatMapLegend(
                     .background(levelColor(level)),
             )
         }
-        Text(
-            text = "$busiestDayCount",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+
+        LegendLabel(text = "$scaleTopCount+")
     }
+}
+
+@Composable
+private fun LegendLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable
@@ -160,15 +166,17 @@ private fun WatchHeatMapSectionPreview() {
         heatMap = WatchHeatMap(
             cells = List(70) { index ->
                 HeatMap(
-                    date = "2026-06-${(index % 28) + 1}",
+                    date = LocalDate(2026, 4, 1).plus(index, DateTimeUnit.DAY).toString(),
                     level = index % 5,
                     episodeCount = index % 5,
+                    isToday = index == 69,
                 )
             },
             leadingBlankCells = 3,
             activeDays = 56,
             quietDays = 14,
-            busiestDayCount = 4,
+            scaleFloorCount = 1,
+            scaleTopCount = 10,
         ),
         title = "Your last year of watching",
     )
