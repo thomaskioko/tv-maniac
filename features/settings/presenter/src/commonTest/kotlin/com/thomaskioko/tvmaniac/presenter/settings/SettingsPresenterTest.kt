@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
@@ -49,6 +50,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.OpenSettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.PosterCornerStyleSelected
 import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleReset
 import com.thomaskioko.tvmaniac.settings.presenter.PosterWidthSelected
+import com.thomaskioko.tvmaniac.settings.presenter.QuickRateToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
@@ -147,6 +149,7 @@ class SettingsPresenterTest {
                 resyncContinueWatching = {},
                 appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
             ),
+            rewatchRepository = FakeRewatchRepository(),
         )
     }
 
@@ -692,6 +695,7 @@ class SettingsPresenterTest {
             locks.customThemesLocked shouldBe false
             locks.posterStyleLocked shouldBe false
             locks.episodeNotificationsLocked shouldBe false
+            locks.quickRateLocked shouldBe false
         }
     }
 
@@ -699,6 +703,7 @@ class SettingsPresenterTest {
     fun `should surface locks given subscription access is revoked`() = runTest {
         subscriptionManager.setAccess(SubscriptionFeature.CustomThemes, false)
         subscriptionManager.setAccess(SubscriptionFeature.EpisodeNotifications, false)
+        subscriptionManager.setAccess(SubscriptionFeature.QuickRate, false)
 
         presenter.state.test {
             testScheduler.advanceUntilIdle()
@@ -706,6 +711,7 @@ class SettingsPresenterTest {
             locks.customThemesLocked shouldBe true
             locks.posterStyleLocked shouldBe true
             locks.episodeNotificationsLocked shouldBe true
+            locks.quickRateLocked shouldBe true
             locks.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
             locks.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)
         }
@@ -749,6 +755,45 @@ class SettingsPresenterTest {
             expectMostRecentItem().episodeNotificationsEnabled shouldBe false
         }
         datastoreRepository.observeEpisodeNotificationsEnabled().first() shouldBe false
+    }
+
+    @Test
+    fun `should enable quick rate given the toggle is switched on`() = runTest {
+        presenter.dispatch(QuickRateToggled(true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().quickRateEnabled shouldBe true
+        }
+        datastoreRepository.observeQuickRateEnabled().first() shouldBe true
+    }
+
+    @Test
+    fun `should disable quick rate given the toggle is switched off`() = runTest {
+        presenter.dispatch(QuickRateToggled(true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(QuickRateToggled(false))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().quickRateEnabled shouldBe false
+        }
+        datastoreRepository.observeQuickRateEnabled().first() shouldBe false
+    }
+
+    @Test
+    fun `should ignore QuickRateToggled while locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.QuickRate, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(QuickRateToggled(true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().quickRateEnabled shouldBe false
+        }
+        datastoreRepository.observeQuickRateEnabled().first() shouldBe false
     }
 
     @Test

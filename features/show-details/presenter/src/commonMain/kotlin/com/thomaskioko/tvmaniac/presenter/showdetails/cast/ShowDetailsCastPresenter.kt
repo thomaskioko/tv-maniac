@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = ShowDetailsChildScope::class, parentScope = ShowDetailsRoute::class)
 @AssistedInject
-public class ShowDetailsCastPresenter(
+public class ShowDetailsCastPresenter internal constructor(
     componentContext: ComponentContext,
     @Assisted private val showId: Long,
     @Assisted private val forceRefresh: Boolean,

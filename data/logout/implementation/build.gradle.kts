@@ -14,6 +14,7 @@ kotlin {
                 api(projects.data.logout.api)
                 api(projects.data.ratings.api)
                 api(projects.data.requestManager.api)
+                api(projects.data.rewatch.api)
                 api(projects.data.syncActivity.api)
                 api(projects.data.user.api)
                 api(projects.core.base)
@@ -27,6 +28,7 @@ kotlin {
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.ratings.implementation)
                 implementation(projects.data.requestManager.testing)
+                implementation(projects.data.rewatch.implementation)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.user.testing)
             }

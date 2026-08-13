@@ -18,33 +18,6 @@ public struct LibraryListItemView: View {
         self.onItemClicked = onItemClicked
     }
 
-    private var metadataText: String? {
-        var components: [String] = []
-        if let year = item.year {
-            components.append(year)
-        }
-        if let status = item.status {
-            components.append(status)
-        }
-        let seasonCount = Int(item.seasonCount)
-        if seasonCount > 0 {
-            components.append(seasonCount == 1 ? "\(seasonCount) Season" : "\(seasonCount) Seasons")
-        }
-        let episodeCount = Int(item.episodeCount)
-        if episodeCount > 0 {
-            components.append(episodeCount == 1 ? "\(episodeCount) Episode" : "\(episodeCount) Episodes")
-        }
-        if let genres = item.genres, let firstGenre = genres.first {
-            components.append(firstGenre)
-        }
-        return components.isEmpty ? nil : components.joined(separator: " · ")
-    }
-
-    private var formattedRating: String? {
-        guard let rating = item.rating else { return nil }
-        return String(format: "%.1f", rating)
-    }
-
     public var body: some View {
         Button(action: onItemClicked) {
             HStack(alignment: .top, spacing: theme.spacing.medium) {
@@ -55,13 +28,13 @@ public struct LibraryListItemView: View {
                     aspectRatio: ImageType.poster.aspect
                 )
 
-                VStack(alignment: .leading, spacing: theme.spacing.xSmall) {
+                VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                     Text(item.title)
                         .textStyle(theme.typography.titleMedium)
                         .foregroundStyle(.appOnSurface)
                         .lineLimit(2)
 
-                    if let rating = formattedRating {
+                    if let rating = item.formattedRating {
                         HStack(spacing: theme.spacing.xxSmall) {
                             Image(systemName: "star.fill")
                                 .textStyle(theme.typography.bodyMedium)
@@ -72,14 +45,12 @@ public struct LibraryListItemView: View {
                         }
                     }
 
-                    if let metadata = metadataText {
-                        Text(metadata)
+                    if !item.metadataComponents.isEmpty {
+                        metadataText(item.metadataComponents, accent: theme.colors.accent)
                             .textStyle(theme.typography.bodySmall)
                             .foregroundStyle(.appOnSurfaceVariant)
                             .lineLimit(3)
                     }
-
-                    Spacer()
 
                     if !item.watchProviders.isEmpty {
                         HStack(spacing: theme.spacing.xxSmall) {
@@ -98,7 +69,6 @@ public struct LibraryListItemView: View {
                 .padding(.vertical, theme.spacing.small)
                 .padding(.trailing, theme.spacing.small)
             }
-            .frame(height: 200)
             .background(.appSurface)
             .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
             .appShadow(theme.shadows.medium)

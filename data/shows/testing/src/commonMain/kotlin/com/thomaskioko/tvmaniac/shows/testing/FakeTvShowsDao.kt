@@ -92,4 +92,5 @@ private fun ShowToPersist.toTvshow(): Tvshow = Tvshow(
     backdrop_path = backdropPath,
     episode_numbers = episodeNumbers,
     season_numbers = seasonNumbers,
+    runtime = null,
 )

@@ -43,6 +43,10 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
+  subgraph :data:datastore
+    direction TB
+    :data:datastore:api[api]:::multiplatform
+  end
   subgraph :data:episode
     direction TB
     :data:episode:api[api]:::multiplatform
@@ -63,6 +67,10 @@ graph TB
     direction TB
     :data:ratings:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:start-watching
     direction TB
     :data:start-watching:api[api]:::multiplatform
@@ -79,6 +87,10 @@ graph TB
     direction TB
     :data:user:api[api]:::multiplatform
   end
+  subgraph :i18n
+    direction TB
+    :i18n:generator[generator]:::multiplatform
+  end
 
   :api:simkl:api --> :core:network-util:api
   :api:simkl:implementation --> :api:simkl:api
@@ -93,6 +105,7 @@ graph TB
   :api:simkl:implementation --> :data:library:api
   :api:simkl:implementation --> :data:oauth:api
   :api:simkl:implementation --> :data:ratings:api
+  :api:simkl:implementation --> :data:rewatch:api
   :api:simkl:implementation --> :data:start-watching:api
   :api:simkl:implementation --> :data:sync-activity:api
   :api:simkl:implementation --> :data:user:api
@@ -104,6 +117,7 @@ graph TB
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:database:sqldelight --> :core:logger:api
+  :data:datastore:api --> :i18n:generator
   :data:episode:api --> :data:account-manager:api
   :data:episode:api --> :data:database:sqldelight
   :data:episode:api --> :data:followedshows:api
@@ -111,11 +125,14 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:oauth:api --> :data:account-manager:api
   :data:ratings:api --> :core:network-util:api
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:start-watching:api --> :core:network-util:api
   :data:start-watching:api --> :data:account-manager:api
   :data:sync-activity:api --> :core:network-util:api

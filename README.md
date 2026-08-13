@@ -10,6 +10,7 @@
 ![swiftui](https://img.shields.io/badge/swiftui-%23000000.svg?style=for-the-badge&logo=swift&logoColor=white)
 
 [![Download APK](https://img.shields.io/github/v/release/thomaskioko/tv-maniac?label=Download%20APK&logo=android&style=for-the-badge)](https://github.com/thomaskioko/tv-maniac/releases/latest)
+[![Join Beta](https://img.shields.io/badge/Join%20Beta-Google%20Play-01875f?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/com.thomaskioko.tvmaniac)
 
 **TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app (Android & iOS) for tracking TV Shows. By utilizing [Trakt](https://trakt.tv) and [TMDB](https://developer.themoviedb.org/docs), you can discover shows, manage your watchlist, track watch progress, and get personalized recommendations.
 
@@ -25,7 +26,7 @@
 
 Download the latest APK from [GitHub Releases](https://github.com/thomaskioko/tv-maniac/releases).
 
-Join the open beta on [Google Play](https://play.google.com/store/apps/details?id=com.thomaskioko.tvmaniac&hl=en_US) or stay up to date with daily builds via Firebase:
+Join the open beta on [Google Play](https://play.google.com/store/apps/details?id=com.thomaskioko.tvmaniac&hl=en_US) or stay up to date with dev builds via Firebase:
 
 [<img width=400 src="art/FirebaseAppDistribution.svg"/>](https://appdistribution.firebase.dev/i/564c934cc970634b)
 

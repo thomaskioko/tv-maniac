@@ -72,6 +72,10 @@ graph TB
     direction TB
     :data:ratings:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -87,6 +91,10 @@ graph TB
   subgraph :data:similar
     direction TB
     :data:similar:api[api]:::multiplatform
+  end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
   end
   subgraph :data:trailers
     direction TB
@@ -113,6 +121,7 @@ graph TB
     :domain:episode[episode]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:similarshows[similarshows]:::multiplatform
     :domain:theme[theme]:::multiplatform
@@ -173,10 +182,13 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:ratings:api --> :core:network-util:api
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
@@ -210,7 +222,12 @@ graph TB
   :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
   :domain:ratings --> :core:base
+  :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:subscription:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api
@@ -237,15 +254,18 @@ graph TB
   :features:show-details:presenter --> :core:base
   :features:show-details:presenter --> :core:logger:api
   :features:show-details:presenter --> :core:notifications:api
+  :features:show-details:presenter --> :core:util:api
   :features:show-details:presenter --> :core:view
   :features:show-details:presenter --> :data:account-manager:api
   :features:show-details:presenter --> :data:datastore:api
   :features:show-details:presenter --> :data:episode:api
   :features:show-details:presenter --> :data:followedshows:api
+  :features:show-details:presenter --> :data:rewatch:api
   :features:show-details:presenter --> :data:seasondetails:api
   :features:show-details:presenter --> :domain:episode
   :features:show-details:presenter --> :domain:notifications
   :features:show-details:presenter --> :domain:ratings
+  :features:show-details:presenter --> :domain:rewatch
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
   :features:show-details:presenter --> :domain:traktlists

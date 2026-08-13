@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.VideoLibrary
@@ -17,11 +19,15 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvide
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.settings.presenter.BackgroundSyncToggled
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
+import com.thomaskioko.tvmaniac.settings.presenter.MultiplePlaysToggled
+import com.thomaskioko.tvmaniac.settings.presenter.QuickRateToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.YoutubeToggled
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroupDivider
+import com.thomaskioko.tvmaniac.settings.ui.behaviorLockedState
+import com.thomaskioko.tvmaniac.settings.ui.behaviorSimklFreeTierState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
@@ -34,6 +40,14 @@ internal fun BehaviorPage(
     val syncDescription = buildString {
         append(state.labels.syncDescription)
         state.labels.lastSync?.let {
+            append("\n")
+            append(it)
+        }
+    }
+
+    val multiplePlaysDescription = buildString {
+        append(state.labels.multiplePlaysDescription)
+        state.multiplePlaysSyncNotice?.let {
             append("\n")
             append(it)
         }
@@ -61,6 +75,26 @@ internal fun BehaviorPage(
                 )
                 SettingsGroupDivider()
                 SwitchRow(
+                    modifier = Modifier.testTag(SettingsTestTags.QUICK_RATE_TOGGLE_TEST_TAG),
+                    icon = Icons.Filled.StarRate,
+                    title = state.labels.quickRateTitle,
+                    description = state.labels.quickRateDescription,
+                    checked = state.quickRateEnabled,
+                    onCheckedChange = { onAction(QuickRateToggled(it)) },
+                    locked = state.locks.quickRateLocked,
+                    lockedBadgeText = state.locks.badgeText,
+                )
+                SettingsGroupDivider()
+                SwitchRow(
+                    modifier = Modifier.testTag(SettingsTestTags.MULTIPLE_PLAYS_TOGGLE_TEST_TAG),
+                    icon = Icons.Filled.Replay,
+                    title = state.labels.multiplePlaysTitle,
+                    description = multiplePlaysDescription,
+                    checked = state.multiplePlaysEnabled,
+                    onCheckedChange = { onAction(MultiplePlaysToggled(it)) },
+                )
+                SettingsGroupDivider()
+                SwitchRow(
                     icon = Icons.Filled.Tv,
                     title = state.labels.youtubeTitle,
                     description = state.labels.youtubeDescription,
@@ -80,6 +114,26 @@ internal fun BehaviorPage(
 private fun BehaviorPagePreview() {
     BehaviorPage(
         state = behaviorState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun BehaviorPageSimklFreeTierPreview() {
+    BehaviorPage(
+        state = behaviorSimklFreeTierState,
+        onAction = {},
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun BehaviorPageLockedPreview() {
+    BehaviorPage(
+        state = behaviorLockedState,
         onAction = {},
     )
 }

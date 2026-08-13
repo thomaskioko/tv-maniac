@@ -12,7 +12,9 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -39,10 +41,14 @@ public class DefaultTrailerDao(
         return database.trailersQueries.selectByShowId(internalShowId).executeAsList()
     }
 
-    override fun observeTrailersByShowId(showId: Long): Flow<List<SelectByShowId>> {
-        val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return flowOf(emptyList())
-        return database.trailersQueries.selectByShowId(internalShowId).asFlow().mapToList(dispatchers.io)
-    }
+    override fun observeTrailersByShowId(showId: Long): Flow<List<SelectByShowId>> = flow {
+        val internalShowId = showIdResolver.showIdForTmdbId(showId)
+        if (internalShowId == null) {
+            emit(emptyList())
+        } else {
+            emitAll(database.trailersQueries.selectByShowId(internalShowId).asFlow().mapToList(dispatchers.io))
+        }
+    }.flowOn(dispatchers.io)
 
     override fun delete(id: Long) {
         database.transaction { database.trailersQueries.delete(Id(id)) }

@@ -12,41 +12,50 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
+import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.myshows.nav.scope.MyShowsChildScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
+import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
+import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = MyShowsChildScope::class, parentScope = MyShowsRoot::class)
 @Inject
-public class ContinueWatchingPresenter(
+public class ContinueWatchingPresenter internal constructor(
     @ContinueWatchingNitroFlagQualifier
     nitroFlag: FeatureFlag<Boolean>,
     syncObserver: SyncObserver,
     repository: WatchlistPrefsRepository,
+    subscriptionManager: SubscriptionManager,
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -54,6 +63,7 @@ public class ContinueWatchingPresenter(
     private val observeUpNextSectionsInteractor: ObserveUpNextSectionsInteractor,
     private val syncContinueWatchingInteractor: SyncContinueWatchingInteractor,
     private val markEpisodeWatchedInteractor: MarkEpisodeWatchedInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val mapper: ContinueWatchingMapper,
     private val logger: Logger,
@@ -77,6 +87,13 @@ public class ContinueWatchingPresenter(
             initialValue = false,
         )
 
+    private val resolvedListStyle = kotlinx.coroutines.flow.combine(
+        repository.observeListStyle(),
+        subscriptionManager.observeAccess(SubscriptionFeature.ListViewTypes),
+    ) { listStyle, hasAccess ->
+        if (hasAccess) listStyle else listStyle.freeFallback
+    }
+
     init {
         observeWatchlistSectionsInteractor(queryFlow.value)
         observeUpNextSectionsInteractor(queryFlow.value)
@@ -97,19 +114,19 @@ public class ContinueWatchingPresenter(
         userRefreshState.observable,
         observeWatchlistSectionsInteractor.flow,
         observeUpNextSectionsInteractor.flow,
-        repository.observeListStyle(),
+        resolvedListStyle,
         repository.observeSortOption(),
         uiMessageManager.message,
         queryFlow,
         syncObserver.isSyncing,
         watchlistLoadingState.observable,
         episodeActionLoadingState.observable,
-    ) { updatingEpisodeIds, isUserRefreshing, watchlistSections, upNextSections, isGridMode, sortOption, message, query, isSyncing, isLoading, isUpdating ->
+    ) { updatingEpisodeIds, isUserRefreshing, watchlistSections, upNextSections, listStyle, sortOption, message, query, isSyncing, isLoading, isUpdating ->
         val sectionedItems = mapper.toSectionedItems(watchlistSections, sortOption)
         val sectionedEpisodes = mapper.toSectionedEpisodes(upNextSections)
         ContinueWatchingState(
             query = query,
-            isGridMode = isGridMode,
+            listStyle = listStyle,
             isLoading = isLoading,
             isRefreshing = isUserRefreshing,
             isSyncing = isSyncing,
@@ -168,6 +185,19 @@ public class ContinueWatchingPresenter(
                     seasonNumber = action.seasonNumber,
                     episodeNumber = action.episodeNumber,
                 ),
+            ).onCompletion {
+                promptForRating(showId = action.showId, episodeId = action.episodeId)
+            }
+        }
+    }
+
+    private suspend fun promptForRating(showId: Long, episodeId: Long) {
+        val shouldPrompt = shouldPromptForRatingInteractor(
+            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
+        )
+        if (shouldPrompt) {
+            navigator.navigateTo(
+                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
             )
         }
     }
@@ -192,21 +222,28 @@ public class ContinueWatchingPresenter(
         }
     }
 
-    private fun syncWatchlist(forceRefresh: Boolean = false) {
-        coroutineScope.launch {
-            val counter = if (forceRefresh) userRefreshState else watchlistLoadingState
-            syncContinueWatchingInteractor(
-                SyncContinueWatchingInteractor.Param(
-                    forceRefresh = forceRefresh,
-                    useNitro = nitroEnabled.value,
-                ),
+    /**
+     * Suspends until the refresh finishes so a caller can hold a progress indicator open for it.
+     * The work runs in the presenter's own scope, so leaving the screen part way through cancels
+     * the wait rather than the sync.
+     */
+    public suspend fun refresh() {
+        syncWatchlist(forceRefresh = true).join()
+    }
+
+    private fun syncWatchlist(forceRefresh: Boolean = false): Job = coroutineScope.launch {
+        val counter = if (forceRefresh) userRefreshState else watchlistLoadingState
+        syncContinueWatchingInteractor(
+            SyncContinueWatchingInteractor.Param(
+                forceRefresh = forceRefresh,
+                useNitro = nitroEnabled.value,
+            ),
+        )
+            .collectStatus(
+                counter = counter,
+                logger = logger,
+                uiMessageManager = uiMessageManager,
+                errorToStringMapper = errorToStringMapper,
             )
-                .collectStatus(
-                    counter = counter,
-                    logger = logger,
-                    uiMessageManager = uiMessageManager,
-                    errorToStringMapper = errorToStringMapper,
-                )
-        }
     }
 }

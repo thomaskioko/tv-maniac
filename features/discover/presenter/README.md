@@ -212,6 +212,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:popularshows:api --> :core:base
   :data:popularshows:api --> :data:database:sqldelight
   :data:popularshows:api --> :data:shows:api
@@ -302,7 +303,6 @@ graph TB
   :features:discover:presenter --> :domain:episode
   :features:discover:presenter --> :domain:followedshows
   :features:discover:presenter --> :domain:genre
-  :features:discover:presenter --> :domain:showdetails
   :features:discover:presenter --> :domain:start-watching
   :features:discover:presenter --> :features:discover:nav
   :features:discover:presenter -.-> :features:episode-sheet:nav

@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
+import com.thomaskioko.tvmaniac.episodes.api.WatchedShowMetadata
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -23,6 +24,7 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.testing.FakeShowWatchStatusRepository
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
@@ -70,7 +72,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        seedShow()
+        addShow()
         dao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, fakeDateTimeProvider)
         defaultWatchedEpisodeSyncRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
@@ -94,7 +96,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should hard-delete pending DELETE row after pushing to Trakt`() = runTest {
-        seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 999L)
+        addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = 999L)
 
         defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
@@ -104,8 +106,8 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should hard-delete both synced and unsynced rows after pushing deletes`() = runTest {
-        seedDeletePending(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
-        seedDeletePending(seasonNumber = 1L, episodeNumber = 2L, traktId = null)
+        addPendingDelete(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+        addPendingDelete(seasonNumber = 1L, episodeNumber = 2L, traktId = null)
 
         defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
 
@@ -116,7 +118,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should upload pending entries exactly once given concurrent pending pushes`() = runTest {
-        seedUploadPending(seasonNumber = 1L, episodeNumber = 1L)
+        addPendingUpload(seasonNumber = 1L, episodeNumber = 1L)
 
         launch { defaultWatchedEpisodeSyncRepository.syncPendingEpisodes() }
         launch { defaultWatchedEpisodeSyncRepository.syncPendingEpisodes() }
@@ -269,7 +271,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should keep syncing remaining shows and hold checkpoint given one show fails during bulk sync`() = runTest {
-        val thirdShowId = seedAdditionalShow(tmdbId = THIRD_SHOW_ID, traktId = THIRD_SHOW_TRAKT_ID)
+        val thirdShowId = addAnotherShow(tmdbId = THIRD_SHOW_ID, traktId = THIRD_SHOW_TRAKT_ID)
         val throwingRepository = DefaultWatchedEpisodeSyncRepository(
             dao = dao,
             episodesDao = DefaultEpisodesDao(database, showIdResolver, dispatchers, fakeDateTimeProvider),
@@ -325,10 +327,10 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should remove a locally-watched episode the provider no longer reports on per-show sync`() = runTest {
-        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 555L)
-        seedEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 2L, episodeTraktId = 556L)
-        seedSynced(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
-        seedSynced(seasonNumber = 1L, episodeNumber = 2L, traktId = 556L)
+        addEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 1L, episodeTraktId = 555L)
+        addEpisode(seasonId = 100L, seasonNumber = 1L, episodeNumber = 2L, episodeTraktId = 556L)
+        addSyncedWatch(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+        addSyncedWatch(seasonNumber = 1L, episodeNumber = 2L, traktId = 556L)
         recordingDataSource.showWatchesToReturn = listOf(
             WatchedEpisodeEntry(
                 showId = SHOW_ID,
@@ -379,7 +381,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         lastUpdatedAt = lastUpdatedAt,
     )
 
-    private fun seedUploadPending(seasonNumber: Long, episodeNumber: Long) {
+    private fun addPendingUpload(seasonNumber: Long, episodeNumber: Long) {
         database.watchedEpisodesQueries.upsertFromTrakt(
             show_id = showId,
             episode_id = null,
@@ -392,7 +394,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedDeletePending(
+    private fun addPendingDelete(
         seasonNumber: Long,
         episodeNumber: Long,
         traktId: Long?,
@@ -409,7 +411,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedSynced(seasonNumber: Long, episodeNumber: Long, traktId: Long) {
+    private fun addSyncedWatch(seasonNumber: Long, episodeNumber: Long, traktId: Long) {
         database.watchedEpisodesQueries.upsertFromTrakt(
             show_id = showId,
             episode_id = null,
@@ -422,7 +424,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedEpisode(
+    private fun addEpisode(
         seasonId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
@@ -452,7 +454,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         )
     }
 
-    private fun seedShow() {
+    private fun addShow() {
         database.tvShowQueries.upsert(
             tmdb_id = Id(SHOW_ID),
             name = "Test Show",
@@ -471,7 +473,26 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         showId = showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_ID)
     }
 
-    private fun seedAdditionalShow(tmdbId: Long, traktId: Long): Id<ShowId> {
+    private fun addShowWithoutMetadata() {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id(SHOW_ID),
+            name = "Test Show",
+            overview = "",
+            language = "en",
+            year = null,
+            ratings = 8.0,
+            vote_count = 100,
+            genres = null,
+            status = "Returning Series",
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
+        showId = showIdForTraktId(traktId = SHOW_TRAKT_ID, tmdbId = SHOW_ID)
+    }
+
+    private fun addAnotherShow(tmdbId: Long, traktId: Long): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id(tmdbId),
             name = "Test Show $tmdbId",
@@ -551,6 +572,81 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         private const val SIMKL_SHOW_ID = 583436L
         private const val PAST_MILLIS = 1_600_000_000_000L
     }
+
+    @Test
+    fun `should store runtime for watched shows missing it given bulk sync runs`() = runTest(testDispatcher) {
+        addShow()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        recordingDataSource.metadataToReturn = listOf(
+            WatchedShowMetadata(tmdbId = SHOW_ID, runtimeMinutes = 47),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne().runtime shouldBe 47L
+        recordingDataSource.metadataRequestPages shouldContainExactly listOf(1)
+    }
+
+    @Test
+    fun `should skip the metadata request given every watched show already has it`() = runTest(testDispatcher) {
+        addShow()
+        database.tvShowQueries.updateRuntime(runtime = 47, tmdbId = Id(SHOW_ID))
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        recordingDataSource.metadataRequestPages.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should store the release year and genres given a watched show is missing them`() = runTest(testDispatcher) {
+        addShowWithoutMetadata()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        recordingDataSource.metadataToReturn = listOf(
+            WatchedShowMetadata(
+                tmdbId = SHOW_ID,
+                runtimeMinutes = 47,
+                year = "2019",
+                genres = listOf("drama", "science-fiction"),
+            ),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        val show = database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne()
+        show.year shouldBe "2019"
+        show.genres shouldContainExactly listOf("Drama", "Science Fiction")
+    }
+
+    @Test
+    fun `should keep the stored genres given the provider returns none`() = runTest(testDispatcher) {
+        addShow()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID))
+        recordingDataSource.metadataToReturn = listOf(
+            WatchedShowMetadata(tmdbId = SHOW_ID, runtimeMinutes = 47, year = null, genres = null),
+        )
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        val show = database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne()
+        show.year shouldBe "2024"
+        show.genres shouldContainExactly listOf("Drama")
+    }
+
+    @Test
+    fun `should store the release year given a batch carries one`() = runTest(testDispatcher) {
+        addShowWithoutMetadata()
+        recordingDataSource.batchesToReturn = listOf(watchedBatch(tmdbId = SHOW_ID).copy(year = "2016"))
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+        advanceUntilIdle()
+
+        database.tvShowQueries.tvshowByTmdbId(Id(SHOW_ID)).executeAsOne().year shouldBe "2016"
+    }
 }
 
 private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
@@ -565,6 +661,16 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
     var batchesToReturn: List<WatchedShowBatch> = emptyList()
+    var metadataToReturn: List<WatchedShowMetadata> = emptyList()
+
+    private val _metadataRequestPages = mutableListOf<Int>()
+    val metadataRequestPages: List<Int> get() = _metadataRequestPages.toList()
+
+    override suspend fun getWatchedShowMetadata(page: Int, limit: Int): List<WatchedShowMetadata> {
+        _metadataRequestPages += page
+        val offset = (page - 1) * limit
+        return metadataToReturn.drop(offset).take(limit)
+    }
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<WatchedEpisodeEntry> {
         _getShowEpisodeWatchesCalls += showId

@@ -20,17 +20,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_statistics_open
+import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileLabels
 import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.profile.ui.StatTile
 import com.thomaskioko.tvmaniac.profile.ui.StatValueLabel
 import com.thomaskioko.tvmaniac.profile.ui.StatValueText
+import com.thomaskioko.tvmaniac.testtags.profile.ProfileTestTags
 
 @Composable
 internal fun StatsCard(
@@ -38,11 +42,18 @@ internal fun StatsCard(
     labels: ProfileLabels,
     listCount: Int,
     onViewLists: () -> Unit,
+    onViewStatistics: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     CollapsibleSection(
         title = labels.statsTitle,
         modifier = modifier,
+        showMore = true,
+        moreContentDescription = cd_statistics_open.resolve(context),
+        onMoreClick = onViewStatistics,
+        moreTestTag = ProfileTestTags.STATISTICS_ROW_TEST_TAG,
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(horizontal = TvManiacSpacing.medium)) {
             Row(
@@ -167,20 +178,22 @@ internal fun ListsCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             StatValueText(count = count)
-            Text(
-                text = viewButtonLabel,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable(onClick = onViewLists)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        shape = MaterialTheme.shapes.small,
-                    )
-                    .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xxSmall),
-            )
+            if (count > 0) {
+                Text(
+                    text = viewButtonLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable(onClick = onViewLists)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            shape = MaterialTheme.shapes.small,
+                        )
+                        .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xxSmall),
+                )
+            }
         }
     }
 }
@@ -255,6 +268,7 @@ private fun StatsCardPreview() {
         ),
         listCount = 8,
         onViewLists = {},
+        onViewStatistics = {},
         modifier = Modifier.padding(TvManiacSpacing.medium),
     )
 }

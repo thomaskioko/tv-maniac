@@ -11,7 +11,7 @@ public data class LibraryShowItem(
     val status: String? = null,
     val year: String? = null,
     val rating: Double? = null,
-    val genres: List<String>? = null,
+    val genres: ImmutableList<String>? = null,
     val seasonCount: Long = 0,
     val episodeCount: Long = 0,
     val isFollowed: Boolean = false,

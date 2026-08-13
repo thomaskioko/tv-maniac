@@ -26,10 +26,12 @@ public class ObserveSettingsPreferencesInteractor(
             datastoreRepository.observeEpisodeNotificationsEnabled(),
             datastoreRepository.observeCrashReportingEnabled(),
             datastoreRepository.observeDebugMenuEnabled(),
+            datastoreRepository.observeQuickRateEnabled(),
+            datastoreRepository.observeMultiplePlaysEnabled(),
             datastoreRepository.observeLayoutPreferences(),
         ) { imageQuality, theme, openTrailersInYoutube, includeSpecials, backgroundSyncEnabled,
             lastSyncTimestamp, episodeNotificationsEnabled, crashReportingEnabled, debugMenuEnabled,
-            layout,
+            quickRateEnabled, multiplePlaysEnabled, layout,
             ->
             val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.epochToDisplayDateTime(it) }
             SettingsPreferences(
@@ -43,6 +45,8 @@ public class ObserveSettingsPreferencesInteractor(
                 episodeNotificationsEnabled = episodeNotificationsEnabled,
                 crashReportingEnabled = crashReportingEnabled,
                 debugMenuEnabled = debugMenuEnabled,
+                quickRateEnabled = quickRateEnabled,
+                multiplePlaysEnabled = multiplePlaysEnabled,
                 layout = layout,
             )
         }
@@ -60,5 +64,7 @@ public data class SettingsPreferences(
     val episodeNotificationsEnabled: Boolean,
     val crashReportingEnabled: Boolean,
     val debugMenuEnabled: Boolean,
+    val quickRateEnabled: Boolean,
+    val multiplePlaysEnabled: Boolean,
     val layout: LayoutPreferences,
 )

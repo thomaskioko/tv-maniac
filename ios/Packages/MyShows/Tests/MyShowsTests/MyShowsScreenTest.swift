@@ -12,12 +12,40 @@ class MyShowsScreenTest: SnapshotTestCase {
         MyShowsGridItem(showId: 2, title: "Game of Thrones", posterImageUrl: nil, watchProgress: 0.3),
     ]
 
+    private let sampleEpisodes: [SwiftNextEpisode] = [
+        SwiftNextEpisode(
+            showId: 1,
+            showName: "The Walking Dead: Daryl Dixon",
+            imageUrl: nil,
+            episodeId: 123,
+            episodeTitle: "L'ame Perdue",
+            episodeNumber: "S02 | E01",
+            runtime: "45 min",
+            overview: "Daryl washes ashore in France.",
+            watchedCount: 3,
+            totalCount: 8
+        ),
+        SwiftNextEpisode(
+            showId: 2,
+            showName: "Severance",
+            imageUrl: nil,
+            episodeId: 456,
+            episodeTitle: "Woe's Hollow",
+            episodeNumber: "S02 | E05",
+            runtime: "52 min",
+            overview: "The severed team goes on a retreat.",
+            watchedCount: 5,
+            totalCount: 10
+        ),
+    ]
+
     private func makeState(
         emptyText: String = "No content",
         isLoading: Bool = false,
-        isGridMode: Bool = true,
+        layout: SwiftListStyle = .grid,
         watchNextGridItems: [MyShowsGridItem] = [],
-        staleGridItems: [MyShowsGridItem] = []
+        staleGridItems: [MyShowsGridItem] = [],
+        watchNextEpisodes: [SwiftNextEpisode] = []
     ) -> MyShowsScreen.State {
         MyShowsScreen.State(
             emptyText: emptyText,
@@ -27,11 +55,11 @@ class MyShowsScreenTest: SnapshotTestCase {
             premiereLabel: "Premiere",
             newLabel: "New",
             isLoading: isLoading,
-            isGridMode: isGridMode,
+            layout: layout,
             query: "",
             watchNextGridItems: watchNextGridItems,
             staleGridItems: staleGridItems,
-            watchNextEpisodes: [],
+            watchNextEpisodes: watchNextEpisodes,
             staleEpisodes: []
         )
     }
@@ -76,8 +104,20 @@ class MyShowsScreenTest: SnapshotTestCase {
     }
 
     func test_MyShowsScreen_UpToDate() {
-        screen(state: makeState(isGridMode: false))
+        screen(state: makeState(layout: .list))
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "MyShowsScreen_UpToDate")
+    }
+
+    func test_MyShowsScreen_CompactMode() {
+        screen(state: makeState(layout: .compact, watchNextEpisodes: sampleEpisodes))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "MyShowsScreen_CompactMode")
+    }
+
+    func test_MyShowsScreen_DetailedMode() {
+        screen(state: makeState(layout: .detailed, watchNextEpisodes: sampleEpisodes))
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "MyShowsScreen_DetailedMode")
     }
 }

@@ -55,7 +55,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should insert trending shows`() = runTest {
-        val showId = seedShow(showId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
+        val showId = addShow(showId = 999, name = "New Test Show", posterPath = "/new_test.jpg")
 
         val trendingShow = Trending_shows(
             show_id = showId,
@@ -102,7 +102,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should not return shows with null names`() = runTest {
         // Given - insert a show without name (simulating pre-migration data)
-        val showId = seedShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
+        val showId = addShow(showId = 999, name = "Null Name Show", posterPath = "/test999.jpg")
         trendingShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
@@ -125,7 +125,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should filter by page correctly`() = runTest {
         // Given - add shows to different pages
-        val showId = seedShow(showId = 999, name = "Page 2 Show", posterPath = "/page2.jpg")
+        val showId = addShow(showId = 999, name = "Page 2 Show", posterPath = "/page2.jpg")
         trendingShowsQueries.insert(
             showId = showId,
             tmdbId = Id<TmdbId>(999),
@@ -184,7 +184,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
             initialShows.size shouldBe 2
 
             // When - add a new show
-            val showId = seedShow(showId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
+            val showId = addShow(showId = 999, name = "New Reactive Show", posterPath = "/reactive.jpg")
             val newShow = Trending_shows(
                 show_id = showId,
                 tmdb_id = Id<TmdbId>(999),
@@ -245,7 +245,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
     @Test
     fun `stable query should handle COALESCE for empty names correctly`() = runTest {
         // Given - manually insert entry with empty string name to test COALESCE
-        val showId = seedShow(showId = 888, name = "Empty Name Show", posterPath = "/empty.jpg")
+        val showId = addShow(showId = 888, name = "Empty Name Show", posterPath = "/empty.jpg")
         database.trendingShowsQueries.transaction {
             // Insert with empty name directly
             database.trendingShowsQueries.insert(
@@ -269,7 +269,7 @@ internal class DefaultTrendingShowsDaoTest : BaseDatabaseTest() {
         }
     }
 
-    private fun seedShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
+    private fun addShow(showId: Long, name: String, posterPath: String): Id<ShowId> {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(showId),
             name = name,

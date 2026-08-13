@@ -1,0 +1,3 @@
+UPDATE tvshow SET genres = NULL WHERE genres LIKE '%-%';
+
+DELETE FROM last_requests;

@@ -8,6 +8,7 @@ import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
+import com.thomaskioko.tvmaniac.presenter.root.model.ConnectivityBannerState
 import com.thomaskioko.tvmaniac.presenter.root.model.ToastState
 import kotlinx.coroutines.flow.StateFlow
 
@@ -42,6 +43,10 @@ public interface RootPresenter {
 
     public val accountLimitBannerVisibleValue: Value<Boolean>
 
+    public val connectivityBannerState: StateFlow<ConnectivityBannerState>
+
+    public val connectivityBannerStateValue: Value<ConnectivityBannerState>
+
     public fun onRationaleAccepted()
 
     public fun onRationaleDismissed()
@@ -53,4 +58,6 @@ public interface RootPresenter {
     public fun onToastShown(id: Long)
 
     public fun onDismissAccountLimitBanner()
+
+    public fun onDismissOfflineBanner()
 }

@@ -1,0 +1,199 @@
+import Components
+import DesignSystem
+import SwiftUI
+import TvManiac
+import TvManiacKit
+
+public struct StatisticsScreen: View {
+    @Environment(\.appTheme) private var theme
+
+    private let state: State
+    private let backButtonAccessibilityLabel: String
+    private let onBack: () -> Void
+    private let onUpgradeClicked: () -> Void
+    private let onShowClicked: (Int64) -> Void
+    private let onRefresh: () async -> Void
+
+    public init(
+        state: State,
+        backButtonAccessibilityLabel: String = "",
+        onBack: @escaping () -> Void = {},
+        onUpgradeClicked: @escaping () -> Void = {},
+        onShowClicked: @escaping (Int64) -> Void = { _ in },
+        onRefresh: @escaping () async -> Void = {}
+    ) {
+        self.state = state
+        self.backButtonAccessibilityLabel = backButtonAccessibilityLabel
+        self.onBack = onBack
+        self.onUpgradeClicked = onUpgradeClicked
+        self.onShowClicked = onShowClicked
+        self.onRefresh = onRefresh
+    }
+
+    public var body: some View {
+        stateBody
+            .premiumOverlay(
+                isLocked: state.isLocked,
+                badgeText: state.labels.lockedBadgeText,
+                title: state.labels.lockedTitle,
+                message: state.labels.lockedMessage,
+                actionText: state.labels.lockedActionText,
+                onActionClick: onUpgradeClicked,
+                accessibilityLabel: state.labels.lockedContentDescription
+            )
+            .testTag(state.isLocked ? StatisticsTestTags.shared.LOCKED_STATE_TEST_TAG : nil)
+            .appScreen()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .navigationBarColor(backgroundColor: .clear)
+            .swipeBackGesture(onSwipe: onBack)
+            .overlay(
+                GlassToolbar(
+                    title: state.labels.screenTitle,
+                    opacity: 1.0,
+                    leadingIcon: {
+                        GlassButton(icon: "chevron.left", action: onBack)
+                            .accessibilityLabel(backButtonAccessibilityLabel)
+                            .testTag(StatisticsTestTags.shared.BACK_BUTTON_TEST_TAG)
+                    }
+                ),
+                alignment: .top
+            )
+            .edgesIgnoringSafeArea(.top)
+    }
+
+    @ViewBuilder
+    private var stateBody: some View {
+        if state.isLoading {
+            LoadingIndicatorView()
+                .padding(.top, toolbarInset)
+                .testTag(StatisticsTestTags.shared.LOADING_INDICATOR_TEST_TAG)
+        } else if state.showEmptyState {
+            EmptyStateView(title: state.labels.emptyMessage)
+                .padding(.top, toolbarInset)
+                .testTag(StatisticsTestTags.shared.EMPTY_STATE_TEST_TAG)
+        } else if state.showContent {
+            contentScrollView
+        }
+    }
+
+    private var contentScrollView: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(alignment: .leading, spacing: theme.spacing.large) {
+                if let heatMap = state.heatMap {
+                    WatchHeatMapSectionView(
+                        heatMap: heatMap,
+                        title: state.labels.episodesOverTimeTitle
+                    )
+                }
+
+                if let totalWatchTime = state.totalWatchTime {
+                    WatchTimeHeroView(
+                        watchTime: totalWatchTime,
+                        title: state.labels.watchTimeTitle,
+                        daysLabel: state.labels.daysLabel,
+                        hoursLabel: state.labels.hoursLabel,
+                        minutesLabel: state.labels.minutesLabel
+                    )
+                }
+
+                if !state.tiles.isEmpty {
+                    StatisticTileGridView(tiles: state.tiles)
+                }
+
+                if state.showsMarkedWatchedTimes {
+                    Text(state.labels.markedWatchedNote)
+                        .textStyle(theme.typography.bodySmall)
+                        .foregroundStyle(theme.colors.onSurfaceVariant)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, theme.spacing.medium)
+                        .testTag(StatisticsTestTags.shared.MARKED_WATCHED_NOTE_TEST_TAG)
+                }
+
+                if !state.yearlyActivity.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.yearlyActivity,
+                        title: state.labels.yearlyActivityTitle,
+                        sectionTestTag: StatisticsTestTags.shared.YEARLY_ACTIVITY_TEST_TAG,
+                        sectionName: "yearly",
+                        showAxisLabels: true
+                    )
+                }
+
+                if !state.monthlyActivity.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.monthlyActivity,
+                        title: state.labels.monthlyActivityTitle,
+                        sectionTestTag: StatisticsTestTags.shared.MONTHLY_ACTIVITY_TEST_TAG,
+                        sectionName: "monthly"
+                    )
+                }
+
+                if !state.weekdayActivity.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.weekdayActivity,
+                        title: state.labels.weekdayActivityTitle,
+                        sectionTestTag: StatisticsTestTags.shared.WEEKDAY_ACTIVITY_TEST_TAG,
+                        sectionName: "weekday"
+                    )
+                }
+
+                if !state.releaseYears.isEmpty {
+                    ActivityChartSectionView(
+                        bars: state.releaseYears,
+                        title: state.labels.releaseYearsTitle,
+                        sectionTestTag: StatisticsTestTags.shared.RELEASE_YEARS_TEST_TAG,
+                        sectionName: "release_years",
+                        showAxisLabels: true
+                    )
+                }
+
+                if state.showContent {
+                    GenreSectionView(
+                        genres: state.genreBreakdown,
+                        title: state.labels.genresTitle,
+                        emptyMessage: state.labels.genresEmptyMessage
+                    )
+                }
+
+                if !state.watchStatusBreakdown.isEmpty {
+                    WatchStatusSectionView(items: state.watchStatusBreakdown, title: state.labels.watchStatusTitle)
+                }
+
+                if !state.ratingBreakdown.isEmpty {
+                    RatingsSectionView(ratings: state.ratingBreakdown, title: state.labels.ratingsTitle)
+                }
+
+                if !state.highestRatedShows.isEmpty {
+                    ShowRowSectionView(
+                        shows: state.highestRatedShows,
+                        title: state.labels.highestRatedTitle,
+                        rowTestTag: StatisticsTestTags.shared.HIGHEST_RATED_ROW_TEST_TAG,
+                        cardTestTag: { StatisticsTestTags.shared.highestRatedShowCard(showId: $0) },
+                        onShowClick: onShowClicked
+                    )
+                }
+
+                if !state.mostWatchedShows.isEmpty {
+                    ShowRowSectionView(
+                        shows: state.mostWatchedShows,
+                        title: state.labels.mostWatchedTitle,
+                        rowTestTag: StatisticsTestTags.shared.MOST_WATCHED_ROW_TEST_TAG,
+                        cardTestTag: { StatisticsTestTags.shared.mostWatchedShowCard(showId: $0) },
+                        onShowClick: onShowClicked
+                    )
+                }
+            }
+            .padding(.bottom, theme.spacing.large)
+        }
+        .contentMargins(.top, toolbarInset + theme.spacing.small)
+        .refreshable { await onRefresh() }
+        .testTag(StatisticsTestTags.shared.CONTENT_TEST_TAG)
+    }
+
+    private var toolbarInset: CGFloat {
+        let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+            .windows.first?.safeAreaInsets.top ?? 0
+        return 44 + safeAreaTop
+    }
+}

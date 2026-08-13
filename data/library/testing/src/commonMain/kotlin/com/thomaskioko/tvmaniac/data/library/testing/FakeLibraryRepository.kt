@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.library.testing
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +13,7 @@ import kotlin.time.Duration
 public class FakeLibraryRepository : LibraryRepository {
 
     private val libraryItemsFlow = MutableStateFlow<List<LibraryItem>>(emptyList())
-    private val isGridModeFlow = MutableStateFlow(true)
+    private val listStyleFlow = MutableStateFlow(ListStyle.GRID)
     private val sortOptionFlow = MutableStateFlow(LibrarySortOption.ADDED_DESC)
     private var needsSyncResult = true
 
@@ -20,8 +21,8 @@ public class FakeLibraryRepository : LibraryRepository {
         libraryItemsFlow.value = items
     }
 
-    public fun setIsGridMode(isGridMode: Boolean) {
-        isGridModeFlow.value = isGridMode
+    public fun setListStyle(listStyle: ListStyle) {
+        listStyleFlow.value = listStyle
     }
 
     public fun setSortOption(sortOption: LibrarySortOption) {
@@ -61,10 +62,10 @@ public class FakeLibraryRepository : LibraryRepository {
         }
     }
 
-    override fun observeListStyle(): Flow<Boolean> = isGridModeFlow.asStateFlow()
+    override fun observeListStyle(): Flow<ListStyle> = listStyleFlow.asStateFlow()
 
-    override suspend fun saveListStyle(isGridMode: Boolean) {
-        isGridModeFlow.value = isGridMode
+    override suspend fun saveListStyle(listStyle: ListStyle) {
+        listStyleFlow.value = listStyle
     }
 
     override fun observeSortOption(): Flow<LibrarySortOption> = sortOptionFlow.asStateFlow()

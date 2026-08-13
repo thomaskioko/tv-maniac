@@ -36,7 +36,7 @@ public data class ProfileAvatar(val url: String? = null)
 
 @ChildPresenter(scope = HomeScope::class, parentScope = ActivityScope::class)
 @Inject
-public class HomePresenter(
+public class HomePresenter internal constructor(
     componentContext: ComponentContext,
     private val navigator: Navigator,
     private val navDestinations: Set<NavDestination<*>>,

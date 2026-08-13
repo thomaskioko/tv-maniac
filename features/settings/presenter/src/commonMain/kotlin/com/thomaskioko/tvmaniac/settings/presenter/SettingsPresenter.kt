@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
@@ -66,7 +67,7 @@ import kotlin.time.Duration.Companion.minutes
     kind = DestinationKind.SCREEN,
 )
 @Inject
-public class SettingsPresenter(
+public class SettingsPresenter internal constructor(
     componentContext: ComponentContext,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
     userRepository: UserRepository,
@@ -88,6 +89,7 @@ public class SettingsPresenter(
     private val pushPendingChangesInteractor: PushPendingChangesInteractor,
     private val countUnsavedChanges: CountUnsavedChanges,
     private val switchAccountInteractor: SwitchAccountInteractor,
+    private val rewatchRepository: RewatchRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -101,11 +103,13 @@ public class SettingsPresenter(
     private val locksFlow = kotlinx.coroutines.flow.combine(
         subscriptionManager.observeAccess(SubscriptionFeature.CustomThemes),
         subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
-    ) { customThemesAccess, episodeNotificationsAccess ->
+        subscriptionManager.observeAccess(SubscriptionFeature.QuickRate),
+    ) { customThemesAccess, episodeNotificationsAccess, quickRateAccess ->
         SettingsLocks(
             customThemesLocked = !customThemesAccess,
             posterStyleLocked = !customThemesAccess,
             episodeNotificationsLocked = !episodeNotificationsAccess,
+            quickRateLocked = !quickRateAccess,
             badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
             themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
             themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
@@ -116,6 +120,20 @@ public class SettingsPresenter(
 
     init {
         observeSettingsPreferencesInteractor(Unit)
+        observeRewatchSyncNotice()
+    }
+
+    private fun observeRewatchSyncNotice() {
+        coroutineScope.launch {
+            accountManager.activeProvider.collect {
+                val notice = if (rewatchRepository.supportsRewatch()) {
+                    null
+                } else {
+                    localizer.getString(StringResourceKey.LabelRewatchSimklFreeTier)
+                }
+                _state.update { state -> state.copy(multiplePlaysSyncNotice = notice) }
+            }
+        }
     }
 
     public val state: StateFlow<SettingsState> = combine(
@@ -141,6 +159,8 @@ public class SettingsPresenter(
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
+            quickRateEnabled = preferences.quickRateEnabled,
+            multiplePlaysEnabled = preferences.multiplePlaysEnabled,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
             authProviders = authProviderOptions(simklEnabled),
@@ -241,6 +261,19 @@ public class SettingsPresenter(
             is IncludeSpecialsToggled -> {
                 coroutineScope.launch {
                     datastoreRepository.saveIncludeSpecials(action.enabled)
+                }
+            }
+
+            is QuickRateToggled -> {
+                if (state.value.locks.quickRateLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.saveQuickRateEnabled(action.enabled)
+                }
+            }
+
+            is MultiplePlaysToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveMultiplePlaysEnabled(action.enabled)
                 }
             }
 
@@ -623,6 +656,10 @@ public class SettingsPresenter(
         },
         includeSpecialsTitle = localizer.getString(StringResourceKey.LabelSettingsIncludeSpecials),
         includeSpecialsDescription = localizer.getString(StringResourceKey.LabelSettingsIncludeSpecialsDescription),
+        quickRateTitle = localizer.getString(StringResourceKey.LabelSettingsQuickRate),
+        quickRateDescription = localizer.getString(StringResourceKey.LabelSettingsQuickRateDescription),
+        multiplePlaysTitle = localizer.getString(StringResourceKey.LabelSettingsMultiplePlays),
+        multiplePlaysDescription = localizer.getString(StringResourceKey.LabelSettingsMultiplePlaysDescription),
         youtubeTitle = localizer.getString(StringResourceKey.LabelSettingsYoutube),
         youtubeDescription = localizer.getString(StringResourceKey.LabelSettingsYoutubeDescription),
         episodeNotificationsTitle = localizer.getString(StringResourceKey.LabelSettingsEpisodeNotifications),

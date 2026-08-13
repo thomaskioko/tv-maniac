@@ -115,6 +115,7 @@ internal val previewProvidersState = ShowDetailsProvidersState(
 )
 
 internal val previewTrailersState = ShowDetailsTrailersState(
+    title = "Trailers",
     trailersList = persistentListOf(
         TrailerModel(
             showId = 1232L,

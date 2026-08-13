@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.library
 
 import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.presentation.library.model.LibraryShowItem
 import com.thomaskioko.tvmaniac.presentation.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.presentation.library.model.ShowStatus
@@ -12,7 +13,8 @@ import kotlinx.collections.immutable.persistentSetOf
 public data class LibraryState(
     val query: String = "",
     val isSearchActive: Boolean = false,
-    val isGridMode: Boolean = true,
+    val listStyle: ListStyle = ListStyle.GRID,
+    val isListStyleLocked: Boolean = false,
     val isRefreshing: Boolean = true,
     val sortOption: LibrarySortOption = LibrarySortOption.ADDED_DESC,
     val followedOnly: Boolean = false,

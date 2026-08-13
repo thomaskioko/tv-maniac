@@ -16,8 +16,11 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.view)
                 api(projects.data.accountManager.api)
+                api(projects.data.subscription.api)
                 api(projects.data.watchlistPrefs.api)
                 api(projects.domain.episode)
+                api(projects.domain.ratings)
+                api(projects.features.ratingSheet.nav)
                 api(projects.domain.followedshows)
                 api(projects.domain.continueWatching)
                 api(projects.features.myShows.nav)
@@ -36,7 +39,6 @@ kotlin {
         androidMain {
             dependencies {
                 api(projects.core.syncstate.api)
-                api(projects.data.database.sqldelight)
                 implementation(projects.i18n.generator)
             }
         }
@@ -54,6 +56,7 @@ kotlin {
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.followedshows.testing)
                 implementation(projects.data.library.testing)
+                implementation(projects.data.subscription.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
@@ -64,6 +67,8 @@ kotlin {
                 implementation(projects.data.continueWatching.testing)
                 implementation(projects.data.watchlistPrefs.testing)
                 implementation(projects.i18n.testing)
+                implementation(projects.data.datastore.testing)
+                implementation(projects.data.ratings.testing)
                 implementation(projects.navigation.testing)
             }
         }

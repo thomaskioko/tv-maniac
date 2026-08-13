@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 public data class ShowDetailsTrailersState(
+    val title: String = "",
     val trailersList: ImmutableList<TrailerModel> = persistentListOf(),
     val hasWebViewInstalled: Boolean = false,
     val isRefreshing: Boolean = false,

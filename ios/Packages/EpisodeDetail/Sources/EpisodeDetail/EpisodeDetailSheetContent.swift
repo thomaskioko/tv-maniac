@@ -116,7 +116,7 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
     }
 
     private func buildRatingText(rating: Double) -> String {
-        var text = String(format: "%.1f", rating)
+        var text = rating.formatted(.number.precision(.fractionLength(1)))
         if let voteCount = episode.voteCount {
             text += " (\(voteCount) votes)"
         }

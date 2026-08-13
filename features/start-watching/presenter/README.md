@@ -34,6 +34,10 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
+  subgraph :data:datastore
+    direction TB
+    :data:datastore:api[api]:::multiplatform
+  end
   subgraph :data:episode
     direction TB
     :data:episode:api[api]:::multiplatform
@@ -70,6 +74,10 @@ graph TB
     direction TB
     :features:start-watching:presenter[presenter]:::multiplatform
   end
+  subgraph :i18n
+    direction TB
+    :i18n:generator[generator]:::multiplatform
+  end
   subgraph :navigation
     direction TB
     :navigation:api[api]:::multiplatform
@@ -81,12 +89,14 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
+  :data:datastore:api --> :i18n:generator
   :data:episode:api --> :data:account-manager:api
   :data:episode:api --> :data:database:sqldelight
   :data:episode:api --> :data:followedshows:api
   :data:episode:api --> :data:upnext:api
   :data:start-watching:api --> :core:network-util:api
   :data:start-watching:api --> :data:account-manager:api
+  :data:watchlist-prefs:api --> :data:datastore:api
   :domain:start-watching --> :core:base
   :domain:start-watching --> :data:episode:api
   :domain:start-watching --> :data:start-watching:api

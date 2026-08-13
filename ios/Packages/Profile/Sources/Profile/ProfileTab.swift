@@ -25,7 +25,8 @@ public struct ProfileTab: View {
             onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) },
             onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) },
             onShowClicked: { showId in presenter.dispatch(action: ProfileActionShowClicked(showId: showId)) },
-            onRetryProgress: { presenter.dispatch(action: ProfileActionRefreshProfile()) }
+            onRetryProgress: { presenter.dispatch(action: ProfileActionRefreshProfile()) },
+            onViewStatistics: { presenter.dispatch(action: ProfileActionStatisticsClicked()) }
         )
         .onChange(of: uiState.errorMessage) { _, errorMessage in
             if let errorMessage {

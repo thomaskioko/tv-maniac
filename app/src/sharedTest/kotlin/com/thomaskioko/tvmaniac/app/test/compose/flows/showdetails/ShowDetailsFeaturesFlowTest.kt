@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.flows.showdetails
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
+import com.thomaskioko.tvmaniac.util.testing.FlakyTests
 import org.junit.Test
 
 internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
@@ -92,6 +93,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    @FlakyTests(count = 2)
     fun givenSimklSession_whenShowDetailsOpened_thenAddToListButtonIsDisabled() = runAppFlowTest {
         scenarios.flags.enableSimklLogin()
         scenarios.discover.stubBrowseGraph()

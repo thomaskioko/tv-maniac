@@ -3,6 +3,8 @@ import SwiftUI
 public struct AppPrimaryButtonStyle: ButtonStyle {
     @Environment(\.appTheme) private var theme
     @Environment(\.isEnabled) private var isEnabled
+    @ScaledMetric(relativeTo: .footnote) private var horizontalPadding: CGFloat = 24
+    @ScaledMetric(relativeTo: .footnote) private var verticalPadding: CGFloat = 12
 
     public init() {}
 
@@ -10,8 +12,8 @@ public struct AppPrimaryButtonStyle: ButtonStyle {
         configuration.label
             .textStyle(theme.typography.labelLarge)
             .foregroundStyle(.appOnButtonBackground)
-            .padding(.horizontal, theme.spacing.large)
-            .padding(.vertical, theme.spacing.small)
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
             .background(
                 .appButtonBackground,
                 in: RoundedRectangle(cornerRadius: theme.shapes.medium)

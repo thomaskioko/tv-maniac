@@ -5,11 +5,14 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowMetadataSyncInfo
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
+import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.Flow
@@ -82,6 +85,9 @@ private class CountingCalendarEpisodeRepository : EpisodeRepository {
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> = flowOf(null)
     override fun observeRecentlyWatched(limit: Long): Flow<List<RecentlyWatchedEpisode>> = flowOf(emptyList())
+    override fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>> = flowOf(emptyList())
+    override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> = flowOf(emptyList())
+    override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> = flowOf(emptyList())
     override suspend fun markEpisodeAsWatched(showId: Long, episodeId: Long, seasonNumber: Long, episodeNumber: Long) {}
     override suspend fun markEpisodeAndPreviousEpisodesWatched(showId: Long, episodeId: Long, seasonNumber: Long, episodeNumber: Long) {}
     override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {}

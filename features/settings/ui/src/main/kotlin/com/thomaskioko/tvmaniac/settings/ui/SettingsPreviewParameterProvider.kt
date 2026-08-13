@@ -67,6 +67,10 @@ private val previewLabels = SettingsLabels(
     lastSync = null,
     includeSpecialsTitle = "Special Seasons",
     includeSpecialsDescription = "Display Specials and bonus seasons",
+    quickRateTitle = "Quick Rate",
+    quickRateDescription = "Show rating prompt after marking an episode as watched",
+    multiplePlaysTitle = "Multiple plays",
+    multiplePlaysDescription = "Let a show be marked watched more than once, and count the rewatches",
     youtubeTitle = "Trailers",
     youtubeDescription = "Open Trailers in Youtube App",
     episodeNotificationsTitle = "Episode Notifications",
@@ -212,6 +216,16 @@ internal val appearanceLockedState = appearanceState.copy(
     ),
 )
 internal val behaviorState = loggedInState.copy(currentPage = SettingsPage.BEHAVIOR, currentPageTitle = "Behavior")
+internal val behaviorSimklFreeTierState = behaviorState.copy(
+    multiplePlaysSyncNotice = "Simkl does not store rewatches without a paid plan, so this count stays on this device.",
+)
+internal val behaviorLockedState = behaviorState.copy(
+    locks = SettingsLocks(
+        quickRateLocked = true,
+        badgeText = "Premium",
+        lockedContentDescription = "Locked",
+    ),
+)
 internal val notificationsState = loggedInState.copy(currentPage = SettingsPage.NOTIFICATIONS, currentPageTitle = "Notifications")
 internal val notificationsLockedState = notificationsState.copy(
     locks = SettingsLocks(

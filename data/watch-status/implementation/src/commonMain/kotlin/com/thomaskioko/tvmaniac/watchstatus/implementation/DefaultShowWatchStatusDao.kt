@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.watchstatus.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.Id
@@ -48,6 +49,12 @@ public class DefaultShowWatchStatusDao(
         queries.watchProgressForShow(showId)
             .executeAsOneOrNull()
             ?.let { ShowWatchProgress(watchedCount = it.watched_count, totalCount = it.total_count) }
+
+    override fun observeStatusCounts(): Flow<Map<WatchStatus, Long>> =
+        queries.statusCounts()
+            .asFlow()
+            .mapToList(dispatchers.databaseRead)
+            .map { rows -> rows.associate { it.status to it.show_count } }
 
     override fun delete(showId: Id<ShowId>) {
         queries.delete(showId)

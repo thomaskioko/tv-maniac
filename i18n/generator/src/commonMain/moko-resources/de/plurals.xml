@@ -52,4 +52,8 @@
         <item quantity="one">%d Serie</item>
         <item quantity="other">%d Serien</item>
     </plurals>
+    <plurals name="watch_count">
+        <item quantity="one">%d Mal gesehen</item>
+        <item quantity="other">%d Mal gesehen</item>
+    </plurals>
 </resources>

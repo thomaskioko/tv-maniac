@@ -147,7 +147,7 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve pending UPLOAD rows given items sync replaces synced rows`() = runTest {
-        seedShow(tmdbId = 990L, traktId = 99L)
+        addShow(tmdbId = 990L, traktId = 99L)
         remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 1))
         remoteDataSource.itemsByListId = mapOf(
             1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
@@ -170,7 +170,7 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should preserve pending DELETE rows given items sync replaces synced rows`() = runTest {
-        seedShow(tmdbId = 200L, traktId = 20L)
+        addShow(tmdbId = 200L, traktId = 20L)
         remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 2))
         remoteDataSource.itemsByListId = mapOf(
             1L to listOf(
@@ -196,7 +196,7 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should reflect synced shows in observeListsForShow given user has multiple lists`() = runTest {
-        seedShow(tmdbId = 100L, traktId = 10L)
+        addShow(tmdbId = 100L, traktId = 10L)
         remoteDataSource.lists = listOf(
             traktListResponse(id = 1L, slug = "watchlist", itemCount = 3),
             traktListResponse(id = 2L, slug = "favorites", itemCount = 1),
@@ -256,8 +256,8 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should store trakt id and call remote with trakt id given show is added to list`() = runTest {
-        seedShow(tmdbId = 100L, traktId = 10L)
-        seedList(listId = 1L)
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
 
         repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = false)
 
@@ -269,8 +269,8 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should keep added show given items sync runs after upload`() = runTest {
-        seedShow(tmdbId = 100L, traktId = 10L)
-        seedList(listId = 1L)
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
 
         repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = false)
 
@@ -285,8 +285,8 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should revert junction entry given remote add fails`() = runTest {
-        seedShow(tmdbId = 100L, traktId = 10L)
-        seedList(listId = 1L)
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
         remoteDataSource.addToListResponse = ApiResponse.Error.HttpError(
             code = 500,
             errorBody = null,
@@ -302,8 +302,8 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should delete junction entry and call remote with trakt id given show is removed from list`() = runTest {
-        seedShow(tmdbId = 100L, traktId = 10L)
-        seedList(listId = 1L)
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
         showDao.upsertSynced(listId = 1L, traktId = 10L, listedAt = "")
 
         repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = true)
@@ -315,8 +315,8 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should restore junction entry given remote remove fails`() = runTest {
-        seedShow(tmdbId = 100L, traktId = 10L)
-        seedList(listId = 1L)
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
         showDao.upsertSynced(listId = 1L, traktId = 10L, listedAt = "")
         remoteDataSource.removeFromListResponse = ApiResponse.Error.HttpError(
             code = 500,
@@ -333,14 +333,14 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should fail given show has no trakt id mapping`() = runTest {
-        seedList(listId = 1L)
+        addList(listId = 1L)
 
         shouldThrow<IllegalArgumentException> {
             repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = false)
         }
     }
 
-    private fun seedShow(tmdbId: Long, traktId: Long) {
+    private fun addShow(tmdbId: Long, traktId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
             name = "Show $tmdbId",
@@ -360,7 +360,7 @@ internal class DefaultTraktListRepositoryTest : BaseDatabaseTest() {
         tvShowsDao.setTraktIdForTmdbId(tmdbId = tmdbId, traktId = traktId)
     }
 
-    private suspend fun seedList(listId: Long) {
+    private suspend fun addList(listId: Long) {
         remoteDataSource.lists = listOf(traktListResponse(id = listId, slug = "watchlist", itemCount = 0))
         remoteDataSource.itemsByListId = mapOf(listId to emptyList())
         repository.fetchUserLists(slug = "sean", forceRefresh = true)

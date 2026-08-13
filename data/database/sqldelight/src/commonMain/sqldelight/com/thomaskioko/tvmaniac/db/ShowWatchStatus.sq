@@ -33,3 +33,25 @@ DELETE FROM show_watch_status WHERE show_id = :showId;
 
 deleteAll:
 DELETE FROM show_watch_status;
+
+statusCounts:
+SELECT status, COUNT(*) AS show_count
+FROM (
+    SELECT status
+    FROM show_watch_status
+    WHERE status IS NOT NULL
+      AND status != 'WATCHLIST'
+
+    UNION ALL
+
+    SELECT 'WATCHLIST' AS status
+    FROM followed_shows
+    WHERE pending_action != 'DELETE'
+      AND show_id NOT IN (
+          SELECT show_id
+          FROM show_watch_status
+          WHERE status IS NOT NULL
+            AND status != 'WATCHLIST'
+      )
+)
+GROUP BY status;

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.thomaskioko.tvmaniac.core.base.coroutines.CoroutineCrashUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ public class BootCompletedReceiver : BroadcastReceiver() {
 
         val pendingResult = goAsync()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + CoroutineCrashUtil.handler).launch {
             try {
                 rearmAlarms(context)
             } catch (e: Exception) {

@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.ratings.api.CommunityRating
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRemoteDataSource
+import com.thomaskioko.tvmaniac.data.ratings.api.RemoteShowRating
 import com.thomaskioko.tvmaniac.simkl.api.SimklRatingsRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRatingIdItem
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRatingItem
@@ -70,6 +71,19 @@ public class SimklRatingsSyncProviderDataSource(
     override suspend fun getShowUserRating(providerShowId: Long): ApiResponse<Int?> =
         remoteDataSource.getUserShowRatings().map { response ->
             response.shows.firstOrNull { it.show.ids.simkl == providerShowId }?.userRating
+        }
+
+    override suspend fun getShowUserRatings(): ApiResponse<List<RemoteShowRating>> =
+        remoteDataSource.getUserShowRatings().map { response ->
+            response.shows.mapNotNull { entry ->
+                val tmdbId = entry.show.ids.tmdb?.toLongOrNull()
+                val userRating = entry.userRating
+                if (tmdbId == null || userRating == null) {
+                    null
+                } else {
+                    RemoteShowRating(tmdbId = tmdbId, userRating = userRating)
+                }
+            }
         }
 
     override suspend fun addSeasonRating(seasonTmdbId: Long, rating: Int): ApiResponse<Unit> = unsupportedRating()

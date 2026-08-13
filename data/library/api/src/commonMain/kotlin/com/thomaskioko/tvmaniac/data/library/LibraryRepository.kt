@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.library
 
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
 
@@ -13,9 +14,9 @@ public interface LibraryRepository {
         followedOnly: Boolean,
     ): Flow<List<LibraryItem>>
 
-    public fun observeListStyle(): Flow<Boolean>
+    public fun observeListStyle(): Flow<ListStyle>
 
-    public suspend fun saveListStyle(isGridMode: Boolean)
+    public suspend fun saveListStyle(listStyle: ListStyle)
 
     public fun observeSortOption(): Flow<LibrarySortOption>
 

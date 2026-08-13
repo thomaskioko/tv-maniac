@@ -56,7 +56,7 @@ internal class StartWatchingFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenStartWatchingTabSelected_thenListStyleToggleHidden() = runAppFlowTest {
+    fun givenStartWatchingTabSelected_thenLayoutMenuButtonHidden() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
 
         rootRobot.dismissNotificationRationale()
@@ -68,10 +68,10 @@ internal class StartWatchingFlowTest : BaseAppFlowTest() {
             .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
 
         watchlistRobot
-            .assertListStyleToggleDisplayed()
+            .assertLayoutMenuButtonDisplayed()
             .clickStartWatchingTab()
             .assertStartWatchingGridDisplayed()
-            .assertListStyleToggleDoesNotExist()
+            .assertLayoutMenuButtonDoesNotExist()
     }
 
     @Test

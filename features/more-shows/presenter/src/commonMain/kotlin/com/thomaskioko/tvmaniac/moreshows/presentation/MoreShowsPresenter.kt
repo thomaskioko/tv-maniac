@@ -11,6 +11,7 @@ import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.popularshows.api.PopularShowsRepository
 import com.thomaskioko.tvmaniac.data.upcomingshows.api.UpcomingShowsRepository
 import com.thomaskioko.tvmaniac.discover.api.TrendingShowsRepository
@@ -54,6 +55,7 @@ public class MoreShowsPresenter(
     private val upcomingShowsRepository: UpcomingShowsRepository,
     private val trendingShowsRepository: TrendingShowsRepository,
     private val topRatedShowsRepository: TopRatedShowsRepository,
+    private val errorToStringMapper: ErrorToStringMapper,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -193,8 +195,8 @@ public class MoreShowsPresenter(
                     it.copy(
                         isRefreshLoading = loadStates.refresh is LoadState.Loading,
                         isAppendLoading = loadStates.append is LoadState.Loading,
-                        appendError = (loadStates.append as? LoadState.Error)?.error?.message,
-                        errorMessage = (loadStates.refresh as? LoadState.Error)?.error?.message,
+                        appendError = (loadStates.append as? LoadState.Error)?.let { error -> errorToStringMapper.mapError(error.error) },
+                        errorMessage = (loadStates.refresh as? LoadState.Error)?.let { error -> errorToStringMapper.mapError(error.error) },
                     )
                 }
             }

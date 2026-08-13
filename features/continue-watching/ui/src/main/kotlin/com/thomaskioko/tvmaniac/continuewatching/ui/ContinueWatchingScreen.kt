@@ -38,10 +38,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.CompactShowRow
+import com.thomaskioko.tvmaniac.compose.components.DetailedShowCard
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -50,6 +53,7 @@ import com.thomaskioko.tvmaniac.compose.components.SnackBarStyle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
+import com.thomaskioko.tvmaniac.compose.components.metadataWithAccentDots
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingAction
@@ -62,6 +66,7 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.UpNextEpisodeClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.testtags.myshows.MyShowsTestTags
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -87,13 +92,13 @@ public fun ContinueWatchingScreen(
             onRefresh = { onAction(RefreshContinueWatching(forceRefresh = true)) },
         ) {
             AnimatedContent(
-                targetState = state.isGridMode,
+                targetState = state.listStyle,
                 transitionSpec = {
                     (scaleIn(animationSpec = spring()) + fadeIn()) togetherWith
                         (scaleOut(animationSpec = spring()) + fadeOut())
                 },
                 label = "list_style_animation",
-            ) { isGridMode ->
+            ) { listStyle ->
                 val hasNoItems = state.watchNextItems.isEmpty() && state.staleItems.isEmpty()
                 val hasNoEpisodes = state.watchNextEpisodes.isEmpty() && state.staleEpisodes.isEmpty()
 
@@ -107,7 +112,7 @@ public fun ContinueWatchingScreen(
                         }
                     }
 
-                    isGridMode -> {
+                    listStyle == ListStyle.GRID -> {
                         if (hasNoItems) {
                             EmptyStateView(
                                 modifier = Modifier.testTag(MyShowsTestTags.EMPTY_STATE_TEST_TAG),
@@ -117,6 +122,46 @@ public fun ContinueWatchingScreen(
                             )
                         } else {
                             SectionedContinueWatchingGridContent(
+                                watchNextTitle = state.labels.watchingTitle,
+                                staleTitle = state.labels.staleTitle,
+                                watchNextItems = state.watchNextItems,
+                                staleItems = state.staleItems,
+                                scrollBehavior = scrollBehavior,
+                                onItemClicked = { onAction(ContinueWatchingShowClicked(it)) },
+                            )
+                        }
+                    }
+
+                    listStyle == ListStyle.COMPACT -> {
+                        if (hasNoItems) {
+                            EmptyStateView(
+                                modifier = Modifier.testTag(MyShowsTestTags.EMPTY_STATE_TEST_TAG),
+                                imageVector = Icons.Outlined.Inbox,
+                                title = state.labels.emptyTitle,
+                                message = state.labels.emptyResultMessage.ifBlank { null },
+                            )
+                        } else {
+                            SectionedContinueWatchingCompactContent(
+                                watchNextTitle = state.labels.watchingTitle,
+                                staleTitle = state.labels.staleTitle,
+                                watchNextItems = state.watchNextItems,
+                                staleItems = state.staleItems,
+                                scrollBehavior = scrollBehavior,
+                                onItemClicked = { onAction(ContinueWatchingShowClicked(it)) },
+                            )
+                        }
+                    }
+
+                    listStyle == ListStyle.DETAILED -> {
+                        if (hasNoItems) {
+                            EmptyStateView(
+                                modifier = Modifier.testTag(MyShowsTestTags.EMPTY_STATE_TEST_TAG),
+                                imageVector = Icons.Outlined.Inbox,
+                                title = state.labels.emptyTitle,
+                                message = state.labels.emptyResultMessage.ifBlank { null },
+                            )
+                        } else {
+                            SectionedContinueWatchingDetailedContent(
                                 watchNextTitle = state.labels.watchingTitle,
                                 staleTitle = state.labels.staleTitle,
                                 watchNextItems = state.watchNextItems,
@@ -286,6 +331,151 @@ private fun ContinueWatchingGridItem(
                 .fillMaxWidth(),
         )
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun SectionedContinueWatchingCompactContent(
+    watchNextTitle: String,
+    staleTitle: String,
+    watchNextItems: ImmutableList<ContinueWatchingItem>,
+    staleItems: ImmutableList<ContinueWatchingItem>,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onItemClicked: (Long) -> Unit,
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
+        modifier = Modifier
+            .testTag(MyShowsTestTags.MY_SHOWS_COMPACT_TEST_TAG)
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) {
+        if (watchNextItems.isNotEmpty()) {
+            stickyHeader(key = "compact_header_watch_next") { SectionHeader(title = watchNextTitle) }
+            items(
+                items = watchNextItems,
+                key = { "compact_watchnext_${it.showId}" },
+                contentType = { "ContinueWatchingCompactItem" },
+            ) { show ->
+                ContinueWatchingCompactItem(
+                    item = show,
+                    onItemClicked = onItemClicked,
+                    modifier = Modifier.testTag(MyShowsTestTags.showCard(show.showId)),
+                )
+            }
+        }
+
+        if (staleItems.isNotEmpty()) {
+            stickyHeader(key = "compact_header_stale") { SectionHeader(title = staleTitle) }
+            items(
+                items = staleItems,
+                key = { "compact_stale_${it.showId}" },
+                contentType = { "ContinueWatchingCompactItem" },
+            ) { show ->
+                ContinueWatchingCompactItem(
+                    item = show,
+                    onItemClicked = onItemClicked,
+                    modifier = Modifier.testTag(MyShowsTestTags.showCard(show.showId)),
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.navigationBarsPadding())
+        }
+    }
+}
+
+@Composable
+private fun ContinueWatchingCompactItem(
+    item: ContinueWatchingItem,
+    onItemClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    CompactShowRow(
+        title = item.title,
+        metadata = buildShowMetadata(item),
+        imageUrl = item.posterImageUrl,
+        onClick = { onItemClicked(item.showId) },
+        modifier = modifier,
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun SectionedContinueWatchingDetailedContent(
+    watchNextTitle: String,
+    staleTitle: String,
+    watchNextItems: ImmutableList<ContinueWatchingItem>,
+    staleItems: ImmutableList<ContinueWatchingItem>,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onItemClicked: (Long) -> Unit,
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
+        modifier = Modifier
+            .testTag(MyShowsTestTags.MY_SHOWS_DETAILED_TEST_TAG)
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) {
+        if (watchNextItems.isNotEmpty()) {
+            stickyHeader(key = "detailed_header_watch_next") { SectionHeader(title = watchNextTitle) }
+            items(
+                items = watchNextItems,
+                key = { "detailed_watchnext_${it.showId}" },
+                contentType = { "ContinueWatchingDetailedItem" },
+            ) { show ->
+                ContinueWatchingDetailedItem(
+                    item = show,
+                    onItemClicked = onItemClicked,
+                    modifier = Modifier.testTag(MyShowsTestTags.showCard(show.showId)),
+                )
+            }
+        }
+
+        if (staleItems.isNotEmpty()) {
+            stickyHeader(key = "detailed_header_stale") { SectionHeader(title = staleTitle) }
+            items(
+                items = staleItems,
+                key = { "detailed_stale_${it.showId}" },
+                contentType = { "ContinueWatchingDetailedItem" },
+            ) { show ->
+                ContinueWatchingDetailedItem(
+                    item = show,
+                    onItemClicked = onItemClicked,
+                    modifier = Modifier.testTag(MyShowsTestTags.showCard(show.showId)),
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.navigationBarsPadding())
+        }
+    }
+}
+
+@Composable
+private fun ContinueWatchingDetailedItem(
+    item: ContinueWatchingItem,
+    onItemClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    DetailedShowCard(
+        title = item.title,
+        subtitle = item.nextEpisode?.let {
+            metadataWithAccentDots(listOf(it.episodeNumberFormatted, it.episodeTitle))
+        },
+        imageUrl = item.posterImageUrl,
+        progress = item.watchProgress,
+        onClick = { onItemClicked(item.showId) },
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun buildShowMetadata(item: ContinueWatchingItem): AnnotatedString? {
+    val parts = listOfNotNull(item.year, item.status)
+    return if (parts.isEmpty()) null else metadataWithAccentDots(parts)
 }
 
 @OptIn(ExperimentalFoundationApi::class)

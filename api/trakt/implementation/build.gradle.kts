@@ -30,6 +30,7 @@ kotlin {
                 api(projects.data.calendar.api)
                 api(projects.data.library.api)
                 api(projects.data.ratings.api)
+                api(projects.data.rewatch.api)
                 api(projects.data.startWatching.api)
                 api(projects.data.user.api)
                 api(projects.data.oauth.api)
@@ -55,6 +56,7 @@ kotlin {
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.calendar.api)
                 implementation(projects.data.followedshows.testing)
+                implementation(projects.data.rewatch.testing)
                 implementation(projects.data.traktauth.testing)
             }
         }

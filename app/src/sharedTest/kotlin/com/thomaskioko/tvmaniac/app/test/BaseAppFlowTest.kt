@@ -28,6 +28,7 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.SeasonDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.SettingsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowListRobot
+import com.thomaskioko.tvmaniac.app.test.compose.robot.StatisticsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.util.testing.FlakyTestRule
@@ -72,7 +73,7 @@ internal abstract class BaseAppFlowTest {
 
     /**
      * Runs [block] inside `runAndroidComposeUiTest<TvManiacTestActivity>`, providing an
-     * [AppFlowScope] with all robots, the dependency graph, and pre-seeded scenarios.
+     * [AppFlowScope] with all robots, the dependency graph, and ready-made scenarios.
      *
      * The scope is rebuilt on every call. The application graph is reset before the activity
      * launches so the [kotlinx.coroutines.test.TestDispatcher] installed by
@@ -132,6 +133,7 @@ internal class AppFlowScope(
     val progressRobot: ProgressRobot by lazy { ProgressRobot(composeUi) }
     val profileRobot: ProfileRobot by lazy { ProfileRobot(composeUi) }
     val settingsRobot: SettingsRobot by lazy { SettingsRobot(composeUi) }
+    val statisticsRobot: StatisticsRobot by lazy { StatisticsRobot(composeUi) }
     val debugRobot: DebugRobot by lazy { DebugRobot(composeUi) }
     val searchRobot: SearchRobot by lazy { SearchRobot(composeUi) }
     val episodeSheetRobot: EpisodeSheetRobot by lazy { EpisodeSheetRobot(composeUi) }

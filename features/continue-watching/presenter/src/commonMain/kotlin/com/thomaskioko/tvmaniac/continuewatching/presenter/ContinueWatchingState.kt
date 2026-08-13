@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.continuewatching.presenter
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.ContinueWatchingItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
 import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
@@ -10,7 +11,7 @@ import kotlinx.collections.immutable.persistentSetOf
 
 public data class ContinueWatchingState(
     val query: String = "",
-    val isGridMode: Boolean = true,
+    val listStyle: ListStyle = ListStyle.GRID,
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val isSyncing: Boolean = false,
@@ -28,7 +29,7 @@ public data class ContinueWatchingState(
             watchNextEpisodes.isEmpty() && staleEpisodes.isEmpty()
 
     val showLoading: Boolean
-        get() = (isLoading || isSyncing) && isEmpty
+        get() = (isLoading || isSyncing) && isEmpty && query.isBlank()
 
     val showRefreshIndicator: Boolean
         get() = (isLoading || isSyncing || isRefreshing) && !isEmpty

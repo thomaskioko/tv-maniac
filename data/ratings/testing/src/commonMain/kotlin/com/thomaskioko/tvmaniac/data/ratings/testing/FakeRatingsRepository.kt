@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.ratings.testing
 
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
+import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.SeasonRating
 import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
@@ -8,10 +9,13 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 
 public class FakeRatingsRepository : RatingsRepository {
 
     private var syncPendingRatingsError: Throwable? = null
+    public var syncUserRatingsCount: Int = 0
+        private set
     private val showRatingFlow = MutableStateFlow(
         ShowRating(userRating = null, communityRating = null, communityVotes = null, pendingAction = PendingAction.NOTHING),
     )
@@ -21,7 +25,23 @@ public class FakeRatingsRepository : RatingsRepository {
     private val episodeRatingFlow = MutableStateFlow(
         EpisodeRating(userRating = null, pendingAction = PendingAction.NOTHING),
     )
+    private val episodeRatingOverrides = MutableStateFlow<Map<Long, EpisodeRating>>(emptyMap())
     private val pendingRatingsFlow = MutableStateFlow(false)
+    private val userRatingDistribution = MutableStateFlow<Map<Int, Long>>(emptyMap())
+
+    public fun setUserRatingDistribution(distribution: Map<Int, Long>) {
+        userRatingDistribution.value = distribution
+    }
+
+    override fun observeUserRatingDistribution(): Flow<Map<Int, Long>> = userRatingDistribution.asStateFlow()
+
+    private val highestRatedShows = MutableStateFlow<List<HighestRatedShow>>(emptyList())
+
+    public fun setHighestRatedShows(shows: List<HighestRatedShow>) {
+        highestRatedShows.value = shows
+    }
+
+    override fun observeHighestRatedShows(limit: Long): Flow<List<HighestRatedShow>> = highestRatedShows.asStateFlow()
 
     public fun setSyncPendingRatingsError(error: Throwable?) {
         syncPendingRatingsError = error
@@ -45,6 +65,10 @@ public class FakeRatingsRepository : RatingsRepository {
         episodeRatingFlow.value = rating
     }
 
+    public fun setEpisodeRating(episodeId: Long, rating: EpisodeRating) {
+        episodeRatingOverrides.value += (episodeId to rating)
+    }
+
     override suspend fun rateShow(showId: Long, rating: Int) {
     }
 
@@ -53,6 +77,10 @@ public class FakeRatingsRepository : RatingsRepository {
 
     override suspend fun syncPendingRatings() {
         syncPendingRatingsError?.let { throw it }
+    }
+
+    override suspend fun syncUserRatings() {
+        syncUserRatingsCount++
     }
 
     override suspend fun refreshCommunityRating(showId: Long, forceRefresh: Boolean) {
@@ -74,5 +102,8 @@ public class FakeRatingsRepository : RatingsRepository {
     override suspend fun removeEpisodeRating(episodeId: Long) {
     }
 
-    override fun observeEpisodeRating(episodeId: Long): Flow<EpisodeRating> = episodeRatingFlow.asStateFlow()
+    override fun observeEpisodeRating(episodeId: Long): Flow<EpisodeRating> =
+        combine(episodeRatingFlow, episodeRatingOverrides) { fallback, overrides ->
+            overrides[episodeId] ?: fallback
+        }
 }

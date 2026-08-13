@@ -64,16 +64,36 @@ internal class MyShowsRobot(composeUi: ComposeUiTest) : BaseRobot<MyShowsRobot>(
         click(MyShowsTestTags.SEARCH_BUTTON_TEST_TAG)
     }
 
-    fun clickToggleListStyleButton() = apply {
-        click(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG)
+    fun clickLayoutMenuButton() = apply {
+        click(MyShowsTestTags.LAYOUT_MENU_BUTTON_TEST_TAG)
     }
 
-    fun assertListStyleToggleDisplayed() = apply {
-        assertDisplayed(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG)
+    fun assertLayoutMenuButtonDisplayed() = apply {
+        assertDisplayed(MyShowsTestTags.LAYOUT_MENU_BUTTON_TEST_TAG)
     }
 
-    fun assertListStyleToggleDoesNotExist() = apply {
-        assertDoesNotExist(MyShowsTestTags.TOGGLE_LIST_STYLE_BUTTON_TEST_TAG)
+    fun assertLayoutMenuButtonDoesNotExist() = apply {
+        assertDoesNotExist(MyShowsTestTags.LAYOUT_MENU_BUTTON_TEST_TAG)
+    }
+
+    fun assertLayoutMenuDisplayed() = apply {
+        assertDisplayed(MyShowsTestTags.LAYOUT_MENU_TEST_TAG)
+    }
+
+    fun clickLayoutMenuItem(tag: String) = apply {
+        click(tag)
+    }
+
+    fun assertLayoutMenuLockedSectionDisplayed() = apply {
+        assertDisplayed(MyShowsTestTags.LAYOUT_MENU_LOCKED_SECTION_TEST_TAG)
+    }
+
+    fun assertCompactDisplayed() = apply {
+        assertDisplayed(MyShowsTestTags.MY_SHOWS_COMPACT_TEST_TAG)
+    }
+
+    fun assertDetailedDisplayed() = apply {
+        assertDisplayed(MyShowsTestTags.MY_SHOWS_DETAILED_TEST_TAG)
     }
 
     fun clickStartWatchingTab() = apply {

@@ -19,7 +19,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.EpisodeBadge as DomainEpisodeBadge
 
-public fun List<FollowedShows>.entityToWatchlistShowList(
+internal fun List<FollowedShows>.entityToWatchlistShowList(
     lastWatchedMap: Map<Long, Long?> = emptyMap(),
 ): PersistentList<ContinueWatchingItem> {
     return this.map {
@@ -43,7 +43,7 @@ public fun List<FollowedShows>.entityToWatchlistShowList(
         .toPersistentList()
 }
 
-public fun List<SearchFollowedShows>.entityToWatchlistShowList(
+internal fun List<SearchFollowedShows>.entityToWatchlistShowList(
     lastWatchedMap: Map<Long, Long?> = emptyMap(),
 ): ImmutableList<ContinueWatchingItem> {
     return this.map {

@@ -84,6 +84,10 @@ graph TB
     direction TB
     :data:similar:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:sync-activity
     direction TB
     :data:sync-activity:api[api]:::multiplatform
@@ -149,6 +153,7 @@ graph TB
   :data:library:api --> :core:network-util:api
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
+  :data:library:api --> :data:datastore:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
@@ -192,6 +197,7 @@ graph TB
   :features:library:presenter --> :core:view
   :features:library:presenter --> :data:account-manager:api
   :features:library:presenter --> :data:library:api
+  :features:library:presenter --> :data:subscription:api
   :features:library:presenter --> :domain:library
   :features:library:presenter -.-> :features:home:nav
   :features:library:presenter --> :features:library:nav
@@ -201,6 +207,7 @@ graph TB
   :features:library:ui --> :core:base
   :features:library:ui -.-> :core:test-tags
   :features:library:ui -.-> :core:view
+  :features:library:ui -.-> :data:datastore:api
   :features:library:ui -.-> :features:home:nav
   :features:library:ui --> :features:library:presenter
   :features:library:ui -.-> :i18n:generator

@@ -74,6 +74,7 @@ public struct ShowHeaderInfoView: View {
 
             Text(year)
                 .textStyle(theme.typography.bodyMedium)
+                .layoutPriority(1)
 
             if seasonCount > 0 {
                 Text("•")
@@ -91,6 +92,7 @@ public struct ShowHeaderInfoView: View {
 
                 Text(language)
                     .textStyle(theme.typography.bodyMedium)
+                    .layoutPriority(1)
             }
 
             if let communityRating {
@@ -103,20 +105,22 @@ public struct ShowHeaderInfoView: View {
                     .frame(width: 14, height: 14)
                     .foregroundStyle(.appAccent)
 
-                Text(String(format: "%.1f", communityRating))
+                Text(communityRating.formatted(.number.precision(.fractionLength(1))))
                     .textStyle(theme.typography.bodyMedium)
                     .foregroundStyle(.appAccent)
                     .accessibilityLabel(communityRatingAccessibilityLabel(communityRating))
+                    .layoutPriority(1)
             }
         }
+        .lineLimit(1)
         .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private func communityRatingAccessibilityLabel(_ communityRating: Double) -> String {
         guard let communityVotes else {
-            return String(format: "%.1f", communityRating)
+            return communityRating.formatted(.number.precision(.fractionLength(1)))
         }
-        return "\(String(format: "%.1f", communityRating)) (\(communityVotes) votes)"
+        return "\(communityRating.formatted(.number.precision(.fractionLength(1)))) (\(communityVotes) votes)"
     }
 }
 

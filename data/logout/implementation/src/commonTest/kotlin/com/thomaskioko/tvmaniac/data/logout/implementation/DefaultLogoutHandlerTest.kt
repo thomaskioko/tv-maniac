@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.coroutines.SyncCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.ratings.implementation.DefaultProviderMetaDao
 import com.thomaskioko.tvmaniac.data.ratings.implementation.DefaultRatingsDao
+import com.thomaskioko.tvmaniac.data.rewatch.implementation.DefaultRewatchSessionDao
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
@@ -50,6 +51,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     private lateinit var cleaner: DefaultLogoutHandler
     private lateinit var ratingsDao: DefaultRatingsDao
     private lateinit var providerMetaDao: DefaultProviderMetaDao
+    private lateinit var rewatchSessionDao: DefaultRewatchSessionDao
     private var showIdForBreakingBad: Id<ShowId> = Id(0L)
     private var showIdForTheWire: Id<ShowId> = Id(0L)
 
@@ -57,6 +59,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     fun setUp() {
         ratingsDao = DefaultRatingsDao(database, dispatchers)
         providerMetaDao = DefaultProviderMetaDao(database, dispatchers)
+        rewatchSessionDao = DefaultRewatchSessionDao(database, dispatchers)
         cleaner = DefaultLogoutHandler(
             syncCoroutineScope = syncCoroutineScope,
             userRepository = fakeUserRepository,
@@ -65,13 +68,14 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             requestManagerRepository = fakeRequestManagerRepository,
             ratingsDao = ratingsDao,
             providerMetaDao = providerMetaDao,
+            rewatchSessionDao = rewatchSessionDao,
             database = database,
             transactionRunner = DbTransactionRunner(database),
         )
 
         showIdForBreakingBad = insertTvShow(traktId = BREAKING_BAD_TRAKT_ID, tmdbId = BREAKING_BAD_TMDB_ID)
         showIdForTheWire = insertTvShow(traktId = THE_WIRE_TRAKT_ID, tmdbId = THE_WIRE_TMDB_ID)
-        seedUserState()
+        addUserState()
     }
 
     @AfterTest
@@ -162,6 +166,20 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should empty rewatch_session given clear called`() = runTest(testDispatcher) {
+        cleaner.clear()
+
+        database.rewatchQueries.sessionsForShow(showIdForBreakingBad).executeAsList().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should reset the play count given clear called`() = runTest(testDispatcher) {
+        cleaner.clear()
+
+        rewatchSessionDao.playCountForEpisode(REWATCHED_EPISODE_ID) shouldBe 1L
+    }
+
+    @Test
     fun `should empty tvshow_provider_meta given clear called`() = runTest(testDispatcher) {
         cleaner.clear()
 
@@ -207,7 +225,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
         fakeActivitySyncRepository.clearAllCallCount() shouldBe 1
     }
 
-    private fun seedUserState() {
+    private fun addUserState() {
         val now = Clock.System.now().toEpochMilliseconds()
 
         database.watchedEpisodesQueries.upsert(
@@ -302,6 +320,33 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             voteCount = 1000L,
             lastSyncedAt = now,
         )
+
+        database.seasonsQueries.upsert(
+            id = Id(REWATCHED_SEASON_ID),
+            show_id = showIdForBreakingBad,
+            season_number = 1L,
+            episode_count = 10L,
+            title = "Season 1",
+            overview = "Overview",
+            image_url = null,
+        )
+
+        database.episodesQueries.upsert(
+            id = Id(REWATCHED_EPISODE_ID),
+            season_id = Id(REWATCHED_SEASON_ID),
+            show_id = showIdForBreakingBad,
+            title = "Pilot",
+            overview = "Overview",
+            runtime = 40L,
+            vote_count = 10L,
+            ratings = 8.0,
+            episode_number = 1L,
+            image_url = null,
+            first_aired = null,
+        )
+
+        val rewatchSessionId = rewatchSessionDao.openSession(showId = showIdForBreakingBad.id, startedAt = now)
+        rewatchSessionDao.addEpisodeToSession(sessionId = rewatchSessionId, episodeId = REWATCHED_EPISODE_ID, watchedAt = now)
     }
 
     private fun insertTvShow(traktId: Long, tmdbId: Long): Id<ShowId> {
@@ -329,5 +374,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
         private const val THE_WIRE_TRAKT_ID = 1429L
         private const val THE_WIRE_TMDB_ID = 1438L
         private const val TRAKT_LIST_ID = 101L
+        private const val REWATCHED_SEASON_ID = 100L
+        private const val REWATCHED_EPISODE_ID = 200L
     }
 }

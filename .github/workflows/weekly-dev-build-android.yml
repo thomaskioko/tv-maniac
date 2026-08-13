@@ -1,0 +1,170 @@
+name: Weekly Dev Build Android
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * 1'  # Mon at 1:00 AM UTC (3:00 AM Berlin summer, 2:00 winter)
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: weekly-dev-build-android
+  cancel-in-progress: false
+
+env:
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
+  TRAKT_CLIENT_SECRET: ${{ secrets.TRAKT_CLIENT_SECRET }}
+  TRAKT_REDIRECT_URI: ${{ secrets.TRAKT_REDIRECT_URI }}
+  SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
+  SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+  SIMKL_REDIRECT_URI: ${{ secrets.SIMKL_REDIRECT_URI }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.dedupe.outputs.should_run }}
+    steps:
+      - name: Skip when nothing new since the last dev build
+        id: dedupe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          last=$(gh run list --repo "${{ github.repository }}" --workflow weekly-dev-build-android.yml --status success --limit 1 --json headSha --jq '.[0].headSha // empty')
+          if [ "$last" = "${{ github.sha }}" ]; then
+            echo "No new commits since the last successful dev build — skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Android Release
+        uses: ./.github/actions/setup-android-release
+        with:
+          google-services-json: ${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}
+          signing-encrypt-key: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+
+      - name: Write build number
+        id: version
+        run: ./scripts/ci/write-build-number.sh
+
+      - name: Build release AAB and APK
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew :app:bundleRelease :app:assembleRelease \
+            -Pandroidx.baselineprofile.skipgeneration=true \
+            -Papp.debugOnly=false \
+            -Papp.versionSuffix=-dev \
+            -PreleaseStoreFile=release/app-release.jks \
+            -PreleaseStorePassword="$SIGNING_STORE_PASSWORD" \
+            -PreleaseKeyAlias=tvmaniac \
+            -PreleaseKeyPassword="$SIGNING_KEY_PASSWORD" \
+            --no-configuration-cache
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-dev-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-dev-apk
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 5
+          overwrite: true
+          if-no-files-found: error
+
+  deploy-play-store:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Play service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/play-service-account.aes -out release/play-service-account.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Download AAB artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: android-dev-aab
+          path: app/build/outputs/bundle/release
+
+      - name: Deploy to Play Store internal track
+        run: |
+          PLAY_STORE_SERVICE_ACCOUNT_JSON=$(cat release/play-service-account.json)
+          export PLAY_STORE_SERVICE_ACCOUNT_JSON
+          bundle exec fastlane android deploy_play_store
+          echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to the Play Store internal track" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-firebase:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Decrypt Firebase service account
+        env:
+          SIGNING_ENCRYPT_KEY: ${{ secrets.SIGNING_ENCRYPT_KEY }}
+        run: openssl aes-256-cbc -d -pbkdf2 -in release/firebase-sa.aes -out release/firebase-sa.json -k "$SIGNING_ENCRYPT_KEY"
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: android-dev-apk
+          path: app/build/outputs/apk/release
+
+      - name: Distribute to Firebase App Distribution
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+        run: |
+          if [ -z "$FIREBASE_APP_ID" ]; then
+            echo "error: FIREBASE_APP_ID secret is not set" >&2
+            exit 1
+          fi
+          export FIREBASE_APP_DISTRIBUTION_SA=release/firebase-sa.json
+          bundle exec fastlane android distribute_firebase
+          echo "Published **${{ needs.build.outputs.version }}-dev** build \`${{ needs.build.outputs.build }}\` to Firebase App Distribution" >> "$GITHUB_STEP_SUMMARY"
