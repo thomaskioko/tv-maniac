@@ -109,7 +109,9 @@ class StatisticsScreenTest: SnapshotTestCase {
     private let heatMap = SwiftWatchHeatMap(
         levels: (0 ..< 215).map { ($0 * 7) % 5 },
         leadingBlankCells: 3,
-        busiestDayCount: 43
+        scaleFloorCount: 1,
+        scaleTopCount: 10,
+        todayIndex: 214
     )
 
     private let longRunOfYears: [SwiftActivityBar] = (2008 ... 2026).enumerated().map { index, year in
@@ -242,7 +244,9 @@ class StatisticsScreenTest: SnapshotTestCase {
             heatMap: SwiftWatchHeatMap(
                 levels: (0 ..< 24).map { $0 % 5 },
                 leadingBlankCells: 2,
-                busiestDayCount: 12
+                scaleFloorCount: 1,
+                scaleTopCount: 10,
+                todayIndex: 23
             ),
             title: "Your year of watching"
         )

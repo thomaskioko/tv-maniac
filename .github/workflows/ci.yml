@@ -380,7 +380,7 @@ jobs:
                     kotlin-tooling: 'false'
 
             -   name: 📦 Download the prebuilt app and test bundle
-                uses: actions/download-artifact@v7
+                uses: actions/download-artifact@v8
                 with:
                     name: ios-build
 

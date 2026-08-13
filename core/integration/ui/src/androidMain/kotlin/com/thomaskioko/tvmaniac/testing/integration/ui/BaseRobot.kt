@@ -37,6 +37,8 @@ import androidx.compose.ui.test.hasContentDescription as composeHasContentDescri
 
 public const val TIMEOUT_MILLIS: Long = 10_000
 
+private const val CLOCK_CATCH_UP_MILLIS: Long = 200
+
 /**
  * Base robot for integration tests.
  *
@@ -71,7 +73,7 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
     ): T = self().apply {
-        composeUi.waitUntil(timeoutMillis = timeoutMillis) {
+        awaitCondition(timeoutMillis) {
             val nodes = fetchNodesSafely(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
             nodes != null && nodes.size == 1
         }
@@ -82,9 +84,21 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
     ): T = self().apply {
-        composeUi.waitUntil(timeoutMillis = timeoutMillis) {
+        awaitCondition(timeoutMillis) {
             val nodes = fetchNodesSafely(matcher = matcher, useUnmergedTree = useUnmergedTree)
             !nodes.isNullOrEmpty()
+        }
+    }
+
+    // App coroutines run on the Compose test scheduler, so work behind a `delay` resumes only as
+    // virtual time advances. waitUntil advances one frame per poll while counting its timeout in
+    // real milliseconds, so on a loaded machine a pending delay outlives the timeout.
+    private fun awaitCondition(timeoutMillis: Long, condition: () -> Boolean) {
+        composeUi.waitUntil(timeoutMillis = timeoutMillis) {
+            condition() || run {
+                composeUi.mainClock.advanceTimeBy(CLOCK_CATCH_UP_MILLIS)
+                condition()
+            }
         }
     }
 
@@ -280,7 +294,7 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
         useUnmergedTree: Boolean = false,
         timeoutMillis: Long = TIMEOUT_MILLIS,
     ): T = self().apply {
-        composeUi.waitUntil(timeoutMillis = timeoutMillis) {
+        awaitCondition(timeoutMillis) {
             val nodes = fetchNodesSafely(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
             nodes != null && nodes.isEmpty()
         }
@@ -387,7 +401,7 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
 
     /** Asserts node with [tag] has exact text matching [text]. */
     public fun assertTextEquals(tag: String, text: String, useUnmergedTree: Boolean = false): T = self().apply {
-        composeUi.waitUntil(timeoutMillis = TIMEOUT_MILLIS) {
+        awaitCondition(TIMEOUT_MILLIS) {
             val nodes = fetchNodesSafely(
                 matcher = hasTestTag(tag) and hasText(text, substring = false, ignoreCase = true),
                 useUnmergedTree = useUnmergedTree,
