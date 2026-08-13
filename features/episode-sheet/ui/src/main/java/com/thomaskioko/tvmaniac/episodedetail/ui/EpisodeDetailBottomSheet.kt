@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.DoneAll
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -48,6 +49,7 @@ internal data class EpisodeDetailInfo(
     val rating: Double? = null,
     val voteCount: Long? = null,
     val isWatched: Boolean = false,
+    val playCount: Int? = null,
 )
 
 internal data class SheetAction(
@@ -81,6 +83,7 @@ internal fun EpisodeDetailSheetContent(
             overview = episode.overview,
             rating = episode.rating,
             voteCount = episode.voteCount,
+            playCount = episode.playCount,
         )
 
         actions?.let {
@@ -160,6 +163,7 @@ private fun EpisodeDetailContentLayout(
     overview: String?,
     rating: Double?,
     voteCount: Long?,
+    playCount: Int?,
 ) {
     Column(
         modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
@@ -180,6 +184,27 @@ private fun EpisodeDetailContentLayout(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+
+        if (playCount != null && playCount > 1) {
+            Row(
+                modifier = Modifier.testTag(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.DoneAll,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
+
+                Text(
+                    text = "$playCount",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
+        }
 
         if (rating != null && rating > 0) {
             Row(

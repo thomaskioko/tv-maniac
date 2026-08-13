@@ -3,9 +3,10 @@ package com.thomaskioko.tvmaniac.episodedetail.ui
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.DoneAll
 import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.RemoveDone
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -88,7 +89,7 @@ private fun EpisodeSheetActions(
         val isToggling = action.item == EpisodeSheetActionItem.MARK_WATCHED && state.isTogglingWatched
         SheetActionItem(
             modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem(action.item.name)),
-            icon = action.item.icon,
+            icon = action.item.icon(state.isWatched),
             label = action.label,
             enabled = !isToggling,
             showProgress = isToggling,
@@ -120,16 +121,16 @@ internal fun EpisodeDetailSheetState.toEpisodeDetailInfo() = EpisodeDetailInfo(
     rating = rating,
     voteCount = voteCount,
     isWatched = isWatched,
+    playCount = playCount,
 )
 
-private val EpisodeSheetActionItem.icon: ImageVector
-    get() = when (this) {
-        EpisodeSheetActionItem.MARK_WATCHED -> Icons.Outlined.Check
-        EpisodeSheetActionItem.MARK_UNWATCHED -> Icons.Outlined.Close
-        EpisodeSheetActionItem.OPEN_SHOW -> Icons.Outlined.Tv
-        EpisodeSheetActionItem.OPEN_SEASON -> Icons.Outlined.Movie
-        EpisodeSheetActionItem.UNFOLLOW -> Icons.Outlined.LinkOff
-    }
+private fun EpisodeSheetActionItem.icon(isWatched: Boolean): ImageVector = when (this) {
+    EpisodeSheetActionItem.MARK_WATCHED -> if (isWatched) Icons.Outlined.DoneAll else Icons.Outlined.Check
+    EpisodeSheetActionItem.MARK_UNWATCHED -> Icons.Outlined.RemoveDone
+    EpisodeSheetActionItem.OPEN_SHOW -> Icons.Outlined.Tv
+    EpisodeSheetActionItem.OPEN_SEASON -> Icons.Outlined.Movie
+    EpisodeSheetActionItem.UNFOLLOW -> Icons.Outlined.LinkOff
+}
 
 private fun EpisodeSheetActionItem.toAction(): EpisodeSheetAction = when (this) {
     EpisodeSheetActionItem.MARK_WATCHED -> EpisodeSheetAction.MarkWatched
@@ -226,6 +227,52 @@ private fun EpisodeDetailContentSeasonDetailsPreview() {
             isWatched = false,
             availableActions = persistentListOf(
                 EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
+            ),
+        ),
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun EpisodeDetailContentWatchedAgainPreview() {
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "The Walking Dead: Daryl Dixon",
+            showName = "The Walking Dead",
+            seasonEpisodeNumber = "S02E01",
+            overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating = 8.5,
+            voteCount = 1234,
+            isWatched = true,
+            playCount = 3,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Watch again"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+            ),
+        ),
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun EpisodeDetailContentSinglePlayPreview() {
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "The Walking Dead: Daryl Dixon",
+            showName = "The Walking Dead",
+            seasonEpisodeNumber = "S02E01",
+            overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating = 8.5,
+            voteCount = 1234,
+            isWatched = true,
+            playCount = 1,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
             ),
         ),
     )
