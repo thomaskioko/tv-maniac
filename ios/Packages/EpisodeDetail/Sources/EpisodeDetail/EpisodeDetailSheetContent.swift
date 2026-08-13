@@ -10,6 +10,7 @@ public struct EpisodeDetailSheetInfo: Equatable {
     public let rating: Double?
     public let voteCount: Int64?
     public let isWatched: Bool
+    public let playCount: Int?
 
     public init(
         title: String,
@@ -18,7 +19,8 @@ public struct EpisodeDetailSheetInfo: Equatable {
         overview: String? = nil,
         rating: Double? = nil,
         voteCount: Int64? = nil,
-        isWatched: Bool = false
+        isWatched: Bool = false,
+        playCount: Int? = nil
     ) {
         self.title = title
         self.imageUrl = imageUrl
@@ -27,6 +29,7 @@ public struct EpisodeDetailSheetInfo: Equatable {
         self.rating = rating
         self.voteCount = voteCount
         self.isWatched = isWatched
+        self.playCount = playCount
     }
 }
 
@@ -57,6 +60,8 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                     Text(episode.episodeInfo)
                         .textStyle(theme.typography.bodyMedium)
                         .foregroundStyle(.appOnSurfaceVariant)
+
+                    playCountRow
 
                     ratingRow
 
@@ -97,6 +102,21 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
                 .fill(theme.colors.onSurface.opacity(0.6))
                 .frame(width: 32, height: 4)
                 .padding(.top, theme.spacing.xSmall)
+        }
+    }
+
+    @ViewBuilder
+    private var playCountRow: some View {
+        if let playCount = episode.playCount, playCount > 1 {
+            HStack(spacing: theme.spacing.xxSmall) {
+                Image(systemName: "repeat")
+                    .textStyle(theme.typography.labelMedium)
+                    .foregroundStyle(.appSecondary)
+
+                Text("\(playCount)")
+                    .textStyle(theme.typography.bodyMedium)
+                    .foregroundStyle(.appSecondary)
+            }
         }
     }
 
@@ -216,6 +236,45 @@ public struct SheetActionItem: View {
         SheetActionItem(icon: "tv", label: "Open Show", action: {})
         SheetActionItem(icon: "list.bullet", label: "Open Season", action: {})
         SheetActionItem(icon: "minus.circle", label: "Unfollow Show", action: {})
+    }
+    .appPreview()
+}
+
+#Preview("Watched Again") {
+    EpisodeDetailSheetContent(
+        episode: EpisodeDetailSheetInfo(
+            title: "The Walking Dead: Daryl Dixon",
+            imageUrl: nil,
+            episodeInfo: "S02E01 \u{2022} The Walking Dead",
+            overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating: 8.5,
+            voteCount: 1234,
+            isWatched: true,
+            playCount: 3
+        )
+    ) {
+        SheetActionItem(icon: "arrow.counterclockwise", label: "Watch again", action: {})
+        SheetActionItem(icon: "star", label: "Rate episode", action: {})
+        SheetActionItem(icon: "checkmark.circle.badge.xmark", label: "Mark unwatched", action: {})
+        SheetActionItem(icon: "tv", label: "Open show", action: {})
+    }
+    .appPreview()
+}
+
+#Preview("Seen Once") {
+    EpisodeDetailSheetContent(
+        episode: EpisodeDetailSheetInfo(
+            title: "The Walking Dead: Daryl Dixon",
+            imageUrl: nil,
+            episodeInfo: "S02E01 \u{2022} The Walking Dead",
+            overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating: 8.5,
+            voteCount: 1234,
+            isWatched: true,
+            playCount: 1
+        )
+    ) {
+        SheetActionItem(icon: "checkmark.circle.badge.xmark", label: "Mark unwatched", action: {})
     }
     .appPreview()
 }
