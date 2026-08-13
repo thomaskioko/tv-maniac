@@ -331,6 +331,8 @@
 
     <string name="label_settings_quick_rate">Notation Rapide</string>
     <string name="label_settings_quick_rate_description">Demander une note dès qu\'un épisode est marqué comme vu</string>
+    <string name="label_settings_multiple_plays">Visionnages multiples</string>
+    <string name="label_settings_multiple_plays_description">Permettre de marquer une série comme vue plusieurs fois et compter les revisionnages</string>
 
     <string name="label_up_to_date">Tout vu</string>
 
@@ -558,8 +560,5 @@
     <string name="label_watch_status_on_hold">En pause</string>
     <string name="label_watch_status_dropped">Abandonnées</string>
 
-    <string name="label_rewatch_start">Commencer un revisionnage</string>
-    <string name="label_rewatch_close">Terminer le revisionnage</string>
-    <string name="label_rewatch_in_progress">Revisionnage en cours</string>
     <string name="label_rewatch_simkl_free_tier">Simkl n\'enregistre pas les revisionnages sans forfait payant. Ce décompte reste sur cet appareil.</string>
 </resources>

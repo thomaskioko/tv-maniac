@@ -158,6 +158,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val landscapeWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
     private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.SHARP)
     private val quickRateEnabledFlow = MutableStateFlow(false)
+    private val multiplePlaysEnabledFlow = MutableStateFlow(true)
 
     override suspend fun saveGenreShowCategory(category: String) {
         genreShowCategoryFlow.value = category
@@ -267,4 +268,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeQuickRateEnabled(): Flow<Boolean> = quickRateEnabledFlow.asStateFlow()
+
+    override suspend fun saveMultiplePlaysEnabled(enabled: Boolean) {
+        multiplePlaysEnabledFlow.value = enabled
+    }
+
+    override fun observeMultiplePlaysEnabled(): Flow<Boolean> = multiplePlaysEnabledFlow.asStateFlow()
 }

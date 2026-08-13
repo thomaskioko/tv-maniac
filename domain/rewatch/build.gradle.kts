@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
+                api(projects.core.util.api)
                 api(projects.data.rewatch.api)
             }
         }
@@ -20,6 +21,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
+                implementation(projects.core.util.testing)
                 implementation(projects.data.rewatch.testing)
             }
         }

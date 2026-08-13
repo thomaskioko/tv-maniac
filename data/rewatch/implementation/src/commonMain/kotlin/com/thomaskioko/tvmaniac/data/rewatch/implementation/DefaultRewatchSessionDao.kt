@@ -2,10 +2,13 @@ package com.thomaskioko.tvmaniac.data.rewatch.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.data.rewatch.api.OpenRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchCoverage
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.UnsentRewatchEpisode
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Rewatch_session
@@ -49,6 +52,27 @@ public class DefaultRewatchSessionDao(
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { rows -> rows.map { it.toRewatchSession() } }
+
+    override fun observeRewatchStatus(showId: Long): Flow<RewatchStatus> =
+        queries.rewatchStatusForShow(Id(showId))
+            .asFlow()
+            .mapToOneOrNull(dispatchers.databaseRead)
+            .map { row ->
+                if (row == null) {
+                    RewatchStatus()
+                } else {
+                    RewatchStatus(
+                        finishedCount = row.finished_count.toInt(),
+                        openSession = row.open_session_id?.let { sessionId ->
+                            OpenRewatchSession(
+                                id = sessionId,
+                                watchedEpisodes = row.watched_in_session.toInt(),
+                                airedEpisodes = row.aired_total.toInt(),
+                            )
+                        },
+                    )
+                }
+            }
 
     override fun openSessionForShow(showId: Long): RewatchSession? =
         queries.openSessionForShow(Id(showId)).executeAsOneOrNull()?.toRewatchSession()

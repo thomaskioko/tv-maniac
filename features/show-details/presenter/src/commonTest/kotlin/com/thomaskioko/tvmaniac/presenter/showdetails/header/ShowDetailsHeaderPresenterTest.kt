@@ -16,6 +16,8 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -24,6 +26,8 @@ import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInte
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -45,6 +49,7 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.collections.immutable.persistentListOf
@@ -81,6 +86,7 @@ internal class ShowDetailsHeaderPresenterTest {
     private val notificationManager = FakeNotificationManager()
     private val accountManager = FakeAccountManager()
     private val traktListRepository = FakeTraktListRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val localizer = FakeLocalizer()
     private val formatterUtil = FakeFormatterUtil()
     private val dateTimeProvider = FakeDateTimeProvider()
@@ -248,6 +254,113 @@ internal class ShowDetailsHeaderPresenterTest {
         navigator.lastActivatedOverlay.shouldBeNull()
     }
 
+    @Test
+    fun `should return no rewatches given the show has none`() = runTest {
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().rewatchCount shouldBe 0
+        }
+    }
+
+    @Test
+    fun `should return the finished count given the show has past rewatches`() = runTest {
+        rewatchRepository.setRewatchStatusForShow(SHOW_ID, RewatchStatus(finishedCount = 2))
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().rewatchCount shouldBe 2
+        }
+    }
+
+    @Test
+    fun `should offer watch again given the show is followed and multiple plays are on`() = runTest {
+        showDetailsRepository.setShowDetailsResult(tvShowDetails.copy(in_library = 1))
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().canWatchAgain shouldBe true
+        }
+    }
+
+    @Test
+    fun `should hide watch again given multiple plays are off`() = runTest {
+        datastoreRepository.saveMultiplePlaysEnabled(false)
+
+        showDetailsRepository.setShowDetailsResult(tvShowDetails.copy(in_library = 1))
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().canWatchAgain shouldBe false
+        }
+    }
+
+    @Test
+    fun `should open the menu given more is clicked`() = runTest {
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            presenter.dispatch(ShowDetailsMoreClicked)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().showMoreSheet shouldBe true
+        }
+    }
+
+    @Test
+    fun `should ask before starting given watch again is clicked`() = runTest {
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            presenter.dispatch(WatchAgainClicked)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.showWatchAgainConfirmation shouldBe true
+            state.showMoreSheet shouldBe false
+        }
+        rewatchRepository.openSessionForShow(SHOW_ID).shouldBeNull()
+    }
+
+    @Test
+    fun `should open a session given watch again is confirmed`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(WatchAgainClicked)
+        presenter.dispatch(WatchAgainConfirmed)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        rewatchRepository.openSessionForShow(SHOW_ID).shouldNotBeNull()
+    }
+
+    @Test
+    fun `should open no session given watch again is dismissed`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(WatchAgainClicked)
+        presenter.dispatch(WatchAgainDismissed)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        rewatchRepository.openSessionForShow(SHOW_ID).shouldBeNull()
+    }
+
     private fun buildPresenter(
         forceRefresh: Boolean = false,
         supportsLists: Boolean = true,
@@ -286,6 +399,9 @@ internal class ShowDetailsHeaderPresenterTest {
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
             observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
+            observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
+            startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,

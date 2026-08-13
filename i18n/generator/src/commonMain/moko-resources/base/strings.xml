@@ -219,6 +219,8 @@
 
     <string name="label_settings_quick_rate">Quick Rate</string>
     <string name="label_settings_quick_rate_description">Show rating prompt after marking an episode as watched</string>
+    <string name="label_settings_multiple_plays">Multiple plays</string>
+    <string name="label_settings_multiple_plays_description">Let a show be marked watched more than once, and count the rewatches</string>
 
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>
@@ -512,6 +514,10 @@
     <string name="label_account_switching">Switching…</string>
     <string name="label_account_switch_failed">Couldn\'t switch accounts. Please try again.</string>
     <string name="label_rating_sheet_title">Your rating</string>
+    <string name="label_action_more">More</string>
+    <string name="label_action_watch_again">Watch again</string>
+    <string name="label_watch_again_confirm_title">Watch again?</string>
+    <string name="label_watch_again_confirm_message">Episodes you mark from now on count towards a new rewatch of \"%1$s\".</string>
     <string name="label_action_rate">Rate</string>
     <string name="label_action_rate_episode">Rate episode</string>
     <string name="label_action_remove_rating">Remove rating</string>
@@ -569,8 +575,5 @@
     <string name="label_watch_status_on_hold">On hold</string>
     <string name="label_watch_status_dropped">Dropped</string>
 
-    <string name="label_rewatch_start">Start rewatch</string>
-    <string name="label_rewatch_close">Close rewatch</string>
-    <string name="label_rewatch_in_progress">Rewatch in progress</string>
     <string name="label_rewatch_simkl_free_tier">Simkl does not store rewatches without a paid plan, so this count stays on this device.</string>
 </resources>

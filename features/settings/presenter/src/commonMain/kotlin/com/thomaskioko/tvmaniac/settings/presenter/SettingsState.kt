@@ -36,6 +36,8 @@ public data class SettingsState(
     val openTrailersInYoutube: Boolean = false,
     val includeSpecials: Boolean = false,
     val quickRateEnabled: Boolean = false,
+    val multiplePlaysEnabled: Boolean = true,
+    val multiplePlaysSyncNotice: String? = null,
     val backgroundSyncEnabled: Boolean = true,
     val lastSyncDate: String? = null,
     val showLastSyncDate: Boolean = false,

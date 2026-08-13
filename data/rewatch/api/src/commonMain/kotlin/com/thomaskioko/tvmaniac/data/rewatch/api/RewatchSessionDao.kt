@@ -11,6 +11,8 @@ public interface RewatchSessionDao {
 
     public fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>>
 
+    public fun observeRewatchStatus(showId: Long): Flow<RewatchStatus>
+
     public fun openSessionForShow(showId: Long): RewatchSession?
 
     public fun sessionById(sessionId: Long): RewatchSession?

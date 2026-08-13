@@ -108,6 +108,20 @@ class ContinueWatchingPresenterTest {
     }
 
     @Test
+    fun `should show empty state instead of loading given a search query is active`() = runTest {
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            presenter.onQueryChanged("Zzzzz")
+
+            val searching = awaitItem()
+            searching.query shouldBe "Zzzzz"
+            searching.isEmpty shouldBe true
+            searching.showLoading shouldBe false
+        }
+    }
+
+    @Test
     fun `should show refresh indicator given syncing but content already present`() = runTest {
         presenter.state.test {
             awaitItem() shouldBe ContinueWatchingState()
