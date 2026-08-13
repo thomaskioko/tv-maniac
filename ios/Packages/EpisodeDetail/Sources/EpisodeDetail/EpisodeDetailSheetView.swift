@@ -72,7 +72,7 @@ public struct EpisodeDetailSheetView: View {
     @ViewBuilder
     private func actionView(for action: EpisodeSheetActionUi) -> some View {
         switch action.item {
-        case .toggleWatched:
+        case .markWatched:
             SheetActionItem(
                 icon: state.isWatched ? "checkmark.circle.fill" : "checkmark.circle",
                 label: action.label,
@@ -80,8 +80,15 @@ public struct EpisodeDetailSheetView: View {
                 showProgress: state.isTogglingWatched,
                 action: {
                     Haptics.impact(isEnabled: hapticFeedbackEnabled)
-                    presenter.dispatch(action: EpisodeSheetActionToggleWatched())
+                    presenter.dispatch(action: EpisodeSheetActionMarkWatched())
                 }
+            )
+        case .markUnwatched:
+            SheetActionItem(
+                icon: "xmark.circle",
+                label: action.label,
+                isEnabled: !state.isTogglingWatched,
+                action: { presenter.dispatch(action: EpisodeSheetActionMarkUnwatched()) }
             )
         case .openShow:
             SheetActionItem(
