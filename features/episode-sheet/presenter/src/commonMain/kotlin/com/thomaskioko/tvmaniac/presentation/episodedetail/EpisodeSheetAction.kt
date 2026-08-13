@@ -1,7 +1,8 @@
 package com.thomaskioko.tvmaniac.presentation.episodedetail
 
 public sealed interface EpisodeSheetAction {
-    public data object ToggleWatched : EpisodeSheetAction
+    public data object MarkWatched : EpisodeSheetAction
+    public data object MarkUnwatched : EpisodeSheetAction
     public data object OpenShow : EpisodeSheetAction
     public data object OpenSeason : EpisodeSheetAction
     public data object Unfollow : EpisodeSheetAction
