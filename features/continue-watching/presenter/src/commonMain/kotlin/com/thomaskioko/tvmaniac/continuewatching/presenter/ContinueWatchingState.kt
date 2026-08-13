@@ -29,7 +29,7 @@ public data class ContinueWatchingState(
             watchNextEpisodes.isEmpty() && staleEpisodes.isEmpty()
 
     val showLoading: Boolean
-        get() = (isLoading || isSyncing) && isEmpty
+        get() = (isLoading || isSyncing) && isEmpty && query.isBlank()
 
     val showRefreshIndicator: Boolean
         get() = (isLoading || isSyncing || isRefreshing) && !isEmpty
