@@ -50,16 +50,17 @@ internal class TraktRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should map an episode with more than one play into extra sessions of one`() = runTest {
+    fun `should carry the extra plays of an episode as viewings of one session`() = runTest {
         syncRemoteDataSource.setWatchedShows(ApiResponse.Success(listOf(showWithPlays(tmdbId = 1396L, plays = 3L))))
 
         val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
 
         sessions shouldHaveSize 1
-        sessions.first().seasonNumber shouldBe 1L
-        sessions.first().episodeNumber shouldBe 1L
-        sessions.first().episodeCount shouldBe 2L
         sessions.first().providerSessionId shouldBe null
+        sessions.first().episodes shouldHaveSize 1
+        sessions.first().episodes.first().seasonNumber shouldBe 1L
+        sessions.first().episodes.first().episodeNumber shouldBe 1L
+        sessions.first().episodes.first().viewings shouldBe 2L
     }
 
     @Test

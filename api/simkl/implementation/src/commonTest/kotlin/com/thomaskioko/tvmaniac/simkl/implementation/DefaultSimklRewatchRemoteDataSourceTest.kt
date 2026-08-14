@@ -48,17 +48,19 @@ internal class DefaultSimklRewatchRemoteDataSourceTest {
     }
 
     @Test
-    fun `should use GET method with the rewatch flag and extended full param given rewatch sessions are read`() = runTest {
+    fun `should use GET method with the rewatch flag and the extended episode params given rewatch sessions are read`() = runTest {
         var capturedMethod: HttpMethod? = null
         var capturedPath: String? = null
         var capturedAllowRewatch: String? = null
         var capturedExtended: String? = null
+        var capturedEpisodeWatchedAt: String? = null
 
         val engine = MockEngine { request ->
             capturedMethod = request.method
             capturedPath = request.url.encodedPath
             capturedAllowRewatch = request.url.parameters["allow_rewatch"]
             capturedExtended = request.url.parameters["extended"]
+            capturedEpisodeWatchedAt = request.url.parameters["episode_watched_at"]
             respond(
                 content = SIMKL_REWATCH_ITEMS_RESPONSE,
                 status = HttpStatusCode.OK,
@@ -73,6 +75,7 @@ internal class DefaultSimklRewatchRemoteDataSourceTest {
         capturedPath shouldBe "/sync/all-items/shows"
         capturedAllowRewatch shouldBe "yes"
         capturedExtended shouldBe "full"
+        capturedEpisodeWatchedAt shouldBe "yes"
     }
 
     @Test
