@@ -127,7 +127,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
                 if (isInList) StringResourceKey.BtnInList else StringResourceKey.BtnAddToList,
             ),
             rewatchCount = rewatchStatus.finishedCount,
-            canWatchAgain = multiplePlaysEnabled && details.isInLibrary,
+            canWatchAgain = multiplePlaysEnabled && details.isInLibrary && rewatchStatus.openSession == null,
             showMoreSheet = current.showMoreSheet,
             showWatchAgainConfirmation = current.showWatchAgainConfirmation,
         )

@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.api.ShowRating
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.api.OpenRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
 import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
@@ -296,6 +297,26 @@ internal class ShowDetailsHeaderPresenterTest {
         datastoreRepository.saveMultiplePlaysEnabled(false)
 
         showDetailsRepository.setShowDetailsResult(tvShowDetails.copy(in_library = 1))
+
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().canWatchAgain shouldBe false
+        }
+    }
+
+    @Test
+    fun `should hide watch again given a rewatch is already under way`() = runTest {
+        showDetailsRepository.setShowDetailsResult(tvShowDetails.copy(in_library = 1))
+        rewatchRepository.setRewatchStatusForShow(
+            SHOW_ID,
+            RewatchStatus(
+                finishedCount = 1,
+                openSession = OpenRewatchSession(id = 1, watchedEpisodes = 2, airedEpisodes = 10),
+            ),
+        )
 
         val presenter = buildPresenter()
 
