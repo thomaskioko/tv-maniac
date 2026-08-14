@@ -32,7 +32,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot
-            .assertActionItemDisplayed(EpisodeSheetActionItem.TOGGLE_WATCHED)
+            .assertActionItemDisplayed(EpisodeSheetActionItem.MARK_WATCHED)
             .assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SHOW)
             .assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SEASON)
             .assertActionItemDisplayed(EpisodeSheetActionItem.UNFOLLOW)
@@ -68,13 +68,13 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenEpisodeSheet_whenToggleWatchedClicked_thenMarksEpisodeWatched() = runAppFlowTest {
+    fun givenEpisodeSheet_whenMarkWatchedClicked_thenMarksEpisodeWatched() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
 
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot
-            .clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
+            .clickActionItem(EpisodeSheetActionItem.MARK_WATCHED)
 
         homeRobot.clickMyShowsTab()
         watchlistRobot.clickShowCard(breakingBadTmdbId)

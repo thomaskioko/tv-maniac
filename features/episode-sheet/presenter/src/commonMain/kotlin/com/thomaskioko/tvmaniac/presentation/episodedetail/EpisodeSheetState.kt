@@ -15,6 +15,7 @@ public data class EpisodeDetailSheetState(
     val voteCount: Long? = null,
     val isWatched: Boolean = false,
     val isTogglingWatched: Boolean = false,
+    val playCount: Int? = null,
     val userRating: Int? = null,
     val availableActions: ImmutableList<EpisodeSheetActionUi> = persistentListOf(),
     val message: UiMessage? = null,
@@ -26,7 +27,8 @@ public data class EpisodeSheetActionUi(
 )
 
 public enum class EpisodeSheetActionItem {
-    TOGGLE_WATCHED,
+    MARK_WATCHED,
+    MARK_UNWATCHED,
     OPEN_SHOW,
     OPEN_SEASON,
     UNFOLLOW,

@@ -9,6 +9,8 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun EpisodeById.toState(
     source: ScreenSource,
     localizer: Localizer,
+    multiplePlaysEnabled: Boolean,
+    rewatches: Long,
 ): EpisodeDetailSheetState {
     val isWatched = is_watched != 0L
     return EpisodeDetailSheetState(
@@ -21,16 +23,23 @@ internal fun EpisodeById.toState(
         rating = ratings.takeIf { it > 0 },
         voteCount = vote_count.takeIf { it > 0 },
         isWatched = isWatched,
-        availableActions = availableActions(source, isWatched, localizer),
+        playCount = if (isWatched) (rewatches + 1).toInt() else null,
+        availableActions = availableActions(source, isWatched, multiplePlaysEnabled, localizer),
     )
 }
 
 private fun availableActions(
     source: ScreenSource,
     isWatched: Boolean,
+    multiplePlaysEnabled: Boolean,
     localizer: Localizer,
 ) = buildList {
-    add(EpisodeSheetActionItem.TOGGLE_WATCHED.toUi(isWatched, localizer))
+    if (!isWatched || multiplePlaysEnabled) {
+        add(EpisodeSheetActionItem.MARK_WATCHED.toUi(isWatched, localizer))
+    }
+    if (isWatched) {
+        add(EpisodeSheetActionItem.MARK_UNWATCHED.toUi(isWatched, localizer))
+    }
     if (source != ScreenSource.SEASON_DETAILS) {
         add(EpisodeSheetActionItem.OPEN_SHOW.toUi(isWatched, localizer))
         add(EpisodeSheetActionItem.OPEN_SEASON.toUi(isWatched, localizer))
@@ -47,8 +56,9 @@ private fun EpisodeSheetActionItem.toUi(
 )
 
 private fun EpisodeSheetActionItem.labelKey(isWatched: Boolean): StringResourceKey = when (this) {
-    EpisodeSheetActionItem.TOGGLE_WATCHED ->
-        if (isWatched) StringResourceKey.LabelEpisodeActionMarkUnwatched else StringResourceKey.LabelEpisodeActionMarkWatched
+    EpisodeSheetActionItem.MARK_WATCHED ->
+        if (isWatched) StringResourceKey.LabelActionWatchAgain else StringResourceKey.LabelEpisodeActionMarkWatched
+    EpisodeSheetActionItem.MARK_UNWATCHED -> StringResourceKey.LabelEpisodeActionMarkUnwatched
     EpisodeSheetActionItem.OPEN_SHOW -> StringResourceKey.LabelEpisodeActionOpenShow
     EpisodeSheetActionItem.OPEN_SEASON -> StringResourceKey.LabelEpisodeActionOpenSeason
     EpisodeSheetActionItem.UNFOLLOW -> StringResourceKey.LabelEpisodeActionUnfollowShow

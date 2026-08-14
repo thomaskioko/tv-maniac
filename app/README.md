@@ -1303,9 +1303,11 @@ graph TB
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
   :features:episode-sheet:presenter --> :core:view
+  :features:episode-sheet:presenter --> :data:datastore:api
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
   :features:episode-sheet:presenter --> :domain:ratings
+  :features:episode-sheet:presenter --> :domain:rewatch
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
   :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav

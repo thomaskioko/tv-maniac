@@ -18,6 +18,8 @@ kotlin {
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)
                 api(projects.domain.ratings)
+                api(projects.data.datastore.api)
+                api(projects.domain.rewatch)
                 api(projects.features.episodeSheet.nav)
                 api(projects.features.ratingSheet.nav)
                 api(projects.i18n.api)
@@ -44,6 +46,8 @@ kotlin {
                 implementation(projects.data.library.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.data.datastore.testing)
+                implementation(projects.data.rewatch.testing)
+                implementation(projects.core.util.testing)
                 implementation(projects.data.subscription.testing)
                 implementation(projects.navigation.testing)
             }

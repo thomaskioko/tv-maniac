@@ -42,7 +42,7 @@ class EpisodeSheetScreenshotTest {
                         voteCount = 1234,
                         isWatched = false,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -69,7 +69,7 @@ class EpisodeSheetScreenshotTest {
                         isWatched = true,
                         userRating = 9,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark unwatched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -95,7 +95,7 @@ class EpisodeSheetScreenshotTest {
                         voteCount = 856,
                         isWatched = true,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark unwatched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -119,7 +119,7 @@ class EpisodeSheetScreenshotTest {
                         overview = "King Viserys hosts a tournament to celebrate the birth of his heir.",
                         isWatched = false,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
                         ),
                     ),
                 )
@@ -141,7 +141,7 @@ class EpisodeSheetScreenshotTest {
                         voteCount = 2500,
                         isWatched = false,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),

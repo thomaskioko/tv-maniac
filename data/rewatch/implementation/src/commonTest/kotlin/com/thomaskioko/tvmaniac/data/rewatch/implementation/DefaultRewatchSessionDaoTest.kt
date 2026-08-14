@@ -11,6 +11,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -97,17 +98,17 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return one given no rewatch session exists for an episode`() = runTest {
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 1L
+    fun `should return no rewatches given no rewatch session exists for an episode`() = runTest {
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }
 
     @Test
-    fun `should return one plus session rows given an episode was watched again`() = runTest {
+    fun `should count the session row given an episode was watched again`() = runTest {
         val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
 
         dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
 
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 2L
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 1L
     }
 
     @Test
@@ -117,7 +118,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
         val secondSessionId = dao.openSession(showId = showId, startedAt = REWATCHED_AT)
         dao.addEpisodeToSession(sessionId = secondSessionId, episodeId = EPISODE_ID, watchedAt = SECOND_REWATCHED_AT)
 
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 3L
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 2L
     }
 
     @Test
@@ -233,7 +234,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
             awaitItem().shouldBeEmpty()
             cancelAndConsumeRemainingEvents()
         }
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 1L
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }
 
     private fun addShow(tmdbId: Long): Long {

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.rewatch.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.rewatch.api.OpenRewatchSession
@@ -84,7 +85,10 @@ public class DefaultRewatchSessionDao(
         queries.setProviderSessionId(sessionId = sessionId, providerSessionId = providerSessionId)
     }
 
-    override fun playCountForEpisode(episodeId: Long): Long = queries.playCountForEpisode(Id(episodeId)).executeAsOne()
+    override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> =
+        queries.observeEpisodeRewatches(Id(episodeId))
+            .asFlow()
+            .mapToOne(dispatchers.databaseRead)
 
     override fun unsentEpisodes(): List<UnsentRewatchEpisode> =
         queries.unsentEpisodes().executeAsList().map { it.toUnsentRewatchEpisode() }

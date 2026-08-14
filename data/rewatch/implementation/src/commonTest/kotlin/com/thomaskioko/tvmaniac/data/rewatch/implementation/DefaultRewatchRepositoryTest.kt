@@ -136,7 +136,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
             watchedAt = REWATCHED_AT,
         )
 
-        repository.playCountForEpisode(EPISODE_ID) shouldBe 2L
+        repository.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 1L
     }
 
     @Test

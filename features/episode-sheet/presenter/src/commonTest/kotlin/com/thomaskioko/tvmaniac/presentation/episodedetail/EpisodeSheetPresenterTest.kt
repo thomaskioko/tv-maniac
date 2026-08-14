@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.ratings.api.EpisodeRating
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.Id
@@ -20,6 +21,8 @@ import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveEpisodeRewatchesInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.WatchAgainInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -31,9 +34,11 @@ import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CoroutineScope
@@ -60,6 +65,8 @@ internal class EpisodeSheetPresenterTest {
 
     private val navigator = FakeNavigator()
     private val datastoreRepository = FakeDatastoreRepository()
+    private val rewatchRepository = FakeRewatchRepository()
+    private val dateTimeProvider = FakeDateTimeProvider()
     private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
         datastoreRepository = datastoreRepository,
         subscriptionManager = FakeSubscriptionManager(),
@@ -148,7 +155,7 @@ internal class EpisodeSheetPresenterTest {
             val state = awaitItem()
 
             state.availableActions.map { it.item } shouldContainExactly listOf(
-                EpisodeSheetActionItem.TOGGLE_WATCHED,
+                EpisodeSheetActionItem.MARK_WATCHED,
                 EpisodeSheetActionItem.OPEN_SHOW,
                 EpisodeSheetActionItem.OPEN_SEASON,
                 EpisodeSheetActionItem.UNFOLLOW,
@@ -168,7 +175,7 @@ internal class EpisodeSheetPresenterTest {
             val state = awaitItem()
 
             state.availableActions.map { it.item } shouldContainExactly listOf(
-                EpisodeSheetActionItem.TOGGLE_WATCHED,
+                EpisodeSheetActionItem.MARK_WATCHED,
                 EpisodeSheetActionItem.OPEN_SHOW,
                 EpisodeSheetActionItem.OPEN_SEASON,
                 EpisodeSheetActionItem.UNFOLLOW,
@@ -188,7 +195,7 @@ internal class EpisodeSheetPresenterTest {
             val state = awaitItem()
 
             state.availableActions.map { it.item } shouldContainExactly listOf(
-                EpisodeSheetActionItem.TOGGLE_WATCHED,
+                EpisodeSheetActionItem.MARK_WATCHED,
                 EpisodeSheetActionItem.OPEN_SHOW,
                 EpisodeSheetActionItem.OPEN_SEASON,
                 EpisodeSheetActionItem.UNFOLLOW,
@@ -197,7 +204,7 @@ internal class EpisodeSheetPresenterTest {
     }
 
     @Test
-    fun `should show only toggle watched given source is SEASON_DETAILS`() = runTest {
+    fun `should show only the watched action given source is SEASON_DETAILS`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
 
         val presenter = createPresenter(source = ScreenSource.SEASON_DETAILS)
@@ -208,13 +215,13 @@ internal class EpisodeSheetPresenterTest {
             val state = awaitItem()
 
             state.availableActions.map { it.item } shouldContainExactly listOf(
-                EpisodeSheetActionItem.TOGGLE_WATCHED,
+                EpisodeSheetActionItem.MARK_WATCHED,
             )
         }
     }
 
     @Test
-    fun `should mark episode as watched given ToggleWatched is dispatched and episode is unwatched`() = runTest {
+    fun `should mark episode as watched given MarkWatched is dispatched and episode is unwatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = false))
 
         val presenter = createPresenter()
@@ -224,7 +231,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             awaitItem()
 
-            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val call = episodeRepository.lastMarkEpisodeWatchedCall
@@ -252,7 +259,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             awaitItem()
 
-            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<RatingSheetRoute>()
@@ -273,7 +280,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             awaitItem()
 
-            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
             testDispatcher.scheduler.advanceUntilIdle()
 
             navigator.activatedOverlays.shouldBeEmpty()
@@ -282,7 +289,7 @@ internal class EpisodeSheetPresenterTest {
     }
 
     @Test
-    fun `should not open the rating sheet given the episode is marked unwatched`() = runTest {
+    fun `should not open the rating sheet given the episode is watched again`() = runTest {
         datastoreRepository.saveQuickRateEnabled(true)
         episodeRepository.setEpisodeById(testEpisode(isWatched = true))
 
@@ -293,7 +300,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             awaitItem()
 
-            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
             testDispatcher.scheduler.advanceUntilIdle()
 
             navigator.activatedOverlays.shouldBeEmpty()
@@ -302,7 +309,7 @@ internal class EpisodeSheetPresenterTest {
     }
 
     @Test
-    fun `should mark episode as unwatched given ToggleWatched is dispatched and episode is watched`() = runTest {
+    fun `should mark episode as unwatched given MarkUnwatched is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = true))
 
         val presenter = createPresenter()
@@ -312,7 +319,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             awaitItem()
 
-            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            presenter.dispatch(EpisodeSheetAction.MarkUnwatched)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val call = episodeRepository.lastMarkEpisodeUnwatchedCall
@@ -326,7 +333,7 @@ internal class EpisodeSheetPresenterTest {
     }
 
     @Test
-    fun `should keep sheet until mark completes then dismiss given ToggleWatched is dispatched`() = runTest {
+    fun `should keep sheet until mark completes then dismiss given MarkWatched is dispatched`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = false))
 
         val presenter = createPresenter()
@@ -336,7 +343,7 @@ internal class EpisodeSheetPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             awaitItem()
 
-            presenter.dispatch(EpisodeSheetAction.ToggleWatched)
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
 
             navigator.overlayDismissCount shouldBe 0
             episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
@@ -482,6 +489,9 @@ internal class EpisodeSheetPresenterTest {
             markEpisodeWatchedInteractor = MarkEpisodeWatchedInteractor(episodeRepository),
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository),
+            observeEpisodeRewatchesInteractor = ObserveEpisodeRewatchesInteractor(rewatchRepository),
+            watchAgainInteractor = WatchAgainInteractor(rewatchRepository, dateTimeProvider),
+            datastoreRepository = datastoreRepository,
             unfollowShowInteractor = UnfollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
                 libraryRepository = FakeLibraryRepository(),
@@ -492,6 +502,123 @@ internal class EpisodeSheetPresenterTest {
             logger = logger,
             appScopeLauncher = appScopeLauncher,
         )
+    }
+
+    @Test
+    fun `should report no play count given the episode was never watched`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = false))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().playCount.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should report one play given the episode was watched once`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().playCount shouldBe 1
+        }
+    }
+
+    @Test
+    fun `should count every viewing given the episode was watched again`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+        rewatchRepository.setRewatchesForEpisode(episodeId = 1L, rewatches = 2L)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().playCount shouldBe 3
+        }
+    }
+
+    @Test
+    fun `should offer removing a viewing given the episode is watched`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        val presenter = createPresenter(source = ScreenSource.SEASON_DETAILS)
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().availableActions.map { it.item } shouldContainExactly listOf(
+                EpisodeSheetActionItem.MARK_WATCHED,
+                EpisodeSheetActionItem.MARK_UNWATCHED,
+            )
+        }
+    }
+
+    @Test
+    fun `should hide the watched action given the episode is watched and multiple plays are off`() = runTest {
+        datastoreRepository.saveMultiplePlaysEnabled(false)
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        val presenter = createPresenter(source = ScreenSource.SEASON_DETAILS)
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().availableActions.map { it.item } shouldContainExactly listOf(
+                EpisodeSheetActionItem.MARK_UNWATCHED,
+            )
+        }
+    }
+
+    @Test
+    fun `should record a viewing given the episode is watched again`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            rewatchRepository.lastAddEpisodeSessionId.shouldNotBeNull()
+            episodeRepository.lastMarkEpisodeUnwatchedCall.shouldBeNull()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should reuse the open session given a rewatch is already under way`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+        val sessionId = rewatchRepository.startSession(showId = 100L, startedAt = 1L)
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            rewatchRepository.lastAddEpisodeSessionId shouldBe sessionId
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     private fun testEpisode(
