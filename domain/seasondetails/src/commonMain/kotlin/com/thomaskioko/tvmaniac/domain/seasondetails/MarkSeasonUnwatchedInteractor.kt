@@ -1,16 +1,22 @@
 package com.thomaskioko.tvmaniac.domain.seasondetails
 
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import dev.zacsweers.metro.Inject
 
 @Inject
 public class MarkSeasonUnwatchedInteractor(
     private val episodeRepository: EpisodeRepository,
+    private val rewatchRepository: RewatchRepository,
 ) : Interactor<MarkSeasonUnwatchedParams>() {
 
     override suspend fun doWork(params: MarkSeasonUnwatchedParams) {
         episodeRepository.markSeasonUnwatched(
+            showId = params.showId,
+            seasonNumber = params.seasonNumber,
+        )
+        rewatchRepository.removeSeasonRewatches(
             showId = params.showId,
             seasonNumber = params.seasonNumber,
         )

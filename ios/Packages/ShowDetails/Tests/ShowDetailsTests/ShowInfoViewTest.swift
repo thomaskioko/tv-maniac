@@ -16,10 +16,13 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             listActionLabel: "Add To List",
+            moreLabel: "More",
             rateLabel: "Rate",
+            watchAgainLabel: "Watch again",
             onAddToLibrary: {},
             onAddToCustomList: {},
-            onRate: {}
+            onRate: {},
+            onWatchAgain: {}
         )
         .padding()
         .appPreview()
@@ -35,10 +38,13 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             listActionLabel: "Add To List",
+            moreLabel: "More",
             rateLabel: "Rate",
+            watchAgainLabel: "Watch again",
             onAddToLibrary: {},
             onAddToCustomList: {},
-            onRate: {}
+            onRate: {},
+            onWatchAgain: {}
         )
         .padding()
         .appPreview()
@@ -54,10 +60,13 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             listActionLabel: "Add To List",
+            moreLabel: "More",
             rateLabel: "Rate",
+            watchAgainLabel: "Watch again",
             onAddToLibrary: {},
             onAddToCustomList: {},
-            onRate: {}
+            onRate: {},
+            onWatchAgain: {}
         )
         .padding()
         .appPreview()
@@ -73,10 +82,13 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             listActionLabel: "In List",
+            moreLabel: "More",
             rateLabel: "Rate",
+            watchAgainLabel: "Watch again",
             onAddToLibrary: {},
             onAddToCustomList: {},
-            onRate: {}
+            onRate: {},
+            onWatchAgain: {}
         )
         .padding()
         .appPreview()
@@ -92,11 +104,14 @@ class ShowInfoViewTest: SnapshotTestCase {
             trackLabel: "Track",
             stopTrackingLabel: "Stop Tracking",
             listActionLabel: "Add To List",
+            moreLabel: "More",
             rateLabel: "Rate",
+            watchAgainLabel: "Watch again",
             userRating: 9,
             onAddToLibrary: {},
             onAddToCustomList: {},
-            onRate: {}
+            onRate: {},
+            onWatchAgain: {}
         )
         .padding()
         .appPreview()

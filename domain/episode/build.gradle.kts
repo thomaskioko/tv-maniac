@@ -20,6 +20,7 @@ kotlin {
                 api(projects.data.database.sqldelight)
                 api(projects.data.episode.api)
                 api(projects.data.library.api)
+                api(projects.data.rewatch.api)
 
                 implementation(projects.core.view)
             }
@@ -33,6 +34,7 @@ kotlin {
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.library.testing)
+                implementation(projects.data.rewatch.testing)
             }
         }
     }

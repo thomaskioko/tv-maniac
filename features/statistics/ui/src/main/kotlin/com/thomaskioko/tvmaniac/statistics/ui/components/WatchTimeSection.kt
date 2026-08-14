@@ -106,7 +106,7 @@ private fun WatchTimeSegment(
 @Composable
 private fun WatchTimeSectionPreview() {
     WatchTimeSection(
-        watchTime = WatchTime(days = 12, hours = 4, minutes = 30),
+        watchTime = WatchTime(days = 22, hours = 6, minutes = 30),
         title = "Total time watched",
         daysLabel = "days",
         hoursLabel = "hours",

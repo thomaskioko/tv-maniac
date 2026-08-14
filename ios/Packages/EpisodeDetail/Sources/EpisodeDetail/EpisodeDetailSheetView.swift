@@ -34,7 +34,8 @@ public struct EpisodeDetailSheetView: View {
                         overview: state.overview,
                         rating: state.rating as? Double,
                         voteCount: state.voteCount as? Int64,
-                        isWatched: state.isWatched
+                        isWatched: state.isWatched,
+                        playCount: state.playCount as? Int
                     )
                 ) {
                     let actions = Array(state.availableActions)
@@ -63,6 +64,26 @@ public struct EpisodeDetailSheetView: View {
                 presenter.dispatch(action: EpisodeSheetActionMessageShown(id: message.id))
             }
         }
+        .alert(
+            state.removeWatchConfirmation?.title ?? "",
+            isPresented: Binding(
+                get: { state.removeWatchConfirmation != nil },
+                set: { isPresented in
+                    if !isPresented { presenter.dispatch(action: EpisodeSheetActionRemoveWatchDismissed()) }
+                }
+            )
+        ) {
+            if let confirmation = state.removeWatchConfirmation {
+                Button(confirmation.confirmLabel, role: .destructive) {
+                    presenter.dispatch(action: EpisodeSheetActionRemoveWatchConfirmed())
+                }
+                Button(confirmation.dismissLabel, role: .cancel) {
+                    presenter.dispatch(action: EpisodeSheetActionRemoveWatchDismissed())
+                }
+            }
+        } message: {
+            Text(state.removeWatchConfirmation?.message ?? "")
+        }
     }
 
     private var rateActionLabel: String {
@@ -72,16 +93,23 @@ public struct EpisodeDetailSheetView: View {
     @ViewBuilder
     private func actionView(for action: EpisodeSheetActionUi) -> some View {
         switch action.item {
-        case .toggleWatched:
+        case .markWatched:
             SheetActionItem(
-                icon: state.isWatched ? "checkmark.circle.fill" : "checkmark.circle",
+                icon: state.isWatched ? "arrow.counterclockwise" : "checkmark.circle",
                 label: action.label,
                 isEnabled: !state.isTogglingWatched,
                 showProgress: state.isTogglingWatched,
                 action: {
                     Haptics.impact(isEnabled: hapticFeedbackEnabled)
-                    presenter.dispatch(action: EpisodeSheetActionToggleWatched())
+                    presenter.dispatch(action: EpisodeSheetActionMarkWatched())
                 }
+            )
+        case .markUnwatched:
+            SheetActionItem(
+                icon: "checkmark.circle.badge.xmark",
+                label: action.label,
+                isEnabled: !state.isTogglingWatched,
+                action: { presenter.dispatch(action: EpisodeSheetActionMarkUnwatched()) }
             )
         case .openShow:
             SheetActionItem(

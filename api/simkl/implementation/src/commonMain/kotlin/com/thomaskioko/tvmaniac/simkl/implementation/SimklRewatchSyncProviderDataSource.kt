@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchEpisode
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
@@ -103,17 +104,26 @@ public class SimklRewatchSyncProviderDataSource(
     }
 }
 
-private fun SimklRewatchShow.toRemoteRewatchSession(): RemoteRewatchSession = RemoteRewatchSession(
-    providerSessionId = rewatchId,
-    seasonNumber = null,
-    episodeNumber = null,
-    episodeCount = watchedEpisodesCount?.toLong()?.takeIf { it > 0 },
-    lastWatchedAt = lastWatchedAt?.toEpochMillis(),
-    status = RemoteRewatchSessionStatus.fromRaw(rewatchStatus),
-    startedAt = seasons
-        .flatMap { season -> season.episodes }
-        .mapNotNull { episode -> episode.watchedAt?.toEpochMillis() }
-        .minOrNull(),
-)
+private fun SimklRewatchShow.toRemoteRewatchSession(): RemoteRewatchSession {
+    val episodes = seasons.flatMap { season ->
+        season.episodes.mapNotNull { episode ->
+            val seasonNumber = season.number ?: return@mapNotNull null
+            val episodeNumber = episode.number ?: return@mapNotNull null
+            RemoteRewatchEpisode(
+                seasonNumber = seasonNumber.toLong(),
+                episodeNumber = episodeNumber.toLong(),
+                watchedAt = episode.watchedAt?.toEpochMillis(),
+            )
+        }
+    }
+
+    return RemoteRewatchSession(
+        providerSessionId = rewatchId,
+        lastWatchedAt = lastWatchedAt?.toEpochMillis(),
+        status = RemoteRewatchSessionStatus.fromRaw(rewatchStatus),
+        startedAt = episodes.mapNotNull { it.watchedAt }.minOrNull(),
+        episodes = episodes,
+    )
+}
 
 private fun String.toEpochMillis(): Long? = runCatching { Instant.parse(this).toEpochMilliseconds() }.getOrNull()

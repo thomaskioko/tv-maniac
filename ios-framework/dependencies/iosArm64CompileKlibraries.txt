@@ -6,8 +6,8 @@ androidx.datastore:datastore-core-okio:1.2.1
 androidx.datastore:datastore-core:1.2.1
 androidx.datastore:datastore-preferences-core-iosarm64:1.2.1
 androidx.datastore:datastore-preferences-core:1.2.1
-androidx.paging:paging-common-iosarm64:3.5.0
-androidx.paging:paging-common:3.5.0
+androidx.paging:paging-common-iosarm64:3.5.1
+androidx.paging:paging-common:3.5.1
 app.cash.sqldelight:async-extensions-iosarm64:2.3.2
 app.cash.sqldelight:async-extensions:2.3.2
 app.cash.sqldelight:coroutines-extensions-iosarm64:2.3.2
@@ -48,8 +48,8 @@ dev.icerock.moko:graphics-iosarm64:0.10.0
 dev.icerock.moko:graphics:0.10.0
 dev.icerock.moko:resources-iosarm64:0.26.4
 dev.icerock.moko:resources:0.26.4
-dev.zacsweers.metro:runtime-iosarm64:1.3.2
-dev.zacsweers.metro:runtime:1.3.2
+dev.zacsweers.metro:runtime-iosarm64:1.4.0
+dev.zacsweers.metro:runtime:1.4.0
 io.github.thomaskioko.gradle.plugins:codegen-annotations-iosarm64:0.8.5
 io.github.thomaskioko.gradle.plugins:codegen-annotations:0.8.5
 io.github.thomaskioko.gradle.plugins:codegen-featureflag-annotations-iosarm64:0.8.5

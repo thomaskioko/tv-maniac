@@ -1111,6 +1111,7 @@ graph TB
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
   :domain:favorites --> :core:base
   :domain:favorites --> :data:favorites:api
   :domain:feature-flags --> :core:base
@@ -1164,6 +1165,7 @@ graph TB
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
+  :domain:seasondetails --> :data:rewatch:api
   :domain:seasondetails --> :data:seasondetails:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
@@ -1191,6 +1193,7 @@ graph TB
   :domain:statistics --> :data:database:sqldelight
   :domain:statistics --> :data:episode:api
   :domain:statistics --> :data:ratings:api
+  :domain:statistics --> :data:rewatch:api
   :domain:statistics --> :data:watch-status:api
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api
@@ -1303,9 +1306,11 @@ graph TB
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
   :features:episode-sheet:presenter --> :core:view
+  :features:episode-sheet:presenter --> :data:datastore:api
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
   :features:episode-sheet:presenter --> :domain:ratings
+  :features:episode-sheet:presenter --> :domain:rewatch
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
   :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav

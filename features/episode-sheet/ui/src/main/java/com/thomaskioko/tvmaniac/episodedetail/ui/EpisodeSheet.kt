@@ -3,8 +3,10 @@ package com.thomaskioko.tvmaniac.episodedetail.ui
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.DoneAll
 import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.RemoveDone
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +22,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -60,6 +63,19 @@ public fun EpisodeSheet(
             )
         }
     }
+
+    state.removeWatchConfirmation?.let { confirmation ->
+        TvManiacAlertDialog(
+            title = confirmation.title,
+            message = confirmation.message,
+            confirmButtonText = confirmation.confirmLabel,
+            dismissButtonText = confirmation.dismissLabel,
+            confirmButtonTestTag = EpisodeSheetTestTags.REMOVE_WATCH_CONFIRM_TEST_TAG,
+            dismissButtonTestTag = EpisodeSheetTestTags.REMOVE_WATCH_DISMISS_TEST_TAG,
+            onConfirm = { presenter.dispatch(EpisodeSheetAction.RemoveWatchConfirmed) },
+            onDismiss = { presenter.dispatch(EpisodeSheetAction.RemoveWatchDismissed) },
+        )
+    }
 }
 
 @Composable
@@ -84,15 +100,15 @@ private fun EpisodeSheetActions(
     val performHaptic = rememberHapticFeedback()
 
     state.availableActions.forEachIndexed { index, action ->
-        val isToggling = action.item == EpisodeSheetActionItem.TOGGLE_WATCHED && state.isTogglingWatched
+        val isToggling = action.item == EpisodeSheetActionItem.MARK_WATCHED && state.isTogglingWatched
         SheetActionItem(
             modifier = Modifier.testTag(EpisodeSheetTestTags.actionItem(action.item.name)),
-            icon = action.item.icon,
+            icon = action.item.icon(state.isWatched),
             label = action.label,
             enabled = !isToggling,
             showProgress = isToggling,
             onClick = {
-                if (action.item == EpisodeSheetActionItem.TOGGLE_WATCHED) performHaptic()
+                if (action.item == EpisodeSheetActionItem.MARK_WATCHED) performHaptic()
                 onAction(action.item.toAction())
             },
         )
@@ -119,18 +135,20 @@ internal fun EpisodeDetailSheetState.toEpisodeDetailInfo() = EpisodeDetailInfo(
     rating = rating,
     voteCount = voteCount,
     isWatched = isWatched,
+    playCount = playCount,
 )
 
-private val EpisodeSheetActionItem.icon: ImageVector
-    get() = when (this) {
-        EpisodeSheetActionItem.TOGGLE_WATCHED -> Icons.Outlined.Check
-        EpisodeSheetActionItem.OPEN_SHOW -> Icons.Outlined.Tv
-        EpisodeSheetActionItem.OPEN_SEASON -> Icons.Outlined.Movie
-        EpisodeSheetActionItem.UNFOLLOW -> Icons.Outlined.LinkOff
-    }
+private fun EpisodeSheetActionItem.icon(isWatched: Boolean): ImageVector = when (this) {
+    EpisodeSheetActionItem.MARK_WATCHED -> if (isWatched) Icons.Outlined.DoneAll else Icons.Outlined.Check
+    EpisodeSheetActionItem.MARK_UNWATCHED -> Icons.Outlined.RemoveDone
+    EpisodeSheetActionItem.OPEN_SHOW -> Icons.Outlined.Tv
+    EpisodeSheetActionItem.OPEN_SEASON -> Icons.Outlined.Movie
+    EpisodeSheetActionItem.UNFOLLOW -> Icons.Outlined.LinkOff
+}
 
 private fun EpisodeSheetActionItem.toAction(): EpisodeSheetAction = when (this) {
-    EpisodeSheetActionItem.TOGGLE_WATCHED -> EpisodeSheetAction.ToggleWatched
+    EpisodeSheetActionItem.MARK_WATCHED -> EpisodeSheetAction.MarkWatched
+    EpisodeSheetActionItem.MARK_UNWATCHED -> EpisodeSheetAction.MarkUnwatched
     EpisodeSheetActionItem.OPEN_SHOW -> EpisodeSheetAction.OpenShow
     EpisodeSheetActionItem.OPEN_SEASON -> EpisodeSheetAction.OpenSeason
     EpisodeSheetActionItem.UNFOLLOW -> EpisodeSheetAction.Unfollow
@@ -151,7 +169,7 @@ private fun EpisodeDetailContentAllActionsPreview() {
             voteCount = 1234,
             isWatched = false,
             availableActions = persistentListOf(
-                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -176,7 +194,7 @@ private fun EpisodeDetailContentRatedPreview() {
             isWatched = true,
             userRating = 9,
             availableActions = persistentListOf(
-                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark unwatched"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -200,7 +218,7 @@ private fun EpisodeDetailContentWatchedPreview() {
             voteCount = 856,
             isWatched = true,
             availableActions = persistentListOf(
-                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark unwatched"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                 EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -222,7 +240,53 @@ private fun EpisodeDetailContentSeasonDetailsPreview() {
             overview = "King Viserys hosts a tournament to celebrate the birth of his heir.",
             isWatched = false,
             availableActions = persistentListOf(
-                EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
+            ),
+        ),
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun EpisodeDetailContentWatchedAgainPreview() {
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "The Walking Dead: Daryl Dixon",
+            showName = "The Walking Dead",
+            seasonEpisodeNumber = "S02E01",
+            overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating = 8.5,
+            voteCount = 1234,
+            isWatched = true,
+            playCount = 3,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Watch again"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
+                EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+            ),
+        ),
+    )
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun EpisodeDetailContentSinglePlayPreview() {
+    EpisodeDetailContent(
+        state = EpisodeDetailSheetState(
+            isLoading = false,
+            episodeTitle = "The Walking Dead: Daryl Dixon",
+            showName = "The Walking Dead",
+            seasonEpisodeNumber = "S02E01",
+            overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+            rating = 8.5,
+            voteCount = 1234,
+            isWatched = true,
+            playCount = 1,
+            availableActions = persistentListOf(
+                EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
             ),
         ),
     )

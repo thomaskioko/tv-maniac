@@ -32,7 +32,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot
-            .assertActionItemDisplayed(EpisodeSheetActionItem.TOGGLE_WATCHED)
+            .assertActionItemDisplayed(EpisodeSheetActionItem.MARK_WATCHED)
             .assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SHOW)
             .assertActionItemDisplayed(EpisodeSheetActionItem.OPEN_SEASON)
             .assertActionItemDisplayed(EpisodeSheetActionItem.UNFOLLOW)
@@ -68,13 +68,13 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenEpisodeSheet_whenToggleWatchedClicked_thenMarksEpisodeWatched() = runAppFlowTest {
+    fun givenEpisodeSheet_whenMarkWatchedClicked_thenMarksEpisodeWatched() = runAppFlowTest {
         scenarios.stubAuthenticatedSync()
 
         openEpisodeSheetFromUpNextCard()
 
         episodeSheetRobot
-            .clickActionItem(EpisodeSheetActionItem.TOGGLE_WATCHED)
+            .clickActionItem(EpisodeSheetActionItem.MARK_WATCHED)
 
         homeRobot.clickMyShowsTab()
         watchlistRobot.clickShowCard(breakingBadTmdbId)
@@ -82,6 +82,31 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .assertShowDetailsDisplayed()
             .clickSeasonChip(seasonNumber = pilotSeasonNumber)
         seasonDetailsRobot.assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
+    }
+
+    @Test
+    @FlakyTests(count = 2)
+    fun givenWatchedEpisode_whenMarkedWatchedAgain_thenSheetShowsPlayCount() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+
+        rootRobot.dismissNotificationRationale()
+        discoverRobot.assertDiscoverScreenDisplayed()
+
+        openSeasonDetails()
+
+        seasonDetailsRobot.clickEpisodeRow(pilotEpisodeTraktId)
+        episodeSheetRobot
+            .assertEpisodeSheetDisplayed()
+            .assertPlayCountDoesNotExist()
+            .clickActionItem(EpisodeSheetActionItem.MARK_WATCHED)
+
+        seasonDetailsRobot
+            .assertSeasonDetailsDisplayed()
+            .clickEpisodeRow(pilotEpisodeTraktId)
+
+        episodeSheetRobot
+            .assertEpisodeSheetDisplayed()
+            .assertPlayCountDisplayed(count = 2)
     }
 
     @Test
@@ -102,6 +127,24 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .assertClearRatingButtonDisplayed()
             .clickClearRatingButton()
             .assertClearRatingButtonDoesNotExist()
+    }
+
+    private fun AppFlowScope.openSeasonDetails() {
+        homeRobot
+            .clickMyShowsTab()
+            .assertTabSelected(HomeTestTags.MY_SHOWS_TAB)
+
+        watchlistRobot
+            .scrollToShowCard(breakingBadTmdbId)
+            .clickShowCard(breakingBadTmdbId)
+
+        showDetailsRobot
+            .assertShowDetailsDisplayed()
+            .clickSeasonChip(seasonNumber = pilotSeasonNumber)
+
+        seasonDetailsRobot
+            .assertSeasonDetailsDisplayed()
+            .assertEpisodeRowDisplayed(pilotEpisodeTraktId)
     }
 
     private fun AppFlowScope.openEpisodeSheetFromUpNextCard() {

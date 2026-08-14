@@ -560,5 +560,8 @@
     <string name="label_watch_status_on_hold">En pause</string>
     <string name="label_watch_status_dropped">Abandonnées</string>
 
+    <string name="label_remove_watch_confirm_title">Retirer des épisodes vus ?</string>
+    <string name="label_remove_watch_confirm_message">\"%1$s\" ne comptera plus comme vu.</string>
+
     <string name="label_rewatch_simkl_free_tier">Simkl n\'enregistre pas les revisionnages sans forfait payant. Ce décompte reste sur cet appareil.</string>
 </resources>

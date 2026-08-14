@@ -54,6 +54,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -82,6 +86,8 @@ graph TB
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
   :data:library:api --> :data:datastore:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :domain:episode --> :core:base
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
@@ -91,6 +97,7 @@ graph TB
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

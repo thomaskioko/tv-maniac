@@ -37,6 +37,24 @@ addEpisodeToSession:
 INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at)
 VALUES (:sessionId, :episodeId, :watchedAt);
 
+addSyncedEpisodeToSession:
+INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at, synced_at)
+VALUES (:sessionId, :episodeId, :watchedAt, :syncedAt);
+
+episodeIdForNumber:
+SELECT episode.id
+FROM episode
+INNER JOIN season ON episode.season_id = season.id
+WHERE episode.show_id = :showId
+  AND season.season_number = :seasonNumber
+  AND episode.episode_number = :episodeNumber
+LIMIT 1;
+
+episodeRewatchCount:
+SELECT COUNT(*)
+FROM rewatch_session_episode
+WHERE episode_id = :episodeId;
+
 closeSession:
 UPDATE rewatch_session
 SET closed_at = :closedAt
@@ -98,10 +116,32 @@ SELECT
 FROM rewatch_session rs
 WHERE rs.id = :sessionId;
 
-playCountForEpisode:
-SELECT COUNT(*) + 1 AS play_count
+observeEpisodeRewatches:
+SELECT COUNT(*) AS rewatch_count
 FROM rewatch_session_episode
 WHERE episode_id = :episodeId;
+
+removeEpisodeRewatches:
+DELETE FROM rewatch_session_episode
+WHERE episode_id = :episodeId;
+
+removeSeasonRewatches:
+DELETE FROM rewatch_session_episode
+WHERE episode_id IN (
+    SELECT episode.id
+    FROM episode
+    INNER JOIN season ON season.id = episode.season_id
+    WHERE season.show_id = :showId AND season.season_number = :seasonNumber
+);
+
+rewatchTotals:
+SELECT
+    COUNT(*) AS viewings,
+    CAST(COALESCE(SUM(COALESCE(episode.runtime, tvshow.runtime)), 0) AS INTEGER) AS minutes
+FROM rewatch_session_episode
+INNER JOIN rewatch_session ON rewatch_session.id = rewatch_session_episode.session_id
+INNER JOIN tvshow ON tvshow.id = rewatch_session.show_id
+LEFT JOIN episode ON episode.id = rewatch_session_episode.episode_id;
 
 unsentEpisodes:
 SELECT

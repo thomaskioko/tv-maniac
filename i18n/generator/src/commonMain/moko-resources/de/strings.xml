@@ -510,6 +510,8 @@
     <string name="label_action_watch_again">Erneut ansehen</string>
     <string name="label_watch_again_confirm_title">Erneut ansehen?</string>
     <string name="label_watch_again_confirm_message">Ab jetzt markierte Folgen zählen zu einem neuen Durchlauf von \"%1$s\".</string>
+    <string name="label_remove_watch_confirm_title">Als ungesehen markieren?</string>
+    <string name="label_remove_watch_confirm_message">\"%1$s\" zählt dann nicht mehr als gesehen.</string>
     <string name="label_action_rate">Bewerten</string>
     <string name="label_action_rate_episode">Folge bewerten</string>
     <string name="label_action_remove_rating">Bewertung entfernen</string>

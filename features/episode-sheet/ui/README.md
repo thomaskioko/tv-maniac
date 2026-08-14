@@ -32,6 +32,10 @@ graph TB
     direction TB
     :core:tasks:api[api]:::multiplatform
   end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
   subgraph :data:account-manager
     direction TB
     :data:account-manager:api[api]:::multiplatform
@@ -60,6 +64,10 @@ graph TB
     direction TB
     :data:ratings:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:subscription
     direction TB
     :data:subscription:api[api]:::multiplatform
@@ -73,6 +81,7 @@ graph TB
     :domain:episode[episode]:::multiplatform
     :domain:followedshows[followedshows]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:theme[theme]:::multiplatform
   end
   subgraph :features:episode-sheet
@@ -126,6 +135,8 @@ graph TB
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :domain:episode --> :core:base
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
@@ -135,6 +146,7 @@ graph TB
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api
@@ -142,14 +154,19 @@ graph TB
   :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
   :domain:ratings --> :data:subscription:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:theme --> :i18n:generator
   :features:episode-sheet:nav --> :navigation:api
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
   :features:episode-sheet:presenter --> :core:view
+  :features:episode-sheet:presenter --> :data:datastore:api
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
   :features:episode-sheet:presenter --> :domain:ratings
+  :features:episode-sheet:presenter --> :domain:rewatch
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
   :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav

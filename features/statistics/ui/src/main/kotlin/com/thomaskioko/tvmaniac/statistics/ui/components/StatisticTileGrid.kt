@@ -130,7 +130,7 @@ private fun StatisticTileGridPreview() {
             StatisticTile(
                 id = StatisticTileId.Episodes,
                 label = "Episodes",
-                value = "1.2K",
+                value = "1.4K",
                 caption = "",
             ),
             StatisticTile(

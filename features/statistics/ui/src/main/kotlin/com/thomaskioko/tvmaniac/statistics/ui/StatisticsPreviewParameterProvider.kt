@@ -85,7 +85,7 @@ private val previewTiles: ImmutableList<StatisticTile> = persistentListOf(
     StatisticTile(
         id = StatisticTileId.Episodes,
         label = "Episodes",
-        value = "1.2K",
+        value = "1.4K",
         caption = "",
     ),
     StatisticTile(
@@ -237,7 +237,7 @@ private val previewReleaseYears: ImmutableList<ActivityBar> = persistentListOf(
 internal val contentState: StatisticsState = StatisticsState(
     isLoading = false,
     hasWatchHistory = true,
-    totalWatchTime = WatchTime(days = 12, hours = 4, minutes = 30),
+    totalWatchTime = WatchTime(days = 22, hours = 6, minutes = 30),
     tiles = previewTiles,
     mostWatchedShows = previewMostWatchedShows,
     highestRatedShows = previewHighestRatedShows,
