@@ -10,9 +10,17 @@ graph TB
     :core:base[base]:::multiplatform
     :core:view[view]:::multiplatform
   end
+  subgraph :core:connectivity
+    direction TB
+    :core:connectivity:api[api]:::multiplatform
+  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
+  end
+  subgraph :core:network-util
+    direction TB
+    :core:network-util:api[api]:::multiplatform
   end
   subgraph :data:account-manager
     direction TB
@@ -34,6 +42,10 @@ graph TB
     direction TB
     :data:followedshows:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -49,6 +61,7 @@ graph TB
 
   :core:base --> :core:logger:api
   :core:base --> :core:view
+  :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:cast:api --> :data:database:sqldelight
@@ -57,10 +70,13 @@ graph TB
   :data:episode:api --> :data:database:sqldelight
   :data:episode:api --> :data:followedshows:api
   :data:episode:api --> :data:upnext:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:seasondetails:api --> :data:database:sqldelight
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
+  :domain:seasondetails --> :data:rewatch:api
   :domain:seasondetails --> :data:seasondetails:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

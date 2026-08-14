@@ -1165,6 +1165,7 @@ graph TB
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
+  :domain:seasondetails --> :data:rewatch:api
   :domain:seasondetails --> :data:seasondetails:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api

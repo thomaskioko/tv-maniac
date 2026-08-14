@@ -154,6 +154,7 @@ graph TB
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
+  :domain:seasondetails --> :data:rewatch:api
   :domain:seasondetails --> :data:seasondetails:api
   :domain:theme --> :i18n:generator
   :features:episode-sheet:nav --> :navigation:api

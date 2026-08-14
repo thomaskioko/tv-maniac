@@ -23,6 +23,8 @@ public interface RewatchSessionDao {
 
     public fun removeEpisodeRewatches(episodeId: Long)
 
+    public fun removeSeasonRewatches(showId: Long, seasonNumber: Long)
+
     public fun observeRewatchTotals(): Flow<RewatchTotals>
 
     public fun unsentEpisodes(): List<UnsentRewatchEpisode>
