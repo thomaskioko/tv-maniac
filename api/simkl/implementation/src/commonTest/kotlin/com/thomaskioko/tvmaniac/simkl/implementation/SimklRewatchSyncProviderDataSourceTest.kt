@@ -22,6 +22,7 @@ import com.thomaskioko.tvmaniac.simkl.api.model.SimklUser
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklUserSettingsResponse
 import com.thomaskioko.tvmaniac.simkl.testing.FakeSimklRewatchRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.testing.FakeSimklUserRemoteDataSource
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -167,25 +168,45 @@ internal class SimklRewatchSyncProviderDataSourceTest {
     }
 
     @Test
-    fun `should treat a zero episode count as unknown given the response carries the sentinel`() = runTest {
+    fun `should carry no episodes given the response omits them`() = runTest {
         rewatchRemoteDataSource.setRewatchSessionsResponse(
             ApiResponse.Success(SimklRewatchItemsResponse(shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 0)))),
         )
 
         val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
 
-        sessions.first().episodeCount.shouldBeNull()
+        sessions.first().episodes.shouldBeEmpty()
     }
 
     @Test
-    fun `should treat a positive episode count as real given the extended payload is present`() = runTest {
+    fun `should carry every episode of the session given the extended payload is present`() = runTest {
         rewatchRemoteDataSource.setRewatchSessionsResponse(
-            ApiResponse.Success(SimklRewatchItemsResponse(shows = listOf(rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5)))),
+            ApiResponse.Success(
+                SimklRewatchItemsResponse(
+                    shows = listOf(
+                        rewatchShow(
+                            tmdbId = "1396",
+                            watchedEpisodesCount = 2,
+                            seasons = listOf(
+                                SimklRewatchSeason(
+                                    number = 1,
+                                    episodes = listOf(
+                                        SimklRewatchEpisode(number = 1, watchedAt = "2026-01-15T00:00:00Z"),
+                                        SimklRewatchEpisode(number = 2, watchedAt = "2026-02-01T00:00:00Z"),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 
-        val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
+        val episodes = source.readRewatchSessions(providerShowId = 1396L).getOrThrow().first().episodes
 
-        sessions.first().episodeCount shouldBe 5L
+        episodes.map { it.episodeNumber } shouldBe listOf(1L, 2L)
+        episodes.first().seasonNumber shouldBe 1L
+        episodes.first().watchedAt shouldBe Instant.parse("2026-01-15T00:00:00Z").toEpochMilliseconds()
     }
 
     @Test
@@ -207,8 +228,8 @@ internal class SimklRewatchSyncProviderDataSourceTest {
             ApiResponse.Success(
                 SimklRewatchItemsResponse(
                     shows = listOf(
-                        rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5, isRewatch = false),
-                        rewatchShow(tmdbId = "1396", watchedEpisodesCount = 3, isRewatch = true),
+                        rewatchShow(tmdbId = "1396", watchedEpisodesCount = 5, isRewatch = false, rewatchId = 2002L),
+                        rewatchShow(tmdbId = "1396", watchedEpisodesCount = 3, isRewatch = true, rewatchId = 3003L),
                     ),
                 ),
             ),
@@ -217,7 +238,7 @@ internal class SimklRewatchSyncProviderDataSourceTest {
         val sessions = source.readRewatchSessions(providerShowId = 1396L).getOrThrow()
 
         sessions.size shouldBe 1
-        sessions.first().episodeCount shouldBe 3L
+        sessions.first().providerSessionId shouldBe 3003L
     }
 
     @Test

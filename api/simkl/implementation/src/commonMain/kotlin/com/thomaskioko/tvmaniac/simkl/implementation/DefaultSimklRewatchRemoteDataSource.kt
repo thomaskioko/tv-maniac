@@ -32,6 +32,7 @@ public class DefaultSimklRewatchRemoteDataSource(
                 path("sync/all-items/shows")
                 parameter("allow_rewatch", "yes")
                 parameter("extended", "full")
+                parameter("episode_watched_at", "yes")
                 dateFrom?.let { parameter("date_from", it) }
             }
         }

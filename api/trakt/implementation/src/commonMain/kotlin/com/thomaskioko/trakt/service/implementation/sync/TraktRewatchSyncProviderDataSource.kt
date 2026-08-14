@@ -4,7 +4,9 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchClose
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchEpisode
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWrite
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSyncProviderDataSource
@@ -62,17 +64,32 @@ public class TraktRewatchSyncProviderDataSource(
     override suspend fun closeRewatch(close: RemoteRewatchClose): ApiResponse<Unit> = ApiResponse.Success(Unit)
 }
 
-private fun TraktWatchedShowResponse.toRemoteRewatchSessions(): List<RemoteRewatchSession> =
-    seasons.orEmpty().flatMap { season ->
+private fun TraktWatchedShowResponse.toRemoteRewatchSessions(): List<RemoteRewatchSession> {
+    val episodes = seasons.orEmpty().flatMap { season ->
         season.episodes.mapNotNull { episode ->
             val plays = episode.plays ?: return@mapNotNull null
             if (plays <= 1L) return@mapNotNull null
-            RemoteRewatchSession(
-                providerSessionId = null,
+            RemoteRewatchEpisode(
                 seasonNumber = season.number,
                 episodeNumber = episode.number,
-                episodeCount = plays - 1,
-                lastWatchedAt = episode.lastWatchedAt?.let { runCatching { Instant.parse(it).toEpochMilliseconds() }.getOrNull() },
+                watchedAt = episode.lastWatchedAt?.toEpochMillis(),
+                viewings = plays - 1,
             )
         }
     }
+
+    if (episodes.isEmpty()) return emptyList()
+
+    val watchedAt = episodes.mapNotNull { it.watchedAt }
+    return listOf(
+        RemoteRewatchSession(
+            providerSessionId = null,
+            lastWatchedAt = watchedAt.maxOrNull(),
+            status = RemoteRewatchSessionStatus.CLOSED,
+            startedAt = watchedAt.minOrNull(),
+            episodes = episodes,
+        ),
+    )
+}
+
+private fun String.toEpochMillis(): Long? = runCatching { Instant.parse(this).toEpochMilliseconds() }.getOrNull()

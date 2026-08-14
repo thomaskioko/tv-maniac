@@ -165,21 +165,46 @@ public class DefaultRewatchRepository(
 
     private fun backfillSessions(showId: Long, sessions: List<RemoteRewatchSession>) {
         val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
+        val restored = mutableMapOf<Long, RestoredEpisode>()
 
         for (session in sessions) {
-            val providerSessionId = session.providerSessionId ?: continue
             val startedAt = session.startedAt ?: session.lastWatchedAt ?: continue
-            rewatchSessionDao.upsertProviderSession(
+            val localSessionId = rewatchSessionDao.upsertProviderSession(
                 showId = localShowId,
-                providerSessionId = providerSessionId,
+                providerSessionId = session.providerSessionId ?: SESSIONLESS_PROVIDER_ID,
                 startedAt = startedAt,
-                closedAt = when (session.status) {
-                    RemoteRewatchSessionStatus.ACTIVE -> null
-                    RemoteRewatchSessionStatus.CLOSED,
-                    RemoteRewatchSessionStatus.COMPLETED,
-                    -> session.lastWatchedAt ?: startedAt
+                closedAt = when {
+                    session.providerSessionId == null -> session.lastWatchedAt ?: startedAt
+                    session.status == RemoteRewatchSessionStatus.ACTIVE -> null
+                    else -> session.lastWatchedAt ?: startedAt
                 },
             )
+
+            for (episode in session.episodes) {
+                val episodeId = rewatchSessionDao.episodeIdForNumber(
+                    showId = localShowId,
+                    seasonNumber = episode.seasonNumber,
+                    episodeNumber = episode.episodeNumber,
+                ) ?: continue
+
+                restored[episodeId] = RestoredEpisode(
+                    sessionId = localSessionId,
+                    watchedAt = episode.watchedAt ?: startedAt,
+                    viewings = (restored[episodeId]?.viewings ?: 0) + episode.viewings,
+                )
+            }
+        }
+
+        for ((episodeId, episode) in restored) {
+            val missing = episode.viewings - rewatchSessionDao.episodeRewatchCount(episodeId)
+            repeat(missing.coerceAtLeast(0).toInt()) {
+                rewatchSessionDao.addSyncedEpisodeToSession(
+                    sessionId = episode.sessionId,
+                    episodeId = episodeId,
+                    watchedAt = episode.watchedAt,
+                    syncedAt = dateTimeProvider.nowMillis(),
+                )
+            }
         }
     }
 
@@ -250,7 +275,14 @@ public class DefaultRewatchRepository(
         is ApiResponse.Error.OfflineError -> Throwable(errorMessage)
     }
 
+    private data class RestoredEpisode(
+        val sessionId: Long,
+        val watchedAt: Long,
+        val viewings: Long,
+    )
+
     private companion object {
         private const val TAG = "rewatch_sync"
+        private const val SESSIONLESS_PROVIDER_ID = -1L
     }
 }
