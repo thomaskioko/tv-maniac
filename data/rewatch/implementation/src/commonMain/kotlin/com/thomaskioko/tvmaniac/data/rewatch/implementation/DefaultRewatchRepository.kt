@@ -126,6 +126,11 @@ public class DefaultRewatchRepository(
         rewatchSessionDao.removeEpisodeRewatches(episodeId)
     }
 
+    override suspend fun removeSeasonRewatches(showId: Long, seasonNumber: Long) {
+        val localShowId = tvShowsDao.getLocalShowIdByTmdbId(showId) ?: return
+        rewatchSessionDao.removeSeasonRewatches(showId = localShowId, seasonNumber = seasonNumber)
+    }
+
     override suspend fun supportsRewatch(): Boolean = activeSource()?.supportsRewatch() ?: true
 
     override suspend fun syncPendingRewatches() {

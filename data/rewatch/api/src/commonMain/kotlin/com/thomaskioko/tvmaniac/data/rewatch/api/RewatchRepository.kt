@@ -28,6 +28,8 @@ public interface RewatchRepository {
 
     public suspend fun removeEpisodeRewatches(episodeId: Long)
 
+    public suspend fun removeSeasonRewatches(showId: Long, seasonNumber: Long)
+
     public fun observeRewatchTotals(): Flow<RewatchTotals>
 
     public suspend fun supportsRewatch(): Boolean

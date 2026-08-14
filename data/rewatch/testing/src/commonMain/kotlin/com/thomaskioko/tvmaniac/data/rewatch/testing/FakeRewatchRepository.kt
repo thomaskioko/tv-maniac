@@ -17,6 +17,7 @@ public class FakeRewatchRepository : RewatchRepository {
     private val rewatchesByEpisode = MutableStateFlow<Map<Long, Long>>(emptyMap())
     private val statusByShow = MutableStateFlow<Map<Long, RewatchStatus>>(emptyMap())
     private val totals = MutableStateFlow(RewatchTotals())
+    private val removedSeasons = mutableListOf<Pair<Long, Long>>()
     private var supportsRewatchValue: Boolean = true
     private var remoteSessionsByShow: Map<Long, List<RemoteRewatchSession>> = emptyMap()
     private var syncException: Throwable? = null
@@ -103,6 +104,12 @@ public class FakeRewatchRepository : RewatchRepository {
     override suspend fun removeEpisodeRewatches(episodeId: Long) {
         rewatchesByEpisode.value -= episodeId
     }
+
+    override suspend fun removeSeasonRewatches(showId: Long, seasonNumber: Long) {
+        removedSeasons += showId to seasonNumber
+    }
+
+    public fun removedSeasons(): List<Pair<Long, Long>> = removedSeasons.toList()
 
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
 

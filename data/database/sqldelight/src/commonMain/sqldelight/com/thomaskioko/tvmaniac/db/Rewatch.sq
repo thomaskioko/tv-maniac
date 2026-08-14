@@ -107,6 +107,15 @@ removeEpisodeRewatches:
 DELETE FROM rewatch_session_episode
 WHERE episode_id = :episodeId;
 
+removeSeasonRewatches:
+DELETE FROM rewatch_session_episode
+WHERE episode_id IN (
+    SELECT episode.id
+    FROM episode
+    INNER JOIN season ON season.id = episode.season_id
+    WHERE season.show_id = :showId AND season.season_number = :seasonNumber
+);
+
 rewatchTotals:
 SELECT
     COUNT(*) AS viewings,

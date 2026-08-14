@@ -100,6 +100,10 @@ public class DefaultRewatchSessionDao(
         queries.removeEpisodeRewatches(Id(episodeId))
     }
 
+    override fun removeSeasonRewatches(showId: Long, seasonNumber: Long) {
+        queries.removeSeasonRewatches(showId = Id(showId), seasonNumber = seasonNumber)
+    }
+
     override fun unsentEpisodes(): List<UnsentRewatchEpisode> =
         queries.unsentEpisodes().executeAsList().map { it.toUnsentRewatchEpisode() }
 

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-class MarkEpisodeUnwatchedInteractorTest {
+internal class MarkEpisodeUnwatchedInteractorTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val rewatchRepository = FakeRewatchRepository()
 

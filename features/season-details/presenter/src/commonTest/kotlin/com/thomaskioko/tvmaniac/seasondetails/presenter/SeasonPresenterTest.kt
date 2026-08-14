@@ -1385,6 +1385,7 @@ class SeasonPresenterTest {
             ),
             markSeasonUnwatchedInteractor = MarkSeasonUnwatchedInteractor(
                 episodeRepository = episodeRepository,
+                rewatchRepository = rewatchRepository,
             ),
             fetchPreviousSeasonsInteractor = FetchPreviousSeasonsInteractor(
                 seasonDetailsRepository = seasonDetailsRepository,

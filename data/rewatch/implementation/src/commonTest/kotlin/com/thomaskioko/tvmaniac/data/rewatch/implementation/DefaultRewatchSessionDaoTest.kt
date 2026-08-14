@@ -98,6 +98,26 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should clear the plays of a season given the season is removed from watched`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        dao.removeSeasonRewatches(showId = showId, seasonNumber = 1L)
+
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
+    }
+
+    @Test
+    fun `should keep the plays of other seasons given one season is removed from watched`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        dao.removeSeasonRewatches(showId = showId, seasonNumber = 2L)
+
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 1L
+    }
+
+    @Test
     fun `should report zero totals given no episode was watched again`() = runTest {
         val totals = dao.observeRewatchTotals().first()
 
