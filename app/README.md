@@ -1192,6 +1192,7 @@ graph TB
   :domain:statistics --> :data:database:sqldelight
   :domain:statistics --> :data:episode:api
   :domain:statistics --> :data:ratings:api
+  :domain:statistics --> :data:rewatch:api
   :domain:statistics --> :data:watch-status:api
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api

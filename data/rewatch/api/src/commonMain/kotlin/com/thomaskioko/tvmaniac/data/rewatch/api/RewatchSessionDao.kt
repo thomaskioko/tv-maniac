@@ -23,6 +23,8 @@ public interface RewatchSessionDao {
 
     public fun removeEpisodeRewatches(episodeId: Long)
 
+    public fun observeRewatchTotals(): Flow<RewatchTotals>
+
     public fun unsentEpisodes(): List<UnsentRewatchEpisode>
 
     public fun markEpisodeSynced(rowId: Long, syncedAt: Long)

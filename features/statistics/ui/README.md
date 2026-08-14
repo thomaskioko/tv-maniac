@@ -48,6 +48,10 @@ graph TB
     direction TB
     :data:ratings:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:subscription
     direction TB
     :data:subscription:api[api]:::multiplatform
@@ -103,12 +107,15 @@ graph TB
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:watch-status:api --> :data:database:sqldelight
   :domain:statistics --> :core:base
   :domain:statistics --> :core:util:api
   :domain:statistics --> :data:database:sqldelight
   :domain:statistics --> :data:episode:api
   :domain:statistics --> :data:ratings:api
+  :domain:statistics --> :data:rewatch:api
   :domain:statistics --> :data:watch-status:api
   :domain:theme --> :i18n:generator
   :features:show-details:nav --> :navigation:api

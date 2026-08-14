@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchCoverage
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchTotals
 import com.thomaskioko.tvmaniac.data.rewatch.api.UnsentRewatchEpisode
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Rewatch_session
@@ -87,6 +88,11 @@ public class DefaultRewatchSessionDao(
 
     override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> =
         queries.observeEpisodeRewatches(Id(episodeId))
+            .asFlow()
+            .mapToOne(dispatchers.databaseRead)
+
+    override fun observeRewatchTotals(): Flow<RewatchTotals> =
+        queries.rewatchTotals { viewings, minutes -> RewatchTotals(viewings = viewings, minutes = minutes) }
             .asFlow()
             .mapToOne(dispatchers.databaseRead)
 

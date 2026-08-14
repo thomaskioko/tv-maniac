@@ -107,6 +107,15 @@ removeEpisodeRewatches:
 DELETE FROM rewatch_session_episode
 WHERE episode_id = :episodeId;
 
+rewatchTotals:
+SELECT
+    COUNT(*) AS viewings,
+    CAST(COALESCE(SUM(COALESCE(episode.runtime, tvshow.runtime)), 0) AS INTEGER) AS minutes
+FROM rewatch_session_episode
+INNER JOIN rewatch_session ON rewatch_session.id = rewatch_session_episode.session_id
+INNER JOIN tvshow ON tvshow.id = rewatch_session.show_id
+LEFT JOIN episode ON episode.id = rewatch_session_episode.episode_id;
+
 unsentEpisodes:
 SELECT
     rse.id AS row_id,
