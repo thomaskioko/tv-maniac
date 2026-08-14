@@ -34,7 +34,8 @@ public struct EpisodeDetailSheetView: View {
                         overview: state.overview,
                         rating: state.rating as? Double,
                         voteCount: state.voteCount as? Int64,
-                        isWatched: state.isWatched
+                        isWatched: state.isWatched,
+                        playCount: state.playCount as? Int
                     )
                 ) {
                     let actions = Array(state.availableActions)
@@ -94,7 +95,7 @@ public struct EpisodeDetailSheetView: View {
         switch action.item {
         case .markWatched:
             SheetActionItem(
-                icon: state.isWatched ? "checkmark.circle.fill" : "checkmark.circle",
+                icon: state.isWatched ? "arrow.counterclockwise" : "checkmark.circle",
                 label: action.label,
                 isEnabled: !state.isTogglingWatched,
                 showProgress: state.isTogglingWatched,
@@ -105,7 +106,7 @@ public struct EpisodeDetailSheetView: View {
             )
         case .markUnwatched:
             SheetActionItem(
-                icon: "xmark.circle",
+                icon: "checkmark.circle.badge.xmark",
                 label: action.label,
                 isEnabled: !state.isTogglingWatched,
                 action: { presenter.dispatch(action: EpisodeSheetActionMarkUnwatched()) }
