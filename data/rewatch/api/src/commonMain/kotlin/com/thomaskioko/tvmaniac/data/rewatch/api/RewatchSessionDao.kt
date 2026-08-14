@@ -7,6 +7,12 @@ public interface RewatchSessionDao {
 
     public fun addEpisodeToSession(sessionId: Long, episodeId: Long, watchedAt: Long): Long
 
+    public fun addSyncedEpisodeToSession(sessionId: Long, episodeId: Long, watchedAt: Long, syncedAt: Long)
+
+    public fun episodeIdForNumber(showId: Long, seasonNumber: Long, episodeNumber: Long): Long?
+
+    public fun episodeRewatchCount(episodeId: Long): Long
+
     public fun closeSession(sessionId: Long, closedAt: Long)
 
     public fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>>
@@ -38,7 +44,7 @@ public interface RewatchSessionDao {
         providerSessionId: Long,
         startedAt: Long,
         closedAt: Long?,
-    )
+    ): Long
 
     public fun clearAll()
 }

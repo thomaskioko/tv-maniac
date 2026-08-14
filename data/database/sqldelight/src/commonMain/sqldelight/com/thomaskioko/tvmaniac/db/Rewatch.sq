@@ -37,6 +37,24 @@ addEpisodeToSession:
 INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at)
 VALUES (:sessionId, :episodeId, :watchedAt);
 
+addSyncedEpisodeToSession:
+INSERT INTO rewatch_session_episode(session_id, episode_id, watched_at, synced_at)
+VALUES (:sessionId, :episodeId, :watchedAt, :syncedAt);
+
+episodeIdForNumber:
+SELECT episode.id
+FROM episode
+INNER JOIN season ON episode.season_id = season.id
+WHERE episode.show_id = :showId
+  AND season.season_number = :seasonNumber
+  AND episode.episode_number = :episodeNumber
+LIMIT 1;
+
+episodeRewatchCount:
+SELECT COUNT(*)
+FROM rewatch_session_episode
+WHERE episode_id = :episodeId;
+
 closeSession:
 UPDATE rewatch_session
 SET closed_at = :closedAt
