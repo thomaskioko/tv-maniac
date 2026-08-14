@@ -146,6 +146,7 @@ graph TB
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
+  :domain:seasondetails --> :data:rewatch:api
   :domain:seasondetails --> :data:seasondetails:api
   :features:episode-sheet:nav --> :navigation:api
   :features:rating-sheet:nav --> :data:ratings:api
