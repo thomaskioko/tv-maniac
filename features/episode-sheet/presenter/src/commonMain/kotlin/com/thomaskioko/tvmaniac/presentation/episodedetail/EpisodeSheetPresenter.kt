@@ -76,6 +76,7 @@ public class EpisodeSheetPresenter internal constructor(
     private val actionLoadingState = ObservableLoadingCounter()
     private val showRemoveWatchConfirmation = MutableStateFlow(false)
     private var currentEpisode: EpisodeById? = null
+    private var isMarking: Boolean = false
 
     public val state: StateFlow<EpisodeDetailSheetState> = combine(
         observeEpisodeByIdInteractor.flow,
@@ -144,7 +145,8 @@ public class EpisodeSheetPresenter internal constructor(
 
     private fun markWatched() {
         val episode = currentEpisode ?: return
-        if (state.value.isTogglingWatched) return
+        if (isMarking) return
+        isMarking = true
         val wasWatched = episode.is_watched != 0L
         appScopeLauncher.launch(TAG) {
             val markStatus = if (wasWatched) {
@@ -167,6 +169,7 @@ public class EpisodeSheetPresenter internal constructor(
                 )
             }
             markStatus.collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            isMarking = false
             val shouldRate = !wasWatched && shouldPromptForRatingInteractor(
                 ShouldPromptForRatingInteractor.Param(
                     showId = episode.show_id.id,
@@ -191,7 +194,8 @@ public class EpisodeSheetPresenter internal constructor(
 
     private fun markUnwatched() {
         val episode = currentEpisode ?: return
-        if (state.value.isTogglingWatched) return
+        if (isMarking) return
+        isMarking = true
         appScopeLauncher.launch(TAG) {
             markEpisodeUnwatchedInteractor(
                 MarkEpisodeUnwatchedParams(
@@ -199,6 +203,7 @@ public class EpisodeSheetPresenter internal constructor(
                     episodeId = episode.episode_id.id,
                 ),
             ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            isMarking = false
             coroutineScope.launch { navigator.dismissOverlay() }
         }
     }

@@ -366,6 +366,7 @@ internal class ShowDetailsPresenterTest {
             ),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
+                rewatchRepository = rewatchRepository,
             ),
             datastoreRepository = datastoreRepository,
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,

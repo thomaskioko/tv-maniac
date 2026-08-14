@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -63,6 +64,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     )
     private val seasonsRepository = FakeSeasonsRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
@@ -349,6 +351,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
             ),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
+                rewatchRepository = rewatchRepository,
             ),
             datastoreRepository = datastoreRepository,
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,

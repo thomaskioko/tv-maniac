@@ -90,6 +90,10 @@ public class DefaultRewatchSessionDao(
             .asFlow()
             .mapToOne(dispatchers.databaseRead)
 
+    override fun removeEpisodeRewatches(episodeId: Long) {
+        queries.removeEpisodeRewatches(Id(episodeId))
+    }
+
     override fun unsentEpisodes(): List<UnsentRewatchEpisode> =
         queries.unsentEpisodes().executeAsList().map { it.toUnsentRewatchEpisode() }
 

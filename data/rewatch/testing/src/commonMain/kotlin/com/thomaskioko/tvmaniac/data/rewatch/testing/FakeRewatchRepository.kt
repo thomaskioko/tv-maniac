@@ -92,6 +92,10 @@ public class FakeRewatchRepository : RewatchRepository {
     override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> =
         rewatchesByEpisode.asStateFlow().map { it[episodeId] ?: 0L }
 
+    override suspend fun removeEpisodeRewatches(episodeId: Long) {
+        rewatchesByEpisode.value -= episodeId
+    }
+
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
 
     override suspend fun syncPendingRewatches() {

@@ -910,6 +910,7 @@ graph TB
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
   :domain:favorites --> :core:base
   :domain:favorites --> :data:favorites:api
   :domain:feature-flags --> :core:base
