@@ -98,6 +98,26 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should report zero totals given no episode was watched again`() = runTest {
+        val totals = dao.observeRewatchTotals().first()
+
+        totals.viewings shouldBe 0L
+        totals.minutes shouldBe 0L
+    }
+
+    @Test
+    fun `should add the episode runtime for each viewing given episodes were watched again`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = SECOND_REWATCHED_AT)
+
+        val totals = dao.observeRewatchTotals().first()
+
+        totals.viewings shouldBe 2L
+        totals.minutes shouldBe 80L
+    }
+
+    @Test
     fun `should return no rewatches given no rewatch session exists for an episode`() = runTest {
         dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }

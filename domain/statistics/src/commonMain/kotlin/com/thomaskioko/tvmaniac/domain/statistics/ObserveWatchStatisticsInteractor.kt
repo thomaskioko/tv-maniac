@@ -1,8 +1,10 @@
 package com.thomaskioko.tvmaniac.domain.statistics
 
+import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
 import com.thomaskioko.tvmaniac.data.ratings.api.HighestRatedShow
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusRepository
@@ -15,6 +17,7 @@ public class ObserveWatchStatisticsInteractor(
     private val episodeRepository: EpisodeRepository,
     private val showWatchStatusRepository: ShowWatchStatusRepository,
     private val ratingsRepository: RatingsRepository,
+    private val rewatchRepository: RewatchRepository,
     private val calculator: WatchStatisticsCalculator,
 ) : SubjectInteractor<Unit, WatchStatistics>() {
 
@@ -24,7 +27,8 @@ public class ObserveWatchStatisticsInteractor(
         showWatchStatusRepository.observeShowCountsByStatus(),
         observeRatings(),
         episodeRepository.observeWatchedShowComposition(),
-    ) { watches, mostWatchedShows, showCountsByStatus, ratings, showComposition ->
+        rewatchRepository.observeRewatchTotals(),
+    ) { watches, mostWatchedShows, showCountsByStatus, ratings, showComposition, rewatchTotals ->
         calculator.calculate(
             watches = watches,
             mostWatchedShows = mostWatchedShows,
@@ -32,6 +36,7 @@ public class ObserveWatchStatisticsInteractor(
             ratingCounts = ratings.distribution,
             showComposition = showComposition,
             highestRatedShows = ratings.highestRated,
+            rewatchTotals = rewatchTotals,
         )
     }
 

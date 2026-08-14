@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSyncProviderDataSource
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchTotals
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
@@ -118,6 +119,8 @@ public class DefaultRewatchRepository(
     }
 
     override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> = rewatchSessionDao.observeEpisodeRewatches(episodeId)
+
+    override fun observeRewatchTotals(): Flow<RewatchTotals> = rewatchSessionDao.observeRewatchTotals()
 
     override suspend fun removeEpisodeRewatches(episodeId: Long) {
         rewatchSessionDao.removeEpisodeRewatches(episodeId)
