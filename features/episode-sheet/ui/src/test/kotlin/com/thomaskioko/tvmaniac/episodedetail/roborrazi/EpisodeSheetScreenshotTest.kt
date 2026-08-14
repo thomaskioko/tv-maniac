@@ -160,4 +160,54 @@ class EpisodeSheetScreenshotTest {
             }
         }
     }
+
+    @Test
+    fun episodeDetailWatchedAgain() {
+        composeTestRule.captureMultiDevice("EpisodeDetailWatchedAgain") {
+            TvManiacBackground {
+                EpisodeDetailContent(
+                    state = EpisodeDetailSheetState(
+                        isLoading = false,
+                        episodeTitle = "The Walking Dead: Daryl Dixon",
+                        showName = "The Walking Dead",
+                        seasonEpisodeNumber = "S02E01",
+                        overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                        rating = 8.5,
+                        voteCount = 1234,
+                        isWatched = true,
+                        playCount = 3,
+                        availableActions = persistentListOf(
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Watch again"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                        ),
+                    ),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun episodeDetailSinglePlay() {
+        composeTestRule.captureMultiDevice("EpisodeDetailSinglePlay") {
+            TvManiacBackground {
+                EpisodeDetailContent(
+                    state = EpisodeDetailSheetState(
+                        isLoading = false,
+                        episodeTitle = "The Walking Dead: Daryl Dixon",
+                        showName = "The Walking Dead",
+                        seasonEpisodeNumber = "S02E01",
+                        overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                        rating = 8.5,
+                        voteCount = 1234,
+                        isWatched = true,
+                        playCount = 1,
+                        availableActions = persistentListOf(
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
+                        ),
+                    ),
+                )
+            }
+        }
+    }
 }

@@ -30,6 +30,15 @@ internal class EpisodeSheetRobot(composeUi: ComposeUiTest) : BaseRobot<EpisodeSh
         click(tag)
     }
 
+    fun assertPlayCountDisplayed(count: Int) = apply {
+        assertDisplayed(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG)
+        assertTextEquals(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG, "$count")
+    }
+
+    fun assertPlayCountDoesNotExist() = apply {
+        assertDoesNotExist(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG)
+    }
+
     fun clickRateAction() = apply {
         val tag = EpisodeSheetTestTags.actionItem("rate")
         scrollTo(tag)
