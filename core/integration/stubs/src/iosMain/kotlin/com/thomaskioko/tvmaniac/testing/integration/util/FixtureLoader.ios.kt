@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.integration.util
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSProcessInfo
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
@@ -7,6 +8,7 @@ import platform.Foundation.stringWithContentsOfFile
 
 public const val FIXTURE_DIR_ENV: String = "TVMANIAC_FIXTURE_DIR"
 
+@OptIn(ExperimentalForeignApi::class)
 internal actual fun readFixture(resourcePath: String): String {
     val directory = NSProcessInfo.processInfo.environment[FIXTURE_DIR_ENV] as String?
     checkNotNull(directory) {
