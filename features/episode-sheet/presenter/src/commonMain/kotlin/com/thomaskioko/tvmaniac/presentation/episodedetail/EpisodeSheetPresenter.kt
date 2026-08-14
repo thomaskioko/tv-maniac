@@ -40,6 +40,7 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -73,6 +74,7 @@ public class EpisodeSheetPresenter internal constructor(
     private val coroutineScope = componentContext.coroutineScope()
     private val uiMessageManager = UiMessageManager()
     private val actionLoadingState = ObservableLoadingCounter()
+    private val showRemoveWatchConfirmation = MutableStateFlow(false)
     private var currentEpisode: EpisodeById? = null
 
     public val state: StateFlow<EpisodeDetailSheetState> = combine(
@@ -82,7 +84,8 @@ public class EpisodeSheetPresenter internal constructor(
         observeRatingInteractor.flow,
         observeEpisodeRewatchesInteractor.flow,
         datastoreRepository.observeMultiplePlaysEnabled(),
-    ) { episode, message, isTogglingWatched, userRating, rewatches, multiplePlaysEnabled ->
+        showRemoveWatchConfirmation,
+    ) { episode, message, isTogglingWatched, userRating, rewatches, multiplePlaysEnabled, confirmRemoval ->
         currentEpisode = episode
         val current = episode?.toState(
             source = param.source,
@@ -94,6 +97,11 @@ public class EpisodeSheetPresenter internal constructor(
             message = message,
             isTogglingWatched = isTogglingWatched,
             userRating = userRating,
+            removeWatchConfirmation = if (confirmRemoval) {
+                removeWatchConfirmation(current.episodeTitle, localizer)
+            } else {
+                null
+            },
         )
     }.stateIn(
         scope = coroutineScope,
@@ -112,7 +120,12 @@ public class EpisodeSheetPresenter internal constructor(
     public fun dispatch(action: EpisodeSheetAction) {
         when (action) {
             is EpisodeSheetAction.MarkWatched -> markWatched()
-            is EpisodeSheetAction.MarkUnwatched -> markUnwatched()
+            is EpisodeSheetAction.MarkUnwatched -> showRemoveWatchConfirmation.value = true
+            is EpisodeSheetAction.RemoveWatchDismissed -> showRemoveWatchConfirmation.value = false
+            is EpisodeSheetAction.RemoveWatchConfirmed -> {
+                showRemoveWatchConfirmation.value = false
+                markUnwatched()
+            }
             is EpisodeSheetAction.OpenShow -> openShow()
             is EpisodeSheetAction.OpenSeason -> openSeason()
             is EpisodeSheetAction.Unfollow -> unfollowShow()

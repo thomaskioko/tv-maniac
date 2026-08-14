@@ -16,9 +16,17 @@ public data class EpisodeDetailSheetState(
     val isWatched: Boolean = false,
     val isTogglingWatched: Boolean = false,
     val playCount: Int? = null,
+    val removeWatchConfirmation: RemoveWatchConfirmation? = null,
     val userRating: Int? = null,
     val availableActions: ImmutableList<EpisodeSheetActionUi> = persistentListOf(),
     val message: UiMessage? = null,
+)
+
+public data class RemoveWatchConfirmation(
+    val title: String,
+    val message: String,
+    val confirmLabel: String,
+    val dismissLabel: String,
 )
 
 public data class EpisodeSheetActionUi(
