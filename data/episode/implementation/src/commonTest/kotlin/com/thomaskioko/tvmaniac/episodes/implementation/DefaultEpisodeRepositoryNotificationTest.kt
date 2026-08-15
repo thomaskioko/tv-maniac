@@ -14,8 +14,10 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepositor
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.maps.shouldNotContainKey
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -97,6 +99,30 @@ internal class DefaultEpisodeRepositoryNotificationTest : BaseDatabaseTest() {
         scheduled shouldNotContainKey 201L
         scheduled shouldNotContainKey 301L
         scheduled shouldContainKey 401L
+    }
+
+    @Test
+    fun `should cancel every scheduled notification for the show given the whole show is marked watched`() = runTest {
+        val repository = buildRepository()
+        notificationManager.addPendingNotification(pendingNotification(id = 201, seasonNumber = 1))
+        notificationManager.addPendingNotification(pendingNotification(id = 301, seasonNumber = 2))
+        notificationManager.addPendingNotification(pendingNotification(id = 401, seasonNumber = 3))
+
+        repository.markShowWatched(showId = SHOW_ID)
+
+        notificationManager.getScheduledNotifications().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should mark the show episodes watched given the whole show is marked watched`() = runTest {
+        val repository = buildRepository()
+
+        repository.markShowWatched(showId = SHOW_ID)
+
+        database.watchedEpisodesQueries
+            .getWatchedEpisodes(showIdForTraktId(SHOW_ID))
+            .executeAsList()
+            .map { it.episode_id } shouldBe listOf(Id(EPISODE_ID))
     }
 
     private fun TestScope.buildRepository(): DefaultEpisodeRepository {

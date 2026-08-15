@@ -539,7 +539,8 @@ internal class EpisodeSheetPresenterTest {
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository, rewatchRepository),
             observeEpisodeRewatchesInteractor = ObserveEpisodeRewatchesInteractor(rewatchRepository),
-            watchAgainInteractor = WatchAgainInteractor(rewatchRepository, dateTimeProvider),
+            watchAgainInteractor = WatchAgainInteractor(rewatchRepository),
+            dateTimeProvider = dateTimeProvider,
             datastoreRepository = datastoreRepository,
             unfollowShowInteractor = UnfollowShowInteractor(
                 followedShowsRepository = followedShowsRepository,
@@ -685,8 +686,11 @@ internal class EpisodeSheetPresenterTest {
         vote_count = voteCount,
         ratings = rating,
         image_url = "https://image.url/episode.jpg",
+        runtime = 45L,
+        first_aired = null,
         season_number = 1L,
         show_name = "Breaking Bad",
         is_watched = if (isWatched) 1L else 0L,
+        watched_at = null,
     )
 }

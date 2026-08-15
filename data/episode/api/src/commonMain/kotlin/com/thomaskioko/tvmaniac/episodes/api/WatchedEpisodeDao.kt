@@ -47,6 +47,8 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodeNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     public suspend fun markAsUnwatched(
@@ -60,6 +62,7 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodes: List<EpisodeWatchParams>,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
     )
 
     public suspend fun markSeasonAsUnwatched(
@@ -72,6 +75,8 @@ public interface WatchedEpisodeDao {
         showId: Long,
         seasonNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     public suspend fun markEpisodeAndPreviousAsWatched(
@@ -80,11 +85,15 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodeNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     public suspend fun getEpisodesForSeason(
         showId: Long,
         seasonNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     ): List<EpisodeWatchParams>
 
     public suspend fun getUnwatchedEpisodeCountInPreviousSeasons(

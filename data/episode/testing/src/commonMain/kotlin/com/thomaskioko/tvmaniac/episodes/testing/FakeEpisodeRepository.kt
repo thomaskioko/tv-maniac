@@ -22,12 +22,22 @@ public data class MarkEpisodeWatchedCall(
     val seasonNumber: Long,
     val episodeNumber: Long,
     val markPreviousEpisodes: Boolean = false,
+    val watchedAt: Long? = null,
+    val useReleaseDate: Boolean = false,
 )
 
 public data class MarkSeasonWatchedCall(
     val showId: Long,
     val seasonNumber: Long,
     val markPreviousSeasons: Boolean,
+    val watchedAt: Long? = null,
+    val useReleaseDate: Boolean = false,
+)
+
+public data class MarkShowWatchedCall(
+    val showId: Long,
+    val watchedAt: Long? = null,
+    val useReleaseDate: Boolean = false,
 )
 
 public data class MarkEpisodeUnwatchedCall(
@@ -72,6 +82,9 @@ public class FakeEpisodeRepository : EpisodeRepository {
         private set
 
     public var lastMarkSeasonWatchedCall: MarkSeasonWatchedCall? = null
+        private set
+
+    public var lastMarkShowWatchedCall: MarkShowWatchedCall? = null
         private set
 
     public var lastMarkEpisodeUnwatchedCall: MarkEpisodeUnwatchedCall? = null
@@ -138,8 +151,17 @@ public class FakeEpisodeRepository : EpisodeRepository {
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
-        lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(showId, episodeId, seasonNumber, episodeNumber)
+        lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(
+            showId = showId,
+            episodeId = episodeId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
     }
 
     override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {
@@ -155,8 +177,19 @@ public class FakeEpisodeRepository : EpisodeRepository {
     override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> =
         allSeasonsWatchProgressFlow.asStateFlow()
 
-    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long) {
-        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showId, seasonNumber, markPreviousSeasons = false)
+    override suspend fun markSeasonWatched(
+        showId: Long,
+        seasonNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {
+        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            markPreviousSeasons = false,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
     }
 
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
@@ -164,21 +197,41 @@ public class FakeEpisodeRepository : EpisodeRepository {
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
         lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(
-            showId,
-            episodeId,
-            seasonNumber,
-            episodeNumber,
+            showId = showId,
+            episodeId = episodeId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
             markPreviousEpisodes = true,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
         )
     }
 
     override suspend fun markSeasonAndPreviousSeasonsWatched(
         showId: Long,
         seasonNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
-        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(showId, seasonNumber, markPreviousSeasons = true)
+        lastMarkSeasonWatchedCall = MarkSeasonWatchedCall(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            markPreviousSeasons = true,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
+    }
+
+    override suspend fun markShowWatched(showId: Long, watchedAt: Long?, useReleaseDate: Boolean) {
+        lastMarkShowWatchedCall = MarkShowWatchedCall(
+            showId = showId,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
     }
 
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {}

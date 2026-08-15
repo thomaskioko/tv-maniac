@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.core.view.InvokeStarted
 import com.thomaskioko.tvmaniac.core.view.InvokeSuccess
 import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
-import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -12,12 +11,8 @@ import kotlin.test.Test
 internal class WatchAgainInteractorTest {
 
     private val rewatchRepository = FakeRewatchRepository()
-    private val dateTimeProvider = FakeDateTimeProvider()
 
-    private val interactor = WatchAgainInteractor(
-        rewatchRepository = rewatchRepository,
-        dateTimeProvider = dateTimeProvider,
-    )
+    private val interactor = WatchAgainInteractor(rewatchRepository = rewatchRepository)
 
     @Test
     fun `should emit success given an episode is watched again`() = runTest {
@@ -62,15 +57,14 @@ internal class WatchAgainInteractorTest {
         rewatchRepository.lastAddEpisodeSessionId shouldBe firstSessionId
     }
 
-    private fun episodeWatch(watchedAt: Long): WatchAgainInteractor.Param {
-        dateTimeProvider.setCurrentTimeMillis(watchedAt)
-        return WatchAgainInteractor.Param(
+    private fun episodeWatch(watchedAt: Long): WatchAgainInteractor.Param =
+        WatchAgainInteractor.Param(
             showId = SHOW_ID,
             episodeId = EPISODE_ID,
             seasonNumber = 1L,
             episodeNumber = 3L,
+            watchedAt = watchedAt,
         )
-    }
 
     private companion object {
         private const val SHOW_ID = 84958L
