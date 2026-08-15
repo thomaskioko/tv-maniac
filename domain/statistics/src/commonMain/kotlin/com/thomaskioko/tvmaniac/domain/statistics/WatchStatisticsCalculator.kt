@@ -21,6 +21,7 @@ import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatusCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
 import com.thomaskioko.tvmaniac.domain.statistics.model.WeekdayWatchCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.YearlyWatchCount
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
@@ -50,31 +51,33 @@ public class WatchStatisticsCalculator(
     ): WatchStatistics {
         val timeZone = dateTimeProvider.getTimeZone()
         val today = dateTimeProvider.now().toLocalDateTime(timeZone).date
-        val watchedDays = watches.map { watch ->
-            WatchedDay(
-                date = Instant.fromEpochMilliseconds(watch.watchedAt).toLocalDateTime(timeZone).date,
-                minutes = watch.runtimeMinutes ?: 0L,
-            )
-        }
+        val datedWatchedDays = watches
+            .filterNot { watch -> WatchedDate.isUnknown(watch.watchedAt) }
+            .map { watch ->
+                WatchedDay(
+                    date = Instant.fromEpochMilliseconds(watch.watchedAt).toLocalDateTime(timeZone).date,
+                    minutes = watch.runtimeMinutes ?: 0L,
+                )
+            }
 
         return WatchStatistics(
-            totalWatchTime = WatchDuration(watchedDays.sumOf { it.minutes } + rewatchTotals.minutes),
+            totalWatchTime = WatchDuration(watches.sumOf { it.runtimeMinutes ?: 0L } + rewatchTotals.minutes),
             episodesWatched = watches.size.toLong() + rewatchTotals.viewings,
             showsTracked = calculateShowsTracked(showCountsByStatus),
             averageRating = calculateAverageRating(ratingCounts),
-            topWeekday = calculateTopWeekday(watchedDays),
-            streak = calculateStreak(watchedDays, today),
-            watchDaysThisYear = calculateWatchDaysThisYear(watchedDays, today),
-            watchDaysThisMonth = calculateWatchDaysThisMonth(watchedDays, today),
+            topWeekday = calculateTopWeekday(datedWatchedDays),
+            streak = calculateStreak(datedWatchedDays, today),
+            watchDaysThisYear = calculateWatchDaysThisYear(datedWatchedDays, today),
+            watchDaysThisMonth = calculateWatchDaysThisMonth(datedWatchedDays, today),
             lastThirtyDays = calculatePeriodSummary(
-                watchedDays = watchedDays,
+                watchedDays = datedWatchedDays,
                 from = today.plus(-LAST_PERIOD_DAYS, DateTimeUnit.DAY),
             ),
-            peakYear = calculatePeakYear(watchedDays),
-            dailyCounts = calculateDailyCounts(watchedDays, today),
-            yearlyCounts = calculateYearlyCounts(watchedDays),
-            monthlyCounts = calculateMonthlyCounts(watchedDays),
-            weekdayCounts = calculateWeekdayCounts(watchedDays),
+            peakYear = calculatePeakYear(datedWatchedDays),
+            dailyCounts = calculateDailyCounts(datedWatchedDays, today),
+            yearlyCounts = calculateYearlyCounts(datedWatchedDays),
+            monthlyCounts = calculateMonthlyCounts(datedWatchedDays),
+            weekdayCounts = calculateWeekdayCounts(datedWatchedDays),
             mostWatchedShows = mostWatchedShows,
             highestRatedShows = highestRatedShows,
             showsByWatchStatus = getShowsByWatchStatus(showCountsByStatus),
