@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
-import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
@@ -27,8 +26,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
+import com.thomaskioko.tvmaniac.ratingsheet.presenter.promptForEpisodeRating
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -174,19 +172,12 @@ public class UpNextPresenter internal constructor(
                     episodeNumber = action.episodeNumber,
                 ),
             ).onCompletion {
-                showRatingPrompt(showId = action.showId, episodeId = action.episodeId)
+                navigator.promptForEpisodeRating(
+                    interactor = shouldPromptForRatingInteractor,
+                    showId = action.showId,
+                    episodeId = action.episodeId,
+                )
             }
-        }
-    }
-
-    private suspend fun showRatingPrompt(showId: Long, episodeId: Long) {
-        val shouldPrompt = shouldPromptForRatingInteractor(
-            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
-        )
-        if (shouldPrompt) {
-            navigator.navigateTo(
-                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
-            )
         }
     }
 

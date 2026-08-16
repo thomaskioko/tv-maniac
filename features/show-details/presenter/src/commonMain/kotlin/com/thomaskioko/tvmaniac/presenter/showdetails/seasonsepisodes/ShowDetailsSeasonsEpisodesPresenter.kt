@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
-import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
@@ -29,8 +28,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.toContinueTrackingModels
 import com.thomaskioko.tvmaniac.presenter.showdetails.toScrollIndex
 import com.thomaskioko.tvmaniac.presenter.showdetails.toSeasonModels
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
+import com.thomaskioko.tvmaniac.ratingsheet.presenter.promptForEpisodeRating
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -155,7 +153,11 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
                         markPreviousEpisodes = false,
                     ),
                 ).onCompletion {
-                    showRatingPrompt(showId = action.showId, episodeId = action.episodeId)
+                    navigator.promptForEpisodeRating(
+                        interactor = shouldPromptForRatingInteractor,
+                        showId = action.showId,
+                        episodeId = action.episodeId,
+                    )
                 }
             }
 
@@ -194,17 +196,6 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
                 .distinctUntilChanged()
                 .filter { it }
                 .collect { syncWatchStatus(forceRefresh = true) }
-        }
-    }
-
-    private suspend fun showRatingPrompt(showId: Long, episodeId: Long) {
-        val shouldPrompt = shouldPromptForRatingInteractor(
-            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
-        )
-        if (shouldPrompt) {
-            navigator.navigateTo(
-                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
-            )
         }
     }
 
