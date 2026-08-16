@@ -477,10 +477,8 @@ public class DefaultWatchedEpisodeDao(
             .executeAsOneOrNull()
     }
 
-    private fun releaseDateOrNull(firstAired: Long?, runtimeMinutes: Long?, useReleaseDate: Boolean): Long? {
-        if (!useReleaseDate || firstAired == null) return null
-        return firstAired + (runtimeMinutes?.takeIf { it > 0 } ?: 0L) * MILLIS_PER_MINUTE
-    }
+    private fun releaseDateOrNull(firstAired: Long?, runtimeMinutes: Long?, useReleaseDate: Boolean): Long? =
+        if (useReleaseDate) WatchedDate.releaseDateMillis(firstAired, runtimeMinutes) else null
 
     private fun recalculateLastWatched(showId: Id<ShowId>, includeSpecials: Boolean) {
         database.showMetadataQueries.recalculateLastWatched(
@@ -669,9 +667,5 @@ public class DefaultWatchedEpisodeDao(
         withContext(dispatchers.databaseWrite) {
             database.watchedShowSyncLogQueries.deleteAll()
         }
-    }
-
-    private companion object {
-        private const val MILLIS_PER_MINUTE = 60_000L
     }
 }
