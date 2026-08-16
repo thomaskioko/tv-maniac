@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveEpisodeRewatchesInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
@@ -34,7 +35,7 @@ import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -53,6 +54,7 @@ public class WatchDateSelectionPresenter internal constructor(
     @Assisted private val param: WatchDateSelectionParam,
     componentContext: ComponentContext,
     observeEpisodeByIdInteractor: ObserveEpisodeByIdInteractor,
+    observeEpisodeRewatchesInteractor: ObserveEpisodeRewatchesInteractor,
     private val markWatchedAtInteractor: MarkWatchedAtInteractor,
     private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val dateTimeProvider: DateTimeProvider,
@@ -70,27 +72,29 @@ public class WatchDateSelectionPresenter internal constructor(
     private val episode: StateFlow<EpisodeById?> = observeEpisodeByIdInteractor.flow
         .stateIn(scope = coroutineScope, started = SharingStarted.Eagerly, initialValue = null)
 
-    private val title = localizer.getString(
-        if (param.isEdit) StringResourceKey.LabelWatchedDateEditTitle else StringResourceKey.LabelWatchedDateTitle,
-    )
+    private val rewatchCount: StateFlow<Long> = observeEpisodeRewatchesInteractor.flow
+        .stateIn(scope = coroutineScope, started = SharingStarted.Eagerly, initialValue = 0L)
+
+    private val sheetTitle = localizer.getString(StringResourceKey.LabelWatchedDateTitle)
+    private val editTitle = localizer.getString(StringResourceKey.LabelWatchedDateEditTitle)
     private val justNowLabel = localizer.getString(StringResourceKey.LabelWatchedDateJustNow)
     private val releaseDateLabel = localizer.getString(StringResourceKey.LabelWatchedDateReleaseDate)
     private val otherDateLabel = localizer.getString(StringResourceKey.LabelWatchedDateOther)
     private val unknownDateLabel = localizer.getString(StringResourceKey.LabelWatchedDateUnknown)
     private val unknownDateDisplayLabel = localizer.getString(StringResourceKey.LabelWatchedDateUnknownDisplay)
 
-    public val state: StateFlow<WatchDateSelectionState> = episode
-        .map { buildState(it) }
+    public val state: StateFlow<WatchDateSelectionState> = combine(episode, rewatchCount, ::buildState)
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = buildState(episode = null),
+            initialValue = buildState(episode = null, rewatchCount = 0L),
         )
 
     public val stateValue: Value<WatchDateSelectionState> = state.asValue(coroutineScope)
 
     init {
         observeEpisodeByIdInteractor(param.episodeId)
+        observeEpisodeRewatchesInteractor(param.episodeId)
     }
 
     public fun dispatch(action: WatchDateSelectionAction) {
@@ -103,14 +107,14 @@ public class WatchDateSelectionPresenter internal constructor(
         }
     }
 
-    private fun buildState(episode: EpisodeById?): WatchDateSelectionState = WatchDateSelectionState(
-        title = title,
+    private fun buildState(episode: EpisodeById?, rewatchCount: Long): WatchDateSelectionState = WatchDateSelectionState(
+        title = if (isEditing(episode, rewatchCount)) editTitle else sheetTitle,
         justNowLabel = justNowLabel,
         releaseDateLabel = releaseDateLabel,
         otherDateLabel = otherDateLabel,
         unknownDateLabel = unknownDateLabel,
         isReleaseDateEnabled = isReleaseDateEnabled(episode),
-        currentWatchedAtLabel = currentWatchedAtLabel(episode),
+        currentWatchedAtLabel = currentWatchedAtLabel(episode, rewatchCount),
         maxSelectableDate = today(),
     )
 
@@ -119,8 +123,13 @@ public class WatchDateSelectionPresenter internal constructor(
         WatchedDateTarget.SEASON, WatchedDateTarget.SHOW -> true
     }
 
-    private fun currentWatchedAtLabel(episode: EpisodeById?): String? {
-        if (!param.isEdit) return null
+    private fun isEditing(episode: EpisodeById?, rewatchCount: Long): Boolean = when (param.target) {
+        WatchedDateTarget.EPISODE -> param.isEdit && episode != null && episode.is_watched != 0L && rewatchCount == 0L
+        WatchedDateTarget.SEASON, WatchedDateTarget.SHOW -> param.isEdit
+    }
+
+    private fun currentWatchedAtLabel(episode: EpisodeById?, rewatchCount: Long): String? {
+        if (!isEditing(episode, rewatchCount)) return null
         val watchedAt = episode?.watched_at ?: return null
         return if (WatchedDate.isUnknown(watchedAt)) {
             unknownDateDisplayLabel
@@ -159,7 +168,7 @@ public class WatchDateSelectionPresenter internal constructor(
         seasonNumber = param.seasonNumber,
         episodeNumber = param.episodeNumber,
         markPrevious = param.markPrevious,
-        isEdit = param.isEdit,
+        isEdit = isEditing(episode.value, rewatchCount.value),
         watchedAt = watchedAt,
         useReleaseDate = useReleaseDate,
     )

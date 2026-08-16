@@ -20,6 +20,7 @@ kotlin {
                 api(projects.data.ratings.api)
                 api(projects.domain.episode)
                 api(projects.domain.ratings)
+                api(projects.domain.rewatch)
                 api(projects.features.ratingSheet.nav)
                 api(projects.features.watchdateSelection.nav)
                 api(projects.i18n.api)
