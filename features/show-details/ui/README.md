@@ -130,6 +130,7 @@ graph TB
   subgraph :features:rating-sheet
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
+    :features:rating-sheet:presenter[presenter]:::multiplatform
   end
   subgraph :features:root
     direction TB
@@ -202,12 +203,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:notifications --> :core:base
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
@@ -249,6 +252,15 @@ graph TB
   :domain:traktlists --> :data:user:api
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
+  :features:rating-sheet:presenter --> :core:base
+  :features:rating-sheet:presenter --> :core:logger:api
+  :features:rating-sheet:presenter --> :core:view
+  :features:rating-sheet:presenter --> :data:ratings:api
+  :features:rating-sheet:presenter --> :domain:ratings
+  :features:rating-sheet:presenter --> :features:rating-sheet:nav
+  :features:rating-sheet:presenter --> :i18n:api
+  :features:rating-sheet:presenter --> :i18n:generator
+  :features:rating-sheet:presenter --> :navigation:api
   :features:root:nav --> :domain:theme
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
@@ -271,6 +283,7 @@ graph TB
   :features:show-details:presenter --> :domain:similarshows
   :features:show-details:presenter --> :domain:traktlists
   :features:show-details:presenter --> :features:rating-sheet:nav
+  :features:show-details:presenter --> :features:rating-sheet:presenter
   :features:show-details:presenter --> :features:root:nav
   :features:show-details:presenter -.-> :features:season-details:nav
   :features:show-details:presenter --> :features:show-details:nav

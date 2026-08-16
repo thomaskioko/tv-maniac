@@ -94,9 +94,14 @@ public class FakeEpisodeRepository : EpisodeRepository {
         private set
 
     private var syncUpcomingEpisodesBehavior: (suspend () -> Unit)? = null
+    private var markEpisodeWatchedBehavior: (suspend () -> Unit)? = null
 
     public fun setSyncUpcomingEpisodesBehavior(behavior: suspend () -> Unit) {
         syncUpcomingEpisodesBehavior = behavior
+    }
+
+    public fun setMarkEpisodeWatchedBehavior(behavior: suspend () -> Unit) {
+        markEpisodeWatchedBehavior = behavior
     }
 
     public fun setEpisodeById(episode: EpisodeById?) {
@@ -154,6 +159,7 @@ public class FakeEpisodeRepository : EpisodeRepository {
         watchedAt: Long?,
         useReleaseDate: Boolean,
     ) {
+        markEpisodeWatchedBehavior?.invoke()
         lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(
             showId = showId,
             episodeId = episodeId,

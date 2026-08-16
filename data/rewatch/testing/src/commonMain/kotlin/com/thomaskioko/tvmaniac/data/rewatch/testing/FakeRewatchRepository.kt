@@ -23,6 +23,7 @@ public class FakeRewatchRepository : RewatchRepository {
     private var syncException: Throwable? = null
 
     public var lastAddEpisodeSessionId: Long? = null
+    public var lastAddEpisodeWatchedAt: Long? = null
         private set
 
     public var finishedSessionId: Long? = null
@@ -72,6 +73,7 @@ public class FakeRewatchRepository : RewatchRepository {
         watchedAt: Long,
     ) {
         lastAddEpisodeSessionId = sessionId
+        lastAddEpisodeWatchedAt = watchedAt
     }
 
     override suspend fun closeSession(sessionId: Long, closedAt: Long) {

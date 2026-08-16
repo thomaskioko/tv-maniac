@@ -129,6 +129,7 @@ graph TB
     :domain:episode[episode]:::multiplatform
     :domain:followedshows[followedshows]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
   end
@@ -152,6 +153,7 @@ graph TB
   subgraph :features:rating-sheet
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
+    :features:rating-sheet:presenter[presenter]:::multiplatform
   end
   subgraph :features:season-details
     direction TB
@@ -230,12 +232,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api
@@ -243,6 +247,9 @@ graph TB
   :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
   :domain:ratings --> :data:subscription:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api
@@ -280,6 +287,15 @@ graph TB
   :features:progress:presenter --> :navigation:api
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
+  :features:rating-sheet:presenter --> :core:base
+  :features:rating-sheet:presenter --> :core:logger:api
+  :features:rating-sheet:presenter --> :core:view
+  :features:rating-sheet:presenter --> :data:ratings:api
+  :features:rating-sheet:presenter --> :domain:ratings
+  :features:rating-sheet:presenter --> :features:rating-sheet:nav
+  :features:rating-sheet:presenter --> :i18n:api
+  :features:rating-sheet:presenter --> :i18n:generator
+  :features:rating-sheet:presenter --> :navigation:api
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
   :features:upnext:presenter --> :core:base
@@ -295,6 +311,7 @@ graph TB
   :features:upnext:presenter -.-> :features:episode-sheet:nav
   :features:upnext:presenter --> :features:progress:nav
   :features:upnext:presenter --> :features:rating-sheet:nav
+  :features:upnext:presenter --> :features:rating-sheet:presenter
   :features:upnext:presenter -.-> :features:season-details:nav
   :features:upnext:presenter -.-> :features:show-details:nav
   :features:upnext:presenter --> :navigation:api

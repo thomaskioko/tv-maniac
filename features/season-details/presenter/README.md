@@ -30,6 +30,10 @@ graph TB
     direction TB
     :core:tasks:api[api]:::multiplatform
   end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
   subgraph :data:account-manager
     direction TB
     :data:account-manager:api[api]:::multiplatform
@@ -82,6 +86,7 @@ graph TB
     direction TB
     :domain:episode[episode]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:seasondetails[seasondetails]:::multiplatform
   end
   subgraph :features:episode-sheet
@@ -133,16 +138,21 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:ratings --> :core:base
   :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
   :domain:ratings --> :data:subscription:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
