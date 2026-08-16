@@ -141,12 +141,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api

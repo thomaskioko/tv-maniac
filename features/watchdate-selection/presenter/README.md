@@ -1,4 +1,4 @@
-# `:features:season-details:presenter`
+# `:features:watchdate-selection:presenter`
 
 ## Module dependency graph
 
@@ -38,10 +38,6 @@ graph TB
     direction TB
     :data:account-manager:api[api]:::multiplatform
   end
-  subgraph :data:cast
-    direction TB
-    :data:cast:api[api]:::multiplatform
-  end
   subgraph :data:database
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
@@ -70,10 +66,6 @@ graph TB
     direction TB
     :data:rewatch:api[api]:::multiplatform
   end
-  subgraph :data:seasondetails
-    direction TB
-    :data:seasondetails:api[api]:::multiplatform
-  end
   subgraph :data:subscription
     direction TB
     :data:subscription:api[api]:::multiplatform
@@ -87,23 +79,19 @@ graph TB
     :domain:episode[episode]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
     :domain:rewatch[rewatch]:::multiplatform
-    :domain:seasondetails[seasondetails]:::multiplatform
-  end
-  subgraph :features:episode-sheet
-    direction TB
-    :features:episode-sheet:nav[nav]:::multiplatform
   end
   subgraph :features:rating-sheet
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
   end
-  subgraph :features:season-details
+  subgraph :features:watchdate-selection
     direction TB
-    :features:season-details:nav[nav]:::multiplatform
-    :features:season-details:presenter[presenter]:::multiplatform
+    :features:watchdate-selection:nav[nav]:::multiplatform
+    :features:watchdate-selection:presenter[presenter]:::multiplatform
   end
   subgraph :i18n
     direction TB
+    :i18n:api[api]:::multiplatform
     :i18n:generator[generator]:::multiplatform
   end
   subgraph :navigation
@@ -116,7 +104,6 @@ graph TB
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
-  :data:cast:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
   :data:episode:api --> :data:account-manager:api
@@ -133,7 +120,6 @@ graph TB
   :data:ratings:api --> :data:followedshows:api
   :data:rewatch:api --> :core:network-util:api
   :data:rewatch:api --> :data:account-manager:api
-  :data:seasondetails:api --> :data:database:sqldelight
   :domain:episode --> :core:base
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
@@ -153,27 +139,24 @@ graph TB
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
   :domain:rewatch --> :data:rewatch:api
-  :domain:seasondetails --> :core:base
-  :domain:seasondetails --> :data:cast:api
-  :domain:seasondetails --> :data:episode:api
-  :domain:seasondetails --> :data:rewatch:api
-  :domain:seasondetails --> :data:seasondetails:api
-  :features:episode-sheet:nav --> :navigation:api
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
-  :features:season-details:nav --> :navigation:api
-  :features:season-details:presenter --> :core:base
-  :features:season-details:presenter --> :core:logger:api
-  :features:season-details:presenter --> :core:view
-  :features:season-details:presenter --> :data:episode:api
-  :features:season-details:presenter --> :data:seasondetails:api
-  :features:season-details:presenter --> :domain:episode
-  :features:season-details:presenter --> :domain:ratings
-  :features:season-details:presenter --> :domain:seasondetails
-  :features:season-details:presenter -.-> :features:episode-sheet:nav
-  :features:season-details:presenter --> :features:rating-sheet:nav
-  :features:season-details:presenter --> :features:season-details:nav
-  :features:season-details:presenter --> :navigation:api
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
+  :features:watchdate-selection:presenter --> :core:base
+  :features:watchdate-selection:presenter --> :core:logger:api
+  :features:watchdate-selection:presenter --> :core:util:api
+  :features:watchdate-selection:presenter --> :core:view
+  :features:watchdate-selection:presenter --> :data:episode:api
+  :features:watchdate-selection:presenter --> :data:ratings:api
+  :features:watchdate-selection:presenter --> :domain:episode
+  :features:watchdate-selection:presenter --> :domain:ratings
+  :features:watchdate-selection:presenter --> :features:rating-sheet:nav
+  :features:watchdate-selection:presenter --> :features:watchdate-selection:nav
+  :features:watchdate-selection:presenter --> :i18n:api
+  :features:watchdate-selection:presenter -.-> :i18n:generator
+  :features:watchdate-selection:presenter --> :navigation:api
+  :i18n:api --> :i18n:generator
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

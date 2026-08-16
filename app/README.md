@@ -438,6 +438,11 @@ graph TB
     :features:upnext:presenter[presenter]:::multiplatform
     :features:upnext:ui[ui]:::android-library
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+    :features:watchdate-selection:presenter[presenter]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -673,6 +678,8 @@ graph TB
   :app -.-> :features:trailers:presenter
   :app -.-> :features:trailers:ui
   :app -.-> :features:upnext:presenter
+  :app -.-> :features:watchdate-selection:nav
+  :app -.-> :features:watchdate-selection:presenter
   :app -.-> :i18n:api
   :app -.-> :i18n:generator
   :app -.-> :i18n:implementation
@@ -1106,12 +1113,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:favorites --> :core:base
   :domain:favorites --> :data:favorites:api
   :domain:feature-flags --> :core:base
@@ -1235,6 +1244,7 @@ graph TB
   :features:continue-watching:presenter --> :domain:ratings
   :features:continue-watching:presenter --> :features:my-shows:nav
   :features:continue-watching:presenter --> :features:rating-sheet:nav
+  :features:continue-watching:presenter --> :features:rating-sheet:presenter
   :features:continue-watching:presenter -.-> :features:season-details:nav
   :features:continue-watching:presenter -.-> :features:show-details:nav
   :features:continue-watching:presenter --> :i18n:api
@@ -1614,6 +1624,7 @@ graph TB
   :features:show-details:presenter --> :domain:similarshows
   :features:show-details:presenter --> :domain:traktlists
   :features:show-details:presenter --> :features:rating-sheet:nav
+  :features:show-details:presenter --> :features:rating-sheet:presenter
   :features:show-details:presenter --> :features:root:nav
   :features:show-details:presenter -.-> :features:season-details:nav
   :features:show-details:presenter --> :features:show-details:nav
@@ -1715,6 +1726,7 @@ graph TB
   :features:upnext:presenter -.-> :features:episode-sheet:nav
   :features:upnext:presenter --> :features:progress:nav
   :features:upnext:presenter --> :features:rating-sheet:nav
+  :features:upnext:presenter --> :features:rating-sheet:presenter
   :features:upnext:presenter -.-> :features:season-details:nav
   :features:upnext:presenter -.-> :features:show-details:nav
   :features:upnext:presenter --> :navigation:api
@@ -1724,6 +1736,21 @@ graph TB
   :features:upnext:ui -.-> :domain:continue-watching
   :features:upnext:ui --> :features:upnext:presenter
   :features:upnext:ui -.-> :i18n:generator
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
+  :features:watchdate-selection:presenter --> :core:base
+  :features:watchdate-selection:presenter --> :core:logger:api
+  :features:watchdate-selection:presenter --> :core:util:api
+  :features:watchdate-selection:presenter --> :core:view
+  :features:watchdate-selection:presenter --> :data:episode:api
+  :features:watchdate-selection:presenter --> :data:ratings:api
+  :features:watchdate-selection:presenter --> :domain:episode
+  :features:watchdate-selection:presenter --> :domain:ratings
+  :features:watchdate-selection:presenter --> :features:rating-sheet:nav
+  :features:watchdate-selection:presenter --> :features:watchdate-selection:nav
+  :features:watchdate-selection:presenter --> :i18n:api
+  :features:watchdate-selection:presenter -.-> :i18n:generator
+  :features:watchdate-selection:presenter --> :navigation:api
   :i18n:api --> :i18n:generator
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api

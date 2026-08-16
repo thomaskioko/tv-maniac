@@ -144,6 +144,7 @@ graph TB
     :domain:library[library]:::multiplatform
     :domain:logout[logout]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:settings[settings]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
@@ -231,12 +232,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:library --> :core:base
   :domain:library --> :core:logger:api
   :domain:library --> :core:network-util:api
@@ -269,6 +272,9 @@ graph TB
   :domain:notifications --> :data:seasons:api
   :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
   :domain:settings --> :data:datastore:api
