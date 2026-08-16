@@ -25,6 +25,7 @@ import SwiftUI
 import Trailers
 import TvManiac
 import TvManiacKit
+import WatchDateSelection
 
 public enum ScreenRegistryBootstrap {
     public static func makeRegistry() -> ScreenRegistry {
@@ -63,6 +64,11 @@ public enum ScreenRegistryBootstrap {
             for: RatingSheetPresenter.self,
             builder: { RatingSheetView(presenter: $0) },
             dismiss: { $0.dispatch(action: RatingSheetActionDismissed()) }
+        )
+        registry.registerSheet(
+            for: WatchDateSelectionPresenter.self,
+            builder: { WatchDateSelectionView(presenter: $0) },
+            dismiss: { $0.dispatch(action: WatchDateSelectionActionDismissed()) }
         )
     }
 }
