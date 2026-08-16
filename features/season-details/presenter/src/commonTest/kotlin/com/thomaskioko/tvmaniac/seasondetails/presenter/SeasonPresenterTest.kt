@@ -25,11 +25,11 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObservableSeasonDetailsInte
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeUnwatchedCall
 import com.thomaskioko.tvmaniac.episodes.testing.MarkEpisodeWatchedCall
-import com.thomaskioko.tvmaniac.episodes.testing.MarkSeasonWatchedCall
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
@@ -40,7 +40,9 @@ import com.thomaskioko.tvmaniac.seasondetails.presenter.data.buildSeasonDetailsW
 import com.thomaskioko.tvmaniac.seasondetails.presenter.model.EpisodeDetailsModel
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -462,6 +464,31 @@ class SeasonPresenterTest {
     }
 
     @Test
+    fun `should open the watch date sheet given the check button is long pressed`() = runTest {
+        seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
+        castRepository.setSeasonCast(emptyList())
+
+        presenter.state.test {
+            awaitItem() shouldBe SeasonDetailsModel.Empty
+
+            presenter.dispatch(
+                EpisodeWatchedLongPressed(episodeId = 12345, seasonNumber = 1, episodeNumber = 1),
+            )
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.target shouldBe WatchedDateTarget.EPISODE
+            route.param.showId shouldBe 1
+            route.param.episodeId shouldBe 12345
+            route.param.seasonNumber shouldBe 1
+            route.param.episodeNumber shouldBe 1
+            episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should not open the rating sheet given previous episodes are marked watched too`() = runTest {
         datastoreRepository.saveQuickRateEnabled(true)
         seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
@@ -484,8 +511,8 @@ class SeasonPresenterTest {
             presenter.dispatch(ConfirmDialogAction)
             testDispatcher.scheduler.advanceUntilIdle()
 
-            episodeRepository.lastMarkEpisodeWatchedCall?.markPreviousEpisodes shouldBe true
-            navigator.activatedOverlays.shouldBeEmpty()
+            navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            navigator.activatedOverlays.none { it is RatingSheetRoute } shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -506,8 +533,8 @@ class SeasonPresenterTest {
             presenter.dispatch(ConfirmDialogAction)
             testDispatcher.scheduler.advanceUntilIdle()
 
-            episodeRepository.lastMarkSeasonWatchedCall.shouldNotBeNull()
-            navigator.activatedOverlays.shouldBeEmpty()
+            navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            navigator.activatedOverlays.none { it is RatingSheetRoute } shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -539,121 +566,6 @@ class SeasonPresenterTest {
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 1,
-                markPreviousEpisodes = false,
-            )
-        }
-    }
-
-    @Test
-    fun `should show unwatch confirmation dialog when MarkEpisodeUnwatched is dispatched`() = runTest {
-        val initialDetails = buildSeasonDetailsWithEpisodes()
-        seasonDetailsRepository.setSeasonsResult(initialDetails)
-        castRepository.setSeasonCast(emptyList())
-
-        presenter.state.test {
-            awaitItem() shouldBe SeasonDetailsModel.Empty
-
-            presenter.dispatch(MarkEpisodeUnwatched(episodeId = 12345))
-
-            val state = awaitItem()
-            val dialog = state.dialogState
-            dialog.shouldBeInstanceOf<SeasonDialogState.UnwatchEpisodeConfirmation>()
-            dialog.primaryChange.episodeId shouldBe 12345
-        }
-    }
-
-    @Test
-    fun `should mark season as unwatched when ConfirmDialogAction is dispatched from season watch state dialog`() = runTest {
-        val initialDetails = buildSeasonDetailsWithEpisodes()
-        seasonDetailsRepository.setSeasonsResult(initialDetails)
-        castRepository.setSeasonCast(emptyList())
-        episodeRepository.setSeasonWatchProgress(
-            SeasonWatchProgress(
-                showId = 1L,
-                seasonNumber = 1L,
-                watchedCount = 10,
-                totalCount = 10,
-            ),
-        )
-
-        presenter.state.test {
-            awaitItem() shouldBe SeasonDetailsModel.Empty
-            awaitItem()
-
-            presenter.dispatch(MarkSeasonAsUnwatched)
-            awaitItem()
-
-            presenter.dispatch(ConfirmDialogAction)
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val state = awaitItem()
-            state.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
-        }
-    }
-
-    @Test
-    fun `should show mark previous episodes dialog when marking episode with unwatched prior episodes`() = runTest {
-        val initialDetails = buildSeasonDetailsWithEpisodes()
-        seasonDetailsRepository.setSeasonsResult(initialDetails)
-        castRepository.setSeasonCast(emptyList())
-
-        presenter.state.test {
-            awaitItem() shouldBe SeasonDetailsModel.Empty
-
-            presenter.dispatch(
-                MarkEpisodeWatched(
-                    episodeId = 12345,
-                    seasonNumber = 1,
-                    episodeNumber = 5,
-                    hasPreviousUnwatched = true,
-                ),
-            )
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val state = awaitItem()
-            state.dialogState.shouldBeInstanceOf<SeasonDialogState.MarkPreviousEpisodesConfirmation>()
-        }
-    }
-
-    @Test
-    fun `should mark episode with previous when ConfirmDialogAction is dispatched from mark previous episodes dialog`() = runTest {
-        val initialDetails = buildSeasonDetailsWithEpisodes()
-        seasonDetailsRepository.setSeasonsResult(initialDetails)
-        castRepository.setSeasonCast(emptyList())
-
-        presenter.state.test {
-            awaitItem() shouldBe SeasonDetailsModel.Empty
-
-            presenter.dispatch(
-                MarkEpisodeWatched(
-                    episodeId = 12345,
-                    seasonNumber = 1,
-                    episodeNumber = 5,
-                    hasPreviousUnwatched = true,
-                ),
-            )
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val dialogState = awaitItem()
-            dialogState.dialogState.shouldBeInstanceOf<SeasonDialogState.MarkPreviousEpisodesConfirmation>()
-
-            presenter.dispatch(ConfirmDialogAction)
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val finalState = expectMostRecentItem()
-            finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
-            finalState.updatingEpisodeIds.shouldBeEmpty()
-
-            episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 1,
-                episodeId = 12345,
-                seasonNumber = 1,
-                episodeNumber = 5,
-                markPreviousEpisodes = true,
             )
         }
     }
@@ -722,13 +634,14 @@ class SeasonPresenterTest {
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
             finalState.updatingEpisodeIds.shouldBeEmpty()
 
-            episodeRepository.lastMarkEpisodeWatchedCall shouldBe MarkEpisodeWatchedCall(
-                showId = 1,
-                episodeId = 12345,
-                seasonNumber = 1,
-                episodeNumber = 5,
-                markPreviousEpisodes = false,
-            )
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.target shouldBe WatchedDateTarget.EPISODE
+            route.param.showId shouldBe 1
+            route.param.episodeId shouldBe 12345
+            route.param.seasonNumber shouldBe 1
+            route.param.episodeNumber shouldBe 5
+            route.param.markPrevious shouldBe false
+            episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
         }
     }
 
@@ -809,11 +722,12 @@ class SeasonPresenterTest {
             val finalState = awaitItem()
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
-            episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
-                seasonNumber = 1,
-                markPreviousSeasons = true,
-            )
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.target shouldBe WatchedDateTarget.SEASON
+            route.param.showId shouldBe 1
+            route.param.seasonNumber shouldBe 1
+            route.param.markPrevious shouldBe true
+            episodeRepository.lastMarkSeasonWatchedCall.shouldBeNull()
         }
     }
 
@@ -842,11 +756,12 @@ class SeasonPresenterTest {
             val finalState = awaitItem()
             finalState.dialogState.shouldBeInstanceOf<SeasonDialogState.Hidden>()
 
-            episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
-                seasonNumber = 1,
-                markPreviousSeasons = false,
-            )
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.target shouldBe WatchedDateTarget.SEASON
+            route.param.showId shouldBe 1
+            route.param.seasonNumber shouldBe 1
+            route.param.markPrevious shouldBe false
+            episodeRepository.lastMarkSeasonWatchedCall.shouldBeNull()
         }
     }
 
@@ -940,11 +855,12 @@ class SeasonPresenterTest {
 
             cancelAndIgnoreRemainingEvents()
 
-            episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
-                seasonNumber = 1,
-                markPreviousSeasons = false,
-            )
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.target shouldBe WatchedDateTarget.SEASON
+            route.param.showId shouldBe 1
+            route.param.seasonNumber shouldBe 1
+            route.param.markPrevious shouldBe false
+            episodeRepository.lastMarkSeasonWatchedCall.shouldBeNull()
         }
     }
 
@@ -1236,7 +1152,6 @@ class SeasonPresenterTest {
                 episodeId = 12345,
                 seasonNumber = 1,
                 episodeNumber = 1,
-                markPreviousEpisodes = false,
             )
         }
     }
@@ -1290,11 +1205,12 @@ class SeasonPresenterTest {
 
             cancelAndIgnoreRemainingEvents()
 
-            episodeRepository.lastMarkSeasonWatchedCall shouldBe MarkSeasonWatchedCall(
-                showId = 1,
-                seasonNumber = 1,
-                markPreviousSeasons = false,
-            )
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.target shouldBe WatchedDateTarget.SEASON
+            route.param.showId shouldBe 1
+            route.param.seasonNumber shouldBe 1
+            route.param.markPrevious shouldBe false
+            episodeRepository.lastMarkSeasonWatchedCall.shouldBeNull()
         }
     }
 

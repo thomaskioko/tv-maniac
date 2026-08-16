@@ -38,6 +38,7 @@ kotlin {
                 api(projects.domain.similarshows)
                 api(projects.domain.traktlists)
                 api(projects.features.ratingSheet.nav)
+                api(projects.features.watchdateSelection.nav)
                 api(projects.features.ratingSheet.presenter)
                 api(projects.features.showDetails.nav)
                 api(projects.features.showList.nav)

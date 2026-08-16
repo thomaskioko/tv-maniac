@@ -42,9 +42,11 @@ import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -263,6 +265,23 @@ internal class UpNextPresenterTest {
 
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `should open the watch date sheet given the check button is long pressed`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.dispatch(
+            MarkWatchedLongPressed(showId = 123L, episodeId = 456L, seasonNumber = 1L, episodeNumber = 5L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+        route.param.showId shouldBe 123L
+        route.param.episodeId shouldBe 456L
+        route.param.seasonNumber shouldBe 1L
+        route.param.episodeNumber shouldBe 5L
+        episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
     }
 
     @Test

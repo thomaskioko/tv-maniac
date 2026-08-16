@@ -151,6 +151,10 @@ graph TB
     direction TB
     :features:trailers:nav[nav]:::multiplatform
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -282,10 +286,13 @@ graph TB
   :features:show-details:presenter --> :features:show-details:nav
   :features:show-details:presenter --> :features:show-list:nav
   :features:show-details:presenter -.-> :features:trailers:nav
+  :features:show-details:presenter --> :features:watchdate-selection:nav
   :features:show-details:presenter --> :i18n:api
   :features:show-details:presenter --> :navigation:api
   :features:show-list:nav --> :navigation:api
   :features:trailers:nav --> :navigation:api
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
   :i18n:api --> :i18n:generator
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

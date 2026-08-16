@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveEpisodeRewatchesInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.WatchAgainInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
@@ -263,6 +264,43 @@ internal class WatchDateSelectionPresenterTest {
     }
 
     @Test
+    fun `should treat a singly watched episode as a correction`() = runTest {
+        dateTimeProvider.setEpochToDisplayDateTimeResult("12 Jan 2026 20:30")
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true, watchedAt = AIR_DATE_MILLIS))
+        rewatchRepository.setRewatchesForEpisode(EPISODE_ID, 0L)
+
+        val presenter = createPresenter(param = episodeParam(isEdit = true))
+        settle(presenter)
+
+        presenter.state.value.title shouldBe localizer.getString(StringResourceKey.LabelWatchedDateEditTitle)
+        presenter.state.value.currentWatchedAtLabel shouldBe "12 Jan 2026 20:30"
+
+        presenter.dispatch(WatchDateSelectionAction.JustNowSelected)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        episodeRepository.lastMarkEpisodeWatchedCall?.watchedAt shouldBe NOW_MILLIS
+        rewatchRepository.lastAddEpisodeWatchedAt.shouldBeNull()
+    }
+
+    @Test
+    fun `should treat a rewatched episode as another viewing rather than a correction`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true, watchedAt = AIR_DATE_MILLIS))
+        rewatchRepository.setRewatchesForEpisode(EPISODE_ID, 1L)
+
+        val presenter = createPresenter(param = episodeParam(isEdit = true))
+        settle(presenter)
+
+        presenter.state.value.title shouldBe localizer.getString(StringResourceKey.LabelWatchedDateTitle)
+        presenter.state.value.currentWatchedAtLabel.shouldBeNull()
+
+        presenter.dispatch(WatchDateSelectionAction.JustNowSelected)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        rewatchRepository.lastAddEpisodeWatchedAt shouldBe NOW_MILLIS
+        episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
+    }
+
+    @Test
     fun `should still dismiss the sheet given the write fails`() = runTest {
         episodeRepository.setEpisodeById(testEpisode())
         episodeRepository.setMarkEpisodeWatchedBehavior { throw IllegalStateException("Disk is full") }
@@ -300,6 +338,7 @@ internal class WatchDateSelectionPresenterTest {
         param = param,
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
+        observeEpisodeRewatchesInteractor = ObserveEpisodeRewatchesInteractor(rewatchRepository),
         markWatchedAtInteractor = MarkWatchedAtInteractor(
             episodeRepository = episodeRepository,
             watchAgainInteractor = WatchAgainInteractor(rewatchRepository),
