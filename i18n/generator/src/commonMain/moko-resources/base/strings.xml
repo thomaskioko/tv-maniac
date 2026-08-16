@@ -5,6 +5,7 @@
     <string name="label_tbd">TBD</string>
     <string name="label_error">Error</string>
     <string name="label_ok">OK</string>
+    <string name="label_cancel">Cancel</string>
 
     <string name="label_tab_discover">Discover</string>
     <string name="label_tab_search">Search</string>

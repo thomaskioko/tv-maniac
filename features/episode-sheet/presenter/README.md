@@ -98,6 +98,10 @@ graph TB
     direction TB
     :features:show-details:nav[nav]:::multiplatform
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -154,7 +158,6 @@ graph TB
   :features:episode-sheet:nav --> :navigation:api
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
-  :features:episode-sheet:presenter --> :core:util:api
   :features:episode-sheet:presenter --> :core:view
   :features:episode-sheet:presenter --> :data:datastore:api
   :features:episode-sheet:presenter --> :domain:episode
@@ -165,6 +168,7 @@ graph TB
   :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav
   :features:episode-sheet:presenter -.-> :features:show-details:nav
+  :features:episode-sheet:presenter --> :features:watchdate-selection:nav
   :features:episode-sheet:presenter --> :i18n:api
   :features:episode-sheet:presenter -.-> :i18n:generator
   :features:episode-sheet:presenter --> :navigation:api
@@ -172,6 +176,8 @@ graph TB
   :features:rating-sheet:nav --> :navigation:api
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
   :i18n:api --> :i18n:generator
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

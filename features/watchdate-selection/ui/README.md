@@ -1,4 +1,4 @@
-# `:features:episode-sheet:ui`
+# `:features:watchdate-selection:ui`
 
 ## Module dependency graph
 
@@ -79,32 +79,19 @@ graph TB
   subgraph :domain
     direction TB
     :domain:episode[episode]:::multiplatform
-    :domain:followedshows[followedshows]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
     :domain:rewatch[rewatch]:::multiplatform
     :domain:theme[theme]:::multiplatform
-  end
-  subgraph :features:episode-sheet
-    direction TB
-    :features:episode-sheet:nav[nav]:::multiplatform
-    :features:episode-sheet:presenter[presenter]:::multiplatform
-    :features:episode-sheet:ui[ui]:::android-library
   end
   subgraph :features:rating-sheet
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
   end
-  subgraph :features:season-details
-    direction TB
-    :features:season-details:nav[nav]:::multiplatform
-  end
-  subgraph :features:show-details
-    direction TB
-    :features:show-details:nav[nav]:::multiplatform
-  end
   subgraph :features:watchdate-selection
     direction TB
     :features:watchdate-selection:nav[nav]:::multiplatform
+    :features:watchdate-selection:presenter[presenter]:::multiplatform
+    :features:watchdate-selection:ui[ui]:::android-library
   end
   subgraph :i18n
     direction TB
@@ -153,9 +140,6 @@ graph TB
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
   :domain:episode --> :domain:rewatch
-  :domain:followedshows --> :core:base
-  :domain:followedshows --> :data:followedshows:api
-  :domain:followedshows --> :data:library:api
   :domain:ratings --> :core:base
   :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
@@ -164,37 +148,30 @@ graph TB
   :domain:rewatch --> :core:util:api
   :domain:rewatch --> :data:rewatch:api
   :domain:theme --> :i18n:generator
-  :features:episode-sheet:nav --> :navigation:api
-  :features:episode-sheet:presenter --> :core:base
-  :features:episode-sheet:presenter --> :core:logger:api
-  :features:episode-sheet:presenter --> :core:view
-  :features:episode-sheet:presenter --> :data:datastore:api
-  :features:episode-sheet:presenter --> :domain:episode
-  :features:episode-sheet:presenter --> :domain:followedshows
-  :features:episode-sheet:presenter --> :domain:ratings
-  :features:episode-sheet:presenter --> :domain:rewatch
-  :features:episode-sheet:presenter --> :features:episode-sheet:nav
-  :features:episode-sheet:presenter --> :features:rating-sheet:nav
-  :features:episode-sheet:presenter -.-> :features:season-details:nav
-  :features:episode-sheet:presenter -.-> :features:show-details:nav
-  :features:episode-sheet:presenter --> :features:watchdate-selection:nav
-  :features:episode-sheet:presenter --> :i18n:api
-  :features:episode-sheet:presenter -.-> :i18n:generator
-  :features:episode-sheet:presenter --> :navigation:api
-  :features:episode-sheet:ui -.-> :android-designsystem
-  :features:episode-sheet:ui --> :core:base
-  :features:episode-sheet:ui -.-> :core:test-tags
-  :features:episode-sheet:ui -.-> :core:view
-  :features:episode-sheet:ui --> :features:episode-sheet:presenter
-  :features:episode-sheet:ui -.-> :i18n:generator
-  :features:episode-sheet:ui --> :navigation:api
-  :features:episode-sheet:ui --> :navigation:ui
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
-  :features:season-details:nav --> :navigation:api
-  :features:show-details:nav --> :navigation:api
   :features:watchdate-selection:nav --> :data:episode:api
   :features:watchdate-selection:nav --> :navigation:api
+  :features:watchdate-selection:presenter --> :core:base
+  :features:watchdate-selection:presenter --> :core:logger:api
+  :features:watchdate-selection:presenter --> :core:util:api
+  :features:watchdate-selection:presenter --> :core:view
+  :features:watchdate-selection:presenter --> :data:episode:api
+  :features:watchdate-selection:presenter --> :data:ratings:api
+  :features:watchdate-selection:presenter --> :domain:episode
+  :features:watchdate-selection:presenter --> :domain:ratings
+  :features:watchdate-selection:presenter --> :features:rating-sheet:nav
+  :features:watchdate-selection:presenter --> :features:watchdate-selection:nav
+  :features:watchdate-selection:presenter --> :i18n:api
+  :features:watchdate-selection:presenter -.-> :i18n:generator
+  :features:watchdate-selection:presenter --> :navigation:api
+  :features:watchdate-selection:ui -.-> :android-designsystem
+  :features:watchdate-selection:ui --> :core:base
+  :features:watchdate-selection:ui -.-> :core:test-tags
+  :features:watchdate-selection:ui --> :features:watchdate-selection:presenter
+  :features:watchdate-selection:ui -.-> :i18n:generator
+  :features:watchdate-selection:ui --> :navigation:api
+  :features:watchdate-selection:ui --> :navigation:ui
   :i18n:api --> :i18n:generator
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api
