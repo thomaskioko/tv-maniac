@@ -39,6 +39,14 @@ struct ShowDetailsSeasonEpisodesSection: View {
                     ))
                 }
             },
+            onMarkWatchedLongPress: { episode in
+                presenter.dispatch(action: ShowDetailsEpisodeWatchedLongPressed(
+                    showId: episode.showId,
+                    episodeId: episode.episodeId,
+                    seasonNumber: episode.seasonNumber,
+                    episodeNumber: episode.episodeNumber
+                ))
+            },
             updatingEpisodeIds: Set(Array(state.updatingEpisodeIds).map(\.int64Value))
         )
         SeasonProgressSection(
