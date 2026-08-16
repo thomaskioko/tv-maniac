@@ -145,6 +145,14 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
         composeUi.waitForIdle()
     }
 
+    /** Waits for [tag] and dispatches its long click semantics action. */
+    public fun longClick(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
+        awaitTagOnce(tag, useUnmergedTree)
+        composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
+            .performSemanticsAction(SemanticsActions.OnLongClick)
+        composeUi.waitForIdle()
+    }
+
     /**
      * Waits for [tag] and dispatches synthetic touch click via [performClick].
      *

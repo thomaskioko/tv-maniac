@@ -127,6 +127,31 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    fun givenSeasonDetails_whenMarkWatchedLongPressed_thenWatchDateSheetOpens() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+        trackShow()
+
+        showDetailsRobot
+            .clickSeasonChip(seasonNumber = 1L)
+            .assertSeasonDetailsDisplayed()
+
+        seasonDetailsRobot
+            .longPressMarkWatched(secondEpisodeTraktId)
+
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
+
+        seasonDetailsRobot
+            .scrollToMarkUnwatchedButton(secondEpisodeTraktId)
+            .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
+    }
+
+    @Test
     fun givenNoUnwatchedPreviousSeasons_whenSeasonToggledWatched_thenConfirmationDialogGatesTheWrite() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 
