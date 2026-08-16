@@ -1317,7 +1317,6 @@ graph TB
   :features:episode-sheet:nav --> :navigation:api
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
-  :features:episode-sheet:presenter --> :core:util:api
   :features:episode-sheet:presenter --> :core:view
   :features:episode-sheet:presenter --> :data:datastore:api
   :features:episode-sheet:presenter --> :domain:episode
@@ -1328,6 +1327,7 @@ graph TB
   :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav
   :features:episode-sheet:presenter -.-> :features:show-details:nav
+  :features:episode-sheet:presenter --> :features:watchdate-selection:nav
   :features:episode-sheet:presenter --> :i18n:api
   :features:episode-sheet:presenter -.-> :i18n:generator
   :features:episode-sheet:presenter --> :navigation:api
