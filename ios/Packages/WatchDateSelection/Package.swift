@@ -3,15 +3,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "EpisodeDetail",
+    name: "WatchDateSelection",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v18),
     ],
     products: [
         .library(
-            name: "EpisodeDetail",
-            targets: ["EpisodeDetail"]
+            name: "WatchDateSelection",
+            targets: ["WatchDateSelection"]
         ),
     ],
     dependencies: [
@@ -22,7 +22,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "EpisodeDetail",
+            name: "WatchDateSelection",
             dependencies: [
                 "DesignSystem",
                 "Components",
@@ -30,12 +30,11 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "EpisodeDetailTests",
+            name: "WatchDateSelectionTests",
             dependencies: [
                 "SnapshotTestingLib",
-                "EpisodeDetail",
+                "WatchDateSelection",
                 "DesignSystem",
-                "Components",
             ],
             exclude: ["__Snapshots__"]
         ),
