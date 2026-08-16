@@ -574,5 +574,5 @@
     <string name="label_watched_date_unknown">Date inconnue</string>
     <string name="label_watched_date_unknown_display">Il y a longtemps</string>
     <string name="label_mark_show_watched">Marquer la série comme vue</string>
-    <string name="label_mark_show_watched_confirm_title">Marquer toute la série comme vue ?</string>
+    <string name="label_mark_show_watched_confirm_title">Marquer la série comme vue ?</string>
 </resources>
