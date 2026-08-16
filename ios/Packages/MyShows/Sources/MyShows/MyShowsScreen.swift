@@ -63,6 +63,7 @@ public struct MyShowsScreen: View {
     private let onEpisodeClicked: (Int64, Int64) -> Void
     private let onShowTitleClicked: (Int64) -> Void
     private let onMarkWatched: (SwiftNextEpisode) -> Void
+    private let onMarkWatchedLongPress: ((SwiftNextEpisode) -> Void)?
     private let onRefresh: () async -> Void
 
     @Namespace private var animation
@@ -73,6 +74,7 @@ public struct MyShowsScreen: View {
         onEpisodeClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping (SwiftNextEpisode) -> Void,
+        onMarkWatchedLongPress: ((SwiftNextEpisode) -> Void)? = nil,
         onRefresh: @escaping () async -> Void
     ) {
         self.state = state
@@ -80,6 +82,7 @@ public struct MyShowsScreen: View {
         self.onEpisodeClicked = onEpisodeClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
+        self.onMarkWatchedLongPress = onMarkWatchedLongPress
         self.onRefresh = onRefresh
     }
 
@@ -178,6 +181,9 @@ public struct MyShowsScreen: View {
                 onItemClicked: onEpisodeClicked,
                 onShowTitleClicked: onShowTitleClicked,
                 onMarkWatched: { onMarkWatched(episode) },
+                onMarkWatchedLongPress: onMarkWatchedLongPress.map { longPress in
+                    { longPress(episode) }
+                },
                 isUpdating: state.updatingEpisodeIds.contains(episode.episodeId)
             )
         }
