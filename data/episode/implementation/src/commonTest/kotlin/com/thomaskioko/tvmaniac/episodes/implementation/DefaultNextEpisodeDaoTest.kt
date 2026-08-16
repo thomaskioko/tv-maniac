@@ -102,6 +102,24 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should keep a show in place given an older episode is marked watched afterwards`() = runTest {
+        followShow(showId = 1L, followedAt = watchDate)
+        followShow(showId = 2L, followedAt = watchDate)
+        markEpisodeWatched(showId = 1L, episodeId = 101L, seasonNumber = 1L, episodeNumber = 1L, watchedAt = RECENT_WATCH)
+        markEpisodeWatched(showId = 2L, episodeId = 201L, seasonNumber = 1L, episodeNumber = 1L, watchedAt = EARLIER_WATCH)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            awaitItem().map { it.showId } shouldBe listOf(1L, 2L)
+        }
+
+        markEpisodeWatched(showId = 1L, episodeId = 102L, seasonNumber = 1L, episodeNumber = 2L, watchedAt = BACKDATED_WATCH)
+
+        nextEpisodeDao.observeNextEpisodesForWatchlist(includeSpecials = false).test {
+            awaitItem().map { it.showId } shouldBe listOf(1L, 2L)
+        }
+    }
+
+    @Test
     fun `should exclude followed-only show given no continue-watching row`() = runTest {
         followShowOnly(showId = 1L, followedAt = watchDate)
 
@@ -981,5 +999,11 @@ internal class DefaultNextEpisodeDaoTest : BaseDatabaseTest() {
 
         insertSeason(seasonId = 41L, showId = 4L, seasonNumber = 1L, episodeCount = 1L)
         insertEpisode(episodeId = 401L, seasonId = 41L, showId = 4L, episodeNumber = 1L, title = "Regular Episode 1")
+    }
+
+    private companion object {
+        private val RECENT_WATCH = LocalDate(2024, 5, 1).toEpochMillis()
+        private val EARLIER_WATCH = LocalDate(2024, 4, 1).toEpochMillis()
+        private val BACKDATED_WATCH = LocalDate(2019, 1, 1).toEpochMillis()
     }
 }

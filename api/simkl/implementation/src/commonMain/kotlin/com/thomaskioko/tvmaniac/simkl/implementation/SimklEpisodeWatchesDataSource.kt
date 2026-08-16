@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
@@ -69,12 +70,23 @@ public class SimklEpisodeWatchesDataSource(
                     SimklHistorySeason(
                         number = seasonNumber.toInt(),
                         episodes = seasonWatches.map { watch ->
-                            SimklHistoryEpisode(number = watch.episodeNumber.toInt())
+                            SimklHistoryEpisode(
+                                number = watch.episodeNumber.toInt(),
+                                watchedAt = when {
+                                    WatchedDate.isUnknown(watch.watchedAt) -> UNKNOWN_WATCHED_AT
+                                    else -> watch.watchedAt.toString()
+                                },
+                            )
                         },
                     )
                 },
             )
         }
+
+    internal companion object {
+        internal const val UNKNOWN_WATCHED_AT: String = "1970-01-01T00:00:01Z"
+        internal const val PLACEHOLDER_BEFORE_MILLIS: Long = 946_684_800_000L
+    }
 }
 
 internal class BulkSimklWatchedShowsFetchException(message: String) : Exception(message)
@@ -104,8 +116,11 @@ private fun SimklWatchedEpisode.toEntry(seasonNumber: Int, tmdbId: Long?): Watch
         episodeId = null,
         seasonNumber = seasonNumber.toLong(),
         episodeNumber = number.toLong(),
-        watchedAt = parsedAt,
+        watchedAt = parsedAt.normalizeSimklPlaceholder(),
         traktId = null,
         pendingAction = PendingAction.NOTHING,
     )
 }
+
+private fun Instant.normalizeSimklPlaceholder(): Instant =
+    if (toEpochMilliseconds() < SimklEpisodeWatchesDataSource.PLACEHOLDER_BEFORE_MILLIS) WatchedDate.UNKNOWN else this

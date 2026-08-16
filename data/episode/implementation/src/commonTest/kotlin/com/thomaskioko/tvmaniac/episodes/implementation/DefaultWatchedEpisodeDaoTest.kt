@@ -7,6 +7,8 @@ import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
@@ -91,7 +93,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return one row per show with the furthest watched episode and show metadata`() = runTest {
-        fakeDateTimeProvider.setCurrentTimeMillis(1_000L)
+        fakeDateTimeProvider.setCurrentTimeMillis(EARLIER_FOLLOW)
         watchedEpisodeDao.markAsWatched(
             showId = TEST_SHOW_ID,
             episodeId = 101L,
@@ -99,7 +101,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             episodeNumber = 1L,
             includeSpecials = false,
         )
-        fakeDateTimeProvider.setCurrentTimeMillis(2_000L)
+        fakeDateTimeProvider.setCurrentTimeMillis(NOW)
         watchedEpisodeDao.markAsWatched(
             showId = TEST_SHOW_ID,
             episodeId = 102L,
@@ -115,7 +117,7 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             items[0].showTitle shouldBe TEST_SHOW_NAME
             items[0].episodeNumber shouldBe 2L
             items[0].episodeTitle shouldBe "Episode 2"
-            items[0].watchedAt shouldBe 2_000L
+            items[0].watchedAt shouldBe NOW
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -823,6 +825,221 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
         watchedEpisodeDao.getWatchedShowsMissingGenres().shouldBeEmpty()
     }
 
+    @Test
+    fun `should stamp the air date plus runtime given the release date is asked for`() = runTest {
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            useReleaseDate = true,
+        )
+
+        watchedAtFor(episodeNumber = 1L) shouldBe LocalDate(2023, 1, 1).toEpochMillis() + EPISODE_RUNTIME_MILLIS
+    }
+
+    @Test
+    fun `should stamp the current time given the episode has no air date`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(NOW)
+        clearFirstAired()
+
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            useReleaseDate = true,
+        )
+
+        watchedAtFor(episodeNumber = 1L) shouldBe NOW
+    }
+
+    @Test
+    fun `should add no minutes to the air date given the episode runtime is zero`() = runTest {
+        setFirstEpisodeRuntime(runtime = 0L)
+
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            useReleaseDate = true,
+        )
+
+        watchedAtFor(episodeNumber = 1L) shouldBe LocalDate(2023, 1, 1).toEpochMillis()
+    }
+
+    @Test
+    fun `should stamp the chosen time given one is passed`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(NOW)
+
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = CHOSEN_TIME,
+        )
+
+        watchedAtFor(episodeNumber = 1L) shouldBe CHOSEN_TIME
+    }
+
+    @Test
+    fun `should report no watched time given the mark has an unknown date`() = runTest {
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = WatchedDate.UNKNOWN_MILLIS,
+        )
+
+        watchedEpisodeDao.observeRecentlyWatched(limit = 10).test {
+            val items = awaitItem()
+            items shouldHaveSize 1
+            items[0].watchedAt shouldBe null
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should keep a show above an older one in the library given its only mark has an unknown date`() = runTest {
+        insertShowMetadata()
+        followTestShow(followedAt = LATER_FOLLOW)
+        followOtherShow(followedAt = EARLIER_FOLLOW)
+
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = WatchedDate.UNKNOWN_MILLIS,
+        )
+
+        libraryOrder() shouldBe listOf(TEST_SHOW_ID, OTHER_SHOW_TMDB_ID)
+    }
+
+    @Test
+    fun `should move a show up the library given its mark carries a date`() = runTest {
+        insertShowMetadata()
+        followTestShow(followedAt = EARLIER_FOLLOW)
+        followOtherShow(followedAt = LATER_FOLLOW)
+
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = CHOSEN_TIME,
+        )
+
+        libraryOrder() shouldBe listOf(TEST_SHOW_ID, OTHER_SHOW_TMDB_ID)
+    }
+
+    @Test
+    fun `should mark every unwatched episode across all seasons given the whole show is marked`() = runTest {
+        fakeDateTimeProvider.setCurrentTimeMillis(NOW)
+
+        watchedEpisodeDao.markSeasonAndPreviousAsWatched(
+            showId = TEST_SHOW_ID,
+            seasonNumber = EpisodeRepository.ALL_SEASONS,
+            includeSpecials = false,
+        )
+
+        database.watchedEpisodesQueries.getWatchedEpisodes(testShowId).executeAsList() shouldHaveSize
+            SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT
+    }
+
+    @Test
+    fun `should keep the original date given an already watched episode is inside a whole show mark`() = runTest {
+        watchedEpisodeDao.markAsWatched(
+            showId = TEST_SHOW_ID,
+            episodeId = 101L,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = CHOSEN_TIME,
+        )
+        fakeDateTimeProvider.setCurrentTimeMillis(NOW)
+
+        watchedEpisodeDao.markSeasonAndPreviousAsWatched(
+            showId = TEST_SHOW_ID,
+            seasonNumber = EpisodeRepository.ALL_SEASONS,
+            includeSpecials = false,
+        )
+
+        watchedAtFor(episodeNumber = 1L) shouldBe CHOSEN_TIME
+    }
+
+    private fun libraryOrder(): List<Long> =
+        database.followedShowsQueries.followedShows().executeAsList().map { it.show_id.id }
+
+    private fun watchedAtFor(episodeNumber: Long, seasonNumber: Long = SEASON_1_NUMBER): Long =
+        database.watchedEpisodesQueries.getWatchedEpisodes(testShowId)
+            .executeAsList()
+            .single { it.season_number == seasonNumber && it.episode_number == episodeNumber }
+            .watched_at
+
+    private fun insertShowMetadata() {
+        database.showMetadataQueries.upsert(
+            show_id = testShowId,
+            season_count = 2L,
+            episode_count = (SEASON_1_EPISODE_COUNT + SEASON_2_EPISODE_COUNT).toLong(),
+            status = "Returning Series",
+        )
+    }
+
+    private fun followTestShow(followedAt: Long) {
+        database.followedShowsQueries.upsert(
+            showId = testShowId,
+            tmdbId = Id<TmdbId>(TEST_SHOW_ID),
+            followedAt = followedAt,
+            pendingAction = "NOTHING",
+        )
+    }
+
+    private fun followOtherShow(followedAt: Long) {
+        addShowWithoutGenres(OTHER_SHOW_TMDB_ID)
+        database.followedShowsQueries.upsert(
+            showId = showIdForTraktId(OTHER_SHOW_TMDB_ID),
+            tmdbId = Id<TmdbId>(OTHER_SHOW_TMDB_ID),
+            followedAt = followedAt,
+            pendingAction = "NOTHING",
+        )
+    }
+
+    private fun clearFirstAired() {
+        database.episodesQueries.updateFirstAired(
+            firstAired = null,
+            showId = testShowId,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+        )
+    }
+
+    private fun setFirstEpisodeRuntime(runtime: Long) {
+        database.episodesQueries.upsert(
+            id = Id(101L),
+            season_id = Id(SEASON_1_ID),
+            show_id = testShowId,
+            title = "Episode 1",
+            overview = "Episode 1 overview",
+            episode_number = 1L,
+            runtime = runtime,
+            image_url = "/episode1.jpg",
+            ratings = 8.5,
+            vote_count = 50L,
+            first_aired = LocalDate(2023, 1, 1).toEpochMillis(),
+        )
+    }
+
     private fun addShowWithoutGenres(tmdbId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id(tmdbId),
@@ -929,5 +1146,13 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             followedAt = Clock.System.now().toEpochMilliseconds(),
             pendingAction = "NOTHING",
         )
+    }
+
+    private companion object {
+        private const val EARLIER_FOLLOW = 1_500_000_000_000L
+        private const val NOW = 1_700_000_000_000L
+        private const val LATER_FOLLOW = 1_800_000_000_000L
+        private const val CHOSEN_TIME = 1_900_000_000_000L
+        private const val EPISODE_RUNTIME_MILLIS = 45L * 60_000L
     }
 }

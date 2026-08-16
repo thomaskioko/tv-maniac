@@ -35,6 +35,7 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -63,6 +64,7 @@ public class EpisodeSheetPresenter internal constructor(
     private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val watchAgainInteractor: WatchAgainInteractor,
+    private val dateTimeProvider: DateTimeProvider,
     private val datastoreRepository: DatastoreRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -156,6 +158,7 @@ public class EpisodeSheetPresenter internal constructor(
                         episodeId = episode.episode_id.id,
                         seasonNumber = episode.season_number,
                         episodeNumber = episode.episode_number,
+                        watchedAt = dateTimeProvider.nowMillis(),
                     ),
                 )
             } else {

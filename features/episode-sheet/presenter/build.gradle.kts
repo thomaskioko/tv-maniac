@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.logger.api)
+                api(projects.core.util.api)
                 api(projects.core.view)
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)

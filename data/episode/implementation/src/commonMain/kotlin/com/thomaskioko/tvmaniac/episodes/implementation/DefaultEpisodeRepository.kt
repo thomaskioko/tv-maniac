@@ -70,6 +70,8 @@ public class DefaultEpisodeRepository(
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markAsWatched(
@@ -78,6 +80,8 @@ public class DefaultEpisodeRepository(
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
         )
         notificationManager.cancelNotification(episodeId)
 
@@ -89,6 +93,8 @@ public class DefaultEpisodeRepository(
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markEpisodeAndPreviousAsWatched(
@@ -97,6 +103,8 @@ public class DefaultEpisodeRepository(
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
         )
         notificationManager.cancelNotification(episodeId)
 
@@ -132,14 +140,22 @@ public class DefaultEpisodeRepository(
     override suspend fun markSeasonWatched(
         showId: Long,
         seasonNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
         val includeSpecials = getIncludeSpecials()
-        val episodes = watchedEpisodeDao.getEpisodesForSeason(showId, seasonNumber)
+        val episodes = watchedEpisodeDao.getEpisodesForSeason(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
         watchedEpisodeDao.markSeasonAsWatched(
             showId = showId,
             seasonNumber = seasonNumber,
             episodes = episodes,
             includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
         )
         cancelPendingSeasonNotifications(showId, seasonNumber, includePreviousSeasons = false)
 
@@ -149,16 +165,33 @@ public class DefaultEpisodeRepository(
     override suspend fun markSeasonAndPreviousSeasonsWatched(
         showId: Long,
         seasonNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
         val includeSpecials = getIncludeSpecials()
         watchedEpisodeDao.markSeasonAndPreviousAsWatched(
             showId = showId,
             seasonNumber = seasonNumber,
             includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
         )
         cancelPendingSeasonNotifications(showId, seasonNumber, includePreviousSeasons = true)
 
         launchSyncReporting { SyncError.BatchMarkFailed(showId, it) }
+    }
+
+    override suspend fun markShowWatched(
+        showId: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {
+        markSeasonAndPreviousSeasonsWatched(
+            showId = showId,
+            seasonNumber = EpisodeRepository.ALL_SEASONS,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
     }
 
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {

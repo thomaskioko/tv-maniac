@@ -154,9 +154,12 @@ SELECT
     episode.vote_count,
     episode.ratings,
     episode.image_url,
+    episode.runtime,
+    episode.first_aired,
     season.season_number,
     tvshow.name AS show_name,
-    CASE WHEN watched_episodes.id IS NOT NULL THEN 1 ELSE 0 END AS is_watched
+    CASE WHEN watched_episodes.id IS NOT NULL THEN 1 ELSE 0 END AS is_watched,
+    watched_episodes.watched_at
 FROM episode
 JOIN season ON season.id = episode.season_id
 JOIN tvshow ON tvshow.id = episode.show_id

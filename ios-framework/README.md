@@ -1075,6 +1075,7 @@ graph TB
   :features:episode-sheet:nav --> :navigation:api
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
+  :features:episode-sheet:presenter --> :core:util:api
   :features:episode-sheet:presenter --> :core:view
   :features:episode-sheet:presenter --> :data:datastore:api
   :features:episode-sheet:presenter --> :domain:episode

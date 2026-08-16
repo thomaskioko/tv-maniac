@@ -15,6 +15,12 @@ public class FakeSimklSyncRemoteDataSource(
     private var removeHistoryResponse: ApiResponse<SimklRemoveHistoryResponse> = ApiResponse.Unauthenticated,
 ) : SimklSyncRemoteDataSource {
 
+    public var lastAddedHistory: SimklSyncHistoryRequest? = null
+        private set
+
+    public var lastRemovedHistory: SimklSyncHistoryRequest? = null
+        private set
+
     public fun setLastActivities(response: ApiResponse<SimklLastActivitiesResponse>) {
         lastActivitiesResponse = response
     }
@@ -37,9 +43,13 @@ public class FakeSimklSyncRemoteDataSource(
     override suspend fun getAllWatchedShows(dateFrom: String?): ApiResponse<SimklAllItemsResponse> =
         allWatchedShowsResponse
 
-    override suspend fun addWatchedHistory(request: SimklSyncHistoryRequest): ApiResponse<SimklAddHistoryResponse> =
-        addHistoryResponse
+    override suspend fun addWatchedHistory(request: SimklSyncHistoryRequest): ApiResponse<SimklAddHistoryResponse> {
+        lastAddedHistory = request
+        return addHistoryResponse
+    }
 
-    override suspend fun removeWatchedHistory(request: SimklSyncHistoryRequest): ApiResponse<SimklRemoveHistoryResponse> =
-        removeHistoryResponse
+    override suspend fun removeWatchedHistory(request: SimklSyncHistoryRequest): ApiResponse<SimklRemoveHistoryResponse> {
+        lastRemovedHistory = request
+        return removeHistoryResponse
+    }
 }
