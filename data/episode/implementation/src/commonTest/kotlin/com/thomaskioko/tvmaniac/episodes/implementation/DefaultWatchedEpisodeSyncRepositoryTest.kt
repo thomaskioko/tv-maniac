@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncOperation
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowMetadata
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultEpisodesDao
@@ -117,6 +118,43 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should send a removal then an add and settle the row given a pending update`() = runTest {
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+
+        recordingDataSource.operations shouldContainExactly listOf("remove", "add")
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
+    }
+
+    @Test
+    fun `should leave the update outstanding given the add fails after the removal lands`() = runTest {
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+        recordingDataSource.addError = IllegalStateException("Simkl: failed to add episode history")
+
+        shouldThrow<IllegalStateException> {
+            defaultWatchedEpisodeSyncRepository.syncPendingEpisodes()
+        }
+
+        recordingDataSource.operations shouldContainExactly listOf("remove", "add")
+        readRow(seasonNumber = 1L, episodeNumber = 1L)
+            .shouldNotBeNull()
+            .pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+    }
+
+    @Test
+    fun `should defer the bulk pull given an update is outstanding`() = runTest {
+        addPendingUpdate(seasonNumber = 1L, episodeNumber = 1L, traktId = 555L)
+
+        defaultWatchedEpisodeSyncRepository.syncAllWatchedEpisodes(forceRefresh = true)
+
+        recordingDataSource.operations shouldContainExactly listOf("remove", "add")
+        recordingDataSource.getAllWatchedShowsCalls.shouldBeEmpty()
+    }
+
+    @Test
     fun `should upload pending entries exactly once given concurrent pending pushes`() = runTest {
         addPendingUpload(seasonNumber = 1L, episodeNumber = 1L)
 
@@ -125,7 +163,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
         advanceUntilIdle()
 
         recordingDataSource.uploaded.size shouldBe 1
-        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull().pending_action shouldBe PendingAction.NOTHING.value
+        readRow(seasonNumber = 1L, episodeNumber = 1L).shouldNotBeNull().pending_action shouldBe WatchedEpisodeSyncOperation.NOTHING.value
     }
 
     @Test
@@ -390,7 +428,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             watched_at = fakeDateTimeProvider.nowMillis(),
             trakt_id = null,
             synced_at = null,
-            pending_action = PendingAction.UPLOAD.value,
+            pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
         )
     }
 
@@ -407,7 +445,24 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             watched_at = fakeDateTimeProvider.nowMillis(),
             trakt_id = traktId,
             synced_at = traktId?.let { fakeDateTimeProvider.nowMillis() },
-            pending_action = PendingAction.DELETE.value,
+            pending_action = WatchedEpisodeSyncOperation.DELETE.value,
+        )
+    }
+
+    private fun addPendingUpdate(
+        seasonNumber: Long,
+        episodeNumber: Long,
+        traktId: Long?,
+    ) {
+        database.watchedEpisodesQueries.upsertFromTrakt(
+            show_id = showId,
+            episode_id = null,
+            season_number = seasonNumber,
+            episode_number = episodeNumber,
+            watched_at = fakeDateTimeProvider.nowMillis(),
+            trakt_id = traktId,
+            synced_at = traktId?.let { fakeDateTimeProvider.nowMillis() },
+            pending_action = WatchedEpisodeSyncOperation.UPDATE.value,
         )
     }
 
@@ -420,7 +475,7 @@ internal class DefaultWatchedEpisodeSyncRepositoryTest : BaseDatabaseTest() {
             watched_at = PAST_MILLIS,
             trakt_id = traktId,
             synced_at = PAST_MILLIS,
-            pending_action = PendingAction.NOTHING.value,
+            pending_action = WatchedEpisodeSyncOperation.NOTHING.value,
         )
     }
 
@@ -659,6 +714,14 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
 
     private val _getShowEpisodeWatchesCalls = mutableListOf<Long>()
     val getShowEpisodeWatchesCalls: List<Long> get() = _getShowEpisodeWatchesCalls.toList()
+
+    private val _operations = mutableListOf<String>()
+    val operations: List<String> get() = _operations.toList()
+
+    private val _getAllWatchedShowsCalls = mutableListOf<Int>()
+    val getAllWatchedShowsCalls: List<Int> get() = _getAllWatchedShowsCalls.toList()
+
+    var addError: Throwable? = null
     var showWatchesToReturn: List<WatchedEpisodeEntry> = emptyList()
     var batchesToReturn: List<WatchedShowBatch> = emptyList()
     var metadataToReturn: List<WatchedShowMetadata> = emptyList()
@@ -678,15 +741,19 @@ private class RecordingEpisodeWatchesDataSource : EpisodeWatchesDataSource {
     }
 
     override suspend fun getAllWatchedShows(page: Int, limit: Int): List<WatchedShowBatch> {
+        _getAllWatchedShowsCalls += page
         val offset = (page - 1) * limit
         return batchesToReturn.drop(offset).take(limit)
     }
 
     override suspend fun addEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
         yield()
+        _operations += "add"
+        addError?.let { throw it }
         _uploaded += entries
     }
     override suspend fun removeEpisodeEntries(entries: List<WatchedEpisodeEntry>) {
+        _operations += "remove"
         _removed += entries.map { it.seasonNumber to it.episodeNumber }
     }
 }

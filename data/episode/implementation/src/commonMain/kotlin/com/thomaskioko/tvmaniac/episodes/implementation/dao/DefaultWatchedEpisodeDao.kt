@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncOperation
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
@@ -21,7 +22,6 @@ import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
-import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -152,6 +152,45 @@ public class DefaultWatchedEpisodeDao(
         watchedAt: Long?,
         useReleaseDate: Boolean,
     ) {
+        writeWatch(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+            action = WatchedEpisodeSyncOperation.UPLOAD,
+        )
+    }
+
+    override suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        includeSpecials: Boolean,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {
+        writeWatch(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+            action = WatchedEpisodeSyncOperation.UPDATE,
+        )
+    }
+
+    private suspend fun writeWatch(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        includeSpecials: Boolean,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+        action: WatchedEpisodeSyncOperation,
+    ) {
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
@@ -170,7 +209,7 @@ public class DefaultWatchedEpisodeDao(
                     season_number = seasonNumber,
                     episode_number = episodeNumber,
                     watched_at = timestamp,
-                    pending_action = PendingAction.UPLOAD.value,
+                    pending_action = action.value,
                 )
                 recalculateLastWatched(internalShowId, includeSpecials)
             }
@@ -192,7 +231,7 @@ public class DefaultWatchedEpisodeDao(
                 if (entry != null) {
                     if (entry.trakt_id != null) {
                         val _ = database.watchedEpisodesQueries.updatePendingActionByShowAndEpisode(
-                            pending_action = PendingAction.DELETE.value,
+                            pending_action = WatchedEpisodeSyncOperation.DELETE.value,
                             show_id = internalShowId,
                             episode_id = Id(episodeId),
                         )
@@ -303,7 +342,7 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.seasonNumber,
                         episode_number = episode.episodeNumber,
                         watched_at = episodeTimestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
                 recalculateLastWatched(internalShowId, includeSpecials)
@@ -326,7 +365,7 @@ public class DefaultWatchedEpisodeDao(
                 seasonRows.forEach { row ->
                     if (row.trakt_id != null) {
                         val _ = database.watchedEpisodesQueries.updatePendingAction(
-                            pending_action = PendingAction.DELETE.value,
+                            pending_action = WatchedEpisodeSyncOperation.DELETE.value,
                             id = row.watched_id,
                         )
                     } else {
@@ -365,7 +404,7 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = releaseDateOrNull(episode.first_aired, episode.runtime, useReleaseDate) ?: timestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
 
@@ -386,7 +425,7 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = releaseDateOrNull(episode.first_aired, episode.runtime, useReleaseDate) ?: timestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
 
@@ -422,7 +461,7 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
                         watched_at = releaseDateOrNull(episode.first_aired, episode.runtime, useReleaseDate) ?: timestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
 
@@ -439,7 +478,7 @@ public class DefaultWatchedEpisodeDao(
                     episode_number = episodeNumber,
                     watched_at = releaseDateOrNull(markedEpisode?.first_aired, markedEpisode?.runtime, useReleaseDate)
                         ?: timestamp,
-                    pending_action = PendingAction.UPLOAD.value,
+                    pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                 )
                 recalculateLastWatched(internalShowId, includeSpecials)
             }
@@ -556,7 +595,7 @@ public class DefaultWatchedEpisodeDao(
             .catch { emit(0L) }
     }
 
-    override suspend fun entriesByPendingAction(action: PendingAction): List<GetEntriesByPendingAction> {
+    override suspend fun entriesByPendingAction(action: WatchedEpisodeSyncOperation): List<GetEntriesByPendingAction> {
         return withContext(dispatchers.databaseRead) {
             database.watchedEpisodesQueries
                 .getEntriesByPendingAction(action.value)
@@ -564,13 +603,13 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
-    override suspend fun updatePendingAction(id: Long, action: PendingAction) {
+    override suspend fun updatePendingAction(id: Long, action: WatchedEpisodeSyncOperation) {
         withContext(dispatchers.databaseWrite) {
             database.watchedEpisodesQueries.updatePendingAction(action.value, id)
         }
     }
 
-    override suspend fun updatePendingActions(ids: List<Long>, action: PendingAction) {
+    override suspend fun updatePendingActions(ids: List<Long>, action: WatchedEpisodeSyncOperation) {
         if (ids.isEmpty()) return
         withContext(dispatchers.databaseWrite) {
             database.transaction {
@@ -629,7 +668,7 @@ public class DefaultWatchedEpisodeDao(
                         watched_at = entry.watchedAt.toEpochMilliseconds(),
                         trakt_id = entry.traktId,
                         synced_at = syncedAt,
-                        pending_action = PendingAction.NOTHING.value,
+                        pending_action = WatchedEpisodeSyncOperation.NOTHING.value,
                     )
                 }
 
