@@ -203,8 +203,8 @@ com.google.firebase:firebase-measurement-connector:20.0.1
 com.google.firebase:firebase-sessions:3.0.7
 com.google.guava:listenablefuture:1.0
 com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0
-com.squareup.okhttp3:okhttp-android:5.4.0
-com.squareup.okhttp3:okhttp:5.4.0
+com.squareup.okhttp3:okhttp-android:5.5.0
+com.squareup.okhttp3:okhttp:5.5.0
 com.squareup.okio:okio-jvm:3.18.1
 com.squareup.okio:okio:3.18.1
 dev.icerock.moko:graphics-android:0.10.0
