@@ -96,6 +96,13 @@ private class CountingCalendarEpisodeRepository : EpisodeRepository {
         watchedAt: Long?,
         useReleaseDate: Boolean,
     ) {}
+    override suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {}
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
         showId: Long,
         episodeId: Long,

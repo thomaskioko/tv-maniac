@@ -278,7 +278,8 @@ internal class WatchDateSelectionPresenterTest {
         presenter.dispatch(WatchDateSelectionAction.JustNowSelected)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        episodeRepository.lastMarkEpisodeWatchedCall?.watchedAt shouldBe NOW_MILLIS
+        episodeRepository.lastUpdateWatchedDateCall?.watchedAt shouldBe NOW_MILLIS
+        episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
         rewatchRepository.lastAddEpisodeWatchedAt.shouldBeNull()
     }
 
