@@ -167,6 +167,10 @@ graph TB
     direction TB
     :features:start-watching:presenter[presenter]:::multiplatform
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -280,6 +284,7 @@ graph TB
   :features:continue-watching:presenter --> :features:rating-sheet:presenter
   :features:continue-watching:presenter -.-> :features:season-details:nav
   :features:continue-watching:presenter -.-> :features:show-details:nav
+  :features:continue-watching:presenter --> :features:watchdate-selection:nav
   :features:continue-watching:presenter --> :i18n:api
   :features:continue-watching:presenter --> :navigation:api
   :features:home:nav --> :navigation:api
@@ -317,6 +322,8 @@ graph TB
   :features:start-watching:presenter --> :features:my-shows:nav
   :features:start-watching:presenter -.-> :features:show-details:nav
   :features:start-watching:presenter --> :navigation:api
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
   :i18n:api --> :i18n:generator
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

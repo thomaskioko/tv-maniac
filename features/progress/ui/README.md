@@ -173,6 +173,10 @@ graph TB
     :features:upnext:presenter[presenter]:::multiplatform
     :features:upnext:ui[ui]:::android-library
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -344,6 +348,7 @@ graph TB
   :features:upnext:presenter --> :features:rating-sheet:presenter
   :features:upnext:presenter -.-> :features:season-details:nav
   :features:upnext:presenter -.-> :features:show-details:nav
+  :features:upnext:presenter --> :features:watchdate-selection:nav
   :features:upnext:presenter --> :navigation:api
   :features:upnext:ui -.-> :android-designsystem
   :features:upnext:ui -.-> :core:test-tags
@@ -351,6 +356,8 @@ graph TB
   :features:upnext:ui -.-> :domain:continue-watching
   :features:upnext:ui --> :features:upnext:presenter
   :features:upnext:ui -.-> :i18n:generator
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
   :i18n:api --> :i18n:generator
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api

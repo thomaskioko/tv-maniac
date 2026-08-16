@@ -106,6 +106,10 @@ graph TB
     :features:season-details:presenter[presenter]:::multiplatform
     :features:season-details:ui[ui]:::android-library
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:generator[generator]:::multiplatform
@@ -182,6 +186,7 @@ graph TB
   :features:season-details:presenter -.-> :features:episode-sheet:nav
   :features:season-details:presenter --> :features:rating-sheet:nav
   :features:season-details:presenter --> :features:season-details:nav
+  :features:season-details:presenter --> :features:watchdate-selection:nav
   :features:season-details:presenter --> :navigation:api
   :features:season-details:ui -.-> :android-designsystem
   :features:season-details:ui --> :core:base
@@ -191,6 +196,8 @@ graph TB
   :features:season-details:ui -.-> :i18n:generator
   :features:season-details:ui --> :navigation:api
   :features:season-details:ui --> :navigation:ui
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api
 

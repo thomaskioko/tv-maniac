@@ -160,6 +160,7 @@ graph TB
   :features:watchdate-selection:presenter --> :data:ratings:api
   :features:watchdate-selection:presenter --> :domain:episode
   :features:watchdate-selection:presenter --> :domain:ratings
+  :features:watchdate-selection:presenter --> :domain:rewatch
   :features:watchdate-selection:presenter --> :features:rating-sheet:nav
   :features:watchdate-selection:presenter --> :features:watchdate-selection:nav
   :features:watchdate-selection:presenter --> :i18n:api

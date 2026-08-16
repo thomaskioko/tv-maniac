@@ -1249,6 +1249,7 @@ graph TB
   :features:continue-watching:presenter --> :features:rating-sheet:presenter
   :features:continue-watching:presenter -.-> :features:season-details:nav
   :features:continue-watching:presenter -.-> :features:show-details:nav
+  :features:continue-watching:presenter --> :features:watchdate-selection:nav
   :features:continue-watching:presenter --> :i18n:api
   :features:continue-watching:presenter --> :navigation:api
   :features:continue-watching:ui -.-> :android-designsystem
@@ -1565,6 +1566,7 @@ graph TB
   :features:season-details:presenter -.-> :features:episode-sheet:nav
   :features:season-details:presenter --> :features:rating-sheet:nav
   :features:season-details:presenter --> :features:season-details:nav
+  :features:season-details:presenter --> :features:watchdate-selection:nav
   :features:season-details:presenter --> :navigation:api
   :features:season-details:ui -.-> :android-designsystem
   :features:season-details:ui --> :core:base
@@ -1632,6 +1634,7 @@ graph TB
   :features:show-details:presenter --> :features:show-details:nav
   :features:show-details:presenter --> :features:show-list:nav
   :features:show-details:presenter -.-> :features:trailers:nav
+  :features:show-details:presenter --> :features:watchdate-selection:nav
   :features:show-details:presenter --> :i18n:api
   :features:show-details:presenter --> :navigation:api
   :features:show-details:ui -.-> :android-designsystem
@@ -1731,6 +1734,7 @@ graph TB
   :features:upnext:presenter --> :features:rating-sheet:presenter
   :features:upnext:presenter -.-> :features:season-details:nav
   :features:upnext:presenter -.-> :features:show-details:nav
+  :features:upnext:presenter --> :features:watchdate-selection:nav
   :features:upnext:presenter --> :navigation:api
   :features:upnext:ui -.-> :android-designsystem
   :features:upnext:ui -.-> :core:test-tags
@@ -1748,6 +1752,7 @@ graph TB
   :features:watchdate-selection:presenter --> :data:ratings:api
   :features:watchdate-selection:presenter --> :domain:episode
   :features:watchdate-selection:presenter --> :domain:ratings
+  :features:watchdate-selection:presenter --> :domain:rewatch
   :features:watchdate-selection:presenter --> :features:rating-sheet:nav
   :features:watchdate-selection:presenter --> :features:watchdate-selection:nav
   :features:watchdate-selection:presenter --> :i18n:api
