@@ -56,4 +56,8 @@
         <item quantity="one">%d Mal gesehen</item>
         <item quantity="other">%d Mal gesehen</item>
     </plurals>
+    <plurals name="dialog_message_mark_show_watched">
+        <item quantity="one">Dadurch wird %d Folge als gesehen markiert.</item>
+        <item quantity="other">Dadurch werden %d Folgen als gesehen markiert.</item>
+    </plurals>
 </resources>

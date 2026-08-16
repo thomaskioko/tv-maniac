@@ -60,4 +60,8 @@
         <item quantity="one">Vu %d fois</item>
         <item quantity="other">Vu %d fois</item>
     </plurals>
+    <plurals name="dialog_message_mark_show_watched">
+        <item quantity="one">%d épisode sera marqué comme vu.</item>
+        <item quantity="other">%d épisodes seront marqués comme vus.</item>
+    </plurals>
 </resources>
