@@ -564,4 +564,14 @@
     <string name="label_remove_watch_confirm_message">\"%1$s\" ne comptera plus comme vu.</string>
 
     <string name="label_rewatch_simkl_free_tier">Simkl n\'enregistre pas les revisionnages sans forfait payant. Ce décompte reste sur cet appareil.</string>
+
+    <string name="label_watched_date_title">Quand avez-vous regardé ceci ?</string>
+    <string name="label_watched_date_edit_title">Modifier la date de visionnage</string>
+    <string name="label_watched_date_just_now">À l\'instant</string>
+    <string name="label_watched_date_release_date">Date de diffusion</string>
+    <string name="label_watched_date_other">Autre date…</string>
+    <string name="label_watched_date_unknown">Date inconnue</string>
+    <string name="label_watched_date_unknown_display">Il y a longtemps</string>
+    <string name="label_mark_show_watched">Marquer la série comme vue</string>
+    <string name="label_mark_show_watched_confirm_title">Marquer toute la série comme vue ?</string>
 </resources>

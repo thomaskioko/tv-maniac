@@ -578,4 +578,14 @@
     <string name="label_watch_status_dropped">Dropped</string>
 
     <string name="label_rewatch_simkl_free_tier">Simkl does not store rewatches without a paid plan, so this count stays on this device.</string>
+
+    <string name="label_watched_date_title">When did you watch this?</string>
+    <string name="label_watched_date_edit_title">Change watched date</string>
+    <string name="label_watched_date_just_now">Just now</string>
+    <string name="label_watched_date_release_date">Release date</string>
+    <string name="label_watched_date_other">Other date…</string>
+    <string name="label_watched_date_unknown">Unknown date</string>
+    <string name="label_watched_date_unknown_display">A long time ago</string>
+    <string name="label_mark_show_watched">Mark show as watched</string>
+    <string name="label_mark_show_watched_confirm_title">Mark whole show as watched?</string>
 </resources>
