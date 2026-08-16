@@ -88,6 +88,25 @@ public class DefaultEpisodeRepository(
         launchSyncReporting { SyncError.MarkWatchedFailed(showId, it) }
     }
 
+    override suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {
+        watchedEpisodeDao.updateWatchedDate(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            includeSpecials = getIncludeSpecials(),
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
+
+        launchSyncReporting { SyncError.MarkWatchedFailed(showId, it) }
+    }
+
     override suspend fun markEpisodeAndPreviousEpisodesWatched(
         showId: Long,
         episodeId: Long,

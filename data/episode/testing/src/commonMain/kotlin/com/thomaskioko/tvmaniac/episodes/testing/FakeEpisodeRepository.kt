@@ -26,6 +26,14 @@ public data class MarkEpisodeWatchedCall(
     val useReleaseDate: Boolean = false,
 )
 
+public data class UpdateWatchedDateCall(
+    val showId: Long,
+    val seasonNumber: Long,
+    val episodeNumber: Long,
+    val watchedAt: Long? = null,
+    val useReleaseDate: Boolean = false,
+)
+
 public data class MarkSeasonWatchedCall(
     val showId: Long,
     val seasonNumber: Long,
@@ -79,6 +87,9 @@ public class FakeEpisodeRepository : EpisodeRepository {
     private val showMetadataSyncInfo = mutableMapOf<Long, ShowMetadataSyncInfo?>()
 
     public var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
+        private set
+
+    public var lastUpdateWatchedDateCall: UpdateWatchedDateCall? = null
         private set
 
     public var lastMarkSeasonWatchedCall: MarkSeasonWatchedCall? = null
@@ -163,6 +174,22 @@ public class FakeEpisodeRepository : EpisodeRepository {
         lastMarkEpisodeWatchedCall = MarkEpisodeWatchedCall(
             showId = showId,
             episodeId = episodeId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+        )
+    }
+
+    override suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {
+        lastUpdateWatchedDateCall = UpdateWatchedDateCall(
+            showId = showId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             watchedAt = watchedAt,
