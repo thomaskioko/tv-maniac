@@ -4,6 +4,7 @@
     <string name="label_tbd">À déterminer</string>
     <string name="label_error">Erreur</string>
     <string name="label_ok">OK</string>
+    <string name="label_cancel">Annuler</string>
 
     <string name="label_tab_discover">Découvrir</string>
     <string name="label_discover_upcoming">À venir</string>
