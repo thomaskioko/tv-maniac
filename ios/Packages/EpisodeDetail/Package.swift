@@ -35,6 +35,7 @@ let package = Package(
                 "SnapshotTestingLib",
                 "EpisodeDetail",
                 "DesignSystem",
+                "Components",
             ],
             exclude: ["__Snapshots__"]
         ),
