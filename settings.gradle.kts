@@ -313,6 +313,7 @@ include(
     ":features:rating-sheet:ui",
     ":features:watchdate-selection:presenter",
     ":features:watchdate-selection:nav",
+    ":features:watchdate-selection:ui",
     ":features:home:nav",
     ":features:home:presenter",
     ":features:library:nav",
