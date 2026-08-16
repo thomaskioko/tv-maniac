@@ -14,7 +14,6 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.logger.api)
-                api(projects.core.util.api)
                 api(projects.core.view)
                 api(projects.domain.episode)
                 api(projects.domain.followedshows)
@@ -23,6 +22,7 @@ kotlin {
                 api(projects.domain.rewatch)
                 api(projects.features.episodeSheet.nav)
                 api(projects.features.ratingSheet.nav)
+                api(projects.features.watchdateSelection.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
 
