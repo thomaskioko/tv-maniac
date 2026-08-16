@@ -105,13 +105,24 @@ class MarkWatchedAtInteractorTest {
     }
 
     @Test
-    fun `should correct the existing mark given the sheet is editing a watched episode`() = runTest {
+    fun `should update the existing mark given the sheet is editing a watched episode`() = runTest {
         episodeRepository.setEpisodeById(testEpisode(isWatched = true))
 
         interactor.executeSync(episodeParams(watchedAt = PICKED_MILLIS, isEdit = true))
 
-        episodeRepository.lastMarkEpisodeWatchedCall?.watchedAt shouldBe PICKED_MILLIS
+        episodeRepository.lastUpdateWatchedDateCall?.watchedAt shouldBe PICKED_MILLIS
+        episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
         rewatchRepository.lastAddEpisodeWatchedAt.shouldBeNull()
+    }
+
+    @Test
+    fun `should update at the release date given the sheet is editing and asks for it`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = true))
+
+        interactor.executeSync(episodeParams(useReleaseDate = true, isEdit = true))
+
+        episodeRepository.lastUpdateWatchedDateCall?.useReleaseDate shouldBe true
+        episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
     }
 
     @Test

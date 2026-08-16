@@ -49,7 +49,15 @@ public class MarkWatchedAtInteractor(
 
     private suspend fun markEpisode(params: MarkWatchedAtParams) {
         val episode = episodeRepository.observeEpisodeById(params.episodeId).first()
-        if (!params.isEdit && episode != null && episode.is_watched != 0L) {
+        if (params.isEdit) {
+            episodeRepository.updateWatchedDate(
+                showId = params.showId,
+                seasonNumber = params.seasonNumber,
+                episodeNumber = params.episodeNumber,
+                watchedAt = params.watchedAt,
+                useReleaseDate = params.useReleaseDate,
+            )
+        } else if (episode != null && episode.is_watched != 0L) {
             watchAgainInteractor.executeSync(
                 WatchAgainInteractor.Param(
                     showId = params.showId,

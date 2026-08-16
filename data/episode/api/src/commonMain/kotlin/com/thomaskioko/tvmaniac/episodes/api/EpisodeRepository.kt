@@ -34,6 +34,14 @@ public interface EpisodeRepository {
         useReleaseDate: Boolean = false,
     )
 
+    public suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
+    )
+
     /**
      * Mark an episode as watched along with all previous unwatched episodes.
      * Automatically adds the show to the library if not already there.

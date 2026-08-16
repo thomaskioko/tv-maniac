@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveTrailersInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.i18n.testing.util.BaseLocalizerTest
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.model.TrailerModel
 import com.thomaskioko.tvmaniac.trailers.nav.TrailersRoute
@@ -26,7 +27,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class ShowDetailsTrailersPresenterTest {
+internal class ShowDetailsTrailersPresenterTest : BaseLocalizerTest() {
 
     private val testDispatcher = StandardTestDispatcher()
     private val dispatchers = AppCoroutineDispatchers(
