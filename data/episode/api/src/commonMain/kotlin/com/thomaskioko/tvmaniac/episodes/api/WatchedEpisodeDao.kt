@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
-import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 
 public interface WatchedEpisodeDao {
@@ -44,6 +43,15 @@ public interface WatchedEpisodeDao {
     public suspend fun markAsWatched(
         showId: Long,
         episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
+    )
+
+    public suspend fun updateWatchedDate(
+        showId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
         includeSpecials: Boolean,
@@ -108,11 +116,11 @@ public interface WatchedEpisodeDao {
         includeSpecials: Boolean,
     ): Flow<Long>
 
-    public suspend fun entriesByPendingAction(action: PendingAction): List<GetEntriesByPendingAction>
+    public suspend fun entriesByPendingAction(action: WatchedEpisodeSyncOperation): List<GetEntriesByPendingAction>
 
-    public suspend fun updatePendingAction(id: Long, action: PendingAction)
+    public suspend fun updatePendingAction(id: Long, action: WatchedEpisodeSyncOperation)
 
-    public suspend fun updatePendingActions(ids: List<Long>, action: PendingAction)
+    public suspend fun updatePendingActions(ids: List<Long>, action: WatchedEpisodeSyncOperation)
 
     public fun deleteAll()
 

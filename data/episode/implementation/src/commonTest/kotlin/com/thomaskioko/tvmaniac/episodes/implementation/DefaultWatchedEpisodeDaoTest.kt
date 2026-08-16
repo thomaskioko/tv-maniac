@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncOperation
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_EPISODE_COUNT
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_ID
 import com.thomaskioko.tvmaniac.episodes.implementation.MockData.SEASON_1_NUMBER
@@ -454,6 +455,95 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
             val watchedEpisodes = awaitItem()
             watchedEpisodes.shouldBeEmpty()
         }
+    }
+
+    @Test
+    fun `should keep the remote id and queue an update given a watched date is changed`() = runTest {
+        val syncedAt = LocalDate(2024, 6, 1).toEpochMillis()
+        addSyncedWatch(episodeNumber = 1L, watchedAt = syncedAt, syncedAt = syncedAt)
+        val updatedAt = LocalDate(2024, 3, 15).toEpochMillis()
+
+        watchedEpisodeDao.updateWatchedDate(
+            showId = TEST_SHOW_ID,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = updatedAt,
+        )
+
+        val row = readWatchedRow(episodeNumber = 1L)
+        row.watched_at shouldBe updatedAt
+        row.pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+        row.trakt_id shouldBe 9001L
+        row.synced_at shouldBe syncedAt
+    }
+
+    @Test
+    fun `should keep an outstanding update given the provider re-reports the episode`() = runTest {
+        val syncedAt = LocalDate(2024, 6, 1).toEpochMillis()
+        addSyncedWatch(episodeNumber = 1L, watchedAt = syncedAt, syncedAt = syncedAt)
+        val updatedAt = LocalDate(2024, 3, 15).toEpochMillis()
+        watchedEpisodeDao.updateWatchedDate(
+            showId = TEST_SHOW_ID,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = updatedAt,
+        )
+
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showId = TEST_SHOW_ID,
+            entries = listOf(
+                WatchedEpisodeEntry(
+                    id = 0,
+                    showId = TEST_SHOW_ID,
+                    episodeId = 101L,
+                    seasonNumber = SEASON_1_NUMBER,
+                    episodeNumber = 1L,
+                    watchedAt = kotlin.time.Instant.fromEpochMilliseconds(syncedAt),
+                    traktId = 9001L,
+                ),
+            ),
+            includeSpecials = false,
+        )
+
+        val row = readWatchedRow(episodeNumber = 1L)
+        row.watched_at shouldBe updatedAt
+        row.pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
+    }
+
+    @Test
+    fun `should keep an outstanding update given the provider stops reporting the episode`() = runTest {
+        val syncedAt = LocalDate(2024, 6, 1).toEpochMillis()
+        addSyncedWatch(episodeNumber = 1L, watchedAt = syncedAt, syncedAt = syncedAt)
+        val updatedAt = LocalDate(2024, 3, 15).toEpochMillis()
+        watchedEpisodeDao.updateWatchedDate(
+            showId = TEST_SHOW_ID,
+            seasonNumber = SEASON_1_NUMBER,
+            episodeNumber = 1L,
+            includeSpecials = false,
+            watchedAt = updatedAt,
+        )
+
+        watchedEpisodeDao.upsertBatchFromTrakt(
+            showId = TEST_SHOW_ID,
+            entries = listOf(
+                WatchedEpisodeEntry(
+                    id = 0,
+                    showId = TEST_SHOW_ID,
+                    episodeId = 102L,
+                    seasonNumber = SEASON_1_NUMBER,
+                    episodeNumber = 2L,
+                    watchedAt = kotlin.time.Instant.fromEpochMilliseconds(syncedAt),
+                    traktId = 9002L,
+                ),
+            ),
+            includeSpecials = false,
+        )
+
+        val row = readWatchedRow(episodeNumber = 1L)
+        row.watched_at shouldBe updatedAt
+        row.pending_action shouldBe WatchedEpisodeSyncOperation.UPDATE.value
     }
 
     @Test
@@ -977,6 +1067,24 @@ internal class DefaultWatchedEpisodeDaoTest : BaseDatabaseTest() {
 
         watchedAtFor(episodeNumber = 1L) shouldBe CHOSEN_TIME
     }
+
+    private fun addSyncedWatch(episodeNumber: Long, watchedAt: Long, syncedAt: Long) {
+        database.watchedEpisodesQueries.upsertFromTrakt(
+            show_id = testShowId,
+            episode_id = Id(100L + episodeNumber),
+            season_number = SEASON_1_NUMBER,
+            episode_number = episodeNumber,
+            watched_at = watchedAt,
+            trakt_id = 9000L + episodeNumber,
+            synced_at = syncedAt,
+            pending_action = WatchedEpisodeSyncOperation.NOTHING.value,
+        )
+    }
+
+    private fun readWatchedRow(episodeNumber: Long, seasonNumber: Long = SEASON_1_NUMBER) =
+        database.watchedEpisodesQueries.getWatchedEpisodes(testShowId)
+            .executeAsList()
+            .first { it.season_number == seasonNumber && it.episode_number == episodeNumber }
 
     private fun libraryOrder(): List<Long> =
         database.followedShowsQueries.followedShows().executeAsList().map { it.show_id.id }
