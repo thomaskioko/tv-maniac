@@ -17,6 +17,13 @@ public data class MarkUpNextEpisodeWatched(
     val episodeNumber: Long,
 ) : ContinueWatchingAction
 
+public data class MarkUpNextEpisodeWatchedLongPressed(
+    val showId: Long,
+    val episodeId: Long,
+    val seasonNumber: Long,
+    val episodeNumber: Long,
+) : ContinueWatchingAction
+
 public data class UnfollowShowFromUpNext(val showId: Long) : ContinueWatchingAction
 
 public data class OpenSeasonFromUpNext(

@@ -24,6 +24,7 @@ import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.toContinueTrackingModels
 import com.thomaskioko.tvmaniac.presenter.showdetails.toScrollIndex
@@ -33,6 +34,8 @@ import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.scope.ShowDetailsChildScope
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionParam
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -160,6 +163,19 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
                     )
                 }
             }
+
+            is ShowDetailsEpisodeWatchedLongPressed -> navigator.navigateTo(
+                WatchDateSelectionRoute(
+                    WatchDateSelectionParam(
+                        target = WatchedDateTarget.EPISODE,
+                        showId = action.showId,
+                        episodeId = action.episodeId,
+                        seasonNumber = action.seasonNumber,
+                        episodeNumber = action.episodeNumber,
+                        isEdit = true,
+                    ),
+                ),
+            )
 
             is ShowDetailsMarkEpisodeUnwatched -> coroutineScope.launchUpdating(
                 id = action.episodeId,

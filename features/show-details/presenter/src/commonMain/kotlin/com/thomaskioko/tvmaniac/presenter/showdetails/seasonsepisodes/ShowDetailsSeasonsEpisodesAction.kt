@@ -13,6 +13,13 @@ public data class ShowDetailsMarkEpisodeWatched(
     val episodeNumber: Long,
 ) : ShowDetailsSeasonsEpisodesAction
 
+public data class ShowDetailsEpisodeWatchedLongPressed(
+    val showId: Long,
+    val episodeId: Long,
+    val seasonNumber: Long,
+    val episodeNumber: Long,
+) : ShowDetailsSeasonsEpisodesAction
+
 public data class ShowDetailsMarkEpisodeUnwatched(
     val showId: Long,
     val episodeId: Long,
