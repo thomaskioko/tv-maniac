@@ -14,11 +14,15 @@ public class MarkSeasonWatchedInteractor(
             episodeRepository.markSeasonAndPreviousSeasonsWatched(
                 showId = params.showId,
                 seasonNumber = params.seasonNumber,
+                watchedAt = params.watchedAt,
+                useReleaseDate = params.useReleaseDate,
             )
         } else {
             episodeRepository.markSeasonWatched(
                 showId = params.showId,
                 seasonNumber = params.seasonNumber,
+                watchedAt = params.watchedAt,
+                useReleaseDate = params.useReleaseDate,
             )
         }
     }
@@ -28,4 +32,6 @@ public data class MarkSeasonWatchedParams(
     val showId: Long,
     val seasonNumber: Long,
     val markPreviousSeasons: Boolean = false,
+    val watchedAt: Long? = null,
+    val useReleaseDate: Boolean = false,
 )

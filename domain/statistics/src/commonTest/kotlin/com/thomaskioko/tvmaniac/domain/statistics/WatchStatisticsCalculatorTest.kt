@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.domain.statistics.model.GenreCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.ReleaseYearCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.implementation.DefaultShowWatchStatusDao
@@ -161,6 +162,37 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
         statistics.episodesWatched shouldBe 1L
         statistics.dailyCounts.all { it.episodeCount == 0 } shouldBe true
         statistics.peakYear?.year shouldBe 2024
+    }
+
+    @Test
+    fun `should leave an undated watch out of every date bucketed chart`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = WatchedDate.UNKNOWN_MILLIS)
+
+        val statistics = calculate()
+
+        statistics.yearlyCounts.map { it.year } shouldBe listOf(2026)
+        statistics.monthlyCounts.sumOf { it.episodeCount } shouldBe 1
+        statistics.weekdayCounts.sumOf { it.episodeCount } shouldBe 1
+        statistics.topWeekday?.episodeCount shouldBe 1
+        statistics.peakYear?.year shouldBe 2026
+        statistics.peakYear?.episodeCount shouldBe 1
+        statistics.streak.longestStart shouldBe LocalDate(2026, 8, 3)
+        statistics.streak.longestEnd shouldBe LocalDate(2026, 8, 3)
+    }
+
+    @Test
+    fun `should count an undated watch in the totals given it is left out of the charts`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        setShowRuntime(BREAKING_BAD, runtime = 45)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = WatchedDate.UNKNOWN_MILLIS)
+
+        val statistics = calculate()
+
+        statistics.episodesWatched shouldBe 2L
+        statistics.totalWatchTime.totalMinutes shouldBe 90L
     }
 
     @Test

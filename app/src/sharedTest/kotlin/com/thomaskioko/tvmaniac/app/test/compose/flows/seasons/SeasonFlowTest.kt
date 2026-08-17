@@ -57,6 +57,12 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
             .assertMarkPreviousEpisodesDialogDisplayed()
             .clickMarkPreviousEpisodesDismiss()
             .assertMarkPreviousEpisodesDialogDoesNotExist()
+
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
+
+        seasonDetailsRobot
             .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
             .assertMarkWatchedDisplayed(pilotEpisodeTraktId)
 
@@ -68,6 +74,12 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
             .clickMarkWatched(secondEpisodeTraktId)
             .clickMarkPreviousEpisodesConfirm()
             .assertMarkPreviousEpisodesDialogDoesNotExist()
+
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
+
+        seasonDetailsRobot
             .assertMarkUnwatchedDisplayed(pilotEpisodeTraktId)
             .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
             .clickBackButton()
@@ -87,6 +99,12 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
             .assertMarkPreviousSeasonsDialogDisplayed()
             .clickMarkPreviousSeasonsConfirm()
             .assertMarkPreviousSeasonsDialogDoesNotExist()
+
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
+
+        seasonDetailsRobot
             .assertMarkUnwatchedDisplayed(seasonTwoFirstEpisodeTraktId)
             .clickBackButton()
 
@@ -106,6 +124,31 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
             .clickUnwatchSeasonConfirm()
             .assertUnwatchSeasonDialogDoesNotExist()
             .assertMarkWatchedDisplayed(seasonTwoFirstEpisodeTraktId)
+    }
+
+    @Test
+    fun givenSeasonDetails_whenMarkWatchedLongPressed_thenWatchDateSheetOpens() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertFeaturedPagerDisplayed()
+            .clickShowCard(breakingBadTmdbId)
+        trackShow()
+
+        showDetailsRobot
+            .clickSeasonChip(seasonNumber = 1L)
+            .assertSeasonDetailsDisplayed()
+
+        seasonDetailsRobot
+            .longPressMarkWatched(secondEpisodeTraktId)
+
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
+
+        seasonDetailsRobot
+            .scrollToMarkUnwatchedButton(secondEpisodeTraktId)
+            .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
     }
 
     @Test
@@ -135,6 +178,12 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
             .assertWatchSeasonDialogDisplayed()
             .clickWatchSeasonConfirm()
             .assertWatchSeasonDialogDoesNotExist()
+
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
+
+        seasonDetailsRobot
             .scrollToMarkUnwatchedButton(secondEpisodeTraktId)
             .assertMarkUnwatchedDisplayed(secondEpisodeTraktId)
     }

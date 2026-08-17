@@ -151,61 +151,6 @@ public extension EpisodeDetailSheetContent where Actions == EmptyView {
     }
 }
 
-public struct SheetActionItem: View {
-    @Environment(\.appTheme) private var theme
-
-    private let icon: String
-    private let label: String
-    private let isEnabled: Bool
-    private let showProgress: Bool
-    private let action: () -> Void
-
-    public init(
-        icon: String,
-        label: String,
-        isEnabled: Bool = true,
-        showProgress: Bool = false,
-        action: @escaping () -> Void
-    ) {
-        self.icon = icon
-        self.label = label
-        self.isEnabled = isEnabled
-        self.showProgress = showProgress
-        self.action = action
-    }
-
-    public var body: some View {
-        Button(action: action) {
-            HStack(spacing: theme.spacing.medium) {
-                ZStack {
-                    if showProgress {
-                        ProgressView()
-                            .controlSize(.small)
-                            .tint(theme.colors.onSurfaceVariant)
-                    } else {
-                        Image(systemName: icon)
-                            .textStyle(theme.typography.titleMedium)
-                            .foregroundStyle(.appOnSurface)
-                            .opacity(isEnabled ? 1 : 0.38)
-                    }
-                }
-                .frame(width: 24)
-
-                Text(label)
-                    .textStyle(theme.typography.bodyLarge)
-                    .foregroundStyle(.appOnSurface)
-                    .opacity(isEnabled ? 1 : 0.38)
-
-                Spacer()
-            }
-            .padding(.horizontal, theme.spacing.medium)
-            .padding(.vertical, theme.spacing.small)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .disabled(!isEnabled)
-    }
-}
-
 #Preview("Detail Only") {
     EpisodeDetailSheetContent(
         episode: EpisodeDetailSheetInfo(

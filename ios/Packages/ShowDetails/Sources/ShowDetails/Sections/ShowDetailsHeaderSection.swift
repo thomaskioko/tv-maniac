@@ -26,6 +26,8 @@ struct ShowDetailsHeaderSection: View {
             rateLabel: String(\.label_action_rate),
             watchAgainLabel: String(\.label_action_watch_again),
             canWatchAgain: state.canWatchAgain,
+            markShowWatchedLabel: state.markShowWatchedLabel,
+            canMarkShowWatched: state.canMarkShowWatched,
             userRating: state.userRating as? Int,
             onAddToLibrary: {
                 presenter.dispatch(action: ShowDetailsFollowClicked(isInLibrary: state.isInLibrary))
@@ -38,6 +40,9 @@ struct ShowDetailsHeaderSection: View {
             },
             onWatchAgain: {
                 presenter.dispatch(action: WatchAgainClicked())
+            },
+            onMarkShowWatched: {
+                presenter.dispatch(action: MarkShowWatchedClicked())
             }
         )
         .alert(
@@ -59,6 +64,26 @@ struct ShowDetailsHeaderSection: View {
             }
         } message: {
             Text(String(\.label_watch_again_confirm_message, parameter: state.title))
+        }
+        .alert(
+            state.markShowWatchedTitle,
+            isPresented: Binding(
+                get: { state.showMarkShowWatchedConfirmation },
+                set: { isPresented in
+                    if !isPresented {
+                        presenter.dispatch(action: MarkShowWatchedDismissed())
+                    }
+                }
+            )
+        ) {
+            Button(String(\.dialog_button_yes)) {
+                presenter.dispatch(action: MarkShowWatchedConfirmed())
+            }
+            Button(String(\.dialog_button_no), role: .cancel) {
+                presenter.dispatch(action: MarkShowWatchedDismissed())
+            }
+        } message: {
+            Text(state.markShowWatchedMessage)
         }
     }
 }

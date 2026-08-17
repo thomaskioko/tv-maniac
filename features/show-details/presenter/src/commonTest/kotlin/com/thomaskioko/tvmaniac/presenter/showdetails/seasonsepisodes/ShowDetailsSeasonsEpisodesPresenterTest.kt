@@ -37,6 +37,7 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -222,6 +223,33 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
 
             testDispatcher.scheduler.advanceUntilIdle()
             expectMostRecentItem().updatingEpisodeIds.shouldBeEmpty()
+        }
+    }
+
+    @Test
+    fun `should open the watch date sheet given the check button is long pressed`() = runTest {
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            presenter.dispatch(
+                ShowDetailsEpisodeWatchedLongPressed(
+                    showId = SHOW_ID,
+                    episodeId = 1001L,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
+                ),
+            )
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.showId shouldBe SHOW_ID
+            route.param.episodeId shouldBe 1001L
+            route.param.seasonNumber shouldBe 1L
+            route.param.episodeNumber shouldBe 1L
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

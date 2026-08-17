@@ -4,6 +4,7 @@
     <string name="label_tbd">TBD</string>
     <string name="label_error">Fehler</string>
     <string name="label_ok">OK</string>
+    <string name="label_cancel">Abbrechen</string>
 
     <string name="label_tab_discover">Entdecken</string>
     <string name="label_discover_upcoming">Kommende</string>
@@ -570,4 +571,14 @@
     <string name="label_watch_status_dropped">Abgebrochen</string>
 
     <string name="label_rewatch_simkl_free_tier">Simkl speichert wiederholtes Ansehen nur mit einem kostenpflichtigen Tarif. Diese Zählung bleibt auf diesem Gerät.</string>
+
+    <string name="label_watched_date_title">Wann haben Sie das gesehen?</string>
+    <string name="label_watched_date_edit_title">Sehdatum ändern</string>
+    <string name="label_watched_date_just_now">Gerade eben</string>
+    <string name="label_watched_date_release_date">Ausstrahlungsdatum</string>
+    <string name="label_watched_date_other">Anderes Datum …</string>
+    <string name="label_watched_date_unknown">Datum unbekannt</string>
+    <string name="label_watched_date_unknown_display">Vor langer Zeit</string>
+    <string name="label_mark_show_watched">Serie als gesehen markieren</string>
+    <string name="label_mark_show_watched_confirm_title">Serie als gesehen markieren?</string>
 </resources>

@@ -129,6 +129,7 @@ graph TB
     :domain:favorites[favorites]:::multiplatform
     :domain:library[library]:::multiplatform
     :domain:recently-watched[recently-watched]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
     :domain:traktlists[traktlists]:::multiplatform
@@ -213,12 +214,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:favorites --> :core:base
   :domain:favorites --> :data:favorites:api
   :domain:library --> :core:base
@@ -236,6 +239,9 @@ graph TB
   :domain:library --> :domain:sync-activity
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api

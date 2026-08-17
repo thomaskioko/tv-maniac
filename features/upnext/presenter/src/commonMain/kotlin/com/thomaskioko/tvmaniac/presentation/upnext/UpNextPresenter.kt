@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
-import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSortOption
@@ -20,6 +19,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -27,8 +27,7 @@ import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presentation.upnext.model.UpNextEpisodeUiModel
 import com.thomaskioko.tvmaniac.progress.nav.ProgressRoot
 import com.thomaskioko.tvmaniac.progress.nav.scope.ProgressChildScope
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
+import com.thomaskioko.tvmaniac.ratingsheet.presenter.promptForEpisodeRating
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -36,6 +35,8 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionParam
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
 import kotlinx.collections.immutable.persistentSetOf
@@ -110,6 +111,18 @@ public class UpNextPresenter internal constructor(
         when (action) {
             is UpNextShowClicked -> navigateToSeasonFromEpisode(action.showId)
             is MarkWatched -> markEpisodeWatched(action)
+            is MarkWatchedLongPressed -> navigator.navigateTo(
+                WatchDateSelectionRoute(
+                    WatchDateSelectionParam(
+                        target = WatchedDateTarget.EPISODE,
+                        showId = action.showId,
+                        episodeId = action.episodeId,
+                        seasonNumber = action.seasonNumber,
+                        episodeNumber = action.episodeNumber,
+                        isEdit = true,
+                    ),
+                ),
+            )
             is UpNextChangeSortOption -> changeSortOption(action.sortOption)
             is RefreshUpNext -> refreshUpNext(isUserInitiated = true)
             is UpNextMessageShown -> clearMessage(action.id)
@@ -174,19 +187,12 @@ public class UpNextPresenter internal constructor(
                     episodeNumber = action.episodeNumber,
                 ),
             ).onCompletion {
-                showRatingPrompt(showId = action.showId, episodeId = action.episodeId)
+                navigator.promptForEpisodeRating(
+                    interactor = shouldPromptForRatingInteractor,
+                    showId = action.showId,
+                    episodeId = action.episodeId,
+                )
             }
-        }
-    }
-
-    private suspend fun showRatingPrompt(showId: Long, episodeId: Long) {
-        val shouldPrompt = shouldPromptForRatingInteractor(
-            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
-        )
-        if (shouldPrompt) {
-            navigator.navigateTo(
-                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
-            )
         }
     }
 

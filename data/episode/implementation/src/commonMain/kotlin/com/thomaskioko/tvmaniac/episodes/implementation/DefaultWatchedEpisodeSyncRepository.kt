@@ -7,9 +7,9 @@ import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
 import com.thomaskioko.tvmaniac.episodes.api.EpisodesDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncOperation
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
-import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.shows.api.ShowReconciler
 import com.thomaskioko.tvmaniac.shows.api.ShowResolveOutcome
 import com.thomaskioko.tvmaniac.shows.api.traktGenreName
@@ -49,6 +49,7 @@ public class DefaultWatchedEpisodeSyncRepository(
 
         syncMutex.withLock {
             processPendingEpisodesToUploads()
+            processPendingEpisodeUpdates()
             processPendingEpisodesDeletes()
         }
     }
@@ -57,17 +58,22 @@ public class DefaultWatchedEpisodeSyncRepository(
         if (accountManager.getActiveProvider() == null) return
 
         syncMutex.withLock {
-            val pendingUploads = dao.entriesByPendingAction(PendingAction.UPLOAD)
-            val pendingDeletes = dao.entriesByPendingAction(PendingAction.DELETE)
+            val pendingUploads = dao.entriesByPendingAction(WatchedEpisodeSyncOperation.UPLOAD)
+            val pendingUpdates = dao.entriesByPendingAction(WatchedEpisodeSyncOperation.UPDATE)
+            val pendingDeletes = dao.entriesByPendingAction(WatchedEpisodeSyncOperation.DELETE)
             if (pendingUploads.isNotEmpty()) {
                 uploadPending(pendingUploads)
+            }
+            if (pendingUpdates.isNotEmpty()) {
+                updatePending(pendingUpdates)
             }
             if (pendingDeletes.isNotEmpty()) {
                 deletePending(pendingDeletes)
             }
 
-            if (pendingDeletes.isNotEmpty()) {
-                logger.debug(TAG, "Deferring bulk pull this cycle after pushing ${pendingDeletes.size} delete(s)")
+            if (pendingDeletes.isNotEmpty() || pendingUpdates.isNotEmpty()) {
+                val removals = pendingDeletes.size + pendingUpdates.size
+                logger.debug(TAG, "Deferring bulk pull this cycle after pushing $removals removal(s)")
                 return
             }
 
@@ -109,17 +115,40 @@ public class DefaultWatchedEpisodeSyncRepository(
     override suspend fun getWatchedShowsMissingGenres(): List<Long> = dao.getWatchedShowsMissingGenres()
 
     private suspend fun processPendingEpisodesToUploads() {
-        val pending = dao.entriesByPendingAction(PendingAction.UPLOAD)
+        val pending = dao.entriesByPendingAction(WatchedEpisodeSyncOperation.UPLOAD)
         if (pending.isEmpty()) return
 
         uploadPending(pending)
     }
 
+    private suspend fun processPendingEpisodeUpdates() {
+        val pending = dao.entriesByPendingAction(WatchedEpisodeSyncOperation.UPDATE)
+        if (pending.isEmpty()) return
+
+        updatePending(pending)
+    }
+
     private suspend fun processPendingEpisodesDeletes() {
-        val pending = dao.entriesByPendingAction(PendingAction.DELETE)
+        val pending = dao.entriesByPendingAction(WatchedEpisodeSyncOperation.DELETE)
         if (pending.isEmpty()) return
 
         deletePending(pending)
+    }
+
+    private suspend fun updatePending(
+        pending: List<com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction>,
+    ) {
+        val source = activeSource() ?: return
+        logger.debug(TAG, "Processing ${pending.size} pending updates")
+
+        val entries = pending.map(::toEntry)
+
+        source.removeEpisodeEntries(entries)
+        source.addEpisodeEntries(entries)
+
+        dao.updatePendingActions(pending.map { it.watched_id }, WatchedEpisodeSyncOperation.NOTHING)
+
+        logger.debug(TAG, "Successfully updated ${pending.size} episodes")
     }
 
     private suspend fun uploadPending(
@@ -128,22 +157,9 @@ public class DefaultWatchedEpisodeSyncRepository(
         val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending uploads")
 
-        val entries = pending.map { episode ->
-            WatchedEpisodeEntry(
-                id = episode.watched_id,
-                showId = episode.trakt_id,
-                episodeId = episode.episode_id?.id,
-                seasonNumber = episode.season_number,
-                episodeNumber = episode.episode_number,
-                watchedAt = fromEpochMilliseconds(episode.watched_at),
-                traktId = episode.trakt_id,
-                pendingAction = PendingAction.UPLOAD,
-            )
-        }
+        source.addEpisodeEntries(pending.map(::toEntry))
 
-        source.addEpisodeEntries(entries)
-
-        dao.updatePendingActions(pending.map { it.watched_id }, PendingAction.NOTHING)
+        dao.updatePendingActions(pending.map { it.watched_id }, WatchedEpisodeSyncOperation.NOTHING)
 
         logger.debug(TAG, "Successfully uploaded ${pending.size} episodes")
     }
@@ -154,24 +170,24 @@ public class DefaultWatchedEpisodeSyncRepository(
         val source = activeSource() ?: return
         logger.debug(TAG, "Processing ${pending.size} pending deletes")
 
-        val entries = pending.map { episode ->
-            WatchedEpisodeEntry(
-                id = episode.watched_id,
-                showId = episode.trakt_id,
-                episodeId = episode.episode_id?.id,
-                seasonNumber = episode.season_number,
-                episodeNumber = episode.episode_number,
-                watchedAt = fromEpochMilliseconds(episode.watched_at),
-                traktId = episode.trakt_id,
-                pendingAction = PendingAction.DELETE,
-            )
-        }
-        source.removeEpisodeEntries(entries)
+        source.removeEpisodeEntries(pending.map(::toEntry))
 
         dao.deleteByIds(pending.map { it.watched_id })
 
         logger.debug(TAG, "Successfully deleted ${pending.size} episodes")
     }
+
+    private fun toEntry(
+        episode: com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction,
+    ): WatchedEpisodeEntry = WatchedEpisodeEntry(
+        id = episode.watched_id,
+        showId = episode.trakt_id,
+        episodeId = episode.episode_id?.id,
+        seasonNumber = episode.season_number,
+        episodeNumber = episode.episode_number,
+        watchedAt = fromEpochMilliseconds(episode.watched_at),
+        traktId = episode.trakt_id,
+    )
 
     private suspend fun fetchAllWatchedShows() {
         val source = activeSource() ?: return

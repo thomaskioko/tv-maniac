@@ -49,6 +49,11 @@ internal class SeasonDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<SeasonDe
         click(SeasonDetailsTestTags.markEpisodeWatchedButton(episodeId))
     }
 
+    fun longPressMarkWatched(episodeId: Long) = apply {
+        scrollToMarkWatchedButton(episodeId)
+        longClick(SeasonDetailsTestTags.markEpisodeWatchedButton(episodeId))
+    }
+
     fun clickMarkUnwatched(episodeId: Long) = apply {
         scrollToMarkUnwatchedButton(episodeId)
         click(SeasonDetailsTestTags.markEpisodeUnwatchedButton(episodeId))

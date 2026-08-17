@@ -76,6 +76,10 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
         episodeSheetRobot
             .clickActionItem(EpisodeSheetActionItem.MARK_WATCHED)
 
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
+
         homeRobot.clickMyShowsTab()
         watchlistRobot.clickShowCard(breakingBadTmdbId)
         showDetailsRobot
@@ -99,6 +103,10 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
             .assertEpisodeSheetDisplayed()
             .assertPlayCountDoesNotExist()
             .clickActionItem(EpisodeSheetActionItem.MARK_WATCHED)
+
+        watchDateSelectionRobot
+            .assertSheetDisplayed()
+            .clickJustNow()
 
         seasonDetailsRobot
             .assertSeasonDetailsDisplayed()

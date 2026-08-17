@@ -64,6 +64,14 @@ struct UpNextPageContent: View {
                                 onLongPress: {
                                     presenter.dispatch(action: UpNextEpisodeLongPressed(episodeId: episode.episodeId))
                                 },
+                                onMarkWatchedLongPress: {
+                                    presenter.dispatch(action: MarkWatchedLongPressed(
+                                        showId: episode.showId,
+                                        episodeId: episode.episodeId,
+                                        seasonNumber: episode.seasonNumber,
+                                        episodeNumber: episode.episodeNumberValue
+                                    ))
+                                },
                                 isUpdating: uiState.updatingEpisodeIds.contains(KotlinLong(value: episode.episodeId))
                             )
                         }

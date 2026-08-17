@@ -126,6 +126,7 @@ graph TB
     :domain:episode[episode]:::multiplatform
     :domain:followedshows[followedshows]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
     :domain:theme[theme]:::multiplatform
@@ -141,6 +142,7 @@ graph TB
   subgraph :features:rating-sheet
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
+    :features:rating-sheet:presenter[presenter]:::multiplatform
   end
   subgraph :features:season-details
     direction TB
@@ -155,8 +157,13 @@ graph TB
     :features:upnext:presenter[presenter]:::multiplatform
     :features:upnext:ui[ui]:::android-library
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
+    :i18n:api[api]:::multiplatform
     :i18n:generator[generator]:::multiplatform
   end
   subgraph :navigation
@@ -216,12 +223,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api
@@ -229,6 +238,9 @@ graph TB
   :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
   :domain:ratings --> :data:subscription:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api
@@ -248,6 +260,15 @@ graph TB
   :features:progress:nav --> :navigation:api
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
+  :features:rating-sheet:presenter --> :core:base
+  :features:rating-sheet:presenter --> :core:logger:api
+  :features:rating-sheet:presenter --> :core:view
+  :features:rating-sheet:presenter --> :data:ratings:api
+  :features:rating-sheet:presenter --> :domain:ratings
+  :features:rating-sheet:presenter --> :features:rating-sheet:nav
+  :features:rating-sheet:presenter --> :i18n:api
+  :features:rating-sheet:presenter --> :i18n:generator
+  :features:rating-sheet:presenter --> :navigation:api
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
   :features:upnext:presenter --> :core:base
@@ -263,8 +284,10 @@ graph TB
   :features:upnext:presenter -.-> :features:episode-sheet:nav
   :features:upnext:presenter --> :features:progress:nav
   :features:upnext:presenter --> :features:rating-sheet:nav
+  :features:upnext:presenter --> :features:rating-sheet:presenter
   :features:upnext:presenter -.-> :features:season-details:nav
   :features:upnext:presenter -.-> :features:show-details:nav
+  :features:upnext:presenter --> :features:watchdate-selection:nav
   :features:upnext:presenter --> :navigation:api
   :features:upnext:ui -.-> :android-designsystem
   :features:upnext:ui -.-> :core:test-tags
@@ -272,6 +295,9 @@ graph TB
   :features:upnext:ui -.-> :domain:continue-watching
   :features:upnext:ui --> :features:upnext:presenter
   :features:upnext:ui -.-> :i18n:generator
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
+  :i18n:api --> :i18n:generator
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

@@ -24,4 +24,5 @@ public data class SimklHistorySeason(
 @Serializable
 public data class SimklHistoryEpisode(
     @SerialName("number") val number: Int,
+    @SerialName("watched_at") val watchedAt: String? = null,
 )

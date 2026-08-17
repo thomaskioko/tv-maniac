@@ -39,6 +39,13 @@ public struct SeasonDetailsView: View {
             onEpisodeWatchToggle: { episode in
                 presenter.dispatch(action: ToggleEpisodeWatched(episodeId: episode.episodeId))
             },
+            onEpisodeWatchLongPress: { episode in
+                presenter.dispatch(action: EpisodeWatchedLongPressed(
+                    episodeId: episode.episodeId,
+                    seasonNumber: episode.seasonNumber,
+                    episodeNumber: episode.episodeNumber
+                ))
+            },
             onEpisodeTapped: { episode in
                 presenter.dispatch(action: EpisodeClicked(id: Int64(episode.episodeId)))
             }

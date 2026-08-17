@@ -43,6 +43,7 @@ internal fun EpisodeItem(
     daysUntilAir: Int? = null,
     shape: Shape = MaterialTheme.shapes.small,
     onEpisodeClicked: () -> Unit = {},
+    onWatchedLongPress: (() -> Unit)? = null,
 ) {
     Card(
         shape = shape,
@@ -100,6 +101,7 @@ internal fun EpisodeItem(
                     isWatched = isWatched,
                     isUpdating = isProcessing,
                     onToggle = onWatchedToggle,
+                    onLongPress = onWatchedLongPress,
                     modifier = Modifier
                         .padding(TvManiacSpacing.small)
                         .let { if (toggleTag != null) it.testTag(toggleTag) else it },

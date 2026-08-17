@@ -7,5 +7,5 @@ public data class RecentlyWatchedEpisode(
     val seasonNumber: Long,
     val episodeNumber: Long,
     val episodeTitle: String?,
-    val watchedAt: Long,
+    val watchedAt: Long?,
 )

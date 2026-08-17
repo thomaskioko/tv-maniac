@@ -46,7 +46,9 @@ UPDATE show_metadata SET
     last_watched_episode_id = (SELECT episode_id FROM last_watched_cte),
     last_watched_season_number = (SELECT season_number FROM last_watched_cte),
     last_watched_episode_number = (SELECT episode_number FROM last_watched_cte),
-    last_watched_at = (SELECT watched_at FROM last_watched_cte)
+    last_watched_at = (
+        SELECT CASE WHEN watched_at > :unknown_millis THEN watched_at END FROM last_watched_cte
+    )
 WHERE show_id = :showId;
 
 CREATE VIEW show_watch_progress AS

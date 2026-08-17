@@ -12,6 +12,7 @@ public struct UpNextListItemView: View {
     let onShowTitleClicked: (Int64) -> Void
     let onMarkWatched: () -> Void
     let onLongPress: () -> Void
+    let onMarkWatchedLongPress: (() -> Void)?
     let isUpdating: Bool
 
     private let posterImageUrl: String?
@@ -23,6 +24,7 @@ public struct UpNextListItemView: View {
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping () -> Void,
         onLongPress: @escaping () -> Void = {},
+        onMarkWatchedLongPress: (() -> Void)? = nil,
         isUpdating: Bool = false
     ) {
         self.episode = episode
@@ -30,6 +32,7 @@ public struct UpNextListItemView: View {
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
         self.onLongPress = onLongPress
+        self.onMarkWatchedLongPress = onMarkWatchedLongPress
         self.isUpdating = isUpdating
 
         posterImageUrl = episode.imageUrl
@@ -152,6 +155,13 @@ public struct UpNextListItemView: View {
         }
         .buttonStyle(.plain)
         .disabled(isUpdating)
+        .highPriorityGesture(
+            LongPressGesture().onEnded { _ in
+                guard let onMarkWatchedLongPress else { return }
+                Haptics.impact(isEnabled: hapticFeedbackEnabled, style: .medium)
+                onMarkWatchedLongPress()
+            }
+        )
         .frame(maxHeight: .infinity)
         .padding(.trailing, theme.spacing.small)
     }

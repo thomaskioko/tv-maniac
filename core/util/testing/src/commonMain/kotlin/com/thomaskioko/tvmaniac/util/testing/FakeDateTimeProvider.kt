@@ -22,7 +22,9 @@ public class FakeDateTimeProvider(
     private var formatDisplayDateResult: String = ""
     private var formatDayOfWeekResult: String = ""
 
-    override fun getTimeZone(): TimeZone = TimeZone.UTC
+    private var timeZone: TimeZone = TimeZone.UTC
+
+    override fun getTimeZone(): TimeZone = timeZone
 
     override fun now(): Instant = currentTime
 
@@ -82,5 +84,9 @@ public class FakeDateTimeProvider(
 
     public fun setFormatDayOfWeekResult(result: String) {
         formatDayOfWeekResult = result
+    }
+
+    public fun setTimeZone(zone: TimeZone) {
+        timeZone = zone
     }
 }

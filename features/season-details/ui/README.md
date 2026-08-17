@@ -32,6 +32,10 @@ graph TB
     direction TB
     :core:tasks:api[api]:::multiplatform
   end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
   subgraph :data:account-manager
     direction TB
     :data:account-manager:api[api]:::multiplatform
@@ -84,6 +88,7 @@ graph TB
     direction TB
     :domain:episode[episode]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:seasondetails[seasondetails]:::multiplatform
     :domain:theme[theme]:::multiplatform
   end
@@ -100,6 +105,10 @@ graph TB
     :features:season-details:nav[nav]:::multiplatform
     :features:season-details:presenter[presenter]:::multiplatform
     :features:season-details:ui[ui]:::android-library
+  end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
   end
   subgraph :i18n
     direction TB
@@ -141,16 +150,21 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:ratings --> :core:base
   :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
   :domain:ratings --> :data:subscription:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
@@ -172,6 +186,7 @@ graph TB
   :features:season-details:presenter -.-> :features:episode-sheet:nav
   :features:season-details:presenter --> :features:rating-sheet:nav
   :features:season-details:presenter --> :features:season-details:nav
+  :features:season-details:presenter --> :features:watchdate-selection:nav
   :features:season-details:presenter --> :navigation:api
   :features:season-details:ui -.-> :android-designsystem
   :features:season-details:ui --> :core:base
@@ -181,6 +196,8 @@ graph TB
   :features:season-details:ui -.-> :i18n:generator
   :features:season-details:ui --> :navigation:api
   :features:season-details:ui --> :navigation:ui
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api
 

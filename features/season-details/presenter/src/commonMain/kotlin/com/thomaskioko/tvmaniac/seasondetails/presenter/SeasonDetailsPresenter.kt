@@ -30,6 +30,7 @@ import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveSeasonWatchProgressP
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.ObserveUnwatchedInPreviousSeasonsParams
 import com.thomaskioko.tvmaniac.domain.seasondetails.SeasonDetailsInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
@@ -39,6 +40,8 @@ import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.api.SeasonDetailsParam
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionParam
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -164,6 +167,18 @@ public class SeasonDetailsPresenter internal constructor(
                 is MarkSeasonAsWatched -> handleMarkSeasonAsWatched(action.hasUnwatchedInPreviousSeasons)
                 MarkSeasonAsUnwatched -> handleMarkSeasonAsUnwatched()
                 is MarkEpisodeWatched -> handleMarkEpisodeWatched(action)
+                is EpisodeWatchedLongPressed -> navigator.navigateTo(
+                    WatchDateSelectionRoute(
+                        WatchDateSelectionParam(
+                            target = WatchedDateTarget.EPISODE,
+                            showId = param.showId,
+                            episodeId = action.episodeId,
+                            seasonNumber = action.seasonNumber,
+                            episodeNumber = action.episodeNumber,
+                            isEdit = true,
+                        ),
+                    ),
+                )
                 is MarkEpisodeUnwatched -> updateState {
                     copy(
                         dialogState = SeasonDialogState.UnwatchEpisodeConfirmation(
@@ -278,16 +293,46 @@ public class SeasonDetailsPresenter internal constructor(
     private suspend fun handleConfirmDialogAction() {
         val change = (state.value.dialogState as? SeasonDialogState.Confirmation)?.primaryChange ?: return
         updateState { copy(dialogState = SeasonDialogState.Hidden) }
-        execute(change)
+        execute(change, fromConfirmation = true)
     }
 
     private suspend fun handleSecondaryDialogAction() {
         val change = (state.value.dialogState as? SeasonDialogState.Confirmation)?.secondaryChange ?: return
         updateState { copy(dialogState = SeasonDialogState.Hidden) }
-        execute(change)
+        execute(change, fromConfirmation = true)
     }
 
-    private suspend fun execute(change: WatchChange) {
+    private fun watchDateRouteOrNull(change: WatchChange): WatchDateSelectionRoute? = when (change) {
+        is WatchChange.WatchEpisode -> WatchDateSelectionRoute(
+            WatchDateSelectionParam(
+                target = WatchedDateTarget.EPISODE,
+                showId = change.params.showId,
+                episodeId = change.params.episodeId,
+                seasonNumber = change.params.seasonNumber,
+                episodeNumber = change.params.episodeNumber,
+                markPrevious = change.params.markPreviousEpisodes,
+            ),
+        )
+        is WatchChange.WatchSeason -> WatchDateSelectionRoute(
+            WatchDateSelectionParam(
+                target = WatchedDateTarget.SEASON,
+                showId = change.showId,
+                seasonNumber = change.seasonNumber,
+                markPrevious = change.markPreviousSeasons,
+            ),
+        )
+        is WatchChange.UnwatchEpisode, is WatchChange.UnwatchSeason -> null
+    }
+
+    private suspend fun execute(change: WatchChange, fromConfirmation: Boolean = false) {
+        if (fromConfirmation) {
+            val route = watchDateRouteOrNull(change)
+            if (route != null) {
+                navigator.navigateTo(route)
+                return
+            }
+        }
+
         val trackedEpisodeId = when (change) {
             is WatchChange.WatchEpisode -> change.params.episodeId
             is WatchChange.UnwatchEpisode -> change.episodeId

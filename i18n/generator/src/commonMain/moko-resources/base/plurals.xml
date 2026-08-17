@@ -56,4 +56,8 @@
         <item quantity="one">Watched %d time</item>
         <item quantity="other">Watched %d times</item>
     </plurals>
+    <plurals name="dialog_message_mark_show_watched">
+        <item quantity="one">This will mark %d episode as watched.</item>
+        <item quantity="other">This will mark %d episodes as watched.</item>
+    </plurals>
 </resources>

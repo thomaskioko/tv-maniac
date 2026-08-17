@@ -29,6 +29,7 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.SettingsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowDetailsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ShowListRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.StatisticsRobot
+import com.thomaskioko.tvmaniac.app.test.compose.robot.WatchDateSelectionRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.util.testing.FlakyTestRule
@@ -139,6 +140,7 @@ internal class AppFlowScope(
     val episodeSheetRobot: EpisodeSheetRobot by lazy { EpisodeSheetRobot(composeUi) }
     val watchlistRobot: MyShowsRobot by lazy { MyShowsRobot(composeUi) }
     val ratingSheetRobot: RatingSheetRobot by lazy { RatingSheetRobot(composeUi) }
+    val watchDateSelectionRobot: WatchDateSelectionRobot by lazy { WatchDateSelectionRobot(composeUi) }
 
     val scenarios: Scenarios by lazy {
         Scenarios(

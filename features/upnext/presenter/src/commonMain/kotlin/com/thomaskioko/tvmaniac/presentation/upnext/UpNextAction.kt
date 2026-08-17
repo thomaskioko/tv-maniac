@@ -30,3 +30,10 @@ public data class OpenSeason(
 public data class UnfollowShow(val showId: Long) : UpNextAction
 
 public data class UpNextEpisodeLongPressed(val episodeId: Long) : UpNextAction
+
+public data class MarkWatchedLongPressed(
+    val showId: Long,
+    val episodeId: Long,
+    val seasonNumber: Long,
+    val episodeNumber: Long,
+) : UpNextAction

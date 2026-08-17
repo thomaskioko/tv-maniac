@@ -22,6 +22,7 @@ kotlin {
                 api(projects.domain.rewatch)
                 api(projects.features.episodeSheet.nav)
                 api(projects.features.ratingSheet.nav)
+                api(projects.features.watchdateSelection.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
 

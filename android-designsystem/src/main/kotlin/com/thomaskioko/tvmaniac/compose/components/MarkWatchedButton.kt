@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -18,22 +20,33 @@ import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MarkWatchedButton(
     isWatched: Boolean,
     isUpdating: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongPress: (() -> Unit)? = null,
     hapticEnabled: Boolean = LocalHapticFeedbackEnabled.current,
 ) {
     val haptics = LocalHapticFeedback.current
     Surface(
-        onClick = {
-            if (hapticEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-            onToggle()
-        },
-        enabled = !isUpdating,
-        modifier = modifier.size(28.dp),
+        modifier = modifier
+            .size(28.dp)
+            .combinedClickable(
+                enabled = !isUpdating,
+                onClick = {
+                    if (hapticEnabled) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onToggle()
+                },
+                onLongClick = onLongPress?.let { longPress ->
+                    {
+                        if (hapticEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                        longPress()
+                    }
+                },
+            ),
         shape = CircleShape,
         color = if (isWatched) TvManiacTheme.colorScheme.success else TvManiacTheme.colorScheme.grey,
     ) {

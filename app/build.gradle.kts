@@ -65,6 +65,7 @@ dependencies {
     implementation(projects.features.featureFlags.ui)
     implementation(projects.features.episodeSheet.ui)
     implementation(projects.features.ratingSheet.ui)
+    implementation(projects.features.watchdateSelection.ui)
     implementation(projects.features.library.ui)
     implementation(projects.features.myShows.ui)
     implementation(projects.features.moreShows.ui)
@@ -146,6 +147,7 @@ dependencies {
     implementation(projects.features.discover.presenter)
     implementation(projects.features.episodeSheet.presenter)
     implementation(projects.features.ratingSheet.presenter)
+    implementation(projects.features.watchdateSelection.presenter)
     implementation(projects.features.library.presenter)
     implementation(projects.features.home.presenter)
     implementation(projects.features.moreShows.presenter)
@@ -227,6 +229,7 @@ dependencies {
     implementation(projects.domain.ratings)
     implementation(projects.domain.rewatch)
     implementation(projects.features.ratingSheet.nav)
+    implementation(projects.features.watchdateSelection.nav)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)
