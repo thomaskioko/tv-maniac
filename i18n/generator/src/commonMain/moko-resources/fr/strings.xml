@@ -575,4 +575,23 @@
     <string name="label_watched_date_unknown_display">Il y a longtemps</string>
     <string name="label_mark_show_watched">Marquer la série comme vue</string>
     <string name="label_mark_show_watched_confirm_title">Marquer la série comme vue ?</string>
+
+    <string name="settings_backup_title">Sauvegarde et restauration</string>
+    <string name="settings_backup_description">Enregistrez vos séries dans un fichier et rechargez-les</string>
+    <string name="settings_backup_export_title">Enregistrer une sauvegarde</string>
+    <string name="settings_backup_export_description">Écrire vos séries, votre historique, vos notes et vos réglages dans un fichier</string>
+    <string name="settings_backup_import_title">Restaurer une sauvegarde</string>
+    <string name="settings_backup_import_description">Remplacer les données de cet appareil par un fichier de sauvegarde</string>
+    <string name="settings_backup_restore_confirm_title">Restaurer cette sauvegarde ?</string>
+    <string name="settings_backup_restore_confirm_message">Cela remplace les séries et l\'historique de cet appareil. Une copie de vos données actuelles est enregistrée au préalable.</string>
+    <string name="settings_backup_restore_confirm_message_connected">Cela remplace les séries et l\'historique de cet appareil. %1$s reste la référence et la prochaine synchronisation mettra les données à jour. Une copie de vos données actuelles est enregistrée au préalable.</string>
+    <string name="settings_backup_restore_confirm_button">Restaurer</string>
+    <string name="settings_backup_restore_summary_title">Restauration terminée</string>
+    <string name="settings_backup_restore_summary_rewatch">Les visionnages répétés n\'étaient pas inclus dans cette sauvegarde</string>
+    <string name="error_backup_save_failed">Impossible d\'enregistrer la sauvegarde. Essayez un autre emplacement.</string>
+    <string name="error_backup_read_failed">Impossible de lire ce fichier. Il est peut-être endommagé ou provient d\'une autre application.</string>
+    <string name="error_backup_version_too_new">Cette sauvegarde a été créée avec une version plus récente de TvManiac. Mettez l\'application à jour pour la restaurer.</string>
+    <string name="error_backup_sync_in_progress">Une synchronisation est en cours. Attendez qu\'elle se termine, puis réessayez.</string>
+    <string name="label_backup_locked_title">La sauvegarde est une fonctionnalité Premium</string>
+    <string name="label_backup_locked_message">Passez à Premium pour sauvegarder et restaurer vos séries.</string>
 </resources>
