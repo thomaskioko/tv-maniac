@@ -40,6 +40,7 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_navigate_back
 import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_no
+import com.thomaskioko.tvmaniac.i18n.MR.strings.dialog_button_yes
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_error_message
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_action_watch_again
@@ -51,6 +52,10 @@ import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsMessageShown
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsReload
 import com.thomaskioko.tvmaniac.presenter.showdetails.ShowDetailsState
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.MarkShowWatchedConfirmed
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.MarkShowWatchedDismissed
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderAction
+import com.thomaskioko.tvmaniac.presenter.showdetails.header.ShowDetailsHeaderState
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.WatchAgainConfirmed
 import com.thomaskioko.tvmaniac.presenter.showdetails.header.WatchAgainDismissed
 import com.thomaskioko.tvmaniac.showdetails.ui.section.ShowDetailsCastSection
@@ -106,15 +111,38 @@ public fun ShowDetailsScreen(
         }
     }
 
-    if (headerState.showWatchAgainConfirmation) {
+    ShowDetailsDialogs(
+        state = headerState,
+        onAction = { presenter.headerPresenter.dispatch(it) },
+    )
+}
+
+@Composable
+internal fun ShowDetailsDialogs(
+    state: ShowDetailsHeaderState,
+    onAction: (ShowDetailsHeaderAction) -> Unit,
+) {
+    if (state.showWatchAgainConfirmation) {
         TvManiacAlertDialog(
             title = label_watch_again_confirm_title.resolve(LocalContext.current),
-            message = stringResource(MR.strings.label_watch_again_confirm_message.resourceId, headerState.title),
+            message = stringResource(MR.strings.label_watch_again_confirm_message.resourceId, state.title),
             confirmButtonText = label_action_watch_again.resolve(LocalContext.current),
             dismissButtonText = dialog_button_no.resolve(LocalContext.current),
             confirmButtonTestTag = ShowDetailsTestTags.WATCH_AGAIN_CONFIRM_TEST_TAG,
-            onConfirm = { presenter.headerPresenter.dispatch(WatchAgainConfirmed) },
-            onDismiss = { presenter.headerPresenter.dispatch(WatchAgainDismissed) },
+            onConfirm = { onAction(WatchAgainConfirmed) },
+            onDismiss = { onAction(WatchAgainDismissed) },
+        )
+    }
+
+    if (state.showMarkShowWatchedConfirmation) {
+        TvManiacAlertDialog(
+            title = state.markShowWatchedTitle,
+            message = state.markShowWatchedMessage,
+            confirmButtonText = dialog_button_yes.resolve(LocalContext.current),
+            dismissButtonText = dialog_button_no.resolve(LocalContext.current),
+            confirmButtonTestTag = ShowDetailsTestTags.MARK_SHOW_WATCHED_CONFIRM_TEST_TAG,
+            onConfirm = { onAction(MarkShowWatchedConfirmed) },
+            onDismiss = { onAction(MarkShowWatchedDismissed) },
         )
     }
 }
@@ -197,6 +225,16 @@ internal fun ShowDetailsScaffold(
             )
         }
     }
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun ShowDetailsMarkShowWatchedDialogPreview() {
+    ShowDetailsDialogs(
+        state = previewHeaderStateMarkShowWatchedConfirm,
+        onAction = {},
+    )
 }
 
 @ThemePreviews

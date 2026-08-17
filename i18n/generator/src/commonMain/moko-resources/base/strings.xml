@@ -588,5 +588,5 @@
     <string name="label_watched_date_unknown">Unknown date</string>
     <string name="label_watched_date_unknown_display">A long time ago</string>
     <string name="label_mark_show_watched">Mark show as watched</string>
-    <string name="label_mark_show_watched_confirm_title">Mark whole show as watched?</string>
+    <string name="label_mark_show_watched_confirm_title">Mark show as watched?</string>
 </resources>

@@ -42,6 +42,21 @@ internal val previewHeaderStateSimkl = previewHeaderState.copy(canAddToList = fa
 
 internal val previewHeaderStateRated = previewHeaderState.copy(userRating = 9)
 
+internal val previewHeaderStateMarkShowWatched = previewHeaderState.copy(
+    showMoreSheet = true,
+    canMarkShowWatched = true,
+    unwatchedEpisodeCount = 8,
+    markShowWatchedLabel = "Mark show as watched",
+)
+
+internal val previewHeaderStateMarkShowWatchedConfirm = previewHeaderState.copy(
+    showMarkShowWatchedConfirmation = true,
+    canMarkShowWatched = true,
+    unwatchedEpisodeCount = 8,
+    markShowWatchedTitle = "Mark show as watched?",
+    markShowWatchedMessage = "This will mark 8 episodes as watched.",
+)
+
 internal val previewHeaderStateInList = previewHeaderState.copy(
     isInList = true,
     listActionLabel = "In List",

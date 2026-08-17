@@ -580,5 +580,5 @@
     <string name="label_watched_date_unknown">Datum unbekannt</string>
     <string name="label_watched_date_unknown_display">Vor langer Zeit</string>
     <string name="label_mark_show_watched">Serie als gesehen markieren</string>
-    <string name="label_mark_show_watched_confirm_title">Ganze Serie als gesehen markieren?</string>
+    <string name="label_mark_show_watched_confirm_title">Serie als gesehen markieren?</string>
 </resources>
