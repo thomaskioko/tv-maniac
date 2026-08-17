@@ -20,6 +20,6 @@ public class LogoutInteractor(
         datastoreRepository.saveLastTraktUserId(currentUser?.slug)
 
         accountManager.getActiveProvider()?.let { accountManager.logout(it) }
-        logoutHandler.clear()
+        logoutHandler.clearAccountData()
     }
 }
