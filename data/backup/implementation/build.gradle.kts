@@ -23,6 +23,12 @@ kotlin {
             }
         }
 
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.core.ktx)
+            }
+        }
+
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
