@@ -5,13 +5,16 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestinationBuilder
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.WatchStatus
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -53,6 +56,9 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
             dateTimeProvider = FakeDateTimeProvider(),
             appMetadata = FakeAppMetadata.DEFAULT,
             dispatchers = dispatchers,
+            destinationBuilder = FakeBackupDestinationBuilder(),
+            syncObserver = FakeSyncObserver(),
+            transactionRunner = DbTransactionRunner(database),
         )
         showId = insertShow()
     }
