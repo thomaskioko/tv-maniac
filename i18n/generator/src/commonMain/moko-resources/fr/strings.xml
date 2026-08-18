@@ -580,6 +580,7 @@
     <string name="settings_backup_description">Enregistrez vos séries dans un fichier et rechargez-les</string>
     <string name="settings_backup_export_title">Enregistrer une sauvegarde</string>
     <string name="settings_backup_export_description">Écrire vos séries, votre historique, vos notes et vos réglages dans un fichier</string>
+    <string name="settings_backup_export_success">Sauvegarde enregistrée</string>
     <string name="settings_backup_import_title">Restaurer une sauvegarde</string>
     <string name="settings_backup_import_description">Remplacer les données de cet appareil par un fichier de sauvegarde</string>
     <string name="settings_backup_restore_confirm_title">Restaurer cette sauvegarde ?</string>

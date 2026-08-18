@@ -586,6 +586,7 @@
     <string name="settings_backup_description">Ihre Serien in eine Datei sichern und wieder laden</string>
     <string name="settings_backup_export_title">Sicherung speichern</string>
     <string name="settings_backup_export_description">Serien, Wiedergabeverlauf, Bewertungen und Einstellungen in eine Datei schreiben</string>
+    <string name="settings_backup_export_success">Sicherung gespeichert</string>
     <string name="settings_backup_import_title">Sicherung wiederherstellen</string>
     <string name="settings_backup_import_description">Die Daten auf diesem Gerät durch eine Sicherungsdatei ersetzen</string>
     <string name="settings_backup_restore_confirm_title">Diese Sicherung wiederherstellen?</string>

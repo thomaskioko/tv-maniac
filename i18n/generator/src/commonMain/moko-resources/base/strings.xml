@@ -594,6 +594,7 @@
     <string name="settings_backup_description">Save your shows to a file and load them back</string>
     <string name="settings_backup_export_title">Save a backup</string>
     <string name="settings_backup_export_description">Write your shows, watch history, ratings and settings to a file</string>
+    <string name="settings_backup_export_success">Backup saved</string>
     <string name="settings_backup_import_title">Restore a backup</string>
     <string name="settings_backup_import_description">Replace what is on this device with a backup file</string>
     <string name="settings_backup_restore_confirm_title">Restore this backup?</string>
