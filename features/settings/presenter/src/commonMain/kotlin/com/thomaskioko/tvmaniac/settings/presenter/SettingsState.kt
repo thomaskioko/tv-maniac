@@ -93,6 +93,28 @@ public data class BackupSettings(
     val awaitingDestination: Boolean = false,
     val exportTitle: String = "",
     val exportDescription: String = "",
+    val importTitle: String = "",
+    val importDescription: String = "",
+    val isImporting: Boolean = false,
+    val awaitingSource: Boolean = false,
+    val confirm: BackupRestoreConfirm? = null,
+    val summary: BackupRestoreSummary? = null,
+)
+
+public data class BackupRestoreConfirm(
+    val title: String,
+    val message: String,
+    val confirmLabel: String,
+    val cancelLabel: String,
+)
+
+public data class BackupRestoreSummary(
+    val title: String,
+    val showsRestored: String,
+    val episodesRestored: String,
+    val showsSkipped: String? = null,
+    val skippedShows: ImmutableList<String> = persistentListOf(),
+    val rewatchNotice: String? = null,
 )
 
 public data class PremiumState(
