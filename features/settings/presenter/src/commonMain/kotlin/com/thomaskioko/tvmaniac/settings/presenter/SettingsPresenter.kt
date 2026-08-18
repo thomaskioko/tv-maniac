@@ -171,7 +171,7 @@ public class SettingsPresenter internal constructor(
             posterCornerStyle = preferences.layout.posterCornerStyle,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
-            locks = labelsMapper.toPremiumLocks(lockedFeatures),
+            premium = labelsMapper.toPremiumState(lockedFeatures),
             backup = currentState.backup.copy(
                 exportTitle = backupLabels.exportTitle,
                 exportDescription = backupLabels.exportDescription,
@@ -230,7 +230,7 @@ public class SettingsPresenter internal constructor(
 
             is UpgradeToPremiumClicked -> Unit
             is ThemeSelected -> {
-                if (!(action.theme.isPremium && state.value.locks.customThemesLocked)) {
+                if (!(action.theme.isPremium && state.value.premium.customThemesLocked)) {
                     datastoreRepository.saveTheme(action.theme.toTheme().toAppTheme())
                 }
             }
@@ -256,7 +256,7 @@ public class SettingsPresenter internal constructor(
             }
 
             is QuickRateToggled -> {
-                if (state.value.locks.quickRateLocked) return
+                if (state.value.premium.quickRateLocked) return
                 coroutineScope.launch {
                     datastoreRepository.saveQuickRateEnabled(action.enabled)
                 }
@@ -274,7 +274,7 @@ public class SettingsPresenter internal constructor(
                 }
             }
             is EpisodeNotificationsToggled -> {
-                if (state.value.locks.episodeNotificationsLocked) return
+                if (state.value.premium.episodeNotificationsLocked) return
                 coroutineScope.launch {
                     toggleEpisodeNotificationsInteractor(
                         ToggleEpisodeNotificationsInteractor.Params(enabled = action.enabled),
@@ -321,28 +321,28 @@ public class SettingsPresenter internal constructor(
             }
 
             is PosterWidthSelected -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.savePosterWidth(action.width)
                 }
             }
 
             is LandscapeWidthSelected -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.saveLandscapeWidth(action.width)
                 }
             }
 
             is PosterCornerStyleSelected -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.savePosterCornerStyle(action.style)
                 }
             }
 
             is PosterStyleReset -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.savePosterWidth(PosterWidth.STANDARD)
                     datastoreRepository.saveLandscapeWidth(PosterWidth.STANDARD)
@@ -367,12 +367,12 @@ public class SettingsPresenter internal constructor(
     }
 
     private fun handleBackupExportClicked() {
-        if (state.value.locks.backupLocked) return
+        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
     }
 
     private fun handleBackupDestination(location: String) {
-        if (state.value.locks.backupLocked) return
+        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels) }
         coroutineScope.launch {
             exportBackupInteractor(ExportBackupInteractor.Params(location))

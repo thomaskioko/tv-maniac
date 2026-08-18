@@ -120,7 +120,7 @@ public class SettingsLabelsMapper(
         switching = localizer.getString(StringResourceKey.LabelAccountSwitching),
     )
 
-    public fun toPremiumLocks(features: LockedFeatures): PremiumLocks = PremiumLocks(
+    public fun toPremiumState(features: LockedFeatures): PremiumState = PremiumState(
         backupLocked = features.backupLocked,
         customThemesLocked = features.customThemesLocked,
         posterStyleLocked = features.posterStyleLocked,

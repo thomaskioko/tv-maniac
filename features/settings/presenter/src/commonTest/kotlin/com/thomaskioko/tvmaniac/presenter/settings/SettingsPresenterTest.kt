@@ -721,11 +721,11 @@ class SettingsPresenterTest {
     fun `should report unlocked locks given full access`() = runTest {
         presenter.state.test {
             testScheduler.advanceUntilIdle()
-            val locks = expectMostRecentItem().locks
-            locks.customThemesLocked shouldBe false
-            locks.posterStyleLocked shouldBe false
-            locks.episodeNotificationsLocked shouldBe false
-            locks.quickRateLocked shouldBe false
+            val premium = expectMostRecentItem().premium
+            premium.customThemesLocked shouldBe false
+            premium.posterStyleLocked shouldBe false
+            premium.episodeNotificationsLocked shouldBe false
+            premium.quickRateLocked shouldBe false
         }
     }
 
@@ -737,13 +737,13 @@ class SettingsPresenterTest {
 
         presenter.state.test {
             testScheduler.advanceUntilIdle()
-            val locks = expectMostRecentItem().locks
-            locks.customThemesLocked shouldBe true
-            locks.posterStyleLocked shouldBe true
-            locks.episodeNotificationsLocked shouldBe true
-            locks.quickRateLocked shouldBe true
-            locks.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
-            locks.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)
+            val premium = expectMostRecentItem().premium
+            premium.customThemesLocked shouldBe true
+            premium.posterStyleLocked shouldBe true
+            premium.episodeNotificationsLocked shouldBe true
+            premium.quickRateLocked shouldBe true
+            premium.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
+            premium.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)
         }
     }
 
@@ -862,7 +862,7 @@ class SettingsPresenterTest {
         testScheduler.advanceUntilIdle()
 
         presenter.state.test {
-            expectMostRecentItem().locks.backupLocked shouldBe true
+            expectMostRecentItem().premium.backupLocked shouldBe true
         }
     }
 

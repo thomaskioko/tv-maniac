@@ -29,7 +29,7 @@ public data class SettingsState(
     val currentPageTitle: String = "",
     val rootGroups: ImmutableList<SettingsCategoryGroup> = persistentListOf(),
     val labels: SettingsLabels = SettingsLabels(),
-    val locks: PremiumLocks = PremiumLocks(),
+    val premium: PremiumState = PremiumState(),
     val backup: BackupSettings = BackupSettings(),
     val username: String? = null,
     val showLogoutConfirmation: Boolean,
@@ -95,7 +95,7 @@ public data class BackupSettings(
     val exportDescription: String = "",
 )
 
-public data class PremiumLocks(
+public data class PremiumState(
     val backupLocked: Boolean = false,
     val customThemesLocked: Boolean = false,
     val posterStyleLocked: Boolean = false,

@@ -37,9 +37,9 @@ extension SettingsView {
             title: uiState.labels.quickRateTitle,
             subtitle: uiState.labels.quickRateDescription,
             isOn: uiState.quickRateEnabled,
-            isLocked: uiState.locks.quickRateLocked,
-            lockedBadgeText: uiState.locks.badgeText,
-            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            isLocked: uiState.premium.quickRateLocked,
+            lockedBadgeText: uiState.premium.badgeText,
+            lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
             onToggle: { presenter.dispatch(action: QuickRateToggled(enabled: $0)) }
         ))
 
@@ -65,9 +65,9 @@ extension SettingsView {
                 title: uiState.labels.episodeNotificationsTitle,
                 subtitle: uiState.labels.episodeNotificationsDescription,
                 isOn: uiState.episodeNotificationsEnabled,
-                isLocked: uiState.locks.episodeNotificationsLocked,
-                lockedBadgeText: uiState.locks.badgeText,
-                lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+                isLocked: uiState.premium.episodeNotificationsLocked,
+                lockedBadgeText: uiState.premium.badgeText,
+                lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
                 onToggle: { handleNotificationToggle(enabled: $0) }
             ),
         ]

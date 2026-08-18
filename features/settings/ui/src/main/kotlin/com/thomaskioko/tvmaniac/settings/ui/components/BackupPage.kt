@@ -77,14 +77,14 @@ private fun BackupPageContent(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val locked = state.locks.backupLocked
+    val locked = state.premium.backupLocked
 
     PremiumOverlay(
         locked = locked,
-        badgeText = state.locks.badgeText,
-        title = state.locks.backupLockedTitle,
-        message = state.locks.backupLockedMessage,
-        actionText = state.locks.upgradeText,
+        badgeText = state.premium.badgeText,
+        title = state.premium.backupLockedTitle,
+        message = state.premium.backupLockedMessage,
+        actionText = state.premium.upgradeText,
         onActionClick = { onAction(UpgradeToPremiumClicked) },
         modifier = modifier
             .fillMaxSize()
