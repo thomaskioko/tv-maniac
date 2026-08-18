@@ -64,6 +64,10 @@
         <item quantity="one">%d Serie wiederhergestellt</item>
         <item quantity="other">%d Serien wiederhergestellt</item>
     </plurals>
+    <plurals name="backup_episodes_restored">
+        <item quantity="one">%d Folge wiederhergestellt</item>
+        <item quantity="other">%d Folgen wiederhergestellt</item>
+    </plurals>
     <plurals name="backup_shows_skipped">
         <item quantity="one">%d Serie übersprungen</item>
         <item quantity="other">%d Serien übersprungen</item>
