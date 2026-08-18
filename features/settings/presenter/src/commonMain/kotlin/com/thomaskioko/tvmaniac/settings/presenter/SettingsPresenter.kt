@@ -12,11 +12,9 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
-import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
@@ -27,9 +25,8 @@ import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
-import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
-import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
-import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
+import com.thomaskioko.tvmaniac.domain.accountswitcher.ConnectAndSwitchProviderInteractor
+import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInteractor
 import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
@@ -50,16 +47,13 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.minutes
 
 @NavDestination(
@@ -87,9 +81,8 @@ public class SettingsPresenter internal constructor(
     private val accountSwitchFlag: FeatureFlag<Boolean>,
     private val accountManager: AccountManager,
     private val subscriptionManager: SubscriptionManager,
-    private val pushPendingChangesInteractor: PushPendingChangesInteractor,
-    private val countUnsavedChanges: CountUnsavedChanges,
-    private val switchAccountInteractor: SwitchAccountInteractor,
+    private val prepareAccountSwitchInteractor: PrepareAccountSwitchInteractor,
+    private val connectAndSwitchProviderInteractor: ConnectAndSwitchProviderInteractor,
     private val rewatchRepository: RewatchRepository,
     private val exportBackupInteractor: ExportBackupInteractor,
     private val labelsMapper: SettingsLabelsMapper,
@@ -99,6 +92,7 @@ public class SettingsPresenter internal constructor(
     private val authProcessingState = ObservableLoadingCounter()
     private val notificationToggleState = ObservableLoadingCounter()
     private val backupExportState = ObservableLoadingCounter()
+    private val accountSwitchState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     private val _state: MutableStateFlow<SettingsState> =
@@ -154,6 +148,7 @@ public class SettingsPresenter internal constructor(
         authProcessingState.observable,
         notificationToggleState.observable,
         backupExportState.observable,
+        accountSwitchState.observable,
         observeSettingsPreferencesInteractor.flow,
         accountManager.isConnected,
         accountManager.activeProvider,
@@ -162,13 +157,14 @@ public class SettingsPresenter internal constructor(
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
         locksFlow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, locks ->
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, locks ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
             isLoading = false,
             isUpdating = isProcessingAuth || isTogglingNotifications,
             isProcessingAuth = isProcessingAuth,
+            isSwitching = isSwitchingAccount,
             imageQuality = preferences.imageQuality,
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
@@ -460,16 +456,12 @@ public class SettingsPresenter internal constructor(
 
     private fun handleSwitchClicked(target: SyncProviderSource) {
         coroutineScope.launch {
-            _state.update { it.copy(isSwitching = true) }
-            runCatching { pushPendingChangesInteractor.executeSync() }
-                .onFailure { logger.warning(TAG, "Pushing pending changes before switch failed: ${it.message}") }
-            val count = runCatching { countUnsavedChanges() }
-                .onFailure { logger.warning(TAG, "Counting unsaved changes before switch failed: ${it.message}") }
-                .getOrDefault(0)
+            accountSwitchState.addLoader()
+            val count = prepareAccountSwitchInteractor()
+            accountSwitchState.removeLoader()
             if (count > 0) {
                 _state.update {
                     it.copy(
-                        isSwitching = false,
                         showSwitchConfirmation = true,
                         switchUnsavedCount = count,
                         pendingSwitchProvider = target,
@@ -508,7 +500,6 @@ public class SettingsPresenter internal constructor(
             it.copy(
                 showSwitchConfirmation = false,
                 pendingSwitchProvider = null,
-                isSwitching = false,
                 switchUnsavedCount = 0,
                 switchDialogTitle = null,
                 switchDialogMessage = null,
@@ -517,28 +508,14 @@ public class SettingsPresenter internal constructor(
     }
 
     private suspend fun switchSyncProviderSource(target: SyncProviderSource) {
-        _state.update { it.copy(isSwitching = true) }
-        try {
-            authManagers[target]?.launchWebView()
-            withTimeoutOrNull(OAUTH_TIMEOUT) {
-                accountManager.accounts.first { accounts ->
-                    accounts.any { it.provider == target && it.isConnected }
-                }
-            } ?: error("Timed out waiting for $target sign-in")
-            switchAccountInteractor.executeSync(target)
-        } catch (cancellation: CancellationException) {
-            throw cancellation
-        } catch (cause: Throwable) {
-            logger.error(TAG, "Account switch to $target failed: ${cause.message}")
-            uiMessageManager.emitMessage(
-                UiMessage(
-                    message = localizer.getString(StringResourceKey.LabelAccountSwitchFailed),
-                    sourceId = "AccountSwitch",
-                ),
+        connectAndSwitchProviderInteractor(ConnectAndSwitchProviderInteractor.Params(target))
+            .collectStatus(
+                counter = accountSwitchState,
+                logger = logger,
+                uiMessageManager = uiMessageManager,
+                sourceId = ACCOUNT_SWITCH_SOURCE_ID,
+                errorToStringMapper = errorToStringMapper,
             )
-        } finally {
-            _state.update { it.copy(isSwitching = false) }
-        }
     }
 
     private fun handleVersionTap() {
@@ -682,6 +659,7 @@ public class SettingsPresenter internal constructor(
         private const val HIDDEN_TAP_THRESHOLD = 6
         private const val TAG = "SettingsPresenter"
         private const val BACKUP_SOURCE_ID = "BackupExport"
+        private const val ACCOUNT_SWITCH_SOURCE_ID = "AccountSwitch"
         private val OAUTH_TIMEOUT = 2.minutes
     }
 }
