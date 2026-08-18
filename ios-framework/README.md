@@ -885,6 +885,7 @@ graph TB
   :data:watchproviders:implementation --> :data:request-manager:api
   :data:watchproviders:implementation --> :data:watchproviders:api
   :domain:account-switcher --> :core:base
+  :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
@@ -1384,6 +1385,7 @@ graph TB
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api
   :i18n:implementation -.-> :core:network-util:api
+  :i18n:implementation -.-> :data:account-manager:api
   :i18n:implementation -.-> :data:backup:api
   :i18n:implementation --> :i18n:api
   :ios-framework -.-> :api:simkl:implementation

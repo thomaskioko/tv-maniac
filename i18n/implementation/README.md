@@ -26,9 +26,17 @@ graph TB
     direction TB
     :core:network-util:api[api]:::multiplatform
   end
+  subgraph :data:account-manager
+    direction TB
+    :data:account-manager:api[api]:::multiplatform
+  end
   subgraph :data:backup
     direction TB
     :data:backup:api[api]:::multiplatform
+  end
+  subgraph :data:database
+    direction TB
+    :data:database:sqldelight[sqldelight]:::multiplatform
   end
   subgraph :i18n
     direction TB
@@ -41,10 +49,13 @@ graph TB
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
+  :data:database:sqldelight --> :core:logger:api
   :i18n:api --> :i18n:generator
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api
   :i18n:implementation -.-> :core:network-util:api
+  :i18n:implementation -.-> :data:account-manager:api
   :i18n:implementation -.-> :data:backup:api
   :i18n:implementation --> :i18n:api
 
