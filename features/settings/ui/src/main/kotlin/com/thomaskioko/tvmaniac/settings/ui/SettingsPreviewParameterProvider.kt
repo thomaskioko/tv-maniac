@@ -10,10 +10,10 @@ import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSettings
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggle
 import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleLabels
+import com.thomaskioko.tvmaniac.settings.presenter.PremiumLocks
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryGroup
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryItem
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabels
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsLocks
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
@@ -192,7 +192,7 @@ internal val posterStyleState = loggedInState.copy(
     currentPageTitle = "Poster Style",
 )
 internal val posterStyleLockedState = posterStyleState.copy(
-    locks = SettingsLocks(
+    locks = PremiumLocks(
         posterStyleLocked = true,
         badgeText = "Premium",
         themesLockedTitle = "Poster styles are a Premium feature",
@@ -207,7 +207,7 @@ internal val posterStyleMixedState = posterStyleState.copy(
     posterCornerStyle = PosterCornerStyle.ROUNDED,
 )
 internal val appearanceLockedState = appearanceState.copy(
-    locks = SettingsLocks(
+    locks = PremiumLocks(
         customThemesLocked = true,
         badgeText = "Premium",
         themesLockedTitle = "Custom themes are a Premium feature",
@@ -221,7 +221,7 @@ internal val behaviorSimklFreeTierState = behaviorState.copy(
     multiplePlaysSyncNotice = "Simkl does not store rewatches without a paid plan, so this count stays on this device.",
 )
 internal val behaviorLockedState = behaviorState.copy(
-    locks = SettingsLocks(
+    locks = PremiumLocks(
         quickRateLocked = true,
         badgeText = "Premium",
         lockedContentDescription = "Locked",
@@ -229,7 +229,7 @@ internal val behaviorLockedState = behaviorState.copy(
 )
 internal val notificationsState = loggedInState.copy(currentPage = SettingsPage.NOTIFICATIONS, currentPageTitle = "Notifications")
 internal val notificationsLockedState = notificationsState.copy(
-    locks = SettingsLocks(
+    locks = PremiumLocks(
         episodeNotificationsLocked = true,
         badgeText = "Premium",
         lockedContentDescription = "Locked",
@@ -245,7 +245,7 @@ internal val backupState = loggedInState.copy(
     ),
 )
 internal val backupLockedState = backupState.copy(
-    locks = SettingsLocks(
+    locks = PremiumLocks(
         backupLocked = true,
         badgeText = "Premium",
         backupLockedTitle = "Backup is a Premium feature",
