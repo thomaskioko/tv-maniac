@@ -192,6 +192,10 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .scrollToThemesLocked()
             .assertThemeSwatchDoesNotExist(ThemeModel.TERMINAL)
             .clickBackButton()
+            .openBackupPage()
+            .assertBackupLockedDisplayed()
+            .assertBackupExportRowDoesNotExist()
+            .clickBackButton()
             .clickBackButton()
 
         homeRobot
@@ -234,6 +238,9 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .clickThemeSwatch(ThemeModel.TERMINAL)
             .assertThemeSwatchSelected(ThemeModel.TERMINAL)
             .clickBackButton()
+            .openBackupPage()
+            .assertBackupExportRowDisplayed()
+            .clickBackButton()
             .clickBackButton()
 
         homeRobot
@@ -247,5 +254,30 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
 
         calendarRobot
             .assertLoggedOutStateDisplayed()
+    }
+
+    @Test
+    fun givenSettings_whenBackupRowClicked_thenPageOpensAndBackReturnsToRoot() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .assertBackupExportRowDisplayed()
+            .clickBackButton()
+            .assertSettingsScreenDisplayed()
     }
 }

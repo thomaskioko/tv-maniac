@@ -16,6 +16,9 @@ import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchingState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceLockedState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
+import com.thomaskioko.tvmaniac.settings.ui.backupExportingState
+import com.thomaskioko.tvmaniac.settings.ui.backupLockedState
+import com.thomaskioko.tvmaniac.settings.ui.backupState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorLockedState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
@@ -243,6 +246,42 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = privacyState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPage() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPage") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageLocked() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageLocked") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupLockedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageExporting() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageExporting") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupExportingState,
                     onAction = {},
                 )
             }

@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.data.backup.testing
 
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.api.BackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
@@ -72,5 +73,18 @@ public class FakeBackupDestination(private var contents: String = "") : BackupDe
     override fun read(): String {
         readException?.let { throw it }
         return contents
+    }
+}
+
+public class FakeBackupDestinationBuilder(
+    private val destination: BackupDestination = FakeBackupDestination(),
+) : BackupDestinationBuilder {
+
+    public var lastLocation: String? = null
+        private set
+
+    override fun build(location: String): BackupDestination {
+        lastLocation = location
+        return destination
     }
 }

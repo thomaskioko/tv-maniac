@@ -208,6 +208,22 @@ extension SettingsScreenTest {
         )
     }
 
+    func backupContent(locked: Bool = false, isExporting: Bool = false) -> SettingsBackupContent {
+        SettingsBackupContent(
+            exportTitle: "Save a backup",
+            exportDescription: "Write your shows, watch history, ratings and settings to a file",
+            isExporting: isExporting,
+            isLocked: locked,
+            lockedBadgeText: locked ? "Premium" : "",
+            lockedTitle: locked ? "Backup is a Premium feature" : "",
+            lockedMessage: locked ? "Upgrade to Premium to save and restore your shows." : "",
+            lockedActionText: locked ? "Upgrade to Premium" : "",
+            lockedAccessibilityLabel: locked ? "Locked" : "",
+            onExport: {},
+            onUpgradeClick: {}
+        )
+    }
+
     func rootSections(authenticated: Bool) -> [SettingsRootSection] {
         var sections: [SettingsRootSection] = []
         if authenticated {
@@ -242,7 +258,8 @@ extension SettingsScreenTest {
         customNotificationToggles: [SettingsToggleItem]? = nil,
         customBehaviorToggles: [SettingsToggleItem]? = nil,
         fontSizePercent: Int = 100,
-        customPosterStyleItem: SettingsPosterStyleItem? = nil
+        customPosterStyleItem: SettingsPosterStyleItem? = nil,
+        customBackupContent: SettingsBackupContent? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
@@ -263,7 +280,8 @@ extension SettingsScreenTest {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            accountContent: customAccountContent ?? accountContent(authenticated: authenticated)
+            accountContent: customAccountContent ?? accountContent(authenticated: authenticated),
+            backupContent: customBackupContent ?? backupContent()
         )
     }
 }
