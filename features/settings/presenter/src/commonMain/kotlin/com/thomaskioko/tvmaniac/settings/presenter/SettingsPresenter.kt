@@ -17,7 +17,6 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
@@ -30,6 +29,8 @@ import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInter
 import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
+import com.thomaskioko.tvmaniac.domain.settings.ObserveLockedFeaturesInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
@@ -39,8 +40,6 @@ import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
-import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
-import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
@@ -65,6 +64,8 @@ import kotlin.time.Duration.Companion.minutes
 public class SettingsPresenter internal constructor(
     componentContext: ComponentContext,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
+    observeLockedFeaturesInteractor: ObserveLockedFeaturesInteractor,
+    private val observeRewatchSupportInteractor: ObserveRewatchSupportInteractor,
     userRepository: UserRepository,
     private val navigator: Navigator,
     private val appMetadata: AppMetadata,
@@ -80,10 +81,8 @@ public class SettingsPresenter internal constructor(
     @AccountSwitchFlagQualifier
     private val accountSwitchFlag: FeatureFlag<Boolean>,
     private val accountManager: AccountManager,
-    private val subscriptionManager: SubscriptionManager,
     private val prepareAccountSwitchInteractor: PrepareAccountSwitchInteractor,
     private val connectAndSwitchProviderInteractor: ConnectAndSwitchProviderInteractor,
-    private val rewatchRepository: RewatchRepository,
     private val exportBackupInteractor: ExportBackupInteractor,
     private val labelsMapper: SettingsLabelsMapper,
 ) : ComponentContext by componentContext {
@@ -103,42 +102,19 @@ public class SettingsPresenter internal constructor(
         exportDescription = localizer.getString(StringResourceKey.SettingsBackupExportDescription),
     )
 
-    private val locksFlow = kotlinx.coroutines.flow.combine(
-        subscriptionManager.observeAccess(SubscriptionFeature.CustomThemes),
-        subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
-        subscriptionManager.observeAccess(SubscriptionFeature.QuickRate),
-        subscriptionManager.observeAccess(SubscriptionFeature.CloudBackup),
-    ) { customThemesAccess, episodeNotificationsAccess, quickRateAccess, backupAccess ->
-        SettingsLocks(
-            backupLocked = !backupAccess,
-            customThemesLocked = !customThemesAccess,
-            posterStyleLocked = !customThemesAccess,
-            episodeNotificationsLocked = !episodeNotificationsAccess,
-            quickRateLocked = !quickRateAccess,
-            badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
-            themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
-            themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
-            upgradeText = localizer.getString(StringResourceKey.LabelUpgradeToPremium),
-            backupLockedTitle = localizer.getString(StringResourceKey.LabelBackupLockedTitle),
-            backupLockedMessage = localizer.getString(StringResourceKey.LabelBackupLockedMessage),
-            lockedContentDescription = localizer.getString(StringResourceKey.CdLocked),
-        )
-    }
-
     init {
         observeSettingsPreferencesInteractor(Unit)
+        observeLockedFeaturesInteractor(Unit)
         observeRewatchSyncNotice()
     }
 
     private fun observeRewatchSyncNotice() {
+        observeRewatchSupportInteractor(Unit)
         coroutineScope.launch {
-            accountManager.activeProvider.collect {
-                val notice = if (rewatchRepository.supportsRewatch()) {
-                    null
-                } else {
-                    localizer.getString(StringResourceKey.LabelRewatchSimklFreeTier)
+            observeRewatchSupportInteractor.flow.collect { supportsRewatch ->
+                _state.update { state ->
+                    state.copy(multiplePlaysSyncNotice = labelsMapper.rewatchSyncNotice(supportsRewatch))
                 }
-                _state.update { state -> state.copy(multiplePlaysSyncNotice = notice) }
             }
         }
     }
@@ -156,8 +132,8 @@ public class SettingsPresenter internal constructor(
         userRepository.observeCurrentUser().onStart { emit(null) },
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
-        locksFlow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, locks ->
+        observeLockedFeaturesInteractor.flow,
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, lockedFeatures ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
@@ -195,7 +171,7 @@ public class SettingsPresenter internal constructor(
             posterCornerStyle = preferences.layout.posterCornerStyle,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
-            locks = locks,
+            locks = labelsMapper.toPremiumLocks(lockedFeatures),
             backup = currentState.backup.copy(
                 exportTitle = backupLabels.exportTitle,
                 exportDescription = backupLabels.exportDescription,

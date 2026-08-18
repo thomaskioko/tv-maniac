@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
+import com.thomaskioko.tvmaniac.domain.settings.LockedFeatures
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -118,4 +119,22 @@ public class SettingsLabelsMapper(
         switchCancel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary),
         switching = localizer.getString(StringResourceKey.LabelAccountSwitching),
     )
+
+    public fun toPremiumLocks(features: LockedFeatures): PremiumLocks = PremiumLocks(
+        backupLocked = features.backupLocked,
+        customThemesLocked = features.customThemesLocked,
+        posterStyleLocked = features.posterStyleLocked,
+        episodeNotificationsLocked = features.episodeNotificationsLocked,
+        quickRateLocked = features.quickRateLocked,
+        badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
+        themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
+        themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
+        upgradeText = localizer.getString(StringResourceKey.LabelUpgradeToPremium),
+        backupLockedTitle = localizer.getString(StringResourceKey.LabelBackupLockedTitle),
+        backupLockedMessage = localizer.getString(StringResourceKey.LabelBackupLockedMessage),
+        lockedContentDescription = localizer.getString(StringResourceKey.CdLocked),
+    )
+
+    public fun rewatchSyncNotice(supportsRewatch: Boolean): String? =
+        if (supportsRewatch) null else localizer.getString(StringResourceKey.LabelRewatchSimklFreeTier)
 }

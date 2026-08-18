@@ -25,6 +25,7 @@ kotlin {
                 api(projects.domain.accountSwitcher)
                 api(projects.domain.backup)
                 api(projects.domain.logout)
+                api(projects.domain.rewatch)
                 api(projects.domain.notifications)
                 api(projects.domain.settings)
                 api(projects.domain.theme)
