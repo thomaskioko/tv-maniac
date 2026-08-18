@@ -13,8 +13,6 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
-import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
-import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
@@ -106,8 +104,6 @@ class SettingsPresenterTest {
     private val navigator = FakeNavigator()
     private val subscriptionManager = FakeSubscriptionManager()
     private val backupRepository = FakeBackupRepository()
-    private val backupDestination = FakeBackupDestination()
-    private val backupDestinationBuilder = FakeBackupDestinationBuilder(backupDestination)
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -163,7 +159,6 @@ class SettingsPresenterTest {
             ),
             rewatchRepository = FakeRewatchRepository(),
             backupRepository = backupRepository,
-            backupDestinationBuilder = backupDestinationBuilder,
         )
     }
 
@@ -859,8 +854,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupDestinationBuilder.lastLocation shouldBe null
-        backupRepository.lastDestination shouldBe null
+        backupRepository.lastWriteLocation shouldBe null
     }
 
     @Test
@@ -895,8 +889,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupDestinationBuilder.lastLocation shouldBe LOCATION
-        backupRepository.lastDestination shouldBe backupDestination
+        backupRepository.lastWriteLocation shouldBe LOCATION
 
         presenter.state.test {
             val state = expectMostRecentItem()

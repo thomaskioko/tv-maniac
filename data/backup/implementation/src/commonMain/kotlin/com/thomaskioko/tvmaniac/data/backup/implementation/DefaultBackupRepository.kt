@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.data.backup.implementation
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
-import com.thomaskioko.tvmaniac.data.backup.api.BackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisodeRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
@@ -43,7 +42,7 @@ public class DefaultBackupRepository(
     private val dateTimeProvider: DateTimeProvider,
     private val appMetadata: AppMetadata,
     private val dispatchers: AppCoroutineDispatchers,
-    private val destinationBuilder: BackupDestinationBuilder,
+    private val destination: BackupDestination,
     private val syncObserver: SyncObserver,
     transactionRunner: DatabaseTransactionRunner,
 ) : BackupRepository {
@@ -59,18 +58,18 @@ public class DefaultBackupRepository(
         preferences = readPreferences(),
     )
 
-    override suspend fun writeBackup(destination: BackupDestination): BackupResult {
+    override suspend fun writeBackup(location: String): BackupResult {
         val backup = createBackup()
         val contents = BackupJson.encode(backup)
 
         try {
-            destination.write(contents)
+            destination.write(location, contents)
         } catch (error: Throwable) {
             return BackupResult.Failed(BackupFailure.WriteFailed, error)
         }
 
         val verified = try {
-            BackupJson.decode(destination.read())
+            BackupJson.decode(destination.read(location))
         } catch (error: Throwable) {
             return BackupResult.Failed(BackupFailure.VerificationFailed, error)
         }
@@ -85,11 +84,11 @@ public class DefaultBackupRepository(
         )
     }
 
-    override suspend fun restoreBackup(source: BackupDestination): RestoreResult {
+    override suspend fun restoreBackup(location: String): RestoreResult {
         if (syncObserver.isSyncing.value) return RestoreResult.Failed(RestoreFailure.SyncInProgress)
 
         val backup = try {
-            BackupJson.decode(source.read())
+            BackupJson.decode(destination.read(location))
         } catch (error: BackupVersionTooNewException) {
             return RestoreResult.Failed(RestoreFailure.VersionTooNew, error)
         } catch (error: Throwable) {
@@ -97,7 +96,7 @@ public class DefaultBackupRepository(
         }
 
         return syncObserver.trackSync(RESTORE_OPERATION) {
-            val safetyCopy = writeBackup(destinationBuilder.safetyCopy())
+            val safetyCopy = writeBackup(destination.safetyCopyLocation())
             if (safetyCopy is BackupResult.Failed) {
                 return@trackSync RestoreResult.Failed(RestoreFailure.SafetyCopyFailed, safetyCopy.cause)
             }

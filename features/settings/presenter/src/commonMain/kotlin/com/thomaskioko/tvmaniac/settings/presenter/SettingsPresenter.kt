@@ -19,7 +19,6 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.data.backup.api.BackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
@@ -95,7 +94,6 @@ public class SettingsPresenter internal constructor(
     private val switchAccountInteractor: SwitchAccountInteractor,
     private val rewatchRepository: RewatchRepository,
     private val backupRepository: BackupRepository,
-    private val backupDestinationBuilder: BackupDestinationBuilder,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -404,7 +402,7 @@ public class SettingsPresenter internal constructor(
         coroutineScope.launch {
             _state.update { it.copy(backup = backupLabels.copy(isExporting = true)) }
             try {
-                when (val result = backupRepository.writeBackup(backupDestinationBuilder.build(location))) {
+                when (val result = backupRepository.writeBackup(location)) {
                     is BackupResult.Written -> Unit
                     is BackupResult.Failed -> emitBackupFailure(result.reason)
                 }
@@ -419,7 +417,7 @@ public class SettingsPresenter internal constructor(
         }
     }
 
-    private suspend fun emitBackupFailure(reason: BackupFailure) {
+    private fun emitBackupFailure(reason: BackupFailure) {
         uiMessageManager.emitMessage(
             UiMessage(
                 message = localizer.getString(

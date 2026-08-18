@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.data.backup.testing
 
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
-import com.thomaskioko.tvmaniac.data.backup.api.BackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
@@ -20,10 +19,10 @@ public class FakeBackupRepository : BackupRepository {
     private var restoreResult: RestoreResult = RestoreResult.Restored(RestoreSummary(showCount = 0, episodeCount = 0))
     private var createException: Throwable? = null
 
-    public var lastDestination: BackupDestination? = null
+    public var lastWriteLocation: String? = null
         private set
 
-    public var lastSource: BackupDestination? = null
+    public var lastRestoreLocation: String? = null
         private set
 
     public fun setBackup(file: BackupFile) {
@@ -47,24 +46,25 @@ public class FakeBackupRepository : BackupRepository {
         return backup
     }
 
-    override suspend fun writeBackup(destination: BackupDestination): BackupResult {
-        lastDestination = destination
+    override suspend fun writeBackup(location: String): BackupResult {
+        lastWriteLocation = location
         createException?.let { throw it }
         return writeResult
     }
 
-    override suspend fun restoreBackup(source: BackupDestination): RestoreResult {
-        lastSource = source
+    override suspend fun restoreBackup(location: String): RestoreResult {
+        lastRestoreLocation = location
         return restoreResult
     }
 }
 
-public class FakeBackupDestination(private var contents: String = "") : BackupDestination {
+public class FakeBackupDestination : BackupDestination {
 
+    private val files = mutableMapOf<String, String>()
     private var writeException: Throwable? = null
     private var readException: Throwable? = null
 
-    public var written: String? = null
+    public var lastWriteLocation: String? = null
         private set
 
     public fun setWriteException(exception: Throwable) {
@@ -75,34 +75,26 @@ public class FakeBackupDestination(private var contents: String = "") : BackupDe
         readException = exception
     }
 
-    public fun setContents(value: String) {
-        contents = value
+    public fun setContents(location: String, contents: String) {
+        files[location] = contents
     }
 
-    override fun write(contents: String) {
+    public fun contentsAt(location: String): String? = files[location]
+
+    override fun write(location: String, contents: String) {
         writeException?.let { throw it }
-        written = contents
-        this.contents = contents
+        lastWriteLocation = location
+        files[location] = contents
     }
 
-    override fun read(): String {
+    override fun read(location: String): String {
         readException?.let { throw it }
-        return contents
-    }
-}
-
-public class FakeBackupDestinationBuilder(
-    private val destination: BackupDestination = FakeBackupDestination(),
-    public val safetyDestination: BackupDestination = FakeBackupDestination(),
-) : BackupDestinationBuilder {
-
-    public var lastLocation: String? = null
-        private set
-
-    override fun build(location: String): BackupDestination {
-        lastLocation = location
-        return destination
+        return files[location] ?: throw IllegalStateException("Nothing written to $location")
     }
 
-    override fun safetyCopy(): BackupDestination = safetyDestination
+    override fun safetyCopyLocation(): String = SAFETY_COPY_LOCATION
+
+    public companion object {
+        public const val SAFETY_COPY_LOCATION: String = "safety-copy"
+    }
 }

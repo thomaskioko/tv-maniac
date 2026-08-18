@@ -10,7 +10,6 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupWatchedEpisode
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
-import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestinationBuilder
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
@@ -52,8 +51,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
     private val datastoreRepository = FakeDatastoreRepository()
     private val syncObserver = FakeSyncObserver()
-    private val safetyDestination = FakeBackupDestination()
-    private val destinationBuilder = FakeBackupDestinationBuilder(safetyDestination = safetyDestination)
+    private val destination = FakeBackupDestination()
 
     private lateinit var repository: DefaultBackupRepository
 
@@ -199,7 +197,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
         repository.restoreBackup(fileWith(BackupShow(tmdbId = OTHER_TMDB_ID, title = "Better Call Saul")))
 
-        safetyDestination.written.shouldNotBeNull() shouldContain "\"season\": 9"
+        safetyCopy().shouldNotBeNull() shouldContain "\"season\": 9"
     }
 
     @Test
@@ -212,7 +210,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         val result = repository.restoreBackup(fileWith(breakingBad()))
 
         result.shouldBeInstanceOf<RestoreResult.Failed>().reason shouldBe RestoreFailure.ImportFailed
-        safetyDestination.written.shouldNotBeNull() shouldContain "\"season\": 9"
+        safetyCopy().shouldNotBeNull() shouldContain "\"season\": 9"
         watchedEpisodes() shouldHaveSize 1
     }
 
@@ -220,7 +218,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
     fun `should fail given the safety copy cannot be written`() = runTest(testDispatcher) {
         val showId = insertShow(BREAKING_BAD_TMDB_ID)
         followShow(showId)
-        safetyDestination.setWriteException(IllegalStateException("no space"))
+        destination.setWriteException(IllegalStateException("no space"))
 
         val result = repository.restoreBackup(fileWith(BackupShow(tmdbId = OTHER_TMDB_ID, title = "Better Call Saul")))
 
@@ -230,7 +228,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should fail given the file was written by a newer release`() = runTest(testDispatcher) {
-        val source = FakeBackupDestination(
+        val source = fileWith(
             """{"version": ${BackupFormat.VERSION + 1}, "createdAt": "now", "appVersion": "9.0", "shows": []}""",
         )
 
@@ -241,7 +239,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should import given the file was written by the current version`() = runTest(testDispatcher) {
-        val source = FakeBackupDestination(
+        val source = fileWith(
             """{"version": 1, "createdAt": "now", "appVersion": "1.0", "shows": [], "preferences": {}}""",
         )
 
@@ -250,7 +248,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should import given the file carries an unknown field`() = runTest(testDispatcher) {
-        val source = FakeBackupDestination(
+        val source = fileWith(
             """{"version": 1, "createdAt": "now", "appVersion": "1.0", "lists": [], "shows": []}""",
         )
 
@@ -262,7 +260,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         val showId = insertShow(BREAKING_BAD_TMDB_ID)
         followShow(showId)
 
-        val result = repository.restoreBackup(FakeBackupDestination("not json"))
+        val result = repository.restoreBackup(fileWith("not json"))
 
         result.shouldBeInstanceOf<RestoreResult.Failed>().reason shouldBe RestoreFailure.ReadFailed
         database.followedShowsQueries.entries().executeAsList() shouldHaveSize 1
@@ -297,21 +295,30 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         dateTimeProvider = FakeDateTimeProvider(),
         appMetadata = FakeAppMetadata.DEFAULT,
         dispatchers = dispatchers,
-        destinationBuilder = destinationBuilder,
+        destination = destination,
         syncObserver = syncObserver,
         transactionRunner = transactionRunner,
     )
 
-    private fun fileWith(vararg shows: BackupShow) = FakeBackupDestination(
-        BackupJson.encode(
-            BackupFile(
-                version = BackupFormat.VERSION,
-                createdAt = "2026-01-01T00:00:00Z",
-                appVersion = "1.0.0",
-                shows = shows.toList(),
+    private fun fileWith(vararg shows: BackupShow): String {
+        destination.setContents(
+            location = SOURCE,
+            contents = BackupJson.encode(
+                BackupFile(
+                    version = BackupFormat.VERSION,
+                    createdAt = "2026-01-01T00:00:00Z",
+                    appVersion = "1.0.0",
+                    shows = shows.toList(),
+                ),
             ),
-        ),
-    )
+        )
+        return SOURCE
+    }
+
+    private fun fileWith(contents: String): String {
+        destination.setContents(location = SOURCE, contents = contents)
+        return SOURCE
+    }
 
     private fun breakingBad() = BackupShow(
         tmdbId = BREAKING_BAD_TMDB_ID,
@@ -322,6 +329,8 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
             BackupWatchedEpisode(season = 1, episode = 2, watchedAt = NOW),
         ),
     )
+
+    private fun safetyCopy(): String? = destination.contentsAt(FakeBackupDestination.SAFETY_COPY_LOCATION)
 
     private fun watchedEpisodes() = database.watchedEpisodesQueries
         .getWatchedEpisodes(database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne())
@@ -392,6 +401,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         private const val OTHER_TMDB_ID = 60059L
         private const val SHOW_TITLE = "Breaking Bad"
         private const val NOW = 1_700_000_000_000L
+        private const val SOURCE = "content://downloads/backup.json"
         private val SEASON_ID = Id<SeasonId>(3572L)
     }
 }

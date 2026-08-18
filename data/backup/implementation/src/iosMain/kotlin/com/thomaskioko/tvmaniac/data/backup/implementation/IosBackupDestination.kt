@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
-import com.thomaskioko.tvmaniac.data.backup.api.BackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupLocationUnreadableException
 import dev.zacsweers.metro.AppScope
@@ -19,36 +18,31 @@ import platform.Foundation.writeToFile
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class IosBackupDestinationBuilder : BackupDestinationBuilder {
+@OptIn(ExperimentalForeignApi::class)
+public class IosBackupDestination : BackupDestination {
 
-    override fun build(location: String): BackupDestination = FileBackupDestination(location)
+    override fun write(location: String, contents: String) {
+        val written = (contents as NSString).writeToFile(
+            path = location,
+            atomically = true,
+            encoding = NSUTF8StringEncoding,
+            error = null,
+        )
+        if (!written) throw BackupLocationUnreadableException(location)
+    }
 
-    override fun safetyCopy(): BackupDestination {
+    override fun read(location: String): String = NSString.stringWithContentsOfFile(
+        path = location,
+        encoding = NSUTF8StringEncoding,
+        error = null,
+    ) ?: throw BackupLocationUnreadableException(location)
+
+    override fun safetyCopyLocation(): String {
         val documents = NSSearchPathForDirectoriesInDomains(
             directory = NSDocumentDirectory,
             domainMask = NSUserDomainMask,
             expandTilde = true,
         ).first() as NSString
-        return FileBackupDestination(documents.stringByAppendingPathComponent(BackupFormat.SAFETY_COPY_NAME))
+        return documents.stringByAppendingPathComponent(BackupFormat.SAFETY_COPY_NAME)
     }
-}
-
-@OptIn(ExperimentalForeignApi::class)
-internal class FileBackupDestination(private val path: String) : BackupDestination {
-
-    override fun write(contents: String) {
-        val written = (contents as NSString).writeToFile(
-            path = path,
-            atomically = true,
-            encoding = NSUTF8StringEncoding,
-            error = null,
-        )
-        if (!written) throw BackupLocationUnreadableException(path)
-    }
-
-    override fun read(): String = NSString.stringWithContentsOfFile(
-        path = path,
-        encoding = NSUTF8StringEncoding,
-        error = null,
-    ) ?: throw BackupLocationUnreadableException(path)
 }

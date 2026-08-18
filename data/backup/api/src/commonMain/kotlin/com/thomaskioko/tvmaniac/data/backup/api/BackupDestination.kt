@@ -1,7 +1,9 @@
 package com.thomaskioko.tvmaniac.data.backup.api
 
 public interface BackupDestination {
-    public fun write(contents: String)
+    public fun write(location: String, contents: String)
 
-    public fun read(): String
+    public fun read(location: String): String
+
+    public fun safetyCopyLocation(): String
 }
