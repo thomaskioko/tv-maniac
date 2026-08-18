@@ -8,22 +8,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
 @Inject
-public class ObserveLockedFeaturesInteractor(
+public class ObservePremiumAccessInteractor(
     private val subscriptionManager: SubscriptionManager,
-) : SubjectInteractor<Unit, LockedFeatures>() {
+) : SubjectInteractor<Unit, PremiumAccess>() {
 
-    override fun createObservable(params: Unit): Flow<LockedFeatures> = combine(
+    override fun createObservable(params: Unit): Flow<PremiumAccess> = combine(
         subscriptionManager.observeAccess(SubscriptionFeature.CustomThemes),
         subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
         subscriptionManager.observeAccess(SubscriptionFeature.QuickRate),
         subscriptionManager.observeAccess(SubscriptionFeature.CloudBackup),
     ) { customThemes, episodeNotifications, quickRate, backup ->
-        LockedFeatures(
-            backupLocked = !backup,
-            customThemesLocked = !customThemes,
-            posterStyleLocked = !customThemes,
-            episodeNotificationsLocked = !episodeNotifications,
-            quickRateLocked = !quickRate,
+        PremiumAccess(
+            backup = backup,
+            customThemes = customThemes,
+            episodeNotifications = episodeNotifications,
+            quickRate = quickRate,
         )
     }
 }

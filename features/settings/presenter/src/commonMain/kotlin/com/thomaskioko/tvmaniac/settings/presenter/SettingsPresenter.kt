@@ -30,7 +30,7 @@ import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
-import com.thomaskioko.tvmaniac.domain.settings.ObserveLockedFeaturesInteractor
+import com.thomaskioko.tvmaniac.domain.settings.ObservePremiumAccessInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
@@ -64,7 +64,7 @@ import kotlin.time.Duration.Companion.minutes
 public class SettingsPresenter internal constructor(
     componentContext: ComponentContext,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
-    observeLockedFeaturesInteractor: ObserveLockedFeaturesInteractor,
+    observePremiumAccessInteractor: ObservePremiumAccessInteractor,
     private val observeRewatchSupportInteractor: ObserveRewatchSupportInteractor,
     userRepository: UserRepository,
     private val navigator: Navigator,
@@ -104,7 +104,7 @@ public class SettingsPresenter internal constructor(
 
     init {
         observeSettingsPreferencesInteractor(Unit)
-        observeLockedFeaturesInteractor(Unit)
+        observePremiumAccessInteractor(Unit)
         observeRewatchSyncNotice()
     }
 
@@ -132,8 +132,8 @@ public class SettingsPresenter internal constructor(
         userRepository.observeCurrentUser().onStart { emit(null) },
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
-        observeLockedFeaturesInteractor.flow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, lockedFeatures ->
+        observePremiumAccessInteractor.flow,
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
@@ -171,7 +171,7 @@ public class SettingsPresenter internal constructor(
             posterCornerStyle = preferences.layout.posterCornerStyle,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
-            premium = labelsMapper.toPremiumState(lockedFeatures),
+            premium = labelsMapper.toPremiumState(premiumAccess),
             backup = currentState.backup.copy(
                 exportTitle = backupLabels.exportTitle,
                 exportDescription = backupLabels.exportDescription,

@@ -34,7 +34,7 @@ import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
-import com.thomaskioko.tvmaniac.domain.settings.ObserveLockedFeaturesInteractor
+import com.thomaskioko.tvmaniac.domain.settings.ObservePremiumAccessInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
@@ -123,7 +123,7 @@ class SettingsPresenterTest {
             datastoreRepository = datastoreRepository,
             userRepository = userRepository,
             accountManager = accountManager,
-            observeLockedFeaturesInteractor = ObserveLockedFeaturesInteractor(subscriptionManager),
+            observePremiumAccessInteractor = ObservePremiumAccessInteractor(subscriptionManager),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
             labelsMapper = SettingsLabelsMapper(localizer),

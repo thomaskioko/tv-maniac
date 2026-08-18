@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
-import com.thomaskioko.tvmaniac.domain.settings.LockedFeatures
+import com.thomaskioko.tvmaniac.domain.settings.PremiumAccess
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -120,12 +120,12 @@ public class SettingsLabelsMapper(
         switching = localizer.getString(StringResourceKey.LabelAccountSwitching),
     )
 
-    public fun toPremiumState(features: LockedFeatures): PremiumState = PremiumState(
-        backupLocked = features.backupLocked,
-        customThemesLocked = features.customThemesLocked,
-        posterStyleLocked = features.posterStyleLocked,
-        episodeNotificationsLocked = features.episodeNotificationsLocked,
-        quickRateLocked = features.quickRateLocked,
+    public fun toPremiumState(access: PremiumAccess): PremiumState = PremiumState(
+        backupLocked = !access.backup,
+        customThemesLocked = !access.customThemes,
+        posterStyleLocked = !access.customThemes,
+        episodeNotificationsLocked = !access.episodeNotifications,
+        quickRateLocked = !access.quickRate,
         badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
         themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
         themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
