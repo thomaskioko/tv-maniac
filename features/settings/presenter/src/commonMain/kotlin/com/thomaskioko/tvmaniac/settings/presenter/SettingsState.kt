@@ -30,6 +30,7 @@ public data class SettingsState(
     val rootGroups: ImmutableList<SettingsCategoryGroup> = persistentListOf(),
     val labels: SettingsLabels = SettingsLabels(),
     val locks: SettingsLocks = SettingsLocks(),
+    val backup: BackupSettings = BackupSettings(),
     val username: String? = null,
     val showLogoutConfirmation: Boolean,
     val message: UiMessage? = null,
@@ -87,12 +88,22 @@ public data class DiscoverSectionToggle(
     val visible: Boolean,
 )
 
+public data class BackupSettings(
+    val isExporting: Boolean = false,
+    val awaitingDestination: Boolean = false,
+    val exportTitle: String = "",
+    val exportDescription: String = "",
+)
+
 public data class SettingsLocks(
+    val backupLocked: Boolean = false,
     val customThemesLocked: Boolean = false,
     val posterStyleLocked: Boolean = false,
     val episodeNotificationsLocked: Boolean = false,
     val quickRateLocked: Boolean = false,
     val badgeText: String = "",
+    val backupLockedTitle: String = "",
+    val backupLockedMessage: String = "",
     val themesLockedTitle: String = "",
     val themesLockedMessage: String = "",
     val upgradeText: String = "",
