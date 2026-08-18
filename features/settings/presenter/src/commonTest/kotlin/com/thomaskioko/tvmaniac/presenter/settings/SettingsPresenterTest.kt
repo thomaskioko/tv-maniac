@@ -60,6 +60,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleReset
 import com.thomaskioko.tvmaniac.settings.presenter.PosterWidthSelected
 import com.thomaskioko.tvmaniac.settings.presenter.QuickRateToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabelsMapper
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
@@ -121,6 +122,7 @@ class SettingsPresenterTest {
             subscriptionManager = subscriptionManager,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
+            labelsMapper = SettingsLabelsMapper(localizer),
             logger = fakeLogger,
             authManagers = mapOf(
                 SyncProviderSource.TRAKT to authManager,
