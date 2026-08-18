@@ -25,7 +25,9 @@ import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
+import com.thomaskioko.tvmaniac.domain.accountswitcher.ConnectAndSwitchProviderInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
+import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
 import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
@@ -144,22 +146,32 @@ class SettingsPresenterTest {
                 datastoreRepository = datastoreRepository,
             ),
             navigator = navigator,
-            pushPendingChangesInteractor = PushPendingChangesInteractor(
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                libraryRepository = libraryRepository,
+            prepareAccountSwitchInteractor = PrepareAccountSwitchInteractor(
+                pushPendingChangesInteractor = PushPendingChangesInteractor(
+                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                    libraryRepository = libraryRepository,
+                ),
+                countUnsavedChanges = CountUnsavedChanges(
+                    libraryRepository = libraryRepository,
+                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                    traktListRepository = traktListRepository,
+                ),
+                logger = fakeLogger,
             ),
-            countUnsavedChanges = CountUnsavedChanges(
-                libraryRepository = libraryRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                traktListRepository = traktListRepository,
-            ),
-            switchAccountInteractor = SwitchAccountInteractor(
-                logoutHandler = FakeLogoutHandler(),
+            connectAndSwitchProviderInteractor = ConnectAndSwitchProviderInteractor(
+                authManagers = mapOf(
+                    SyncProviderSource.TRAKT to authManager,
+                    SyncProviderSource.SIMKL to simklAuthManager,
+                ),
                 accountManager = accountManager,
-                resyncProfile = {},
-                resyncLibrary = {},
-                resyncContinueWatching = {},
-                appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
+                switchAccountInteractor = SwitchAccountInteractor(
+                    logoutHandler = FakeLogoutHandler(),
+                    accountManager = accountManager,
+                    resyncProfile = {},
+                    resyncLibrary = {},
+                    resyncContinueWatching = {},
+                    appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
+                ),
             ),
             rewatchRepository = FakeRewatchRepository(),
             exportBackupInteractor = ExportBackupInteractor(backupRepository),
