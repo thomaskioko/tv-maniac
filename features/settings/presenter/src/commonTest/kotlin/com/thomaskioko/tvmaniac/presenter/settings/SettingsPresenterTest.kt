@@ -28,6 +28,7 @@ import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
+import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
@@ -159,7 +160,7 @@ class SettingsPresenterTest {
                 appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
             ),
             rewatchRepository = FakeRewatchRepository(),
-            backupRepository = backupRepository,
+            exportBackupInteractor = ExportBackupInteractor(backupRepository),
         )
     }
 
