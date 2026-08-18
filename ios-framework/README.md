@@ -517,10 +517,12 @@ graph TB
   :data:account-manager:implementation --> :data:account-manager:api
   :data:backup:implementation --> :core:appconfig:api
   :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:syncstate:api
   :data:backup:implementation --> :core:util:api
   :data:backup:implementation --> :data:backup:api
   :data:backup:implementation --> :data:database:sqldelight
   :data:backup:implementation --> :data:datastore:api
+  :data:backup:implementation --> :data:episode:api
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:calendar:implementation --> :core:base
