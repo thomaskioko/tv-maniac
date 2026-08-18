@@ -67,7 +67,7 @@ extension View {
             presenter.dispatch(action: BackupDestinationSelected(location: url.path))
         }
         .onChange(of: uiState.backup.isExporting) { wasExporting, isExporting in
-            guard wasExporting, !isExporting, uiState.message == nil, pendingURL.wrappedValue != nil else { return }
+            guard wasExporting, !isExporting, uiState.message?.type != .error, pendingURL.wrappedValue != nil else { return }
             isPresented.wrappedValue = true
         }
         .sheet(isPresented: isPresented, onDismiss: { pendingURL.wrappedValue = nil }) {

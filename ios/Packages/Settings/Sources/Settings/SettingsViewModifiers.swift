@@ -20,7 +20,7 @@ extension View {
             store.imageQuality = imageQuality.toSwift()
         }
         .onChange(of: uiState.message) { _, message in
-            showingErrorAlert.wrappedValue = message != nil
+            showingErrorAlert.wrappedValue = message?.type == .error
         }
         .onChange(of: uiState.showSwitchConfirmation) { _, show in
             showingSwitchAlert.wrappedValue = show
