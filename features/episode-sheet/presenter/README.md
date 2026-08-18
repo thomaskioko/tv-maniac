@@ -154,6 +154,7 @@ graph TB
   :domain:ratings --> :data:subscription:api
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
   :features:episode-sheet:nav --> :navigation:api
   :features:episode-sheet:presenter --> :core:base

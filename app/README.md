@@ -1192,6 +1192,7 @@ graph TB
   :domain:recently-watched --> :data:episode:api
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
@@ -1201,6 +1202,7 @@ graph TB
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
   :domain:settings --> :data:datastore:api
+  :domain:settings --> :data:subscription:api
   :domain:settings --> :domain:theme
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
@@ -1612,6 +1614,7 @@ graph TB
   :features:settings:presenter --> :domain:backup
   :features:settings:presenter --> :domain:logout
   :features:settings:presenter --> :domain:notifications
+  :features:settings:presenter --> :domain:rewatch
   :features:settings:presenter --> :domain:settings
   :features:settings:presenter --> :domain:theme
   :features:settings:presenter -.-> :features:debug:nav
