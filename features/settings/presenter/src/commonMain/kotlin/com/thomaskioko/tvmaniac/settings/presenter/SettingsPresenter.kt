@@ -18,6 +18,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
+import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
@@ -403,7 +404,7 @@ public class SettingsPresenter internal constructor(
             _state.update { it.copy(backup = backupLabels.copy(isExporting = true)) }
             try {
                 when (val result = backupRepository.writeBackup(location)) {
-                    is BackupResult.Written -> Unit
+                    is BackupResult.Success -> emitBackupSuccess()
                     is BackupResult.Failed -> emitBackupFailure(result.reason)
                 }
             } catch (cancellation: CancellationException) {
@@ -417,6 +418,16 @@ public class SettingsPresenter internal constructor(
         }
     }
 
+    private fun emitBackupSuccess() {
+        uiMessageManager.emitMessage(
+            UiMessage(
+                message = localizer.getString(StringResourceKey.SettingsBackupExportSuccess),
+                sourceId = BACKUP_SOURCE_ID,
+                type = UiMessageType.Success,
+            ),
+        )
+    }
+
     private fun emitBackupFailure(reason: BackupFailure) {
         uiMessageManager.emitMessage(
             UiMessage(
@@ -426,7 +437,7 @@ public class SettingsPresenter internal constructor(
                         BackupFailure.VerificationFailed -> StringResourceKey.ErrorBackupReadFailed
                     },
                 ),
-                sourceId = "BackupExport",
+                sourceId = BACKUP_SOURCE_ID,
             ),
         )
     }
@@ -803,6 +814,7 @@ public class SettingsPresenter internal constructor(
     private companion object {
         private const val HIDDEN_TAP_THRESHOLD = 6
         private const val TAG = "SettingsPresenter"
+        private const val BACKUP_SOURCE_ID = "BackupExport"
         private val OAUTH_TIMEOUT = 2.minutes
     }
 }
