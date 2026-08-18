@@ -14,10 +14,12 @@ kotlin {
                 api(libs.coroutines.core)
                 api(projects.core.appconfig.api)
                 api(projects.core.base)
+                api(projects.core.syncstate.api)
                 api(projects.core.util.api)
                 api(projects.data.backup.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.datastore.api)
+                api(projects.data.episode.api)
 
                 implementation(libs.kotlinx.serialization.json)
             }
@@ -32,6 +34,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.syncstate.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.followedshows.api)
                 implementation(projects.data.backup.testing)
