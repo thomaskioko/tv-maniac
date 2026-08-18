@@ -168,7 +168,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
 
         val result = repository.writeBackup(LOCATION)
 
-        result shouldBe BackupResult.Written(showCount = 1, episodeCount = 1)
+        result shouldBe BackupResult.Success(showCount = 1, episodeCount = 1)
         destination.contentsAt(LOCATION).shouldNotBeNull()
     }
 

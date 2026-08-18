@@ -15,7 +15,7 @@ public class FakeBackupRepository : BackupRepository {
         createdAt = "2026-01-01T00:00:00Z",
         appVersion = "1.0.0",
     )
-    private var writeResult: BackupResult = BackupResult.Written(showCount = 0, episodeCount = 0)
+    private var writeResult: BackupResult = BackupResult.Success(showCount = 0, episodeCount = 0)
     private var restoreResult: RestoreResult = RestoreResult.Restored(RestoreSummary(showCount = 0, episodeCount = 0))
     private var createException: Throwable? = null
 

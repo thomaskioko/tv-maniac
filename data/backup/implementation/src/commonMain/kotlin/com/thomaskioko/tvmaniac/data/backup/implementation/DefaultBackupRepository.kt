@@ -78,7 +78,7 @@ public class DefaultBackupRepository(
             return BackupResult.Failed(BackupFailure.VerificationFailed)
         }
 
-        return BackupResult.Written(
+        return BackupResult.Success(
             showCount = backup.shows.size,
             episodeCount = backup.shows.sumOf { it.watchedEpisodes.size },
         )
