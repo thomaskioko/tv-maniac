@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
 
 public class FakeBackupRepository : BackupRepository {
 
@@ -15,9 +17,13 @@ public class FakeBackupRepository : BackupRepository {
         appVersion = "1.0.0",
     )
     private var writeResult: BackupResult = BackupResult.Written(showCount = 0, episodeCount = 0)
+    private var restoreResult: RestoreResult = RestoreResult.Restored(RestoreSummary(showCount = 0, episodeCount = 0))
     private var createException: Throwable? = null
 
     public var lastDestination: BackupDestination? = null
+        private set
+
+    public var lastSource: BackupDestination? = null
         private set
 
     public fun setBackup(file: BackupFile) {
@@ -26,6 +32,10 @@ public class FakeBackupRepository : BackupRepository {
 
     public fun setWriteResult(result: BackupResult) {
         writeResult = result
+    }
+
+    public fun setRestoreResult(result: RestoreResult) {
+        restoreResult = result
     }
 
     public fun setCreateException(exception: Throwable) {
@@ -41,6 +51,11 @@ public class FakeBackupRepository : BackupRepository {
         lastDestination = destination
         createException?.let { throw it }
         return writeResult
+    }
+
+    override suspend fun restoreBackup(source: BackupDestination): RestoreResult {
+        lastSource = source
+        return restoreResult
     }
 }
 
@@ -78,6 +93,7 @@ public class FakeBackupDestination(private var contents: String = "") : BackupDe
 
 public class FakeBackupDestinationBuilder(
     private val destination: BackupDestination = FakeBackupDestination(),
+    public val safetyDestination: BackupDestination = FakeBackupDestination(),
 ) : BackupDestinationBuilder {
 
     public var lastLocation: String? = null
@@ -87,4 +103,6 @@ public class FakeBackupDestinationBuilder(
         lastLocation = location
         return destination
     }
+
+    override fun safetyCopy(): BackupDestination = safetyDestination
 }
