@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
@@ -894,7 +895,7 @@ class SettingsPresenterTest {
         presenter.state.test {
             val state = expectMostRecentItem()
             state.backup.isExporting shouldBe false
-            state.message shouldBe null
+            state.message.shouldNotBeNull().type shouldBe UiMessageType.Success
         }
     }
 
