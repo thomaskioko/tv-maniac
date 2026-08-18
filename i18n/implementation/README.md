@@ -26,6 +26,10 @@ graph TB
     direction TB
     :core:network-util:api[api]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -41,6 +45,7 @@ graph TB
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api
   :i18n:implementation -.-> :core:network-util:api
+  :i18n:implementation -.-> :data:backup:api
   :i18n:implementation --> :i18n:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

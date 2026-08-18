@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.i18n
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.backup.api.BackupExportException
+import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -14,10 +16,17 @@ public class LocalizedErrorToStringMapper(
     private val localizer: Localizer,
 ) : ErrorToStringMapper {
 
-    override fun mapError(throwable: Throwable): String =
-        throwable.toSyncError()
+    override fun mapError(throwable: Throwable): String = when (throwable) {
+        is BackupExportException -> mapBackupFailure(throwable.reason)
+        else -> throwable.toSyncError()
             ?.let(::mapSyncError)
             ?: localizer.getString(StringResourceKey.ErrorGeneric)
+    }
+
+    private fun mapBackupFailure(failure: BackupFailure): String = when (failure) {
+        BackupFailure.WriteFailed -> localizer.getString(StringResourceKey.ErrorBackupSaveFailed)
+        BackupFailure.VerificationFailed -> localizer.getString(StringResourceKey.ErrorBackupReadFailed)
+    }
 
     private fun mapSyncError(error: SyncError): String = when (error) {
         is SyncError.Retryable.RateLimited -> localizer.getString(StringResourceKey.ErrorRateLimited)
