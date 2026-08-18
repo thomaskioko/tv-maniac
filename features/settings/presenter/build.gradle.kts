@@ -23,6 +23,7 @@ kotlin {
                 api(projects.data.subscription.api)
                 api(projects.data.user.api)
                 api(projects.domain.accountSwitcher)
+                api(projects.domain.backup)
                 api(projects.domain.logout)
                 api(projects.domain.notifications)
                 api(projects.domain.settings)

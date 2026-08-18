@@ -18,11 +18,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
-import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
-import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -34,6 +30,7 @@ import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
+import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
@@ -94,12 +91,13 @@ public class SettingsPresenter internal constructor(
     private val countUnsavedChanges: CountUnsavedChanges,
     private val switchAccountInteractor: SwitchAccountInteractor,
     private val rewatchRepository: RewatchRepository,
-    private val backupRepository: BackupRepository,
+    private val exportBackupInteractor: ExportBackupInteractor,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
     private val authProcessingState = ObservableLoadingCounter()
     private val notificationToggleState = ObservableLoadingCounter()
+    private val backupExportState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
     private val _state: MutableStateFlow<SettingsState> =
@@ -154,6 +152,7 @@ public class SettingsPresenter internal constructor(
         _state,
         authProcessingState.observable,
         notificationToggleState.observable,
+        backupExportState.observable,
         observeSettingsPreferencesInteractor.flow,
         accountManager.isConnected,
         accountManager.activeProvider,
@@ -162,7 +161,7 @@ public class SettingsPresenter internal constructor(
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
         locksFlow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, locks ->
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, locks ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
@@ -203,6 +202,7 @@ public class SettingsPresenter internal constructor(
             backup = currentState.backup.copy(
                 exportTitle = backupLabels.exportTitle,
                 exportDescription = backupLabels.exportDescription,
+                isExporting = isExportingBackup,
             ),
             currentPageTitle = resolvePageTitle(currentState.currentPage),
             rootGroups = buildRootGroups(),
@@ -400,46 +400,18 @@ public class SettingsPresenter internal constructor(
 
     private fun handleBackupDestination(location: String) {
         if (state.value.locks.backupLocked) return
+        _state.update { it.copy(backup = backupLabels) }
         coroutineScope.launch {
-            _state.update { it.copy(backup = backupLabels.copy(isExporting = true)) }
-            try {
-                when (val result = backupRepository.writeBackup(location)) {
-                    is BackupResult.Success -> emitBackupSuccess()
-                    is BackupResult.Failed -> emitBackupFailure(result.reason)
-                }
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (cause: Throwable) {
-                logger.error(TAG, "Backup export failed: ${cause.message}")
-                emitBackupFailure(BackupFailure.WriteFailed)
-            } finally {
-                _state.update { it.copy(backup = backupLabels) }
-            }
+            exportBackupInteractor(ExportBackupInteractor.Params(location))
+                .collectStatus(
+                    counter = backupExportState,
+                    logger = logger,
+                    uiMessageManager = uiMessageManager,
+                    sourceId = BACKUP_SOURCE_ID,
+                    errorToStringMapper = errorToStringMapper,
+                    successMessage = localizer.getString(StringResourceKey.SettingsBackupExportSuccess),
+                )
         }
-    }
-
-    private fun emitBackupSuccess() {
-        uiMessageManager.emitMessage(
-            UiMessage(
-                message = localizer.getString(StringResourceKey.SettingsBackupExportSuccess),
-                sourceId = BACKUP_SOURCE_ID,
-                type = UiMessageType.Success,
-            ),
-        )
-    }
-
-    private fun emitBackupFailure(reason: BackupFailure) {
-        uiMessageManager.emitMessage(
-            UiMessage(
-                message = localizer.getString(
-                    when (reason) {
-                        BackupFailure.WriteFailed -> StringResourceKey.ErrorBackupSaveFailed
-                        BackupFailure.VerificationFailed -> StringResourceKey.ErrorBackupReadFailed
-                    },
-                ),
-                sourceId = BACKUP_SOURCE_ID,
-            ),
-        )
     }
 
     private fun handleBackClicked() {
@@ -511,7 +483,7 @@ public class SettingsPresenter internal constructor(
                     )
                 }
             } else {
-                executeSwitch(target)
+                switchSyncProviderSource(target)
             }
         }
     }
@@ -527,7 +499,7 @@ public class SettingsPresenter internal constructor(
                 switchDialogMessage = null,
             )
         }
-        coroutineScope.launch { executeSwitch(target) }
+        coroutineScope.launch { switchSyncProviderSource(target) }
     }
 
     private fun dismissSwitchDialog() {
@@ -543,7 +515,7 @@ public class SettingsPresenter internal constructor(
         }
     }
 
-    private suspend fun executeSwitch(target: SyncProviderSource) {
+    private suspend fun switchSyncProviderSource(target: SyncProviderSource) {
         _state.update { it.copy(isSwitching = true) }
         try {
             authManagers[target]?.launchWebView()
