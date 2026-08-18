@@ -5,6 +5,15 @@
 <!--region graph-->
 ```mermaid
 graph TB
+  subgraph :core
+    direction TB
+    :core:base[base]:::multiplatform
+    :core:view[view]:::multiplatform
+  end
+  subgraph :core:logger
+    direction TB
+    :core:logger:api[api]:::multiplatform
+  end
   subgraph :data:backup
     direction TB
     :data:backup:api[api]:::multiplatform
@@ -14,6 +23,11 @@ graph TB
     :domain:backup[backup]:::multiplatform
   end
 
+  :core:base --> :core:logger:api
+  :core:base --> :core:view
+  :core:view --> :core:logger:api
+  :domain:backup --> :core:base
+  :domain:backup --> :core:view
   :domain:backup --> :data:backup:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

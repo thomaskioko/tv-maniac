@@ -10,6 +10,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(projects.core.base)
+                api(projects.core.view)
                 api(projects.data.backup.api)
 
                 implementation(libs.coroutines.core)

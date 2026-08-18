@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.backup
 
+import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
+import com.thomaskioko.tvmaniac.data.backup.api.BackupExportException
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import dev.zacsweers.metro.AppScope
@@ -10,6 +12,12 @@ import dev.zacsweers.metro.SingleIn
 @SingleIn(AppScope::class)
 public class ExportBackupInteractor(
     private val backupRepository: BackupRepository,
-) {
-    public suspend operator fun invoke(location: String): BackupResult = backupRepository.writeBackup(location)
+) : Interactor<ExportBackupInteractor.Params>() {
+
+    public data class Params(val location: String)
+
+    override suspend fun doWork(params: Params) {
+        val result = backupRepository.writeBackup(params.location)
+        if (result is BackupResult.Failed) throw BackupExportException(result.reason, result.cause)
+    }
 }
