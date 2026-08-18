@@ -287,6 +287,7 @@ graph TB
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
+    :domain:backup[backup]:::multiplatform
     :domain:calendar[calendar]:::multiplatform
     :domain:continue-watching[continue-watching]:::multiplatform
     :domain:discover[discover]:::multiplatform
@@ -892,6 +893,9 @@ graph TB
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
+  :domain:backup --> :core:base
+  :domain:backup --> :core:view
+  :domain:backup --> :data:backup:api
   :domain:calendar --> :core:base
   :domain:calendar --> :core:util:api
   :domain:calendar --> :data:calendar:api
@@ -1257,6 +1261,7 @@ graph TB
   :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
+  :features:settings:presenter --> :domain:backup
   :features:settings:presenter --> :domain:logout
   :features:settings:presenter --> :domain:notifications
   :features:settings:presenter --> :domain:settings
@@ -1379,6 +1384,7 @@ graph TB
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api
   :i18n:implementation -.-> :core:network-util:api
+  :i18n:implementation -.-> :data:backup:api
   :i18n:implementation --> :i18n:api
   :ios-framework -.-> :api:simkl:implementation
   :ios-framework -.-> :api:tmdb:api
