@@ -9,10 +9,16 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.uuid.Uuid
 
+public enum class UiMessageType {
+    Error,
+    Success,
+}
+
 public data class UiMessage(
     val message: String,
     val id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
     val sourceId: String? = null,
+    val type: UiMessageType = UiMessageType.Error,
 )
 
 public fun UiMessage(
