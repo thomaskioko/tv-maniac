@@ -22,7 +22,7 @@ public class AndroidBackupDestination(
             File(location).writeText(contents)
             return
         }
-        val stream = context.contentResolver.openOutputStream(location.toUri(), "wt")
+        val stream = context.contentResolver.openOutputStream(location.toUri(), TRUNCATE_WRITE_MODE)
             ?: throw BackupLocationUnreadableException(location)
         stream.use { it.write(contents.toByteArray()) }
     }
@@ -40,5 +40,10 @@ public class AndroidBackupDestination(
 
     override fun safetyCopyLocation(): String = File(context.filesDir, BackupFormat.SAFETY_COPY_NAME).path
 
-    private fun isContentUri(location: String): Boolean = location.toUri().scheme == "content"
+    private fun isContentUri(location: String): Boolean = location.toUri().scheme == CONTENT_SCHEME
+
+    private companion object {
+        private const val TRUNCATE_WRITE_MODE = "wt"
+        private const val CONTENT_SCHEME = "content"
+    }
 }
