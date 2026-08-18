@@ -236,6 +236,7 @@ kotlin {
                 implementation(projects.data.simklauth.implementation)
                 implementation(projects.data.user.api)
                 implementation(projects.data.user.implementation)
+                implementation(projects.data.backup.implementation)
                 implementation(projects.data.logout.implementation)
                 implementation(projects.data.rewatch.implementation)
                 implementation(projects.domain.user)
