@@ -12,4 +12,5 @@ public enum class SettingsPage {
     LAYOUT,
     DISCOVER_SECTIONS,
     POSTER_STYLE,
+    BACKUP,
 }
