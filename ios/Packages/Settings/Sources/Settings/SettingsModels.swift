@@ -182,3 +182,43 @@ public struct SettingsAccountContent {
         self.onDismissSwitchDialog = onDismissSwitchDialog
     }
 }
+
+public struct SettingsBackupContent {
+    public let exportTitle: String
+    public let exportDescription: String
+    public let isExporting: Bool
+    public let isLocked: Bool
+    public let lockedBadgeText: String
+    public let lockedTitle: String
+    public let lockedMessage: String
+    public let lockedActionText: String
+    public let lockedAccessibilityLabel: String
+    public let onExport: () -> Void
+    public let onUpgradeClick: () -> Void
+
+    public init(
+        exportTitle: String,
+        exportDescription: String,
+        isExporting: Bool = false,
+        isLocked: Bool = false,
+        lockedBadgeText: String = "",
+        lockedTitle: String = "",
+        lockedMessage: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = "",
+        onExport: @escaping () -> Void,
+        onUpgradeClick: @escaping () -> Void = {}
+    ) {
+        self.exportTitle = exportTitle
+        self.exportDescription = exportDescription
+        self.isExporting = isExporting
+        self.isLocked = isLocked
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedTitle = lockedTitle
+        self.lockedMessage = lockedMessage
+        self.lockedActionText = lockedActionText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
+        self.onExport = onExport
+        self.onUpgradeClick = onUpgradeClick
+    }
+}

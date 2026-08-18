@@ -141,5 +141,37 @@
                 ),
             ]
         }
+
+        static var backupContent: SettingsBackupContent {
+            SettingsBackupContent(
+                exportTitle: "Save a backup",
+                exportDescription: "Write your shows, watch history, ratings and settings to a file",
+                onExport: {}
+            )
+        }
+
+        static var lockedBackupContent: SettingsBackupContent {
+            SettingsBackupContent(
+                exportTitle: "Save a backup",
+                exportDescription: "Write your shows, watch history, ratings and settings to a file",
+                isLocked: true,
+                lockedBadgeText: "Premium",
+                lockedTitle: "Backup is a Premium feature",
+                lockedMessage: "Upgrade to Premium to save and restore your shows.",
+                lockedActionText: "Upgrade to Premium",
+                lockedAccessibilityLabel: "Locked",
+                onExport: {},
+                onUpgradeClick: {}
+            )
+        }
+
+        static var exportingBackupContent: SettingsBackupContent {
+            SettingsBackupContent(
+                exportTitle: "Save a backup",
+                exportDescription: "Write your shows, watch history, ratings and settings to a file",
+                isExporting: true,
+                onExport: {}
+            )
+        }
     }
 #endif
