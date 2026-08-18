@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.i18n
 
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountSwitchFailedException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.SyncError
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -17,6 +18,7 @@ public class LocalizedErrorToStringMapper(
 ) : ErrorToStringMapper {
 
     override fun mapError(throwable: Throwable): String = when (throwable) {
+        is AccountSwitchFailedException -> localizer.getString(StringResourceKey.LabelAccountSwitchFailed)
         is BackupExportException -> mapBackupFailure(throwable.reason)
         else -> throwable.toSyncError()
             ?.let(::mapSyncError)
