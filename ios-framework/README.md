@@ -87,6 +87,11 @@ graph TB
     :data:account-manager:api[api]:::multiplatform
     :data:account-manager:implementation[implementation]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+    :data:backup:implementation[implementation]:::multiplatform
+  end
   subgraph :data:calendar
     direction TB
     :data:calendar:api[api]:::multiplatform
@@ -510,6 +515,12 @@ graph TB
   :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
+  :data:backup:implementation --> :core:appconfig:api
+  :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:util:api
+  :data:backup:implementation --> :data:backup:api
+  :data:backup:implementation --> :data:database:sqldelight
+  :data:backup:implementation --> :data:datastore:api
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:calendar:implementation --> :core:base
@@ -1238,6 +1249,7 @@ graph TB
   :features:settings:presenter --> :core:logger:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
+  :features:settings:presenter --> :data:backup:api
   :features:settings:presenter --> :data:datastore:api
   :features:settings:presenter --> :data:rewatch:api
   :features:settings:presenter --> :data:subscription:api
@@ -1395,6 +1407,7 @@ graph TB
   :ios-framework -.-> :core:util:implementation
   :ios-framework --> :data:account-manager:api
   :ios-framework --> :data:account-manager:implementation
+  :ios-framework -.-> :data:backup:implementation
   :ios-framework --> :data:calendar:api
   :ios-framework -.-> :data:calendar:implementation
   :ios-framework -.-> :data:cast:api

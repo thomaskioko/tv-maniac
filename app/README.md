@@ -89,6 +89,11 @@ graph TB
     :data:account-manager:api[api]:::multiplatform
     :data:account-manager:implementation[implementation]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+    :data:backup:implementation[implementation]:::multiplatform
+  end
   subgraph :data:calendar
     direction TB
     :data:calendar:api[api]:::multiplatform
@@ -529,6 +534,8 @@ graph TB
   :app -.-> :core:view
   :app -.-> :data:account-manager:api
   :app -.-> :data:account-manager:implementation
+  :app -.-> :data:backup:api
+  :app -.-> :data:backup:implementation
   :app -.-> :data:calendar:api
   :app -.-> :data:calendar:implementation
   :app -.-> :data:cast:implementation
@@ -724,6 +731,12 @@ graph TB
   :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
+  :data:backup:implementation --> :core:appconfig:api
+  :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:util:api
+  :data:backup:implementation --> :data:backup:api
+  :data:backup:implementation --> :data:database:sqldelight
+  :data:backup:implementation --> :data:datastore:api
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:calendar:implementation --> :core:base
@@ -1583,6 +1596,7 @@ graph TB
   :features:settings:presenter --> :core:logger:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
+  :features:settings:presenter --> :data:backup:api
   :features:settings:presenter --> :data:datastore:api
   :features:settings:presenter --> :data:rewatch:api
   :features:settings:presenter --> :data:subscription:api
