@@ -182,7 +182,7 @@ extension SettingsView {
             isProcessingAuth: uiState.isProcessingAuth,
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
-            providerName: providerDisplayName(uiState.activeProvider),
+            providerName: uiState.activeProviderName ?? "",
             providerLogoName: uiState.activeProvider?.name == "SIMKL" ? "SimklMono" : "TraktMono",
             authProviders: uiState.authProviders.map { option in
                 SwiftAuthProvider(
@@ -213,10 +213,6 @@ extension SettingsView {
             onConfirmSwitch: { presenter.dispatch(action: ConfirmSwitchDiscard()) },
             onDismissSwitchDialog: { presenter.dispatch(action: DismissSwitchDialog()) }
         )
-    }
-
-    func providerDisplayName(_ provider: SyncProviderSource?) -> String {
-        provider?.name == "SIMKL" ? "Simkl" : "Trakt"
     }
 
     // MARK: - Notification Handling

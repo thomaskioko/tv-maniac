@@ -13,6 +13,7 @@ import kotlinx.collections.immutable.persistentListOf
 public data class SettingsState(
     val isAuthenticated: Boolean,
     val activeProvider: SyncProviderSource? = null,
+    val activeProviderName: String? = null,
     val authProviders: ImmutableList<AuthProviderOption> = persistentListOf(),
     val accountConnectedDescription: String? = null,
     val switchTargetProvider: SyncProviderSource? = null,

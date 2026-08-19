@@ -150,6 +150,7 @@ public class SettingsPresenter internal constructor(
             multiplePlaysEnabled = preferences.multiplePlaysEnabled,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
+            activeProviderName = activeProvider?.displayName,
             authProviders = authProviderOptions(simklEnabled),
             accountConnectedDescription = activeProvider?.let { connectedDescription(it) },
             switchTargetProvider = switchTarget,
