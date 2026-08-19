@@ -25,6 +25,12 @@ public class FakeBackupRepository : BackupRepository {
     public var lastRestoreLocation: String? = null
         private set
 
+    private var showsNeedingMetadata: List<Long> = emptyList()
+
+    public fun setShowsNeedingMetadata(ids: List<Long>) {
+        showsNeedingMetadata = ids
+    }
+
     public fun setBackup(file: BackupFile) {
         backup = file
     }
@@ -56,6 +62,8 @@ public class FakeBackupRepository : BackupRepository {
         lastRestoreLocation = location
         return restoreResult
     }
+
+    override suspend fun showsNeedingMetadata(): List<Long> = showsNeedingMetadata
 }
 
 public class FakeBackupDestination : BackupDestination {
