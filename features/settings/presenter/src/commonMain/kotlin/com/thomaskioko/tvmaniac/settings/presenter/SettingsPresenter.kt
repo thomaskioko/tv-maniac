@@ -114,18 +114,7 @@ public class SettingsPresenter internal constructor(
     init {
         observeSettingsPreferencesInteractor(Unit)
         observePremiumAccessInteractor(Unit)
-        observeRewatchSyncNotice()
-    }
-
-    private fun observeRewatchSyncNotice() {
         observeRewatchSupportInteractor(Unit)
-        coroutineScope.launch {
-            observeRewatchSupportInteractor.flow.collect { supportsRewatch ->
-                _state.update { state ->
-                    state.copy(multiplePlaysSyncNotice = labelsMapper.rewatchSyncNotice(supportsRewatch))
-                }
-            }
-        }
     }
 
     public val state: StateFlow<SettingsState> = combine(
@@ -142,7 +131,8 @@ public class SettingsPresenter internal constructor(
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
         observePremiumAccessInteractor.flow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess ->
+        observeRewatchSupportInteractor.flow,
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess, supportsRewatch ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
@@ -181,6 +171,7 @@ public class SettingsPresenter internal constructor(
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             premium = labelsMapper.toPremiumState(premiumAccess),
+            multiplePlaysSyncNotice = labelsMapper.rewatchSyncNotice(supportsRewatch),
             backup = currentState.backup.copy(
                 exportTitle = backupLabels.exportTitle,
                 exportDescription = backupLabels.exportDescription,
