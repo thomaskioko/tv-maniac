@@ -174,10 +174,13 @@ public class SettingsPresenter internal constructor(
             message = message,
             premium = labelsMapper.toPremiumState(premiumAccess),
             multiplePlaysSyncNotice = labelsMapper.rewatchSyncNotice(supportsRewatch),
-            backup = currentState.backup.copy(
-                exportTitle = backupLabels.exportTitle,
-                exportDescription = backupLabels.exportDescription,
+            backup = backupLabels.copy(
                 isExporting = isExportingBackup,
+                isImporting = currentState.backup.isImporting,
+                awaitingDestination = currentState.backup.awaitingDestination,
+                awaitingSource = currentState.backup.awaitingSource,
+                confirm = currentState.backup.confirm,
+                summary = currentState.backup.summary,
             ),
             currentPageTitle = resolvePageTitle(currentState.currentPage),
             rootGroups = buildRootGroups(),
