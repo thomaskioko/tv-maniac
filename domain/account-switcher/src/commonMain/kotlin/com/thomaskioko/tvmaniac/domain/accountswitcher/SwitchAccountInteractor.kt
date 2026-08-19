@@ -22,7 +22,7 @@ public class SwitchAccountInteractor(
         accountManager.accounts.first()
             .filter { it.isConnected && it.provider != params }
             .forEach { accountManager.logout(it.provider) }
-        logoutHandler.clear()
+        logoutHandler.clearAccountAndTrackingData()
         accountManager.setActive(params)
         appScopeLauncher.launch(RESYNC_TAG) {
             resyncProfile()
