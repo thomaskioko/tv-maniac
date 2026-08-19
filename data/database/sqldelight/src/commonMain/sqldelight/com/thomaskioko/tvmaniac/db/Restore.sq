@@ -5,10 +5,6 @@ import com.thomaskioko.tvmaniac.db.ShowId;
 import com.thomaskioko.tvmaniac.db.TmdbId;
 import com.thomaskioko.tvmaniac.db.WatchStatus;
 
--- Every insert here hardcodes pending_action to 'NOTHING' and writes no provider id, so a restored
--- row cannot reach somebody's Trakt or Simkl account. The rule is in the query rather than in Kotlin
--- because no caller can then pass 'UPLOAD' by mistake.
-
 restoreFollowedShow:
 INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
 VALUES(:showId, :tmdbId, :followedAt, 'NOTHING')
@@ -16,6 +12,14 @@ ON CONFLICT(show_id) DO UPDATE SET
     tmdb_id = excluded.tmdb_id,
     followed_at = excluded.followed_at,
     pending_action = 'NOTHING';
+
+restoreFollowedShowForUpload:
+INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
+VALUES(:showId, :tmdbId, :followedAt, 'UPLOAD')
+ON CONFLICT(show_id) DO UPDATE SET
+    tmdb_id = excluded.tmdb_id,
+    followed_at = excluded.followed_at,
+    pending_action = 'UPLOAD';
 
 restoreWatchedEpisode:
 INSERT OR REPLACE INTO watched_episodes(
