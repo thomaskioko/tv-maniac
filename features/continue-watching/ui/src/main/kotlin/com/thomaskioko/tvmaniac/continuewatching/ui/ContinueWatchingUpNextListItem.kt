@@ -40,8 +40,8 @@ internal fun ContinueWatchingUpNextListItem(
     onItemClicked: (Long, Long) -> Unit,
     onShowTitleClicked: (Long) -> Unit,
     onMarkWatched: () -> Unit,
-    onMarkWatchedLongPress: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onMarkWatchedLongPress: (() -> Unit)? = null,
     isUpdating: Boolean = false,
 ) {
     Card(

@@ -44,8 +44,8 @@ internal fun ContinueTrackingSection(
     episodes: ImmutableList<ContinueTrackingEpisodeModel>,
     scrollIndex: Int,
     onMarkWatched: (ContinueTrackingEpisodeModel) -> Unit,
-    onMarkWatchedLongPress: ((ContinueTrackingEpisodeModel) -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onMarkWatchedLongPress: ((ContinueTrackingEpisodeModel) -> Unit)? = null,
     updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
 ) {
     Box(

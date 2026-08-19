@@ -90,6 +90,7 @@ graph TB
   subgraph :data:backup
     direction TB
     :data:backup:api[api]:::multiplatform
+    :data:backup:implementation[implementation]:::multiplatform
   end
   subgraph :data:calendar
     direction TB
@@ -382,6 +383,7 @@ graph TB
   :core:integration:infra --> :core:util:api
   :core:integration:infra --> :core:util:implementation
   :core:integration:infra --> :data:account-manager:implementation
+  :core:integration:infra --> :data:backup:implementation
   :core:integration:infra --> :data:calendar:implementation
   :core:integration:infra --> :data:cast:implementation
   :core:integration:infra --> :data:continue-watching:implementation
@@ -423,6 +425,7 @@ graph TB
   :core:integration:infra --> :features:profile:nav
   :core:integration:infra --> :features:progress:nav
   :core:integration:infra --> :features:root:presenter
+  :core:integration:infra --> :features:settings:presenter
   :core:integration:infra --> :i18n:implementation
   :core:integration:infra --> :navigation:api
   :core:integration:infra --> :navigation:implementation
@@ -442,6 +445,14 @@ graph TB
   :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
+  :data:backup:implementation --> :core:appconfig:api
+  :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:syncstate:api
+  :data:backup:implementation --> :core:util:api
+  :data:backup:implementation --> :data:backup:api
+  :data:backup:implementation --> :data:database:sqldelight
+  :data:backup:implementation --> :data:datastore:api
+  :data:backup:implementation --> :data:episode:api
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:calendar:implementation --> :core:base

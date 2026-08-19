@@ -82,20 +82,13 @@ extension View {
         uiState: SettingsState,
         presenter: SettingsPresenter,
         showingConfirm: Binding<Bool>,
-        showingSource: Binding<Bool>,
-        pendingSummary: Binding<BackupRestoreSummary?>,
-        showingSummary: Binding<Bool>
+        showingSource: Binding<Bool>
     ) -> some View {
         onChange(of: uiState.backup.confirm) { _, confirm in
             showingConfirm.wrappedValue = confirm != nil
         }
         .onChange(of: uiState.backup.awaitingSource) { _, awaitingSource in
             showingSource.wrappedValue = awaitingSource
-        }
-        .onChange(of: uiState.backup.summary) { _, summary in
-            guard let summary else { return }
-            pendingSummary.wrappedValue = summary
-            showingSummary.wrappedValue = true
         }
         .alert(
             uiState.backup.confirm?.title ?? "",
@@ -122,17 +115,6 @@ extension View {
                 presenter.dispatch(action: BackupSourceSelected(location: importedBackupPath(from: url)))
             case .failure:
                 presenter.dispatch(action: BackupSourceCancelled())
-            }
-        }
-        .sheet(
-            isPresented: showingSummary,
-            onDismiss: {
-                presenter.dispatch(action: BackupSummaryDismissed())
-                pendingSummary.wrappedValue = nil
-            }
-        ) {
-            if let summary = pendingSummary.wrappedValue {
-                BackupRestoreSummaryView(content: summary.toContent())
             }
         }
     }

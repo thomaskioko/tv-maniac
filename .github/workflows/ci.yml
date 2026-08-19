@@ -42,7 +42,7 @@ jobs:
                 uses: ./.github/actions/setup-gradle
 
             -   name: Lint Project
-                run: ./gradlew :app:lintRelease -Papp.debugOnly=false
+                run: ./gradlew :app:lintDebug :app:lintRelease -Papp.debugOnly=false
 
             -   name: Upload Lint Report
                 if: ${{ !cancelled() }}

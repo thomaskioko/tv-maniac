@@ -195,6 +195,34 @@
             )
         }
 
+        static var backupContentWithSummary: SettingsBackupContent {
+            SettingsBackupContent(
+                exportTitle: "Save a backup",
+                exportDescription: "Write your shows, watch history, ratings and settings to a file",
+                importTitle: "Restore a backup",
+                importDescription: "Replace your shows, watch history, ratings and settings from a file",
+                summary: restoreSummaryContent,
+                summaryDismissAccessibilityLabel: "Dismiss",
+                onExport: {},
+                onImport: {},
+                onDismissSummary: {}
+            )
+        }
+
+        static var backupContentWithSummaryAndSkips: SettingsBackupContent {
+            SettingsBackupContent(
+                exportTitle: "Save a backup",
+                exportDescription: "Write your shows, watch history, ratings and settings to a file",
+                importTitle: "Restore a backup",
+                importDescription: "Replace your shows, watch history, ratings and settings from a file",
+                summary: restoreSummaryContentWithSkips,
+                summaryDismissAccessibilityLabel: "Dismiss",
+                onExport: {},
+                onImport: {},
+                onDismissSummary: {}
+            )
+        }
+
         static var restoreSummaryContent: SettingsBackupSummaryContent {
             SettingsBackupSummaryContent(
                 title: "Restore complete",

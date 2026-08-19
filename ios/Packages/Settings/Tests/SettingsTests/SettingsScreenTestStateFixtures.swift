@@ -208,7 +208,12 @@ extension SettingsScreenTest {
         )
     }
 
-    func backupContent(locked: Bool = false, isExporting: Bool = false, isImporting: Bool = false) -> SettingsBackupContent {
+    func backupContent(
+        locked: Bool = false,
+        isExporting: Bool = false,
+        isImporting: Bool = false,
+        summary: SettingsBackupSummaryContent? = nil
+    ) -> SettingsBackupContent {
         SettingsBackupContent(
             exportTitle: "Save a backup",
             exportDescription: "Write your shows, watch history, ratings and settings to a file",
@@ -216,6 +221,8 @@ extension SettingsScreenTest {
             importTitle: "Restore a backup",
             importDescription: "Replace your shows, watch history, ratings and settings from a file",
             isImporting: isImporting,
+            summary: summary,
+            summaryDismissAccessibilityLabel: "Dismiss",
             isLocked: locked,
             lockedBadgeText: locked ? "Premium" : "",
             lockedTitle: locked ? "Backup is a Premium feature" : "",
@@ -224,7 +231,27 @@ extension SettingsScreenTest {
             lockedAccessibilityLabel: locked ? "Locked" : "",
             onExport: {},
             onImport: {},
-            onUpgradeClick: {}
+            onUpgradeClick: {},
+            onDismissSummary: {}
+        )
+    }
+
+    var restoreSummaryContent: SettingsBackupSummaryContent {
+        SettingsBackupSummaryContent(
+            title: "Restore complete",
+            showsRestored: "48 shows restored",
+            episodesRestored: "612 episodes restored"
+        )
+    }
+
+    var restoreSummaryContentWithSkips: SettingsBackupSummaryContent {
+        SettingsBackupSummaryContent(
+            title: "Restore complete",
+            showsRestored: "45 shows restored",
+            episodesRestored: "598 episodes restored",
+            showsSkipped: "3 shows couldn't be restored",
+            skippedShows: ["Severance", "The Bear", "Shōgun"],
+            rewatchNotice: "Rewatch history wasn't restored."
         )
     }
 

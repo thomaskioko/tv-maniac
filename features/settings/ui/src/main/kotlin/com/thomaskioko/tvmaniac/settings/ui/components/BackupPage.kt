@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.settings.ui.components
 
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -69,17 +67,12 @@ internal fun BackupPage(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val inInspectionMode = LocalInspectionMode.current
 
     val createDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(BACKUP_PICKER_MIME_TYPE),
     ) { uri ->
         if (uri != null) {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-            )
             onAction(BackupDestinationSelected(uri.toString()))
         } else {
             onAction(BackupDestinationCancelled)
@@ -90,10 +83,6 @@ internal fun BackupPage(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
         if (uri != null) {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION,
-            )
             onAction(BackupSourceSelected(uri.toString()))
         } else {
             onAction(BackupSourceCancelled)

@@ -11,10 +11,20 @@ struct BackupPageView: View {
     }
 
     var body: some View {
-        SettingsCard {
-            exportRow
-            SettingsRowDivider()
-            importRow
+        VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
+            SettingsCard {
+                exportRow
+                SettingsRowDivider()
+                importRow
+            }
+
+            if let summary = content.summary {
+                BackupRestoreSummaryView(
+                    content: summary,
+                    dismissAccessibilityLabel: content.summaryDismissAccessibilityLabel,
+                    onDismiss: content.onDismissSummary
+                )
+            }
         }
         .premiumOverlay(
             isLocked: content.isLocked,
@@ -119,6 +129,18 @@ struct BackupPageView: View {
 
     #Preview("Importing") {
         BackupPageView(content: SettingsPreviewSamples.importingBackupContent)
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Restore Summary") {
+        BackupPageView(content: SettingsPreviewSamples.backupContentWithSummary)
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Restore Summary With Skips") {
+        BackupPageView(content: SettingsPreviewSamples.backupContentWithSummaryAndSkips)
             .padding()
             .appPreview()
     }

@@ -190,6 +190,8 @@ public struct SettingsBackupContent {
     public let importTitle: String
     public let importDescription: String
     public let isImporting: Bool
+    public let summary: SettingsBackupSummaryContent?
+    public let summaryDismissAccessibilityLabel: String
     public let isLocked: Bool
     public let lockedBadgeText: String
     public let lockedTitle: String
@@ -199,6 +201,7 @@ public struct SettingsBackupContent {
     public let onExport: () -> Void
     public let onImport: () -> Void
     public let onUpgradeClick: () -> Void
+    public let onDismissSummary: () -> Void
 
     public init(
         exportTitle: String,
@@ -207,6 +210,8 @@ public struct SettingsBackupContent {
         importTitle: String,
         importDescription: String,
         isImporting: Bool = false,
+        summary: SettingsBackupSummaryContent? = nil,
+        summaryDismissAccessibilityLabel: String = "",
         isLocked: Bool = false,
         lockedBadgeText: String = "",
         lockedTitle: String = "",
@@ -215,7 +220,8 @@ public struct SettingsBackupContent {
         lockedAccessibilityLabel: String = "",
         onExport: @escaping () -> Void,
         onImport: @escaping () -> Void,
-        onUpgradeClick: @escaping () -> Void = {}
+        onUpgradeClick: @escaping () -> Void = {},
+        onDismissSummary: @escaping () -> Void = {}
     ) {
         self.exportTitle = exportTitle
         self.exportDescription = exportDescription
@@ -223,6 +229,8 @@ public struct SettingsBackupContent {
         self.importTitle = importTitle
         self.importDescription = importDescription
         self.isImporting = isImporting
+        self.summary = summary
+        self.summaryDismissAccessibilityLabel = summaryDismissAccessibilityLabel
         self.isLocked = isLocked
         self.lockedBadgeText = lockedBadgeText
         self.lockedTitle = lockedTitle
@@ -232,6 +240,7 @@ public struct SettingsBackupContent {
         self.onExport = onExport
         self.onImport = onImport
         self.onUpgradeClick = onUpgradeClick
+        self.onDismissSummary = onDismissSummary
     }
 }
 
