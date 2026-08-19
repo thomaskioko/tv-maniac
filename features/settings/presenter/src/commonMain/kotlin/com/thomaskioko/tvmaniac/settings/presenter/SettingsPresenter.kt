@@ -15,8 +15,12 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
@@ -27,6 +31,7 @@ import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.ConnectAndSwitchProviderInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInteractor
 import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
+import com.thomaskioko.tvmaniac.domain.backup.RestoreBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
@@ -36,6 +41,7 @@ import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.AccountSwitchFlagQualifier
 import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
+import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -84,6 +90,7 @@ public class SettingsPresenter internal constructor(
     private val prepareAccountSwitchInteractor: PrepareAccountSwitchInteractor,
     private val connectAndSwitchProviderInteractor: ConnectAndSwitchProviderInteractor,
     private val exportBackupInteractor: ExportBackupInteractor,
+    private val restoreBackupInteractor: RestoreBackupInteractor,
     private val labelsMapper: SettingsLabelsMapper,
 ) : ComponentContext by componentContext {
 
@@ -100,23 +107,14 @@ public class SettingsPresenter internal constructor(
     private val backupLabels = BackupSettings(
         exportTitle = localizer.getString(StringResourceKey.SettingsBackupExportTitle),
         exportDescription = localizer.getString(StringResourceKey.SettingsBackupExportDescription),
+        importTitle = localizer.getString(StringResourceKey.SettingsBackupImportTitle),
+        importDescription = localizer.getString(StringResourceKey.SettingsBackupImportDescription),
     )
 
     init {
         observeSettingsPreferencesInteractor(Unit)
         observePremiumAccessInteractor(Unit)
-        observeRewatchSyncNotice()
-    }
-
-    private fun observeRewatchSyncNotice() {
         observeRewatchSupportInteractor(Unit)
-        coroutineScope.launch {
-            observeRewatchSupportInteractor.flow.collect { supportsRewatch ->
-                _state.update { state ->
-                    state.copy(multiplePlaysSyncNotice = labelsMapper.rewatchSyncNotice(supportsRewatch))
-                }
-            }
-        }
     }
 
     public val state: StateFlow<SettingsState> = combine(
@@ -133,7 +131,10 @@ public class SettingsPresenter internal constructor(
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
         observePremiumAccessInteractor.flow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess ->
+        observeRewatchSupportInteractor.flow,
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount,
+        preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess, supportsRewatch,
+        ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
@@ -172,6 +173,7 @@ public class SettingsPresenter internal constructor(
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             premium = labelsMapper.toPremiumState(premiumAccess),
+            multiplePlaysSyncNotice = labelsMapper.rewatchSyncNotice(supportsRewatch),
             backup = currentState.backup.copy(
                 exportTitle = backupLabels.exportTitle,
                 exportDescription = backupLabels.exportDescription,
@@ -354,6 +356,18 @@ public class SettingsPresenter internal constructor(
 
             is BackupDestinationSelected -> handleBackupDestination(action.location)
 
+            is BackupImportClicked -> handleImportClicked()
+
+            is BackupImportConfirmed -> handleImportConfirmed()
+
+            is BackupImportCancelled -> _state.update { it.copy(backup = backupLabels) }
+
+            is BackupSourceSelected -> handleBackupSource(action.location)
+
+            is BackupSourceCancelled -> _state.update { it.copy(backup = backupLabels) }
+
+            is BackupSummaryDismissed -> _state.update { it.copy(backup = backupLabels) }
+
             is BackupDestinationCancelled -> {
                 _state.update { it.copy(backup = backupLabels) }
             }
@@ -367,12 +381,10 @@ public class SettingsPresenter internal constructor(
     }
 
     private fun handleBackupExportClicked() {
-        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
     }
 
     private fun handleBackupDestination(location: String) {
-        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels) }
         coroutineScope.launch {
             exportBackupInteractor(ExportBackupInteractor.Params(location))
@@ -386,6 +398,88 @@ public class SettingsPresenter internal constructor(
                 )
         }
     }
+
+    private fun handleImportClicked() {
+        _state.update { it.copy(backup = backupLabels.copy(confirm = buildRestoreConfirm())) }
+    }
+
+    private fun handleImportConfirmed() {
+        _state.update { it.copy(backup = backupLabels.copy(awaitingSource = true)) }
+    }
+
+    private fun handleBackupSource(location: String) {
+        coroutineScope.launch {
+            _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
+            when (val result = restoreBackupInteractor.executeSync(RestoreBackupInteractor.Params(location))) {
+                is RestoreResult.Restored ->
+                    _state.update { it.copy(backup = backupLabels.copy(summary = buildRestoreSummary(result.summary))) }
+
+                is RestoreResult.Failed -> {
+                    _state.update { it.copy(backup = backupLabels) }
+                    emitRestoreFailure(result)
+                }
+            }
+        }
+    }
+
+    private fun emitRestoreFailure(result: RestoreResult.Failed) {
+        result.cause?.let { logger.error(TAG, "Backup restore failed: ${it.message}") }
+        uiMessageManager.emitMessage(
+            UiMessage(
+                message = localizer.getString(
+                    when (result.reason) {
+                        RestoreFailure.SyncInProgress -> StringResourceKey.ErrorBackupSyncInProgress
+                        RestoreFailure.VersionTooNew -> StringResourceKey.ErrorBackupVersionTooNew
+                        RestoreFailure.ReadFailed,
+                        RestoreFailure.SafetyCopyFailed,
+                        RestoreFailure.ImportFailed,
+                        -> StringResourceKey.ErrorBackupReadFailed
+                    },
+                ),
+                sourceId = BACKUP_SOURCE_ID,
+            ),
+        )
+    }
+
+    private fun buildRestoreConfirm(): BackupRestoreConfirm {
+        val provider = state.value.activeProvider
+        return BackupRestoreConfirm(
+            title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle),
+            message = if (provider == null) {
+                localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage)
+            } else {
+                localizer.getString(
+                    StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
+                    provider.displayName,
+                )
+            },
+            confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
+            cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary),
+        )
+    }
+
+    private fun buildRestoreSummary(summary: RestoreSummary): BackupRestoreSummary = BackupRestoreSummary(
+        title = localizer.getString(StringResourceKey.SettingsBackupRestoreSummaryTitle),
+        showsRestored = localizer.getPlural(
+            PluralsResourceKey.BackupShowsRestored,
+            summary.showCount,
+            summary.showCount,
+        ),
+        episodesRestored = localizer.getPlural(
+            PluralsResourceKey.BackupEpisodesRestored,
+            summary.episodeCount,
+            summary.episodeCount,
+        ),
+        showsSkipped = summary.skippedShows.takeIf { it.isNotEmpty() }?.let {
+            localizer.getPlural(PluralsResourceKey.BackupShowsSkipped, it.size, it.size)
+        },
+        skippedShows = summary.skippedShows.toImmutableList(),
+        rewatchNotice = if (summary.rewatchSessionsKept > 0) {
+            localizer.getString(StringResourceKey.SettingsBackupRestoreSummaryRewatch)
+        } else {
+            null
+        },
+    )
 
     private fun handleBackClicked() {
         if (_state.value.currentPage != SettingsPage.ROOT) {

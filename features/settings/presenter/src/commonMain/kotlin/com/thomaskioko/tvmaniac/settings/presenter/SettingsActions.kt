@@ -112,3 +112,17 @@ public data class BackupDestinationSelected(
 ) : SettingsActions
 
 public data object BackupDestinationCancelled : SettingsActions
+
+public data object BackupImportClicked : SettingsActions
+
+public data object BackupImportConfirmed : SettingsActions
+
+public data object BackupImportCancelled : SettingsActions
+
+public data class BackupSourceSelected(
+    public val location: String,
+) : SettingsActions
+
+public data object BackupSourceCancelled : SettingsActions
+
+public data object BackupSummaryDismissed : SettingsActions

@@ -535,6 +535,7 @@ graph TB
   :app -.-> :core:view
   :app -.-> :data:account-manager:api
   :app -.-> :data:account-manager:implementation
+  :app -.-> :data:backup:api
   :app -.-> :data:backup:implementation
   :app -.-> :data:calendar:api
   :app -.-> :data:calendar:implementation

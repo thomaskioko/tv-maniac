@@ -64,6 +64,10 @@
         <item quantity="one">%d show restored</item>
         <item quantity="other">%d shows restored</item>
     </plurals>
+    <plurals name="backup_episodes_restored">
+        <item quantity="one">%d episode restored</item>
+        <item quantity="other">%d episodes restored</item>
+    </plurals>
     <plurals name="backup_shows_skipped">
         <item quantity="one">%d show skipped</item>
         <item quantity="other">%d shows skipped</item>

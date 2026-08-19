@@ -6,6 +6,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.tvmaniac.accountmanager.api.ConnectedAccount
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
@@ -14,6 +15,9 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
@@ -31,6 +35,7 @@ import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInter
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
 import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
+import com.thomaskioko.tvmaniac.domain.backup.RestoreBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
@@ -39,6 +44,7 @@ import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesIntera
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
+import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
@@ -48,6 +54,9 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggled
@@ -78,6 +87,7 @@ import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -180,6 +190,7 @@ class SettingsPresenterTest {
                 rewatchRepository = FakeRewatchRepository(),
             ),
             exportBackupInteractor = ExportBackupInteractor(backupRepository),
+            restoreBackupInteractor = RestoreBackupInteractor(backupRepository),
         )
     }
 
@@ -867,18 +878,6 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun `should not write a backup given the page is locked`() = runTest {
-        subscriptionManager.setAccess(SubscriptionFeature.CloudBackup, false)
-        testScheduler.advanceUntilIdle()
-
-        presenter.dispatch(BackupExportClicked)
-        presenter.dispatch(BackupDestinationSelected(LOCATION))
-        testScheduler.advanceUntilIdle()
-
-        backupRepository.lastWriteLocation shouldBe null
-    }
-
-    @Test
     fun `should ask for a destination given export is tapped`() = runTest {
         testScheduler.advanceUntilIdle()
 
@@ -929,6 +928,108 @@ class SettingsPresenterTest {
 
         presenter.state.test {
             expectMostRecentItem().message.shouldNotBeNull()
+        }
+    }
+
+    @Test
+    fun `should ask for confirmation given restore is tapped`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportClicked)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val confirm = expectMostRecentItem().backup.confirm.shouldNotBeNull()
+            confirm.message shouldBe localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage)
+        }
+    }
+
+    @Test
+    fun `should name the provider in the confirmation given an account is connected`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportClicked)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val confirm = expectMostRecentItem().backup.confirm.shouldNotBeNull()
+            confirm.message shouldBe localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
+                SyncProviderSource.TRAKT.displayName,
+            )
+        }
+    }
+
+    @Test
+    fun `should change nothing given the confirmation is cancelled`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportClicked)
+        presenter.dispatch(BackupImportCancelled)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val backup = expectMostRecentItem().backup
+            backup.confirm.shouldBeNull()
+            backup.awaitingSource shouldBe false
+        }
+        backupRepository.lastRestoreLocation shouldBe null
+    }
+
+    @Test
+    fun `should report the counts given a backup is restored`() = runTest {
+        backupRepository.setRestoreResult(
+            RestoreResult.Restored(
+                RestoreSummary(
+                    showCount = 3,
+                    episodeCount = 42,
+                    skippedShows = listOf("Dark"),
+                    rewatchSessionsKept = 2,
+                ),
+            ),
+        )
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupSourceSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val summary = expectMostRecentItem().backup.summary.shouldNotBeNull()
+            summary.showsRestored shouldBe localizer.getPlural(PluralsResourceKey.BackupShowsRestored, 3, 3)
+            summary.episodesRestored shouldBe localizer.getPlural(PluralsResourceKey.BackupEpisodesRestored, 42, 42)
+            summary.skippedShows shouldBe listOf("Dark")
+            summary.rewatchNotice.shouldNotBeNull()
+        }
+    }
+
+    @Test
+    fun `should omit the rewatch notice given no sessions were kept`() = runTest {
+        backupRepository.setRestoreResult(
+            RestoreResult.Restored(RestoreSummary(showCount = 1, episodeCount = 1)),
+        )
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupSourceSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().backup.summary.shouldNotBeNull().rewatchNotice.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should report a message given a sync is running`() = runTest {
+        backupRepository.setRestoreResult(RestoreResult.Failed(RestoreFailure.SyncInProgress))
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupSourceSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val state = expectMostRecentItem()
+            state.message.shouldNotBeNull()
+            state.backup.summary.shouldBeNull()
         }
     }
 

@@ -141,6 +141,7 @@ dependencies {
     implementation(projects.domain.user)
     implementation(projects.data.logout.api)
     implementation(projects.data.logout.implementation)
+    implementation(projects.data.backup.api)
     implementation(projects.domain.backup)
     implementation(projects.domain.logout)
     implementation(projects.features.debug.presenter)
