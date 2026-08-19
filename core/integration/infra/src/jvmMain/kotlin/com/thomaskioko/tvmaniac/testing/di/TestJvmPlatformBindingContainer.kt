@@ -7,6 +7,8 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
+import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
 import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
@@ -57,4 +59,8 @@ public object TestJvmPlatformBindingContainer {
             produceFile = { tempDir.resolve(DATA_STORE_FILE_NAME).toString().toPath() },
         )
     }
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideBackupDestination(): BackupDestination = FakeBackupDestination()
 }
