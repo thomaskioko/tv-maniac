@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.data.backup.implementation
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisode
 import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisodeRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
@@ -11,6 +12,7 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupPreferences
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.BackupSeason
 import com.thomaskioko.tvmaniac.data.backup.api.BackupSeasonRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
 import com.thomaskioko.tvmaniac.data.backup.api.BackupWatchedEpisode
@@ -147,11 +149,50 @@ public class DefaultBackupRepository(
                 )
             }
 
+        val episodesBySeason = queries.backupEpisodes().executeAsList().groupBy { it.season_id.id }
+        val seasonsByShow = queries.backupSeasons().executeAsList()
+            .groupBy({ it.tmdb_id.id }) { season ->
+                BackupSeason(
+                    tmdbId = season.id.id,
+                    seasonNumber = season.season_number,
+                    title = season.title,
+                    episodeCount = season.episode_count,
+                    overview = season.overview,
+                    imageUrl = season.image_url,
+                    episodes = episodesBySeason[season.id.id].orEmpty().map { episode ->
+                        BackupEpisode(
+                            tmdbId = episode.id.id,
+                            episodeNumber = episode.episode_number,
+                            title = episode.title,
+                            overview = episode.overview,
+                            runtime = episode.runtime,
+                            voteCount = episode.vote_count,
+                            ratings = episode.ratings,
+                            imageUrl = episode.image_url,
+                            firstAired = episode.first_aired,
+                        )
+                    },
+                )
+            }
+
         queries.backupShows().executeAsList().map { show ->
             val tmdbId = show.tmdb_id.id
             BackupShow(
                 tmdbId = tmdbId,
                 title = show.name,
+                overview = show.overview,
+                posterPath = show.poster_path,
+                backdropPath = show.backdrop_path,
+                year = show.year,
+                language = show.language,
+                status = show.status,
+                runtime = show.runtime,
+                ratings = show.ratings,
+                voteCount = show.vote_count,
+                genres = show.genres.orEmpty(),
+                seasonNumbers = show.season_numbers,
+                episodeNumbers = show.episode_numbers,
+                seasons = seasonsByShow[tmdbId].orEmpty(),
                 followedAt = followedAt[tmdbId],
                 watchStatus = watchStatus[tmdbId],
                 rating = showRatings[tmdbId],

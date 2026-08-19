@@ -4,7 +4,9 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.SeasonId
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -35,6 +37,7 @@ internal class BackupImporter(
             }
 
             showCount++
+            restoreSeasonsAndEpisodes(show, showId)
             episodeCount += restoreShow(show, showId)
             skippedSeasonRatings += restoreSeasonRatings(show, showId)
             skippedEpisodeRatings += restoreEpisodeRatings(show, showId)
@@ -72,19 +75,49 @@ internal class BackupImporter(
         database.tvShowQueries.upsert(
             tmdb_id = tmdbId,
             name = show.title,
-            overview = "",
-            language = null,
-            year = null,
-            ratings = 0.0,
-            vote_count = 0,
-            genres = null,
-            status = null,
-            episode_numbers = null,
-            season_numbers = null,
-            poster_path = null,
-            backdrop_path = null,
+            overview = show.overview.orEmpty(),
+            language = show.language,
+            year = show.year,
+            ratings = show.ratings ?: 0.0,
+            vote_count = show.voteCount ?: 0,
+            genres = show.genres.takeIf { it.isNotEmpty() },
+            status = show.status,
+            episode_numbers = show.episodeNumbers,
+            season_numbers = show.seasonNumbers,
+            poster_path = show.posterPath,
+            backdrop_path = show.backdropPath,
         )
         return database.tvShowQueries.getShowIdByTmdbId(tmdbId).executeAsOneOrNull()
+    }
+
+    private fun restoreSeasonsAndEpisodes(show: BackupShow, showId: Id<ShowId>) {
+        show.seasons.forEach { season ->
+            val seasonId = Id<SeasonId>(season.tmdbId)
+            restoreQueries.restoreSeason(
+                seasonId = seasonId,
+                showId = showId,
+                seasonNumber = season.seasonNumber,
+                episodeCount = season.episodeCount,
+                title = season.title,
+                overview = season.overview,
+                imageUrl = season.imageUrl,
+            )
+            season.episodes.forEach { episode ->
+                restoreQueries.restoreEpisode(
+                    episodeId = Id<EpisodeId>(episode.tmdbId),
+                    seasonId = seasonId,
+                    showId = showId,
+                    episodeNumber = episode.episodeNumber,
+                    title = episode.title,
+                    overview = episode.overview.orEmpty(),
+                    runtime = episode.runtime,
+                    voteCount = episode.voteCount ?: 0,
+                    ratings = episode.ratings ?: 0.0,
+                    imageUrl = episode.imageUrl,
+                    firstAired = episode.firstAired,
+                )
+            }
+        }
     }
 
     private fun restoreShow(show: BackupShow, showId: Id<ShowId>): Int {
