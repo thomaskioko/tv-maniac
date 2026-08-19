@@ -1,0 +1,84 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.WatchStatus;
+
+-- Every query here selects tmdb_id rather than a local row id. A backup file is read on another
+-- device where tvshow.id means nothing, so a query that returns one cannot exist in this file.
+-- Rows pending removal are excluded so a restore does not resurrect something the user deleted.
+
+backupShows:
+SELECT DISTINCT
+    tvshow.tmdb_id,
+    tvshow.name
+FROM tvshow
+WHERE tvshow.id IN (
+    SELECT show_id FROM followed_shows WHERE pending_action != 'DELETE'
+    UNION
+    SELECT show_id FROM watched_episodes WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    UNION
+    SELECT show_id FROM show_ratings WHERE pending_action != 'DELETE' AND user_rating IS NOT NULL
+    UNION
+    SELECT show_id FROM show_watch_status WHERE status IS NOT NULL
+);
+
+backupFollowedShows:
+SELECT
+    tvshow.tmdb_id,
+    followed_shows.followed_at
+FROM followed_shows
+INNER JOIN tvshow ON tvshow.id = followed_shows.show_id
+WHERE followed_shows.pending_action != 'DELETE';
+
+backupWatchedEpisodes:
+SELECT
+    tvshow.tmdb_id,
+    watched_episodes.season_number,
+    watched_episodes.episode_number,
+    watched_episodes.watched_at
+FROM watched_episodes
+INNER JOIN tvshow ON tvshow.id = watched_episodes.show_id
+WHERE watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE');
+
+backupWatchStatus:
+SELECT
+    tvshow.tmdb_id,
+    show_watch_status.status
+FROM show_watch_status
+INNER JOIN tvshow ON tvshow.id = show_watch_status.show_id
+WHERE show_watch_status.status IS NOT NULL;
+
+backupShowRatings:
+SELECT
+    tvshow.tmdb_id,
+    show_ratings.user_rating,
+    show_ratings.rated_at
+FROM show_ratings
+INNER JOIN tvshow ON tvshow.id = show_ratings.show_id
+WHERE show_ratings.pending_action != 'DELETE'
+  AND show_ratings.user_rating IS NOT NULL;
+
+backupSeasonRatings:
+SELECT
+    tvshow.tmdb_id,
+    season.season_number,
+    season_ratings.user_rating,
+    season_ratings.rated_at
+FROM season_ratings
+INNER JOIN season ON season.id = season_ratings.season_id
+INNER JOIN tvshow ON tvshow.id = season.show_id
+WHERE season_ratings.pending_action != 'DELETE'
+  AND season_ratings.user_rating IS NOT NULL;
+
+backupEpisodeRatings:
+SELECT
+    tvshow.tmdb_id,
+    season.season_number,
+    episode.episode_number,
+    episode_ratings.user_rating,
+    episode_ratings.rated_at
+FROM episode_ratings
+INNER JOIN episode ON episode.id = episode_ratings.episode_id
+INNER JOIN season ON season.id = episode.season_id
+INNER JOIN tvshow ON tvshow.id = episode.show_id
+WHERE episode_ratings.pending_action != 'DELETE'
+  AND episode_ratings.user_rating IS NOT NULL;
