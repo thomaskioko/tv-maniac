@@ -15,8 +15,11 @@ import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
+import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -95,7 +98,6 @@ public class SettingsPresenter internal constructor(
     private val authProcessingState = ObservableLoadingCounter()
     private val notificationToggleState = ObservableLoadingCounter()
     private val backupExportState = ObservableLoadingCounter()
-    private val backupImportState = ObservableLoadingCounter()
     private val accountSwitchState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
 
@@ -418,20 +420,37 @@ public class SettingsPresenter internal constructor(
 
     private fun handleBackupSource(location: String) {
         if (state.value.premium.backupLocked) return
-        _state.update { it.copy(backup = backupLabels) }
         coroutineScope.launch {
-            restoreBackupInteractor(RestoreBackupInteractor.Params(location))
-                .collectStatus(
-                    counter = backupImportState,
-                    logger = logger,
-                    uiMessageManager = uiMessageManager,
-                    sourceId = BACKUP_SOURCE_ID,
-                    errorToStringMapper = errorToStringMapper,
-                )
-            restoreBackupInteractor.lastSummary?.let { summary ->
-                _state.update { it.copy(backup = backupLabels.copy(summary = buildRestoreSummary(summary))) }
+            _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
+            when (val result = restoreBackupInteractor.executeSync(RestoreBackupInteractor.Params(location))) {
+                is RestoreResult.Restored ->
+                    _state.update { it.copy(backup = backupLabels.copy(summary = buildRestoreSummary(result.summary))) }
+
+                is RestoreResult.Failed -> {
+                    _state.update { it.copy(backup = backupLabels) }
+                    emitRestoreFailure(result)
+                }
             }
         }
+    }
+
+    private fun emitRestoreFailure(result: RestoreResult.Failed) {
+        result.cause?.let { logger.error(TAG, "Backup restore failed: ${it.message}") }
+        uiMessageManager.emitMessage(
+            UiMessage(
+                message = localizer.getString(
+                    when (result.reason) {
+                        RestoreFailure.SyncInProgress -> StringResourceKey.ErrorBackupSyncInProgress
+                        RestoreFailure.VersionTooNew -> StringResourceKey.ErrorBackupVersionTooNew
+                        RestoreFailure.ReadFailed,
+                        RestoreFailure.SafetyCopyFailed,
+                        RestoreFailure.ImportFailed,
+                        -> StringResourceKey.ErrorBackupReadFailed
+                    },
+                ),
+                sourceId = BACKUP_SOURCE_ID,
+            ),
+        )
     }
 
     private fun buildRestoreConfirm(): BackupRestoreConfirm {

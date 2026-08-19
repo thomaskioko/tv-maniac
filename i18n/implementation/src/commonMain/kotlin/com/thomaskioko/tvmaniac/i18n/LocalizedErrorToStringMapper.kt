@@ -6,8 +6,6 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.backup.api.BackupExportException
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailedException
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -22,7 +20,6 @@ public class LocalizedErrorToStringMapper(
     override fun mapError(throwable: Throwable): String = when (throwable) {
         is AccountSwitchFailedException -> localizer.getString(StringResourceKey.LabelAccountSwitchFailed)
         is BackupExportException -> mapBackupFailure(throwable.reason)
-        is RestoreFailedException -> mapRestoreFailure(throwable.reason)
         else -> throwable.toSyncError()
             ?.let(::mapSyncError)
             ?: localizer.getString(StringResourceKey.ErrorGeneric)
@@ -31,15 +28,6 @@ public class LocalizedErrorToStringMapper(
     private fun mapBackupFailure(failure: BackupFailure): String = when (failure) {
         BackupFailure.WriteFailed -> localizer.getString(StringResourceKey.ErrorBackupSaveFailed)
         BackupFailure.VerificationFailed -> localizer.getString(StringResourceKey.ErrorBackupReadFailed)
-    }
-
-    private fun mapRestoreFailure(failure: RestoreFailure): String = when (failure) {
-        RestoreFailure.SyncInProgress -> localizer.getString(StringResourceKey.ErrorBackupSyncInProgress)
-        RestoreFailure.VersionTooNew -> localizer.getString(StringResourceKey.ErrorBackupVersionTooNew)
-        RestoreFailure.ReadFailed,
-        RestoreFailure.SafetyCopyFailed,
-        RestoreFailure.ImportFailed,
-        -> localizer.getString(StringResourceKey.ErrorBackupReadFailed)
     }
 
     private fun mapSyncError(error: SyncError): String = when (error) {
