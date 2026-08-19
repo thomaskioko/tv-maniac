@@ -34,8 +34,8 @@ import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 internal fun ContinueTrackingCard(
     episode: ContinueTrackingEpisodeModel,
     onMarkWatched: () -> Unit,
-    onMarkWatchedLongPress: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onMarkWatchedLongPress: (() -> Unit)? = null,
     isUpdating: Boolean = false,
 ) {
     Card(
