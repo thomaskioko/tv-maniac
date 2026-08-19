@@ -933,7 +933,7 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun `should carry the backup labels given the state is first read`() = runTest {
+    fun `should include the backup labels given the state is first read`() = runTest {
         testScheduler.advanceUntilIdle()
 
         presenter.state.test {

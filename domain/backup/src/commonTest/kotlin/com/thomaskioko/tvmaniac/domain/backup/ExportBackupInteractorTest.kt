@@ -34,7 +34,7 @@ internal class ExportBackupInteractorTest {
     }
 
     @Test
-    fun `should carry the reason given the backup cannot be written`() = runTest {
+    fun `should report the reason given the backup cannot be written`() = runTest {
         repository.setWriteResult(BackupResult.Failed(BackupFailure.VerificationFailed))
 
         val failure = assertFailsWith<BackupExportException> {

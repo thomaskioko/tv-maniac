@@ -20,7 +20,7 @@ internal class BackupJsonTest {
     }
 
     @Test
-    fun `should fail given the file carries no version`() {
+    fun `should fail given the file has no version`() {
         val contents = """
             {"createdAt": "2026-01-01T00:00:00Z", "appVersion": "1.0.0"}
         """.trimIndent()
@@ -29,7 +29,7 @@ internal class BackupJsonTest {
     }
 
     @Test
-    fun `should read a file given it carries a field the reader does not know`() {
+    fun `should read a file given it has an unknown field`() {
         val contents = """
             {
               "version": ${BackupFormat.VERSION},
