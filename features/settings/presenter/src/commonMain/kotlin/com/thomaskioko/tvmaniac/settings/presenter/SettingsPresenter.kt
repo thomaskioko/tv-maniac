@@ -19,7 +19,7 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.api.BackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
@@ -95,6 +95,7 @@ public class SettingsPresenter internal constructor(
     private val switchAccountInteractor: SwitchAccountInteractor,
     private val rewatchRepository: RewatchRepository,
     private val backupRepository: BackupRepository,
+    private val backupDestinationBuilder: BackupDestinationBuilder,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -379,7 +380,7 @@ public class SettingsPresenter internal constructor(
 
             is BackupExportClicked -> handleBackupExportClicked()
 
-            is BackupDestinationSelected -> handleBackupDestination(action.destination)
+            is BackupDestinationSelected -> handleBackupDestination(action.location)
 
             is BackupDestinationCancelled -> {
                 _state.update { it.copy(backup = backupLabels) }
@@ -398,12 +399,12 @@ public class SettingsPresenter internal constructor(
         _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
     }
 
-    private fun handleBackupDestination(destination: BackupDestination) {
+    private fun handleBackupDestination(location: String) {
         if (state.value.locks.backupLocked) return
         coroutineScope.launch {
             _state.update { it.copy(backup = backupLabels.copy(isExporting = true)) }
             try {
-                when (val result = backupRepository.writeBackup(destination)) {
+                when (val result = backupRepository.writeBackup(backupDestinationBuilder.build(location))) {
                     is BackupResult.Written -> Unit
                     is BackupResult.Failed -> emitBackupFailure(result.reason)
                 }
@@ -450,6 +451,7 @@ public class SettingsPresenter internal constructor(
         SettingsPage.LICENSES,
         SettingsPage.ACCOUNT,
         SettingsPage.LAYOUT,
+        SettingsPage.BACKUP,
         -> SettingsPage.ROOT
 
         SettingsPage.DISCOVER_SECTIONS,
@@ -585,6 +587,7 @@ public class SettingsPresenter internal constructor(
             SettingsPage.LAYOUT -> StringResourceKey.SettingsLayoutTitle
             SettingsPage.DISCOVER_SECTIONS -> StringResourceKey.SettingsDiscoverSectionsTitle
             SettingsPage.POSTER_STYLE -> StringResourceKey.SettingsPosterStyleTitle
+            SettingsPage.BACKUP -> StringResourceKey.SettingsBackupTitle
         },
     )
 
@@ -665,6 +668,11 @@ public class SettingsPresenter internal constructor(
                             page = SettingsPage.PRIVACY,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionPrivacy),
                             summary = localizer.getString(StringResourceKey.LabelSettingsPrivacyDescription),
+                        ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.BACKUP,
+                            title = localizer.getString(StringResourceKey.SettingsBackupTitle),
+                            summary = localizer.getString(StringResourceKey.SettingsBackupDescription),
                         ),
                     ),
                 ),

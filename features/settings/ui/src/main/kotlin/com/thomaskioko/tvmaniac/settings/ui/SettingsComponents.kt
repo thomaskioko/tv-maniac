@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -86,11 +88,14 @@ internal fun SettingsNavigationRow(
     modifier: Modifier = Modifier,
     description: String? = null,
     icon: ImageVector? = null,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    loadingTestTag: String? = null,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -114,11 +119,21 @@ internal fun SettingsNavigationRow(
             }
         }
         Spacer(modifier = Modifier.width(TvManiacSpacing.small))
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(20.dp)
+                    .then(if (loadingTestTag != null) Modifier.testTag(loadingTestTag) else Modifier),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        } else {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

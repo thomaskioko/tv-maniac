@@ -1,0 +1,38 @@
+package com.thomaskioko.tvmaniac.data.backup.implementation
+
+import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.api.BackupDestinationBuilder
+import com.thomaskioko.tvmaniac.data.backup.api.BackupLocationUnreadableException
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.stringWithContentsOfFile
+import platform.Foundation.writeToFile
+
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+public class IosBackupDestinationBuilder : BackupDestinationBuilder {
+
+    override fun build(location: String): BackupDestination = FileBackupDestination(location)
+}
+
+internal class FileBackupDestination(private val path: String) : BackupDestination {
+
+    override fun write(contents: String) {
+        val written = (contents as NSString).writeToFile(
+            path = path,
+            atomically = true,
+            encoding = NSUTF8StringEncoding,
+            error = null,
+        )
+        if (!written) throw BackupLocationUnreadableException(path)
+    }
+
+    override fun read(): String = NSString.stringWithContentsOfFile(
+        path = path,
+        encoding = NSUTF8StringEncoding,
+        error = null,
+    ) ?: throw BackupLocationUnreadableException(path)
+}

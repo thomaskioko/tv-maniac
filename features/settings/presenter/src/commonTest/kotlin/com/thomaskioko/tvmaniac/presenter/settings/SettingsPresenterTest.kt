@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
@@ -105,6 +106,8 @@ class SettingsPresenterTest {
     private val navigator = FakeNavigator()
     private val subscriptionManager = FakeSubscriptionManager()
     private val backupRepository = FakeBackupRepository()
+    private val backupDestination = FakeBackupDestination()
+    private val backupDestinationBuilder = FakeBackupDestinationBuilder(backupDestination)
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -160,6 +163,7 @@ class SettingsPresenterTest {
             ),
             rewatchRepository = FakeRewatchRepository(),
             backupRepository = backupRepository,
+            backupDestinationBuilder = backupDestinationBuilder,
         )
     }
 
@@ -827,6 +831,16 @@ class SettingsPresenterTest {
     }
 
     @Test
+    fun `should show the backup row given settings load`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val state = expectMostRecentItem()
+            state.rootGroups.flatMap { it.items }.any { it.page == SettingsPage.BACKUP } shouldBe true
+        }
+    }
+
+    @Test
     fun `should report the backup page locked given access is denied`() = runTest {
         subscriptionManager.setAccess(SubscriptionFeature.CloudBackup, false)
         testScheduler.advanceUntilIdle()
@@ -840,13 +854,12 @@ class SettingsPresenterTest {
     fun `should not write a backup given the page is locked`() = runTest {
         subscriptionManager.setAccess(SubscriptionFeature.CloudBackup, false)
         testScheduler.advanceUntilIdle()
-        val destination = FakeBackupDestination()
 
         presenter.dispatch(BackupExportClicked)
-        presenter.dispatch(BackupDestinationSelected(destination))
+        presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        destination.written shouldBe null
+        backupDestinationBuilder.lastLocation shouldBe null
         backupRepository.lastDestination shouldBe null
     }
 
@@ -878,12 +891,12 @@ class SettingsPresenterTest {
     @Test
     fun `should write a backup given a destination is chosen`() = runTest {
         testScheduler.advanceUntilIdle()
-        val destination = FakeBackupDestination()
 
-        presenter.dispatch(BackupDestinationSelected(destination))
+        presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupRepository.lastDestination shouldBe destination
+        backupDestinationBuilder.lastLocation shouldBe LOCATION
+        backupRepository.lastDestination shouldBe backupDestination
 
         presenter.state.test {
             val state = expectMostRecentItem()
@@ -897,11 +910,15 @@ class SettingsPresenterTest {
         testScheduler.advanceUntilIdle()
         backupRepository.setWriteResult(BackupResult.Failed(BackupFailure.WriteFailed))
 
-        presenter.dispatch(BackupDestinationSelected(FakeBackupDestination()))
+        presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
         presenter.state.test {
             expectMostRecentItem().message.shouldNotBeNull()
         }
+    }
+
+    private companion object {
+        private const val LOCATION = "content://downloads/tvmaniac-backup.json"
     }
 }

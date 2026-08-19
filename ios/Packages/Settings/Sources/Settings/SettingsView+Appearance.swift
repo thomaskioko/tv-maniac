@@ -250,4 +250,20 @@ extension SettingsView {
         default: style.name
         }
     }
+
+    var backupContent: SettingsBackupContent {
+        SettingsBackupContent(
+            exportTitle: uiState.backup.exportTitle,
+            exportDescription: uiState.backup.exportDescription,
+            isExporting: uiState.backup.isExporting || uiState.backup.awaitingDestination,
+            isLocked: uiState.locks.backupLocked,
+            lockedBadgeText: uiState.locks.badgeText,
+            lockedTitle: uiState.locks.backupLockedTitle,
+            lockedMessage: uiState.locks.backupLockedMessage,
+            lockedActionText: uiState.locks.upgradeText,
+            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            onExport: { presenter.dispatch(action: BackupExportClicked()) },
+            onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) }
+        )
+    }
 }

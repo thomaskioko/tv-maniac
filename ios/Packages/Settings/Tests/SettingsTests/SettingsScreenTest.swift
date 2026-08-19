@@ -208,4 +208,28 @@ class SettingsScreenTest: SnapshotTestCase {
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Account_SwitchConfirmDialog")
     }
+
+    func test_SettingsScreen_Backup() {
+        SettingsScreen(state: makeState(page: .backup, authenticated: true), onBack: {})
+            .appPreview()
+            .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup")
+    }
+
+    func test_SettingsScreen_Backup_Locked() {
+        SettingsScreen(
+            state: makeState(page: .backup, authenticated: true, customBackupContent: backupContent(locked: true)),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_Locked")
+    }
+
+    func test_SettingsScreen_Backup_Exporting() {
+        SettingsScreen(
+            state: makeState(page: .backup, authenticated: true, customBackupContent: backupContent(isExporting: true)),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_Exporting")
+    }
 }

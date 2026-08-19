@@ -18,6 +18,8 @@ public struct SettingsView: View {
     @State private var showingErrorAlert: Bool = false
     @State var showPolicy = false
     @State var showNotificationPermissionDeniedAlert = false
+    @State private var pendingBackupURL: URL?
+    @State private var showingBackupExporter = false
     @Environment(\.openURL) var openURL
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -46,7 +48,8 @@ public struct SettingsView: View {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            accountContent: accountContent
+            accountContent: accountContent,
+            backupContent: backupContent
         )
     }
 
@@ -112,6 +115,12 @@ public struct SettingsView: View {
             store.fontSizePercent = Int(newValue)
         }
         .settingsPosterStyleObservers(uiState: uiState, store: store)
+        .settingsBackupExporter(
+            uiState: uiState,
+            presenter: presenter,
+            pendingURL: $pendingBackupURL,
+            isPresented: $showingBackupExporter
+        )
         .screenTag(SettingsTestTags.shared.SCREEN_TEST_TAG)
     }
 }

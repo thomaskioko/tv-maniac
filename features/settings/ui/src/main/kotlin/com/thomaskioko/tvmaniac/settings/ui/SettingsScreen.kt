@@ -42,6 +42,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.ui.components.AccountPage
 import com.thomaskioko.tvmaniac.settings.ui.components.AppearancePage
+import com.thomaskioko.tvmaniac.settings.ui.components.BackupPage
 import com.thomaskioko.tvmaniac.settings.ui.components.BehaviorPage
 import com.thomaskioko.tvmaniac.settings.ui.components.DiscoverSectionsPage
 import com.thomaskioko.tvmaniac.settings.ui.components.InfoPage
@@ -168,6 +169,7 @@ internal fun SettingsScreen(
                             onAction = onAction,
                         )
                         SettingsPage.PRIVACY -> PrivacyPage(state = state, onAction = onAction)
+                        SettingsPage.BACKUP -> BackupPage(state = state, onAction = onAction)
                         SettingsPage.INFO -> InfoPage(state = state, onAction = onAction)
                         SettingsPage.LICENSES -> LicensesPage(state = state)
                         SettingsPage.ACCOUNT -> AccountPage(state = state, onAction = onAction)

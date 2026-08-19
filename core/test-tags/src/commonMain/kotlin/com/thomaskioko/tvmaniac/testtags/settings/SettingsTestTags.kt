@@ -43,4 +43,8 @@ public object SettingsTestTags {
     public fun posterWidthChip(name: String): String = "settings_poster_width_chip_${name.lowercase()}"
     public fun landscapeWidthChip(name: String): String = "settings_landscape_width_chip_${name.lowercase()}"
     public fun posterCornerStyleChip(name: String): String = "settings_poster_corner_style_chip_${name.lowercase()}"
+    public const val GENERAL_BACKUP_ROW_TEST_TAG: String = "settings_general_backup_row"
+    public const val BACKUP_LOCKED_TEST_TAG: String = "settings_backup_locked"
+    public const val BACKUP_EXPORT_ROW_TEST_TAG: String = "settings_backup_export_row"
+    public const val BACKUP_EXPORTING_INDICATOR_TEST_TAG: String = "settings_backup_exporting_indicator"
 }

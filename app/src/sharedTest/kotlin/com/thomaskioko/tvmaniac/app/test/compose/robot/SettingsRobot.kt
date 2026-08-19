@@ -58,6 +58,23 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         click(SettingsTestTags.GENERAL_PRIVACY_ROW_TEST_TAG)
     }
 
+    fun openBackupPage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.GENERAL_BACKUP_ROW_TEST_TAG)
+        click(SettingsTestTags.GENERAL_BACKUP_ROW_TEST_TAG)
+    }
+
+    fun assertBackupLockedDisplayed() = apply {
+        assertDisplayed(SettingsTestTags.BACKUP_LOCKED_TEST_TAG)
+    }
+
+    fun assertBackupExportRowDisplayed() = apply {
+        assertDisplayed(SettingsTestTags.BACKUP_EXPORT_ROW_TEST_TAG)
+    }
+
+    fun assertBackupExportRowDoesNotExist() = apply {
+        assertDoesNotExist(SettingsTestTags.BACKUP_EXPORT_ROW_TEST_TAG)
+    }
+
     fun openInfoPage() = apply {
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG)
         click(SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG)

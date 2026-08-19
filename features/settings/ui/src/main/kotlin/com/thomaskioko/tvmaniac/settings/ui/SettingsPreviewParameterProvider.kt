@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.settings.presenter.BackupSettings
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggle
 import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleLabels
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryGroup
@@ -235,6 +236,27 @@ internal val notificationsLockedState = notificationsState.copy(
     ),
 )
 internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVACY, currentPageTitle = "Privacy")
+internal val backupState = loggedInState.copy(
+    currentPage = SettingsPage.BACKUP,
+    currentPageTitle = "Backup",
+    backup = BackupSettings(
+        exportTitle = "Export backup",
+        exportDescription = "Save your tracking data and preferences to a file",
+    ),
+)
+internal val backupLockedState = backupState.copy(
+    locks = SettingsLocks(
+        backupLocked = true,
+        badgeText = "Premium",
+        backupLockedTitle = "Backup is a Premium feature",
+        backupLockedMessage = "Upgrade to Premium to back up your data to a file.",
+        upgradeText = "Upgrade to Premium",
+        lockedContentDescription = "Locked",
+    ),
+)
+internal val backupExportingState = backupState.copy(
+    backup = backupState.backup.copy(isExporting = true),
+)
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")
 internal val accountState = loggedInState.copy(
@@ -288,6 +310,17 @@ internal class SettingsPreviewParameterProvider : PreviewParameterProvider<Setti
                 discoverSectionsState,
                 posterStyleState,
                 behaviorState,
+            )
+        }
+}
+
+internal class BackupPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
+    override val values: Sequence<SettingsState>
+        get() {
+            return sequenceOf(
+                backupState,
+                backupLockedState,
+                backupExportingState,
             )
         }
 }

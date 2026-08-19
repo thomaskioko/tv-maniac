@@ -12,6 +12,12 @@ public interface BackupDestination {
     public fun read(): String
 }
 
+public interface BackupDestinationBuilder {
+    public fun build(location: String): BackupDestination
+}
+
+public class BackupLocationUnreadableException(location: String) : Exception("Cannot open $location")
+
 public sealed interface BackupResult {
     public data class Written(val showCount: Int, val episodeCount: Int) : BackupResult
 
