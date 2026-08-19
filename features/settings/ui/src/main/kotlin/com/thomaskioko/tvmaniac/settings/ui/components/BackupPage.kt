@@ -41,7 +41,8 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
-import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirm
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmedWithAccount
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceSelected
@@ -169,25 +170,34 @@ private fun BackupPageContent(
 
     BackupRestoreConfirmDialog(
         confirm = backup.confirm,
-        onConfirm = { onAction(BackupImportConfirmed) },
-        onCancel = { onAction(BackupImportCancelled) },
+        onAction = onAction,
     )
 }
 
 @Composable
 private fun BackupRestoreConfirmDialog(
-    confirm: BackupRestoreConfirm?,
-    onConfirm: () -> Unit,
-    onCancel: () -> Unit,
+    confirm: BackupRestoreConfirmationDialog?,
+    onAction: (SettingsActions) -> Unit,
 ) {
-    if (confirm != null) {
-        TvManiacAlertDialog(
+    when (confirm) {
+        null -> Unit
+        is BackupRestoreConfirmationDialog.Local -> TvManiacAlertDialog(
             title = confirm.title,
             message = confirm.message,
             confirmButtonText = confirm.confirmLabel,
             dismissButtonText = confirm.cancelLabel,
-            onConfirm = onConfirm,
-            onDismiss = onCancel,
+            onConfirm = { onAction(BackupImportConfirmed) },
+            onDismiss = { onAction(BackupImportCancelled) },
+            confirmButtonTestTag = SettingsTestTags.BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG,
+            dismissButtonTestTag = SettingsTestTags.BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG,
+        )
+        is BackupRestoreConfirmationDialog.Connected -> TvManiacAlertDialog(
+            title = confirm.title,
+            message = confirm.message,
+            confirmButtonText = confirm.accountLabel,
+            dismissButtonText = confirm.cancelLabel,
+            onConfirm = { onAction(BackupImportConfirmedWithAccount) },
+            onDismiss = { onAction(BackupImportCancelled) },
             confirmButtonTestTag = SettingsTestTags.BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG,
             dismissButtonTestTag = SettingsTestTags.BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG,
         )

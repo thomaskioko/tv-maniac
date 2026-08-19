@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
-import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirm
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSettings
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggle
@@ -266,7 +266,7 @@ internal val backupImportingState = backupState.copy(
 )
 internal val backupRestoreConfirmState = backupState.copy(
     backup = backupState.backup.copy(
-        confirm = BackupRestoreConfirm(
+        confirm = BackupRestoreConfirmationDialog.Local(
             title = "Restore this backup?",
             message = "This replaces the shows and watch history on this device. " +
                 "A copy of your current data is saved first.",

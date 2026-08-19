@@ -94,10 +94,20 @@ extension View {
             uiState.backup.confirm?.title ?? "",
             isPresented: showingConfirm,
             actions: {
-                if let confirm = uiState.backup.confirm {
-                    Button(confirm.confirmLabel) {
+                if let local = uiState.backup.confirm as? BackupRestoreConfirmationDialogLocal {
+                    Button(local.confirmLabel) {
                         presenter.dispatch(action: BackupImportConfirmed())
                     }
+                }
+                if let connected = uiState.backup.confirm as? BackupRestoreConfirmationDialogConnected {
+                    Button(connected.accountLabel) {
+                        presenter.dispatch(action: BackupImportConfirmedWithAccount())
+                    }
+                    Button(connected.deviceLabel) {
+                        presenter.dispatch(action: BackupImportConfirmed())
+                    }
+                }
+                if let confirm = uiState.backup.confirm {
                     Button(confirm.cancelLabel, role: .cancel) {
                         presenter.dispatch(action: BackupImportCancelled())
                     }
