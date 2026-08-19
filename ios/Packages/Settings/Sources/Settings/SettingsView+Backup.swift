@@ -84,8 +84,8 @@ extension View {
         showingConfirm: Binding<Bool>,
         showingSource: Binding<Bool>
     ) -> some View {
-        onChange(of: uiState.backup.confirm) { _, confirm in
-            showingConfirm.wrappedValue = confirm != nil
+        onChange(of: uiState.backup.confirm != nil) { _, isConfirming in
+            showingConfirm.wrappedValue = isConfirming
         }
         .onChange(of: uiState.backup.awaitingSource) { _, awaitingSource in
             showingSource.wrappedValue = awaitingSource
