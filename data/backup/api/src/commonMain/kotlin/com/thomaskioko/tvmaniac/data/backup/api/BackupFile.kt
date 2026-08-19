@@ -16,12 +16,49 @@ public data class BackupFile(
 public data class BackupShow(
     val tmdbId: Long,
     val title: String,
+    val overview: String? = null,
+    val posterPath: String? = null,
+    val backdropPath: String? = null,
+    val year: String? = null,
+    val language: String? = null,
+    val status: String? = null,
+    val runtime: Long? = null,
+    val ratings: Double? = null,
+    val voteCount: Long? = null,
+    val genres: List<String> = emptyList(),
+    val seasonNumbers: String? = null,
+    val episodeNumbers: String? = null,
+    val seasons: List<BackupSeason> = emptyList(),
     val followedAt: Long? = null,
     val watchStatus: String? = null,
     val rating: BackupRating? = null,
     val watchedEpisodes: List<BackupWatchedEpisode> = emptyList(),
     val seasonRatings: List<BackupSeasonRating> = emptyList(),
     val episodeRatings: List<BackupEpisodeRating> = emptyList(),
+)
+
+@Serializable
+public data class BackupSeason(
+    val tmdbId: Long,
+    val seasonNumber: Long,
+    val title: String,
+    val episodeCount: Long,
+    val overview: String? = null,
+    val imageUrl: String? = null,
+    val episodes: List<BackupEpisode> = emptyList(),
+)
+
+@Serializable
+public data class BackupEpisode(
+    val tmdbId: Long,
+    val episodeNumber: Long,
+    val title: String,
+    val overview: String? = null,
+    val runtime: Long? = null,
+    val voteCount: Long? = null,
+    val ratings: Double? = null,
+    val imageUrl: String? = null,
+    val firstAired: Long? = null,
 )
 
 @Serializable

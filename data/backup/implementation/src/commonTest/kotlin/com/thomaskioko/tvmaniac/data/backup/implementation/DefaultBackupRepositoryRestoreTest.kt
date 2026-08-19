@@ -1,9 +1,11 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisode
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRating
+import com.thomaskioko.tvmaniac.data.backup.api.BackupSeason
 import com.thomaskioko.tvmaniac.data.backup.api.BackupSeasonRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
 import com.thomaskioko.tvmaniac.data.backup.api.BackupWatchedEpisode
@@ -138,7 +140,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should count a show skipped given it carries no tmdb id`() = runTest(testDispatcher) {
+    fun `should count a show skipped given it has no tmdb id`() = runTest(testDispatcher) {
         val result = repository.restoreBackup(
             fileWith(BackupShow(tmdbId = 0L, title = "Nameless", followedAt = NOW)),
         )
@@ -197,7 +199,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
         repository.restoreBackup(fileWith(BackupShow(tmdbId = OTHER_TMDB_ID, title = "Better Call Saul")))
 
-        safetyCopy().shouldNotBeNull() shouldContain "\"season\": 9"
+        safetyCopy().shouldNotBeNull() shouldContain "\"season\":9"
     }
 
     @Test
@@ -210,7 +212,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         val result = repository.restoreBackup(fileWith(breakingBad()))
 
         result.shouldBeInstanceOf<RestoreResult.Failed>().reason shouldBe RestoreFailure.ImportFailed
-        safetyCopy().shouldNotBeNull() shouldContain "\"season\": 9"
+        safetyCopy().shouldNotBeNull() shouldContain "\"season\":9"
         watchedEpisodes() shouldHaveSize 1
     }
 
@@ -247,7 +249,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should import given the file carries an unknown field`() = runTest(testDispatcher) {
+    fun `should import given the file has an unknown field`() = runTest(testDispatcher) {
         val source = fileWith(
             """{"version": 1, "createdAt": "now", "appVersion": "1.0", "lists": [], "shows": []}""",
         )
@@ -267,7 +269,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should restore the watch status given the file carries one`() = runTest(testDispatcher) {
+    fun `should restore the watch status given the file has one`() = runTest(testDispatcher) {
         repository.restoreBackup(fileWith(breakingBad().copy(watchStatus = "COMPLETED")))
 
         val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
@@ -287,6 +289,81 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         repository.restoreBackup(fileWith(breakingBad()))
 
         database.continueWatchingQueries.entries().executeAsList() shouldHaveSize 1
+    }
+
+    @Test
+    fun `should restore seasons and episodes given the file has them`() = runTest(testDispatcher) {
+        val show = breakingBad().copy(
+            seasons = listOf(
+                BackupSeason(
+                    tmdbId = 3572,
+                    seasonNumber = 1,
+                    title = "Season 1",
+                    episodeCount = 2,
+                    episodes = listOf(
+                        BackupEpisode(tmdbId = 62085, episodeNumber = 1, title = "Pilot"),
+                        BackupEpisode(tmdbId = 62086, episodeNumber = 2, title = "Cat in the Bag"),
+                    ),
+                ),
+            ),
+        )
+
+        repository.restoreBackup(fileWith(show))
+
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
+        database.seasonsQueries.getSeasonByShowAndNumber(showId, 1).executeAsOneOrNull().shouldNotBeNull()
+        database.episodesQueries.countEpisodesForShow(showId, 1).executeAsOne() shouldBe 2
+    }
+
+    @Test
+    fun `should link watch history to the restored episodes`() = runTest(testDispatcher) {
+        val show = breakingBad().copy(
+            seasons = listOf(
+                BackupSeason(
+                    tmdbId = 3572,
+                    seasonNumber = 1,
+                    title = "Season 1",
+                    episodeCount = 2,
+                    episodes = listOf(
+                        BackupEpisode(tmdbId = 62085, episodeNumber = 1, title = "Pilot"),
+                        BackupEpisode(tmdbId = 62086, episodeNumber = 2, title = "Cat in the Bag"),
+                    ),
+                ),
+            ),
+        )
+
+        repository.restoreBackup(fileWith(show))
+
+        watchedEpisodes().all { it.episode_id != null } shouldBe true
+    }
+
+    @Test
+    fun `should restore the show details given the file has them`() = runTest(testDispatcher) {
+        val show = breakingBad().copy(overview = "A chemistry teacher", posterPath = "/poster.jpg", year = "2008")
+
+        repository.restoreBackup(fileWith(show))
+
+        val backup = repository.createBackup()
+        val restored = backup.shows.single()
+        restored.overview shouldBe "A chemistry teacher"
+        restored.posterPath shouldBe "/poster.jpg"
+    }
+
+    @Test
+    fun `should import a file written before seasons were added`() = runTest(testDispatcher) {
+        val result = repository.restoreBackup(fileWith(VERSION_ONE_FILE))
+
+        val summary = result.shouldBeInstanceOf<RestoreResult.Restored>().summary
+        summary.showCount shouldBe 1
+        summary.episodeCount shouldBe 1
+        watchedEpisodes() shouldHaveSize 1
+    }
+
+    @Test
+    fun `should leave a show from an older file for the refill`() = runTest(testDispatcher) {
+        repository.restoreBackup(fileWith(VERSION_ONE_FILE))
+
+        repository.showsNeedingMetadata() shouldHaveSize 1
     }
 
     private fun buildRepository(transactionRunner: DatabaseTransactionRunner) = DefaultBackupRepository(
@@ -402,6 +479,12 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         private const val SHOW_TITLE = "Breaking Bad"
         private const val NOW = 1_700_000_000_000L
         private const val SOURCE = "content://downloads/backup.json"
+        private val VERSION_ONE_FILE = """
+            {"version":1,"createdAt":"2026-01-01T00:00:00Z","appVersion":"1.0.0","shows":[
+              {"tmdbId":$BREAKING_BAD_TMDB_ID,"title":"$SHOW_TITLE","followedAt":$NOW,
+               "watchedEpisodes":[{"season":1,"episode":1,"watchedAt":$NOW}]}
+            ]}
+        """.trimIndent()
         private val SEASON_ID = Id<SeasonId>(3572L)
     }
 }
