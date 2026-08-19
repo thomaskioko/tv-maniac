@@ -20,6 +20,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.util.api)
                 api(projects.data.datastore.api)
+                api(projects.data.subscription.api)
                 api(projects.domain.theme)
             }
         }

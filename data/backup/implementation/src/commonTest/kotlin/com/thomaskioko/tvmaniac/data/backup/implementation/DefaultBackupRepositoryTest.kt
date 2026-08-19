@@ -7,11 +7,13 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.db.DbTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.WatchStatus
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
+import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -42,6 +44,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
     )
 
     private val datastoreRepository = FakeDatastoreRepository()
+    private val destination = FakeBackupDestination()
     private lateinit var repository: DefaultBackupRepository
     private var showId: Id<ShowId> = Id(0L)
 
@@ -53,6 +56,9 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
             dateTimeProvider = FakeDateTimeProvider(),
             appMetadata = FakeAppMetadata.DEFAULT,
             dispatchers = dispatchers,
+            destination = destination,
+            syncObserver = FakeSyncObserver(),
+            transactionRunner = DbTransactionRunner(database),
         )
         showId = insertShow()
     }
@@ -159,30 +165,27 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
     fun `should report counts given the file is written and read back`() = runTest(testDispatcher) {
         followShow()
         watchEpisode(season = 1, episode = 1)
-        val destination = FakeBackupDestination()
 
-        val result = repository.writeBackup(destination)
+        val result = repository.writeBackup(LOCATION)
 
-        result shouldBe BackupResult.Written(showCount = 1, episodeCount = 1)
-        destination.written.shouldNotBeNull()
+        result shouldBe BackupResult.Success(showCount = 1, episodeCount = 1)
+        destination.contentsAt(LOCATION).shouldNotBeNull()
     }
 
     @Test
     fun `should report failure given the destination cannot be written`() = runTest(testDispatcher) {
-        val destination = FakeBackupDestination()
         destination.setWriteException(IllegalStateException("no permission"))
 
-        val result = repository.writeBackup(destination)
+        val result = repository.writeBackup(LOCATION)
 
         result.shouldBeInstanceOf<BackupResult.Failed>().reason shouldBe BackupFailure.WriteFailed
     }
 
     @Test
     fun `should report failure given the file reads back as something else`() = runTest(testDispatcher) {
-        val destination = FakeBackupDestination()
         destination.setReadException(IllegalStateException("truncated"))
 
-        val result = repository.writeBackup(destination)
+        val result = repository.writeBackup(LOCATION)
 
         result.shouldBeInstanceOf<BackupResult.Failed>().reason shouldBe BackupFailure.VerificationFailed
     }
@@ -240,5 +243,6 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
         private const val BREAKING_BAD_TMDB_ID = 1396L
         private const val SHOW_TITLE = "Breaking Bad"
         private const val NOW = 1_700_000_000_000L
+        private const val LOCATION = "content://downloads/backup.json"
     }
 }

@@ -34,6 +34,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsMessageShown
@@ -71,7 +72,10 @@ public fun SettingsScreen(
 
     TvManiacSnackBarHost(
         message = state.message?.message,
-        style = SnackBarStyle.Error,
+        style = when (state.message?.type) {
+            UiMessageType.Success -> SnackBarStyle.Success
+            else -> SnackBarStyle.Error
+        },
         onDismiss = { state.message?.let { presenter.dispatch(SettingsMessageShown(it.id)) } },
     )
 }

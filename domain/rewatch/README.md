@@ -53,6 +53,7 @@ graph TB
   :data:rewatch:api --> :data:account-manager:api
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

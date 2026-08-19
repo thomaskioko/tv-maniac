@@ -272,6 +272,7 @@ include(
     ":data:logout:api",
     ":data:logout:implementation",
     ":data:logout:testing",
+    ":domain:backup",
     ":domain:calendar",
     ":domain:continue-watching",
     ":domain:discover",

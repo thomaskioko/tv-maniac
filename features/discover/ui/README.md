@@ -294,6 +294,7 @@ graph TB
   :domain:genre --> :data:genre:api
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api

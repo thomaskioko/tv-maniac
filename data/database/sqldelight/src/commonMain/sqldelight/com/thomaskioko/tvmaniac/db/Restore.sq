@@ -1,0 +1,90 @@
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.SeasonId;
+import com.thomaskioko.tvmaniac.db.ShowId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.WatchStatus;
+
+-- Every insert here hardcodes pending_action to 'NOTHING' and writes no provider id, so a restored
+-- row cannot reach somebody's Trakt or Simkl account. The rule is in the query rather than in Kotlin
+-- because no caller can then pass 'UPLOAD' by mistake.
+
+restoreFollowedShow:
+INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
+VALUES(:showId, :tmdbId, :followedAt, 'NOTHING')
+ON CONFLICT(show_id) DO UPDATE SET
+    tmdb_id = excluded.tmdb_id,
+    followed_at = excluded.followed_at,
+    pending_action = 'NOTHING';
+
+restoreWatchedEpisode:
+INSERT OR REPLACE INTO watched_episodes(
+    show_id,
+    episode_id,
+    season_number,
+    episode_number,
+    watched_at,
+    pending_action
+)
+VALUES(
+    :showId,
+    (
+        SELECT episode.id FROM episode
+        INNER JOIN season ON season.id = episode.season_id
+        WHERE episode.show_id = :showId
+          AND season.season_number = :seasonNumber
+          AND episode.episode_number = :episodeNumber
+    ),
+    :seasonNumber,
+    :episodeNumber,
+    :watchedAt,
+    'NOTHING'
+);
+
+restoreWatchStatus:
+INSERT INTO show_watch_status(show_id, status, last_watched_at, last_synced_at)
+VALUES(:showId, :status, :lastWatchedAt, NULL)
+ON CONFLICT(show_id) DO UPDATE SET
+    status = excluded.status,
+    last_watched_at = excluded.last_watched_at,
+    last_synced_at = NULL;
+
+restoreShowRating:
+INSERT INTO show_ratings(show_id, user_rating, rated_at, pending_action)
+VALUES(:showId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(show_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'NOTHING';
+
+restoreSeasonRating:
+INSERT INTO season_ratings(season_id, user_rating, rated_at, pending_action)
+VALUES(:seasonId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(season_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'NOTHING';
+
+restoreEpisodeRating:
+INSERT INTO episode_ratings(episode_id, user_rating, rated_at, pending_action)
+VALUES(:episodeId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(episode_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'NOTHING';
+
+seasonIdForNumber:
+SELECT id FROM season
+WHERE show_id = :showId AND season_number = :seasonNumber
+LIMIT 1;
+
+episodeIdForNumber:
+SELECT episode.id FROM episode
+INNER JOIN season ON season.id = episode.season_id
+WHERE episode.show_id = :showId
+  AND season.season_number = :seasonNumber
+  AND episode.episode_number = :episodeNumber
+LIMIT 1;
+
+rewatchSessionCount:
+SELECT COUNT(*) FROM rewatch_session;

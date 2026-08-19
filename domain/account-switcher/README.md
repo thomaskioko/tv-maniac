@@ -168,6 +168,7 @@ graph TB
   :data:user:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:account-switcher --> :core:base
+  :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
@@ -218,6 +219,7 @@ graph TB
   :domain:library --> :domain:sync-activity
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api

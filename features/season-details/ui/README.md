@@ -164,6 +164,7 @@ graph TB
   :domain:ratings --> :data:subscription:api
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api

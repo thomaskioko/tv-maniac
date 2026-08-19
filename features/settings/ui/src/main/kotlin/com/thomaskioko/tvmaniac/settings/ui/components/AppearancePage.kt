@@ -48,7 +48,7 @@ internal fun AppearancePage(
                     selectedTheme = state.theme,
                     onThemeSelected = { onAction(ThemeSelected(it)) },
                     onUpgradeClick = { onAction(UpgradeToPremiumClicked) },
-                    locks = state.locks,
+                    premium = state.premium,
                     modifier = Modifier.padding(vertical = TvManiacSpacing.small),
                 )
             }

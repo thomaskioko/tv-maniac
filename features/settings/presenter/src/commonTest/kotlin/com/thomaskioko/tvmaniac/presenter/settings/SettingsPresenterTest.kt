@@ -11,10 +11,9 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
-import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
-import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestinationBuilder
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
@@ -26,11 +25,16 @@ import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
+import com.thomaskioko.tvmaniac.domain.accountswitcher.ConnectAndSwitchProviderInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
+import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
+import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
+import com.thomaskioko.tvmaniac.domain.settings.ObservePremiumAccessInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
@@ -60,6 +64,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleReset
 import com.thomaskioko.tvmaniac.settings.presenter.PosterWidthSelected
 import com.thomaskioko.tvmaniac.settings.presenter.QuickRateToggled
 import com.thomaskioko.tvmaniac.settings.presenter.SeasonOrderToggled
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabelsMapper
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.ShowLogoutDialog
@@ -106,8 +111,6 @@ class SettingsPresenterTest {
     private val navigator = FakeNavigator()
     private val subscriptionManager = FakeSubscriptionManager()
     private val backupRepository = FakeBackupRepository()
-    private val backupDestination = FakeBackupDestination()
-    private val backupDestinationBuilder = FakeBackupDestinationBuilder(backupDestination)
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -120,9 +123,10 @@ class SettingsPresenterTest {
             datastoreRepository = datastoreRepository,
             userRepository = userRepository,
             accountManager = accountManager,
-            subscriptionManager = subscriptionManager,
+            observePremiumAccessInteractor = ObservePremiumAccessInteractor(subscriptionManager),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             localizer = localizer,
+            labelsMapper = SettingsLabelsMapper(localizer),
             logger = fakeLogger,
             authManagers = mapOf(
                 SyncProviderSource.TRAKT to authManager,
@@ -144,26 +148,38 @@ class SettingsPresenterTest {
                 datastoreRepository = datastoreRepository,
             ),
             navigator = navigator,
-            pushPendingChangesInteractor = PushPendingChangesInteractor(
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                libraryRepository = libraryRepository,
+            prepareAccountSwitchInteractor = PrepareAccountSwitchInteractor(
+                pushPendingChangesInteractor = PushPendingChangesInteractor(
+                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                    libraryRepository = libraryRepository,
+                ),
+                countUnsavedChanges = CountUnsavedChanges(
+                    libraryRepository = libraryRepository,
+                    watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
+                    traktListRepository = traktListRepository,
+                ),
+                logger = fakeLogger,
             ),
-            countUnsavedChanges = CountUnsavedChanges(
-                libraryRepository = libraryRepository,
-                watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                traktListRepository = traktListRepository,
-            ),
-            switchAccountInteractor = SwitchAccountInteractor(
-                logoutHandler = FakeLogoutHandler(),
+            connectAndSwitchProviderInteractor = ConnectAndSwitchProviderInteractor(
+                authManagers = mapOf(
+                    SyncProviderSource.TRAKT to authManager,
+                    SyncProviderSource.SIMKL to simklAuthManager,
+                ),
                 accountManager = accountManager,
-                resyncProfile = {},
-                resyncLibrary = {},
-                resyncContinueWatching = {},
-                appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
+                switchAccountInteractor = SwitchAccountInteractor(
+                    logoutHandler = FakeLogoutHandler(),
+                    accountManager = accountManager,
+                    resyncProfile = {},
+                    resyncLibrary = {},
+                    resyncContinueWatching = {},
+                    appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
+                ),
             ),
-            rewatchRepository = FakeRewatchRepository(),
-            backupRepository = backupRepository,
-            backupDestinationBuilder = backupDestinationBuilder,
+            observeRewatchSupportInteractor = ObserveRewatchSupportInteractor(
+                accountManager = accountManager,
+                rewatchRepository = FakeRewatchRepository(),
+            ),
+            exportBackupInteractor = ExportBackupInteractor(backupRepository),
         )
     }
 
@@ -705,11 +721,11 @@ class SettingsPresenterTest {
     fun `should report unlocked locks given full access`() = runTest {
         presenter.state.test {
             testScheduler.advanceUntilIdle()
-            val locks = expectMostRecentItem().locks
-            locks.customThemesLocked shouldBe false
-            locks.posterStyleLocked shouldBe false
-            locks.episodeNotificationsLocked shouldBe false
-            locks.quickRateLocked shouldBe false
+            val premium = expectMostRecentItem().premium
+            premium.customThemesLocked shouldBe false
+            premium.posterStyleLocked shouldBe false
+            premium.episodeNotificationsLocked shouldBe false
+            premium.quickRateLocked shouldBe false
         }
     }
 
@@ -721,13 +737,13 @@ class SettingsPresenterTest {
 
         presenter.state.test {
             testScheduler.advanceUntilIdle()
-            val locks = expectMostRecentItem().locks
-            locks.customThemesLocked shouldBe true
-            locks.posterStyleLocked shouldBe true
-            locks.episodeNotificationsLocked shouldBe true
-            locks.quickRateLocked shouldBe true
-            locks.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
-            locks.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)
+            val premium = expectMostRecentItem().premium
+            premium.customThemesLocked shouldBe true
+            premium.posterStyleLocked shouldBe true
+            premium.episodeNotificationsLocked shouldBe true
+            premium.quickRateLocked shouldBe true
+            premium.badgeText shouldBe localizer.getString(StringResourceKey.LabelPremiumBadge)
+            premium.upgradeText shouldBe localizer.getString(StringResourceKey.LabelUpgradeToPremium)
         }
     }
 
@@ -846,7 +862,7 @@ class SettingsPresenterTest {
         testScheduler.advanceUntilIdle()
 
         presenter.state.test {
-            expectMostRecentItem().locks.backupLocked shouldBe true
+            expectMostRecentItem().premium.backupLocked shouldBe true
         }
     }
 
@@ -859,8 +875,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupDestinationBuilder.lastLocation shouldBe null
-        backupRepository.lastDestination shouldBe null
+        backupRepository.lastWriteLocation shouldBe null
     }
 
     @Test
@@ -895,13 +910,12 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupDestinationBuilder.lastLocation shouldBe LOCATION
-        backupRepository.lastDestination shouldBe backupDestination
+        backupRepository.lastWriteLocation shouldBe LOCATION
 
         presenter.state.test {
             val state = expectMostRecentItem()
             state.backup.isExporting shouldBe false
-            state.message shouldBe null
+            state.message.shouldNotBeNull().type shouldBe UiMessageType.Success
         }
     }
 

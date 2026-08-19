@@ -22,6 +22,10 @@ graph TB
     direction TB
     :data:datastore:api[api]:::multiplatform
   end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :domain
     direction TB
     :domain:settings[settings]:::multiplatform
@@ -39,6 +43,7 @@ graph TB
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
   :domain:settings --> :data:datastore:api
+  :domain:settings --> :data:subscription:api
   :domain:settings --> :domain:theme
   :domain:theme --> :i18n:generator
 

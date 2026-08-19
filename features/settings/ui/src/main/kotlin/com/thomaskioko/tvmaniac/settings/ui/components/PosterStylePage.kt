@@ -64,15 +64,15 @@ internal fun PosterStylePage(
     onAction: (SettingsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val locked = state.locks.posterStyleLocked
+    val locked = state.premium.posterStyleLocked
     val labels = state.labels.posterStyle
 
     PremiumOverlay(
         locked = locked,
-        badgeText = state.locks.badgeText,
-        title = state.locks.themesLockedTitle,
-        message = state.locks.themesLockedMessage,
-        actionText = state.locks.upgradeText,
+        badgeText = state.premium.badgeText,
+        title = state.premium.themesLockedTitle,
+        message = state.premium.themesLockedMessage,
+        actionText = state.premium.upgradeText,
         onActionClick = { onAction(UpgradeToPremiumClicked) },
         modifier = modifier
             .fillMaxSize()

@@ -18,9 +18,17 @@ graph TB
     direction TB
     :core:logger:api[api]:::multiplatform
   end
+  subgraph :core:syncstate
+    direction TB
+    :core:syncstate:api[api]:::multiplatform
+  end
   subgraph :core:util
     direction TB
     :core:util:api[api]:::multiplatform
+  end
+  subgraph :data:account-manager
+    direction TB
+    :data:account-manager:api[api]:::multiplatform
   end
   subgraph :data:backup
     direction TB
@@ -35,6 +43,18 @@ graph TB
     direction TB
     :data:datastore:api[api]:::multiplatform
   end
+  subgraph :data:episode
+    direction TB
+    :data:episode:api[api]:::multiplatform
+  end
+  subgraph :data:followedshows
+    direction TB
+    :data:followedshows:api[api]:::multiplatform
+  end
+  subgraph :data:upnext
+    direction TB
+    :data:upnext:api[api]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:generator[generator]:::multiplatform
@@ -43,14 +63,21 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:view --> :core:logger:api
+  :data:account-manager:api --> :data:database:sqldelight
   :data:backup:implementation --> :core:appconfig:api
   :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:syncstate:api
   :data:backup:implementation --> :core:util:api
   :data:backup:implementation --> :data:backup:api
   :data:backup:implementation --> :data:database:sqldelight
   :data:backup:implementation --> :data:datastore:api
+  :data:backup:implementation --> :data:episode:api
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
+  :data:episode:api --> :data:account-manager:api
+  :data:episode:api --> :data:database:sqldelight
+  :data:episode:api --> :data:followedshows:api
+  :data:episode:api --> :data:upnext:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

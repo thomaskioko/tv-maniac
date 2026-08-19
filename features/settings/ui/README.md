@@ -143,6 +143,7 @@ graph TB
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
+    :domain:backup[backup]:::multiplatform
     :domain:continue-watching[continue-watching]:::multiplatform
     :domain:episode[episode]:::multiplatform
     :domain:library[library]:::multiplatform
@@ -209,6 +210,7 @@ graph TB
   :data:user:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:account-switcher --> :core:base
+  :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
@@ -217,6 +219,9 @@ graph TB
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
+  :domain:backup --> :core:base
+  :domain:backup --> :core:view
+  :domain:backup --> :data:backup:api
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
@@ -278,10 +283,12 @@ graph TB
   :domain:notifications --> :i18n:api
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
   :domain:settings --> :data:datastore:api
+  :domain:settings --> :data:subscription:api
   :domain:settings --> :domain:theme
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
@@ -316,8 +323,10 @@ graph TB
   :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
+  :features:settings:presenter --> :domain:backup
   :features:settings:presenter --> :domain:logout
   :features:settings:presenter --> :domain:notifications
+  :features:settings:presenter --> :domain:rewatch
   :features:settings:presenter --> :domain:settings
   :features:settings:presenter --> :domain:theme
   :features:settings:presenter -.-> :features:debug:nav
