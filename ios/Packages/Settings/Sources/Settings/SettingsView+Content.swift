@@ -183,16 +183,15 @@ extension SettingsView {
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
             providerName: uiState.activeProviderName ?? "",
-            providerLogoName: uiState.activeProvider?.name == "SIMKL" ? "SimklMono" : "TraktMono",
+            providerLogoName: uiState.activeProvider?.logoAssetName ?? SyncProviderSource.trakt.logoAssetName,
             authProviders: uiState.authProviders.map { option in
                 SwiftAuthProvider(
                     id: option.provider.name,
                     label: option.label,
-                    logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+                    logoName: option.provider.logoAssetName
                 )
             },
-            switchTargetLogoName: uiState.switchTargetProvider?
-                .name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
+            switchTargetLogoName: uiState.switchTargetProvider?.logoAssetName,
             switchActionLabel: uiState.switchActionLabel,
             isSwitching: uiState.isSwitching,
             showSwitchConfirmation: showingSwitchAlert,
