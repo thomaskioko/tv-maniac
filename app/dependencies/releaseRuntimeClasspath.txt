@@ -187,7 +187,7 @@ com.google.android.gms:play-services-tasks:18.4.0
 com.google.errorprone:error_prone_annotations:2.26.0
 com.google.firebase:firebase-abt:21.1.1
 com.google.firebase:firebase-annotations:17.0.0
-com.google.firebase:firebase-bom:34.17.0
+com.google.firebase:firebase-bom:34.18.0
 com.google.firebase:firebase-common:22.2.0
 com.google.firebase:firebase-components:19.0.0
 com.google.firebase:firebase-config-interop:16.0.1
