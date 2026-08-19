@@ -89,7 +89,7 @@ LIMIT 1;
 rewatchSessionCount:
 SELECT COUNT(*) FROM rewatch_session;
 
--- A restore inserts stub shows carrying only a tmdb id and a title, because the backup file holds no
+-- A restore inserts stub shows with only a tmdb id and a title, because the backup file holds no
 -- cached metadata. This finds the ones worth refilling: a stub the user either follows or has watch
 -- history for. A stub reached only by a rating is left alone.
 showsNeedingMetadata:
