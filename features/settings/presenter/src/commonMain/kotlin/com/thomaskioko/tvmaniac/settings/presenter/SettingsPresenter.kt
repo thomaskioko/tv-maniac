@@ -132,7 +132,9 @@ public class SettingsPresenter internal constructor(
         accountSwitchFlag.observe(),
         observePremiumAccessInteractor.flow,
         observeRewatchSupportInteractor.flow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess, supportsRewatch ->
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount,
+        preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess, supportsRewatch,
+        ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
@@ -379,12 +381,10 @@ public class SettingsPresenter internal constructor(
     }
 
     private fun handleBackupExportClicked() {
-        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
     }
 
     private fun handleBackupDestination(location: String) {
-        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels) }
         coroutineScope.launch {
             exportBackupInteractor(ExportBackupInteractor.Params(location))
@@ -400,17 +400,14 @@ public class SettingsPresenter internal constructor(
     }
 
     private fun handleImportClicked() {
-        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels.copy(confirm = buildRestoreConfirm())) }
     }
 
     private fun handleImportConfirmed() {
-        if (state.value.premium.backupLocked) return
         _state.update { it.copy(backup = backupLabels.copy(awaitingSource = true)) }
     }
 
     private fun handleBackupSource(location: String) {
-        if (state.value.premium.backupLocked) return
         coroutineScope.launch {
             _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
             when (val result = restoreBackupInteractor.executeSync(RestoreBackupInteractor.Params(location))) {

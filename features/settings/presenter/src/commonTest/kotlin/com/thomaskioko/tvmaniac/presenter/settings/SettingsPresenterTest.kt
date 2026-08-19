@@ -56,7 +56,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
-import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
@@ -879,18 +878,6 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun `should not write a backup given the page is locked`() = runTest {
-        subscriptionManager.setAccess(SubscriptionFeature.CloudBackup, false)
-        testScheduler.advanceUntilIdle()
-
-        presenter.dispatch(BackupExportClicked)
-        presenter.dispatch(BackupDestinationSelected(LOCATION))
-        testScheduler.advanceUntilIdle()
-
-        backupRepository.lastWriteLocation shouldBe null
-    }
-
-    @Test
     fun `should ask for a destination given export is tapped`() = runTest {
         testScheduler.advanceUntilIdle()
 
@@ -987,19 +974,6 @@ class SettingsPresenterTest {
             backup.confirm.shouldBeNull()
             backup.awaitingSource shouldBe false
         }
-        backupRepository.lastRestoreLocation shouldBe null
-    }
-
-    @Test
-    fun `should not restore a backup given the page is locked`() = runTest {
-        subscriptionManager.setAccess(SubscriptionFeature.CloudBackup, false)
-        testScheduler.advanceUntilIdle()
-
-        presenter.dispatch(BackupImportClicked)
-        presenter.dispatch(BackupImportConfirmed)
-        presenter.dispatch(BackupSourceSelected(LOCATION))
-        testScheduler.advanceUntilIdle()
-
         backupRepository.lastRestoreLocation shouldBe null
     }
 
