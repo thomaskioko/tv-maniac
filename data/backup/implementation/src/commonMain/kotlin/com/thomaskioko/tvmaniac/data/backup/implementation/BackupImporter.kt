@@ -23,7 +23,7 @@ internal class BackupImporter(
     fun import(
         backup: BackupFile,
         includeSpecials: Boolean,
-        addToConnectedAccount: Boolean,
+        syncWithConnectedAccount: Boolean,
     ): RestoreSummary = transactionRunner {
         clearRestoredTables()
 
@@ -45,7 +45,7 @@ internal class BackupImporter(
             episodeCount += restoreShow(
                 show = show,
                 showId = showId,
-                addToConnectedAccount = addToConnectedAccount,
+                syncWithConnectedAccount = syncWithConnectedAccount,
             )
             skippedSeasonRatings += restoreSeasonRatings(show, showId)
             skippedEpisodeRatings += restoreEpisodeRatings(show, showId)
@@ -128,10 +128,10 @@ internal class BackupImporter(
         }
     }
 
-    private fun restoreShow(show: BackupShow, showId: Id<ShowId>, addToConnectedAccount: Boolean): Int {
+    private fun restoreShow(show: BackupShow, showId: Id<ShowId>, syncWithConnectedAccount: Boolean): Int {
         show.followedAt?.let { followedAt ->
             when {
-                addToConnectedAccount -> restoreQueries.restoreFollowedShowForUpload(
+                syncWithConnectedAccount -> restoreQueries.restoreFollowedShowForUpload(
                     showId = showId,
                     tmdbId = Id(show.tmdbId),
                     followedAt = followedAt,

@@ -123,7 +123,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should mark a restored followed show for upload given user is signed in`() = runTest(testDispatcher) {
-        repository.restoreBackup(fileWith(breakingBad()), addToConnectedAccount = true)
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = true)
 
         database.followedShowsQueries.entries().executeAsList()
             .all { it.pending_action == PendingAction.UPLOAD.value } shouldBe true
@@ -131,7 +131,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should survive a library sync given user is signed in`() = runTest(testDispatcher) {
-        repository.restoreBackup(fileWith(breakingBad()), addToConnectedAccount = true)
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = true)
 
         val survivors = database.followedShowsQueries.entriesWithNoPendingAction().executeAsList()
 
@@ -141,7 +141,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
     @Test
     fun `should be removed by a library sync given user is signed out`() = runTest(testDispatcher) {
-        repository.restoreBackup(fileWith(breakingBad()), addToConnectedAccount = false)
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = false)
 
         val exposed = database.followedShowsQueries.entriesWithNoPendingAction().executeAsList()
 

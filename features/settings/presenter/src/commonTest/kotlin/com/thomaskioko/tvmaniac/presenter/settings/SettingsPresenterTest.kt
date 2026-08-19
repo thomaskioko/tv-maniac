@@ -1057,7 +1057,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupSourceSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupRepository.lastRestoreAddedToConnectedAccount shouldBe true
+        backupRepository.lastRestoreSyncedWithConnectedAccount shouldBe true
     }
 
     @Test
@@ -1069,7 +1069,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupSourceSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupRepository.lastRestoreAddedToConnectedAccount shouldBe false
+        backupRepository.lastRestoreSyncedWithConnectedAccount shouldBe false
     }
 
     @Test
@@ -1082,7 +1082,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupSourceSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupRepository.lastRestoreAddedToConnectedAccount shouldBe false
+        backupRepository.lastRestoreSyncedWithConnectedAccount shouldBe false
     }
 
     @Test

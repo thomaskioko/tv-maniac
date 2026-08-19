@@ -23,7 +23,7 @@ public class FakeBackupRepository : BackupRepository {
         private set
 
     public var lastRestoreLocation: String? = null
-    public var lastRestoreAddedToConnectedAccount: Boolean? = null
+    public var lastRestoreSyncedWithConnectedAccount: Boolean? = null
         private set
 
     private var showsNeedingMetadata: List<Long> = emptyList()
@@ -59,9 +59,9 @@ public class FakeBackupRepository : BackupRepository {
         return writeResult
     }
 
-    override suspend fun restoreBackup(location: String, addToConnectedAccount: Boolean): RestoreResult {
+    override suspend fun restoreBackup(location: String, syncWithConnectedAccount: Boolean): RestoreResult {
         lastRestoreLocation = location
-        lastRestoreAddedToConnectedAccount = addToConnectedAccount
+        lastRestoreSyncedWithConnectedAccount = syncWithConnectedAccount
         return restoreResult
     }
 

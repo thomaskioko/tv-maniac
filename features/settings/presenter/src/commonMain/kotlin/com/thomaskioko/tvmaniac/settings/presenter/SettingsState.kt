@@ -98,7 +98,7 @@ public data class BackupSettings(
     val importDescription: String = "",
     val isImporting: Boolean = false,
     val awaitingSource: Boolean = false,
-    val addToConnectedAccount: Boolean = false,
+    val syncWithConnectedAccount: Boolean = false,
     val confirm: BackupRestoreConfirmationDialog? = null,
     val summary: BackupRestoreSummary? = null,
 )

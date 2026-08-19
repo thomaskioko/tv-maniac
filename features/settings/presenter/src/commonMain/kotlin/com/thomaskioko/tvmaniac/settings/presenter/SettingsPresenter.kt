@@ -180,7 +180,7 @@ public class SettingsPresenter internal constructor(
                 isImporting = currentState.backup.isImporting,
                 awaitingDestination = currentState.backup.awaitingDestination,
                 awaitingSource = currentState.backup.awaitingSource,
-                addToConnectedAccount = currentState.backup.addToConnectedAccount,
+                syncWithConnectedAccount = currentState.backup.syncWithConnectedAccount,
                 confirm = currentState.backup.confirm,
                 summary = currentState.backup.summary,
             ),
@@ -363,9 +363,9 @@ public class SettingsPresenter internal constructor(
 
             is BackupImportClicked -> handleImportClicked()
 
-            is BackupImportConfirmed -> handleImportConfirmed(addToConnectedAccount = false)
+            is BackupImportConfirmed -> handleImportConfirmed(syncWithConnectedAccount = false)
 
-            is BackupImportConfirmedWithAccount -> handleImportConfirmed(addToConnectedAccount = true)
+            is BackupImportConfirmedWithAccount -> handleImportConfirmed(syncWithConnectedAccount = true)
 
             is BackupImportCancelled -> _state.update { it.copy(backup = backupLabels) }
 
@@ -410,24 +410,24 @@ public class SettingsPresenter internal constructor(
         _state.update { it.copy(backup = backupLabels.copy(confirm = buildRestoreConfirm())) }
     }
 
-    private fun handleImportConfirmed(addToConnectedAccount: Boolean) {
+    private fun handleImportConfirmed(syncWithConnectedAccount: Boolean) {
         _state.update {
             it.copy(
                 backup = backupLabels.copy(
                     awaitingSource = true,
-                    addToConnectedAccount = addToConnectedAccount,
+                    syncWithConnectedAccount = syncWithConnectedAccount,
                 ),
             )
         }
     }
 
     private fun handleBackupSource(location: String) {
-        val addToConnectedAccount = _state.value.backup.addToConnectedAccount
+        val syncWithConnectedAccount = _state.value.backup.syncWithConnectedAccount
         coroutineScope.launch {
             _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
             val params = RestoreBackupInteractor.Params(
                 location = location,
-                addToConnectedAccount = addToConnectedAccount,
+                syncWithConnectedAccount = syncWithConnectedAccount,
             )
             when (val result = restoreBackupInteractor.executeSync(params)) {
                 is RestoreResult.Restored ->

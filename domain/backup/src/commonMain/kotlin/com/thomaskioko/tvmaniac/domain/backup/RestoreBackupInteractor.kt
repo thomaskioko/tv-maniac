@@ -14,13 +14,13 @@ public class RestoreBackupInteractor(
 
     public data class Params(
         val location: String,
-        val addToConnectedAccount: Boolean = false,
+        val syncWithConnectedAccount: Boolean = false,
     )
 
     override suspend fun doWork(params: Params): RestoreResult {
         val result = backupRepository.restoreBackup(
             location = params.location,
-            addToConnectedAccount = params.addToConnectedAccount,
+            syncWithConnectedAccount = params.syncWithConnectedAccount,
         )
         if (result is RestoreResult.Restored) {
             taskScheduler.scheduleAndExecute(RestoredShowsRefillWorker.REQUEST)

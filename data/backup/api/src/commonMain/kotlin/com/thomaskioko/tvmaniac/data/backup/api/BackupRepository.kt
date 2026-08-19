@@ -7,7 +7,7 @@ public interface BackupRepository {
 
     public suspend fun restoreBackup(
         location: String,
-        addToConnectedAccount: Boolean = false,
+        syncWithConnectedAccount: Boolean = false,
     ): RestoreResult
 
     public suspend fun showsNeedingMetadata(): List<Long>
