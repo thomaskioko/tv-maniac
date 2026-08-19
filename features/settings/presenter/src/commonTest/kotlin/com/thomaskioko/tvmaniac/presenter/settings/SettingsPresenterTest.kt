@@ -1000,6 +1000,25 @@ class SettingsPresenterTest {
     }
 
     @Test
+    fun `should resolve the provider name given an account is connected`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().activeProviderName shouldBe SyncProviderSource.SIMKL.displayName
+        }
+    }
+
+    @Test
+    fun `should resolve no provider name given user is signed out`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().activeProviderName.shouldBeNull()
+        }
+    }
+
+    @Test
     fun `should name simkl in the account choice given simkl is connected`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.SIMKL)
         testScheduler.advanceUntilIdle()
