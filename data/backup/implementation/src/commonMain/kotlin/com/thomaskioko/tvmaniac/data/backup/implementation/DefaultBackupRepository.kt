@@ -114,6 +114,10 @@ public class DefaultBackupRepository(
         }
     }
 
+    override suspend fun showsNeedingMetadata(): List<Long> = withContext(dispatchers.databaseRead) {
+        database.restoreQueries.showsNeedingMetadata().executeAsList().map { it.id }
+    }
+
     private suspend fun readShows(): List<BackupShow> = withContext(dispatchers.databaseRead) {
         val followedAt = queries.backupFollowedShows().executeAsList()
             .associate { it.tmdb_id.id to it.followed_at }

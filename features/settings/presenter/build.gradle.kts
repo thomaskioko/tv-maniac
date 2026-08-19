@@ -46,6 +46,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.tasks.testing)
                 implementation(projects.core.base.testing)
                 implementation(projects.data.backup.testing)
                 implementation(projects.core.featureFlags.testing)
