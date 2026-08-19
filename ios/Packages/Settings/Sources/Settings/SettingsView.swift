@@ -22,8 +22,6 @@ public struct SettingsView: View {
     @State private var showingBackupExporter = false
     @State private var showingImportConfirm = false
     @State private var showingImportSource = false
-    @State private var pendingImportSummary: BackupRestoreSummary?
-    @State private var showingImportSummary = false
     @Environment(\.openURL) var openURL
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -129,9 +127,7 @@ public struct SettingsView: View {
             uiState: uiState,
             presenter: presenter,
             showingConfirm: $showingImportConfirm,
-            showingSource: $showingImportSource,
-            pendingSummary: $pendingImportSummary,
-            showingSummary: $showingImportSummary
+            showingSource: $showingImportSource
         )
         .screenTag(SettingsTestTags.shared.SCREEN_TEST_TAG)
     }
