@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Close
@@ -138,44 +136,45 @@ private fun BackupPageContent(
             .fillMaxSize()
             .testTag(SettingsTestTags.BACKUP_LOCKED_TEST_TAG),
     ) {
-        if (summary != null) {
-            BackupRestoreSummaryContent(
-                summary = summary,
-                onDismiss = { onAction(BackupSummaryDismissed) },
-                modifier = Modifier.fillMaxSize(),
-            )
-        } else {
-            LazyColumn(modifier = Modifier.fillMaxSize().testTag(SettingsTestTags.LIST_TEST_TAG)) {
-                item { Spacer(modifier = Modifier.height(TvManiacSpacing.medium)) }
+        LazyColumn(modifier = Modifier.fillMaxSize().testTag(SettingsTestTags.LIST_TEST_TAG)) {
+            item { Spacer(modifier = Modifier.height(TvManiacSpacing.medium)) }
 
-                item {
-                    SettingsGroup {
-                        SettingsNavigationRow(
-                            modifier = Modifier.testTag(SettingsTestTags.BACKUP_EXPORT_ROW_TEST_TAG),
-                            icon = Icons.Filled.Backup,
-                            title = backup.exportTitle,
-                            description = backup.exportDescription,
-                            enabled = !locked && !backup.isExporting,
-                            isLoading = backup.isExporting,
-                            loadingTestTag = SettingsTestTags.BACKUP_EXPORTING_INDICATOR_TEST_TAG,
-                            onClick = { onAction(BackupExportClicked) },
-                        )
-                        SettingsGroupDivider()
-                        SettingsNavigationRow(
-                            modifier = Modifier.testTag(SettingsTestTags.BACKUP_IMPORT_ROW_TEST_TAG),
-                            icon = Icons.Filled.SettingsBackupRestore,
-                            title = backup.importTitle,
-                            description = backup.importDescription,
-                            enabled = !locked && !backup.isImporting,
-                            isLoading = backup.isImporting,
-                            loadingTestTag = SettingsTestTags.BACKUP_IMPORTING_INDICATOR_TEST_TAG,
-                            onClick = { onAction(BackupImportClicked) },
-                        )
-                    }
+            item {
+                SettingsGroup {
+                    SettingsNavigationRow(
+                        modifier = Modifier.testTag(SettingsTestTags.BACKUP_EXPORT_ROW_TEST_TAG),
+                        icon = Icons.Filled.Backup,
+                        title = backup.exportTitle,
+                        description = backup.exportDescription,
+                        enabled = !locked && !backup.isExporting,
+                        isLoading = backup.isExporting,
+                        loadingTestTag = SettingsTestTags.BACKUP_EXPORTING_INDICATOR_TEST_TAG,
+                        onClick = { onAction(BackupExportClicked) },
+                    )
+                    SettingsGroupDivider()
+                    SettingsNavigationRow(
+                        modifier = Modifier.testTag(SettingsTestTags.BACKUP_IMPORT_ROW_TEST_TAG),
+                        icon = Icons.Filled.SettingsBackupRestore,
+                        title = backup.importTitle,
+                        description = backup.importDescription,
+                        enabled = !locked && !backup.isImporting,
+                        isLoading = backup.isImporting,
+                        loadingTestTag = SettingsTestTags.BACKUP_IMPORTING_INDICATOR_TEST_TAG,
+                        onClick = { onAction(BackupImportClicked) },
+                    )
                 }
-
-                item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
             }
+
+            if (summary != null) {
+                item {
+                    BackupRestoreSummaryContent(
+                        summary = summary,
+                        onDismiss = { onAction(BackupSummaryDismissed) },
+                    )
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
         }
     }
 
@@ -214,7 +213,7 @@ private fun BackupRestoreSummaryContent(
 ) {
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
             .testTag(SettingsTestTags.BACKUP_RESTORE_SUMMARY_TEST_TAG),
     ) {
         Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
