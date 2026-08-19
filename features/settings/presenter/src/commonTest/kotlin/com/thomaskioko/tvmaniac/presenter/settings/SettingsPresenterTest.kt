@@ -932,6 +932,19 @@ class SettingsPresenterTest {
     }
 
     @Test
+    fun `should carry the backup labels given the state is first read`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val backup = expectMostRecentItem().backup
+            backup.exportTitle shouldBe localizer.getString(StringResourceKey.SettingsBackupExportTitle)
+            backup.exportDescription shouldBe localizer.getString(StringResourceKey.SettingsBackupExportDescription)
+            backup.importTitle shouldBe localizer.getString(StringResourceKey.SettingsBackupImportTitle)
+            backup.importDescription shouldBe localizer.getString(StringResourceKey.SettingsBackupImportDescription)
+        }
+    }
+
+    @Test
     fun `should ask for confirmation given restore is tapped`() = runTest {
         testScheduler.advanceUntilIdle()
 

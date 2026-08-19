@@ -208,11 +208,14 @@ extension SettingsScreenTest {
         )
     }
 
-    func backupContent(locked: Bool = false, isExporting: Bool = false) -> SettingsBackupContent {
+    func backupContent(locked: Bool = false, isExporting: Bool = false, isImporting: Bool = false) -> SettingsBackupContent {
         SettingsBackupContent(
             exportTitle: "Save a backup",
             exportDescription: "Write your shows, watch history, ratings and settings to a file",
             isExporting: isExporting,
+            importTitle: "Restore a backup",
+            importDescription: "Replace your shows, watch history, ratings and settings from a file",
+            isImporting: isImporting,
             isLocked: locked,
             lockedBadgeText: locked ? "Premium" : "",
             lockedTitle: locked ? "Backup is a Premium feature" : "",
@@ -220,6 +223,7 @@ extension SettingsScreenTest {
             lockedActionText: locked ? "Upgrade to Premium" : "",
             lockedAccessibilityLabel: locked ? "Locked" : "",
             onExport: {},
+            onImport: {},
             onUpgradeClick: {}
         )
     }
