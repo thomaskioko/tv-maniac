@@ -600,4 +600,17 @@
     <string name="error_backup_sync_in_progress">Eine Synchronisierung läuft. Warten Sie, bis sie abgeschlossen ist, und versuchen Sie es erneut.</string>
     <string name="label_backup_locked_title">Sichern ist eine Premium-Funktion</string>
     <string name="label_backup_locked_message">Upgraden Sie auf Premium, um Ihre Serien zu sichern und wiederherzustellen.</string>
+
+    <string name="dialog_button_just_this">Nur diese</string>
+    <string name="dialog_button_just_this_season">Nur diese Staffel</string>
+    <string name="dialog_button_mark_all">Alle markieren</string>
+    <string name="dialog_button_mark_all_seasons">Alle Staffeln markieren</string>
+    <string name="dialog_message_episode_unwatched">Möchten Sie diese Episode wirklich als ungesehen markieren?</string>
+    <string name="dialog_title_episode_unwatched">Episode als ungesehen markieren?</string>
+    <string name="dialog_title_mark_previous">Vorherige Episoden markieren?</string>
+    <string name="dialog_title_mark_previous_seasons">Vorherige Staffeln markieren?</string>
+    <string name="menu_mark_watched">Als gesehen markieren</string>
+    <string name="menu_open_season">Staffel öffnen</string>
+    <string name="menu_open_show">Serie öffnen</string>
+    <string name="menu_unfollow_show">Nicht mehr folgen</string>
 </resources>

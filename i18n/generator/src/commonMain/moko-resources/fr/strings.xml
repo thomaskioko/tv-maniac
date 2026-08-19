@@ -594,4 +594,21 @@
     <string name="error_backup_sync_in_progress">Une synchronisation est en cours. Attendez qu\'elle se termine, puis réessayez.</string>
     <string name="label_backup_locked_title">La sauvegarde est une fonctionnalité Premium</string>
     <string name="label_backup_locked_message">Passez à Premium pour sauvegarder et restaurer vos séries.</string>
+
+    <string name="dialog_button_just_this">Uniquement celui-ci</string>
+    <string name="dialog_button_just_this_season">Uniquement cette saison</string>
+    <string name="dialog_button_mark_all">Tout marquer</string>
+    <string name="dialog_button_mark_all_seasons">Marquer toutes les saisons</string>
+    <string name="dialog_message_episode_unwatched">Voulez-vous vraiment marquer cet épisode comme non vu ?</string>
+    <string name="dialog_title_episode_unwatched">Marquer l\'épisode comme non vu ?</string>
+    <string name="dialog_title_mark_previous">Marquer les épisodes précédents ?</string>
+    <string name="dialog_title_mark_previous_seasons">Marquer les saisons précédentes ?</string>
+    <string name="label_action_more">Plus</string>
+    <string name="label_action_watch_again">Revoir</string>
+    <string name="label_watch_again_confirm_message">Les épisodes que vous marquez à partir de maintenant comptent pour un nouveau visionnage de « %1$s ».</string>
+    <string name="label_watch_again_confirm_title">Revoir ?</string>
+    <string name="menu_mark_watched">Marquer comme vu</string>
+    <string name="menu_open_season">Ouvrir la saison</string>
+    <string name="menu_open_show">Ouvrir la série</string>
+    <string name="menu_unfollow_show">Ne plus suivre</string>
 </resources>
