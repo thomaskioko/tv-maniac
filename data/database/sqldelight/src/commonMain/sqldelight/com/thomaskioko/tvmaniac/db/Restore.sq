@@ -102,3 +102,35 @@ WHERE tvshow.overview = ''
     SELECT show_id FROM watched_episodes WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
   );
 
+restoreSeason:
+INSERT INTO season(id, show_id, season_number, episode_count, title, overview, image_url)
+VALUES(:seasonId, :showId, :seasonNumber, :episodeCount, :title, :overview, :imageUrl)
+ON CONFLICT(id) DO UPDATE SET
+    show_id = excluded.show_id,
+    season_number = excluded.season_number,
+    episode_count = excluded.episode_count,
+    title = excluded.title,
+    overview = excluded.overview,
+    image_url = excluded.image_url;
+
+restoreEpisode:
+INSERT INTO episode(
+    id, season_id, show_id, episode_number, title, overview, runtime, vote_count, ratings,
+    image_url, first_aired
+)
+VALUES(
+    :episodeId, :seasonId, :showId, :episodeNumber, :title, :overview, :runtime, :voteCount,
+    :ratings, :imageUrl, :firstAired
+)
+ON CONFLICT(id) DO UPDATE SET
+    season_id = excluded.season_id,
+    show_id = excluded.show_id,
+    episode_number = excluded.episode_number,
+    title = excluded.title,
+    overview = excluded.overview,
+    runtime = excluded.runtime,
+    vote_count = excluded.vote_count,
+    ratings = excluded.ratings,
+    image_url = excluded.image_url,
+    first_aired = excluded.first_aired;
+
