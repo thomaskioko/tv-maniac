@@ -349,6 +349,23 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         restored.posterPath shouldBe "/poster.jpg"
     }
 
+    @Test
+    fun `should import a file written before seasons were added`() = runTest(testDispatcher) {
+        val result = repository.restoreBackup(fileWith(VERSION_ONE_FILE))
+
+        val summary = result.shouldBeInstanceOf<RestoreResult.Restored>().summary
+        summary.showCount shouldBe 1
+        summary.episodeCount shouldBe 1
+        watchedEpisodes() shouldHaveSize 1
+    }
+
+    @Test
+    fun `should leave a show from an older file for the refill`() = runTest(testDispatcher) {
+        repository.restoreBackup(fileWith(VERSION_ONE_FILE))
+
+        repository.showsNeedingMetadata() shouldHaveSize 1
+    }
+
     private fun buildRepository(transactionRunner: DatabaseTransactionRunner) = DefaultBackupRepository(
         database = database,
         datastoreRepository = datastoreRepository,
@@ -462,6 +479,12 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         private const val SHOW_TITLE = "Breaking Bad"
         private const val NOW = 1_700_000_000_000L
         private const val SOURCE = "content://downloads/backup.json"
+        private val VERSION_ONE_FILE = """
+            {"version":1,"createdAt":"2026-01-01T00:00:00Z","appVersion":"1.0.0","shows":[
+              {"tmdbId":$BREAKING_BAD_TMDB_ID,"title":"$SHOW_TITLE","followedAt":$NOW,
+               "watchedEpisodes":[{"season":1,"episode":1,"watchedAt":$NOW}]}
+            ]}
+        """.trimIndent()
         private val SEASON_ID = Id<SeasonId>(3572L)
     }
 }
