@@ -11,6 +11,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
@@ -190,7 +191,7 @@ class SettingsPresenterTest {
                 rewatchRepository = FakeRewatchRepository(),
             ),
             exportBackupInteractor = ExportBackupInteractor(backupRepository),
-            restoreBackupInteractor = RestoreBackupInteractor(backupRepository),
+            restoreBackupInteractor = RestoreBackupInteractor(backupRepository, FakeBackgroundTaskScheduler()),
         )
     }
 
@@ -932,7 +933,7 @@ class SettingsPresenterTest {
     }
 
     @Test
-    fun `should carry the backup labels given the state is first read`() = runTest {
+    fun `should include the backup labels given the state is first read`() = runTest {
         testScheduler.advanceUntilIdle()
 
         presenter.state.test {

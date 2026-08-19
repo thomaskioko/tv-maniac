@@ -1103,8 +1103,12 @@ graph TB
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
   :domain:backup --> :core:base
+  :domain:backup --> :core:logger:api
+  :domain:backup --> :core:network-util:api
+  :domain:backup --> :core:tasks:api
   :domain:backup --> :core:view
   :domain:backup --> :data:backup:api
+  :domain:backup --> :domain:showdetails
   :domain:calendar --> :core:base
   :domain:calendar --> :core:util:api
   :domain:calendar --> :data:calendar:api

@@ -69,7 +69,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should carry the format version given a backup is created`() = runTest(testDispatcher) {
+    fun `should include the format version given a backup is created`() = runTest(testDispatcher) {
         val backup = repository.createBackup()
 
         backup.version shouldBe BackupFormat.VERSION
@@ -133,7 +133,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
 
         val contents = BackupJson.encode(repository.createBackup())
 
-        contents shouldContain "\"tmdbId\": $BREAKING_BAD_TMDB_ID"
+        contents shouldContain "\"tmdbId\":$BREAKING_BAD_TMDB_ID"
         contents shouldNotContain "showId"
         contents shouldNotContain "episodeId"
         contents shouldNotContain "seasonId"

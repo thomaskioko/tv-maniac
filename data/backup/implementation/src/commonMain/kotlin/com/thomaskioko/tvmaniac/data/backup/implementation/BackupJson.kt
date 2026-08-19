@@ -9,9 +9,9 @@ import kotlinx.serialization.json.jsonPrimitive
 public object BackupJson {
 
     private val json = Json {
-        prettyPrint = true
         ignoreUnknownKeys = true
-        encodeDefaults = true
+        encodeDefaults = false
+        explicitNulls = false
     }
 
     public fun encode(backup: BackupFile): String = json.encodeToString(backup)
