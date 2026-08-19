@@ -241,4 +241,22 @@ class SettingsScreenTest: SnapshotTestCase {
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_Importing")
     }
+
+    func test_SettingsScreen_Backup_RestoreSummary() {
+        SettingsScreen(
+            state: makeState(page: .backup, authenticated: true, customBackupContent: backupContent(summary: restoreSummaryContent)),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_RestoreSummary")
+    }
+
+    func test_SettingsScreen_Backup_RestoreSummary_WithSkips() {
+        SettingsScreen(
+            state: makeState(page: .backup, authenticated: true, customBackupContent: backupContent(summary: restoreSummaryContentWithSkips)),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_RestoreSummary_WithSkips")
+    }
 }
