@@ -585,9 +585,12 @@
     <string name="settings_backup_import_description">Remplacer les données de cet appareil par un fichier de sauvegarde</string>
     <string name="settings_backup_restore_confirm_title">Restaurer cette sauvegarde ?</string>
     <string name="settings_backup_restore_confirm_message">Cela remplace les séries et l\'historique de cet appareil. Une copie de vos données actuelles est enregistrée au préalable.</string>
-    <string name="settings_backup_restore_confirm_message_connected">Cela remplace les séries et l\'historique de cet appareil. %1$s reste la référence et la prochaine synchronisation mettra les données à jour. Une copie de vos données actuelles est enregistrée au préalable.</string>
+    <string name="settings_backup_restore_confirm_message_connected">Cela remplace les séries et l\'historique de cet appareil. Une copie de vos données actuelles est enregistrée au préalable. Vous êtes connecté à %1$s, donc les séries que vous n\'y ajoutez pas seront supprimées lors de la prochaine synchronisation.</string>
     <string name="settings_backup_restore_confirm_button">Restaurer</string>
+    <string name="settings_backup_restore_confirm_account_button">Ajouter à %1$s</string>
+    <string name="settings_backup_restore_confirm_device_button">Sur cet appareil uniquement</string>
     <string name="settings_backup_restore_summary_title">Restauration terminée</string>
+    <string name="settings_backup_restore_summary_added_to_account">Ajouté à %1$s</string>
     <string name="settings_backup_restore_summary_rewatch">Les visionnages répétés n\'étaient pas inclus dans cette sauvegarde</string>
     <string name="error_backup_save_failed">Impossible d\'enregistrer la sauvegarde. Essayez un autre emplacement.</string>
     <string name="error_backup_read_failed">Impossible de lire ce fichier. Il est peut-être endommagé ou provient d\'une autre application.</string>

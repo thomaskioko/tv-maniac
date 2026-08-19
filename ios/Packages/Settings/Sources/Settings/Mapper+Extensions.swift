@@ -33,3 +33,12 @@ public extension BackupRestoreSummary {
         )
     }
 }
+
+// MARK: - SyncProviderSource Mapping
+
+public extension SyncProviderSource {
+    var logoAssetName: String {
+        if self == SyncProviderSource.simkl { return "SimklMono" }
+        return "TraktMono"
+    }
+}

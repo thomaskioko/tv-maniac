@@ -150,6 +150,7 @@ public class SettingsPresenter internal constructor(
             multiplePlaysEnabled = preferences.multiplePlaysEnabled,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
+            activeProviderName = activeProvider?.displayName,
             authProviders = authProviderOptions(simklEnabled),
             accountConnectedDescription = activeProvider?.let { connectedDescription(it) },
             switchTargetProvider = switchTarget,
@@ -179,6 +180,7 @@ public class SettingsPresenter internal constructor(
                 isImporting = currentState.backup.isImporting,
                 awaitingDestination = currentState.backup.awaitingDestination,
                 awaitingSource = currentState.backup.awaitingSource,
+                syncWithConnectedAccount = currentState.backup.syncWithConnectedAccount,
                 confirm = currentState.backup.confirm,
                 summary = currentState.backup.summary,
             ),
@@ -361,7 +363,9 @@ public class SettingsPresenter internal constructor(
 
             is BackupImportClicked -> handleImportClicked()
 
-            is BackupImportConfirmed -> handleImportConfirmed()
+            is BackupImportConfirmed -> handleImportConfirmed(syncWithConnectedAccount = false)
+
+            is BackupImportConfirmedWithAccount -> handleImportConfirmed(syncWithConnectedAccount = true)
 
             is BackupImportCancelled -> _state.update { it.copy(backup = backupLabels) }
 
@@ -406,14 +410,26 @@ public class SettingsPresenter internal constructor(
         _state.update { it.copy(backup = backupLabels.copy(confirm = buildRestoreConfirm())) }
     }
 
-    private fun handleImportConfirmed() {
-        _state.update { it.copy(backup = backupLabels.copy(awaitingSource = true)) }
+    private fun handleImportConfirmed(syncWithConnectedAccount: Boolean) {
+        _state.update {
+            it.copy(
+                backup = backupLabels.copy(
+                    awaitingSource = true,
+                    syncWithConnectedAccount = syncWithConnectedAccount,
+                ),
+            )
+        }
     }
 
     private fun handleBackupSource(location: String) {
+        val syncWithConnectedAccount = _state.value.backup.syncWithConnectedAccount
         coroutineScope.launch {
             _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
-            when (val result = restoreBackupInteractor.executeSync(RestoreBackupInteractor.Params(location))) {
+            val params = RestoreBackupInteractor.Params(
+                location = location,
+                syncWithConnectedAccount = syncWithConnectedAccount,
+            )
+            when (val result = restoreBackupInteractor.executeSync(params)) {
                 is RestoreResult.Restored ->
                     _state.update { it.copy(backup = backupLabels.copy(summary = buildRestoreSummary(result.summary))) }
 
@@ -444,20 +460,29 @@ public class SettingsPresenter internal constructor(
         )
     }
 
-    private fun buildRestoreConfirm(): BackupRestoreConfirm {
+    private fun buildRestoreConfirm(): BackupRestoreConfirmationDialog {
+        val title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle)
+        val cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary)
         val provider = state.value.activeProvider
-        return BackupRestoreConfirm(
-            title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle),
-            message = if (provider == null) {
-                localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage)
-            } else {
-                localizer.getString(
-                    StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
-                    provider.displayName,
-                )
-            },
-            confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
-            cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary),
+            ?: return BackupRestoreConfirmationDialog.Local(
+                title = title,
+                message = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage),
+                cancelLabel = cancelLabel,
+                confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
+            )
+
+        return BackupRestoreConfirmationDialog.Connected(
+            title = title,
+            message = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
+                provider.displayName,
+            ),
+            cancelLabel = cancelLabel,
+            accountLabel = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmAccountButton,
+                provider.displayName,
+            ),
+            deviceLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmDeviceButton),
         )
     }
 

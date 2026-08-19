@@ -122,6 +122,33 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should mark a restored followed show for upload given user is signed in`() = runTest(testDispatcher) {
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = true)
+
+        database.followedShowsQueries.entries().executeAsList()
+            .all { it.pending_action == PendingAction.UPLOAD.value } shouldBe true
+    }
+
+    @Test
+    fun `should survive a library sync given user is signed in`() = runTest(testDispatcher) {
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = true)
+
+        val survivors = database.followedShowsQueries.entriesWithNoPendingAction().executeAsList()
+
+        survivors shouldHaveSize 0
+        database.followedShowsQueries.entries().executeAsList() shouldHaveSize 1
+    }
+
+    @Test
+    fun `should be removed by a library sync given user is signed out`() = runTest(testDispatcher) {
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = false)
+
+        val exposed = database.followedShowsQueries.entriesWithNoPendingAction().executeAsList()
+
+        exposed shouldHaveSize 1
+    }
+
+    @Test
     fun `should leave no provider id on a restored watched episode`() = runTest(testDispatcher) {
         repository.restoreBackup(fileWith(breakingBad()))
 

@@ -117,6 +117,8 @@ public data object BackupImportClicked : SettingsActions
 
 public data object BackupImportConfirmed : SettingsActions
 
+public data object BackupImportConfirmedWithAccount : SettingsActions
+
 public data object BackupImportCancelled : SettingsActions
 
 public data class BackupSourceSelected(

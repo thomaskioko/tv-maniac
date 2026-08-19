@@ -13,6 +13,7 @@ import kotlinx.collections.immutable.persistentListOf
 public data class SettingsState(
     val isAuthenticated: Boolean,
     val activeProvider: SyncProviderSource? = null,
+    val activeProviderName: String? = null,
     val authProviders: ImmutableList<AuthProviderOption> = persistentListOf(),
     val accountConnectedDescription: String? = null,
     val switchTargetProvider: SyncProviderSource? = null,
@@ -97,16 +98,31 @@ public data class BackupSettings(
     val importDescription: String = "",
     val isImporting: Boolean = false,
     val awaitingSource: Boolean = false,
-    val confirm: BackupRestoreConfirm? = null,
+    val syncWithConnectedAccount: Boolean = false,
+    val confirm: BackupRestoreConfirmationDialog? = null,
     val summary: BackupRestoreSummary? = null,
 )
 
-public data class BackupRestoreConfirm(
-    val title: String,
-    val message: String,
-    val confirmLabel: String,
-    val cancelLabel: String,
-)
+public sealed interface BackupRestoreConfirmationDialog {
+    public val title: String
+    public val message: String
+    public val cancelLabel: String
+
+    public data class Local(
+        override val title: String,
+        override val message: String,
+        override val cancelLabel: String,
+        val confirmLabel: String,
+    ) : BackupRestoreConfirmationDialog
+
+    public data class Connected(
+        override val title: String,
+        override val message: String,
+        override val cancelLabel: String,
+        val accountLabel: String,
+        val deviceLabel: String,
+    ) : BackupRestoreConfirmationDialog
+}
 
 public data class BackupRestoreSummary(
     val title: String,

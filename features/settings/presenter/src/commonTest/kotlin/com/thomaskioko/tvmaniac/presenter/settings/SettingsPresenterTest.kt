@@ -57,6 +57,9 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmedWithAccount
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
@@ -91,6 +94,7 @@ import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -973,6 +977,112 @@ class SettingsPresenterTest {
                 SyncProviderSource.TRAKT.displayName,
             )
         }
+    }
+
+    @Test
+    fun `should offer the account choice given an account is connected`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportClicked)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val confirm = expectMostRecentItem().backup.confirm
+                .shouldBeInstanceOf<BackupRestoreConfirmationDialog.Connected>()
+            confirm.accountLabel shouldBe localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmAccountButton,
+                SyncProviderSource.TRAKT.displayName,
+            )
+            confirm.deviceLabel shouldBe
+                localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmDeviceButton)
+        }
+    }
+
+    @Test
+    fun `should resolve the provider name given an account is connected`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().activeProviderName shouldBe SyncProviderSource.SIMKL.displayName
+        }
+    }
+
+    @Test
+    fun `should resolve no provider name given user is signed out`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().activeProviderName.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should name simkl in the account choice given simkl is connected`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportClicked)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val confirm = expectMostRecentItem().backup.confirm
+                .shouldBeInstanceOf<BackupRestoreConfirmationDialog.Connected>()
+            confirm.accountLabel shouldBe localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmAccountButton,
+                SyncProviderSource.SIMKL.displayName,
+            )
+        }
+    }
+
+    @Test
+    fun `should offer no account choice given user is signed out`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportClicked)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().backup.confirm.shouldBeInstanceOf<BackupRestoreConfirmationDialog.Local>()
+        }
+    }
+
+    @Test
+    fun `should restore to the account given the account choice was taken`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportConfirmedWithAccount)
+        presenter.dispatch(BackupSourceSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        backupRepository.lastRestoreSyncedWithConnectedAccount shouldBe true
+    }
+
+    @Test
+    fun `should restore on the device only given the device choice was taken`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportConfirmed)
+        presenter.dispatch(BackupSourceSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        backupRepository.lastRestoreSyncedWithConnectedAccount shouldBe false
+    }
+
+    @Test
+    fun `should forget the account choice given the confirmation is cancelled`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupImportConfirmedWithAccount)
+        presenter.dispatch(BackupImportCancelled)
+        presenter.dispatch(BackupSourceSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        backupRepository.lastRestoreSyncedWithConnectedAccount shouldBe false
     }
 
     @Test
