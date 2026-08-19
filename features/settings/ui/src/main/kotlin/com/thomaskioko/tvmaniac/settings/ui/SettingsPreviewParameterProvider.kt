@@ -7,6 +7,8 @@ import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirm
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSettings
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggle
 import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleLabels
@@ -242,6 +244,8 @@ internal val backupState = loggedInState.copy(
     backup = BackupSettings(
         exportTitle = "Export backup",
         exportDescription = "Save your tracking data and preferences to a file",
+        importTitle = "Restore a backup",
+        importDescription = "Replace what is on this device with a backup file",
     ),
 )
 internal val backupLockedState = backupState.copy(
@@ -256,6 +260,41 @@ internal val backupLockedState = backupState.copy(
 )
 internal val backupExportingState = backupState.copy(
     backup = backupState.backup.copy(isExporting = true),
+)
+internal val backupImportingState = backupState.copy(
+    backup = backupState.backup.copy(isImporting = true),
+)
+internal val backupRestoreConfirmState = backupState.copy(
+    backup = backupState.backup.copy(
+        confirm = BackupRestoreConfirm(
+            title = "Restore this backup?",
+            message = "This replaces the shows and watch history on this device. " +
+                "A copy of your current data is saved first.",
+            confirmLabel = "Restore",
+            cancelLabel = "Cancel",
+        ),
+    ),
+)
+internal val backupRestoreSummaryState = backupState.copy(
+    backup = backupState.backup.copy(
+        summary = BackupRestoreSummary(
+            title = "Restore finished",
+            showsRestored = "42 shows restored",
+            episodesRestored = "612 episodes restored",
+        ),
+    ),
+)
+internal val backupRestoreSummaryWithSkipsState = backupState.copy(
+    backup = backupState.backup.copy(
+        summary = BackupRestoreSummary(
+            title = "Restore finished",
+            showsRestored = "40 shows restored",
+            episodesRestored = "598 episodes restored",
+            showsSkipped = "2 shows skipped",
+            skippedShows = persistentListOf("Breaking Bad", "The Wire"),
+            rewatchNotice = "Repeat viewings were not included in this backup",
+        ),
+    ),
 )
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")
@@ -321,6 +360,10 @@ internal class BackupPreviewParameterProvider : PreviewParameterProvider<Setting
                 backupState,
                 backupLockedState,
                 backupExportingState,
+                backupImportingState,
+                backupRestoreConfirmState,
+                backupRestoreSummaryState,
+                backupRestoreSummaryWithSkipsState,
             )
         }
 }
