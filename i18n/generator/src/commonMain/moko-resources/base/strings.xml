@@ -589,4 +589,23 @@
     <string name="label_watched_date_unknown_display">A long time ago</string>
     <string name="label_mark_show_watched">Mark show as watched</string>
     <string name="label_mark_show_watched_confirm_title">Mark show as watched?</string>
+
+    <string name="settings_backup_title">Backup &amp; restore</string>
+    <string name="settings_backup_description">Save your shows to a file and load them back</string>
+    <string name="settings_backup_export_title">Save a backup</string>
+    <string name="settings_backup_export_description">Write your shows, watch history, ratings and settings to a file</string>
+    <string name="settings_backup_import_title">Restore a backup</string>
+    <string name="settings_backup_import_description">Replace what is on this device with a backup file</string>
+    <string name="settings_backup_restore_confirm_title">Restore this backup?</string>
+    <string name="settings_backup_restore_confirm_message">This replaces the shows and watch history on this device. A copy of your current data is saved first.</string>
+    <string name="settings_backup_restore_confirm_message_connected">This replaces the shows and watch history on this device. %1$s remains the source of truth and the next sync will reconcile. A copy of your current data is saved first.</string>
+    <string name="settings_backup_restore_confirm_button">Restore</string>
+    <string name="settings_backup_restore_summary_title">Restore finished</string>
+    <string name="settings_backup_restore_summary_rewatch">Repeat viewings were not included in this backup</string>
+    <string name="error_backup_save_failed">Could not save the backup. Try another location.</string>
+    <string name="error_backup_read_failed">Could not read that file. It may be damaged or from another app.</string>
+    <string name="error_backup_version_too_new">This backup was made by a newer version of TvManiac. Update the app to restore it.</string>
+    <string name="error_backup_sync_in_progress">A sync is running. Wait for it to finish, then try again.</string>
+    <string name="label_backup_locked_title">Backup is a Premium feature</string>
+    <string name="label_backup_locked_message">Upgrade to Premium to save and restore your shows.</string>
 </resources>

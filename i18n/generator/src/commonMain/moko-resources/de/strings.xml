@@ -581,4 +581,23 @@
     <string name="label_watched_date_unknown_display">Vor langer Zeit</string>
     <string name="label_mark_show_watched">Serie als gesehen markieren</string>
     <string name="label_mark_show_watched_confirm_title">Serie als gesehen markieren?</string>
+
+    <string name="settings_backup_title">Sichern &amp; Wiederherstellen</string>
+    <string name="settings_backup_description">Ihre Serien in eine Datei sichern und wieder laden</string>
+    <string name="settings_backup_export_title">Sicherung speichern</string>
+    <string name="settings_backup_export_description">Serien, Wiedergabeverlauf, Bewertungen und Einstellungen in eine Datei schreiben</string>
+    <string name="settings_backup_import_title">Sicherung wiederherstellen</string>
+    <string name="settings_backup_import_description">Die Daten auf diesem Gerät durch eine Sicherungsdatei ersetzen</string>
+    <string name="settings_backup_restore_confirm_title">Diese Sicherung wiederherstellen?</string>
+    <string name="settings_backup_restore_confirm_message">Dies ersetzt die Serien und den Wiedergabeverlauf auf diesem Gerät. Eine Kopie Ihrer aktuellen Daten wird vorher gespeichert.</string>
+    <string name="settings_backup_restore_confirm_message_connected">Dies ersetzt die Serien und den Wiedergabeverlauf auf diesem Gerät. %1$s bleibt maßgeblich und die nächste Synchronisierung gleicht die Daten ab. Eine Kopie Ihrer aktuellen Daten wird vorher gespeichert.</string>
+    <string name="settings_backup_restore_confirm_button">Wiederherstellen</string>
+    <string name="settings_backup_restore_summary_title">Wiederherstellung abgeschlossen</string>
+    <string name="settings_backup_restore_summary_rewatch">Wiederholte Ansichten waren in dieser Sicherung nicht enthalten</string>
+    <string name="error_backup_save_failed">Sicherung konnte nicht gespeichert werden. Versuchen Sie einen anderen Speicherort.</string>
+    <string name="error_backup_read_failed">Diese Datei konnte nicht gelesen werden. Sie ist möglicherweise beschädigt oder stammt aus einer anderen App.</string>
+    <string name="error_backup_version_too_new">Diese Sicherung wurde mit einer neueren Version von TvManiac erstellt. Aktualisieren Sie die App, um sie wiederherzustellen.</string>
+    <string name="error_backup_sync_in_progress">Eine Synchronisierung läuft. Warten Sie, bis sie abgeschlossen ist, und versuchen Sie es erneut.</string>
+    <string name="label_backup_locked_title">Sichern ist eine Premium-Funktion</string>
+    <string name="label_backup_locked_message">Upgraden Sie auf Premium, um Ihre Serien zu sichern und wiederherzustellen.</string>
 </resources>
