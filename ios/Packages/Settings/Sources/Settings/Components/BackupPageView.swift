@@ -13,6 +13,8 @@ struct BackupPageView: View {
     var body: some View {
         SettingsCard {
             exportRow
+            SettingsRowDivider()
+            importRow
         }
         .premiumOverlay(
             isLocked: content.isLocked,
@@ -59,6 +61,41 @@ struct BackupPageView: View {
         .accessibilityLabel(content.exportTitle)
         .accessibilityHint(content.exportDescription)
     }
+
+    private var importRow: some View {
+        Button(action: content.onImport) {
+            HStack(spacing: appTheme.spacing.medium) {
+                SettingsIconChip("square.and.arrow.down")
+
+                VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                    Text(content.importTitle)
+                        .textStyle(appTheme.typography.bodyLarge)
+                        .foregroundColor(appTheme.colors.onSurface)
+                    Text(content.importDescription)
+                        .textStyle(appTheme.typography.bodySmall)
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                if content.isImporting {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(appTheme.colors.onSurfaceVariant)
+                } else {
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                }
+            }
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.vertical, appTheme.spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(content.isImporting || content.isLocked)
+        .accessibilityLabel(content.importTitle)
+        .accessibilityHint(content.importDescription)
+    }
 }
 
 #if DEBUG
@@ -76,6 +113,12 @@ struct BackupPageView: View {
 
     #Preview("Exporting") {
         BackupPageView(content: SettingsPreviewSamples.exportingBackupContent)
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Importing") {
+        BackupPageView(content: SettingsPreviewSamples.importingBackupContent)
             .padding()
             .appPreview()
     }

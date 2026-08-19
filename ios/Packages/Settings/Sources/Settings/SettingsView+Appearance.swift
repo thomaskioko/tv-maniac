@@ -256,6 +256,9 @@ extension SettingsView {
             exportTitle: uiState.backup.exportTitle,
             exportDescription: uiState.backup.exportDescription,
             isExporting: uiState.backup.isExporting || uiState.backup.awaitingDestination,
+            importTitle: uiState.backup.importTitle,
+            importDescription: uiState.backup.importDescription,
+            isImporting: uiState.backup.isImporting || uiState.backup.awaitingSource,
             isLocked: uiState.premium.backupLocked,
             lockedBadgeText: uiState.premium.badgeText,
             lockedTitle: uiState.premium.backupLockedTitle,
@@ -263,6 +266,7 @@ extension SettingsView {
             lockedActionText: uiState.premium.upgradeText,
             lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
             onExport: { presenter.dispatch(action: BackupExportClicked()) },
+            onImport: { presenter.dispatch(action: BackupImportClicked()) },
             onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) }
         )
     }

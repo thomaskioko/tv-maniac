@@ -20,6 +20,10 @@ public struct SettingsView: View {
     @State var showNotificationPermissionDeniedAlert = false
     @State private var pendingBackupURL: URL?
     @State private var showingBackupExporter = false
+    @State private var showingImportConfirm = false
+    @State private var showingImportSource = false
+    @State private var pendingImportSummary: BackupRestoreSummary?
+    @State private var showingImportSummary = false
     @Environment(\.openURL) var openURL
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -120,6 +124,14 @@ public struct SettingsView: View {
             presenter: presenter,
             pendingURL: $pendingBackupURL,
             isPresented: $showingBackupExporter
+        )
+        .settingsBackupImporter(
+            uiState: uiState,
+            presenter: presenter,
+            showingConfirm: $showingImportConfirm,
+            showingSource: $showingImportSource,
+            pendingSummary: $pendingImportSummary,
+            showingSummary: $showingImportSummary
         )
         .screenTag(SettingsTestTags.shared.SCREEN_TEST_TAG)
     }
