@@ -11,6 +11,10 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
+import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
@@ -36,6 +40,9 @@ import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
+import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
+import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggled
@@ -65,6 +72,7 @@ import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -96,6 +104,7 @@ class SettingsPresenterTest {
     private val traktListRepository = FakeTraktListRepository()
     private val navigator = FakeNavigator()
     private val subscriptionManager = FakeSubscriptionManager()
+    private val backupRepository = FakeBackupRepository()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -150,6 +159,7 @@ class SettingsPresenterTest {
                 appScopeLauncher = FakeAppScopeLauncher(TestScope(testDispatcher)),
             ),
             rewatchRepository = FakeRewatchRepository(),
+            backupRepository = backupRepository,
         )
     }
 
@@ -813,6 +823,85 @@ class SettingsPresenterTest {
 
         presenter.state.test {
             expectMostRecentItem().theme shouldBe ThemeModel.SYSTEM
+        }
+    }
+
+    @Test
+    fun `should report the backup page locked given access is denied`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.CloudBackup, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().locks.backupLocked shouldBe true
+        }
+    }
+
+    @Test
+    fun `should not write a backup given the page is locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.CloudBackup, false)
+        testScheduler.advanceUntilIdle()
+        val destination = FakeBackupDestination()
+
+        presenter.dispatch(BackupExportClicked)
+        presenter.dispatch(BackupDestinationSelected(destination))
+        testScheduler.advanceUntilIdle()
+
+        destination.written shouldBe null
+        backupRepository.lastDestination shouldBe null
+    }
+
+    @Test
+    fun `should ask for a destination given export is tapped`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupExportClicked)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().backup.awaitingDestination shouldBe true
+        }
+    }
+
+    @Test
+    fun `should stop asking for a destination given the picker is dismissed`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupExportClicked)
+        presenter.dispatch(BackupDestinationCancelled)
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().backup.awaitingDestination shouldBe false
+        }
+    }
+
+    @Test
+    fun `should write a backup given a destination is chosen`() = runTest {
+        testScheduler.advanceUntilIdle()
+        val destination = FakeBackupDestination()
+
+        presenter.dispatch(BackupDestinationSelected(destination))
+        testScheduler.advanceUntilIdle()
+
+        backupRepository.lastDestination shouldBe destination
+
+        presenter.state.test {
+            val state = expectMostRecentItem()
+            state.backup.isExporting shouldBe false
+            state.message shouldBe null
+        }
+    }
+
+    @Test
+    fun `should report a failure given the backup cannot be written`() = runTest {
+        testScheduler.advanceUntilIdle()
+        backupRepository.setWriteResult(BackupResult.Failed(BackupFailure.WriteFailed))
+
+        presenter.dispatch(BackupDestinationSelected(FakeBackupDestination()))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().message.shouldNotBeNull()
         }
     }
 }

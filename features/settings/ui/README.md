@@ -52,6 +52,10 @@ graph TB
     direction TB
     :data:account-manager:api[api]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+  end
   subgraph :data:cast
     direction TB
     :data:cast:api[api]:::multiplatform
@@ -306,6 +310,7 @@ graph TB
   :features:settings:presenter --> :core:logger:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
+  :features:settings:presenter --> :data:backup:api
   :features:settings:presenter --> :data:datastore:api
   :features:settings:presenter --> :data:rewatch:api
   :features:settings:presenter --> :data:subscription:api

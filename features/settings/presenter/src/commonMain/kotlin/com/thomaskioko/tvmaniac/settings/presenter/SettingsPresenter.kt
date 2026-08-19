@@ -19,6 +19,10 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
+import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
@@ -90,6 +94,7 @@ public class SettingsPresenter internal constructor(
     private val countUnsavedChanges: CountUnsavedChanges,
     private val switchAccountInteractor: SwitchAccountInteractor,
     private val rewatchRepository: RewatchRepository,
+    private val backupRepository: BackupRepository,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -100,12 +105,19 @@ public class SettingsPresenter internal constructor(
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
 
+    private val backupLabels = BackupSettings(
+        exportTitle = localizer.getString(StringResourceKey.SettingsBackupExportTitle),
+        exportDescription = localizer.getString(StringResourceKey.SettingsBackupExportDescription),
+    )
+
     private val locksFlow = kotlinx.coroutines.flow.combine(
         subscriptionManager.observeAccess(SubscriptionFeature.CustomThemes),
         subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
         subscriptionManager.observeAccess(SubscriptionFeature.QuickRate),
-    ) { customThemesAccess, episodeNotificationsAccess, quickRateAccess ->
+        subscriptionManager.observeAccess(SubscriptionFeature.CloudBackup),
+    ) { customThemesAccess, episodeNotificationsAccess, quickRateAccess, backupAccess ->
         SettingsLocks(
+            backupLocked = !backupAccess,
             customThemesLocked = !customThemesAccess,
             posterStyleLocked = !customThemesAccess,
             episodeNotificationsLocked = !episodeNotificationsAccess,
@@ -114,6 +126,8 @@ public class SettingsPresenter internal constructor(
             themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
             themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
             upgradeText = localizer.getString(StringResourceKey.LabelUpgradeToPremium),
+            backupLockedTitle = localizer.getString(StringResourceKey.LabelBackupLockedTitle),
+            backupLockedMessage = localizer.getString(StringResourceKey.LabelBackupLockedMessage),
             lockedContentDescription = localizer.getString(StringResourceKey.CdLocked),
         )
     }
@@ -186,6 +200,10 @@ public class SettingsPresenter internal constructor(
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             locks = locks,
+            backup = currentState.backup.copy(
+                exportTitle = backupLabels.exportTitle,
+                exportDescription = backupLabels.exportDescription,
+            ),
             currentPageTitle = resolvePageTitle(currentState.currentPage),
             rootGroups = buildRootGroups(),
             username = username,
@@ -359,12 +377,59 @@ public class SettingsPresenter internal constructor(
                 }
             }
 
+            is BackupExportClicked -> handleBackupExportClicked()
+
+            is BackupDestinationSelected -> handleBackupDestination(action.destination)
+
+            is BackupDestinationCancelled -> {
+                _state.update { it.copy(backup = backupLabels) }
+            }
+
             is SettingsMessageShown -> {
                 coroutineScope.launch {
                     uiMessageManager.clearMessage(action.id)
                 }
             }
         }
+    }
+
+    private fun handleBackupExportClicked() {
+        if (state.value.locks.backupLocked) return
+        _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
+    }
+
+    private fun handleBackupDestination(destination: BackupDestination) {
+        if (state.value.locks.backupLocked) return
+        coroutineScope.launch {
+            _state.update { it.copy(backup = backupLabels.copy(isExporting = true)) }
+            try {
+                when (val result = backupRepository.writeBackup(destination)) {
+                    is BackupResult.Written -> Unit
+                    is BackupResult.Failed -> emitBackupFailure(result.reason)
+                }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (cause: Throwable) {
+                logger.error(TAG, "Backup export failed: ${cause.message}")
+                emitBackupFailure(BackupFailure.WriteFailed)
+            } finally {
+                _state.update { it.copy(backup = backupLabels) }
+            }
+        }
+    }
+
+    private suspend fun emitBackupFailure(reason: BackupFailure) {
+        uiMessageManager.emitMessage(
+            UiMessage(
+                message = localizer.getString(
+                    when (reason) {
+                        BackupFailure.WriteFailed -> StringResourceKey.ErrorBackupSaveFailed
+                        BackupFailure.VerificationFailed -> StringResourceKey.ErrorBackupReadFailed
+                    },
+                ),
+                sourceId = "BackupExport",
+            ),
+        )
     }
 
     private fun handleBackClicked() {

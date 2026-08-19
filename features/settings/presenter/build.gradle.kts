@@ -13,6 +13,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
+                api(projects.data.backup.api)
                 api(projects.core.featureFlags.api)
                 api(projects.core.logger.api)
                 api(projects.core.view)
@@ -44,6 +45,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
+                implementation(projects.data.backup.testing)
                 implementation(projects.core.featureFlags.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
