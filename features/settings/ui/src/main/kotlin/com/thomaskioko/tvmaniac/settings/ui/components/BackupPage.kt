@@ -3,33 +3,57 @@ package com.thomaskioko.tvmaniac.settings.ui.components
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.SettingsBackupRestore
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
+import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
+import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirm
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
+import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceCancelled
+import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceSelected
+import com.thomaskioko.tvmaniac.settings.presenter.BackupSummaryDismissed
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.UpgradeToPremiumClicked
 import com.thomaskioko.tvmaniac.settings.ui.BackupPreviewParameterProvider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
+import com.thomaskioko.tvmaniac.settings.ui.SettingsGroupDivider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsNavigationRow
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 import java.text.SimpleDateFormat
@@ -62,9 +86,29 @@ internal fun BackupPage(
         }
     }
 
+    val openDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        if (uri != null) {
+            context.contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION,
+            )
+            onAction(BackupSourceSelected(uri.toString()))
+        } else {
+            onAction(BackupSourceCancelled)
+        }
+    }
+
     LaunchedEffect(state.backup.awaitingDestination) {
         if (state.backup.awaitingDestination && !inInspectionMode) {
             createDocumentLauncher.launch(backupFileName())
+        }
+    }
+
+    LaunchedEffect(state.backup.awaitingSource) {
+        if (state.backup.awaitingSource && !inInspectionMode) {
+            openDocumentLauncher.launch(arrayOf(BACKUP_PICKER_MIME_TYPE))
         }
     }
 
@@ -78,6 +122,8 @@ private fun BackupPageContent(
     modifier: Modifier = Modifier,
 ) {
     val locked = state.premium.backupLocked
+    val backup = state.backup
+    val summary = backup.summary
 
     PremiumOverlay(
         locked = locked,
@@ -98,18 +144,156 @@ private fun BackupPageContent(
                     SettingsNavigationRow(
                         modifier = Modifier.testTag(SettingsTestTags.BACKUP_EXPORT_ROW_TEST_TAG),
                         icon = Icons.Filled.Backup,
-                        title = state.backup.exportTitle,
-                        description = state.backup.exportDescription,
-                        enabled = !locked && !state.backup.isExporting,
-                        isLoading = state.backup.isExporting,
+                        title = backup.exportTitle,
+                        description = backup.exportDescription,
+                        enabled = !locked && !backup.isExporting,
+                        isLoading = backup.isExporting,
                         loadingTestTag = SettingsTestTags.BACKUP_EXPORTING_INDICATOR_TEST_TAG,
                         onClick = { onAction(BackupExportClicked) },
+                    )
+                    SettingsGroupDivider()
+                    SettingsNavigationRow(
+                        modifier = Modifier.testTag(SettingsTestTags.BACKUP_IMPORT_ROW_TEST_TAG),
+                        icon = Icons.Filled.SettingsBackupRestore,
+                        title = backup.importTitle,
+                        description = backup.importDescription,
+                        enabled = !locked && !backup.isImporting,
+                        isLoading = backup.isImporting,
+                        loadingTestTag = SettingsTestTags.BACKUP_IMPORTING_INDICATOR_TEST_TAG,
+                        onClick = { onAction(BackupImportClicked) },
+                    )
+                }
+            }
+
+            if (summary != null) {
+                item {
+                    BackupRestoreSummaryContent(
+                        summary = summary,
+                        onDismiss = { onAction(BackupSummaryDismissed) },
                     )
                 }
             }
 
             item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
         }
+    }
+
+    BackupRestoreConfirmDialog(
+        confirm = backup.confirm,
+        onConfirm = { onAction(BackupImportConfirmed) },
+        onCancel = { onAction(BackupImportCancelled) },
+    )
+}
+
+@Composable
+private fun BackupRestoreConfirmDialog(
+    confirm: BackupRestoreConfirm?,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    if (confirm != null) {
+        TvManiacAlertDialog(
+            title = confirm.title,
+            message = confirm.message,
+            confirmButtonText = confirm.confirmLabel,
+            dismissButtonText = confirm.cancelLabel,
+            onConfirm = onConfirm,
+            onDismiss = onCancel,
+            confirmButtonTestTag = SettingsTestTags.BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG,
+            dismissButtonTestTag = SettingsTestTags.BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG,
+        )
+    }
+}
+
+@Composable
+private fun BackupRestoreSummaryContent(
+    summary: BackupRestoreSummary,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag(SettingsTestTags.BACKUP_RESTORE_SUMMARY_TEST_TAG),
+    ) {
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = TvManiacSpacing.medium),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = summary.title,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            IconButton(
+                modifier = Modifier.testTag(SettingsTestTags.BACKUP_RESTORE_SUMMARY_DISMISS_BUTTON_TEST_TAG),
+                onClick = onDismiss,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = stringResource(MR.strings.cd_dismiss.resourceId),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
+
+        SettingsGroup {
+            Column(modifier = Modifier.padding(TvManiacSpacing.medium)) {
+                Text(
+                    text = summary.showsRestored,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
+                Text(
+                    text = summary.episodesRestored,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+
+        val showsSkipped = summary.showsSkipped
+        if (showsSkipped != null) {
+            Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
+            SettingsGroup {
+                Column(modifier = Modifier.padding(TvManiacSpacing.medium)) {
+                    Text(
+                        text = showsSkipped,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    summary.skippedShows.forEach { name ->
+                        Spacer(modifier = Modifier.height(TvManiacSpacing.xxSmall))
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+        }
+
+        val rewatchNotice = summary.rewatchNotice
+        if (rewatchNotice != null) {
+            Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
+            Text(
+                text = rewatchNotice,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(TvManiacSpacing.large))
     }
 }
 

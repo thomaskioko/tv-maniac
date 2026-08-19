@@ -17,7 +17,10 @@ import com.thomaskioko.tvmaniac.settings.ui.accountSwitchingState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceLockedState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.backupExportingState
+import com.thomaskioko.tvmaniac.settings.ui.backupImportingState
 import com.thomaskioko.tvmaniac.settings.ui.backupLockedState
+import com.thomaskioko.tvmaniac.settings.ui.backupRestoreSummaryState
+import com.thomaskioko.tvmaniac.settings.ui.backupRestoreSummaryWithSkipsState
 import com.thomaskioko.tvmaniac.settings.ui.backupState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorLockedState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
@@ -282,6 +285,42 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = backupExportingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageImporting() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageImporting") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupImportingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageRestoreSummary() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageRestoreSummary") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupRestoreSummaryState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageRestoreSummaryWithSkips() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageRestoreSummaryWithSkips") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupRestoreSummaryWithSkipsState,
                     onAction = {},
                 )
             }

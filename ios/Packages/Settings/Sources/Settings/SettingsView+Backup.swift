@@ -1,6 +1,7 @@
 import SwiftUI
 import TvManiac
 import UIKit
+import UniformTypeIdentifiers
 
 private func makeTemporaryBackupURL() -> URL {
     let formatter = DateFormatter()
@@ -75,5 +76,77 @@ extension View {
                 BackupDocumentExporter(url: url, isPresented: isPresented)
             }
         }
+    }
+
+    func settingsBackupImporter(
+        uiState: SettingsState,
+        presenter: SettingsPresenter,
+        showingConfirm: Binding<Bool>,
+        showingSource: Binding<Bool>,
+        pendingSummary: Binding<BackupRestoreSummary?>,
+        showingSummary: Binding<Bool>
+    ) -> some View {
+        onChange(of: uiState.backup.confirm) { _, confirm in
+            showingConfirm.wrappedValue = confirm != nil
+        }
+        .onChange(of: uiState.backup.awaitingSource) { _, awaitingSource in
+            showingSource.wrappedValue = awaitingSource
+        }
+        .onChange(of: uiState.backup.summary) { _, summary in
+            guard let summary else { return }
+            pendingSummary.wrappedValue = summary
+            showingSummary.wrappedValue = true
+        }
+        .alert(
+            uiState.backup.confirm?.title ?? "",
+            isPresented: showingConfirm,
+            actions: {
+                if let confirm = uiState.backup.confirm {
+                    Button(confirm.confirmLabel) {
+                        presenter.dispatch(action: BackupImportConfirmed())
+                    }
+                    Button(confirm.cancelLabel, role: .cancel) {
+                        presenter.dispatch(action: BackupImportCancelled())
+                    }
+                }
+            },
+            message: {
+                if let message = uiState.backup.confirm?.message {
+                    Text(message)
+                }
+            }
+        )
+        .fileImporter(isPresented: showingSource, allowedContentTypes: [.json]) { result in
+            switch result {
+            case let .success(url):
+                presenter.dispatch(action: BackupSourceSelected(location: importedBackupPath(from: url)))
+            case .failure:
+                presenter.dispatch(action: BackupSourceCancelled())
+            }
+        }
+        .sheet(
+            isPresented: showingSummary,
+            onDismiss: {
+                presenter.dispatch(action: BackupSummaryDismissed())
+                pendingSummary.wrappedValue = nil
+            }
+        ) {
+            if let summary = pendingSummary.wrappedValue {
+                BackupRestoreSummaryView(content: summary.toContent())
+            }
+        }
+    }
+}
+
+private func importedBackupPath(from url: URL) -> String {
+    let isAccessing = url.startAccessingSecurityScopedResource()
+    defer { if isAccessing { url.stopAccessingSecurityScopedResource() } }
+    let destination = FileManager.default.temporaryDirectory
+        .appendingPathComponent("tvmaniac-restore-\(UUID().uuidString).json")
+    do {
+        try FileManager.default.copyItem(at: url, to: destination)
+        return destination.path
+    } catch {
+        return url.path
     }
 }

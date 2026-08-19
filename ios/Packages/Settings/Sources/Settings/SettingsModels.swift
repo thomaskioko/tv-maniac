@@ -187,6 +187,9 @@ public struct SettingsBackupContent {
     public let exportTitle: String
     public let exportDescription: String
     public let isExporting: Bool
+    public let importTitle: String
+    public let importDescription: String
+    public let isImporting: Bool
     public let isLocked: Bool
     public let lockedBadgeText: String
     public let lockedTitle: String
@@ -194,12 +197,16 @@ public struct SettingsBackupContent {
     public let lockedActionText: String
     public let lockedAccessibilityLabel: String
     public let onExport: () -> Void
+    public let onImport: () -> Void
     public let onUpgradeClick: () -> Void
 
     public init(
         exportTitle: String,
         exportDescription: String,
         isExporting: Bool = false,
+        importTitle: String,
+        importDescription: String,
+        isImporting: Bool = false,
         isLocked: Bool = false,
         lockedBadgeText: String = "",
         lockedTitle: String = "",
@@ -207,11 +214,15 @@ public struct SettingsBackupContent {
         lockedActionText: String = "",
         lockedAccessibilityLabel: String = "",
         onExport: @escaping () -> Void,
+        onImport: @escaping () -> Void,
         onUpgradeClick: @escaping () -> Void = {}
     ) {
         self.exportTitle = exportTitle
         self.exportDescription = exportDescription
         self.isExporting = isExporting
+        self.importTitle = importTitle
+        self.importDescription = importDescription
+        self.isImporting = isImporting
         self.isLocked = isLocked
         self.lockedBadgeText = lockedBadgeText
         self.lockedTitle = lockedTitle
@@ -219,6 +230,32 @@ public struct SettingsBackupContent {
         self.lockedActionText = lockedActionText
         self.lockedAccessibilityLabel = lockedAccessibilityLabel
         self.onExport = onExport
+        self.onImport = onImport
         self.onUpgradeClick = onUpgradeClick
+    }
+}
+
+public struct SettingsBackupSummaryContent {
+    public let title: String
+    public let showsRestored: String
+    public let episodesRestored: String
+    public let showsSkipped: String?
+    public let skippedShows: [String]
+    public let rewatchNotice: String?
+
+    public init(
+        title: String,
+        showsRestored: String,
+        episodesRestored: String,
+        showsSkipped: String? = nil,
+        skippedShows: [String] = [],
+        rewatchNotice: String? = nil
+    ) {
+        self.title = title
+        self.showsRestored = showsRestored
+        self.episodesRestored = episodesRestored
+        self.showsSkipped = showsSkipped
+        self.skippedShows = skippedShows
+        self.rewatchNotice = rewatchNotice
     }
 }

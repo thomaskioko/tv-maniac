@@ -18,3 +18,18 @@ public extension SettingsPage {
         return .root
     }
 }
+
+// MARK: - BackupRestoreSummary Mapping
+
+public extension BackupRestoreSummary {
+    func toContent() -> SettingsBackupSummaryContent {
+        SettingsBackupSummaryContent(
+            title: title,
+            showsRestored: showsRestored,
+            episodesRestored: episodesRestored,
+            showsSkipped: showsSkipped,
+            skippedShows: skippedShows.map { $0 },
+            rewatchNotice: rewatchNotice
+        )
+    }
+}

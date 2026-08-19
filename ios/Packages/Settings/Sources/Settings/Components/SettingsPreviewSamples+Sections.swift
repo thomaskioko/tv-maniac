@@ -146,7 +146,10 @@
             SettingsBackupContent(
                 exportTitle: "Save a backup",
                 exportDescription: "Write your shows, watch history, ratings and settings to a file",
-                onExport: {}
+                importTitle: "Restore a backup",
+                importDescription: "Replace your shows, watch history, ratings and settings from a file",
+                onExport: {},
+                onImport: {}
             )
         }
 
@@ -154,6 +157,8 @@
             SettingsBackupContent(
                 exportTitle: "Save a backup",
                 exportDescription: "Write your shows, watch history, ratings and settings to a file",
+                importTitle: "Restore a backup",
+                importDescription: "Replace your shows, watch history, ratings and settings from a file",
                 isLocked: true,
                 lockedBadgeText: "Premium",
                 lockedTitle: "Backup is a Premium feature",
@@ -161,6 +166,7 @@
                 lockedActionText: "Upgrade to Premium",
                 lockedAccessibilityLabel: "Locked",
                 onExport: {},
+                onImport: {},
                 onUpgradeClick: {}
             )
         }
@@ -170,7 +176,41 @@
                 exportTitle: "Save a backup",
                 exportDescription: "Write your shows, watch history, ratings and settings to a file",
                 isExporting: true,
-                onExport: {}
+                importTitle: "Restore a backup",
+                importDescription: "Replace your shows, watch history, ratings and settings from a file",
+                onExport: {},
+                onImport: {}
+            )
+        }
+
+        static var importingBackupContent: SettingsBackupContent {
+            SettingsBackupContent(
+                exportTitle: "Save a backup",
+                exportDescription: "Write your shows, watch history, ratings and settings to a file",
+                importTitle: "Restore a backup",
+                importDescription: "Replace your shows, watch history, ratings and settings from a file",
+                isImporting: true,
+                onExport: {},
+                onImport: {}
+            )
+        }
+
+        static var restoreSummaryContent: SettingsBackupSummaryContent {
+            SettingsBackupSummaryContent(
+                title: "Restore complete",
+                showsRestored: "48 shows restored",
+                episodesRestored: "612 episodes restored"
+            )
+        }
+
+        static var restoreSummaryContentWithSkips: SettingsBackupSummaryContent {
+            SettingsBackupSummaryContent(
+                title: "Restore complete",
+                showsRestored: "45 shows restored",
+                episodesRestored: "598 episodes restored",
+                showsSkipped: "3 shows couldn't be restored",
+                skippedShows: ["Severance", "The Bear", "Shōgun"],
+                rewatchNotice: "Rewatch history wasn't restored."
             )
         }
     }

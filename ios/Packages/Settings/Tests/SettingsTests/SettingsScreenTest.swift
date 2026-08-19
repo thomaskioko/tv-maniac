@@ -232,4 +232,13 @@ class SettingsScreenTest: SnapshotTestCase {
         .appPreview()
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_Exporting")
     }
+
+    func test_SettingsScreen_Backup_Importing() {
+        SettingsScreen(
+            state: makeState(page: .backup, authenticated: true, customBackupContent: backupContent(isImporting: true)),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_Importing")
+    }
 }

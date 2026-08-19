@@ -195,6 +195,7 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .openBackupPage()
             .assertBackupLockedDisplayed()
             .assertBackupExportRowDoesNotExist()
+            .assertBackupImportRowDoesNotExist()
             .clickBackButton()
             .clickBackButton()
 
@@ -240,6 +241,7 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .clickBackButton()
             .openBackupPage()
             .assertBackupExportRowDisplayed()
+            .assertBackupImportRowDisplayed()
             .clickBackButton()
             .clickBackButton()
 
@@ -279,5 +281,61 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .assertBackupExportRowDisplayed()
             .clickBackButton()
             .assertSettingsScreenDisplayed()
+    }
+
+    @Test
+    fun givenBackupPage_whenImportCancelled_thenNothingChanges() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .assertBackupExportRowDisplayed()
+            .assertBackupImportRowDisplayed()
+            .clickBackupImportRow()
+            .assertBackupRestoreConfirmDisplayed()
+            .clickBackupRestoreDismiss()
+            .assertBackupRestoreConfirmDoesNotExist()
+            .assertBackupExportRowDisplayed()
+            .assertBackupImportRowDisplayed()
+    }
+
+    @Test
+    fun givenBackupPage_whenImportConfirmed_thenConfirmDialogDismisses() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .clickBackupImportRow()
+            .assertBackupRestoreConfirmDisplayed()
+            .clickBackupRestoreConfirm()
+            .assertBackupRestoreConfirmDoesNotExist()
     }
 }
