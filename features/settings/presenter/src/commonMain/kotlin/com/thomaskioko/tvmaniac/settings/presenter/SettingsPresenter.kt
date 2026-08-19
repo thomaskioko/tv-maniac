@@ -179,6 +179,7 @@ public class SettingsPresenter internal constructor(
                 isImporting = currentState.backup.isImporting,
                 awaitingDestination = currentState.backup.awaitingDestination,
                 awaitingSource = currentState.backup.awaitingSource,
+                addToConnectedAccount = currentState.backup.addToConnectedAccount,
                 confirm = currentState.backup.confirm,
                 summary = currentState.backup.summary,
             ),
@@ -361,7 +362,9 @@ public class SettingsPresenter internal constructor(
 
             is BackupImportClicked -> handleImportClicked()
 
-            is BackupImportConfirmed -> handleImportConfirmed()
+            is BackupImportConfirmed -> handleImportConfirmed(addToConnectedAccount = false)
+
+            is BackupImportConfirmedWithAccount -> handleImportConfirmed(addToConnectedAccount = true)
 
             is BackupImportCancelled -> _state.update { it.copy(backup = backupLabels) }
 
@@ -406,14 +409,26 @@ public class SettingsPresenter internal constructor(
         _state.update { it.copy(backup = backupLabels.copy(confirm = buildRestoreConfirm())) }
     }
 
-    private fun handleImportConfirmed() {
-        _state.update { it.copy(backup = backupLabels.copy(awaitingSource = true)) }
+    private fun handleImportConfirmed(addToConnectedAccount: Boolean) {
+        _state.update {
+            it.copy(
+                backup = backupLabels.copy(
+                    awaitingSource = true,
+                    addToConnectedAccount = addToConnectedAccount,
+                ),
+            )
+        }
     }
 
     private fun handleBackupSource(location: String) {
+        val addToConnectedAccount = _state.value.backup.addToConnectedAccount
         coroutineScope.launch {
             _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
-            when (val result = restoreBackupInteractor.executeSync(RestoreBackupInteractor.Params(location))) {
+            val params = RestoreBackupInteractor.Params(
+                location = location,
+                addToConnectedAccount = addToConnectedAccount,
+            )
+            when (val result = restoreBackupInteractor.executeSync(params)) {
                 is RestoreResult.Restored ->
                     _state.update { it.copy(backup = backupLabels.copy(summary = buildRestoreSummary(result.summary))) }
 
@@ -444,20 +459,29 @@ public class SettingsPresenter internal constructor(
         )
     }
 
-    private fun buildRestoreConfirm(): BackupRestoreConfirm {
+    private fun buildRestoreConfirm(): BackupRestoreConfirmationDialog {
+        val title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle)
+        val cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary)
         val provider = state.value.activeProvider
-        return BackupRestoreConfirm(
-            title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle),
-            message = if (provider == null) {
-                localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage)
-            } else {
-                localizer.getString(
-                    StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
-                    provider.displayName,
-                )
-            },
-            confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
-            cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary),
+            ?: return BackupRestoreConfirmationDialog.Local(
+                title = title,
+                message = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage),
+                cancelLabel = cancelLabel,
+                confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
+            )
+
+        return BackupRestoreConfirmationDialog.Connected(
+            title = title,
+            message = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
+                provider.displayName,
+            ),
+            cancelLabel = cancelLabel,
+            accountLabel = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmAccountButton,
+                provider.displayName,
+            ),
+            deviceLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmDeviceButton),
         )
     }
 
