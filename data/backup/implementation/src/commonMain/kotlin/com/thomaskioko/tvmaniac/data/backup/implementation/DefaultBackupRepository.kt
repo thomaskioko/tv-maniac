@@ -86,7 +86,7 @@ public class DefaultBackupRepository(
         )
     }
 
-    override suspend fun restoreBackup(location: String): RestoreResult {
+    override suspend fun restoreBackup(location: String, addToConnectedAccount: Boolean): RestoreResult {
         if (syncObserver.isSyncing.value) return RestoreResult.Failed(RestoreFailure.SyncInProgress)
 
         val backup = try {
@@ -106,7 +106,11 @@ public class DefaultBackupRepository(
             try {
                 val includeSpecials = datastoreRepository.getIncludeSpecials()
                 val summary = withContext(dispatchers.databaseWrite) {
-                    importer.import(backup, includeSpecials)
+                    importer.import(
+                        backup = backup,
+                        includeSpecials = includeSpecials,
+                        addToConnectedAccount = addToConnectedAccount,
+                    )
                 }
                 writePreferences(backup.preferences)
                 RestoreResult.Restored(summary)

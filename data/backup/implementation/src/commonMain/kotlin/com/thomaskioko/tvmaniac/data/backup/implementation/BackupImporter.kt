@@ -20,7 +20,11 @@ internal class BackupImporter(
 
     private val restoreQueries = database.restoreQueries
 
-    fun import(backup: BackupFile, includeSpecials: Boolean): RestoreSummary = transactionRunner {
+    fun import(
+        backup: BackupFile,
+        includeSpecials: Boolean,
+        addToConnectedAccount: Boolean,
+    ): RestoreSummary = transactionRunner {
         clearRestoredTables()
 
         var showCount = 0
@@ -38,7 +42,11 @@ internal class BackupImporter(
 
             showCount++
             restoreSeasonsAndEpisodes(show, showId)
-            episodeCount += restoreShow(show, showId)
+            episodeCount += restoreShow(
+                show = show,
+                showId = showId,
+                addToConnectedAccount = addToConnectedAccount,
+            )
             skippedSeasonRatings += restoreSeasonRatings(show, showId)
             skippedEpisodeRatings += restoreEpisodeRatings(show, showId)
             recalculateMetadata(showId, includeSpecials)
@@ -120,13 +128,20 @@ internal class BackupImporter(
         }
     }
 
-    private fun restoreShow(show: BackupShow, showId: Id<ShowId>): Int {
+    private fun restoreShow(show: BackupShow, showId: Id<ShowId>, addToConnectedAccount: Boolean): Int {
         show.followedAt?.let { followedAt ->
-            restoreQueries.restoreFollowedShow(
-                showId = showId,
-                tmdbId = Id(show.tmdbId),
-                followedAt = followedAt,
-            )
+            when {
+                addToConnectedAccount -> restoreQueries.restoreFollowedShowForUpload(
+                    showId = showId,
+                    tmdbId = Id(show.tmdbId),
+                    followedAt = followedAt,
+                )
+                else -> restoreQueries.restoreFollowedShow(
+                    showId = showId,
+                    tmdbId = Id(show.tmdbId),
+                    followedAt = followedAt,
+                )
+            }
         }
 
         watchStatusOrNull(show.watchStatus)?.let { status ->

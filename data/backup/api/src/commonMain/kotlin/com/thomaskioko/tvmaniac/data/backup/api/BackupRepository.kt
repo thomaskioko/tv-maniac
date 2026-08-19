@@ -5,7 +5,10 @@ public interface BackupRepository {
 
     public suspend fun writeBackup(location: String): BackupResult
 
-    public suspend fun restoreBackup(location: String): RestoreResult
+    public suspend fun restoreBackup(
+        location: String,
+        addToConnectedAccount: Boolean = false,
+    ): RestoreResult
 
     public suspend fun showsNeedingMetadata(): List<Long>
 }
