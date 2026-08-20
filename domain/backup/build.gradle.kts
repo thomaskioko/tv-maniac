@@ -16,6 +16,7 @@ kotlin {
                 api(projects.core.networkUtil.api)
                 api(projects.core.tasks.api)
                 api(projects.data.backup.api)
+                api(projects.data.shows.api)
                 api(projects.domain.showdetails)
 
                 implementation(libs.coroutines.core)
