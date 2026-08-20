@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.datastore.testing
 
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
@@ -21,6 +22,9 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
     private val includeSpecialsFlow = MutableStateFlow(false)
     private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val autoBackupEnabledFlow = MutableStateFlow(false)
+    private val autoBackupIntervalFlow = MutableStateFlow(AutoBackupInterval.Default)
+    private val autoBackupLocationFlow = MutableStateFlow<String?>(null)
     private val backgroundSyncEnabledFlow = MutableStateFlow(true)
     private val lastSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val episodeNotificationsEnabledFlow = MutableStateFlow(false)
@@ -100,6 +104,26 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeBackgroundSyncEnabled(): Flow<Boolean> = backgroundSyncEnabledFlow.asStateFlow()
+
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        autoBackupEnabledFlow.value = enabled
+    }
+
+    override fun observeAutoBackupEnabled(): Flow<Boolean> = autoBackupEnabledFlow.asStateFlow()
+
+    override suspend fun saveAutoBackupInterval(interval: AutoBackupInterval) {
+        autoBackupIntervalFlow.value = interval
+    }
+
+    override fun observeAutoBackupInterval(): Flow<AutoBackupInterval> = autoBackupIntervalFlow.asStateFlow()
+
+    override suspend fun saveAutoBackupLocation(location: String?) {
+        autoBackupLocationFlow.value = location
+    }
+
+    override fun observeAutoBackupLocation(): Flow<String?> = autoBackupLocationFlow.asStateFlow()
+
+    override suspend fun getAutoBackupLocation(): String? = autoBackupLocationFlow.value
 
     override suspend fun setLastSyncTimestamp(timestamp: Long) {
         lastSyncTimestampFlow.value = timestamp

@@ -128,6 +128,44 @@ public interface DatastoreRepository {
      *
      * @param timestamp The epoch milliseconds of the last sync.
      */
+    /**
+     * Saves whether a backup should be written on a schedule.
+     *
+     * @param enabled true to run an automatic backup, false to stop.
+     */
+    public suspend fun setAutoBackupEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether a backup is written on a schedule. Defaults to false.
+     */
+    public fun observeAutoBackupEnabled(): Flow<Boolean>
+
+    /**
+     * Saves how often an automatic backup runs.
+     */
+    public suspend fun saveAutoBackupInterval(interval: AutoBackupInterval)
+
+    /**
+     * Observes how often an automatic backup runs. Defaults to [AutoBackupInterval.Default].
+     */
+    public fun observeAutoBackupInterval(): Flow<AutoBackupInterval>
+
+    /**
+     * Saves the location an automatic backup writes to, or null once it stops working and the user
+     * has to pick a new one.
+     */
+    public suspend fun saveAutoBackupLocation(location: String?)
+
+    /**
+     * Observes the location an automatic backup writes to, or null when none has been chosen.
+     */
+    public fun observeAutoBackupLocation(): Flow<String?>
+
+    /**
+     * Reads the location an automatic backup writes to, for callers that cannot observe.
+     */
+    public suspend fun getAutoBackupLocation(): String?
+
     public suspend fun setLastSyncTimestamp(timestamp: Long)
 
     /**
