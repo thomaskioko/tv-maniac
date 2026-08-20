@@ -35,21 +35,27 @@ public class SimklLibraryRemoteDataSource(
             }
 
     override suspend fun addToWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
+        moveToList(shows = shows, status = SimklListStatus.PLAN_TO_WATCH)
+
+    override suspend fun removeFromWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
+        moveToList(shows = shows, status = SimklListStatus.DROPPED)
+
+    private suspend fun moveToList(
+        shows: List<WatchlistShowIds>,
+        status: String,
+    ): ApiResponse<WatchlistSyncResult> =
         syncRemoteDataSource.addToList(
             SimklAddToListRequest(
                 shows = shows.map {
                     SimklListShow(
                         ids = SimklShowIds(tmdb = it.tmdbId.toString()),
-                        to = SimklListStatus.PLAN_TO_WATCH,
+                        to = status,
                     )
                 },
             ),
         ).map { response ->
             WatchlistSyncResult(notFoundCount = response.notFound?.shows?.size ?: 0)
         }
-
-    override suspend fun removeFromWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
-        ApiResponse.Success(WatchlistSyncResult(notFoundCount = 0))
 
     private companion object {
         private val TRACKED_STATUSES = setOf("plantowatch", "watching", "hold")

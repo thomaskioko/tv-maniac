@@ -21,4 +21,5 @@ public data class SimklAddToListResponse(
 
 public object SimklListStatus {
     public const val PLAN_TO_WATCH: String = "plantowatch"
+    public const val DROPPED: String = "dropped"
 }
