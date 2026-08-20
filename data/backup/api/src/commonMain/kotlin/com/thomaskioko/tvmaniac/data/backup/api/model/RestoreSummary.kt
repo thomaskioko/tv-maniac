@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.backup.api
+package com.thomaskioko.tvmaniac.data.backup.api.model
 
 public data class RestoreSummary(
     val showCount: Int,

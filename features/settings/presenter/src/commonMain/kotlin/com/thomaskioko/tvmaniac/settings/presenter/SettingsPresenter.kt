@@ -18,9 +18,9 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection

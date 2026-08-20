@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.view.InvokeError
 import com.thomaskioko.tvmaniac.core.view.InvokeSuccess
 import com.thomaskioko.tvmaniac.data.backup.api.BackupExportException
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf

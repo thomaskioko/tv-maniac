@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.traktlists.implementation
 
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
-import com.thomaskioko.tvmaniac.data.backup.api.BackupList
-import com.thomaskioko.tvmaniac.data.backup.api.BackupListShow
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupListShow
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeShowTraktIdResolver
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListDao

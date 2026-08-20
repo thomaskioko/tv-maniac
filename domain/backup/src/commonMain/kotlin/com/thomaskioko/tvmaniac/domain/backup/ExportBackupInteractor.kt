@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.backup
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.data.backup.api.BackupExportException
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn

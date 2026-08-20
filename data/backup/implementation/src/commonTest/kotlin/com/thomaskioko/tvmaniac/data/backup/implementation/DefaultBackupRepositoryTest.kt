@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeRestoredListWriter
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest

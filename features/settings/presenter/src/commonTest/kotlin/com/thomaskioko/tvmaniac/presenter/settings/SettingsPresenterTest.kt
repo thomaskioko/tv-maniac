@@ -14,11 +14,11 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.UiMessageType
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
