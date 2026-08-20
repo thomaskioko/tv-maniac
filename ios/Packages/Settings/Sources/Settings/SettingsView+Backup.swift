@@ -177,8 +177,8 @@ public struct BackupRestoreConfirmationActions: View {
                     title: "Restore this backup?",
                     message: "This replaces the shows and watch history on this device, and a copy of your current data is saved first. You are signed in to Trakt, so shows you do not add to it are removed at the next sync.",
                     cancelLabel: "Cancel",
-                    accountLabel: "Add to Trakt",
-                    deviceLabel: "This device only"
+                    accountLabel: "Restore and sync with Trakt",
+                    deviceLabel: "Restore locally"
                 ),
                 onConfirmAccount: {},
                 onConfirmDevice: {},
