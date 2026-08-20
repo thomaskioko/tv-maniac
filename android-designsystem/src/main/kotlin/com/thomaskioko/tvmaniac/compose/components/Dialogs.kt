@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -142,6 +143,7 @@ private fun DialogTextButton(
             text = text,
             style = MaterialTheme.typography.labelLarge,
             color = color,
+            textAlign = TextAlign.End,
         )
     }
 }
@@ -183,9 +185,9 @@ private fun TvManiacAlertDialogThreeActionsPreview() {
         title = "Restore this backup?",
         message = "This replaces the shows and watch history on this device. " +
             "Add it to Trakt to keep it synced, or restore on this device only.",
-        confirmButtonText = "Add to Trakt",
+        confirmButtonText = "Restore and sync with Trakt",
         dismissButtonText = "Cancel",
-        neutralButtonText = "This device only",
+        neutralButtonText = "Restore locally",
         onConfirm = {},
         onDismiss = {},
         onNeutral = {},
