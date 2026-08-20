@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.api.tmdb.api)
+                api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.data.accountManager.api)
@@ -32,6 +33,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.api.tmdb.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.database.testing)
             }
