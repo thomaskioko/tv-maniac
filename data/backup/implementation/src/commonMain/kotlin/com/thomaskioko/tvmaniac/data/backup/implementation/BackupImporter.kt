@@ -61,6 +61,7 @@ internal class BackupImporter(
             skippedSeasonRatings = skippedSeasonRatings,
             skippedEpisodeRatings = skippedEpisodeRatings,
             rewatchSessionsKept = restoreQueries.rewatchSessionCount().executeAsOne().toInt(),
+            listsNotRestored = backup.lists.size,
         )
     }
 

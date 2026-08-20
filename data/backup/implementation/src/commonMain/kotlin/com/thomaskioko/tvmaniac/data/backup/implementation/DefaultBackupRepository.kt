@@ -8,6 +8,8 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisodeRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
+import com.thomaskioko.tvmaniac.data.backup.api.BackupList
+import com.thomaskioko.tvmaniac.data.backup.api.BackupListShow
 import com.thomaskioko.tvmaniac.data.backup.api.BackupPreferences
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
@@ -57,6 +59,7 @@ public class DefaultBackupRepository(
         createdAt = dateTimeProvider.now().toString(),
         appVersion = appMetadata.versionName,
         shows = readShows(),
+        lists = readLists(),
         preferences = readPreferences(),
     )
 
@@ -122,6 +125,20 @@ public class DefaultBackupRepository(
 
     override suspend fun showsNeedingMetadata(): List<Long> = withContext(dispatchers.databaseRead) {
         database.restoreQueries.showsNeedingMetadata().executeAsList().map { it.id }
+    }
+
+    private suspend fun readLists(): List<BackupList> = withContext(dispatchers.databaseRead) {
+        val showsByList = queries.backupListShows().executeAsList()
+            .groupBy({ it.list_id }) { BackupListShow(tmdbId = it.tmdb_id.id, listedAt = it.listed_at) }
+
+        queries.backupLists().executeAsList().map { list ->
+            BackupList(
+                name = list.name,
+                description = list.description,
+                createdAt = list.created_at,
+                shows = showsByList[list.id].orEmpty(),
+            )
+        }
     }
 
     private suspend fun readShows(): List<BackupShow> = withContext(dispatchers.databaseRead) {
