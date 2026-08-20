@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 import TvManiac
 import UIKit
@@ -94,24 +95,12 @@ extension View {
             uiState.backup.confirm?.title ?? "",
             isPresented: showingConfirm,
             actions: {
-                if let local = uiState.backup.confirm as? BackupRestoreConfirmationDialogLocal {
-                    Button(local.confirmLabel) {
-                        presenter.dispatch(action: BackupImportConfirmed())
-                    }
-                }
-                if let connected = uiState.backup.confirm as? BackupRestoreConfirmationDialogConnected {
-                    Button(connected.accountLabel) {
-                        presenter.dispatch(action: BackupImportConfirmedWithAccount())
-                    }
-                    Button(connected.deviceLabel) {
-                        presenter.dispatch(action: BackupImportConfirmed())
-                    }
-                }
-                if let confirm = uiState.backup.confirm {
-                    Button(confirm.cancelLabel, role: .cancel) {
-                        presenter.dispatch(action: BackupImportCancelled())
-                    }
-                }
+                BackupRestoreConfirmationActions(
+                    confirm: uiState.backup.confirm,
+                    onConfirmAccount: { presenter.dispatch(action: BackupImportConfirmedWithAccount()) },
+                    onConfirmDevice: { presenter.dispatch(action: BackupImportConfirmed()) },
+                    onCancel: { presenter.dispatch(action: BackupImportCancelled()) }
+                )
             },
             message: {
                 if let message = uiState.backup.confirm?.message {
@@ -129,6 +118,77 @@ extension View {
         }
     }
 }
+
+public struct BackupRestoreConfirmationActions: View {
+    let confirm: BackupRestoreConfirmationDialog?
+    let onConfirmAccount: () -> Void
+    let onConfirmDevice: () -> Void
+    let onCancel: () -> Void
+
+    public init(
+        confirm: BackupRestoreConfirmationDialog?,
+        onConfirmAccount: @escaping () -> Void,
+        onConfirmDevice: @escaping () -> Void,
+        onCancel: @escaping () -> Void
+    ) {
+        self.confirm = confirm
+        self.onConfirmAccount = onConfirmAccount
+        self.onConfirmDevice = onConfirmDevice
+        self.onCancel = onCancel
+    }
+
+    public var body: some View {
+        if let local = confirm as? BackupRestoreConfirmationDialogLocal {
+            Button(local.confirmLabel, action: onConfirmDevice)
+        }
+        if let connected = confirm as? BackupRestoreConfirmationDialogConnected {
+            Button(connected.accountLabel, action: onConfirmAccount)
+            Button(connected.deviceLabel, action: onConfirmDevice)
+        }
+        if let confirm {
+            Button(confirm.cancelLabel, role: .cancel, action: onCancel)
+        }
+    }
+}
+
+#if DEBUG
+    #Preview("Restore Confirm - Local") {
+        VStack(alignment: .leading, spacing: 12) {
+            BackupRestoreConfirmationActions(
+                confirm: BackupRestoreConfirmationDialogLocal(
+                    title: "Restore this backup?",
+                    message: "This replaces the shows and watch history on this device. A copy of your current data is saved first.",
+                    cancelLabel: "Cancel",
+                    confirmLabel: "Restore"
+                ),
+                onConfirmAccount: {},
+                onConfirmDevice: {},
+                onCancel: {}
+            )
+        }
+        .padding()
+        .appPreview()
+    }
+
+    #Preview("Restore Confirm - Connected") {
+        VStack(alignment: .leading, spacing: 12) {
+            BackupRestoreConfirmationActions(
+                confirm: BackupRestoreConfirmationDialogConnected(
+                    title: "Restore this backup?",
+                    message: "This replaces the shows and watch history on this device, and a copy of your current data is saved first. You are signed in to Trakt, so shows you do not add to it are removed at the next sync.",
+                    cancelLabel: "Cancel",
+                    accountLabel: "Add to Trakt",
+                    deviceLabel: "This device only"
+                ),
+                onConfirmAccount: {},
+                onConfirmDevice: {},
+                onCancel: {}
+            )
+        }
+        .padding()
+        .appPreview()
+    }
+#endif
 
 private func importedBackupPath(from url: URL) -> String {
     let isAccessing = url.startAccessingSecurityScopedResource()
