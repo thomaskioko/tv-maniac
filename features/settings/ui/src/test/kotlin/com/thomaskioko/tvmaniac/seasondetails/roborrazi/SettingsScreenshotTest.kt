@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.settings.ui.appearanceState
 import com.thomaskioko.tvmaniac.settings.ui.backupExportingState
 import com.thomaskioko.tvmaniac.settings.ui.backupImportingState
 import com.thomaskioko.tvmaniac.settings.ui.backupLockedState
+import com.thomaskioko.tvmaniac.settings.ui.backupRestoreConfirmConnectedState
 import com.thomaskioko.tvmaniac.settings.ui.backupRestoreSummaryState
 import com.thomaskioko.tvmaniac.settings.ui.backupRestoreSummaryWithSkipsState
 import com.thomaskioko.tvmaniac.settings.ui.backupState
@@ -297,6 +298,18 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = backupImportingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageRestoreConfirmConnected() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageRestoreConfirmConnected", shouldCompareDarkMode = false) {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupRestoreConfirmConnectedState,
                     onAction = {},
                 )
             }

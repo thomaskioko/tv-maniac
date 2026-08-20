@@ -338,4 +338,31 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .clickBackupRestoreConfirm()
             .assertBackupRestoreConfirmDoesNotExist()
     }
+
+    @Test
+    fun givenConnectedAccount_whenBackupRestoreRequested_thenDeviceOnlyChoiceIsReachable() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.signInAndDismissRationale()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertUserCardDisplayed("integration-test-user")
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .clickBackupImportRow()
+            .assertBackupRestoreConfirmDisplayed()
+            .assertBackupRestoreDeviceOnlyDisplayed()
+            .clickBackupRestoreDeviceOnly()
+            .assertBackupRestoreConfirmDoesNotExist()
+    }
 }
