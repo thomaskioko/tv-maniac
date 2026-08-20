@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeRestoredListWriter
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
@@ -45,6 +46,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
 
     private val datastoreRepository = FakeDatastoreRepository()
     private val destination = FakeBackupDestination()
+    private val restoredListWriter = FakeRestoredListWriter()
     private lateinit var repository: DefaultBackupRepository
     private var showId: Id<ShowId> = Id(0L)
 
@@ -58,6 +60,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
             destination = destination,
             syncObserver = FakeSyncObserver(),
+            restoredListWriter = restoredListWriter,
             transactionRunner = DbTransactionRunner(database),
         )
         showId = insertShow()
