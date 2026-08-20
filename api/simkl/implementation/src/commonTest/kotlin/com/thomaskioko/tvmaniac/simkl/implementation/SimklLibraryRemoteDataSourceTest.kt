@@ -52,6 +52,17 @@ internal class SimklLibraryRemoteDataSourceTest {
     }
 
     @Test
+    fun `should move a show to the dropped list given it is unfollowed`() = runTest {
+        syncRemoteDataSource.setAddToListResponse(ApiResponse.Success(addToListResponse(notFound = 0)))
+
+        source.removeFromWatchlist(listOf(WatchlistShowIds(tmdbId = 1396)))
+
+        val request = syncRemoteDataSource.lastAddedToList.shouldNotBeNull()
+        request.shows.map { it.ids.tmdb } shouldBe listOf("1396")
+        request.shows.map { it.to } shouldBe listOf("dropped")
+    }
+
+    @Test
     fun `should report not found count given simkl could not match a show`() = runTest {
         syncRemoteDataSource.setAddToListResponse(ApiResponse.Success(addToListResponse(notFound = 2)))
 
