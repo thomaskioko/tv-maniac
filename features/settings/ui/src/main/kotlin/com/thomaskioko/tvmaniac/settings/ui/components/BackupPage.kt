@@ -200,6 +200,9 @@ private fun BackupRestoreConfirmDialog(
             onDismiss = { onAction(BackupImportCancelled) },
             confirmButtonTestTag = SettingsTestTags.BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG,
             dismissButtonTestTag = SettingsTestTags.BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG,
+            neutralButtonText = confirm.deviceLabel,
+            onNeutral = { onAction(BackupImportConfirmed) },
+            neutralButtonTestTag = SettingsTestTags.BACKUP_RESTORE_DEVICE_ONLY_BUTTON_TEST_TAG,
         )
     }
 }

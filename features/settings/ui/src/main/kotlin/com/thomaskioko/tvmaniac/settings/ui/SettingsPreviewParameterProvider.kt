@@ -275,6 +275,20 @@ internal val backupRestoreConfirmState = backupState.copy(
         ),
     ),
 )
+internal val backupRestoreConfirmConnectedState = backupState.copy(
+    activeProvider = SyncProviderSource.TRAKT,
+    backup = backupState.backup.copy(
+        confirm = BackupRestoreConfirmationDialog.Connected(
+            title = "Restore this backup?",
+            message = "This replaces the shows and watch history on this device, and a copy of " +
+                "your current data is saved first. You are signed in to Trakt, so shows you do " +
+                "not add to it are removed at the next sync.",
+            cancelLabel = "Cancel",
+            accountLabel = "Add to Trakt",
+            deviceLabel = "This device only",
+        ),
+    ),
+)
 internal val backupRestoreSummaryState = backupState.copy(
     backup = backupState.backup.copy(
         summary = BackupRestoreSummary(
@@ -362,6 +376,7 @@ internal class BackupPreviewParameterProvider : PreviewParameterProvider<Setting
                 backupExportingState,
                 backupImportingState,
                 backupRestoreConfirmState,
+                backupRestoreConfirmConnectedState,
                 backupRestoreSummaryState,
                 backupRestoreSummaryWithSkipsState,
             )
