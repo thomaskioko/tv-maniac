@@ -4,6 +4,8 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisode
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
+import com.thomaskioko.tvmaniac.data.backup.api.BackupList
+import com.thomaskioko.tvmaniac.data.backup.api.BackupListShow
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupSeason
 import com.thomaskioko.tvmaniac.data.backup.api.BackupSeasonRating
@@ -206,6 +208,37 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
         val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
         database.ratingsQueries.observeShowRating(showId).executeAsOneOrNull().shouldBeNull()
+    }
+
+    @Test
+    fun `should report lists as not restored given the file carries them`() = runTest(testDispatcher) {
+        val contents = BackupJson.encode(
+            BackupFile(
+                version = BackupFormat.VERSION,
+                createdAt = "2026-01-01T00:00:00Z",
+                appVersion = "1.0.0",
+                shows = listOf(breakingBad()),
+                lists = listOf(
+                    BackupList(
+                        name = "Comfort watches",
+                        shows = listOf(BackupListShow(tmdbId = BREAKING_BAD_TMDB_ID, listedAt = "2026-01-01T00:00:00Z")),
+                    ),
+                ),
+            ),
+        )
+
+        val result = repository.restoreBackup(fileWith(contents))
+
+        result.shouldBeInstanceOf<RestoreResult.Restored>().summary.listsNotRestored shouldBe 1
+    }
+
+    @Test
+    fun `should restore given a file written before lists were saved`() = runTest(testDispatcher) {
+        val result = repository.restoreBackup(fileWith(breakingBad()))
+
+        val summary = result.shouldBeInstanceOf<RestoreResult.Restored>().summary
+        summary.showCount shouldBe 1
+        summary.listsNotRestored shouldBe 0
     }
 
     @Test
