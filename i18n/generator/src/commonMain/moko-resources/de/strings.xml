@@ -593,8 +593,8 @@
     <string name="settings_backup_restore_confirm_message">Dies ersetzt die Serien und den Wiedergabeverlauf auf diesem Gerät. Eine Kopie Ihrer aktuellen Daten wird vorher gespeichert.</string>
     <string name="settings_backup_restore_confirm_message_connected">Dies ersetzt die Serien und den Wiedergabeverlauf auf diesem Gerät. Eine Kopie Ihrer aktuellen Daten wird vorher gespeichert. Sie sind bei %1$s angemeldet, daher werden Serien, die Sie dort nicht hinzufügen, bei der nächsten Synchronisierung entfernt.</string>
     <string name="settings_backup_restore_confirm_button">Wiederherstellen</string>
-    <string name="settings_backup_restore_confirm_account_button">Zu %1$s hinzufügen</string>
-    <string name="settings_backup_restore_confirm_device_button">Nur auf diesem Gerät</string>
+    <string name="settings_backup_restore_confirm_account_button">Wiederherstellen und mit %1$s synchronisieren</string>
+    <string name="settings_backup_restore_confirm_device_button">Lokal wiederherstellen</string>
     <string name="settings_backup_restore_summary_title">Wiederherstellung abgeschlossen</string>
     <string name="settings_backup_restore_summary_added_to_account">Zu %1$s hinzugefügt</string>
     <string name="settings_backup_restore_summary_rewatch">Wiederholte Ansichten waren in dieser Sicherung nicht enthalten</string>

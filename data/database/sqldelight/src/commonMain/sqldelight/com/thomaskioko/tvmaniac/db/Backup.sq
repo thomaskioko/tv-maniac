@@ -146,3 +146,24 @@ WHERE 1 = 1
     SELECT show_id FROM show_watch_status WHERE status IS NOT NULL
   );
 
+-- `id` is the Trakt list id and is read only to group the members below onto their list. It is
+-- dropped before the file is written, because a list is recreated on the provider by name.
+backupLists:
+SELECT
+    trakt_lists.id,
+    trakt_lists.name,
+    trakt_lists.description,
+    trakt_lists.created_at
+FROM trakt_lists
+ORDER BY trakt_lists.name ASC;
+
+backupListShows:
+SELECT
+    trakt_list_shows.list_id,
+    tvshow.tmdb_id AS tmdb_id,
+    trakt_list_shows.listed_at
+FROM trakt_list_shows
+INNER JOIN show_trakt ON show_trakt.trakt_id = trakt_list_shows.trakt_id
+INNER JOIN tvshow ON tvshow.id = show_trakt.show_id
+WHERE trakt_list_shows.pending_action != 'DELETE'
+ORDER BY trakt_list_shows.listed_at DESC, tvshow.tmdb_id ASC;

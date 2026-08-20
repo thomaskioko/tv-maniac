@@ -7,4 +7,6 @@ public data class RestoreSummary(
     val skippedSeasonRatings: Int = 0,
     val skippedEpisodeRatings: Int = 0,
     val rewatchSessionsKept: Int = 0,
+    val listsRestored: Int = 0,
+    val listsNotRestored: Int = 0,
 )

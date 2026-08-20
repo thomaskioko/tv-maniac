@@ -50,6 +50,7 @@ public object SettingsTestTags {
     public const val BACKUP_IMPORT_ROW_TEST_TAG: String = "settings_backup_import_row"
     public const val BACKUP_IMPORTING_INDICATOR_TEST_TAG: String = "settings_backup_importing_indicator"
     public const val BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG: String = "settings_backup_restore_confirm"
+    public const val BACKUP_RESTORE_DEVICE_ONLY_BUTTON_TEST_TAG: String = "settings_backup_restore_device_only"
     public const val BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG: String = "settings_backup_restore_dismiss"
     public const val BACKUP_RESTORE_SUMMARY_TEST_TAG: String = "settings_backup_restore_summary"
     public const val BACKUP_RESTORE_SUMMARY_DISMISS_BUTTON_TEST_TAG: String = "settings_backup_restore_summary_dismiss"

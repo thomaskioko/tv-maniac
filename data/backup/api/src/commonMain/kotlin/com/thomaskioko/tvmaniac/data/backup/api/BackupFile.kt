@@ -9,7 +9,22 @@ public data class BackupFile(
     val createdAt: String,
     val appVersion: String,
     val shows: List<BackupShow> = emptyList(),
+    val lists: List<BackupList> = emptyList(),
     val preferences: BackupPreferences = BackupPreferences(),
+)
+
+@Serializable
+public data class BackupList(
+    val name: String,
+    val description: String? = null,
+    val createdAt: String? = null,
+    val shows: List<BackupListShow> = emptyList(),
+)
+
+@Serializable
+public data class BackupListShow(
+    val tmdbId: Long,
+    val listedAt: String,
 )
 
 @Serializable

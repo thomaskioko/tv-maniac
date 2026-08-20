@@ -12,7 +12,7 @@
 [![Download APK](https://img.shields.io/github/v/release/thomaskioko/tv-maniac?label=Download%20APK&logo=android&style=for-the-badge)](https://github.com/thomaskioko/tv-maniac/releases/latest)
 [![Join Beta](https://img.shields.io/badge/Join%20Beta-Google%20Play-01875f?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/apps/testing/com.thomaskioko.tvmaniac)
 
-**TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app (Android & iOS) for tracking TV Shows. By utilizing [Trakt](https://trakt.tv) and [TMDB](https://developer.themoviedb.org/docs), you can discover shows, manage your watchlist, track watch progress, and get personalized recommendations.
+**TvManiac** is a personalized entertainment tracking and recommendation Multiplatform app (Android & iOS) for tracking TV Shows. By utilizing [TMDB](https://developer.themoviedb.org/docs), [Trakt](https://trakt.tv) and [Simkl](https://simkl.com), you can discover shows, manage your watchlist, track watch progress, and get personalized recommendations.
 
 | Android | iOS |
 |---|---|

@@ -99,6 +99,14 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         click(SettingsTestTags.BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG)
     }
 
+    fun assertBackupRestoreDeviceOnlyDisplayed() = apply {
+        assertExists(SettingsTestTags.BACKUP_RESTORE_DEVICE_ONLY_BUTTON_TEST_TAG)
+    }
+
+    fun clickBackupRestoreDeviceOnly() = apply {
+        click(SettingsTestTags.BACKUP_RESTORE_DEVICE_ONLY_BUTTON_TEST_TAG)
+    }
+
     fun clickBackupRestoreDismiss() = apply {
         click(SettingsTestTags.BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG)
     }

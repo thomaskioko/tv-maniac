@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.trakt.api.model
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,8 +15,9 @@ public data class TraktShow(
     @SerialName("ids") val ids: TraktShowIds,
 )
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 public data class TraktShowIds(
-    @SerialName("trakt") val traktId: Long? = null,
-    @SerialName("tmdb") val tmdbId: Long? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) @SerialName("trakt") val traktId: Long? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) @SerialName("tmdb") val tmdbId: Long? = null,
 )

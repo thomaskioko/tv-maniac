@@ -8,6 +8,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
+import com.thomaskioko.tvmaniac.data.library.model.WatchlistShowIds
+import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.Id
@@ -314,11 +316,11 @@ private class FakeLibrarySource(
     override suspend fun getWatchlist(): ApiResponse<List<RemoteFollowedShow>> =
         ApiResponse.Success(watchlistShows)
 
-    override suspend fun addToWatchlist(showIds: List<Long>): ApiResponse<com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult> =
-        ApiResponse.Success(com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult(notFoundCount = 0))
+    override suspend fun addToWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
+        ApiResponse.Success(WatchlistSyncResult(notFoundCount = 0))
 
-    override suspend fun removeFromWatchlist(showIds: List<Long>): ApiResponse<com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult> =
-        ApiResponse.Success(com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult(notFoundCount = 0))
+    override suspend fun removeFromWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
+        ApiResponse.Success(WatchlistSyncResult(notFoundCount = 0))
 }
 
 private fun buildMinimalTmdbDetailsResponse(

@@ -8,6 +8,8 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisodeRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
+import com.thomaskioko.tvmaniac.data.backup.api.BackupList
+import com.thomaskioko.tvmaniac.data.backup.api.BackupListShow
 import com.thomaskioko.tvmaniac.data.backup.api.BackupPreferences
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
@@ -18,6 +20,8 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
 import com.thomaskioko.tvmaniac.data.backup.api.BackupWatchedEpisode
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.RestoredListWriter
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
@@ -46,6 +50,7 @@ public class DefaultBackupRepository(
     private val dispatchers: AppCoroutineDispatchers,
     private val destination: BackupDestination,
     private val syncObserver: SyncObserver,
+    private val restoredListWriter: RestoredListWriter,
     transactionRunner: DatabaseTransactionRunner,
 ) : BackupRepository {
 
@@ -57,6 +62,7 @@ public class DefaultBackupRepository(
         createdAt = dateTimeProvider.now().toString(),
         appVersion = appMetadata.versionName,
         shows = readShows(),
+        lists = readLists(),
         preferences = readPreferences(),
     )
 
@@ -113,15 +119,34 @@ public class DefaultBackupRepository(
                     )
                 }
                 writePreferences(backup.preferences)
-                RestoreResult.Restored(summary)
+                RestoreResult.Restored(summary.withRestoredLists(restoreLists(backup, syncWithConnectedAccount)))
             } catch (error: Throwable) {
                 RestoreResult.Failed(RestoreFailure.ImportFailed, error)
             }
         }
     }
 
+    private suspend fun restoreLists(backup: BackupFile, syncWithConnectedAccount: Boolean): Int {
+        if (!syncWithConnectedAccount) return 0
+        return restoredListWriter.restoreLists(backup.lists)
+    }
+
     override suspend fun showsNeedingMetadata(): List<Long> = withContext(dispatchers.databaseRead) {
         database.restoreQueries.showsNeedingMetadata().executeAsList().map { it.id }
+    }
+
+    private suspend fun readLists(): List<BackupList> = withContext(dispatchers.databaseRead) {
+        val showsByList = queries.backupListShows().executeAsList()
+            .groupBy({ it.list_id }) { BackupListShow(tmdbId = it.tmdb_id.id, listedAt = it.listed_at) }
+
+        queries.backupLists().executeAsList().map { list ->
+            BackupList(
+                name = list.name,
+                description = list.description,
+                createdAt = list.created_at,
+                shows = showsByList[list.id].orEmpty(),
+            )
+        }
     }
 
     private suspend fun readShows(): List<BackupShow> = withContext(dispatchers.databaseRead) {
@@ -268,3 +293,8 @@ public class DefaultBackupRepository(
         private const val RESTORE_OPERATION = "backup-restore"
     }
 }
+
+private fun RestoreSummary.withRestoredLists(restored: Int): RestoreSummary = copy(
+    listsRestored = restored,
+    listsNotRestored = listsNotRestored - restored,
+)

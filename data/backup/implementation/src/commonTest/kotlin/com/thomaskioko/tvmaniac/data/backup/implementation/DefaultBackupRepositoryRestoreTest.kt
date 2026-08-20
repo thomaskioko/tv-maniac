@@ -4,6 +4,8 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisode
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
+import com.thomaskioko.tvmaniac.data.backup.api.BackupList
+import com.thomaskioko.tvmaniac.data.backup.api.BackupListShow
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRating
 import com.thomaskioko.tvmaniac.data.backup.api.BackupSeason
 import com.thomaskioko.tvmaniac.data.backup.api.BackupSeasonRating
@@ -12,6 +14,7 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupWatchedEpisode
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
 import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeRestoredListWriter
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
@@ -54,6 +57,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
     private val datastoreRepository = FakeDatastoreRepository()
     private val syncObserver = FakeSyncObserver()
     private val destination = FakeBackupDestination()
+    private val restoredListWriter = FakeRestoredListWriter()
 
     private lateinit var repository: DefaultBackupRepository
 
@@ -127,6 +131,36 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
         database.followedShowsQueries.entries().executeAsList()
             .all { it.pending_action == PendingAction.UPLOAD.value } shouldBe true
+    }
+
+    @Test
+    fun `should mark restored watch history for upload given user is signed in`() = runTest(testDispatcher) {
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = true)
+
+        watchedEpisodes()
+            .all { it.pending_action == PendingAction.UPLOAD.value } shouldBe true
+    }
+
+    @Test
+    fun `should mark a restored show rating for upload given user is signed in`() = runTest(testDispatcher) {
+        val show = breakingBad().copy(rating = BackupRating(value = 9, ratedAt = NOW))
+
+        repository.restoreBackup(fileWith(show), syncWithConnectedAccount = true)
+
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
+        database.ratingsQueries.observeShowRating(showId).executeAsOne()
+            .pending_action shouldBe PendingAction.UPLOAD.value
+    }
+
+    @Test
+    fun `should leave a restored show rating alone given user is signed out`() = runTest(testDispatcher) {
+        val show = breakingBad().copy(rating = BackupRating(value = 9, ratedAt = NOW))
+
+        repository.restoreBackup(fileWith(show), syncWithConnectedAccount = false)
+
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
+        database.ratingsQueries.observeShowRating(showId).executeAsOne()
+            .pending_action shouldBe PendingAction.NOTHING.value
     }
 
     @Test
@@ -206,6 +240,70 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
 
         val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
         database.ratingsQueries.observeShowRating(showId).executeAsOneOrNull().shouldBeNull()
+    }
+
+    @Test
+    fun `should report lists as not restored given the file carries them`() = runTest(testDispatcher) {
+        val contents = BackupJson.encode(
+            BackupFile(
+                version = BackupFormat.VERSION,
+                createdAt = "2026-01-01T00:00:00Z",
+                appVersion = "1.0.0",
+                shows = listOf(breakingBad()),
+                lists = listOf(
+                    BackupList(
+                        name = "Comfort watches",
+                        shows = listOf(BackupListShow(tmdbId = BREAKING_BAD_TMDB_ID, listedAt = "2026-01-01T00:00:00Z")),
+                    ),
+                ),
+            ),
+        )
+
+        val result = repository.restoreBackup(fileWith(contents))
+
+        result.shouldBeInstanceOf<RestoreResult.Restored>().summary.listsNotRestored shouldBe 1
+    }
+
+    @Test
+    fun `should send the lists to the provider given the sync choice is taken`() = runTest(testDispatcher) {
+        restoredListWriter.setRestoredCount(1)
+
+        val result = repository.restoreBackup(fileWithList(), syncWithConnectedAccount = true)
+
+        restoredListWriter.received().single().single().name shouldBe "Comfort watches"
+        val summary = result.shouldBeInstanceOf<RestoreResult.Restored>().summary
+        summary.listsRestored shouldBe 1
+        summary.listsNotRestored shouldBe 0
+    }
+
+    @Test
+    fun `should send nothing to the provider given the sync choice is not taken`() = runTest(testDispatcher) {
+        val result = repository.restoreBackup(fileWithList(), syncWithConnectedAccount = false)
+
+        restoredListWriter.received().shouldBeEmpty()
+        val summary = result.shouldBeInstanceOf<RestoreResult.Restored>().summary
+        summary.listsRestored shouldBe 0
+        summary.listsNotRestored shouldBe 1
+    }
+
+    @Test
+    fun `should count a list the provider refused as not restored`() = runTest(testDispatcher) {
+        restoredListWriter.setRestoredCount(0)
+
+        val result = repository.restoreBackup(fileWithList(), syncWithConnectedAccount = true)
+
+        val summary = result.shouldBeInstanceOf<RestoreResult.Restored>().summary
+        summary.listsRestored shouldBe 0
+        summary.listsNotRestored shouldBe 1
+    }
+
+    @Test
+    fun `should restore given a file written before lists were saved`() = runTest(testDispatcher) {
+        val result = repository.restoreBackup(fileWith(breakingBad()))
+
+        val summary = result.shouldBeInstanceOf<RestoreResult.Restored>().summary
+        summary.showCount shouldBe 1
+        summary.listsNotRestored shouldBe 0
     }
 
     @Test
@@ -401,7 +499,25 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         dispatchers = dispatchers,
         destination = destination,
         syncObserver = syncObserver,
+        restoredListWriter = restoredListWriter,
         transactionRunner = transactionRunner,
+    )
+
+    private fun fileWithList(): String = fileWith(
+        BackupJson.encode(
+            BackupFile(
+                version = BackupFormat.VERSION,
+                createdAt = "2026-01-01T00:00:00Z",
+                appVersion = "1.0.0",
+                shows = listOf(breakingBad()),
+                lists = listOf(
+                    BackupList(
+                        name = "Comfort watches",
+                        shows = listOf(BackupListShow(tmdbId = BREAKING_BAD_TMDB_ID, listedAt = "2026-01-01T00:00:00Z")),
+                    ),
+                ),
+            ),
+        ),
     )
 
     private fun fileWith(vararg shows: BackupShow): String {

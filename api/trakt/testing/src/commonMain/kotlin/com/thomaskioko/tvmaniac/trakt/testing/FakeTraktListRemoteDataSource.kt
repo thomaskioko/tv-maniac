@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
 public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
@@ -16,6 +17,12 @@ public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
         ApiResponse.Success(emptyList())
     private var addShowsResponse: ApiResponse<TraktAddShowToListResponse>? = null
     private var removeShowsResponse: ApiResponse<TraktAddRemoveShowFromListResponse>? = null
+    private val addedShows = mutableListOf<TraktShowIds>()
+    private val removedShows = mutableListOf<TraktShowIds>()
+
+    public fun addedShows(): List<TraktShowIds> = addedShows
+
+    public fun removedShows(): List<TraktShowIds> = removedShows
 
     public fun setWatchList(response: ApiResponse<List<TraktFollowedShowResponse>>) {
         watchListResponse = response
@@ -34,15 +41,19 @@ public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
         sortHow: String,
     ): ApiResponse<List<TraktFollowedShowResponse>> = watchListResponse
 
-    override suspend fun addShowsToWatchListByIds(
-        showIds: List<Long>,
-    ): ApiResponse<TraktAddShowToListResponse> =
-        addShowsResponse ?: error("FakeTraktListRemoteDataSource: addShowsToWatchListByIds not configured")
+    override suspend fun addShowsToWatchList(
+        shows: List<TraktShowIds>,
+    ): ApiResponse<TraktAddShowToListResponse> {
+        addedShows.addAll(shows)
+        return addShowsResponse ?: error("FakeTraktListRemoteDataSource: addShowsToWatchList not configured")
+    }
 
-    override suspend fun removeShowsFromWatchListByIds(
-        showIds: List<Long>,
-    ): ApiResponse<TraktAddRemoveShowFromListResponse> =
-        removeShowsResponse ?: error("FakeTraktListRemoteDataSource: removeShowsFromWatchListByIds not configured")
+    override suspend fun removeShowsFromWatchList(
+        shows: List<TraktShowIds>,
+    ): ApiResponse<TraktAddRemoveShowFromListResponse> {
+        removedShows.addAll(shows)
+        return removeShowsResponse ?: error("FakeTraktListRemoteDataSource: removeShowsFromWatchList not configured")
+    }
 
     override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
         error("FakeTraktListRemoteDataSource: getUser not configured")
@@ -61,22 +72,6 @@ public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
         name: String,
     ): ApiResponse<TraktCreateListResponse> =
         error("FakeTraktListRemoteDataSource: createList not configured")
-
-    override suspend fun addShowToWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddShowToListResponse> =
-        error("FakeTraktListRemoteDataSource: addShowToWatchListByTmdbId not configured")
-
-    override suspend fun removeShowFromWatchListByTmdbId(
-        tmdbId: Long,
-    ): ApiResponse<TraktAddRemoveShowFromListResponse> =
-        error("FakeTraktListRemoteDataSource: removeShowFromWatchListByTmdbId not configured")
-
-    override suspend fun addShowToWatchListById(showId: Long): ApiResponse<TraktAddShowToListResponse> =
-        error("FakeTraktListRemoteDataSource: addShowToWatchListById not configured")
-
-    override suspend fun removeShowFromWatchListById(
-        showId: Long,
-    ): ApiResponse<TraktAddRemoveShowFromListResponse> =
-        error("FakeTraktListRemoteDataSource: removeShowFromWatchListById not configured")
 
     override suspend fun addShowToList(
         userSlug: String,
