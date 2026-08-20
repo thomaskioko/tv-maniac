@@ -134,6 +134,36 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should mark restored watch history for upload given user is signed in`() = runTest(testDispatcher) {
+        repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = true)
+
+        watchedEpisodes()
+            .all { it.pending_action == PendingAction.UPLOAD.value } shouldBe true
+    }
+
+    @Test
+    fun `should mark a restored show rating for upload given user is signed in`() = runTest(testDispatcher) {
+        val show = breakingBad().copy(rating = BackupRating(value = 9, ratedAt = NOW))
+
+        repository.restoreBackup(fileWith(show), syncWithConnectedAccount = true)
+
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
+        database.ratingsQueries.observeShowRating(showId).executeAsOne()
+            .pending_action shouldBe PendingAction.UPLOAD.value
+    }
+
+    @Test
+    fun `should leave a restored show rating alone given user is signed out`() = runTest(testDispatcher) {
+        val show = breakingBad().copy(rating = BackupRating(value = 9, ratedAt = NOW))
+
+        repository.restoreBackup(fileWith(show), syncWithConnectedAccount = false)
+
+        val showId = database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne()
+        database.ratingsQueries.observeShowRating(showId).executeAsOne()
+            .pending_action shouldBe PendingAction.NOTHING.value
+    }
+
+    @Test
     fun `should survive a library sync given user is signed in`() = runTest(testDispatcher) {
         repository.restoreBackup(fileWith(breakingBad()), syncWithConnectedAccount = true)
 
