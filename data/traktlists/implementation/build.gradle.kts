@@ -15,6 +15,8 @@ kotlin {
                 api(projects.api.trakt.api)
                 api(projects.core.base)
                 api(projects.core.util.api)
+                api(projects.core.logger.api)
+                api(projects.data.backup.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
                 api(projects.data.traktlists.api)
@@ -22,6 +24,7 @@ kotlin {
 
                 implementation(projects.core.networkUtil.api)
                 implementation(projects.data.followedshows.api)
+                implementation(projects.data.user.api)
                 implementation(libs.sqldelight.extensions)
             }
         }
@@ -32,7 +35,10 @@ kotlin {
                 implementation(projects.core.util.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.requestManager.testing)
+                implementation(projects.core.logger.testing)
                 implementation(projects.data.shows.testing)
+                implementation(projects.data.traktlists.testing)
+                implementation(projects.data.user.testing)
             }
         }
     }
