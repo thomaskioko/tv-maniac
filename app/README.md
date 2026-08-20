@@ -1041,7 +1041,7 @@ graph TB
   :data:traktlists:implementation --> :data:request-manager:api
   :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
-  :data:traktlists:implementation -.-> :data:user:api
+  :data:traktlists:implementation --> :data:user:api
   :data:trendingshows:api --> :core:base
   :data:trendingshows:api --> :data:database:sqldelight
   :data:trendingshows:api --> :data:shows:api

@@ -84,7 +84,7 @@ graph TB
   :data:traktlists:implementation --> :data:request-manager:api
   :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
-  :data:traktlists:implementation -.-> :data:user:api
+  :data:traktlists:implementation --> :data:user:api
   :data:user:api --> :core:network-util:api
   :data:user:api --> :data:account-manager:api
   :data:user:api --> :data:database:sqldelight
