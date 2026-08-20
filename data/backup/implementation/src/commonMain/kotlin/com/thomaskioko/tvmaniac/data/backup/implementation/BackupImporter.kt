@@ -47,8 +47,8 @@ internal class BackupImporter(
                 showId = showId,
                 syncWithConnectedAccount = syncWithConnectedAccount,
             )
-            skippedSeasonRatings += restoreSeasonRatings(show, showId)
-            skippedEpisodeRatings += restoreEpisodeRatings(show, showId)
+            skippedSeasonRatings += restoreSeasonRatings(show, showId, syncWithConnectedAccount)
+            skippedEpisodeRatings += restoreEpisodeRatings(show, showId, syncWithConnectedAccount)
             recalculateMetadata(showId, includeSpecials)
         }
 
@@ -154,26 +154,41 @@ internal class BackupImporter(
         }
 
         show.rating?.takeIf { it.value in RATING_RANGE }?.let { rating ->
-            restoreQueries.restoreShowRating(
-                showId = showId,
-                userRating = rating.value,
-                ratedAt = rating.ratedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreShowRatingForUpload(
+                    showId = showId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+                else -> restoreQueries.restoreShowRating(
+                    showId = showId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+            }
         }
 
         show.watchedEpisodes.forEach { episode ->
-            restoreQueries.restoreWatchedEpisode(
-                showId = showId,
-                seasonNumber = episode.season,
-                episodeNumber = episode.episode,
-                watchedAt = episode.watchedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreWatchedEpisodeForUpload(
+                    showId = showId,
+                    seasonNumber = episode.season,
+                    episodeNumber = episode.episode,
+                    watchedAt = episode.watchedAt,
+                )
+                else -> restoreQueries.restoreWatchedEpisode(
+                    showId = showId,
+                    seasonNumber = episode.season,
+                    episodeNumber = episode.episode,
+                    watchedAt = episode.watchedAt,
+                )
+            }
         }
 
         return show.watchedEpisodes.size
     }
 
-    private fun restoreSeasonRatings(show: BackupShow, showId: Id<ShowId>): Int {
+    private fun restoreSeasonRatings(show: BackupShow, showId: Id<ShowId>, syncWithConnectedAccount: Boolean): Int {
         var skipped = 0
         show.seasonRatings.forEach { rating ->
             val seasonId = restoreQueries.seasonIdForNumber(showId, rating.season).executeAsOneOrNull()
@@ -181,16 +196,23 @@ internal class BackupImporter(
                 skipped++
                 return@forEach
             }
-            restoreQueries.restoreSeasonRating(
-                seasonId = seasonId,
-                userRating = rating.value,
-                ratedAt = rating.ratedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreSeasonRatingForUpload(
+                    seasonId = seasonId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+                else -> restoreQueries.restoreSeasonRating(
+                    seasonId = seasonId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+            }
         }
         return skipped
     }
 
-    private fun restoreEpisodeRatings(show: BackupShow, showId: Id<ShowId>): Int {
+    private fun restoreEpisodeRatings(show: BackupShow, showId: Id<ShowId>, syncWithConnectedAccount: Boolean): Int {
         var skipped = 0
         show.episodeRatings.forEach { rating ->
             val episodeId = restoreQueries
@@ -200,11 +222,18 @@ internal class BackupImporter(
                 skipped++
                 return@forEach
             }
-            restoreQueries.restoreEpisodeRating(
-                episodeId = episodeId,
-                userRating = rating.value,
-                ratedAt = rating.ratedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreEpisodeRatingForUpload(
+                    episodeId = episodeId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+                else -> restoreQueries.restoreEpisodeRating(
+                    episodeId = episodeId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+            }
         }
         return skipped
     }
