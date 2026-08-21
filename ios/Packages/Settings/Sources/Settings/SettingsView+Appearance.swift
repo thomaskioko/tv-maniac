@@ -275,7 +275,8 @@ extension SettingsView {
             backupNowDescription: autoBackup.backupNowDescription,
             isBackingUp: autoBackup.isBackingUp,
             onToggle: { presenter.dispatch(action: AutoBackupToggled(enabled: $0)) },
-            onBackupNow: { presenter.dispatch(action: BackupNowClicked()) }
+            onBackupNow: { presenter.dispatch(action: BackupNowClicked()) },
+            onChooseLocation: { presenter.dispatch(action: AutoBackupLocationClicked()) }
         )
     }
 

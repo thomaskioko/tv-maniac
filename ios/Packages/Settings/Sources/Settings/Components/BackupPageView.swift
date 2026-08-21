@@ -115,23 +115,33 @@ struct BackupPageView: View {
     }
 
     private var locationRow: some View {
-        HStack(spacing: appTheme.spacing.medium) {
-            SettingsIconChip("folder")
+        Button(action: content.autoBackup.onChooseLocation) {
+            HStack(spacing: appTheme.spacing.medium) {
+                SettingsIconChip("folder")
 
-            VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
-                Text(content.autoBackup.locationTitle)
-                    .textStyle(appTheme.typography.bodyLarge)
-                    .foregroundColor(appTheme.colors.onSurface)
-                Text(content.autoBackup.locationLabel)
-                    .textStyle(appTheme.typography.bodySmall)
+                VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                    Text(content.autoBackup.locationTitle)
+                        .textStyle(appTheme.typography.bodyLarge)
+                        .foregroundColor(appTheme.colors.onSurface)
+                    Text(content.autoBackup.locationLabel)
+                        .textStyle(appTheme.typography.bodySmall)
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
                     .foregroundColor(appTheme.colors.onSurfaceVariant)
             }
-
-            Spacer()
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.vertical, appTheme.spacing.small)
+            .contentShape(Rectangle())
         }
-        .padding(.horizontal, appTheme.spacing.medium)
-        .padding(.vertical, appTheme.spacing.small)
-        .accessibilityElement(children: .combine)
+        .buttonStyle(.plain)
+        .disabled(content.isLocked)
+        .testTag(SettingsTestTags.shared.AUTO_BACKUP_LOCATION_ROW_TEST_TAG)
+        .accessibilityLabel(content.autoBackup.locationTitle)
+        .accessibilityHint(content.autoBackup.locationLabel)
     }
 
     private var autoBackupSection: some View {
