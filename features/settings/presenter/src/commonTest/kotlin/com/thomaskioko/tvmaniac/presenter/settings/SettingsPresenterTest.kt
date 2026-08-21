@@ -14,16 +14,20 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.UiMessageType
+import com.thomaskioko.tvmaniac.data.backup.api.model.AutoBackupStatus
 import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreFailure
 import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
 import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeAutoBackupPreferences
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupLocationPermissions
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
@@ -35,8 +39,11 @@ import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
+import com.thomaskioko.tvmaniac.domain.backup.BackupNowInteractor
 import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
+import com.thomaskioko.tvmaniac.domain.backup.ObserveAutoBackupInteractor
 import com.thomaskioko.tvmaniac.domain.backup.RestoreBackupInteractor
+import com.thomaskioko.tvmaniac.domain.backup.RunAutoBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
@@ -51,6 +58,9 @@ import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupLocationClicked
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupScheduleSelected
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupToggled
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
@@ -59,6 +69,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmedWithAccount
+import com.thomaskioko.tvmaniac.settings.presenter.BackupNowClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
@@ -126,6 +137,8 @@ class SettingsPresenterTest {
     private val navigator = FakeNavigator()
     private val subscriptionManager = FakeSubscriptionManager()
     private val backupRepository = FakeBackupRepository()
+    private val autoBackupPreferences = FakeAutoBackupPreferences()
+    private val backupLocationPermissions = FakeBackupLocationPermissions()
     private lateinit var presenter: SettingsPresenter
 
     @BeforeTest
@@ -196,6 +209,21 @@ class SettingsPresenterTest {
             ),
             exportBackupInteractor = ExportBackupInteractor(backupRepository),
             restoreBackupInteractor = RestoreBackupInteractor(backupRepository, FakeBackgroundTaskScheduler()),
+            backupNowInteractor = BackupNowInteractor(
+                RunAutoBackupInteractor(
+                    backupRepository = backupRepository,
+                    datastoreRepository = datastoreRepository,
+                    autoBackupPreferences = autoBackupPreferences,
+                    dateTimeProvider = dateTimeProvider,
+                    logger = fakeLogger,
+                ),
+            ),
+            backupLocationPermissions = backupLocationPermissions,
+            observeAutoBackupInteractor = ObserveAutoBackupInteractor(
+                datastoreRepository = datastoreRepository,
+                autoBackupPreferences = autoBackupPreferences,
+                dateTimeProvider = dateTimeProvider,
+            ),
         )
     }
 
@@ -950,6 +978,148 @@ class SettingsPresenterTest {
     }
 
     @Test
+    fun `should include the automatic backup labels given the state is first read`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val autoBackup = expectMostRecentItem().backup.autoBackup
+            autoBackup.title shouldBe localizer.getString(StringResourceKey.SettingsAutoBackupTitle)
+            autoBackup.description shouldBe localizer.getString(StringResourceKey.SettingsAutoBackupDescription)
+            autoBackup.scheduleTitle shouldBe localizer.getString(StringResourceKey.SettingsAutoBackupScheduleTitle)
+            autoBackup.backupNowTitle shouldBe localizer.getString(StringResourceKey.SettingsAutoBackupNowTitle)
+        }
+    }
+
+    @Test
+    fun `should report no backup yet given none has run`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val autoBackup = expectMostRecentItem().backup.autoBackup
+            autoBackup.lastRunLabel shouldBe
+                localizer.getString(StringResourceKey.SettingsAutoBackupLastRunNever)
+            autoBackup.failureWarning.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should report when the last backup ran given one has`() = runTest {
+        autoBackupPreferences.setStatus(AutoBackupStatus(lastRunAt = NOW, lastRunFailed = false))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val autoBackup = expectMostRecentItem().backup.autoBackup
+            autoBackup.lastRunLabel shouldBe localizer.getString(
+                StringResourceKey.SettingsAutoBackupLastRun,
+                dateTimeProvider.epochToDisplayDateTime(NOW),
+            )
+            autoBackup.failureWarning.shouldBeNull()
+        }
+    }
+
+    @Test
+    fun `should warn given the last backup failed`() = runTest {
+        autoBackupPreferences.setStatus(AutoBackupStatus(lastRunAt = NOW, lastRunFailed = true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().backup.autoBackup.failureWarning shouldBe
+                localizer.getString(StringResourceKey.SettingsAutoBackupLastRunFailed)
+        }
+    }
+
+    @Test
+    fun `should turn automatic backup on given it is toggled`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(AutoBackupToggled(enabled = true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().backup.autoBackup.enabled shouldBe true
+        }
+    }
+
+    @Test
+    fun `should mark the chosen schedule as selected given one is picked`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(AutoBackupScheduleSelected(AutoBackupInterval.MONTHLY))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val autoBackup = expectMostRecentItem().backup.autoBackup
+            autoBackup.scheduleLabel shouldBe
+                localizer.getString(StringResourceKey.SettingsAutoBackupScheduleMonthly)
+            autoBackup.scheduleOptions.single { it.selected }.interval shouldBe AutoBackupInterval.MONTHLY
+        }
+    }
+
+    @Test
+    fun `should offer every schedule given the options are read`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            val options = expectMostRecentItem().backup.autoBackup.scheduleOptions
+            options.map { it.interval } shouldBe AutoBackupInterval.entries
+            options.single { it.selected }.interval shouldBe AutoBackupInterval.WEEKLY
+        }
+    }
+
+    @Test
+    fun `should save the chosen location given it is picked for automatic backup`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(AutoBackupLocationClicked)
+        testScheduler.advanceUntilIdle()
+        presenter.dispatch(BackupDestinationSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.getAutoBackupLocation() shouldBe LOCATION
+        backupLocationPermissions.requested() shouldBe listOf(LOCATION)
+        backupRepository.lastWriteLocation.shouldBeNull()
+
+        presenter.state.test {
+            val autoBackup = expectMostRecentItem().backup.autoBackup
+            autoBackup.locationLabel shouldBe LOCATION
+            autoBackup.hasLocation shouldBe true
+        }
+    }
+
+    @Test
+    fun `should keep no location given write access cannot be kept`() = runTest {
+        testScheduler.advanceUntilIdle()
+        backupLocationPermissions.setPersisted(false)
+
+        presenter.dispatch(AutoBackupLocationClicked)
+        testScheduler.advanceUntilIdle()
+        presenter.dispatch(BackupDestinationSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.getAutoBackupLocation().shouldBeNull()
+
+        presenter.state.test {
+            expectMostRecentItem().message.shouldNotBeNull()
+        }
+    }
+
+    @Test
+    fun `should write a backup given back up now is tapped`() = runTest {
+        testScheduler.advanceUntilIdle()
+        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupNowClicked)
+        testScheduler.advanceUntilIdle()
+
+        backupRepository.lastWriteLocation shouldBe LOCATION
+
+        presenter.state.test {
+            expectMostRecentItem().backup.autoBackup.isBackingUp shouldBe false
+        }
+    }
+
+    @Test
     fun `should ask for confirmation given restore is tapped`() = runTest {
         testScheduler.advanceUntilIdle()
 
@@ -1159,5 +1329,6 @@ class SettingsPresenterTest {
 
     private companion object {
         private const val LOCATION = "content://downloads/tvmaniac-backup.json"
+        private const val NOW = 1_700_000_000_000L
     }
 }
