@@ -14,10 +14,10 @@ public class ExportBackupInteractor(
     private val backupRepository: BackupRepository,
 ) : Interactor<ExportBackupInteractor.Params>() {
 
-    public data class Params(val location: String)
+    public data class Params(val folder: String, val fileName: String)
 
     override suspend fun doWork(params: Params) {
-        val result = backupRepository.writeBackup(params.location)
+        val result = backupRepository.writeBackup(params.folder, params.fileName)
         if (result is BackupResult.Failed) throw BackupExportException(result.reason, result.cause)
     }
 }

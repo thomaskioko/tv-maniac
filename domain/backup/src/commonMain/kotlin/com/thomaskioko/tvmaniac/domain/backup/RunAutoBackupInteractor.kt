@@ -24,14 +24,15 @@ public class RunAutoBackupInteractor(
 ) : ResultInteractor<Unit, AutoBackupResult>() {
 
     override suspend fun doWork(params: Unit): AutoBackupResult {
-        val location = datastoreRepository.getAutoBackupLocation()
-        if (location == null) {
-            logger.debug(TAG, "No location chosen, skipping automatic backup")
+        val folder = datastoreRepository.getBackupFolder()
+        if (folder == null) {
+            logger.debug(TAG, "No folder chosen, skipping automatic backup")
             return AutoBackupResult.NoLocation
         }
+        val fileName = datastoreRepository.getBackupFileName()
 
         val result = try {
-            backupRepository.writeBackup(location)
+            backupRepository.writeBackup(folder, fileName)
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (error: Exception) {
@@ -49,8 +50,8 @@ public class RunAutoBackupInteractor(
             is BackupResult.Failed -> {
                 recordAttempt(failed = true)
                 if (result.reason == BackupFailure.LocationUnavailable) {
-                    logger.warning(TAG, "Automatic backup location is gone, asking for a new one")
-                    datastoreRepository.saveAutoBackupLocation(null)
+                    logger.warning(TAG, "The backup folder is gone, asking for a new one")
+                    datastoreRepository.saveBackupFolder(null)
                     return AutoBackupResult.LocationLost
                 }
                 logger.error(TAG, "Automatic backup failed: ${result.reason}")

@@ -26,7 +26,7 @@ public class AutoBackupTasksInitializer(
 
             combine(
                 datastoreRepository.value.observeAutoBackupEnabled(),
-                datastoreRepository.value.observeAutoBackupLocation(),
+                datastoreRepository.value.observeBackupFolder(),
                 datastoreRepository.value.observeAutoBackupInterval(),
             ) { enabled, location, interval ->
                 if (enabled && location != null) interval else null
@@ -45,10 +45,10 @@ public class AutoBackupTasksInitializer(
     }
 
     private suspend fun useDefaultLocationWhenNoneChosen() {
-        if (datastoreRepository.value.getAutoBackupLocation() != null) return
-        val default = backupDestination.value.defaultBackupLocation() ?: return
+        if (datastoreRepository.value.getBackupFolder() != null) return
+        val default = backupDestination.value.defaultBackupFolder() ?: return
         logger.debug(TAG, "Writing automatic backups to $default")
-        datastoreRepository.value.saveAutoBackupLocation(default)
+        datastoreRepository.value.saveBackupFolder(default)
     }
 
     private companion object {
