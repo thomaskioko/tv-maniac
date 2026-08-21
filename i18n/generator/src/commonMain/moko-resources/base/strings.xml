@@ -613,7 +613,7 @@
     <string name="settings_auto_backup_schedule_weekly">Every week</string>
     <string name="settings_auto_backup_schedule_fortnightly">Every two weeks</string>
     <string name="settings_auto_backup_schedule_monthly">Every month</string>
-    <string name="settings_auto_backup_location_title">Where backups are saved</string>
+    <string name="settings_auto_backup_location_title">Backup location</string>
     <string name="settings_auto_backup_location_none">Choose where to save backups</string>
     <string name="settings_auto_backup_last_run">Last backup %1$s</string>
     <string name="settings_auto_backup_last_run_never">No backup saved yet</string>
