@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.domain.backup
 
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
 import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -20,6 +21,7 @@ internal class AutoBackupTasksInitializerTest {
     private val initializerScope = CoroutineScope(testDispatcher + Job())
     private val scheduler = FakeBackgroundTaskScheduler()
     private val datastoreRepository = FakeDatastoreRepository()
+    private val backupDestination = FakeBackupDestination()
 
     @AfterTest
     fun tearDown() {
@@ -29,10 +31,40 @@ internal class AutoBackupTasksInitializerTest {
     private fun startInitializer() {
         AutoBackupTasksInitializer(
             scheduler = scheduler,
+            backupDestination = lazyOf(backupDestination),
             datastoreRepository = lazyOf(datastoreRepository),
             logger = FakeLogger(),
             coroutineScope = initializerScope,
         ).init()
+    }
+
+    @Test
+    fun `should use the default location given the platform supplies one`() = runTest(testDispatcher) {
+        backupDestination.setDefaultLocation(DEFAULT_LOCATION)
+
+        startInitializer()
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.getAutoBackupLocation() shouldBe DEFAULT_LOCATION
+    }
+
+    @Test
+    fun `should keep the chosen location given the platform supplies a default`() = runTest(testDispatcher) {
+        backupDestination.setDefaultLocation(DEFAULT_LOCATION)
+        datastoreRepository.saveAutoBackupLocation(LOCATION)
+
+        startInitializer()
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.getAutoBackupLocation() shouldBe LOCATION
+    }
+
+    @Test
+    fun `should keep no location given the platform supplies no default`() = runTest(testDispatcher) {
+        startInitializer()
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.getAutoBackupLocation() shouldBe null
     }
 
     @Test
@@ -134,6 +166,7 @@ internal class AutoBackupTasksInitializerTest {
 
     private companion object {
         private const val LOCATION = "content://downloads/backup.json"
+        private const val DEFAULT_LOCATION = "/Documents/tvmaniac-backup.json"
         private const val ONE_DAY_MS = 24L * 60 * 60 * 1000
         private const val SEVEN_DAYS_MS = 7 * ONE_DAY_MS
         private const val THIRTY_DAYS_MS = 30 * ONE_DAY_MS
