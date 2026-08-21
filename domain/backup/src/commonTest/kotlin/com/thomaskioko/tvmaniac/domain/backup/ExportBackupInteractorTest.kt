@@ -21,16 +21,16 @@ internal class ExportBackupInteractorTest {
 
     @Test
     fun `should write to the given location given a backup is exported`() = runTest {
-        interactor.executeSync(ExportBackupInteractor.Params(LOCATION))
+        interactor.executeSync(ExportBackupInteractor.Params(LOCATION, FILE_NAME))
 
-        repository.lastWriteLocation shouldBe LOCATION
+        repository.lastWriteLocation shouldBe "$LOCATION/$FILE_NAME"
     }
 
     @Test
     fun `should report success given the backup is written`() = runTest {
         repository.setWriteResult(BackupResult.Success(showCount = 3, episodeCount = 42))
 
-        interactor(ExportBackupInteractor.Params(LOCATION)).toList().last() shouldBe InvokeSuccess
+        interactor(ExportBackupInteractor.Params(LOCATION, FILE_NAME)).toList().last() shouldBe InvokeSuccess
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class ExportBackupInteractorTest {
         repository.setWriteResult(BackupResult.Failed(BackupFailure.VerificationFailed))
 
         val failure = assertFailsWith<BackupExportException> {
-            interactor.executeSync(ExportBackupInteractor.Params(LOCATION))
+            interactor.executeSync(ExportBackupInteractor.Params(LOCATION, FILE_NAME))
         }
 
         failure.reason shouldBe BackupFailure.VerificationFailed
@@ -48,12 +48,13 @@ internal class ExportBackupInteractorTest {
     fun `should report an error given the repository throws`() = runTest {
         repository.setCreateException(IllegalStateException("database is locked"))
 
-        val status = interactor(ExportBackupInteractor.Params(LOCATION)).toList().last()
+        val status = interactor(ExportBackupInteractor.Params(LOCATION, FILE_NAME)).toList().last()
 
         status.shouldBeInstanceOf<InvokeError>()
     }
 
     private companion object {
+        private const val FILE_NAME = "tvmaniac-backup.json"
         private const val LOCATION = "content://downloads/backup.json"
     }
 }

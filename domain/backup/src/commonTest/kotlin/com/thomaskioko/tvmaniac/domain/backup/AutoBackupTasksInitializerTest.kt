@@ -39,38 +39,38 @@ internal class AutoBackupTasksInitializerTest {
     }
 
     @Test
-    fun `should use the default location given the platform supplies one`() = runTest(testDispatcher) {
-        backupDestination.setDefaultLocation(DEFAULT_LOCATION)
+    fun `should use the default folder given the platform supplies one`() = runTest(testDispatcher) {
+        backupDestination.setDefaultFolder(DEFAULT_FOLDER)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
 
-        datastoreRepository.getAutoBackupLocation() shouldBe DEFAULT_LOCATION
+        datastoreRepository.getBackupFolder() shouldBe DEFAULT_FOLDER
     }
 
     @Test
-    fun `should keep the chosen location given the platform supplies a default`() = runTest(testDispatcher) {
-        backupDestination.setDefaultLocation(DEFAULT_LOCATION)
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+    fun `should keep the chosen folder given the platform supplies a default`() = runTest(testDispatcher) {
+        backupDestination.setDefaultFolder(DEFAULT_FOLDER)
+        datastoreRepository.saveBackupFolder(LOCATION)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
 
-        datastoreRepository.getAutoBackupLocation() shouldBe LOCATION
+        datastoreRepository.getBackupFolder() shouldBe LOCATION
     }
 
     @Test
-    fun `should keep no location given the platform supplies no default`() = runTest(testDispatcher) {
+    fun `should keep no folder given the platform supplies no default`() = runTest(testDispatcher) {
         startInitializer()
         testScheduler.advanceUntilIdle()
 
-        datastoreRepository.getAutoBackupLocation() shouldBe null
+        datastoreRepository.getBackupFolder() shouldBe null
     }
 
     @Test
     fun `should schedule the backup given it is on and a location is chosen`() = runTest(testDispatcher) {
         datastoreRepository.setAutoBackupEnabled(true)
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
@@ -81,7 +81,7 @@ internal class AutoBackupTasksInitializerTest {
     @Test
     fun `should schedule on the chosen interval given one is set`() = runTest(testDispatcher) {
         datastoreRepository.setAutoBackupEnabled(true)
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
         datastoreRepository.saveAutoBackupInterval(AutoBackupInterval.DAILY)
 
         startInitializer()
@@ -93,7 +93,7 @@ internal class AutoBackupTasksInitializerTest {
     @Test
     fun `should schedule weekly given no interval has been chosen`() = runTest(testDispatcher) {
         datastoreRepository.setAutoBackupEnabled(true)
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
@@ -104,7 +104,7 @@ internal class AutoBackupTasksInitializerTest {
     @Test
     fun `should reschedule given the interval changes`() = runTest(testDispatcher) {
         datastoreRepository.setAutoBackupEnabled(true)
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
@@ -128,7 +128,7 @@ internal class AutoBackupTasksInitializerTest {
 
     @Test
     fun `should schedule nothing given a location is chosen but it is off`() = runTest(testDispatcher) {
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
@@ -139,7 +139,7 @@ internal class AutoBackupTasksInitializerTest {
     @Test
     fun `should cancel the backup given it is switched off`() = runTest(testDispatcher) {
         datastoreRepository.setAutoBackupEnabled(true)
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
@@ -153,20 +153,20 @@ internal class AutoBackupTasksInitializerTest {
     @Test
     fun `should cancel the backup given the location is forgotten`() = runTest(testDispatcher) {
         datastoreRepository.setAutoBackupEnabled(true)
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
 
         startInitializer()
         testScheduler.advanceUntilIdle()
 
-        datastoreRepository.saveAutoBackupLocation(null)
+        datastoreRepository.saveBackupFolder(null)
         testScheduler.advanceUntilIdle()
 
         scheduler.getCancelledIds() shouldBe listOf(AutoBackupWorker.WORKER_NAME)
     }
 
     private companion object {
-        private const val LOCATION = "content://downloads/backup.json"
-        private const val DEFAULT_LOCATION = "/Documents/tvmaniac-backup.json"
+        private const val LOCATION = "content://downloads/tree"
+        private const val DEFAULT_FOLDER = "/Documents"
         private const val ONE_DAY_MS = 24L * 60 * 60 * 1000
         private const val SEVEN_DAYS_MS = 7 * ONE_DAY_MS
         private const val THIRTY_DAYS_MS = 30 * ONE_DAY_MS

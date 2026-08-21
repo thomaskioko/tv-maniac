@@ -942,7 +942,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        backupRepository.lastWriteLocation shouldBe LOCATION
+        backupRepository.lastWriteLocation shouldBe "$LOCATION/$FILE_NAME"
 
         presenter.state.test {
             val state = expectMostRecentItem()
@@ -1075,7 +1075,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        datastoreRepository.getAutoBackupLocation() shouldBe LOCATION
+        datastoreRepository.getBackupFolder() shouldBe LOCATION
         backupLocationPermissions.requested() shouldBe listOf(LOCATION)
         backupRepository.lastWriteLocation.shouldBeNull()
 
@@ -1111,7 +1111,7 @@ class SettingsPresenterTest {
         presenter.dispatch(BackupDestinationSelected(LOCATION))
         testScheduler.advanceUntilIdle()
 
-        datastoreRepository.getAutoBackupLocation().shouldBeNull()
+        datastoreRepository.getBackupFolder().shouldBeNull()
 
         presenter.state.test {
             expectMostRecentItem().message.shouldNotBeNull()
@@ -1121,13 +1121,13 @@ class SettingsPresenterTest {
     @Test
     fun `should write a backup given back up now is tapped`() = runTest {
         testScheduler.advanceUntilIdle()
-        datastoreRepository.saveAutoBackupLocation(LOCATION)
+        datastoreRepository.saveBackupFolder(LOCATION)
         testScheduler.advanceUntilIdle()
 
         presenter.dispatch(BackupNowClicked)
         testScheduler.advanceUntilIdle()
 
-        backupRepository.lastWriteLocation shouldBe LOCATION
+        backupRepository.lastWriteLocation shouldBe "$LOCATION/$FILE_NAME"
 
         presenter.state.test {
             expectMostRecentItem().backup.autoBackup.isBackingUp shouldBe false
@@ -1343,6 +1343,7 @@ class SettingsPresenterTest {
     }
 
     private companion object {
+        private const val FILE_NAME = "tvmaniac-backup.json"
         private const val LOCATION = "content://downloads/tvmaniac-backup.json"
         private const val NOW = 1_700_000_000_000L
     }
