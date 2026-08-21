@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import android.content.Context
+import android.net.Uri
+import android.provider.DocumentsContract
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
@@ -19,13 +21,16 @@ public class AndroidBackupDestination(
     @ApplicationContext private val context: Context,
 ) : BackupDestination {
 
-    override fun write(location: String, contents: String) {
-        if (!isContentUri(location)) {
-            File(location).writeText(contents)
-            return
+    override fun write(folder: String, fileName: String, contents: String): String {
+        if (!isContentUri(folder)) {
+            val file = File(folder, fileName)
+            file.writeText(contents)
+            return file.path
         }
-        val stream = openOutputStreamOrThrow(location)
-        stream.use { it.write(contents.toByteArray()) }
+
+        val document = documentIn(folder.toUri(), fileName)
+        openOutputStreamOrThrow(document).use { it.write(contents.toByteArray()) }
+        return document.toString()
     }
 
     override fun read(location: String): String {
@@ -39,17 +44,59 @@ public class AndroidBackupDestination(
         return stream.use { it.readBytes().decodeToString() }
     }
 
-    override fun safetyCopyLocation(): String = File(context.filesDir, BackupFormat.SAFETY_COPY_NAME).path
+    override fun safetyCopyFolder(): String = context.filesDir.path
 
-    override fun defaultBackupLocation(): String? = null
+    override fun defaultBackupFolder(): String? = null
 
-    private fun openOutputStreamOrThrow(location: String): OutputStream = try {
-        context.contentResolver.openOutputStream(location.toUri(), TRUNCATE_WRITE_MODE)
-            ?: throw BackupLocationUnreadableException(location)
-    } catch (security: SecurityException) {
-        throw BackupLocationUnreadableException(location, security)
+    private fun documentIn(tree: Uri, fileName: String): Uri {
+        val treeDocument = try {
+            DocumentsContract.buildDocumentUriUsingTree(tree, DocumentsContract.getTreeDocumentId(tree))
+        } catch (invalid: RuntimeException) {
+            throw BackupLocationUnreadableException(tree.toString(), invalid)
+        }
+        return existingDocument(tree, treeDocument, fileName)
+            ?: createDocumentOrThrow(tree, treeDocument, fileName)
+    }
+
+    private fun existingDocument(tree: Uri, treeDocument: Uri, fileName: String): Uri? {
+        val children = DocumentsContract.buildChildDocumentsUriUsingTree(
+            tree,
+            DocumentsContract.getDocumentId(treeDocument),
+        )
+        val columns = arrayOf(
+            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+        )
+        return try {
+            context.contentResolver.query(children, columns, null, null, null)?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    if (cursor.getString(1) == fileName) {
+                        return DocumentsContract.buildDocumentUriUsingTree(tree, cursor.getString(0))
+                    }
+                }
+                null
+            }
+        } catch (error: RuntimeException) {
+            throw BackupLocationUnreadableException(tree.toString(), error)
+        }
+    }
+
+    private fun createDocumentOrThrow(tree: Uri, treeDocument: Uri, fileName: String): Uri = try {
+        DocumentsContract.createDocument(context.contentResolver, treeDocument, BackupFormat.MIME_TYPE, fileName)
+            ?: throw BackupLocationUnreadableException(tree.toString())
+    } catch (error: RuntimeException) {
+        throw BackupLocationUnreadableException(tree.toString(), error)
     } catch (missing: FileNotFoundException) {
-        throw BackupLocationUnreadableException(location, missing)
+        throw BackupLocationUnreadableException(tree.toString(), missing)
+    }
+
+    private fun openOutputStreamOrThrow(document: Uri): OutputStream = try {
+        context.contentResolver.openOutputStream(document, TRUNCATE_WRITE_MODE)
+            ?: throw BackupLocationUnreadableException(document.toString())
+    } catch (security: SecurityException) {
+        throw BackupLocationUnreadableException(document.toString(), security)
+    } catch (missing: FileNotFoundException) {
+        throw BackupLocationUnreadableException(document.toString(), missing)
     }
 
     private fun isContentUri(location: String): Boolean = location.toUri().scheme == CONTENT_SCHEME

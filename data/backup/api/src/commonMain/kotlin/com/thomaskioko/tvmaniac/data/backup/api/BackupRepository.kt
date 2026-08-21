@@ -7,7 +7,7 @@ import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
 public interface BackupRepository {
     public suspend fun createBackup(): BackupFile
 
-    public suspend fun writeBackup(location: String): BackupResult
+    public suspend fun writeBackup(folder: String, fileName: String): BackupResult
 
     public suspend fun restoreBackup(
         location: String,
