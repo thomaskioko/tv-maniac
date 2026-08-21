@@ -251,6 +251,34 @@ extension SettingsView {
         }
     }
 
+    var autoBackupContent: SettingsAutoBackupContent {
+        let autoBackup = uiState.backup.autoBackup
+        return SettingsAutoBackupContent(
+            title: autoBackup.title,
+            description: autoBackup.description,
+            isOn: autoBackup.enabled,
+            locationTitle: autoBackup.locationTitle,
+            locationLabel: autoBackup.locationLabel,
+            hasLocation: autoBackup.hasLocation,
+            scheduleTitle: autoBackup.scheduleTitle,
+            scheduleOptions: autoBackup.scheduleOptions.map { option in
+                SettingsAutoBackupScheduleOption(
+                    id: option.interval.name,
+                    label: option.label,
+                    isSelected: option.selected,
+                    onSelect: { presenter.dispatch(action: AutoBackupScheduleSelected(interval: option.interval)) }
+                )
+            },
+            lastRunLabel: autoBackup.lastRunLabel,
+            failureWarning: autoBackup.failureWarning,
+            backupNowTitle: autoBackup.backupNowTitle,
+            backupNowDescription: autoBackup.backupNowDescription,
+            isBackingUp: autoBackup.isBackingUp,
+            onToggle: { presenter.dispatch(action: AutoBackupToggled(enabled: $0)) },
+            onBackupNow: { presenter.dispatch(action: BackupNowClicked()) }
+        )
+    }
+
     var backupContent: SettingsBackupContent {
         SettingsBackupContent(
             exportTitle: uiState.backup.exportTitle,
@@ -261,6 +289,7 @@ extension SettingsView {
             isImporting: uiState.backup.isImporting || uiState.backup.awaitingSource,
             summary: uiState.backup.summary?.toContent(),
             summaryDismissAccessibilityLabel: String(\.cd_dismiss),
+            autoBackup: autoBackupContent,
             isLocked: uiState.premium.backupLocked,
             lockedBadgeText: uiState.premium.badgeText,
             lockedTitle: uiState.premium.backupLockedTitle,

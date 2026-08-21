@@ -183,6 +183,72 @@ public struct SettingsAccountContent {
     }
 }
 
+public struct SettingsAutoBackupScheduleOption: Identifiable {
+    public let id: String
+    public let label: String
+    public let isSelected: Bool
+    public let onSelect: () -> Void
+
+    public init(id: String, label: String, isSelected: Bool, onSelect: @escaping () -> Void) {
+        self.id = id
+        self.label = label
+        self.isSelected = isSelected
+        self.onSelect = onSelect
+    }
+}
+
+public struct SettingsAutoBackupContent {
+    public let title: String
+    public let description: String
+    public let isOn: Bool
+    public let locationTitle: String
+    public let locationLabel: String
+    public let hasLocation: Bool
+    public let scheduleTitle: String
+    public let scheduleOptions: [SettingsAutoBackupScheduleOption]
+    public let lastRunLabel: String
+    public let failureWarning: String?
+    public let backupNowTitle: String
+    public let backupNowDescription: String
+    public let isBackingUp: Bool
+    public let onToggle: (Bool) -> Void
+    public let onBackupNow: () -> Void
+
+    public init(
+        title: String,
+        description: String,
+        isOn: Bool = false,
+        locationTitle: String,
+        locationLabel: String,
+        hasLocation: Bool = false,
+        scheduleTitle: String,
+        scheduleOptions: [SettingsAutoBackupScheduleOption] = [],
+        lastRunLabel: String = "",
+        failureWarning: String? = nil,
+        backupNowTitle: String,
+        backupNowDescription: String,
+        isBackingUp: Bool = false,
+        onToggle: @escaping (Bool) -> Void = { _ in },
+        onBackupNow: @escaping () -> Void = {}
+    ) {
+        self.title = title
+        self.description = description
+        self.isOn = isOn
+        self.locationTitle = locationTitle
+        self.locationLabel = locationLabel
+        self.hasLocation = hasLocation
+        self.scheduleTitle = scheduleTitle
+        self.scheduleOptions = scheduleOptions
+        self.lastRunLabel = lastRunLabel
+        self.failureWarning = failureWarning
+        self.backupNowTitle = backupNowTitle
+        self.backupNowDescription = backupNowDescription
+        self.isBackingUp = isBackingUp
+        self.onToggle = onToggle
+        self.onBackupNow = onBackupNow
+    }
+}
+
 public struct SettingsBackupContent {
     public let exportTitle: String
     public let exportDescription: String
@@ -192,6 +258,7 @@ public struct SettingsBackupContent {
     public let isImporting: Bool
     public let summary: SettingsBackupSummaryContent?
     public let summaryDismissAccessibilityLabel: String
+    public let autoBackup: SettingsAutoBackupContent
     public let isLocked: Bool
     public let lockedBadgeText: String
     public let lockedTitle: String
@@ -212,6 +279,7 @@ public struct SettingsBackupContent {
         isImporting: Bool = false,
         summary: SettingsBackupSummaryContent? = nil,
         summaryDismissAccessibilityLabel: String = "",
+        autoBackup: SettingsAutoBackupContent,
         isLocked: Bool = false,
         lockedBadgeText: String = "",
         lockedTitle: String = "",
@@ -231,6 +299,7 @@ public struct SettingsBackupContent {
         self.isImporting = isImporting
         self.summary = summary
         self.summaryDismissAccessibilityLabel = summaryDismissAccessibilityLabel
+        self.autoBackup = autoBackup
         self.isLocked = isLocked
         self.lockedBadgeText = lockedBadgeText
         self.lockedTitle = lockedTitle

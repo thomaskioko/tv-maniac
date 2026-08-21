@@ -1,6 +1,9 @@
 import Components
 import DesignSystem
 import SwiftUI
+import TvManiac
+
+private let disabledOpacity: Double = 0.38
 
 struct BackupPageView: View {
     @Environment(\.appTheme) private var appTheme
@@ -16,6 +19,8 @@ struct BackupPageView: View {
                 exportRow
                 SettingsRowDivider()
                 importRow
+                SettingsRowDivider()
+                locationRow
             }
 
             if let summary = content.summary {
@@ -25,6 +30,8 @@ struct BackupPageView: View {
                     onDismiss: content.onDismissSummary
                 )
             }
+
+            autoBackupSection
         }
         .premiumOverlay(
             isLocked: content.isLocked,
@@ -106,6 +113,126 @@ struct BackupPageView: View {
         .accessibilityLabel(content.importTitle)
         .accessibilityHint(content.importDescription)
     }
+
+    private var locationRow: some View {
+        HStack(spacing: appTheme.spacing.medium) {
+            SettingsIconChip("folder")
+
+            VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                Text(content.autoBackup.locationTitle)
+                    .textStyle(appTheme.typography.bodyLarge)
+                    .foregroundColor(appTheme.colors.onSurface)
+                Text(content.autoBackup.locationLabel)
+                    .textStyle(appTheme.typography.bodySmall)
+                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, appTheme.spacing.medium)
+        .padding(.vertical, appTheme.spacing.small)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var autoBackupSection: some View {
+        VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
+            SettingsCard {
+                automaticBackupToggle
+
+                if content.autoBackup.isOn {
+                    SettingsRowDivider()
+                    backupNowRow
+                }
+            }
+
+            if content.autoBackup.isOn {
+                SettingsCard {
+                    VStack(alignment: .leading, spacing: appTheme.spacing.small) {
+                        Text(content.autoBackup.scheduleTitle)
+                            .textStyle(appTheme.typography.titleSmall)
+                            .foregroundColor(appTheme.colors.onSurface)
+
+                        FlowLayout(
+                            spacing: appTheme.spacing.small,
+                            items: content.autoBackup.scheduleOptions
+                        ) { option in
+                            SelectionChip(
+                                label: option.label,
+                                isSelected: option.isSelected,
+                                action: option.onSelect
+                            )
+                            .testTag(SettingsTestTags.shared.autoBackupScheduleChip(name: option.id))
+                        }
+                    }
+                    .padding(appTheme.spacing.medium)
+                }
+
+                VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                    Text(content.autoBackup.lastRunLabel)
+                        .textStyle(appTheme.typography.bodySmall)
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+
+                    if let failureWarning = content.autoBackup.failureWarning {
+                        Text(failureWarning)
+                            .textStyle(appTheme.typography.bodySmall)
+                            .foregroundColor(appTheme.colors.error)
+                    }
+                }
+                .padding(.horizontal, appTheme.spacing.medium)
+            }
+        }
+    }
+
+    private var automaticBackupToggle: some View {
+        SettingsToggleRow(
+            SettingsToggleItem(
+                id: "auto_backup",
+                icon: "clock",
+                title: content.autoBackup.title,
+                subtitle: content.autoBackup.description,
+                isOn: content.autoBackup.isOn,
+                onToggle: content.autoBackup.onToggle
+            )
+        )
+        .testTag(SettingsTestTags.shared.AUTO_BACKUP_TOGGLE_TEST_TAG)
+    }
+
+    private var backupNowRow: some View {
+        Button(action: content.autoBackup.onBackupNow) {
+            HStack(spacing: appTheme.spacing.medium) {
+                SettingsIconChip("bolt")
+
+                VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                    Text(content.autoBackup.backupNowTitle)
+                        .textStyle(appTheme.typography.bodyLarge)
+                        .foregroundColor(appTheme.colors.onSurface)
+                    Text(content.autoBackup.backupNowDescription)
+                        .textStyle(appTheme.typography.bodySmall)
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                if content.autoBackup.isBackingUp {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(appTheme.colors.onSurfaceVariant)
+                } else {
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                }
+            }
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.vertical, appTheme.spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(content.autoBackup.isBackingUp || !content.autoBackup.hasLocation || content.isLocked)
+        .opacity(content.autoBackup.hasLocation ? 1 : disabledOpacity)
+        .testTag(SettingsTestTags.shared.AUTO_BACKUP_NOW_ROW_TEST_TAG)
+        .accessibilityLabel(content.autoBackup.backupNowTitle)
+        .accessibilityHint(content.autoBackup.backupNowDescription)
+    }
 }
 
 #if DEBUG
@@ -129,6 +256,24 @@ struct BackupPageView: View {
 
     #Preview("Importing") {
         BackupPageView(content: SettingsPreviewSamples.importingBackupContent)
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Automatic Backup On") {
+        BackupPageView(content: SettingsPreviewSamples.autoBackupOnBackupContent)
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Automatic Backup Never Run") {
+        BackupPageView(content: SettingsPreviewSamples.autoBackupNeverRunBackupContent)
+            .padding()
+            .appPreview()
+    }
+
+    #Preview("Automatic Backup Failed") {
+        BackupPageView(content: SettingsPreviewSamples.autoBackupFailedBackupContent)
             .padding()
             .appPreview()
     }
