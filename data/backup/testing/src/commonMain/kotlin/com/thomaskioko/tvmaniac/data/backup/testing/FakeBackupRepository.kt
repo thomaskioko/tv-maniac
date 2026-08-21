@@ -73,9 +73,14 @@ public class FakeBackupDestination : BackupDestination {
     private val files = mutableMapOf<String, String>()
     private var writeException: Throwable? = null
     private var readException: Throwable? = null
+    private var defaultLocation: String? = null
 
     public var lastWriteLocation: String? = null
         private set
+
+    public fun setDefaultLocation(location: String?) {
+        defaultLocation = location
+    }
 
     public fun setWriteException(exception: Throwable) {
         writeException = exception
@@ -103,6 +108,8 @@ public class FakeBackupDestination : BackupDestination {
     }
 
     override fun safetyCopyLocation(): String = SAFETY_COPY_LOCATION
+
+    override fun defaultBackupLocation(): String? = defaultLocation
 
     public companion object {
         public const val SAFETY_COPY_LOCATION: String = "safety-copy"

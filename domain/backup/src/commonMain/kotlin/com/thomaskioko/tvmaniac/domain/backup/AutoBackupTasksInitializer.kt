@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.domain.backup
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 @Inject
 public class AutoBackupTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
+    private val backupDestination: Lazy<BackupDestination>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
@@ -20,6 +22,8 @@ public class AutoBackupTasksInitializer(
 
     public fun init() {
         coroutineScope.launch {
+            useDefaultLocationWhenNoneChosen()
+
             combine(
                 datastoreRepository.value.observeAutoBackupEnabled(),
                 datastoreRepository.value.observeAutoBackupLocation(),
@@ -38,6 +42,13 @@ public class AutoBackupTasksInitializer(
                     }
                 }
         }
+    }
+
+    private suspend fun useDefaultLocationWhenNoneChosen() {
+        if (datastoreRepository.value.getAutoBackupLocation() != null) return
+        val default = backupDestination.value.defaultBackupLocation() ?: return
+        logger.debug(TAG, "Writing automatic backups to $default")
+        datastoreRepository.value.saveAutoBackupLocation(default)
     }
 
     private companion object {

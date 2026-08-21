@@ -37,12 +37,16 @@ public class IosBackupDestination : BackupDestination {
         error = null,
     ) ?: throw BackupLocationUnreadableException(location)
 
-    override fun safetyCopyLocation(): String {
+    override fun safetyCopyLocation(): String = documentsPath(BackupFormat.SAFETY_COPY_NAME)
+
+    override fun defaultBackupLocation(): String = documentsPath(BackupFormat.AUTO_BACKUP_NAME)
+
+    private fun documentsPath(name: String): String {
         val documents = NSSearchPathForDirectoriesInDomains(
             directory = NSDocumentDirectory,
             domainMask = NSUserDomainMask,
             expandTilde = true,
         ).first() as NSString
-        return documents.stringByAppendingPathComponent(BackupFormat.SAFETY_COPY_NAME)
+        return documents.stringByAppendingPathComponent(name)
     }
 }
