@@ -11,7 +11,6 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSString
 import platform.Foundation.NSURL
-import platform.Foundation.NSURLBookmarkResolutionWithSecurityScope
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.create
@@ -62,7 +61,7 @@ public class IosBackupDestination : BackupDestination {
 
         val url = NSURL.URLByResolvingBookmarkData(
             bookmarkData = data,
-            options = NSURLBookmarkResolutionWithSecurityScope,
+            options = 0u,
             relativeToURL = null,
             bookmarkDataIsStale = null,
             error = null,
