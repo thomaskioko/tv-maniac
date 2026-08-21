@@ -412,6 +412,7 @@ graph TB
   :core:integration:infra --> :data:user:implementation
   :core:integration:infra --> :data:watch-status:implementation
   :core:integration:infra --> :data:watchproviders:implementation
+  :core:integration:infra --> :domain:backup
   :core:integration:infra --> :domain:continue-watching
   :core:integration:infra --> :domain:episode
   :core:integration:infra --> :domain:library
