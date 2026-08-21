@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.settings.presenter
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.view.UiMessage
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
@@ -99,8 +100,33 @@ public data class BackupSettings(
     val isImporting: Boolean = false,
     val awaitingSource: Boolean = false,
     val syncWithConnectedAccount: Boolean = false,
+    val choosingAutoBackupLocation: Boolean = false,
     val confirm: BackupRestoreConfirmationDialog? = null,
     val summary: BackupRestoreSummary? = null,
+    val autoBackup: AutoBackupSettings = AutoBackupSettings(),
+)
+
+public data class AutoBackupSettings(
+    val title: String = "",
+    val description: String = "",
+    val enabled: Boolean = false,
+    val scheduleTitle: String = "",
+    val scheduleLabel: String = "",
+    val scheduleOptions: ImmutableList<AutoBackupScheduleOption> = persistentListOf(),
+    val locationTitle: String = "",
+    val locationLabel: String = "",
+    val hasLocation: Boolean = false,
+    val lastRunLabel: String = "",
+    val failureWarning: String? = null,
+    val backupNowTitle: String = "",
+    val backupNowDescription: String = "",
+    val isBackingUp: Boolean = false,
+)
+
+public data class AutoBackupScheduleOption(
+    val interval: AutoBackupInterval,
+    val label: String,
+    val selected: Boolean,
 )
 
 public sealed interface BackupRestoreConfirmationDialog {

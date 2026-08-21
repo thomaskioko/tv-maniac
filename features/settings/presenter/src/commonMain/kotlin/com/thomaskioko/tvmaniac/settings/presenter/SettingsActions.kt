@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.presenter
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
@@ -128,3 +129,15 @@ public data class BackupSourceSelected(
 public data object BackupSourceCancelled : SettingsActions
 
 public data object BackupSummaryDismissed : SettingsActions
+
+public data class AutoBackupToggled(
+    val enabled: Boolean,
+) : SettingsActions
+
+public data class AutoBackupScheduleSelected(
+    val interval: AutoBackupInterval,
+) : SettingsActions
+
+public data object AutoBackupLocationClicked : SettingsActions
+
+public data object BackupNowClicked : SettingsActions
