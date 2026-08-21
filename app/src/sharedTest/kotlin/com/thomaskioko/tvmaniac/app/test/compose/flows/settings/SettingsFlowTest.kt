@@ -360,13 +360,12 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
         settingsRobot
             .assertSettingsScreenDisplayed()
             .openBackupPage()
+            .assertAutoBackupLocationRowDisplayed()
             .scrollToAutoBackupToggle()
             .assertAutoBackupDisabled()
-            .assertAutoBackupLocationRowDoesNotExist()
             .assertAutoBackupNowRowDoesNotExist()
             .clickAutoBackupToggle()
             .assertAutoBackupEnabled()
-            .assertAutoBackupLocationRowDisplayed()
             .assertAutoBackupNowRowDisplayed()
     }
 

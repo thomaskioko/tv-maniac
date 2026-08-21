@@ -252,7 +252,7 @@ private val autoBackupSettings = AutoBackupSettings(
         AutoBackupScheduleOption(interval = AutoBackupInterval.FORTNIGHTLY, label = "Every two weeks", selected = false),
         AutoBackupScheduleOption(interval = AutoBackupInterval.MONTHLY, label = "Every month", selected = false),
     ),
-    locationTitle = "Where backups are saved",
+    locationTitle = "Backup location",
     locationLabel = "Choose where to save backups",
     lastRunLabel = "No backup saved yet",
     backupNowTitle = "Back up now",

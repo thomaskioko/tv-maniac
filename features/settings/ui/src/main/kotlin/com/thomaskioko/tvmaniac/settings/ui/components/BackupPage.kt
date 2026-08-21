@@ -162,6 +162,15 @@ private fun BackupPageContent(
                         loadingTestTag = SettingsTestTags.BACKUP_IMPORTING_INDICATOR_TEST_TAG,
                         onClick = { onAction(BackupImportClicked) },
                     )
+                    SettingsGroupDivider()
+                    SettingsNavigationRow(
+                        modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_LOCATION_ROW_TEST_TAG),
+                        icon = Icons.Filled.FolderOpen,
+                        title = backup.autoBackup.locationTitle,
+                        description = backup.autoBackup.locationLabel,
+                        enabled = !locked,
+                        onClick = { onAction(AutoBackupLocationClicked) },
+                    )
                 }
             }
 
@@ -213,17 +222,6 @@ private fun AutoBackupSection(
             )
 
             if (settings.enabled) {
-                SettingsGroupDivider()
-
-                SettingsNavigationRow(
-                    modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_LOCATION_ROW_TEST_TAG),
-                    icon = Icons.Filled.FolderOpen,
-                    title = settings.locationTitle,
-                    description = settings.locationLabel,
-                    enabled = enabled,
-                    onClick = { onAction(AutoBackupLocationClicked) },
-                )
-
                 SettingsGroupDivider()
 
                 SettingsNavigationRow(
