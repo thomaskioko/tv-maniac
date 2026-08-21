@@ -1087,6 +1087,21 @@ class SettingsPresenterTest {
     }
 
     @Test
+    fun `should show the file name given a location is saved`() = runTest {
+        backupLocationPermissions.setDisplayName("tvmaniac-backup.json")
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(AutoBackupLocationClicked)
+        testScheduler.advanceUntilIdle()
+        presenter.dispatch(BackupDestinationSelected(LOCATION))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().backup.autoBackup.locationLabel shouldBe "tvmaniac-backup.json"
+        }
+    }
+
+    @Test
     fun `should keep no location given write access cannot be kept`() = runTest {
         testScheduler.advanceUntilIdle()
         backupLocationPermissions.setPersisted(false)

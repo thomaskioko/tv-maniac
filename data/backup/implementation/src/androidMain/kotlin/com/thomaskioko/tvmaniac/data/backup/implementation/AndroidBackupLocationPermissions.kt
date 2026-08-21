@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import android.content.Context
 import android.content.Intent
+import android.provider.OpenableColumns
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -28,6 +29,23 @@ public class AndroidBackupLocationPermissions(
             logger.warning(TAG, "Cannot keep write access to $location: ${security.message}")
             false
         }
+    }
+
+    override fun displayName(location: String): String {
+        val uri = location.toUri()
+        if (uri.scheme != CONTENT_SCHEME) return uri.lastPathSegment ?: location
+
+        val name = try {
+            context.contentResolver
+                .query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
+                ?.use { cursor ->
+                    if (cursor.moveToFirst() && !cursor.isNull(0)) cursor.getString(0) else null
+                }
+        } catch (security: SecurityException) {
+            logger.warning(TAG, "Cannot read the name of $location: ${security.message}")
+            null
+        }
+        return name ?: uri.lastPathSegment ?: location
     }
 
     private companion object {

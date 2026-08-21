@@ -485,7 +485,7 @@ public class SettingsPresenter internal constructor(
                 }
                 .toImmutableList(),
             locationTitle = localizer.getString(StringResourceKey.SettingsAutoBackupLocationTitle),
-            locationLabel = state.location
+            locationLabel = state.location?.let { backupLocationPermissions.displayName(it) }
                 ?: localizer.getString(StringResourceKey.SettingsAutoBackupLocationNone),
             hasLocation = state.location != null,
             lastRunLabel = when (val date = state.lastRunDate) {
