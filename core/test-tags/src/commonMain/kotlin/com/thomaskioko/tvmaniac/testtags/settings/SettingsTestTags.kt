@@ -54,4 +54,11 @@ public object SettingsTestTags {
     public const val BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG: String = "settings_backup_restore_dismiss"
     public const val BACKUP_RESTORE_SUMMARY_TEST_TAG: String = "settings_backup_restore_summary"
     public const val BACKUP_RESTORE_SUMMARY_DISMISS_BUTTON_TEST_TAG: String = "settings_backup_restore_summary_dismiss"
+    public const val AUTO_BACKUP_TOGGLE_TEST_TAG: String = "settings_auto_backup_toggle"
+    public const val AUTO_BACKUP_LOCATION_ROW_TEST_TAG: String = "settings_auto_backup_location_row"
+    public const val AUTO_BACKUP_NOW_ROW_TEST_TAG: String = "settings_auto_backup_now_row"
+    public const val AUTO_BACKUP_NOW_INDICATOR_TEST_TAG: String = "settings_auto_backup_now_indicator"
+    public const val AUTO_BACKUP_LAST_RUN_TEST_TAG: String = "settings_auto_backup_last_run"
+    public const val AUTO_BACKUP_FAILURE_TEST_TAG: String = "settings_auto_backup_failure"
+    public fun autoBackupScheduleChip(name: String): String = "settings_auto_backup_schedule_${name.lowercase()}"
 }

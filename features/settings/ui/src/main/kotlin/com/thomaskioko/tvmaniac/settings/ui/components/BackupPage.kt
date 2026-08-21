@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,13 +31,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import com.thomaskioko.tvmaniac.compose.components.ChoiceChipGroup
 import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
+import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupLocationClicked
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupScheduleSelected
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupSettings
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupToggled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
@@ -42,6 +51,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmedWithAccount
+import com.thomaskioko.tvmaniac.settings.presenter.BackupNowClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceCancelled
@@ -165,6 +175,16 @@ private fun BackupPageContent(
             }
 
             item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
+
+            item {
+                AutoBackupSection(
+                    settings = backup.autoBackup,
+                    enabled = !locked,
+                    onAction = onAction,
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
         }
     }
 
@@ -172,6 +192,91 @@ private fun BackupPageContent(
         confirm = backup.confirm,
         onAction = onAction,
     )
+}
+
+@Composable
+private fun AutoBackupSection(
+    settings: AutoBackupSettings,
+    enabled: Boolean,
+    onAction: (SettingsActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        SettingsGroup {
+            SwitchRow(
+                modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_TOGGLE_TEST_TAG),
+                icon = Icons.Filled.Schedule,
+                title = settings.title,
+                description = settings.description,
+                checked = settings.enabled,
+                onCheckedChange = { onAction(AutoBackupToggled(it)) },
+            )
+
+            if (settings.enabled) {
+                SettingsGroupDivider()
+
+                SettingsNavigationRow(
+                    modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_LOCATION_ROW_TEST_TAG),
+                    icon = Icons.Filled.FolderOpen,
+                    title = settings.locationTitle,
+                    description = settings.locationLabel,
+                    enabled = enabled,
+                    onClick = { onAction(AutoBackupLocationClicked) },
+                )
+
+                SettingsGroupDivider()
+
+                SettingsNavigationRow(
+                    modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_NOW_ROW_TEST_TAG),
+                    icon = Icons.Filled.Bolt,
+                    title = settings.backupNowTitle,
+                    description = settings.backupNowDescription,
+                    enabled = enabled && settings.hasLocation && !settings.isBackingUp,
+                    isLoading = settings.isBackingUp,
+                    loadingTestTag = SettingsTestTags.AUTO_BACKUP_NOW_INDICATOR_TEST_TAG,
+                    onClick = { onAction(BackupNowClicked) },
+                )
+            }
+        }
+
+        if (settings.enabled) {
+            Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
+
+            SettingsGroup {
+                ChoiceChipGroup(
+                    title = settings.scheduleTitle,
+                    options = settings.scheduleOptions,
+                    isSelected = { it.selected },
+                    enabled = enabled,
+                    label = { it.label },
+                    testTagFor = { SettingsTestTags.autoBackupScheduleChip(it.interval.name) },
+                    onSelected = { onAction(AutoBackupScheduleSelected(it.interval)) },
+                    modifier = Modifier.padding(TvManiacSpacing.medium),
+                )
+            }
+
+            Text(
+                text = settings.lastRunLabel,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(horizontal = TvManiacSpacing.large, vertical = TvManiacSpacing.xSmall)
+                    .testTag(SettingsTestTags.AUTO_BACKUP_LAST_RUN_TEST_TAG),
+            )
+
+            val failureWarning = settings.failureWarning
+            if (failureWarning != null) {
+                Text(
+                    text = failureWarning,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .padding(horizontal = TvManiacSpacing.large)
+                        .testTag(SettingsTestTags.AUTO_BACKUP_FAILURE_TEST_TAG),
+                )
+            }
+        }
+    }
 }
 
 @Composable
