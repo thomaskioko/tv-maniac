@@ -151,20 +151,35 @@ public interface DatastoreRepository {
     public fun observeAutoBackupInterval(): Flow<AutoBackupInterval>
 
     /**
-     * Saves the location an automatic backup writes to, or null once it stops working and the user
-     * has to pick a new one.
+     * Saves the folder backups are written to, or null once it stops working and the user has to
+     * pick a new one.
      */
-    public suspend fun saveAutoBackupLocation(location: String?)
+    public suspend fun saveBackupFolder(folder: String?)
 
     /**
-     * Observes the location an automatic backup writes to, or null when none has been chosen.
+     * Observes the folder backups are written to, or null when none has been chosen.
      */
-    public fun observeAutoBackupLocation(): Flow<String?>
+    public fun observeBackupFolder(): Flow<String?>
 
     /**
-     * Reads the location an automatic backup writes to, for callers that cannot observe.
+     * Reads the folder backups are written to, for callers that cannot observe.
      */
-    public suspend fun getAutoBackupLocation(): String?
+    public suspend fun getBackupFolder(): String?
+
+    /**
+     * Saves the name backups are written under.
+     */
+    public suspend fun saveBackupFileName(fileName: String)
+
+    /**
+     * Observes the name backups are written under. Defaults to [BackupFileName.Default].
+     */
+    public fun observeBackupFileName(): Flow<String>
+
+    /**
+     * Reads the name backups are written under, for callers that cannot observe.
+     */
+    public suspend fun getBackupFileName(): String
 
     public suspend fun setLastSyncTimestamp(timestamp: Long)
 

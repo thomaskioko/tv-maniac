@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
+import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
@@ -167,22 +168,30 @@ public class DefaultDatastoreRepository(
             AutoBackupInterval.fromName(preferences[KEY_AUTO_BACKUP_INTERVAL])
         }
 
-    override suspend fun saveAutoBackupLocation(location: String?) {
+    override suspend fun saveBackupFolder(folder: String?) {
         dataStore.edit { preferences ->
-            when (location) {
-                null -> preferences.remove(KEY_AUTO_BACKUP_LOCATION)
-                else -> preferences[KEY_AUTO_BACKUP_LOCATION] = location
+            when (folder) {
+                null -> preferences.remove(KEY_BACKUP_FOLDER)
+                else -> preferences[KEY_BACKUP_FOLDER] = folder
             }
         }
     }
 
-    override fun observeAutoBackupLocation(): Flow<String?> =
-        dataStore.data.map { preferences ->
-            preferences[KEY_AUTO_BACKUP_LOCATION]
-        }
+    override fun observeBackupFolder(): Flow<String?> =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FOLDER] }
 
-    override suspend fun getAutoBackupLocation(): String? =
-        dataStore.data.map { preferences -> preferences[KEY_AUTO_BACKUP_LOCATION] }.first()
+    override suspend fun getBackupFolder(): String? =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FOLDER] }.first()
+
+    override suspend fun saveBackupFileName(fileName: String) {
+        dataStore.edit { preferences -> preferences[KEY_BACKUP_FILE_NAME] = fileName }
+    }
+
+    override fun observeBackupFileName(): Flow<String> =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FILE_NAME] ?: BackupFileName.Default }
+
+    override suspend fun getBackupFileName(): String =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FILE_NAME] ?: BackupFileName.Default }.first()
 
     override suspend fun setLastSyncTimestamp(timestamp: Long) {
         dataStore.edit { preferences ->
@@ -529,7 +538,8 @@ public class DefaultDatastoreRepository(
         public val KEY_MULTIPLE_PLAYS_ENABLED: Preferences.Key<Boolean> =
             booleanPreferencesKey("multiple_plays_enabled")
         public val KEY_AUTO_BACKUP_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("auto_backup_enabled")
-        public val KEY_AUTO_BACKUP_LOCATION: Preferences.Key<String> = stringPreferencesKey("auto_backup_location")
+        public val KEY_BACKUP_FOLDER: Preferences.Key<String> = stringPreferencesKey("backup_folder")
+        public val KEY_BACKUP_FILE_NAME: Preferences.Key<String> = stringPreferencesKey("backup_file_name")
         public val KEY_AUTO_BACKUP_INTERVAL: Preferences.Key<String> = stringPreferencesKey("auto_backup_interval")
     }
 }
