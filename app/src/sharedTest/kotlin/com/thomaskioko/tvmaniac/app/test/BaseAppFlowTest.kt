@@ -31,12 +31,10 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.StatisticsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.WatchDateSelectionRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
-import com.thomaskioko.tvmaniac.util.testing.FlakyTestRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.junit.Rule
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
@@ -44,9 +42,6 @@ import org.robolectric.annotation.Config
 @Config(sdk = [33], application = TvManiacTestApplication::class)
 @OptIn(ExperimentalTestApi::class)
 internal abstract class BaseAppFlowTest {
-
-    @get:Rule
-    val flakyRule = FlakyTestRule()
 
     protected fun runAppFlowTest(block: AppFlowScope.() -> Unit) {
         MockEngineHandler.handler.reset()

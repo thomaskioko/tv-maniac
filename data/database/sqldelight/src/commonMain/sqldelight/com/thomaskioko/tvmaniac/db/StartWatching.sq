@@ -58,4 +58,4 @@ LEFT JOIN episode AS next_episode
     ON next_episode.season_id = next_season.id
     AND next_episode.episode_number = next_abs.next_ep_abs_number % 1000
 WHERE (tvshow.year IS NULL OR CAST(tvshow.year AS INTEGER) <= CAST(strftime('%Y', 'now') AS INTEGER))
-ORDER BY eligible.followed_at DESC;
+ORDER BY eligible.followed_at DESC, eligible.show_id ASC;

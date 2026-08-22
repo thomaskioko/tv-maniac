@@ -149,7 +149,8 @@ LEFT JOIN episode AS next_episode
 ORDER BY COALESCE(CASE WHEN next_abs.next_ep_abs_number IS NOT NULL THEN last_watched.last_watched_at END,
                   watched_show.last_watched_at) DESC,
          next_season.season_number ASC,
-         next_episode.episode_number ASC;
+         next_episode.episode_number ASC,
+         watched_show.show_id ASC;
 
 completedShowsForWatchlist:
 WITH watched_counts AS (
@@ -183,4 +184,4 @@ LEFT JOIN watched_counts ON watched_counts.show_id = watched_show.show_id
 LEFT JOIN total_counts ON total_counts.show_id = watched_show.show_id
 WHERE COALESCE(total_counts.total_count, 0) > 0
   AND COALESCE(watched_counts.watched_count, 0) >= COALESCE(total_counts.total_count, 0)
-ORDER BY watched_show.last_watched_at DESC;
+ORDER BY watched_show.last_watched_at DESC, watched_show.show_id ASC;
