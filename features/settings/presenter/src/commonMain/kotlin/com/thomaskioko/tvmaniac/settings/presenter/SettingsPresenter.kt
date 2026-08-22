@@ -24,6 +24,7 @@ import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
 import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
+import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
@@ -426,6 +427,8 @@ public class SettingsPresenter internal constructor(
                 }
             }
 
+            is BackupFileNameChanged -> saveBackupFileName(action.name)
+
             is BackupNowClicked -> handleBackupNow()
 
             is SettingsMessageShown -> {
@@ -458,6 +461,19 @@ public class SettingsPresenter internal constructor(
         }
         coroutineScope.launch { datastoreRepository.saveBackupFolder(location) }
         return true
+    }
+
+    private fun saveBackupFileName(name: String) {
+        val fileName = BackupFileName.sanitize(name)
+        if (fileName == null) {
+            coroutineScope.launch {
+                uiMessageManager.emitMessage(
+                    UiMessage(localizer.getString(StringResourceKey.ErrorBackupFileNameInvalid)),
+                )
+            }
+            return
+        }
+        coroutineScope.launch { datastoreRepository.saveBackupFileName(fileName) }
     }
 
     private fun handleBackupNow() {
@@ -493,6 +509,11 @@ public class SettingsPresenter internal constructor(
             locationLabel = state.location?.let { backupLocationPermissions.displayName(it) }
                 ?: localizer.getString(StringResourceKey.SettingsAutoBackupLocationNone),
             hasLocation = state.location != null,
+            fileNameTitle = localizer.getString(StringResourceKey.SettingsBackupFileNameTitle),
+            fileNameMessage = localizer.getString(StringResourceKey.SettingsBackupFileNameMessage),
+            fileName = state.fileName,
+            fileNameSaveLabel = localizer.getString(StringResourceKey.LabelSave),
+            fileNameCancelLabel = localizer.getString(StringResourceKey.LabelCancel),
             lastRunLabel = when (val date = state.lastRunDate) {
                 null -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRunNever)
                 else -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRun, date)

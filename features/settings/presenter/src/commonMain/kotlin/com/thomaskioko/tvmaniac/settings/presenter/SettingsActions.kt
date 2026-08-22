@@ -140,4 +140,8 @@ public data class AutoBackupScheduleSelected(
 
 public data object AutoBackupLocationClicked : SettingsActions
 
+public data class BackupFileNameChanged(
+    val name: String,
+) : SettingsActions
+
 public data object BackupNowClicked : SettingsActions
