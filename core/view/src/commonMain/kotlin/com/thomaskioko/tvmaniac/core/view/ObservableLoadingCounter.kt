@@ -31,10 +31,18 @@ public fun Flow<InvokeStatus>.onEachStatus(
     uiMessageManager: UiMessageManager? = null,
     sourceId: String? = null,
     errorToStringMapper: ErrorToStringMapper? = null,
+    successMessage: String? = null,
 ): Flow<InvokeStatus> = onEach { status ->
     when (status) {
         InvokeStarted -> counter.addLoader()
-        InvokeSuccess -> counter.removeLoader()
+        InvokeSuccess -> {
+            if (uiMessageManager != null && successMessage != null) {
+                uiMessageManager.emitMessage(
+                    UiMessage(message = successMessage, sourceId = sourceId, type = UiMessageType.Success),
+                )
+            }
+            counter.removeLoader()
+        }
         is InvokeError -> {
             val source = status.source ?: sourceId
             val tag = source ?: "@InvokeError"
@@ -57,4 +65,5 @@ public suspend inline fun Flow<InvokeStatus>.collectStatus(
     uiMessageManager: UiMessageManager? = null,
     sourceId: String? = null,
     errorToStringMapper: ErrorToStringMapper? = null,
-): Unit = onEachStatus(counter, logger, uiMessageManager, sourceId, errorToStringMapper).collect()
+    successMessage: String? = null,
+): Unit = onEachStatus(counter, logger, uiMessageManager, sourceId, errorToStringMapper, successMessage).collect()

@@ -42,7 +42,7 @@ class EpisodeSheetScreenshotTest {
                         voteCount = 1234,
                         isWatched = false,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -69,7 +69,7 @@ class EpisodeSheetScreenshotTest {
                         isWatched = true,
                         userRating = 9,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark unwatched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -95,7 +95,7 @@ class EpisodeSheetScreenshotTest {
                         voteCount = 856,
                         isWatched = true,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark unwatched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark unwatched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -119,7 +119,7 @@ class EpisodeSheetScreenshotTest {
                         overview = "King Viserys hosts a tournament to celebrate the birth of his heir.",
                         isWatched = false,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
                         ),
                     ),
                 )
@@ -141,7 +141,7 @@ class EpisodeSheetScreenshotTest {
                         voteCount = 2500,
                         isWatched = false,
                         availableActions = persistentListOf(
-                            EpisodeSheetActionUi(EpisodeSheetActionItem.TOGGLE_WATCHED, "Mark watched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Mark watched"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SEASON, "Open season"),
                             EpisodeSheetActionUi(EpisodeSheetActionItem.UNFOLLOW, "Unfollow show"),
@@ -157,6 +157,56 @@ class EpisodeSheetScreenshotTest {
         composeTestRule.captureMultiDevice("EpisodeDetailLoading") {
             TvManiacBackground {
                 EpisodeDetailSheetLoadingUi()
+            }
+        }
+    }
+
+    @Test
+    fun episodeDetailWatchedAgain() {
+        composeTestRule.captureMultiDevice("EpisodeDetailWatchedAgain") {
+            TvManiacBackground {
+                EpisodeDetailContent(
+                    state = EpisodeDetailSheetState(
+                        isLoading = false,
+                        episodeTitle = "The Walking Dead: Daryl Dixon",
+                        showName = "The Walking Dead",
+                        seasonEpisodeNumber = "S02E01",
+                        overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                        rating = 8.5,
+                        voteCount = 1234,
+                        isWatched = true,
+                        playCount = 3,
+                        availableActions = persistentListOf(
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_WATCHED, "Watch again"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.OPEN_SHOW, "Open show"),
+                        ),
+                    ),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun episodeDetailSinglePlay() {
+        composeTestRule.captureMultiDevice("EpisodeDetailSinglePlay") {
+            TvManiacBackground {
+                EpisodeDetailContent(
+                    state = EpisodeDetailSheetState(
+                        isLoading = false,
+                        episodeTitle = "The Walking Dead: Daryl Dixon",
+                        showName = "The Walking Dead",
+                        seasonEpisodeNumber = "S02E01",
+                        overview = "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                        rating = 8.5,
+                        voteCount = 1234,
+                        isWatched = true,
+                        playCount = 1,
+                        availableActions = persistentListOf(
+                            EpisodeSheetActionUi(EpisodeSheetActionItem.MARK_UNWATCHED, "Mark unwatched"),
+                        ),
+                    ),
+                )
             }
         }
     }

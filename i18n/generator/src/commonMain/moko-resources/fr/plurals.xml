@@ -60,4 +60,20 @@
         <item quantity="one">Vu %d fois</item>
         <item quantity="other">Vu %d fois</item>
     </plurals>
+    <plurals name="dialog_message_mark_show_watched">
+        <item quantity="one">%d épisode sera marqué comme vu.</item>
+        <item quantity="other">%d épisodes seront marqués comme vus.</item>
+    </plurals>
+    <plurals name="backup_shows_restored">
+        <item quantity="one">%d série restaurée</item>
+        <item quantity="other">%d séries restaurées</item>
+    </plurals>
+    <plurals name="backup_episodes_restored">
+        <item quantity="one">%d épisode restauré</item>
+        <item quantity="other">%d épisodes restaurés</item>
+    </plurals>
+    <plurals name="backup_shows_skipped">
+        <item quantity="one">%d série ignorée</item>
+        <item quantity="other">%d séries ignorées</item>
+    </plurals>
 </resources>

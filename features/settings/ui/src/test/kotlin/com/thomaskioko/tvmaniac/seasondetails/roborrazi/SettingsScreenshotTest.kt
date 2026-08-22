@@ -16,8 +16,20 @@ import com.thomaskioko.tvmaniac.settings.ui.accountSwitchState
 import com.thomaskioko.tvmaniac.settings.ui.accountSwitchingState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceLockedState
 import com.thomaskioko.tvmaniac.settings.ui.appearanceState
+import com.thomaskioko.tvmaniac.settings.ui.backupAutoBackupFailedState
+import com.thomaskioko.tvmaniac.settings.ui.backupAutoBackupNeverRunState
+import com.thomaskioko.tvmaniac.settings.ui.backupAutoBackupOnState
+import com.thomaskioko.tvmaniac.settings.ui.backupAutoBackupRunningState
+import com.thomaskioko.tvmaniac.settings.ui.backupExportingState
+import com.thomaskioko.tvmaniac.settings.ui.backupImportingState
+import com.thomaskioko.tvmaniac.settings.ui.backupLockedState
+import com.thomaskioko.tvmaniac.settings.ui.backupRestoreConfirmConnectedState
+import com.thomaskioko.tvmaniac.settings.ui.backupRestoreSummaryState
+import com.thomaskioko.tvmaniac.settings.ui.backupRestoreSummaryWithSkipsState
+import com.thomaskioko.tvmaniac.settings.ui.backupState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorLockedState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
+import com.thomaskioko.tvmaniac.settings.ui.components.BackupFileNameDialog
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
 import com.thomaskioko.tvmaniac.settings.ui.discoverSectionsState
 import com.thomaskioko.tvmaniac.settings.ui.fontSizeScaledLayoutState
@@ -244,6 +256,151 @@ class SettingsScreenshotTest {
                 SettingsScreen(
                     state = privacyState,
                     onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPage() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPage") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageLocked() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageLocked") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupLockedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageExporting() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageExporting") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupExportingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageImporting() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageImporting") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupImportingState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageRestoreConfirmConnected() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageRestoreConfirmConnected", shouldCompareDarkMode = false) {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupRestoreConfirmConnectedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageRestoreSummary() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageRestoreSummary") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupRestoreSummaryState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageRestoreSummaryWithSkips() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageRestoreSummaryWithSkips") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupRestoreSummaryWithSkipsState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageAutoBackupOn() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageAutoBackupOn") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupAutoBackupOnState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageAutoBackupNeverRun() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageAutoBackupNeverRun") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupAutoBackupNeverRunState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageAutoBackupFailed() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageAutoBackupFailed") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupAutoBackupFailedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageAutoBackupRunning() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageAutoBackupRunning") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = backupAutoBackupRunningState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageFileNameDialog() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageFileNameDialog") {
+            TvManiacBackground {
+                BackupFileNameDialog(
+                    settings = backupAutoBackupOnState.backup.autoBackup,
+                    onConfirm = {},
+                    onDismiss = {},
                 )
             }
         }

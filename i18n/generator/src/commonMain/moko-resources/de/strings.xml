@@ -4,6 +4,8 @@
     <string name="label_tbd">TBD</string>
     <string name="label_error">Fehler</string>
     <string name="label_ok">OK</string>
+    <string name="label_save">Speichern</string>
+    <string name="label_cancel">Abbrechen</string>
 
     <string name="label_tab_discover">Entdecken</string>
     <string name="label_discover_upcoming">Kommende</string>
@@ -334,6 +336,8 @@
 
     <string name="label_settings_quick_rate">Schnellbewertung</string>
     <string name="label_settings_quick_rate_description">Nach einer Bewertung fragen, sobald eine Episode als gesehen markiert wird</string>
+    <string name="label_settings_multiple_plays">Mehrfaches Ansehen</string>
+    <string name="label_settings_multiple_plays_description">Eine Serie mehr als einmal als gesehen markieren und die Wiederholungen zählen</string>
 
     <string name="label_up_to_date">Alles gesehen</string>
 
@@ -504,6 +508,12 @@
     <string name="label_account_switching">Wird gewechselt…</string>
     <string name="label_account_switch_failed">Konten konnten nicht gewechselt werden. Bitte versuche es erneut.</string>
     <string name="label_rating_sheet_title">Deine Bewertung</string>
+    <string name="label_action_more">Mehr</string>
+    <string name="label_action_watch_again">Erneut ansehen</string>
+    <string name="label_watch_again_confirm_title">Erneut ansehen?</string>
+    <string name="label_watch_again_confirm_message">Ab jetzt markierte Folgen zählen zu einem neuen Durchlauf von \"%1$s\".</string>
+    <string name="label_remove_watch_confirm_title">Als ungesehen markieren?</string>
+    <string name="label_remove_watch_confirm_message">\"%1$s\" zählt dann nicht mehr als gesehen.</string>
     <string name="label_action_rate">Bewerten</string>
     <string name="label_action_rate_episode">Folge bewerten</string>
     <string name="label_action_remove_rating">Bewertung entfernen</string>
@@ -561,8 +571,69 @@
     <string name="label_watch_status_on_hold">Pausiert</string>
     <string name="label_watch_status_dropped">Abgebrochen</string>
 
-    <string name="label_rewatch_start">Erneutes Ansehen starten</string>
-    <string name="label_rewatch_close">Erneutes Ansehen beenden</string>
-    <string name="label_rewatch_in_progress">Wird erneut angesehen</string>
     <string name="label_rewatch_simkl_free_tier">Simkl speichert wiederholtes Ansehen nur mit einem kostenpflichtigen Tarif. Diese Zählung bleibt auf diesem Gerät.</string>
+
+    <string name="label_watched_date_title">Wann haben Sie das gesehen?</string>
+    <string name="label_watched_date_edit_title">Sehdatum ändern</string>
+    <string name="label_watched_date_just_now">Gerade eben</string>
+    <string name="label_watched_date_release_date">Ausstrahlungsdatum</string>
+    <string name="label_watched_date_other">Anderes Datum …</string>
+    <string name="label_watched_date_unknown">Datum unbekannt</string>
+    <string name="label_watched_date_unknown_display">Vor langer Zeit</string>
+    <string name="label_mark_show_watched">Serie als gesehen markieren</string>
+    <string name="label_mark_show_watched_confirm_title">Serie als gesehen markieren?</string>
+
+    <string name="settings_backup_title">Sichern &amp; Wiederherstellen</string>
+    <string name="settings_backup_description">Ihre Serien in eine Datei sichern und wieder laden</string>
+    <string name="settings_backup_export_title">Sicherung speichern</string>
+    <string name="settings_backup_export_description">Serien, Wiedergabeverlauf, Bewertungen und Einstellungen in eine Datei schreiben</string>
+    <string name="settings_backup_export_success">Sicherung gespeichert</string>
+    <string name="settings_backup_import_title">Sicherung wiederherstellen</string>
+    <string name="settings_backup_import_description">Die Daten auf diesem Gerät durch eine Sicherungsdatei ersetzen</string>
+    <string name="settings_backup_restore_confirm_title">Diese Sicherung wiederherstellen?</string>
+    <string name="settings_backup_restore_confirm_message">Dies ersetzt die Serien und den Wiedergabeverlauf auf diesem Gerät. Eine Kopie Ihrer aktuellen Daten wird vorher gespeichert.</string>
+    <string name="settings_backup_restore_confirm_message_connected">Dies ersetzt die Serien und den Wiedergabeverlauf auf diesem Gerät. Eine Kopie Ihrer aktuellen Daten wird vorher gespeichert. Sie sind bei %1$s angemeldet, daher werden Serien, die Sie dort nicht hinzufügen, bei der nächsten Synchronisierung entfernt.</string>
+    <string name="settings_backup_restore_confirm_button">Wiederherstellen</string>
+    <string name="settings_backup_restore_confirm_account_button">Wiederherstellen und mit %1$s synchronisieren</string>
+    <string name="settings_backup_restore_confirm_device_button">Lokal wiederherstellen</string>
+    <string name="settings_backup_restore_summary_title">Wiederherstellung abgeschlossen</string>
+    <string name="settings_backup_restore_summary_added_to_account">Zu %1$s hinzugefügt</string>
+    <string name="settings_backup_restore_summary_rewatch">Wiederholte Ansichten waren in dieser Sicherung nicht enthalten</string>
+    <string name="settings_auto_backup_title">Automatische Sicherung</string>
+    <string name="settings_auto_backup_description">Ihre Serien, Wiedergabeverlauf, Bewertungen und Einstellungen nach Zeitplan in einer Datei speichern</string>
+    <string name="settings_auto_backup_schedule_title">Wie oft</string>
+    <string name="settings_auto_backup_schedule_daily">Täglich</string>
+    <string name="settings_auto_backup_schedule_weekly">Wöchentlich</string>
+    <string name="settings_auto_backup_schedule_fortnightly">Alle zwei Wochen</string>
+    <string name="settings_auto_backup_schedule_monthly">Monatlich</string>
+    <string name="settings_auto_backup_location_title">Speicherort</string>
+    <string name="settings_backup_file_name_title">Dateiname</string>
+    <string name="settings_backup_file_name_message">Sicherungen werden unter diesem Namen gespeichert</string>
+    <string name="settings_auto_backup_location_none">Wählen Sie, wo Sicherungen gespeichert werden</string>
+    <string name="settings_auto_backup_last_run">Letzte Sicherung %1$s</string>
+    <string name="settings_auto_backup_last_run_never">Noch keine Sicherung gespeichert</string>
+    <string name="settings_auto_backup_last_run_failed">Die letzte automatische Sicherung ist fehlgeschlagen. Prüfen Sie, ob der Speicherort noch verfügbar ist, und sichern Sie jetzt.</string>
+    <string name="settings_auto_backup_now_title">Jetzt sichern</string>
+    <string name="settings_auto_backup_now_description">Sofort eine Sicherung speichern, ohne auf den Zeitplan zu warten</string>
+    <string name="error_backup_save_failed">Sicherung konnte nicht gespeichert werden. Versuchen Sie einen anderen Speicherort.</string>
+    <string name="error_backup_location_unavailable">TvManiac kann an diesem Speicherort nicht mehr schreiben. Wählen Sie erneut, wo Sicherungen gespeichert werden.</string>
+    <string name="error_backup_file_name_invalid">Dieser Name kann nicht verwendet werden. Versuchen Sie einen ohne Schrägstriche oder Doppelpunkte.</string>
+    <string name="error_backup_read_failed">Diese Datei konnte nicht gelesen werden. Sie ist möglicherweise beschädigt oder stammt aus einer anderen App.</string>
+    <string name="error_backup_version_too_new">Diese Sicherung wurde mit einer neueren Version von TvManiac erstellt. Aktualisieren Sie die App, um sie wiederherzustellen.</string>
+    <string name="error_backup_sync_in_progress">Eine Synchronisierung läuft. Warten Sie, bis sie abgeschlossen ist, und versuchen Sie es erneut.</string>
+    <string name="label_backup_locked_title">Sichern ist eine Premium-Funktion</string>
+    <string name="label_backup_locked_message">Upgraden Sie auf Premium, um Ihre Serien zu sichern und wiederherzustellen.</string>
+
+    <string name="dialog_button_just_this">Nur diese</string>
+    <string name="dialog_button_just_this_season">Nur diese Staffel</string>
+    <string name="dialog_button_mark_all">Alle markieren</string>
+    <string name="dialog_button_mark_all_seasons">Alle Staffeln markieren</string>
+    <string name="dialog_message_episode_unwatched">Möchten Sie diese Episode wirklich als ungesehen markieren?</string>
+    <string name="dialog_title_episode_unwatched">Episode als ungesehen markieren?</string>
+    <string name="dialog_title_mark_previous">Vorherige Episoden markieren?</string>
+    <string name="dialog_title_mark_previous_seasons">Vorherige Staffeln markieren?</string>
+    <string name="menu_mark_watched">Als gesehen markieren</string>
+    <string name="menu_open_season">Staffel öffnen</string>
+    <string name="menu_open_show">Serie öffnen</string>
+    <string name="menu_unfollow_show">Nicht mehr folgen</string>
 </resources>

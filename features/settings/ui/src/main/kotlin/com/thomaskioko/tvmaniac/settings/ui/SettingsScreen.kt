@@ -34,6 +34,7 @@ import com.thomaskioko.tvmaniac.compose.components.TvManiacSnackBarHost
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.core.view.UiMessageType
 import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsMessageShown
@@ -42,6 +43,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsPresenter
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.ui.components.AccountPage
 import com.thomaskioko.tvmaniac.settings.ui.components.AppearancePage
+import com.thomaskioko.tvmaniac.settings.ui.components.BackupPage
 import com.thomaskioko.tvmaniac.settings.ui.components.BehaviorPage
 import com.thomaskioko.tvmaniac.settings.ui.components.DiscoverSectionsPage
 import com.thomaskioko.tvmaniac.settings.ui.components.InfoPage
@@ -70,7 +72,10 @@ public fun SettingsScreen(
 
     TvManiacSnackBarHost(
         message = state.message?.message,
-        style = SnackBarStyle.Error,
+        style = when (state.message?.type) {
+            UiMessageType.Success -> SnackBarStyle.Success
+            else -> SnackBarStyle.Error
+        },
         onDismiss = { state.message?.let { presenter.dispatch(SettingsMessageShown(it.id)) } },
     )
 }
@@ -168,6 +173,7 @@ internal fun SettingsScreen(
                             onAction = onAction,
                         )
                         SettingsPage.PRIVACY -> PrivacyPage(state = state, onAction = onAction)
+                        SettingsPage.BACKUP -> BackupPage(state = state, onAction = onAction)
                         SettingsPage.INFO -> InfoPage(state = state, onAction = onAction)
                         SettingsPage.LICENSES -> LicensesPage(state = state)
                         SettingsPage.ACCOUNT -> AccountPage(state = state, onAction = onAction)

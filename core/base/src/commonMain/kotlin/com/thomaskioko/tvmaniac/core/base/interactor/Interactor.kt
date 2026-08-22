@@ -47,6 +47,14 @@ public abstract class Interactor<in P> {
 
 public suspend inline fun Interactor<Unit>.executeSync(): Unit = executeSync(Unit)
 
+public abstract class ResultInteractor<in P, R> {
+    public operator fun invoke(params: P): Flow<R> = flow { emit(doWork(params)) }
+
+    public suspend fun executeSync(params: P): R = doWork(params)
+
+    protected abstract suspend fun doWork(params: P): R
+}
+
 public abstract class SubjectInteractor<P : Any, T> {
     // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
     // suspending. This means that we can't suspend while flatMapLatest cancels any

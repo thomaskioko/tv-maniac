@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.db.WatchStatus
 import com.thomaskioko.tvmaniac.domain.statistics.ObserveWatchStatisticsInteractor
 import com.thomaskioko.tvmaniac.domain.statistics.SyncStatisticsInteractor
@@ -53,6 +54,7 @@ internal class StatisticsPresenterTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val showWatchStatusRepository = FakeShowWatchStatusRepository()
     private val ratingsRepository = FakeRatingsRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val dispatchers = AppCoroutineDispatchers(
         main = testDispatcher,
@@ -381,6 +383,7 @@ internal class StatisticsPresenterTest {
             episodeRepository = episodeRepository,
             showWatchStatusRepository = showWatchStatusRepository,
             ratingsRepository = ratingsRepository,
+            rewatchRepository = rewatchRepository,
             calculator = WatchStatisticsCalculator(dateTimeProvider),
         ),
         accountManager = accountManager,

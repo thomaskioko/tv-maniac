@@ -88,16 +88,43 @@ private class CountingCalendarEpisodeRepository : EpisodeRepository {
     override fun observeWatchedEpisodeRuntimes(): Flow<List<WatchedEpisodeRuntime>> = flowOf(emptyList())
     override fun observeWatchedShowComposition(): Flow<List<WatchedShowComposition>> = flowOf(emptyList())
     override fun observeMostWatchedShows(limit: Long): Flow<List<MostWatchedShow>> = flowOf(emptyList())
-    override suspend fun markEpisodeAsWatched(showId: Long, episodeId: Long, seasonNumber: Long, episodeNumber: Long) {}
-    override suspend fun markEpisodeAndPreviousEpisodesWatched(showId: Long, episodeId: Long, seasonNumber: Long, episodeNumber: Long) {}
+    override suspend fun markEpisodeAsWatched(
+        showId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {}
+    override suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {}
+    override suspend fun markEpisodeAndPreviousEpisodesWatched(
+        showId: Long,
+        episodeId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {}
     override suspend fun markEpisodeAsUnwatched(showId: Long, episodeId: Long) {}
     override fun observeSeasonWatchProgress(showId: Long, seasonNumber: Long): Flow<SeasonWatchProgress> =
         flowOf(SeasonWatchProgress(0, 0, 0, 0))
     override fun observeShowWatchProgress(showId: Long): Flow<ShowWatchProgress> =
         flowOf(ShowWatchProgress(0, 0, 0))
     override fun observeAllSeasonsWatchProgress(showId: Long): Flow<List<SeasonWatchProgress>> = flowOf(emptyList())
-    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long) {}
-    override suspend fun markSeasonAndPreviousSeasonsWatched(showId: Long, seasonNumber: Long) {}
+    override suspend fun markSeasonWatched(showId: Long, seasonNumber: Long, watchedAt: Long?, useReleaseDate: Boolean) {}
+    override suspend fun markSeasonAndPreviousSeasonsWatched(
+        showId: Long,
+        seasonNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {}
+    override suspend fun markShowWatched(showId: Long, watchedAt: Long?, useReleaseDate: Boolean) {}
     override suspend fun markSeasonUnwatched(showId: Long, seasonNumber: Long) {}
     override fun observeUnwatchedCountInPreviousSeasons(showId: Long, seasonNumber: Long): Flow<Long> = flowOf(0L)
     override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> = emptyList()

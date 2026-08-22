@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
-import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import kotlinx.coroutines.flow.Flow
 
 public interface WatchedEpisodeDao {
@@ -47,6 +46,17 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodeNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
+    )
+
+    public suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     public suspend fun markAsUnwatched(
@@ -60,6 +70,7 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodes: List<EpisodeWatchParams>,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
     )
 
     public suspend fun markSeasonAsUnwatched(
@@ -72,6 +83,8 @@ public interface WatchedEpisodeDao {
         showId: Long,
         seasonNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     public suspend fun markEpisodeAndPreviousAsWatched(
@@ -80,11 +93,15 @@ public interface WatchedEpisodeDao {
         seasonNumber: Long,
         episodeNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     public suspend fun getEpisodesForSeason(
         showId: Long,
         seasonNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     ): List<EpisodeWatchParams>
 
     public suspend fun getUnwatchedEpisodeCountInPreviousSeasons(
@@ -99,11 +116,11 @@ public interface WatchedEpisodeDao {
         includeSpecials: Boolean,
     ): Flow<Long>
 
-    public suspend fun entriesByPendingAction(action: PendingAction): List<GetEntriesByPendingAction>
+    public suspend fun entriesByPendingAction(action: WatchedEpisodeSyncOperation): List<GetEntriesByPendingAction>
 
-    public suspend fun updatePendingAction(id: Long, action: PendingAction)
+    public suspend fun updatePendingAction(id: Long, action: WatchedEpisodeSyncOperation)
 
-    public suspend fun updatePendingActions(ids: List<Long>, action: PendingAction)
+    public suspend fun updatePendingActions(ids: List<Long>, action: WatchedEpisodeSyncOperation)
 
     public fun deleteAll()
 

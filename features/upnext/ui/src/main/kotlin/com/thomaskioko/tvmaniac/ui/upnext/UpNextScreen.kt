@@ -49,6 +49,7 @@ import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_air_date
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_upnext_sort_last_watched
 import com.thomaskioko.tvmaniac.i18n.resolve
 import com.thomaskioko.tvmaniac.presentation.upnext.MarkWatched
+import com.thomaskioko.tvmaniac.presentation.upnext.MarkWatchedLongPressed
 import com.thomaskioko.tvmaniac.presentation.upnext.OpenShow
 import com.thomaskioko.tvmaniac.presentation.upnext.RefreshUpNext
 import com.thomaskioko.tvmaniac.presentation.upnext.UpNextAction
@@ -198,6 +199,16 @@ private fun UpNextLoadedContent(
                 },
                 onLongPress = {
                     episode.episodeId?.let { onAction(UpNextEpisodeLongPressed(it)) }
+                },
+                onMarkWatchedLongPress = {
+                    onAction(
+                        MarkWatchedLongPressed(
+                            showId = episode.showId,
+                            episodeId = episode.episodeId!!,
+                            seasonNumber = episode.seasonNumber!!,
+                            episodeNumber = episode.episodeNumber!!,
+                        ),
+                    )
                 },
                 isUpdating = episode.episodeId != null && episode.episodeId in state.updatingEpisodeIds,
             )

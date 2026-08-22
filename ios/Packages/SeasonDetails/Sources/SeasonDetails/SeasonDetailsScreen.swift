@@ -85,6 +85,7 @@ public struct SeasonDetailsScreen: View {
     private let onWatchedStateClicked: () -> Void
     private let onRateClicked: () -> Void
     private let onEpisodeWatchToggle: (SwiftEpisode) -> Void
+    private let onEpisodeWatchLongPress: ((SwiftEpisode) -> Void)?
     private let onEpisodeTapped: (SwiftEpisode) -> Void
 
     public init(
@@ -100,6 +101,7 @@ public struct SeasonDetailsScreen: View {
         onWatchedStateClicked: @escaping () -> Void,
         onRateClicked: @escaping () -> Void = {},
         onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void,
+        onEpisodeWatchLongPress: ((SwiftEpisode) -> Void)? = nil,
         onEpisodeTapped: @escaping (SwiftEpisode) -> Void = { _ in }
     ) {
         self.state = state
@@ -114,6 +116,7 @@ public struct SeasonDetailsScreen: View {
         self.onWatchedStateClicked = onWatchedStateClicked
         self.onRateClicked = onRateClicked
         self.onEpisodeWatchToggle = onEpisodeWatchToggle
+        self.onEpisodeWatchLongPress = onEpisodeWatchLongPress
         self.onEpisodeTapped = onEpisodeTapped
     }
 
@@ -206,6 +209,7 @@ public struct SeasonDetailsScreen: View {
                         onEpisodeHeaderClicked: onEpisodeHeaderClicked,
                         onWatchedStateClicked: onWatchedStateClicked,
                         onEpisodeWatchToggle: onEpisodeWatchToggle,
+                        onEpisodeWatchLongPress: onEpisodeWatchLongPress,
                         onEpisodeTapped: onEpisodeTapped
                     )
                 }

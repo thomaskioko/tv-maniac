@@ -37,9 +37,9 @@ extension SettingsView {
             title: uiState.labels.quickRateTitle,
             subtitle: uiState.labels.quickRateDescription,
             isOn: uiState.quickRateEnabled,
-            isLocked: uiState.locks.quickRateLocked,
-            lockedBadgeText: uiState.locks.badgeText,
-            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            isLocked: uiState.premium.quickRateLocked,
+            lockedBadgeText: uiState.premium.badgeText,
+            lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
             onToggle: { presenter.dispatch(action: QuickRateToggled(enabled: $0)) }
         ))
 
@@ -65,9 +65,9 @@ extension SettingsView {
                 title: uiState.labels.episodeNotificationsTitle,
                 subtitle: uiState.labels.episodeNotificationsDescription,
                 isOn: uiState.episodeNotificationsEnabled,
-                isLocked: uiState.locks.episodeNotificationsLocked,
-                lockedBadgeText: uiState.locks.badgeText,
-                lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+                isLocked: uiState.premium.episodeNotificationsLocked,
+                lockedBadgeText: uiState.premium.badgeText,
+                lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
                 onToggle: { handleNotificationToggle(enabled: $0) }
             ),
         ]
@@ -182,17 +182,16 @@ extension SettingsView {
             isProcessingAuth: uiState.isProcessingAuth,
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
-            providerName: providerDisplayName(uiState.activeProvider),
-            providerLogoName: uiState.activeProvider?.name == "SIMKL" ? "SimklMono" : "TraktMono",
+            providerName: uiState.activeProviderName ?? "",
+            providerLogoName: uiState.activeProvider?.logoAssetName ?? SyncProviderSource.trakt.logoAssetName,
             authProviders: uiState.authProviders.map { option in
                 SwiftAuthProvider(
                     id: option.provider.name,
                     label: option.label,
-                    logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+                    logoName: option.provider.logoAssetName
                 )
             },
-            switchTargetLogoName: uiState.switchTargetProvider?
-                .name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
+            switchTargetLogoName: uiState.switchTargetProvider?.logoAssetName,
             switchActionLabel: uiState.switchActionLabel,
             isSwitching: uiState.isSwitching,
             showSwitchConfirmation: showingSwitchAlert,
@@ -213,10 +212,6 @@ extension SettingsView {
             onConfirmSwitch: { presenter.dispatch(action: ConfirmSwitchDiscard()) },
             onDismissSwitchDialog: { presenter.dispatch(action: DismissSwitchDialog()) }
         )
-    }
-
-    func providerDisplayName(_ provider: SyncProviderSource?) -> String {
-        provider?.name == "SIMKL" ? "Simkl" : "Trakt"
     }
 
     // MARK: - Notification Handling

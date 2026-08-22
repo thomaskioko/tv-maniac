@@ -12,6 +12,7 @@ public struct ContinueTrackingSection: View {
     private let dayLabelFormat: (_ count: Int) -> String
     private let tbdLabel: String
     private let onMarkWatched: (SwiftContinueTrackingEpisode) -> Void
+    private let onMarkWatchedLongPress: ((SwiftContinueTrackingEpisode) -> Void)?
     private let updatingEpisodeIds: Set<Int64>
 
     public init(
@@ -21,6 +22,7 @@ public struct ContinueTrackingSection: View {
         dayLabelFormat: @escaping (_ count: Int) -> String,
         tbdLabel: String,
         onMarkWatched: @escaping (SwiftContinueTrackingEpisode) -> Void,
+        onMarkWatchedLongPress: ((SwiftContinueTrackingEpisode) -> Void)? = nil,
         updatingEpisodeIds: Set<Int64> = []
     ) {
         self.title = title
@@ -29,6 +31,7 @@ public struct ContinueTrackingSection: View {
         self.dayLabelFormat = dayLabelFormat
         self.tbdLabel = tbdLabel
         self.onMarkWatched = onMarkWatched
+        self.onMarkWatchedLongPress = onMarkWatchedLongPress
         self.updatingEpisodeIds = updatingEpisodeIds
     }
 
@@ -49,6 +52,9 @@ public struct ContinueTrackingSection: View {
                                     dayLabelFormat: dayLabelFormat,
                                     tbdLabel: tbdLabel,
                                     onMarkWatched: { onMarkWatched(episode) },
+                                    onMarkWatchedLongPress: onMarkWatchedLongPress.map { longPress in
+                                        { longPress(episode) }
+                                    },
                                     isUpdating: updatingEpisodeIds.contains(episode.episodeId)
                                 )
                                 .id(episode.id)

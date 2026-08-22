@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchEpisode
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSessionStatus
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchWriteResult
@@ -136,7 +137,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
             watchedAt = REWATCHED_AT,
         )
 
-        repository.playCountForEpisode(EPISODE_ID) shouldBe 2L
+        repository.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 1L
     }
 
     @Test
@@ -506,9 +507,6 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
         val repository = buildRepository()
         val session = RemoteRewatchSession(
             providerSessionId = null,
-            seasonNumber = 1L,
-            episodeNumber = 1L,
-            episodeCount = 2L,
             lastWatchedAt = REWATCHED_AT,
         )
         rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(ApiResponse.Success(listOf(session)))
@@ -692,28 +690,160 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should write no local session given the provider reports one without a session id`() = runTest {
+    fun `should write one local session given the provider reports one without a session id`() = runTest {
         val repository = buildRepository()
         rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
-            ApiResponse.Success(listOf(remoteSession(providerSessionId = null))),
+            ApiResponse.Success(listOf(remoteSession(providerSessionId = null, episodes = listOf(remoteEpisode())))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeSessionsForShow(localShowId).first().size shouldBe 1
+    }
+
+    @Test
+    fun `should close a restored session given the provider reports no session id`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(
+                listOf(
+                    remoteSession(
+                        providerSessionId = null,
+                        status = RemoteRewatchSessionStatus.ACTIVE,
+                        episodes = listOf(remoteEpisode()),
+                    ),
+                ),
+            ),
         )
 
         repository.syncRewatchSessions(TMDB_ID)
 
-        rewatchSessionDao.observeSessionsForShow(localShowId).first().shouldBeEmpty()
+        rewatchSessionDao.openSessionForShow(localShowId).shouldBeNull()
+    }
+
+    @Test
+    fun `should restore the viewings of an episode given the provider reports them`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(episodes = listOf(remoteEpisode(viewings = 2L))))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 2L
+    }
+
+    @Test
+    fun `should keep the restored viewings unchanged given the same sync runs twice`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(episodes = listOf(remoteEpisode(viewings = 2L))))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 2L
+    }
+
+    @Test
+    fun `should add every reported viewing given two sessions carry the same episode`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(
+                listOf(
+                    remoteSession(providerSessionId = PROVIDER_SESSION_ID, episodes = listOf(remoteEpisode())),
+                    remoteSession(providerSessionId = OTHER_PROVIDER_SESSION_ID, episodes = listOf(remoteEpisode())),
+                ),
+            ),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 2L
+    }
+
+    @Test
+    fun `should keep a locally recorded viewing given the provider reports the same one`() = runTest {
+        val repository = buildRepository()
+        val sessionId = repository.startSession(showId = TMDB_ID, startedAt = STARTED_AT)!!
+        repository.addEpisodeToSession(
+            sessionId = sessionId,
+            showId = TMDB_ID,
+            episodeId = EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 1L,
+            watchedAt = REWATCHED_AT,
+        )
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(episodes = listOf(remoteEpisode())))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 1L
+    }
+
+    @Test
+    fun `should send no restored viewing back to the provider given pending rewatches are synced`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(episodes = listOf(remoteEpisode(viewings = 2L))))),
+        )
+        repository.syncRewatchSessions(TMDB_ID)
+
+        repository.syncPendingRewatches()
+
+        rewatchSyncProviderDataSource.lastWrite.shouldBeNull()
+    }
+
+    @Test
+    fun `should skip a viewing given the episode is missing locally`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(episodes = listOf(remoteEpisode(episodeNumber = 99L))))),
+        )
+
+        repository.syncRewatchSessions(TMDB_ID)
+
+        rewatchSessionDao.observeSessionsForShow(localShowId).first().size shouldBe 1
+    }
+
+    @Test
+    fun `should clear the restored viewings given the episode is removed from watched`() = runTest {
+        val repository = buildRepository()
+        rewatchSyncProviderDataSource.setReadRewatchSessionsResponse(
+            ApiResponse.Success(listOf(remoteSession(episodes = listOf(remoteEpisode(viewings = 2L))))),
+        )
+        repository.syncRewatchSessions(TMDB_ID)
+
+        repository.removeEpisodeRewatches(EPISODE_ID)
+
+        rewatchSessionDao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }
 
     private fun remoteSession(
         providerSessionId: Long? = PROVIDER_SESSION_ID,
         status: RemoteRewatchSessionStatus = RemoteRewatchSessionStatus.CLOSED,
+        episodes: List<RemoteRewatchEpisode> = emptyList(),
     ): RemoteRewatchSession = RemoteRewatchSession(
         providerSessionId = providerSessionId,
-        seasonNumber = null,
-        episodeNumber = null,
-        episodeCount = 2L,
         lastWatchedAt = REWATCHED_AT,
         status = status,
         startedAt = STARTED_AT,
+        episodes = episodes,
+    )
+
+    private fun remoteEpisode(
+        episodeNumber: Long = 1L,
+        viewings: Long = 1L,
+        watchedAt: Long? = REWATCHED_AT,
+    ): RemoteRewatchEpisode = RemoteRewatchEpisode(
+        seasonNumber = 1L,
+        episodeNumber = episodeNumber,
+        watchedAt = watchedAt,
+        viewings = viewings,
     )
 
     private fun buildRepository(
@@ -724,6 +854,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
         activeSource = activeSource,
         syncObserver = syncObserver,
         dateTimeProvider = dateTimeProvider,
+        dispatchers = dispatchers,
     )
 
     private fun addShow(tmdbId: Long): Long {
@@ -784,5 +915,6 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
         private const val SECOND_REWATCHED_AT = 1_800_000_000_000L
         private const val CLOSED_AT = 1_760_000_000_000L
         private const val PROVIDER_SESSION_ID = 7482L
+        private const val OTHER_PROVIDER_SESSION_ID = 7483L
     }
 }

@@ -17,6 +17,7 @@ public struct EpisodeListView: View {
     private let onEpisodeHeaderClicked: () -> Void
     private let onWatchedStateClicked: () -> Void
     private let onEpisodeWatchToggle: (SwiftEpisode) -> Void
+    private let onEpisodeWatchLongPress: ((SwiftEpisode) -> Void)?
     private let onEpisodeTapped: (SwiftEpisode) -> Void
 
     public init(
@@ -31,6 +32,7 @@ public struct EpisodeListView: View {
         onEpisodeHeaderClicked: @escaping () -> Void,
         onWatchedStateClicked: @escaping () -> Void,
         onEpisodeWatchToggle: @escaping (SwiftEpisode) -> Void = { _ in },
+        onEpisodeWatchLongPress: ((SwiftEpisode) -> Void)? = nil,
         onEpisodeTapped: @escaping (SwiftEpisode) -> Void = { _ in }
     ) {
         self.title = title
@@ -44,6 +46,7 @@ public struct EpisodeListView: View {
         self.onEpisodeHeaderClicked = onEpisodeHeaderClicked
         self.onWatchedStateClicked = onWatchedStateClicked
         self.onEpisodeWatchToggle = onEpisodeWatchToggle
+        self.onEpisodeWatchLongPress = onEpisodeWatchLongPress
         self.onEpisodeTapped = onEpisodeTapped
     }
 
@@ -79,7 +82,10 @@ public struct EpisodeListView: View {
                             hasAired: item.hasAired,
                             dayLabelFormat: dayLabelFormat,
                             tbdLabel: tbdLabel,
-                            onWatchedToggle: { onEpisodeWatchToggle(item) }
+                            onWatchedToggle: { onEpisodeWatchToggle(item) },
+                            onWatchedLongPress: onEpisodeWatchLongPress.map { longPress in
+                                { longPress(item) }
+                            }
                         )
                         .contentShape(Rectangle())
                         .onTapGesture { onEpisodeTapped(item) }

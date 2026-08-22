@@ -40,7 +40,7 @@ class StatisticsScreenTest: SnapshotTestCase {
         .init(id: "TopWeekday", label: "Top weekday", value: "Sunday", caption: "48 episodes"),
         .init(id: "LastThirtyDays", label: "Last 30 days", value: "24", caption: "18 days"),
         .init(id: "TitlesTracked", label: "Titles tracked", value: "128", caption: "18 completed"),
-        .init(id: "Episodes", label: "Episodes", value: "1.2K", caption: ""),
+        .init(id: "Episodes", label: "Episodes", value: "1.6K", caption: ""),
         .init(id: "AverageRating", label: "Average rating", value: "8.4", caption: "across 42 rated"),
         .init(id: "WatchStreak", label: "Watch streak", value: "9 days", caption: "longest run"),
     ]
@@ -109,7 +109,9 @@ class StatisticsScreenTest: SnapshotTestCase {
     private let heatMap = SwiftWatchHeatMap(
         levels: (0 ..< 215).map { ($0 * 7) % 5 },
         leadingBlankCells: 3,
-        busiestDayCount: 43
+        scaleFloorCount: 1,
+        scaleTopCount: 10,
+        todayIndex: 214
     )
 
     private let longRunOfYears: [SwiftActivityBar] = (2008 ... 2026).enumerated().map { index, year in
@@ -142,7 +144,7 @@ class StatisticsScreenTest: SnapshotTestCase {
         StatisticsScreen.State(
             isLoading: false,
             showContent: true,
-            totalWatchTime: SwiftWatchTime(days: 12, hours: 4, minutes: 30),
+            totalWatchTime: SwiftWatchTime(days: 16, hours: 5, minutes: 20),
             tiles: tiles,
             heatMap: heatMap,
             mostWatchedShows: mostWatchedShows,
@@ -242,7 +244,9 @@ class StatisticsScreenTest: SnapshotTestCase {
             heatMap: SwiftWatchHeatMap(
                 levels: (0 ..< 24).map { $0 % 5 },
                 leadingBlankCells: 2,
-                busiestDayCount: 12
+                scaleFloorCount: 1,
+                scaleTopCount: 10,
+                todayIndex: 23
             ),
             title: "Your year of watching"
         )

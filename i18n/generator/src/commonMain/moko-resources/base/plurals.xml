@@ -56,4 +56,20 @@
         <item quantity="one">Watched %d time</item>
         <item quantity="other">Watched %d times</item>
     </plurals>
+    <plurals name="dialog_message_mark_show_watched">
+        <item quantity="one">This will mark %d episode as watched.</item>
+        <item quantity="other">This will mark %d episodes as watched.</item>
+    </plurals>
+    <plurals name="backup_shows_restored">
+        <item quantity="one">%d show restored</item>
+        <item quantity="other">%d shows restored</item>
+    </plurals>
+    <plurals name="backup_episodes_restored">
+        <item quantity="one">%d episode restored</item>
+        <item quantity="other">%d episodes restored</item>
+    </plurals>
+    <plurals name="backup_shows_skipped">
+        <item quantity="one">%d show skipped</item>
+        <item quantity="other">%d shows skipped</item>
+    </plurals>
 </resources>

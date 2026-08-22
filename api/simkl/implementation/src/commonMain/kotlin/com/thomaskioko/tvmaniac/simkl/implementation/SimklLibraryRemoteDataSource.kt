@@ -5,8 +5,13 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
+import com.thomaskioko.tvmaniac.data.library.model.WatchlistShowIds
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
 import com.thomaskioko.tvmaniac.simkl.api.SimklSyncRemoteDataSource
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddToListRequest
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklListShow
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklListStatus
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowIds
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedShow
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
@@ -29,11 +34,28 @@ public class SimklLibraryRemoteDataSource(
                     .map { it.toRemoteFollowedShow() }
             }
 
-    override suspend fun addToWatchlist(showIds: List<Long>): ApiResponse<WatchlistSyncResult> =
-        ApiResponse.Success(WatchlistSyncResult(notFoundCount = 0))
+    override suspend fun addToWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
+        moveToList(shows = shows, status = SimklListStatus.PLAN_TO_WATCH)
 
-    override suspend fun removeFromWatchlist(showIds: List<Long>): ApiResponse<WatchlistSyncResult> =
-        ApiResponse.Success(WatchlistSyncResult(notFoundCount = 0))
+    override suspend fun removeFromWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
+        moveToList(shows = shows, status = SimklListStatus.DROPPED)
+
+    private suspend fun moveToList(
+        shows: List<WatchlistShowIds>,
+        status: String,
+    ): ApiResponse<WatchlistSyncResult> =
+        syncRemoteDataSource.addToList(
+            SimklAddToListRequest(
+                shows = shows.map {
+                    SimklListShow(
+                        ids = SimklShowIds(tmdb = it.tmdbId.toString()),
+                        to = status,
+                    )
+                },
+            ),
+        ).map { response ->
+            WatchlistSyncResult(notFoundCount = response.notFound?.shows?.size ?: 0)
+        }
 
     private companion object {
         private val TRACKED_STATUSES = setOf("plantowatch", "watching", "hold")

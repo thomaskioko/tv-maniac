@@ -5,6 +5,8 @@
     <string name="label_tbd">TBD</string>
     <string name="label_error">Error</string>
     <string name="label_ok">OK</string>
+    <string name="label_save">Save</string>
+    <string name="label_cancel">Cancel</string>
 
     <string name="label_tab_discover">Discover</string>
     <string name="label_tab_search">Search</string>
@@ -219,6 +221,8 @@
 
     <string name="label_settings_quick_rate">Quick Rate</string>
     <string name="label_settings_quick_rate_description">Show rating prompt after marking an episode as watched</string>
+    <string name="label_settings_multiple_plays">Multiple plays</string>
+    <string name="label_settings_multiple_plays_description">Let a show be marked watched more than once, and count the rewatches</string>
 
     <string name="following">Track</string>
     <string name="unfollow">Stop Tracking</string>
@@ -512,6 +516,12 @@
     <string name="label_account_switching">Switching…</string>
     <string name="label_account_switch_failed">Couldn\'t switch accounts. Please try again.</string>
     <string name="label_rating_sheet_title">Your rating</string>
+    <string name="label_action_more">More</string>
+    <string name="label_action_watch_again">Watch again</string>
+    <string name="label_watch_again_confirm_title">Watch again?</string>
+    <string name="label_watch_again_confirm_message">Episodes you mark from now on count towards a new rewatch of \"%1$s\".</string>
+    <string name="label_remove_watch_confirm_title">Remove from watched?</string>
+    <string name="label_remove_watch_confirm_message">\"%1$s\" will no longer count as watched.</string>
     <string name="label_action_rate">Rate</string>
     <string name="label_action_rate_episode">Rate episode</string>
     <string name="label_action_remove_rating">Remove rating</string>
@@ -569,8 +579,56 @@
     <string name="label_watch_status_on_hold">On hold</string>
     <string name="label_watch_status_dropped">Dropped</string>
 
-    <string name="label_rewatch_start">Start rewatch</string>
-    <string name="label_rewatch_close">Close rewatch</string>
-    <string name="label_rewatch_in_progress">Rewatch in progress</string>
     <string name="label_rewatch_simkl_free_tier">Simkl does not store rewatches without a paid plan, so this count stays on this device.</string>
+
+    <string name="label_watched_date_title">When did you watch this?</string>
+    <string name="label_watched_date_edit_title">Change watched date</string>
+    <string name="label_watched_date_just_now">Just now</string>
+    <string name="label_watched_date_release_date">Release date</string>
+    <string name="label_watched_date_other">Other date…</string>
+    <string name="label_watched_date_unknown">Unknown date</string>
+    <string name="label_watched_date_unknown_display">A long time ago</string>
+    <string name="label_mark_show_watched">Mark show as watched</string>
+    <string name="label_mark_show_watched_confirm_title">Mark show as watched?</string>
+
+    <string name="settings_backup_title">Backup &amp; restore</string>
+    <string name="settings_backup_description">Save your shows to a file and load them back</string>
+    <string name="settings_backup_export_title">Save a backup</string>
+    <string name="settings_backup_export_description">Write your shows, watch history, ratings and settings to a file</string>
+    <string name="settings_backup_export_success">Backup saved</string>
+    <string name="settings_backup_import_title">Restore a backup</string>
+    <string name="settings_backup_import_description">Replace what is on this device with a backup file</string>
+    <string name="settings_backup_restore_confirm_title">Restore this backup?</string>
+    <string name="settings_backup_restore_confirm_message">This replaces the shows and watch history on this device. A copy of your current data is saved first.</string>
+    <string name="settings_backup_restore_confirm_message_connected">This replaces the shows and watch history on this device, and a copy of your current data is saved first. You are signed in to %1$s, so shows you do not add to it are removed at the next sync.</string>
+    <string name="settings_backup_restore_confirm_button">Restore</string>
+    <string name="settings_backup_restore_confirm_account_button">Restore and sync with %1$s</string>
+    <string name="settings_backup_restore_confirm_device_button">Restore locally</string>
+    <string name="settings_backup_restore_summary_title">Restore finished</string>
+    <string name="settings_backup_restore_summary_added_to_account">Added to %1$s</string>
+    <string name="settings_backup_restore_summary_rewatch">Repeat viewings were not included in this backup</string>
+    <string name="settings_auto_backup_title">Automatic backup</string>
+    <string name="settings_auto_backup_description">Save your shows, watch history, ratings and settings to a file on a schedule</string>
+    <string name="settings_auto_backup_schedule_title">How often</string>
+    <string name="settings_auto_backup_schedule_daily">Every day</string>
+    <string name="settings_auto_backup_schedule_weekly">Every week</string>
+    <string name="settings_auto_backup_schedule_fortnightly">Every two weeks</string>
+    <string name="settings_auto_backup_schedule_monthly">Every month</string>
+    <string name="settings_auto_backup_location_title">Backup location</string>
+    <string name="settings_auto_backup_location_none">Choose where to save backups</string>
+    <string name="settings_backup_file_name_title">File name</string>
+    <string name="settings_backup_file_name_message">Backups are saved under this name</string>
+    <string name="settings_auto_backup_last_run">Last backup %1$s</string>
+    <string name="settings_auto_backup_last_run_never">No backup saved yet</string>
+    <string name="settings_auto_backup_last_run_failed">The last automatic backup failed. Check the location is still available, then back up now.</string>
+    <string name="settings_auto_backup_now_title">Back up now</string>
+    <string name="settings_auto_backup_now_description">Save a backup straight away, without waiting for the schedule</string>
+    <string name="error_backup_save_failed">Could not save the backup. Try another location.</string>
+    <string name="error_backup_location_unavailable">TvManiac can no longer write to that location. Choose where to save backups again.</string>
+    <string name="error_backup_file_name_invalid">That name cannot be used. Try one without slashes or colons.</string>
+    <string name="error_backup_read_failed">Could not read that file. It may be damaged or from another app.</string>
+    <string name="error_backup_version_too_new">This backup was made by a newer version of TvManiac. Update the app to restore it.</string>
+    <string name="error_backup_sync_in_progress">A sync is running. Wait for it to finish, then try again.</string>
+    <string name="label_backup_locked_title">Backup is a Premium feature</string>
+    <string name="label_backup_locked_message">Upgrade to Premium to save and restore your shows.</string>
 </resources>

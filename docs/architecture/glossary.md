@@ -78,7 +78,7 @@ A coordinator that combines a [`Fetcher`](#fetcher), a [`SourceOfTruth`](#source
 
 ### Fetcher
 
-The network side of a `Store`. Calls Trakt or TMDB and returns domain models.
+The network side of a `Store`. Calls TMDB, Trakt or Simkl and returns domain models.
 
 ### SourceOfTruth
 

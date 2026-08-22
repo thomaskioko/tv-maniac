@@ -4,13 +4,14 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class RewatchSessionRegressionTest : BaseDatabaseTest() {
+internal class RewatchSessionWatchStateTest : BaseDatabaseTest() {
 
     private lateinit var dao: DefaultRewatchSessionDao
     private var showId: Long = 0
@@ -81,6 +82,28 @@ internal class RewatchSessionRegressionTest : BaseDatabaseTest() {
         startRewatchSession()
 
         database.showsNextToWatchQueries.completedShowsForWatchlist().executeAsList() shouldBe before
+    }
+
+    @Test
+    fun `should offer no next episode for a fully watched show given a rewatch session exists`() {
+        markWatched(episodeId = EPISODE_THREE, episodeNumber = 3L, watchedAt = THIRD_WATCHED_AT)
+        database.showsNextToWatchQueries.nextEpisodesForWatchlist(includeSpecials = 0)
+            .executeAsList().single().episode_id.shouldBeNull()
+
+        startRewatchSession()
+
+        database.showsNextToWatchQueries.nextEpisodesForWatchlist(includeSpecials = 0)
+            .executeAsList().single().episode_id.shouldBeNull()
+    }
+
+    @Test
+    fun `should keep a fully watched show complete given a rewatch session exists`() {
+        markWatched(episodeId = EPISODE_THREE, episodeNumber = 3L, watchedAt = THIRD_WATCHED_AT)
+
+        startRewatchSession()
+
+        val progress = database.showWatchStatusQueries.watchProgressForShow(Id(showId)).executeAsOne()
+        progress.watched_count shouldBe progress.total_count
     }
 
     @Test

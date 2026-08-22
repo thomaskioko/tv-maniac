@@ -12,52 +12,60 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
-import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.data.backup.api.BackupLocationPermissions
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
+import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
-import com.thomaskioko.tvmaniac.domain.accountswitcher.CountUnsavedChanges
-import com.thomaskioko.tvmaniac.domain.accountswitcher.PushPendingChangesInteractor
-import com.thomaskioko.tvmaniac.domain.accountswitcher.SwitchAccountInteractor
+import com.thomaskioko.tvmaniac.domain.accountswitcher.ConnectAndSwitchProviderInteractor
+import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInteractor
+import com.thomaskioko.tvmaniac.domain.backup.AutoBackupResult
+import com.thomaskioko.tvmaniac.domain.backup.AutoBackupState
+import com.thomaskioko.tvmaniac.domain.backup.BackupNowInteractor
+import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
+import com.thomaskioko.tvmaniac.domain.backup.ObserveAutoBackupInteractor
+import com.thomaskioko.tvmaniac.domain.backup.RestoreBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchSupportInteractor
+import com.thomaskioko.tvmaniac.domain.settings.ObservePremiumAccessInteractor
 import com.thomaskioko.tvmaniac.domain.settings.ObserveSettingsPreferencesInteractor
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.AccountSwitchFlagQualifier
 import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
+import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
-import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
-import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.minutes
 
 @NavDestination(
@@ -69,6 +77,8 @@ import kotlin.time.Duration.Companion.minutes
 public class SettingsPresenter internal constructor(
     componentContext: ComponentContext,
     observeSettingsPreferencesInteractor: ObserveSettingsPreferencesInteractor,
+    observePremiumAccessInteractor: ObservePremiumAccessInteractor,
+    private val observeRewatchSupportInteractor: ObserveRewatchSupportInteractor,
     userRepository: UserRepository,
     private val navigator: Navigator,
     private val appMetadata: AppMetadata,
@@ -84,46 +94,50 @@ public class SettingsPresenter internal constructor(
     @AccountSwitchFlagQualifier
     private val accountSwitchFlag: FeatureFlag<Boolean>,
     private val accountManager: AccountManager,
-    private val subscriptionManager: SubscriptionManager,
-    private val pushPendingChangesInteractor: PushPendingChangesInteractor,
-    private val countUnsavedChanges: CountUnsavedChanges,
-    private val switchAccountInteractor: SwitchAccountInteractor,
+    private val prepareAccountSwitchInteractor: PrepareAccountSwitchInteractor,
+    private val connectAndSwitchProviderInteractor: ConnectAndSwitchProviderInteractor,
+    private val exportBackupInteractor: ExportBackupInteractor,
+    private val restoreBackupInteractor: RestoreBackupInteractor,
+    private val backupNowInteractor: BackupNowInteractor,
+    private val backupLocationPermissions: BackupLocationPermissions,
+    observeAutoBackupInteractor: ObserveAutoBackupInteractor,
+    private val labelsMapper: SettingsLabelsMapper,
 ) : ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
     private val authProcessingState = ObservableLoadingCounter()
     private val notificationToggleState = ObservableLoadingCounter()
+    private val backupExportState = ObservableLoadingCounter()
+    private val accountSwitchState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
+    private var backupFolder: String? = null
 
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
 
-    private val locksFlow = kotlinx.coroutines.flow.combine(
-        subscriptionManager.observeAccess(SubscriptionFeature.CustomThemes),
-        subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
-        subscriptionManager.observeAccess(SubscriptionFeature.QuickRate),
-    ) { customThemesAccess, episodeNotificationsAccess, quickRateAccess ->
-        SettingsLocks(
-            customThemesLocked = !customThemesAccess,
-            posterStyleLocked = !customThemesAccess,
-            episodeNotificationsLocked = !episodeNotificationsAccess,
-            quickRateLocked = !quickRateAccess,
-            badgeText = localizer.getString(StringResourceKey.LabelPremiumBadge),
-            themesLockedTitle = localizer.getString(StringResourceKey.LabelThemesLockedTitle),
-            themesLockedMessage = localizer.getString(StringResourceKey.LabelThemesLockedMessage),
-            upgradeText = localizer.getString(StringResourceKey.LabelUpgradeToPremium),
-            lockedContentDescription = localizer.getString(StringResourceKey.CdLocked),
-        )
-    }
+    private val backupLabels = BackupSettings(
+        exportTitle = localizer.getString(StringResourceKey.SettingsBackupExportTitle),
+        exportDescription = localizer.getString(StringResourceKey.SettingsBackupExportDescription),
+        importTitle = localizer.getString(StringResourceKey.SettingsBackupImportTitle),
+        importDescription = localizer.getString(StringResourceKey.SettingsBackupImportDescription),
+    )
 
     init {
         observeSettingsPreferencesInteractor(Unit)
+        observePremiumAccessInteractor(Unit)
+        observeRewatchSupportInteractor(Unit)
+        observeAutoBackupInteractor(Unit)
+        coroutineScope.launch {
+            datastoreRepository.observeBackupFolder().collect { backupFolder = it }
+        }
     }
 
     public val state: StateFlow<SettingsState> = combine(
         _state,
         authProcessingState.observable,
         notificationToggleState.observable,
+        backupExportState.observable,
+        accountSwitchState.observable,
         observeSettingsPreferencesInteractor.flow,
         accountManager.isConnected,
         accountManager.activeProvider,
@@ -131,21 +145,29 @@ public class SettingsPresenter internal constructor(
         userRepository.observeCurrentUser().onStart { emit(null) },
         simklLoginFlag.observe(),
         accountSwitchFlag.observe(),
-        locksFlow,
-    ) { currentState, isProcessingAuth, isTogglingNotifications, preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, locks ->
+        observePremiumAccessInteractor.flow,
+        observeRewatchSupportInteractor.flow,
+        observeAutoBackupInteractor.flow,
+    ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount,
+        preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess, supportsRewatch,
+        autoBackup,
+        ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
         currentState.copy(
             isLoading = false,
             isUpdating = isProcessingAuth || isTogglingNotifications,
             isProcessingAuth = isProcessingAuth,
+            isSwitching = isSwitchingAccount,
             imageQuality = preferences.imageQuality,
             theme = preferences.theme.toThemeModel(),
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
             quickRateEnabled = preferences.quickRateEnabled,
+            multiplePlaysEnabled = preferences.multiplePlaysEnabled,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
+            activeProviderName = activeProvider?.displayName,
             authProviders = authProviderOptions(simklEnabled),
             accountConnectedDescription = activeProvider?.let { connectedDescription(it) },
             switchTargetProvider = switchTarget,
@@ -168,11 +190,26 @@ public class SettingsPresenter internal constructor(
             posterCornerStyle = preferences.layout.posterCornerStyle,
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
-            locks = locks,
+            premium = labelsMapper.toPremiumState(premiumAccess),
+            multiplePlaysSyncNotice = labelsMapper.rewatchSyncNotice(supportsRewatch),
+            backup = backupLabels.copy(
+                isExporting = isExportingBackup,
+                isImporting = currentState.backup.isImporting,
+                awaitingDestination = currentState.backup.awaitingDestination,
+                awaitingSource = currentState.backup.awaitingSource,
+                syncWithConnectedAccount = currentState.backup.syncWithConnectedAccount,
+                choosingAutoBackupLocation = currentState.backup.choosingAutoBackupLocation,
+                confirm = currentState.backup.confirm,
+                summary = currentState.backup.summary,
+                autoBackup = buildAutoBackupSettings(
+                    state = autoBackup,
+                    isBackingUp = currentState.backup.autoBackup.isBackingUp,
+                ),
+            ),
             currentPageTitle = resolvePageTitle(currentState.currentPage),
             rootGroups = buildRootGroups(),
             username = username,
-            labels = buildLabels(
+            labels = labelsMapper(
                 imageQuality = preferences.imageQuality,
                 showLastSyncDate = preferences.showLastSyncDate,
                 lastSyncDate = preferences.lastSyncDate,
@@ -222,7 +259,7 @@ public class SettingsPresenter internal constructor(
 
             is UpgradeToPremiumClicked -> Unit
             is ThemeSelected -> {
-                if (!(action.theme.isPremium && state.value.locks.customThemesLocked)) {
+                if (!(action.theme.isPremium && state.value.premium.customThemesLocked)) {
                     datastoreRepository.saveTheme(action.theme.toTheme().toAppTheme())
                 }
             }
@@ -248,9 +285,15 @@ public class SettingsPresenter internal constructor(
             }
 
             is QuickRateToggled -> {
-                if (state.value.locks.quickRateLocked) return
+                if (state.value.premium.quickRateLocked) return
                 coroutineScope.launch {
                     datastoreRepository.saveQuickRateEnabled(action.enabled)
+                }
+            }
+
+            is MultiplePlaysToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveMultiplePlaysEnabled(action.enabled)
                 }
             }
 
@@ -260,7 +303,7 @@ public class SettingsPresenter internal constructor(
                 }
             }
             is EpisodeNotificationsToggled -> {
-                if (state.value.locks.episodeNotificationsLocked) return
+                if (state.value.premium.episodeNotificationsLocked) return
                 coroutineScope.launch {
                     toggleEpisodeNotificationsInteractor(
                         ToggleEpisodeNotificationsInteractor.Params(enabled = action.enabled),
@@ -307,34 +350,86 @@ public class SettingsPresenter internal constructor(
             }
 
             is PosterWidthSelected -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.savePosterWidth(action.width)
                 }
             }
 
             is LandscapeWidthSelected -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.saveLandscapeWidth(action.width)
                 }
             }
 
             is PosterCornerStyleSelected -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.savePosterCornerStyle(action.style)
                 }
             }
 
             is PosterStyleReset -> {
-                if (state.value.locks.posterStyleLocked) return
+                if (state.value.premium.posterStyleLocked) return
                 coroutineScope.launch {
                     datastoreRepository.savePosterWidth(PosterWidth.STANDARD)
                     datastoreRepository.saveLandscapeWidth(PosterWidth.STANDARD)
                     datastoreRepository.savePosterCornerStyle(PosterCornerStyle.SHARP)
                 }
             }
+
+            is BackupExportClicked -> handleBackupExportClicked()
+
+            is BackupDestinationSelected -> handleBackupDestination(action.location)
+
+            is BackupImportClicked -> handleImportClicked()
+
+            is BackupImportConfirmed -> handleImportConfirmed(syncWithConnectedAccount = false)
+
+            is BackupImportConfirmedWithAccount -> handleImportConfirmed(syncWithConnectedAccount = true)
+
+            is BackupImportCancelled -> _state.update { it.copy(backup = backupLabels) }
+
+            is BackupSourceSelected -> handleBackupSource(action.location)
+
+            is BackupSourceCancelled -> _state.update { it.copy(backup = backupLabels) }
+
+            is BackupSummaryDismissed -> _state.update { it.copy(backup = backupLabels) }
+
+            is BackupDestinationCancelled -> {
+                _state.update {
+                    it.copy(
+                        backup = currentBackup().copy(
+                            awaitingDestination = false,
+                            choosingAutoBackupLocation = false,
+                        ),
+                    )
+                }
+            }
+
+            is AutoBackupToggled -> {
+                coroutineScope.launch { datastoreRepository.setAutoBackupEnabled(action.enabled) }
+            }
+
+            is AutoBackupScheduleSelected -> {
+                coroutineScope.launch { datastoreRepository.saveAutoBackupInterval(action.interval) }
+            }
+
+            is AutoBackupLocationClicked -> {
+                _state.update {
+                    it.copy(
+                        backup = currentBackup().copy(
+                            awaitingDestination = true,
+                            choosingAutoBackupLocation = true,
+                        ),
+                    )
+                }
+            }
+
+            is BackupFileNameChanged -> saveBackupFileName(action.name)
+
+            is BackupNowClicked -> handleBackupNow()
 
             is SettingsMessageShown -> {
                 coroutineScope.launch {
@@ -343,6 +438,237 @@ public class SettingsPresenter internal constructor(
             }
         }
     }
+
+    private fun currentBackup(): BackupSettings = _state.value.backup
+
+    private fun saveBackupFolder(location: String): Boolean {
+        _state.update {
+            it.copy(
+                backup = currentBackup().copy(
+                    awaitingDestination = false,
+                    choosingAutoBackupLocation = false,
+                ),
+            )
+        }
+        if (!backupLocationPermissions.persist(location)) {
+            logger.warning(TAG, "Cannot keep write access to the chosen backup location")
+            coroutineScope.launch {
+                uiMessageManager.emitMessage(
+                    UiMessage(localizer.getString(StringResourceKey.ErrorBackupLocationUnavailable)),
+                )
+            }
+            return false
+        }
+        coroutineScope.launch { datastoreRepository.saveBackupFolder(location) }
+        return true
+    }
+
+    private fun saveBackupFileName(name: String) {
+        val fileName = BackupFileName.sanitize(name)
+        if (fileName == null) {
+            coroutineScope.launch {
+                uiMessageManager.emitMessage(
+                    UiMessage(localizer.getString(StringResourceKey.ErrorBackupFileNameInvalid)),
+                )
+            }
+            return
+        }
+        coroutineScope.launch { datastoreRepository.saveBackupFileName(fileName) }
+    }
+
+    private fun handleBackupNow() {
+        _state.update { it.copy(backup = currentBackup().copy(autoBackup = currentBackup().autoBackup.copy(isBackingUp = true))) }
+        coroutineScope.launch {
+            val result = backupNowInteractor.executeSync(Unit)
+            _state.update { it.copy(backup = currentBackup().copy(autoBackup = currentBackup().autoBackup.copy(isBackingUp = false))) }
+            if (result is AutoBackupResult.Failed || result is AutoBackupResult.LocationLost) {
+                uiMessageManager.emitMessage(
+                    UiMessage(localizer.getString(StringResourceKey.SettingsAutoBackupLastRunFailed)),
+                )
+            }
+        }
+    }
+
+    private fun buildAutoBackupSettings(state: AutoBackupState, isBackingUp: Boolean): AutoBackupSettings =
+        AutoBackupSettings(
+            title = localizer.getString(StringResourceKey.SettingsAutoBackupTitle),
+            description = localizer.getString(StringResourceKey.SettingsAutoBackupDescription),
+            enabled = state.enabled,
+            scheduleTitle = localizer.getString(StringResourceKey.SettingsAutoBackupScheduleTitle),
+            scheduleLabel = scheduleLabel(state.interval),
+            scheduleOptions = AutoBackupInterval.entries
+                .map { interval ->
+                    AutoBackupScheduleOption(
+                        interval = interval,
+                        label = scheduleLabel(interval),
+                        selected = interval == state.interval,
+                    )
+                }
+                .toImmutableList(),
+            locationTitle = localizer.getString(StringResourceKey.SettingsAutoBackupLocationTitle),
+            locationLabel = state.location?.let { backupLocationPermissions.displayName(it) }
+                ?: localizer.getString(StringResourceKey.SettingsAutoBackupLocationNone),
+            hasLocation = state.location != null,
+            fileNameTitle = localizer.getString(StringResourceKey.SettingsBackupFileNameTitle),
+            fileNameMessage = localizer.getString(StringResourceKey.SettingsBackupFileNameMessage),
+            fileName = state.fileName,
+            fileNameSaveLabel = localizer.getString(StringResourceKey.LabelSave),
+            fileNameCancelLabel = localizer.getString(StringResourceKey.LabelCancel),
+            lastRunLabel = when (val date = state.lastRunDate) {
+                null -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRunNever)
+                else -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRun, date)
+            },
+            failureWarning = when {
+                state.lastRunFailed -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRunFailed)
+                else -> null
+            },
+            backupNowTitle = localizer.getString(StringResourceKey.SettingsAutoBackupNowTitle),
+            backupNowDescription = localizer.getString(StringResourceKey.SettingsAutoBackupNowDescription),
+            isBackingUp = isBackingUp,
+        )
+
+    private fun scheduleLabel(interval: AutoBackupInterval): String = localizer.getString(
+        when (interval) {
+            AutoBackupInterval.DAILY -> StringResourceKey.SettingsAutoBackupScheduleDaily
+            AutoBackupInterval.WEEKLY -> StringResourceKey.SettingsAutoBackupScheduleWeekly
+            AutoBackupInterval.FORTNIGHTLY -> StringResourceKey.SettingsAutoBackupScheduleFortnightly
+            AutoBackupInterval.MONTHLY -> StringResourceKey.SettingsAutoBackupScheduleMonthly
+        },
+    )
+
+    private fun handleBackupExportClicked() {
+        val folder = backupFolder
+        if (folder == null) {
+            _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
+            return
+        }
+        exportTo(folder)
+    }
+
+    private fun handleBackupDestination(location: String) {
+        val exportWasWaiting = !_state.value.backup.choosingAutoBackupLocation
+        if (!saveBackupFolder(location)) return
+        if (exportWasWaiting) exportTo(location)
+    }
+
+    private fun exportTo(folder: String) {
+        coroutineScope.launch {
+            exportBackupInteractor(
+                ExportBackupInteractor.Params(folder, datastoreRepository.getBackupFileName()),
+            )
+                .collectStatus(
+                    counter = backupExportState,
+                    logger = logger,
+                    uiMessageManager = uiMessageManager,
+                    sourceId = BACKUP_SOURCE_ID,
+                    errorToStringMapper = errorToStringMapper,
+                    successMessage = localizer.getString(StringResourceKey.SettingsBackupExportSuccess),
+                )
+        }
+    }
+
+    private fun handleImportClicked() {
+        _state.update { it.copy(backup = backupLabels.copy(confirm = buildRestoreConfirm())) }
+    }
+
+    private fun handleImportConfirmed(syncWithConnectedAccount: Boolean) {
+        _state.update {
+            it.copy(
+                backup = backupLabels.copy(
+                    awaitingSource = true,
+                    syncWithConnectedAccount = syncWithConnectedAccount,
+                ),
+            )
+        }
+    }
+
+    private fun handleBackupSource(location: String) {
+        val syncWithConnectedAccount = _state.value.backup.syncWithConnectedAccount
+        coroutineScope.launch {
+            _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
+            val params = RestoreBackupInteractor.Params(
+                location = location,
+                syncWithConnectedAccount = syncWithConnectedAccount,
+            )
+            when (val result = restoreBackupInteractor.executeSync(params)) {
+                is RestoreResult.Restored ->
+                    _state.update { it.copy(backup = backupLabels.copy(summary = buildRestoreSummary(result.summary))) }
+
+                is RestoreResult.Failed -> {
+                    _state.update { it.copy(backup = backupLabels) }
+                    emitRestoreFailure(result)
+                }
+            }
+        }
+    }
+
+    private fun emitRestoreFailure(result: RestoreResult.Failed) {
+        result.cause?.let { logger.error(TAG, "Backup restore failed: ${it.message}") }
+        uiMessageManager.emitMessage(
+            UiMessage(
+                message = localizer.getString(
+                    when (result.reason) {
+                        RestoreFailure.SyncInProgress -> StringResourceKey.ErrorBackupSyncInProgress
+                        RestoreFailure.VersionTooNew -> StringResourceKey.ErrorBackupVersionTooNew
+                        RestoreFailure.ReadFailed,
+                        RestoreFailure.SafetyCopyFailed,
+                        RestoreFailure.ImportFailed,
+                        -> StringResourceKey.ErrorBackupReadFailed
+                    },
+                ),
+                sourceId = BACKUP_SOURCE_ID,
+            ),
+        )
+    }
+
+    private fun buildRestoreConfirm(): BackupRestoreConfirmationDialog {
+        val title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle)
+        val cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary)
+        val provider = state.value.activeProvider
+            ?: return BackupRestoreConfirmationDialog.Local(
+                title = title,
+                message = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage),
+                cancelLabel = cancelLabel,
+                confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
+            )
+
+        return BackupRestoreConfirmationDialog.Connected(
+            title = title,
+            message = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
+                provider.displayName,
+            ),
+            cancelLabel = cancelLabel,
+            accountLabel = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmAccountButton,
+                provider.displayName,
+            ),
+            deviceLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmDeviceButton),
+        )
+    }
+
+    private fun buildRestoreSummary(summary: RestoreSummary): BackupRestoreSummary = BackupRestoreSummary(
+        title = localizer.getString(StringResourceKey.SettingsBackupRestoreSummaryTitle),
+        showsRestored = localizer.getPlural(
+            PluralsResourceKey.BackupShowsRestored,
+            summary.showCount,
+            summary.showCount,
+        ),
+        episodesRestored = localizer.getPlural(
+            PluralsResourceKey.BackupEpisodesRestored,
+            summary.episodeCount,
+            summary.episodeCount,
+        ),
+        showsSkipped = summary.skippedShows.takeIf { it.isNotEmpty() }?.let {
+            localizer.getPlural(PluralsResourceKey.BackupShowsSkipped, it.size, it.size)
+        },
+        skippedShows = summary.skippedShows.toImmutableList(),
+        rewatchNotice = if (summary.rewatchSessionsKept > 0) {
+            localizer.getString(StringResourceKey.SettingsBackupRestoreSummaryRewatch)
+        } else {
+            null
+        },
+    )
 
     private fun handleBackClicked() {
         if (_state.value.currentPage != SettingsPage.ROOT) {
@@ -362,6 +688,7 @@ public class SettingsPresenter internal constructor(
         SettingsPage.LICENSES,
         SettingsPage.ACCOUNT,
         SettingsPage.LAYOUT,
+        SettingsPage.BACKUP,
         -> SettingsPage.ROOT
 
         SettingsPage.DISCOVER_SECTIONS,
@@ -388,16 +715,12 @@ public class SettingsPresenter internal constructor(
 
     private fun handleSwitchClicked(target: SyncProviderSource) {
         coroutineScope.launch {
-            _state.update { it.copy(isSwitching = true) }
-            runCatching { pushPendingChangesInteractor.executeSync() }
-                .onFailure { logger.warning(TAG, "Pushing pending changes before switch failed: ${it.message}") }
-            val count = runCatching { countUnsavedChanges() }
-                .onFailure { logger.warning(TAG, "Counting unsaved changes before switch failed: ${it.message}") }
-                .getOrDefault(0)
+            accountSwitchState.addLoader()
+            val count = prepareAccountSwitchInteractor()
+            accountSwitchState.removeLoader()
             if (count > 0) {
                 _state.update {
                     it.copy(
-                        isSwitching = false,
                         showSwitchConfirmation = true,
                         switchUnsavedCount = count,
                         pendingSwitchProvider = target,
@@ -412,7 +735,7 @@ public class SettingsPresenter internal constructor(
                     )
                 }
             } else {
-                executeSwitch(target)
+                switchSyncProviderSource(target)
             }
         }
     }
@@ -428,7 +751,7 @@ public class SettingsPresenter internal constructor(
                 switchDialogMessage = null,
             )
         }
-        coroutineScope.launch { executeSwitch(target) }
+        coroutineScope.launch { switchSyncProviderSource(target) }
     }
 
     private fun dismissSwitchDialog() {
@@ -436,7 +759,6 @@ public class SettingsPresenter internal constructor(
             it.copy(
                 showSwitchConfirmation = false,
                 pendingSwitchProvider = null,
-                isSwitching = false,
                 switchUnsavedCount = 0,
                 switchDialogTitle = null,
                 switchDialogMessage = null,
@@ -444,29 +766,15 @@ public class SettingsPresenter internal constructor(
         }
     }
 
-    private suspend fun executeSwitch(target: SyncProviderSource) {
-        _state.update { it.copy(isSwitching = true) }
-        try {
-            authManagers[target]?.launchWebView()
-            withTimeoutOrNull(OAUTH_TIMEOUT) {
-                accountManager.accounts.first { accounts ->
-                    accounts.any { it.provider == target && it.isConnected }
-                }
-            } ?: error("Timed out waiting for $target sign-in")
-            switchAccountInteractor.executeSync(target)
-        } catch (cancellation: CancellationException) {
-            throw cancellation
-        } catch (cause: Throwable) {
-            logger.error(TAG, "Account switch to $target failed: ${cause.message}")
-            uiMessageManager.emitMessage(
-                UiMessage(
-                    message = localizer.getString(StringResourceKey.LabelAccountSwitchFailed),
-                    sourceId = "AccountSwitch",
-                ),
+    private suspend fun switchSyncProviderSource(target: SyncProviderSource) {
+        connectAndSwitchProviderInteractor(ConnectAndSwitchProviderInteractor.Params(target))
+            .collectStatus(
+                counter = accountSwitchState,
+                logger = logger,
+                uiMessageManager = uiMessageManager,
+                sourceId = ACCOUNT_SWITCH_SOURCE_ID,
+                errorToStringMapper = errorToStringMapper,
             )
-        } finally {
-            _state.update { it.copy(isSwitching = false) }
-        }
     }
 
     private fun handleVersionTap() {
@@ -497,6 +805,7 @@ public class SettingsPresenter internal constructor(
             SettingsPage.LAYOUT -> StringResourceKey.SettingsLayoutTitle
             SettingsPage.DISCOVER_SECTIONS -> StringResourceKey.SettingsDiscoverSectionsTitle
             SettingsPage.POSTER_STYLE -> StringResourceKey.SettingsPosterStyleTitle
+            SettingsPage.BACKUP -> StringResourceKey.SettingsBackupTitle
         },
     )
 
@@ -578,6 +887,11 @@ public class SettingsPresenter internal constructor(
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionPrivacy),
                             summary = localizer.getString(StringResourceKey.LabelSettingsPrivacyDescription),
                         ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.BACKUP,
+                            title = localizer.getString(StringResourceKey.SettingsBackupTitle),
+                            summary = localizer.getString(StringResourceKey.SettingsBackupDescription),
+                        ),
                     ),
                 ),
             )
@@ -600,113 +914,11 @@ public class SettingsPresenter internal constructor(
             )
         }.toImmutableList()
 
-    private fun imageQualityDescriptionKey(quality: ImageQuality): StringResourceKey = when (quality) {
-        ImageQuality.AUTO -> StringResourceKey.LabelSettingsImageQualityAutoDescription
-        ImageQuality.HIGH -> StringResourceKey.LabelSettingsImageQualityHighDescription
-        ImageQuality.MEDIUM -> StringResourceKey.LabelSettingsImageQualityMediumDescription
-        ImageQuality.LOW -> StringResourceKey.LabelSettingsImageQualityLowDescription
-    }
-
-    private fun buildLabels(
-        imageQuality: ImageQuality,
-        showLastSyncDate: Boolean,
-        lastSyncDate: String?,
-        versionName: String,
-        username: String?,
-        isAuthenticated: Boolean,
-    ): SettingsLabels = SettingsLabels(
-        back = localizer.getString(StringResourceKey.CdBack),
-        themeTitle = localizer.getString(StringResourceKey.SettingsThemeSelectorTitle),
-        themeSubtitle = localizer.getString(StringResourceKey.SettingsThemeSelectorSubtitle),
-        imageQualityTitle = localizer.getString(StringResourceKey.LabelSettingsImageQuality),
-        imageQualityDescription = localizer.getString(imageQualityDescriptionKey(imageQuality)),
-        imageQualityAuto = localizer.getString(StringResourceKey.LabelSettingsImageQualityAuto),
-        imageQualityHigh = localizer.getString(StringResourceKey.LabelSettingsImageQualityHigh),
-        imageQualityMedium = localizer.getString(StringResourceKey.LabelSettingsImageQualityMedium),
-        imageQualityLow = localizer.getString(StringResourceKey.LabelSettingsImageQualityLow),
-        syncTitle = localizer.getString(StringResourceKey.LabelSettingsSyncUpdate),
-        syncDescription = localizer.getString(StringResourceKey.LabelSettingsSyncUpdateDescription),
-        lastSync = if (showLastSyncDate && lastSyncDate != null) {
-            localizer.getString(StringResourceKey.LabelSettingsLastSyncDate, lastSyncDate)
-        } else {
-            null
-        },
-        includeSpecialsTitle = localizer.getString(StringResourceKey.LabelSettingsIncludeSpecials),
-        includeSpecialsDescription = localizer.getString(StringResourceKey.LabelSettingsIncludeSpecialsDescription),
-        quickRateTitle = localizer.getString(StringResourceKey.LabelSettingsQuickRate),
-        quickRateDescription = localizer.getString(StringResourceKey.LabelSettingsQuickRateDescription),
-        youtubeTitle = localizer.getString(StringResourceKey.LabelSettingsYoutube),
-        youtubeDescription = localizer.getString(StringResourceKey.LabelSettingsYoutubeDescription),
-        episodeNotificationsTitle = localizer.getString(StringResourceKey.LabelSettingsEpisodeNotifications),
-        episodeNotificationsDescription = localizer.getString(StringResourceKey.LabelSettingsEpisodeNotificationsDescription),
-        crashReportingTitle = localizer.getString(StringResourceKey.LabelSettingsCrashReporting),
-        crashReportingDescription = localizer.getString(StringResourceKey.LabelSettingsCrashReportingDescription),
-        hapticFeedbackTitle = localizer.getString(StringResourceKey.SettingsHapticFeedbackTitle),
-        hapticFeedbackDescription = localizer.getString(StringResourceKey.SettingsHapticFeedbackDescription),
-        seasonOrderTitle = localizer.getString(StringResourceKey.SettingsSeasonOrderTitle),
-        seasonOrderDescription = localizer.getString(StringResourceKey.SettingsSeasonOrderDescription),
-        blurUnwatchedTitle = localizer.getString(StringResourceKey.SettingsBlurUnwatchedTitle),
-        blurUnwatchedDescription = localizer.getString(StringResourceKey.SettingsBlurUnwatchedDescription),
-        discoverSectionsTitle = localizer.getString(StringResourceKey.SettingsDiscoverSectionsTitle),
-        discoverSectionsDescription = localizer.getString(StringResourceKey.SettingsDiscoverSectionsDescription),
-        fontSizeTitle = localizer.getString(StringResourceKey.SettingsFontSizeTitle),
-        fontSizeDescription = localizer.getString(StringResourceKey.SettingsFontSizeDescription),
-        fontSizePreview = localizer.getString(StringResourceKey.SettingsFontSizePreview),
-        fontSizeReset = localizer.getString(StringResourceKey.SettingsFontSizeReset),
-        posterStyle = PosterStyleLabels(
-            title = localizer.getString(StringResourceKey.SettingsPosterStyleTitle),
-            subtitle = localizer.getString(StringResourceKey.SettingsPosterStyleDescription),
-            livePreview = localizer.getString(StringResourceKey.SettingsPosterLivePreview),
-            reset = localizer.getString(StringResourceKey.SettingsPosterReset),
-            postersLabel = localizer.getString(StringResourceKey.SettingsPosterPostersLabel),
-            landscapeLabel = localizer.getString(StringResourceKey.SettingsPosterLandscapeLabel),
-            cornerLabel = localizer.getString(StringResourceKey.SettingsPosterCornerLabel),
-            widthCompact = localizer.getString(StringResourceKey.SettingsPosterWidthCompact),
-            widthStandard = localizer.getString(StringResourceKey.SettingsPosterWidthStandard),
-            widthComfortable = localizer.getString(StringResourceKey.SettingsPosterWidthComfortable),
-            widthLarge = localizer.getString(StringResourceKey.SettingsPosterWidthLarge),
-            cornerSharp = localizer.getString(StringResourceKey.SettingsPosterCornerSharp),
-            cornerClassic = localizer.getString(StringResourceKey.SettingsPosterCornerClassic),
-            cornerRounded = localizer.getString(StringResourceKey.SettingsPosterCornerRounded),
-            cornerPill = localizer.getString(StringResourceKey.SettingsPosterCornerPill),
-        ),
-        privacyPolicy = localizer.getString(StringResourceKey.LabelSettingsPrivacyPolicy),
-        appName = localizer.getString(StringResourceKey.SettingsAboutAppName),
-        version = localizer.getString(StringResourceKey.SettingsAboutVersion, versionName),
-        aboutDescription = localizer.getString(StringResourceKey.SettingsAboutDescription),
-        sourceCode = localizer.getString(StringResourceKey.SettingsAboutSourceCode),
-        github = localizer.getString(StringResourceKey.SettingsAboutGithub),
-        apiDisclaimer = localizer.getString(StringResourceKey.SettingsAboutApiDisclaimer),
-        licensesApp = localizer.getString(StringResourceKey.LabelSettingsLicensesSectionApp),
-        licensesData = localizer.getString(StringResourceKey.LabelSettingsLicensesSectionData),
-        tmdbTitle = localizer.getString(StringResourceKey.LabelSettingsLicensesTmdbTitle),
-        tmdbBody = localizer.getString(StringResourceKey.LabelSettingsLicensesTmdbBody),
-        traktBody = localizer.getString(StringResourceKey.LabelSettingsLicensesTraktBody),
-        traktTitle = localizer.getString(StringResourceKey.SettingsTitleTraktApp),
-        traktDescription = localizer.getString(StringResourceKey.TraktDescription),
-        traktAuthentication = localizer.getString(StringResourceKey.LabelSettingsTraktAuthentication),
-        connectTitle = localizer.getString(StringResourceKey.LabelSettingsConnectTitle),
-        accountSyncDescription = localizer.getString(StringResourceKey.LabelSettingsAccountSyncDescription),
-        traktConnected = when {
-            !isAuthenticated -> localizer.getString(StringResourceKey.LabelSettingsTraktConnect)
-            username != null -> localizer.getString(StringResourceKey.LabelSettingsTraktConnectedAs, username)
-            else -> localizer.getString(StringResourceKey.LabelSettingsTraktConnected)
-        },
-        traktConnectedDescription = if (isAuthenticated) {
-            localizer.getString(StringResourceKey.LabelSettingsTraktConnectedDescription)
-        } else {
-            localizer.getString(StringResourceKey.SettingsTraktDetailDescription)
-        },
-        logout = localizer.getString(StringResourceKey.Logout),
-        login = localizer.getString(StringResourceKey.Login),
-        switchConfirm = localizer.getString(StringResourceKey.LabelAccountSwitchDialogConfirm),
-        switchCancel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary),
-        switching = localizer.getString(StringResourceKey.LabelAccountSwitching),
-    )
-
     private companion object {
         private const val HIDDEN_TAP_THRESHOLD = 6
         private const val TAG = "SettingsPresenter"
+        private const val BACKUP_SOURCE_ID = "BackupExport"
+        private const val ACCOUNT_SWITCH_SOURCE_ID = "AccountSwitch"
         private val OAUTH_TIMEOUT = 2.minutes
     }
 }

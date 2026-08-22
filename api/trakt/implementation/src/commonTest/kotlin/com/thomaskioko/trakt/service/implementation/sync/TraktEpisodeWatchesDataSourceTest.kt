@@ -1,6 +1,8 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowIds
@@ -22,8 +24,9 @@ import kotlin.time.Instant
 internal class TraktEpisodeWatchesDataSourceTest {
 
     private val fakeSync = FakeTraktSyncRemoteDataSource()
+    private val fakeHistory = FakeTraktEpisodeHistoryRemoteDataSource()
     private val dataSource = TraktEpisodeWatchesDataSource(
-        remoteDataSource = FakeTraktEpisodeHistoryRemoteDataSource(),
+        remoteDataSource = fakeHistory,
         syncRemoteDataSource = fakeSync,
         followedShowsDao = FakeFollowedShowsDao(),
     )
@@ -87,6 +90,48 @@ internal class TraktEpisodeWatchesDataSourceTest {
 
         batches.shouldBeEmpty()
     }
+
+    @Test
+    fun `should send the local watched time unchanged given the mark carries a date`() = runTest {
+        dataSource.addEpisodeEntries(listOf(watchedEntry(Instant.parse("2026-04-25T20:00:00Z"))))
+
+        fakeHistory.lastAddedItems!!.shows!!.single().seasons!!.single().episodes.single().watchedAt shouldBe
+            "2026-04-25T20:00:00Z"
+    }
+
+    @Test
+    fun `should send the unknown literal given the watched time is unknown`() = runTest {
+        dataSource.addEpisodeEntries(listOf(watchedEntry(WatchedDate.UNKNOWN)))
+
+        fakeHistory.lastAddedItems!!.shows!!.single().seasons!!.single().episodes.single().watchedAt shouldBe "unknown"
+    }
+
+    @Test
+    fun `should read back as the unknown sentinel given a pulled timestamp sits at the epoch`() = runTest {
+        fakeSync.setWatchedShows(ApiResponse.Success(listOf(SHOW_WITH_EPOCH_WATCHED_AT)))
+
+        val episode = dataSource.getAllWatchedShows(page = 1, limit = 100).single().episodes.single()
+
+        episode.watchedAt shouldBe WatchedDate.UNKNOWN
+    }
+
+    @Test
+    fun `should keep the pulled timestamp given a watch predates the year 2000`() = runTest {
+        fakeSync.setWatchedShows(ApiResponse.Success(listOf(SHOW_WATCHED_IN_1999)))
+
+        val episode = dataSource.getAllWatchedShows(page = 1, limit = 100).single().episodes.single()
+
+        episode.watchedAt shouldBe Instant.parse("1999-06-15T20:00:00.000Z")
+    }
+
+    private fun watchedEntry(watchedAt: Instant) = WatchedEpisodeEntry(
+        showId = 1388L,
+        episodeId = null,
+        seasonNumber = 1L,
+        episodeNumber = 1L,
+        watchedAt = watchedAt,
+        pendingAction = PendingAction.NOTHING,
+    )
 }
 
 private val BREAKING_BAD = TraktWatchedShowResponse(
@@ -119,6 +164,38 @@ private val SHOW_WITH_NULL_WATCHED_AT = TraktWatchedShowResponse(
         TraktWatchedSeasonResponse(
             number = 1,
             episodes = listOf(TraktWatchedEpisodeResponse(number = 1, plays = 1, lastWatchedAt = null)),
+        ),
+    ),
+)
+
+private val SHOW_WITH_EPOCH_WATCHED_AT = TraktWatchedShowResponse(
+    plays = 1,
+    show = TraktShowResponse(
+        title = "Undated Show",
+        ids = ShowIds(trakt = 77, tmdb = 88),
+    ),
+    seasons = listOf(
+        TraktWatchedSeasonResponse(
+            number = 1,
+            episodes = listOf(
+                TraktWatchedEpisodeResponse(number = 1, plays = 1, lastWatchedAt = "1970-01-01T00:00:00.000Z"),
+            ),
+        ),
+    ),
+)
+
+private val SHOW_WATCHED_IN_1999 = TraktWatchedShowResponse(
+    plays = 1,
+    show = TraktShowResponse(
+        title = "Old Show",
+        ids = ShowIds(trakt = 78, tmdb = 89),
+    ),
+    seasons = listOf(
+        TraktWatchedSeasonResponse(
+            number = 1,
+            episodes = listOf(
+                TraktWatchedEpisodeResponse(number = 1, plays = 1, lastWatchedAt = "1999-06-15T20:00:00.000Z"),
+            ),
         ),
     ),
 )

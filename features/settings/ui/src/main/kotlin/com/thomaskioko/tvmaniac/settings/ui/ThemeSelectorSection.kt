@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.testTag
 import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.resolve
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsLocks
+import com.thomaskioko.tvmaniac.settings.presenter.PremiumState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
@@ -25,7 +25,7 @@ internal fun ThemeSelectorSection(
     selectedTheme: ThemeModel,
     onThemeSelected: (ThemeModel) -> Unit,
     onUpgradeClick: () -> Unit,
-    locks: SettingsLocks,
+    premium: PremiumState,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -46,11 +46,11 @@ internal fun ThemeSelectorSection(
         )
 
         PremiumOverlay(
-            locked = locks.customThemesLocked,
-            badgeText = locks.badgeText,
-            title = locks.themesLockedTitle,
-            message = locks.themesLockedMessage,
-            actionText = locks.upgradeText,
+            locked = premium.customThemesLocked,
+            badgeText = premium.badgeText,
+            title = premium.themesLockedTitle,
+            message = premium.themesLockedMessage,
+            actionText = premium.upgradeText,
             onActionClick = onUpgradeClick,
             modifier = Modifier.testTag(SettingsTestTags.THEMES_LOCKED),
         ) {

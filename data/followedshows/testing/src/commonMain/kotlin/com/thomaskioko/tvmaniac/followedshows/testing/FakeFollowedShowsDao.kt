@@ -16,13 +16,13 @@ public class FakeFollowedShowsDao : FollowedShowsDao {
     override fun entriesObservable(): Flow<List<FollowedShowEntry>> = entriesFlow
 
     override fun entryWithTraktId(traktId: Long): FollowedShowEntry? =
-        entriesFlow.value.find { it.showId == traktId }
+        entriesFlow.value.find { it.traktId == traktId }
 
     override fun entryWithTmdbId(tmdbId: Long): FollowedShowEntry? =
-        entriesFlow.value.find { it.tmdbId == tmdbId || (it.tmdbId == null && it.showId == tmdbId) }
+        entriesFlow.value.find { it.showId == tmdbId }
 
     override fun traktIdForTmdbId(tmdbId: Long): Long? =
-        entriesFlow.value.find { it.tmdbId == tmdbId || (it.tmdbId == null && it.showId == tmdbId) }?.showId
+        entriesFlow.value.find { it.showId == tmdbId }?.traktId
 
     override fun entriesWithNoPendingAction(): List<FollowedShowEntry> =
         entriesFlow.value.filter { it.pendingAction == PendingAction.NOTHING }

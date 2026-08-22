@@ -25,6 +25,7 @@ public interface TestGraph {
     public val rootPresenterFactory: RootPresenter.Factory
     public val navDestinations: Set<NavDestination<*>>
     public val homeChildGraphFactory: HomeChildGraph.Factory
+    public val testActivityGraphFactory: TestActivityGraph.Factory
     public val syncObserver: SyncObserver
     public val workerFactory: WorkerFactory
     public val featureFlags: Set<FeatureFlag<Boolean>>

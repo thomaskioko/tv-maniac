@@ -3,16 +3,22 @@ package com.thomaskioko.tvmaniac.settings.ui
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupScheduleOption
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupSettings
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
+import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
+import com.thomaskioko.tvmaniac.settings.presenter.BackupSettings
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggle
 import com.thomaskioko.tvmaniac.settings.presenter.PosterStyleLabels
+import com.thomaskioko.tvmaniac.settings.presenter.PremiumState
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryGroup
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsCategoryItem
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabels
-import com.thomaskioko.tvmaniac.settings.presenter.SettingsLocks
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
@@ -69,6 +75,8 @@ private val previewLabels = SettingsLabels(
     includeSpecialsDescription = "Display Specials and bonus seasons",
     quickRateTitle = "Quick Rate",
     quickRateDescription = "Show rating prompt after marking an episode as watched",
+    multiplePlaysTitle = "Multiple plays",
+    multiplePlaysDescription = "Let a show be marked watched more than once, and count the rewatches",
     youtubeTitle = "Trailers",
     youtubeDescription = "Open Trailers in Youtube App",
     episodeNotificationsTitle = "Episode Notifications",
@@ -189,7 +197,7 @@ internal val posterStyleState = loggedInState.copy(
     currentPageTitle = "Poster Style",
 )
 internal val posterStyleLockedState = posterStyleState.copy(
-    locks = SettingsLocks(
+    premium = PremiumState(
         posterStyleLocked = true,
         badgeText = "Premium",
         themesLockedTitle = "Poster styles are a Premium feature",
@@ -204,7 +212,7 @@ internal val posterStyleMixedState = posterStyleState.copy(
     posterCornerStyle = PosterCornerStyle.ROUNDED,
 )
 internal val appearanceLockedState = appearanceState.copy(
-    locks = SettingsLocks(
+    premium = PremiumState(
         customThemesLocked = true,
         badgeText = "Premium",
         themesLockedTitle = "Custom themes are a Premium feature",
@@ -214,8 +222,11 @@ internal val appearanceLockedState = appearanceState.copy(
     ),
 )
 internal val behaviorState = loggedInState.copy(currentPage = SettingsPage.BEHAVIOR, currentPageTitle = "Behavior")
+internal val behaviorSimklFreeTierState = behaviorState.copy(
+    multiplePlaysSyncNotice = "Simkl does not store rewatches without a paid plan, so this count stays on this device.",
+)
 internal val behaviorLockedState = behaviorState.copy(
-    locks = SettingsLocks(
+    premium = PremiumState(
         quickRateLocked = true,
         badgeText = "Premium",
         lockedContentDescription = "Locked",
@@ -223,13 +234,140 @@ internal val behaviorLockedState = behaviorState.copy(
 )
 internal val notificationsState = loggedInState.copy(currentPage = SettingsPage.NOTIFICATIONS, currentPageTitle = "Notifications")
 internal val notificationsLockedState = notificationsState.copy(
-    locks = SettingsLocks(
+    premium = PremiumState(
         episodeNotificationsLocked = true,
         badgeText = "Premium",
         lockedContentDescription = "Locked",
     ),
 )
 internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVACY, currentPageTitle = "Privacy")
+private val autoBackupSettings = AutoBackupSettings(
+    title = "Automatic backup",
+    description = "Save your shows, watch history, ratings and settings to a file on a schedule",
+    scheduleTitle = "How often",
+    scheduleLabel = "Every week",
+    scheduleOptions = persistentListOf(
+        AutoBackupScheduleOption(interval = AutoBackupInterval.DAILY, label = "Every day", selected = false),
+        AutoBackupScheduleOption(interval = AutoBackupInterval.WEEKLY, label = "Every week", selected = true),
+        AutoBackupScheduleOption(interval = AutoBackupInterval.FORTNIGHTLY, label = "Every two weeks", selected = false),
+        AutoBackupScheduleOption(interval = AutoBackupInterval.MONTHLY, label = "Every month", selected = false),
+    ),
+    locationTitle = "Backup location",
+    locationLabel = "Choose where to save backups",
+    fileNameTitle = "File name",
+    fileNameMessage = "Backups are saved under this name",
+    fileName = "tvmaniac-backup.json",
+    fileNameSaveLabel = "Save",
+    fileNameCancelLabel = "Cancel",
+    lastRunLabel = "No backup saved yet",
+    backupNowTitle = "Back up now",
+    backupNowDescription = "Save a backup straight away, without waiting for the schedule",
+)
+internal val backupState = loggedInState.copy(
+    currentPage = SettingsPage.BACKUP,
+    currentPageTitle = "Backup",
+    backup = BackupSettings(
+        exportTitle = "Export backup",
+        exportDescription = "Save your tracking data and preferences to a file",
+        importTitle = "Restore a backup",
+        importDescription = "Replace what is on this device with a backup file",
+        autoBackup = autoBackupSettings,
+    ),
+)
+internal val backupAutoBackupOnState = backupState.copy(
+    backup = backupState.backup.copy(
+        autoBackup = autoBackupSettings.copy(
+            enabled = true,
+            hasLocation = true,
+            locationLabel = "Download",
+            lastRunLabel = "Last backup 12 August 2026",
+        ),
+    ),
+)
+internal val backupAutoBackupNeverRunState = backupState.copy(
+    backup = backupState.backup.copy(
+        autoBackup = autoBackupSettings.copy(enabled = true),
+    ),
+)
+internal val backupAutoBackupFailedState = backupState.copy(
+    backup = backupState.backup.copy(
+        autoBackup = autoBackupSettings.copy(
+            enabled = true,
+            hasLocation = true,
+            locationLabel = "Download",
+            lastRunLabel = "Last backup 12 August 2026",
+            failureWarning = "The last automatic backup failed. Check the location is still " +
+                "available, then back up now.",
+        ),
+    ),
+)
+internal val backupAutoBackupRunningState = backupAutoBackupOnState.copy(
+    backup = backupAutoBackupOnState.backup.copy(
+        autoBackup = backupAutoBackupOnState.backup.autoBackup.copy(isBackingUp = true),
+    ),
+)
+internal val backupLockedState = backupState.copy(
+    premium = PremiumState(
+        backupLocked = true,
+        badgeText = "Premium",
+        backupLockedTitle = "Backup is a Premium feature",
+        backupLockedMessage = "Upgrade to Premium to back up your data to a file.",
+        upgradeText = "Upgrade to Premium",
+        lockedContentDescription = "Locked",
+    ),
+)
+internal val backupExportingState = backupState.copy(
+    backup = backupState.backup.copy(isExporting = true),
+)
+internal val backupImportingState = backupState.copy(
+    backup = backupState.backup.copy(isImporting = true),
+)
+internal val backupRestoreConfirmState = backupState.copy(
+    backup = backupState.backup.copy(
+        confirm = BackupRestoreConfirmationDialog.Local(
+            title = "Restore this backup?",
+            message = "This replaces the shows and watch history on this device. " +
+                "A copy of your current data is saved first.",
+            confirmLabel = "Restore",
+            cancelLabel = "Cancel",
+        ),
+    ),
+)
+internal val backupRestoreConfirmConnectedState = backupState.copy(
+    activeProvider = SyncProviderSource.TRAKT,
+    backup = backupState.backup.copy(
+        confirm = BackupRestoreConfirmationDialog.Connected(
+            title = "Restore this backup?",
+            message = "This replaces the shows and watch history on this device, and a copy of " +
+                "your current data is saved first. You are signed in to Trakt, so shows you do " +
+                "not add to it are removed at the next sync.",
+            cancelLabel = "Cancel",
+            accountLabel = "Restore and sync with Trakt",
+            deviceLabel = "Restore locally",
+        ),
+    ),
+)
+internal val backupRestoreSummaryState = backupState.copy(
+    backup = backupState.backup.copy(
+        summary = BackupRestoreSummary(
+            title = "Restore finished",
+            showsRestored = "42 shows restored",
+            episodesRestored = "612 episodes restored",
+        ),
+    ),
+)
+internal val backupRestoreSummaryWithSkipsState = backupState.copy(
+    backup = backupState.backup.copy(
+        summary = BackupRestoreSummary(
+            title = "Restore finished",
+            showsRestored = "40 shows restored",
+            episodesRestored = "598 episodes restored",
+            showsSkipped = "2 shows skipped",
+            skippedShows = persistentListOf("Breaking Bad", "The Wire"),
+            rewatchNotice = "Repeat viewings were not included in this backup",
+        ),
+    ),
+)
 internal val infoState = loggedInState.copy(currentPage = SettingsPage.INFO, currentPageTitle = "Info")
 internal val licensesState = loggedInState.copy(currentPage = SettingsPage.LICENSES, currentPageTitle = "Licenses & Attribution")
 internal val accountState = loggedInState.copy(
@@ -283,6 +421,26 @@ internal class SettingsPreviewParameterProvider : PreviewParameterProvider<Setti
                 discoverSectionsState,
                 posterStyleState,
                 behaviorState,
+            )
+        }
+}
+
+internal class BackupPreviewParameterProvider : PreviewParameterProvider<SettingsState> {
+    override val values: Sequence<SettingsState>
+        get() {
+            return sequenceOf(
+                backupState,
+                backupLockedState,
+                backupExportingState,
+                backupImportingState,
+                backupRestoreConfirmState,
+                backupRestoreConfirmConnectedState,
+                backupRestoreSummaryState,
+                backupRestoreSummaryWithSkipsState,
+                backupAutoBackupOnState,
+                backupAutoBackupNeverRunState,
+                backupAutoBackupFailedState,
+                backupAutoBackupRunningState,
             )
         }
 }

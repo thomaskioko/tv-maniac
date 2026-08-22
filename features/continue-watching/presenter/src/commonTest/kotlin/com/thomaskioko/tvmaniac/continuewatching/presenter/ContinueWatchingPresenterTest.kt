@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -70,6 +71,26 @@ class ContinueWatchingPresenterTest {
     }
 
     @Test
+    fun `should open the watch date sheet given the check button is long pressed`() = runTest {
+        val navigator = FakeNavigator()
+        val presenter = factory.create(
+            componentContext = DefaultComponentContext(lifecycle = lifecycle),
+            navigator = navigator,
+        )
+
+        presenter.dispatch(
+            MarkUpNextEpisodeWatchedLongPressed(showId = 1L, episodeId = 2L, seasonNumber = 1L, episodeNumber = 3L),
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+        route.param.showId shouldBe 1L
+        route.param.episodeId shouldBe 2L
+        route.param.seasonNumber shouldBe 1L
+        route.param.episodeNumber shouldBe 3L
+    }
+
+    @Test
     fun `should not open the rating sheet given quick rate is off`() = runTest {
         val navigator = FakeNavigator()
         val presenter = factory.create(
@@ -104,6 +125,20 @@ class ContinueWatchingPresenterTest {
             val loaded = awaitItem()
             loaded.isEmpty shouldBe false
             loaded.showLoading shouldBe false
+        }
+    }
+
+    @Test
+    fun `should show empty state instead of loading given a search query is active`() = runTest {
+        presenter.state.test {
+            awaitItem().showLoading shouldBe true
+
+            presenter.onQueryChanged("Zzzzz")
+
+            val searching = awaitItem()
+            searching.query shouldBe "Zzzzz"
+            searching.isEmpty shouldBe true
+            searching.showLoading shouldBe false
         }
     }
 

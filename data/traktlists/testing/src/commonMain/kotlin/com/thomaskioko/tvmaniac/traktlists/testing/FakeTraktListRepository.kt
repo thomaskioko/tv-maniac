@@ -27,6 +27,23 @@ public class FakeTraktListRepository : TraktListRepository {
     public var toggleShowInListInvocations: Int = 0
         private set
 
+    private val createdListNames = mutableListOf<String>()
+    private val toggledShows = mutableListOf<Pair<Long, Long>>()
+    private var createListFailure: Throwable? = null
+    private var toggleFailure: Throwable? = null
+
+    public fun createdListNames(): List<String> = createdListNames
+
+    public fun toggledShows(): List<Pair<Long, Long>> = toggledShows
+
+    public fun setCreateListFailure(error: Throwable?) {
+        createListFailure = error
+    }
+
+    public fun setToggleFailure(error: Throwable?) {
+        toggleFailure = error
+    }
+
     public fun setLists(lists: List<TraktListEntity>) {
         listsFlow.value = lists
     }
@@ -54,10 +71,14 @@ public class FakeTraktListRepository : TraktListRepository {
     }
 
     override suspend fun createList(slug: String, name: String) {
+        createListFailure?.let { throw it }
+        createdListNames += name
     }
 
     override suspend fun toggleShowInList(slug: String, listId: Long, showId: Long, isCurrentlyInList: Boolean) {
         toggleShowInListInvocations += 1
+        toggleFailure?.let { throw it }
+        toggledShows += listId to showId
         toggleGate?.await()
     }
 

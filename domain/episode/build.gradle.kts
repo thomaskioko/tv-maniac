@@ -15,11 +15,14 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.syncstate.api)
+                api(projects.core.util.api)
                 api(projects.core.tasks.api)
                 api(projects.data.accountManager.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.episode.api)
                 api(projects.data.library.api)
+                api(projects.data.rewatch.api)
+                api(projects.domain.rewatch)
 
                 implementation(projects.core.view)
             }
@@ -33,6 +36,8 @@ kotlin {
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.library.testing)
+                implementation(projects.data.rewatch.testing)
+                implementation(projects.core.util.testing)
             }
         }
     }

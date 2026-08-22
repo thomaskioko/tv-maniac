@@ -7,4 +7,5 @@ public enum class SubscriptionFeature {
     ListViewTypes,
     QuickRate,
     Statistics,
+    CloudBackup,
 }

@@ -14,7 +14,7 @@ internal class EpisodeSheetRobot(composeUi: ComposeUiTest) : BaseRobot<EpisodeSh
         awaitTagOnce(EpisodeSheetTestTags.SHEET_TEST_TAG, timeoutMillis = SHEET_APPEARANCE_TIMEOUT_MILLIS)
         assertDisplayed(EpisodeSheetTestTags.SHEET_TEST_TAG)
         awaitTagOnce(EpisodeSheetTestTags.TITLE_TEST_TAG)
-        awaitMatcherAtLeastOne(matcher = hasTestTag(EpisodeSheetTestTags.actionItem(EpisodeSheetActionItem.TOGGLE_WATCHED.name)))
+        awaitMatcherAtLeastOne(matcher = hasTestTag(EpisodeSheetTestTags.actionItem(EpisodeSheetActionItem.MARK_WATCHED.name)))
         waitForIdle()
     }
 
@@ -28,6 +28,15 @@ internal class EpisodeSheetRobot(composeUi: ComposeUiTest) : BaseRobot<EpisodeSh
         val tag = EpisodeSheetTestTags.actionItem(action.name)
         scrollTo(tag)
         click(tag)
+    }
+
+    fun assertPlayCountDisplayed(count: Int) = apply {
+        assertDisplayed(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG)
+        assertTextEquals(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG, "$count")
+    }
+
+    fun assertPlayCountDoesNotExist() = apply {
+        assertDoesNotExist(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG)
     }
 
     fun clickRateAction() = apply {

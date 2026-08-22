@@ -12,9 +12,7 @@ internal class WatchAgainInteractorTest {
 
     private val rewatchRepository = FakeRewatchRepository()
 
-    private val interactor = WatchAgainInteractor(
-        rewatchRepository = rewatchRepository,
-    )
+    private val interactor = WatchAgainInteractor(rewatchRepository = rewatchRepository)
 
     @Test
     fun `should emit success given an episode is watched again`() = runTest {
@@ -59,13 +57,14 @@ internal class WatchAgainInteractorTest {
         rewatchRepository.lastAddEpisodeSessionId shouldBe firstSessionId
     }
 
-    private fun episodeWatch(watchedAt: Long): WatchAgainInteractor.Param = WatchAgainInteractor.Param(
-        showId = SHOW_ID,
-        episodeId = EPISODE_ID,
-        seasonNumber = 1L,
-        episodeNumber = 3L,
-        watchedAt = watchedAt,
-    )
+    private fun episodeWatch(watchedAt: Long): WatchAgainInteractor.Param =
+        WatchAgainInteractor.Param(
+            showId = SHOW_ID,
+            episodeId = EPISODE_ID,
+            seasonNumber = 1L,
+            episodeNumber = 3L,
+            watchedAt = watchedAt,
+        )
 
     private companion object {
         private const val SHOW_ID = 84958L

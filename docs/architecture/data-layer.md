@@ -12,10 +12,23 @@ The data layer fetches, caches, and persists every domain model using the [Store
 
 ## Hybrid API Strategy
 
-Two upstream services power the catalogue. A single Store may call either or both inside one Fetcher.
+Three upstream services power the app. A single Store may call more than one inside a Fetcher.
 
-- **Trakt**: Listings, authentication, and watchlist (popular, trending, profile).
-- **TMDB**: Show details, images, and cast (metadata, seasons, trailers).
+- **TMDB**: Show details, images, and cast (metadata, seasons, trailers). Always available, and the
+  only source that needs no account.
+- **Trakt**: Listings and the catalogue (popular, trending), plus a sync account.
+- **Simkl**: A sync account, as an alternative to Trakt. Someone signs in to one or the other, never
+  both at once.
+
+Trakt and Simkl are interchangeable where they overlap. A capability either of them can provide is
+declared once as an interface in the `data/{name}/api` module that owns it, and each provider
+contributes its own implementation from `api/trakt/implementation` or `api/simkl/implementation`. The
+caller asks for the interface and never learns which account is connected. `LibraryRemoteDataSource`
+is the clearest example.
+
+A provider that cannot do something still implements the interface. `SimklLibraryRemoteDataSource`
+returns success without calling anything for removals, because Simkl's only removal endpoint deletes
+watch history and ratings along with the list entry.
 
 ## Store Pattern
 

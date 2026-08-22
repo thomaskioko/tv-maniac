@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.episodedetail.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.DoneAll
 import androidx.compose.material.icons.outlined.Movie
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +47,7 @@ internal data class EpisodeDetailInfo(
     val rating: Double? = null,
     val voteCount: Long? = null,
     val isWatched: Boolean = false,
+    val playCount: Int? = null,
 )
 
 internal data class SheetAction(
@@ -81,6 +81,7 @@ internal fun EpisodeDetailSheetContent(
             overview = episode.overview,
             rating = episode.rating,
             voteCount = episode.voteCount,
+            playCount = episode.playCount,
         )
 
         actions?.let {
@@ -160,6 +161,7 @@ private fun EpisodeDetailContentLayout(
     overview: String?,
     rating: Double?,
     voteCount: Long?,
+    playCount: Int?,
 ) {
     Column(
         modifier = Modifier.padding(horizontal = TvManiacSpacing.medium),
@@ -180,6 +182,27 @@ private fun EpisodeDetailContentLayout(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+
+        if (playCount != null && playCount > 1) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.DoneAll,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
+
+                Text(
+                    modifier = Modifier.testTag(EpisodeSheetTestTags.PLAY_COUNT_TEST_TAG),
+                    text = "$playCount",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
+        }
 
         if (rating != null && rating > 0) {
             Row(
@@ -214,50 +237,5 @@ private fun EpisodeDetailContentLayout(
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
-    }
-}
-
-@Composable
-internal fun SheetActionItem(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    showProgress: Boolean = false,
-) {
-    val contentAlpha = if (enabled) 1f else 0.38f
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.small),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium),
-    ) {
-        Box(
-            modifier = Modifier.size(24.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (showProgress) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            } else {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
-                )
-            }
-        }
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha),
-        )
     }
 }

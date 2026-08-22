@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.domain.statistics
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.ratings.implementation.DefaultRatingsDao
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchTotals
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
@@ -13,6 +14,7 @@ import com.thomaskioko.tvmaniac.domain.statistics.model.GenreCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.ReleaseYearCount
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStatistics
 import com.thomaskioko.tvmaniac.domain.statistics.model.WatchStreak
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.implementation.dao.DefaultWatchedEpisodeDao
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.implementation.DefaultShowWatchStatusDao
@@ -52,13 +54,16 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
     private val ratingsDao = DefaultRatingsDao(database, dispatchers)
     private val calculator = WatchStatisticsCalculator(dateTimeProvider)
 
-    private suspend fun calculate(): WatchStatistics = calculator.calculate(
+    private suspend fun calculate(
+        rewatchTotals: RewatchTotals = RewatchTotals(),
+    ): WatchStatistics = calculator.calculate(
         watches = watchedEpisodeDao.observeWatchedAtWithRuntime().first(),
         mostWatchedShows = watchedEpisodeDao.observeMostWatchedShows(10).first(),
         showCountsByStatus = showWatchStatusDao.observeStatusCounts().first(),
         ratingCounts = ratingsDao.observeUserRatingDistribution().first(),
         showComposition = watchedEpisodeDao.observeWatchedShowComposition().first(),
         highestRatedShows = ratingsDao.observeHighestRatedShows(10).first(),
+        rewatchTotals = rewatchTotals,
     )
 
     @AfterTest
@@ -160,6 +165,37 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should leave an undated watch out of every date bucketed chart`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = WatchedDate.UNKNOWN_MILLIS)
+
+        val statistics = calculate()
+
+        statistics.yearlyCounts.map { it.year } shouldBe listOf(2026)
+        statistics.monthlyCounts.sumOf { it.episodeCount } shouldBe 1
+        statistics.weekdayCounts.sumOf { it.episodeCount } shouldBe 1
+        statistics.topWeekday?.episodeCount shouldBe 1
+        statistics.peakYear?.year shouldBe 2026
+        statistics.peakYear?.episodeCount shouldBe 1
+        statistics.streak.longestStart shouldBe LocalDate(2026, 8, 3)
+        statistics.streak.longestEnd shouldBe LocalDate(2026, 8, 3)
+    }
+
+    @Test
+    fun `should count an undated watch in the totals given it is left out of the charts`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        setShowRuntime(BREAKING_BAD, runtime = 45)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = WatchedDate.UNKNOWN_MILLIS)
+
+        val statistics = calculate()
+
+        statistics.episodesWatched shouldBe 2L
+        statistics.totalWatchTime.totalMinutes shouldBe 90L
+    }
+
+    @Test
     fun `should sum runtime from the show when the episode has none`() = runTest(testDispatcher) {
         insertShow(tmdbId = BREAKING_BAD)
         setShowRuntime(BREAKING_BAD, runtime = 45)
@@ -170,6 +206,43 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
 
         statistics.totalWatchTime.totalMinutes shouldBe 90L
         statistics.hasRuntimeData shouldBe true
+    }
+
+    @Test
+    fun `should keep the totals unchanged given the account has no rewatches`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        setShowRuntime(BREAKING_BAD, runtime = 45)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+        markWatched(BREAKING_BAD, episodeNumber = 2, watchedAt = epochMillis(2026, 8, 3))
+
+        val statistics = calculate(rewatchTotals = RewatchTotals())
+
+        statistics.episodesWatched shouldBe 2L
+        statistics.totalWatchTime.totalMinutes shouldBe 90L
+    }
+
+    @Test
+    fun `should count every viewing given an episode was seen three times`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        setShowRuntime(BREAKING_BAD, runtime = 45)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+
+        val statistics = calculate(rewatchTotals = RewatchTotals(viewings = 2, minutes = 90))
+
+        statistics.episodesWatched shouldBe 3L
+        statistics.totalWatchTime.totalMinutes shouldBe 135L
+    }
+
+    @Test
+    fun `should leave the daily counts on first viewings given an episode was seen again`() = runTest(testDispatcher) {
+        insertShow(tmdbId = BREAKING_BAD)
+        setShowRuntime(BREAKING_BAD, runtime = 45)
+        markWatched(BREAKING_BAD, episodeNumber = 1, watchedAt = epochMillis(2026, 8, 3))
+
+        val statistics = calculate(rewatchTotals = RewatchTotals(viewings = 2, minutes = 90))
+
+        statistics.dailyCounts.sumOf { it.episodeCount } shouldBe 1
+        statistics.streak.currentDays shouldBe calculate().streak.currentDays
     }
 
     @Test

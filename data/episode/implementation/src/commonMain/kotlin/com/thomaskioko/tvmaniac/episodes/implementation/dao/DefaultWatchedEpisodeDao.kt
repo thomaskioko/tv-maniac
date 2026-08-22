@@ -4,14 +4,17 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.GetEntriesByPendingAction
+import com.thomaskioko.tvmaniac.db.GetEpisodeByShowSeasonEpisodeNumber
 import com.thomaskioko.tvmaniac.db.GetPreviousUnwatchedEpisodes
 import com.thomaskioko.tvmaniac.db.GetWatchedEpisodes
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeDao
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
+import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncOperation
 import com.thomaskioko.tvmaniac.episodes.api.model.EpisodeWatchParams
 import com.thomaskioko.tvmaniac.episodes.api.model.MostWatchedShow
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
@@ -19,7 +22,6 @@ import com.thomaskioko.tvmaniac.episodes.api.model.SeasonWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedEpisodeRuntime
 import com.thomaskioko.tvmaniac.episodes.api.model.WatchedShowComposition
-import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -64,7 +66,7 @@ public class DefaultWatchedEpisodeDao(
                         seasonNumber = row.season_number,
                         episodeNumber = row.episode_number,
                         episodeTitle = row.episode_title,
-                        watchedAt = row.watched_at,
+                        watchedAt = row.watched_at.takeUnless { WatchedDate.isUnknown(it) },
                     )
                 }
             }
@@ -147,29 +149,69 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         episodeNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
-        val timestamp = dateTimeProvider.nowMillis()
+        writeWatch(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+            action = WatchedEpisodeSyncOperation.UPLOAD,
+        )
+    }
+
+    override suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        includeSpecials: Boolean,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+    ) {
+        writeWatch(
+            showId = showId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            includeSpecials = includeSpecials,
+            watchedAt = watchedAt,
+            useReleaseDate = useReleaseDate,
+            action = WatchedEpisodeSyncOperation.UPDATE,
+        )
+    }
+
+    private suspend fun writeWatch(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        includeSpecials: Boolean,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
+        action: WatchedEpisodeSyncOperation,
+    ) {
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
+                val episode = getEpisodeOrNull(internalShowId, seasonNumber, episodeNumber)
+                val timestamp = releaseDateOrNull(episode?.first_aired, episode?.runtime, useReleaseDate)
+                    ?: watchedAt
+                    ?: dateTimeProvider.nowMillis()
                 val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
                     showId = internalShowId,
                     tmdbId = null,
                     watchedAt = timestamp,
                 )
-                val localEpisodeId = getEpisodeIdOrNull(internalShowId, seasonNumber, episodeNumber)
                 val _ = database.watchedEpisodesQueries.markAsWatched(
                     show_id = internalShowId,
-                    episode_id = localEpisodeId?.let { Id(it) },
+                    episode_id = episode?.episode_id,
                     season_number = seasonNumber,
                     episode_number = episodeNumber,
                     watched_at = timestamp,
-                    pending_action = PendingAction.UPLOAD.value,
+                    pending_action = action.value,
                 )
-                val _ = database.showMetadataQueries.recalculateLastWatched(
-                    showId = internalShowId,
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
+                recalculateLastWatched(internalShowId, includeSpecials)
             }
         }
     }
@@ -189,7 +231,7 @@ public class DefaultWatchedEpisodeDao(
                 if (entry != null) {
                     if (entry.trakt_id != null) {
                         val _ = database.watchedEpisodesQueries.updatePendingActionByShowAndEpisode(
-                            pending_action = PendingAction.DELETE.value,
+                            pending_action = WatchedEpisodeSyncOperation.DELETE.value,
                             show_id = internalShowId,
                             episode_id = Id(episodeId),
                         )
@@ -200,10 +242,7 @@ public class DefaultWatchedEpisodeDao(
                         )
                     }
                 }
-                val _ = database.showMetadataQueries.recalculateLastWatched(
-                    showId = internalShowId,
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
+                recalculateLastWatched(internalShowId, includeSpecials)
                 recalculateContinueWatchingLastWatchedAt(internalShowId)
             }
         }
@@ -281,8 +320,9 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         episodes: List<EpisodeWatchParams>,
         includeSpecials: Boolean,
+        watchedAt: Long?,
     ) {
-        val timestamp = dateTimeProvider.nowMillis()
+        val timestamp = watchedAt ?: dateTimeProvider.nowMillis()
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
@@ -302,13 +342,10 @@ public class DefaultWatchedEpisodeDao(
                         season_number = episode.seasonNumber,
                         episode_number = episode.episodeNumber,
                         watched_at = episodeTimestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
-                val _ = database.showMetadataQueries.recalculateLastWatched(
-                    showId = internalShowId,
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
+                recalculateLastWatched(internalShowId, includeSpecials)
             }
         }
     }
@@ -328,17 +365,14 @@ public class DefaultWatchedEpisodeDao(
                 seasonRows.forEach { row ->
                     if (row.trakt_id != null) {
                         val _ = database.watchedEpisodesQueries.updatePendingAction(
-                            pending_action = PendingAction.DELETE.value,
+                            pending_action = WatchedEpisodeSyncOperation.DELETE.value,
                             id = row.watched_id,
                         )
                     } else {
                         val _ = database.watchedEpisodesQueries.deleteById(row.watched_id)
                     }
                 }
-                val _ = database.showMetadataQueries.recalculateLastWatched(
-                    showId = internalShowId,
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
+                recalculateLastWatched(internalShowId, includeSpecials)
                 recalculateContinueWatchingLastWatchedAt(internalShowId)
             }
         }
@@ -348,8 +382,10 @@ public class DefaultWatchedEpisodeDao(
         showId: Long,
         seasonNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
-        val timestamp = dateTimeProvider.nowMillis()
+        val timestamp = watchedAt ?: dateTimeProvider.nowMillis()
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
@@ -367,8 +403,8 @@ public class DefaultWatchedEpisodeDao(
                         episode_id = episode.episode_id,
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
-                        watched_at = timestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        watched_at = releaseDateOrNull(episode.first_aired, episode.runtime, useReleaseDate) ?: timestamp,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
 
@@ -388,15 +424,12 @@ public class DefaultWatchedEpisodeDao(
                         episode_id = episode.episode_id,
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
-                        watched_at = timestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        watched_at = releaseDateOrNull(episode.first_aired, episode.runtime, useReleaseDate) ?: timestamp,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
 
-                val _ = database.showMetadataQueries.recalculateLastWatched(
-                    showId = internalShowId,
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
+                recalculateLastWatched(internalShowId, includeSpecials)
             }
         }
     }
@@ -407,8 +440,10 @@ public class DefaultWatchedEpisodeDao(
         seasonNumber: Long,
         episodeNumber: Long,
         includeSpecials: Boolean,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ) {
-        val timestamp = dateTimeProvider.nowMillis()
+        val timestamp = watchedAt ?: dateTimeProvider.nowMillis()
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext
             database.transaction {
@@ -425,11 +460,12 @@ public class DefaultWatchedEpisodeDao(
                         episode_id = episode.episode_id,
                         season_number = episode.season_number,
                         episode_number = episode.episode_number,
-                        watched_at = timestamp,
-                        pending_action = PendingAction.UPLOAD.value,
+                        watched_at = releaseDateOrNull(episode.first_aired, episode.runtime, useReleaseDate) ?: timestamp,
+                        pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                     )
                 }
 
+                val markedEpisode = getEpisodeOrNull(internalShowId, seasonNumber, episodeNumber)
                 val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
                     showId = internalShowId,
                     tmdbId = null,
@@ -440,13 +476,11 @@ public class DefaultWatchedEpisodeDao(
                     episode_id = Id(episodeId),
                     season_number = seasonNumber,
                     episode_number = episodeNumber,
-                    watched_at = timestamp,
-                    pending_action = PendingAction.UPLOAD.value,
+                    watched_at = releaseDateOrNull(markedEpisode?.first_aired, markedEpisode?.runtime, useReleaseDate)
+                        ?: timestamp,
+                    pending_action = WatchedEpisodeSyncOperation.UPLOAD.value,
                 )
-                val _ = database.showMetadataQueries.recalculateLastWatched(
-                    showId = internalShowId,
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
+                recalculateLastWatched(internalShowId, includeSpecials)
             }
         }
     }
@@ -468,11 +502,11 @@ public class DefaultWatchedEpisodeDao(
         return unwatchedEpisodes
     }
 
-    private fun getEpisodeIdOrNull(
+    private fun getEpisodeOrNull(
         showId: Id<ShowId>,
         seasonNumber: Long,
         episodeNumber: Long,
-    ): Long? {
+    ): GetEpisodeByShowSeasonEpisodeNumber? {
         return database.episodesQueries
             .getEpisodeByShowSeasonEpisodeNumber(
                 showId = showId,
@@ -480,8 +514,17 @@ public class DefaultWatchedEpisodeDao(
                 episodeNumber = episodeNumber,
             )
             .executeAsOneOrNull()
-            ?.episode_id
-            ?.id
+    }
+
+    private fun releaseDateOrNull(firstAired: Long?, runtimeMinutes: Long?, useReleaseDate: Boolean): Long? =
+        if (useReleaseDate) WatchedDate.releaseDateMillis(firstAired, runtimeMinutes) else null
+
+    private fun recalculateLastWatched(showId: Id<ShowId>, includeSpecials: Boolean) {
+        database.showMetadataQueries.recalculateLastWatched(
+            showId = showId,
+            include_specials = if (includeSpecials) 1L else 0L,
+            unknown_millis = WatchedDate.UNKNOWN_MILLIS,
+        )
     }
 
     private fun recalculateContinueWatchingLastWatchedAt(showId: Id<ShowId>) {
@@ -499,6 +542,8 @@ public class DefaultWatchedEpisodeDao(
     override suspend fun getEpisodesForSeason(
         showId: Long,
         seasonNumber: Long,
+        watchedAt: Long?,
+        useReleaseDate: Boolean,
     ): List<EpisodeWatchParams> {
         return withContext(dispatchers.databaseRead) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext emptyList()
@@ -510,6 +555,7 @@ public class DefaultWatchedEpisodeDao(
                         episodeId = result.episode_id.id,
                         seasonNumber = result.season_number,
                         episodeNumber = result.episode_number,
+                        watchedAt = releaseDateOrNull(result.first_aired, result.runtime, useReleaseDate) ?: watchedAt,
                     )
                 }
         }
@@ -549,7 +595,7 @@ public class DefaultWatchedEpisodeDao(
             .catch { emit(0L) }
     }
 
-    override suspend fun entriesByPendingAction(action: PendingAction): List<GetEntriesByPendingAction> {
+    override suspend fun entriesByPendingAction(action: WatchedEpisodeSyncOperation): List<GetEntriesByPendingAction> {
         return withContext(dispatchers.databaseRead) {
             database.watchedEpisodesQueries
                 .getEntriesByPendingAction(action.value)
@@ -557,13 +603,13 @@ public class DefaultWatchedEpisodeDao(
         }
     }
 
-    override suspend fun updatePendingAction(id: Long, action: PendingAction) {
+    override suspend fun updatePendingAction(id: Long, action: WatchedEpisodeSyncOperation) {
         withContext(dispatchers.databaseWrite) {
             database.watchedEpisodesQueries.updatePendingAction(action.value, id)
         }
     }
 
-    override suspend fun updatePendingActions(ids: List<Long>, action: PendingAction) {
+    override suspend fun updatePendingActions(ids: List<Long>, action: WatchedEpisodeSyncOperation) {
         if (ids.isEmpty()) return
         withContext(dispatchers.databaseWrite) {
             database.transaction {
@@ -622,7 +668,7 @@ public class DefaultWatchedEpisodeDao(
                         watched_at = entry.watchedAt.toEpochMilliseconds(),
                         trakt_id = entry.traktId,
                         synced_at = syncedAt,
-                        pending_action = PendingAction.NOTHING.value,
+                        pending_action = WatchedEpisodeSyncOperation.NOTHING.value,
                     )
                 }
 
@@ -631,10 +677,7 @@ public class DefaultWatchedEpisodeDao(
                     syncedAt = syncedAt,
                 )
 
-                val _ = database.showMetadataQueries.recalculateLastWatched(
-                    showId = internalShowId,
-                    include_specials = if (includeSpecials) 1L else 0L,
-                )
+                recalculateLastWatched(internalShowId, includeSpecials)
             }
         }
     }

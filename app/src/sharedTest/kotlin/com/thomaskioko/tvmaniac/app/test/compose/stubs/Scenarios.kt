@@ -1,11 +1,13 @@
 package com.thomaskioko.tvmaniac.app.test.compose.stubs
 
+import androidx.datastore.preferences.core.edit
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.api.TokenRefreshResult
 import com.thomaskioko.tvmaniac.app.test.TestAppComponent
 import com.thomaskioko.tvmaniac.app.test.compose.robot.RootRobot
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
 import com.thomaskioko.tvmaniac.testing.integration.HttpScenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.testing.integration.TEST_PROFILE_SLUG
@@ -46,6 +48,7 @@ internal class Scenarios(
     val library: Library = Library()
     val watchlist: Watchlist = Watchlist()
     val profile: Profile = Profile()
+    val settings: Settings = Settings()
 
     fun signInAndDismissRationale() {
         stubLoggedInUser(SyncProviderSource.TRAKT)
@@ -349,6 +352,16 @@ internal class Scenarios(
 
         fun enablePaywall() {
             graph.featureFlagsRemoteConfig.setBoolean(ENABLE_PAYWALL_FLAG_KEY, true)
+        }
+    }
+
+    inner class Settings {
+        fun disableMultiplePlays() {
+            runBlocking {
+                graph.dataStore.edit { preferences ->
+                    preferences[DefaultDatastoreRepository.KEY_MULTIPLE_PLAYS_ENABLED] = false
+                }
+            }
         }
     }
 }

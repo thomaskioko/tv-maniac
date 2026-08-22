@@ -77,13 +77,51 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<ShowDetail
         click(tag)
     }
 
-    fun clickRateButton() = apply {
-        val tag = ShowDetailsTestTags.RATE_BUTTON_TEST_TAG
+    fun clickMoreButton() = apply {
+        val tag = ShowDetailsTestTags.MORE_BUTTON_TEST_TAG
         scrollDownUntilTag(
             listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
             itemTag = tag,
         )
         click(tag)
+        waitForIdle()
+    }
+
+    fun clickRateButton() = apply {
+        clickMoreButton()
+        click(ShowDetailsTestTags.RATE_BUTTON_TEST_TAG)
+    }
+
+    fun clickWatchAgain() = apply {
+        clickMoreButton()
+        click(ShowDetailsTestTags.WATCH_AGAIN_BUTTON_TEST_TAG)
+        waitForIdle()
+    }
+
+    fun confirmWatchAgain() = apply {
+        click(ShowDetailsTestTags.WATCH_AGAIN_CONFIRM_TEST_TAG)
+        waitForIdle()
+    }
+
+    fun clickMarkShowWatched() = apply {
+        clickMoreButton()
+        click(ShowDetailsTestTags.MARK_SHOW_WATCHED_BUTTON_TEST_TAG)
+        waitForIdle()
+    }
+
+    fun confirmMarkShowWatched() = apply {
+        click(ShowDetailsTestTags.MARK_SHOW_WATCHED_CONFIRM_TEST_TAG)
+        waitForIdle()
+    }
+
+    fun assertMarkShowWatchedDoesNotExist() = apply {
+        clickMoreButton()
+        assertDoesNotExist(ShowDetailsTestTags.MARK_SHOW_WATCHED_BUTTON_TEST_TAG)
+    }
+
+    fun assertWatchAgainDoesNotExist() = apply {
+        clickMoreButton()
+        assertDoesNotExist(ShowDetailsTestTags.WATCH_AGAIN_BUTTON_TEST_TAG)
     }
 
     fun assertAddToListButtonDisabled() = apply {

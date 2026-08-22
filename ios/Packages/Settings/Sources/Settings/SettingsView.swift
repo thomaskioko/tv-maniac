@@ -18,6 +18,9 @@ public struct SettingsView: View {
     @State private var showingErrorAlert: Bool = false
     @State var showPolicy = false
     @State var showNotificationPermissionDeniedAlert = false
+    @State private var showingBackupFolderPicker = false
+    @State private var showingImportConfirm = false
+    @State private var showingImportSource = false
     @Environment(\.openURL) var openURL
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -46,7 +49,8 @@ public struct SettingsView: View {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            accountContent: accountContent
+            accountContent: accountContent,
+            backupContent: backupContent
         )
     }
 
@@ -112,6 +116,17 @@ public struct SettingsView: View {
             store.fontSizePercent = Int(newValue)
         }
         .settingsPosterStyleObservers(uiState: uiState, store: store)
+        .settingsBackupFolderPicker(
+            uiState: uiState,
+            presenter: presenter,
+            isPresented: $showingBackupFolderPicker
+        )
+        .settingsBackupImporter(
+            uiState: uiState,
+            presenter: presenter,
+            showingConfirm: $showingImportConfirm,
+            showingSource: $showingImportSource
+        )
         .screenTag(SettingsTestTags.shared.SCREEN_TEST_TAG)
     }
 }

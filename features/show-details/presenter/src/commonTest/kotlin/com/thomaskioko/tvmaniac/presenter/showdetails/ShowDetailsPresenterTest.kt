@@ -15,6 +15,7 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.cast.testing.FakeCastRepository
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -28,6 +29,8 @@ import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
@@ -48,6 +51,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.i18n.testing.util.BaseLocalizerTest
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.ShowDetailsCastPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.di.ShowDetailsCastChildGraph
@@ -83,7 +87,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class ShowDetailsPresenterTest {
+internal class ShowDetailsPresenterTest : BaseLocalizerTest() {
 
     private val testDispatcher = StandardTestDispatcher()
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
@@ -102,6 +106,7 @@ internal class ShowDetailsPresenterTest {
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val ratingsRepository = FakeRatingsRepository()
     private val traktListRepository = FakeTraktListRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
     private val shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
@@ -297,6 +302,10 @@ internal class ShowDetailsPresenterTest {
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
             observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
+            observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
+            observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(episodeRepository),
+            startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
                 dateTimeProvider = dateTimeProvider,
@@ -359,6 +368,7 @@ internal class ShowDetailsPresenterTest {
             ),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
+                rewatchRepository = rewatchRepository,
             ),
             datastoreRepository = datastoreRepository,
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,

@@ -128,6 +128,59 @@ public interface DatastoreRepository {
      *
      * @param timestamp The epoch milliseconds of the last sync.
      */
+    /**
+     * Saves whether a backup should be written on a schedule.
+     *
+     * @param enabled true to run an automatic backup, false to stop.
+     */
+    public suspend fun setAutoBackupEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether a backup is written on a schedule. Defaults to false.
+     */
+    public fun observeAutoBackupEnabled(): Flow<Boolean>
+
+    /**
+     * Saves how often an automatic backup runs.
+     */
+    public suspend fun saveAutoBackupInterval(interval: AutoBackupInterval)
+
+    /**
+     * Observes how often an automatic backup runs. Defaults to [AutoBackupInterval.Default].
+     */
+    public fun observeAutoBackupInterval(): Flow<AutoBackupInterval>
+
+    /**
+     * Saves the folder backups are written to, or null once it stops working and the user has to
+     * pick a new one.
+     */
+    public suspend fun saveBackupFolder(folder: String?)
+
+    /**
+     * Observes the folder backups are written to, or null when none has been chosen.
+     */
+    public fun observeBackupFolder(): Flow<String?>
+
+    /**
+     * Reads the folder backups are written to, for callers that cannot observe.
+     */
+    public suspend fun getBackupFolder(): String?
+
+    /**
+     * Saves the name backups are written under.
+     */
+    public suspend fun saveBackupFileName(fileName: String)
+
+    /**
+     * Observes the name backups are written under. Defaults to [BackupFileName.Default].
+     */
+    public fun observeBackupFileName(): Flow<String>
+
+    /**
+     * Reads the name backups are written under, for callers that cannot observe.
+     */
+    public suspend fun getBackupFileName(): String
+
     public suspend fun setLastSyncTimestamp(timestamp: Long)
 
     /**
@@ -444,4 +497,18 @@ public interface DatastoreRepository {
      * @return A Flow of Boolean, true if the rating prompt is enabled. Defaults to false.
      */
     public fun observeQuickRateEnabled(): Flow<Boolean>
+
+    /**
+     * Saves whether a show can be marked watched more than once.
+     *
+     * @param enabled Whether more than one play is allowed.
+     */
+    public suspend fun saveMultiplePlaysEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether a show can be marked watched more than once.
+     *
+     * @return A Flow of Boolean, true when more than one play is allowed. Defaults to true.
+     */
+    public fun observeMultiplePlaysEnabled(): Flow<Boolean>
 }

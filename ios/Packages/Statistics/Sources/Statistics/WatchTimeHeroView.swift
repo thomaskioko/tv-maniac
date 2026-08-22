@@ -47,7 +47,7 @@ struct WatchTimeHeroView: View {
 
 #Preview {
     WatchTimeHeroView(
-        watchTime: SwiftWatchTime(days: 12, hours: 4, minutes: 30),
+        watchTime: SwiftWatchTime(days: 16, hours: 5, minutes: 20),
         title: "Total time watched",
         daysLabel: "days",
         hoursLabel: "hours",

@@ -3,6 +3,7 @@ package com.thomaskioko.trakt.service.implementation.sync
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
+import com.thomaskioko.tvmaniac.data.library.model.WatchlistShowIds
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
 import com.thomaskioko.tvmaniac.trakt.api.model.IdsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.ShowResponse
@@ -15,6 +16,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNotFoundShows
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNotFoundShowsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.testing.FakeTraktListRemoteDataSource
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -62,17 +64,50 @@ class TraktLibraryRemoteDataSourceTest {
     fun `should report not found count given add response`() = runTest {
         remoteDataSource.setAddShowsToWatchList(ApiResponse.Success(addResponse(notFound = 2)))
 
-        val result = source.addToWatchlist(listOf(1, 2, 3))
+        val result = source.addToWatchlist(
+            listOf(
+                WatchlistShowIds(tmdbId = 1),
+                WatchlistShowIds(tmdbId = 2),
+                WatchlistShowIds(tmdbId = 3),
+            ),
+        )
 
         val success = result.shouldBeInstanceOf<ApiResponse.Success<WatchlistSyncResult>>()
         success.body.notFoundCount shouldBe 2
     }
 
     @Test
+    fun `should send the tmdb id given the show has no trakt id`() = runTest {
+        remoteDataSource.setAddShowsToWatchList(ApiResponse.Success(addResponse(notFound = 0)))
+
+        source.addToWatchlist(listOf(WatchlistShowIds(tmdbId = 1396)))
+
+        remoteDataSource.addedShows() shouldBe listOf(TraktShowIds(tmdbId = 1396))
+    }
+
+    @Test
+    fun `should send the trakt id given the show has one`() = runTest {
+        remoteDataSource.setAddShowsToWatchList(ApiResponse.Success(addResponse(notFound = 0)))
+
+        source.addToWatchlist(listOf(WatchlistShowIds(tmdbId = 1396, traktId = 1388)))
+
+        remoteDataSource.addedShows() shouldBe listOf(TraktShowIds(traktId = 1388))
+    }
+
+    @Test
+    fun `should send the tmdb id given a removal for a show with no trakt id`() = runTest {
+        remoteDataSource.setRemoveShowsFromWatchList(ApiResponse.Success(removeResponse(notFound = 0)))
+
+        source.removeFromWatchlist(listOf(WatchlistShowIds(tmdbId = 1396)))
+
+        remoteDataSource.removedShows() shouldBe listOf(TraktShowIds(tmdbId = 1396))
+    }
+
+    @Test
     fun `should report not found count given remove response`() = runTest {
         remoteDataSource.setRemoveShowsFromWatchList(ApiResponse.Success(removeResponse(notFound = 1)))
 
-        val result = source.removeFromWatchlist(listOf(9))
+        val result = source.removeFromWatchlist(listOf(WatchlistShowIds(tmdbId = 9)))
 
         val success = result.shouldBeInstanceOf<ApiResponse.Success<WatchlistSyncResult>>()
         success.body.notFoundCount shouldBe 1

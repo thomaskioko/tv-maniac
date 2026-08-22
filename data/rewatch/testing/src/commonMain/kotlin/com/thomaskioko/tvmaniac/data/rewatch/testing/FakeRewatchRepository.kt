@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.data.rewatch.testing
 import com.thomaskioko.tvmaniac.data.rewatch.api.RemoteRewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchRepository
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchTotals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,12 +14,16 @@ public class FakeRewatchRepository : RewatchRepository {
 
     private var nextSessionId: Long = 1
     private val sessionsByShow = MutableStateFlow<Map<Long, List<RewatchSession>>>(emptyMap())
-    private val playCountsByEpisode = MutableStateFlow<Map<Long, Long>>(emptyMap())
+    private val rewatchesByEpisode = MutableStateFlow<Map<Long, Long>>(emptyMap())
+    private val statusByShow = MutableStateFlow<Map<Long, RewatchStatus>>(emptyMap())
+    private val totals = MutableStateFlow(RewatchTotals())
+    private val removedSeasons = mutableListOf<Pair<Long, Long>>()
     private var supportsRewatchValue: Boolean = true
     private var remoteSessionsByShow: Map<Long, List<RemoteRewatchSession>> = emptyMap()
     private var syncException: Throwable? = null
 
     public var lastAddEpisodeSessionId: Long? = null
+    public var lastAddEpisodeWatchedAt: Long? = null
         private set
 
     public var finishedSessionId: Long? = null
@@ -27,8 +33,16 @@ public class FakeRewatchRepository : RewatchRepository {
         sessionsByShow.value += (showId to sessions)
     }
 
-    public fun setPlayCountForEpisode(episodeId: Long, playCount: Long) {
-        playCountsByEpisode.value += (episodeId to playCount)
+    public fun setRewatchesForEpisode(episodeId: Long, rewatches: Long) {
+        rewatchesByEpisode.value += (episodeId to rewatches)
+    }
+
+    public fun setRewatchTotals(totals: RewatchTotals) {
+        this.totals.value = totals
+    }
+
+    public fun setRewatchStatusForShow(showId: Long, status: RewatchStatus) {
+        statusByShow.value += (showId to status)
     }
 
     public fun setSupportsRewatch(value: Boolean) {
@@ -59,6 +73,7 @@ public class FakeRewatchRepository : RewatchRepository {
         watchedAt: Long,
     ) {
         lastAddEpisodeSessionId = sessionId
+        lastAddEpisodeWatchedAt = watchedAt
     }
 
     override suspend fun closeSession(sessionId: Long, closedAt: Long) {
@@ -77,10 +92,26 @@ public class FakeRewatchRepository : RewatchRepository {
     override fun observeSessionsForShow(showId: Long): Flow<List<RewatchSession>> =
         sessionsByShow.asStateFlow().map { it[showId].orEmpty() }
 
+    override fun observeRewatchStatus(showId: Long): Flow<RewatchStatus> =
+        statusByShow.asStateFlow().map { it[showId] ?: RewatchStatus() }
+
     override suspend fun openSessionForShow(showId: Long): RewatchSession? =
         sessionsByShow.value[showId].orEmpty().firstOrNull { it.closedAt == null }
 
-    override fun playCountForEpisode(episodeId: Long): Long = playCountsByEpisode.value[episodeId] ?: 1L
+    override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> =
+        rewatchesByEpisode.asStateFlow().map { it[episodeId] ?: 0L }
+
+    override fun observeRewatchTotals(): Flow<RewatchTotals> = totals.asStateFlow()
+
+    override suspend fun removeEpisodeRewatches(episodeId: Long) {
+        rewatchesByEpisode.value -= episodeId
+    }
+
+    override suspend fun removeSeasonRewatches(showId: Long, seasonNumber: Long) {
+        removedSeasons += showId to seasonNumber
+    }
+
+    public fun removedSeasons(): List<Pair<Long, Long>> = removedSeasons.toList()
 
     override suspend fun supportsRewatch(): Boolean = supportsRewatchValue
 

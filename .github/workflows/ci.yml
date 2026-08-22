@@ -42,7 +42,7 @@ jobs:
                 uses: ./.github/actions/setup-gradle
 
             -   name: Lint Project
-                run: ./gradlew :app:lintRelease -Papp.debugOnly=false
+                run: ./gradlew :app:lintDebug :app:lintRelease -Papp.debugOnly=false
 
             -   name: Upload Lint Report
                 if: ${{ !cancelled() }}
@@ -86,6 +86,14 @@ jobs:
                     git add -- '**/README.md'
                     git diff --cached --quiet --exit-code -- '**/README.md' \
                       || { echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files."; exit 1; }
+
+    locale-parity:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v7
+
+            -   name: Check Locale Parity
+                run: python3 scripts/ci/check-locale-parity.py
 
     dependency-guard:
         runs-on: ubuntu-latest
@@ -380,7 +388,7 @@ jobs:
                     kotlin-tooling: 'false'
 
             -   name: 📦 Download the prebuilt app and test bundle
-                uses: actions/download-artifact@v7
+                uses: actions/download-artifact@v8
                 with:
                     name: ios-build
 

@@ -50,6 +50,10 @@ graph TB
     direction TB
     :data:account-manager:api[api]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+  end
   subgraph :data:cast
     direction TB
     :data:cast:api[api]:::multiplatform
@@ -86,6 +90,10 @@ graph TB
     direction TB
     :data:request-manager:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -97,6 +105,10 @@ graph TB
   subgraph :data:showdetails
     direction TB
     :data:showdetails:api[api]:::multiplatform
+  end
+  subgraph :data:shows
+    direction TB
+    :data:shows:api[api]:::multiplatform
   end
   subgraph :data:similar
     direction TB
@@ -133,11 +145,13 @@ graph TB
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
+    :domain:backup[backup]:::multiplatform
     :domain:continue-watching[continue-watching]:::multiplatform
     :domain:episode[episode]:::multiplatform
     :domain:library[library]:::multiplatform
     :domain:logout[logout]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:settings[settings]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
@@ -217,9 +231,13 @@ graph TB
   :data:library:api --> :data:account-manager:api
   :data:library:api --> :data:database:sqldelight
   :data:library:api --> :data:datastore:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
+  :data:shows:api --> :data:account-manager:api
+  :data:shows:api --> :data:database:sqldelight
   :data:similar:api --> :data:database:sqldelight
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
@@ -229,6 +247,7 @@ graph TB
   :data:user:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:account-switcher --> :core:base
+  :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
@@ -237,6 +256,14 @@ graph TB
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
+  :domain:backup --> :core:base
+  :domain:backup --> :core:logger:api
+  :domain:backup --> :core:network-util:api
+  :domain:backup --> :core:tasks:api
+  :domain:backup --> :core:view
+  :domain:backup --> :data:backup:api
+  :domain:backup --> :data:shows:api
+  :domain:backup --> :domain:showdetails
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
@@ -256,11 +283,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:library --> :core:base
   :domain:library --> :core:logger:api
   :domain:library --> :core:network-util:api
@@ -293,9 +323,14 @@ graph TB
   :domain:notifications --> :data:seasons:api
   :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
   :domain:settings --> :data:datastore:api
+  :domain:settings --> :data:subscription:api
   :domain:settings --> :domain:theme
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
@@ -359,12 +394,16 @@ graph TB
   :features:settings:presenter --> :core:logger:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
+  :features:settings:presenter --> :data:backup:api
   :features:settings:presenter --> :data:datastore:api
+  :features:settings:presenter --> :data:rewatch:api
   :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
+  :features:settings:presenter --> :domain:backup
   :features:settings:presenter --> :domain:logout
   :features:settings:presenter --> :domain:notifications
+  :features:settings:presenter --> :domain:rewatch
   :features:settings:presenter --> :domain:settings
   :features:settings:presenter --> :domain:theme
   :features:settings:presenter -.-> :features:debug:nav

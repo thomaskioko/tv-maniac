@@ -38,6 +38,8 @@ kotlin {
                 api(projects.i18n.api)
 
                 implementation(projects.core.networkUtil.api)
+                implementation(projects.data.accountManager.api)
+                implementation(projects.data.backup.api)
             }
         }
 

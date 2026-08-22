@@ -13,15 +13,19 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.core.base)
+                api(projects.data.backup.api)
                 api(projects.core.featureFlags.api)
                 api(projects.core.logger.api)
                 api(projects.core.view)
                 api(projects.data.accountManager.api)
                 api(projects.data.datastore.api)
+                api(projects.data.rewatch.api)
                 api(projects.data.subscription.api)
                 api(projects.data.user.api)
                 api(projects.domain.accountSwitcher)
+                api(projects.domain.backup)
                 api(projects.domain.logout)
+                api(projects.domain.rewatch)
                 api(projects.domain.notifications)
                 api(projects.domain.settings)
                 api(projects.domain.theme)
@@ -42,7 +46,9 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.tasks.testing)
                 implementation(projects.core.base.testing)
+                implementation(projects.data.backup.testing)
                 implementation(projects.core.featureFlags.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.util.testing)
@@ -53,6 +59,7 @@ kotlin {
                 implementation(projects.data.library.testing)
                 implementation(projects.data.traktlists.testing)
                 implementation(projects.data.logout.testing)
+                implementation(projects.data.rewatch.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)

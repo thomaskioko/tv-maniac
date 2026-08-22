@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,11 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
+
+private const val DISABLED_CONTENT_ALPHA = 0.38f
 
 @Composable
 internal fun SettingsSectionLabel(
@@ -86,39 +90,54 @@ internal fun SettingsNavigationRow(
     modifier: Modifier = Modifier,
     description: String? = null,
     icon: ImageVector? = null,
+    enabled: Boolean = true,
+    isLoading: Boolean = false,
+    loadingTestTag: String? = null,
 ) {
+    val contentAlpha = if (enabled || isLoading) 1f else DISABLED_CONTENT_ALPHA
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
-            SettingsIconChip(icon = icon)
+            SettingsIconChip(icon = icon, contentAlpha = contentAlpha)
             Spacer(modifier = Modifier.width(TvManiacSpacing.small))
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha),
                 fontWeight = FontWeight.Medium,
             )
             if (description != null) {
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
                 )
             }
         }
         Spacer(modifier = Modifier.width(TvManiacSpacing.small))
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(20.dp)
+                    .then(if (loadingTestTag != null) Modifier.testTag(loadingTestTag) else Modifier),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        } else {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
+            )
+        }
     }
 }
 
@@ -190,17 +209,18 @@ internal fun openInCustomTab(context: Context, url: String) {
 private fun SettingsIconChip(
     icon: ImageVector,
     modifier: Modifier = Modifier,
+    contentAlpha: Float = 1f,
 ) {
     Surface(
         modifier = modifier.size(36.dp),
-        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f),
+        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f * contentAlpha),
         shape = MaterialTheme.shapes.medium,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
+                tint = MaterialTheme.colorScheme.secondary.copy(alpha = contentAlpha),
                 modifier = Modifier.size(20.dp),
             )
         }

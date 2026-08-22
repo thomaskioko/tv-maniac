@@ -39,7 +39,7 @@ internal class LogoutInteractorTest {
     )
 
     @Test
-    fun `should logout active provider given active provider is set`() = runTest(testDispatcher) {
+    fun `should log out of the active provider given one is connected`() = runTest(testDispatcher) {
         fakeAccountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         interactor.executeSync(Unit)
@@ -48,14 +48,21 @@ internal class LogoutInteractorTest {
     }
 
     @Test
-    fun `should delegate clearing to provider state cleaner given logout executed`() = runTest(testDispatcher) {
+    fun `should clear account data given the user logs out`() = runTest(testDispatcher) {
         interactor.executeSync(Unit)
 
-        fakeLogoutHandler.cleared shouldBe true
+        fakeLogoutHandler.accountDataCleared shouldBe true
     }
 
     @Test
-    fun `should not logout given no active provider`() = runTest(testDispatcher) {
+    fun `should keep tracking data given the user logs out`() = runTest(testDispatcher) {
+        interactor.executeSync(Unit)
+
+        fakeLogoutHandler.accountAndTrackingDataCleared shouldBe false
+    }
+
+    @Test
+    fun `should do nothing given no provider is connected`() = runTest(testDispatcher) {
         fakeAccountManager.setActiveProvider(null)
 
         interactor.executeSync(Unit)

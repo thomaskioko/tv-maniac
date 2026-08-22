@@ -1,5 +1,5 @@
 CREATE TABLE show_ratings(
-    show_id INTEGER NOT NULL PRIMARY KEY,
+    show_id INTEGER PRIMARY KEY NOT NULL,
     user_rating INTEGER DEFAULT NULL,
     rated_at INTEGER DEFAULT NULL,
     pending_action TEXT NOT NULL DEFAULT 'NOTHING'
@@ -10,7 +10,7 @@ CREATE TABLE show_ratings(
 CREATE INDEX idx_show_ratings_pending_action ON show_ratings(pending_action);
 
 CREATE TABLE season_ratings(
-    season_id INTEGER NOT NULL PRIMARY KEY,
+    season_id INTEGER PRIMARY KEY NOT NULL,
     user_rating INTEGER DEFAULT NULL,
     rated_at INTEGER DEFAULT NULL,
     pending_action TEXT NOT NULL DEFAULT 'NOTHING'
@@ -21,7 +21,7 @@ CREATE TABLE season_ratings(
 CREATE INDEX idx_season_ratings_pending_action ON season_ratings(pending_action);
 
 CREATE TABLE episode_ratings(
-    episode_id INTEGER NOT NULL PRIMARY KEY,
+    episode_id INTEGER PRIMARY KEY NOT NULL,
     user_rating INTEGER DEFAULT NULL,
     rated_at INTEGER DEFAULT NULL,
     pending_action TEXT NOT NULL DEFAULT 'NOTHING'

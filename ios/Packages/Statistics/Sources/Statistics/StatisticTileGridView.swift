@@ -78,7 +78,7 @@ private struct StatisticTileCardView: View {
 #Preview {
     StatisticTileGridView(tiles: [
         .init(id: "TitlesTracked", label: "Titles tracked", value: "128", caption: "18 completed"),
-        .init(id: "Episodes", label: "Episodes", value: "1.2K", caption: ""),
+        .init(id: "Episodes", label: "Episodes", value: "1.6K", caption: ""),
         .init(id: "AverageRating", label: "Average rating", value: "8.4", caption: "across 42 rated"),
         .init(id: "WatchStreak", label: "Watch streak", value: "9 days", caption: "longest run"),
     ])
