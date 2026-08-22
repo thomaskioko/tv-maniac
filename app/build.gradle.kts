@@ -40,6 +40,16 @@ android {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    develocity.testRetry {
+        maxRetries = providers.environmentVariable("CI").map { 2 }.orElse(0)
+        failOnPassedAfterRetry = false
+        filter {
+            includeClasses.add("com.thomaskioko.tvmaniac.app.test.compose.*")
+        }
+    }
+}
+
 dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.features.root.ui)

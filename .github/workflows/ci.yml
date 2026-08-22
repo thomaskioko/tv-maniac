@@ -190,14 +190,32 @@ jobs:
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
 
-            -   name: Run Linux Tests
-                run: ./gradlew linuxTest -Papp.debugOnly=false
+            -   name: Run Unit Tests
+                run: ./gradlew linuxTest -Papp.debugOnly=false -x :app:testDebugUnitTest
 
             -   name: Upload Test Reports
                 uses: actions/upload-artifact@v7
                 if: ${{ !cancelled() }}
                 with:
                     name: linux-test-report
+                    path: '**/build/reports/*'
+
+    integration-test:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v7
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
+            -   name: Run Integration Tests
+                run: ./gradlew :app:testDebugUnitTest -Papp.debugOnly=false --continue
+
+            -   name: Upload Test Reports
+                uses: actions/upload-artifact@v7
+                if: ${{ !cancelled() }}
+                with:
+                    name: integration-test-report
                     path: '**/build/reports/*'
 
     ios-test:
