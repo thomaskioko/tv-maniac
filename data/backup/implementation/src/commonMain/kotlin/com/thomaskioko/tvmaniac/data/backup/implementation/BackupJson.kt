@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFile
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive

@@ -350,7 +350,6 @@ graph TB
   :features:settings:ui -.-> :core:test-tags
   :features:settings:ui -.-> :core:view
   :features:settings:ui -.-> :data:account-manager:api
-  :features:settings:ui -.-> :data:backup:api
   :features:settings:ui -.-> :data:datastore:api
   :features:settings:ui -.-> :domain:theme
   :features:settings:ui --> :features:settings:presenter

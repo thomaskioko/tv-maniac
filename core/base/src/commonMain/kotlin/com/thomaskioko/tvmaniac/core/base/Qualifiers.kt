@@ -58,3 +58,13 @@ public annotation class AppPreferencesDataStore
 @Qualifier
 @Retention(BINARY)
 public annotation class FeatureFlagLocalsDataStore
+
+/**
+ * Preferences that must not follow the user to a new device.
+ *
+ * Kept in a file the Android backup rules exclude, so a restored device does not inherit a record of
+ * something that never happened on it.
+ */
+@Qualifier
+@Retention(BINARY)
+public annotation class DeviceLocalDataStore

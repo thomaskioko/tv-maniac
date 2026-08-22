@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 
+private const val DISABLED_CONTENT_ALPHA = 0.38f
+
 @Composable
 internal fun SettingsSectionLabel(
     text: String,
@@ -92,6 +94,8 @@ internal fun SettingsNavigationRow(
     isLoading: Boolean = false,
     loadingTestTag: String? = null,
 ) {
+    val contentAlpha = if (enabled || isLoading) 1f else DISABLED_CONTENT_ALPHA
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -100,21 +104,21 @@ internal fun SettingsNavigationRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
-            SettingsIconChip(icon = icon)
+            SettingsIconChip(icon = icon, contentAlpha = contentAlpha)
             Spacer(modifier = Modifier.width(TvManiacSpacing.small))
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha),
                 fontWeight = FontWeight.Medium,
             )
             if (description != null) {
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
                 )
             }
         }
@@ -131,7 +135,7 @@ internal fun SettingsNavigationRow(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
             )
         }
     }
@@ -205,17 +209,18 @@ internal fun openInCustomTab(context: Context, url: String) {
 private fun SettingsIconChip(
     icon: ImageVector,
     modifier: Modifier = Modifier,
+    contentAlpha: Float = 1f,
 ) {
     Surface(
         modifier = modifier.size(36.dp),
-        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f),
+        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f * contentAlpha),
         shape = MaterialTheme.shapes.medium,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
+                tint = MaterialTheme.colorScheme.secondary.copy(alpha = contentAlpha),
                 modifier = Modifier.size(20.dp),
             )
         }
