@@ -9,7 +9,9 @@ import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.DeviceLocalDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.api.BackupLocationPermissions
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupLocationPermissions
 import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
@@ -44,6 +46,11 @@ public object TestJvmPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideAuthStore(): AuthStore = FakeAuthStore()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideBackupLocationPermissions(): BackupLocationPermissions =
+        FakeBackupLocationPermissions()
 
     @Provides
     @SingleIn(AppScope::class)
