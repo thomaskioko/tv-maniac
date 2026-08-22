@@ -87,13 +87,13 @@ jobs:
                     git diff --cached --quiet --exit-code -- '**/README.md' \
                       || { echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files."; exit 1; }
 
-    locale-parity:
+    localization-check:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v7
 
-            -   name: Check Locale Parity
-                run: python3 scripts/ci/check-locale-parity.py
+            -   name: Check Localization
+                run: python3 scripts/ci/check-localization.py
 
     dependency-guard:
         runs-on: ubuntu-latest
