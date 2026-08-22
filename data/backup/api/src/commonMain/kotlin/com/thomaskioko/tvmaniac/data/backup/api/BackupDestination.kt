@@ -6,4 +6,6 @@ public interface BackupDestination {
     public fun read(location: String): String
 
     public fun safetyCopyLocation(): String
+
+    public fun defaultBackupLocation(): String?
 }

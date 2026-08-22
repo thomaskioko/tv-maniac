@@ -41,6 +41,8 @@ public class AndroidBackupDestination(
 
     override fun safetyCopyLocation(): String = File(context.filesDir, BackupFormat.SAFETY_COPY_NAME).path
 
+    override fun defaultBackupLocation(): String? = null
+
     private fun openOutputStreamOrThrow(location: String): OutputStream = try {
         context.contentResolver.openOutputStream(location.toUri(), TRUNCATE_WRITE_MODE)
             ?: throw BackupLocationUnreadableException(location)
