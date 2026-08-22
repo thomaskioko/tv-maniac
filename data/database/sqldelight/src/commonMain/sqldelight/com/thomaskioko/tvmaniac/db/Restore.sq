@@ -1,0 +1,188 @@
+import com.thomaskioko.tvmaniac.db.EpisodeId;
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.SeasonId;
+import com.thomaskioko.tvmaniac.db.ShowId;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+import com.thomaskioko.tvmaniac.db.WatchStatus;
+
+restoreFollowedShow:
+INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
+VALUES(:showId, :tmdbId, :followedAt, 'NOTHING')
+ON CONFLICT(show_id) DO UPDATE SET
+    tmdb_id = excluded.tmdb_id,
+    followed_at = excluded.followed_at,
+    pending_action = 'NOTHING';
+
+restoreFollowedShowForUpload:
+INSERT INTO followed_shows(show_id, tmdb_id, followed_at, pending_action)
+VALUES(:showId, :tmdbId, :followedAt, 'UPLOAD')
+ON CONFLICT(show_id) DO UPDATE SET
+    tmdb_id = excluded.tmdb_id,
+    followed_at = excluded.followed_at,
+    pending_action = 'UPLOAD';
+
+restoreWatchedEpisode:
+INSERT OR REPLACE INTO watched_episodes(
+    show_id,
+    episode_id,
+    season_number,
+    episode_number,
+    watched_at,
+    pending_action
+)
+VALUES(
+    :showId,
+    (
+        SELECT episode.id FROM episode
+        INNER JOIN season ON season.id = episode.season_id
+        WHERE episode.show_id = :showId
+          AND season.season_number = :seasonNumber
+          AND episode.episode_number = :episodeNumber
+    ),
+    :seasonNumber,
+    :episodeNumber,
+    :watchedAt,
+    'NOTHING'
+);
+
+restoreWatchedEpisodeForUpload:
+INSERT OR REPLACE INTO watched_episodes(
+    show_id,
+    episode_id,
+    season_number,
+    episode_number,
+    watched_at,
+    pending_action
+)
+VALUES(
+    :showId,
+    (
+        SELECT episode.id FROM episode
+        INNER JOIN season ON season.id = episode.season_id
+        WHERE episode.show_id = :showId
+          AND season.season_number = :seasonNumber
+          AND episode.episode_number = :episodeNumber
+    ),
+    :seasonNumber,
+    :episodeNumber,
+    :watchedAt,
+    'UPLOAD'
+);
+
+restoreWatchStatus:
+INSERT INTO show_watch_status(show_id, status, last_watched_at, last_synced_at)
+VALUES(:showId, :status, :lastWatchedAt, NULL)
+ON CONFLICT(show_id) DO UPDATE SET
+    status = excluded.status,
+    last_watched_at = excluded.last_watched_at,
+    last_synced_at = NULL;
+
+restoreShowRating:
+INSERT INTO show_ratings(show_id, user_rating, rated_at, pending_action)
+VALUES(:showId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(show_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'NOTHING';
+
+restoreShowRatingForUpload:
+INSERT INTO show_ratings(show_id, user_rating, rated_at, pending_action)
+VALUES(:showId, :userRating, :ratedAt, 'UPLOAD')
+ON CONFLICT(show_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'UPLOAD';
+
+restoreSeasonRating:
+INSERT INTO season_ratings(season_id, user_rating, rated_at, pending_action)
+VALUES(:seasonId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(season_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'NOTHING';
+
+restoreSeasonRatingForUpload:
+INSERT INTO season_ratings(season_id, user_rating, rated_at, pending_action)
+VALUES(:seasonId, :userRating, :ratedAt, 'UPLOAD')
+ON CONFLICT(season_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'UPLOAD';
+
+restoreEpisodeRating:
+INSERT INTO episode_ratings(episode_id, user_rating, rated_at, pending_action)
+VALUES(:episodeId, :userRating, :ratedAt, 'NOTHING')
+ON CONFLICT(episode_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'NOTHING';
+
+restoreEpisodeRatingForUpload:
+INSERT INTO episode_ratings(episode_id, user_rating, rated_at, pending_action)
+VALUES(:episodeId, :userRating, :ratedAt, 'UPLOAD')
+ON CONFLICT(episode_id) DO UPDATE SET
+    user_rating = excluded.user_rating,
+    rated_at = excluded.rated_at,
+    pending_action = 'UPLOAD';
+
+seasonIdForNumber:
+SELECT id FROM season
+WHERE show_id = :showId AND season_number = :seasonNumber
+LIMIT 1;
+
+episodeIdForNumber:
+SELECT episode.id FROM episode
+INNER JOIN season ON season.id = episode.season_id
+WHERE episode.show_id = :showId
+  AND season.season_number = :seasonNumber
+  AND episode.episode_number = :episodeNumber
+LIMIT 1;
+
+rewatchSessionCount:
+SELECT COUNT(*) FROM rewatch_session;
+
+-- A restore inserts stub shows with only a tmdb id and a title, because the backup file holds no
+-- cached metadata. This finds the ones worth refilling: a stub the user either follows or has watch
+-- history for. A stub reached only by a rating is left alone.
+showsNeedingMetadata:
+SELECT tvshow.id
+FROM tvshow
+WHERE tvshow.overview = ''
+  AND tvshow.id IN (
+    SELECT show_id FROM followed_shows WHERE pending_action != 'DELETE'
+    UNION
+    SELECT show_id FROM watched_episodes WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+  );
+
+restoreSeason:
+INSERT INTO season(id, show_id, season_number, episode_count, title, overview, image_url)
+VALUES(:seasonId, :showId, :seasonNumber, :episodeCount, :title, :overview, :imageUrl)
+ON CONFLICT(id) DO UPDATE SET
+    show_id = excluded.show_id,
+    season_number = excluded.season_number,
+    episode_count = excluded.episode_count,
+    title = excluded.title,
+    overview = excluded.overview,
+    image_url = excluded.image_url;
+
+restoreEpisode:
+INSERT INTO episode(
+    id, season_id, show_id, episode_number, title, overview, runtime, vote_count, ratings,
+    image_url, first_aired
+)
+VALUES(
+    :episodeId, :seasonId, :showId, :episodeNumber, :title, :overview, :runtime, :voteCount,
+    :ratings, :imageUrl, :firstAired
+)
+ON CONFLICT(id) DO UPDATE SET
+    season_id = excluded.season_id,
+    show_id = excluded.show_id,
+    episode_number = excluded.episode_number,
+    title = excluded.title,
+    overview = excluded.overview,
+    runtime = excluded.runtime,
+    vote_count = excluded.vote_count,
+    ratings = excluded.ratings,
+    image_url = excluded.image_url,
+    first_aired = excluded.first_aired;
+

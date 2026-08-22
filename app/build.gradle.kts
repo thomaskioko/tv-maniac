@@ -40,6 +40,16 @@ android {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    develocity.testRetry {
+        maxRetries = providers.environmentVariable("CI").map { 2 }.orElse(0)
+        failOnPassedAfterRetry = false
+        filter {
+            includeClasses.add("com.thomaskioko.tvmaniac.app.test.compose.*")
+        }
+    }
+}
+
 dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.features.root.ui)
@@ -65,6 +75,7 @@ dependencies {
     implementation(projects.features.featureFlags.ui)
     implementation(projects.features.episodeSheet.ui)
     implementation(projects.features.ratingSheet.ui)
+    implementation(projects.features.watchdateSelection.ui)
     implementation(projects.features.library.ui)
     implementation(projects.features.myShows.ui)
     implementation(projects.features.moreShows.ui)
@@ -140,12 +151,15 @@ dependencies {
     implementation(projects.domain.user)
     implementation(projects.data.logout.api)
     implementation(projects.data.logout.implementation)
+    implementation(projects.data.backup.api)
+    implementation(projects.domain.backup)
     implementation(projects.domain.logout)
     implementation(projects.features.debug.presenter)
     implementation(projects.features.calendar.presenter)
     implementation(projects.features.discover.presenter)
     implementation(projects.features.episodeSheet.presenter)
     implementation(projects.features.ratingSheet.presenter)
+    implementation(projects.features.watchdateSelection.presenter)
     implementation(projects.features.library.presenter)
     implementation(projects.features.home.presenter)
     implementation(projects.features.moreShows.presenter)
@@ -185,6 +199,7 @@ dependencies {
     implementation(projects.core.tasks.api)
     implementation(projects.data.followedshows.implementation)
     implementation(projects.data.library.implementation)
+    implementation(projects.data.backup.implementation)
     implementation(projects.data.ratings.implementation)
     implementation(projects.data.rewatch.implementation)
     implementation(projects.data.syncActivity.implementation)
@@ -227,6 +242,7 @@ dependencies {
     implementation(projects.domain.ratings)
     implementation(projects.domain.rewatch)
     implementation(projects.features.ratingSheet.nav)
+    implementation(projects.features.watchdateSelection.nav)
 
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.core.ktx)

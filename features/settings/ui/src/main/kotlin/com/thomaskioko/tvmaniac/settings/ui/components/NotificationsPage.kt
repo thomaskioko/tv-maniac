@@ -39,8 +39,8 @@ internal fun NotificationsPage(
                     description = state.labels.episodeNotificationsDescription,
                     checked = state.episodeNotificationsEnabled,
                     onCheckedChange = { onAction(EpisodeNotificationsToggled(it)) },
-                    locked = state.locks.episodeNotificationsLocked,
-                    lockedBadgeText = state.locks.badgeText,
+                    locked = state.premium.episodeNotificationsLocked,
+                    lockedBadgeText = state.premium.badgeText,
                 )
             }
         }

@@ -17,6 +17,7 @@ kotlin {
                 api(projects.data.database.sqldelight)
                 api(projects.data.episode.api)
                 api(projects.data.ratings.api)
+                api(projects.data.rewatch.api)
                 api(projects.data.watchStatus.api)
             }
         }
@@ -30,6 +31,7 @@ kotlin {
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.implementation)
                 implementation(projects.data.ratings.testing)
+                implementation(projects.data.rewatch.testing)
                 implementation(projects.data.watchStatus.implementation)
             }
         }

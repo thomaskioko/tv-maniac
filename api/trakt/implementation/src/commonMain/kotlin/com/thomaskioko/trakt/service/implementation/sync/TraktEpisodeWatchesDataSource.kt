@@ -3,6 +3,7 @@ package com.thomaskioko.trakt.service.implementation.sync
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.episodes.api.EpisodeWatchesDataSource
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowBatch
 import com.thomaskioko.tvmaniac.episodes.api.WatchedShowMetadata
@@ -41,7 +42,7 @@ public class TraktEpisodeWatchesDataSource(
                         episodeId = 0L,
                         seasonNumber = entry.episode.season.toLong(),
                         episodeNumber = entry.episode.number.toLong(),
-                        watchedAt = Instant.parse(entry.watchedAt),
+                        watchedAt = WatchedDate.normalize(Instant.parse(entry.watchedAt)),
                         traktId = entry.id,
                         pendingAction = PendingAction.NOTHING,
                     )
@@ -122,13 +123,20 @@ public class TraktEpisodeWatchesDataSource(
                         episodes = seasonWatches.map { watch ->
                             TraktSyncSeasonEpisode(
                                 number = watch.episodeNumber,
-                                watchedAt = watch.watchedAt.toString(),
+                                watchedAt = when {
+                                    WatchedDate.isUnknown(watch.watchedAt) -> UNKNOWN_WATCHED_AT
+                                    else -> watch.watchedAt.toString()
+                                },
                             )
                         },
                     )
                 },
             )
         }
+
+    internal companion object {
+        internal const val UNKNOWN_WATCHED_AT: String = "unknown"
+    }
 }
 
 internal class BulkWatchedShowsFetchException(message: String) : Exception(message)
@@ -145,7 +153,7 @@ private fun TraktWatchedShowResponse.toBatch(): WatchedShowBatch? {
                 episodeId = null,
                 seasonNumber = season.number,
                 episodeNumber = episode.number,
-                watchedAt = watchedAt,
+                watchedAt = WatchedDate.normalize(watchedAt),
                 traktId = null,
                 pendingAction = PendingAction.NOTHING,
             )

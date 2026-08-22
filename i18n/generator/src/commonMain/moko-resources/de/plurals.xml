@@ -56,4 +56,20 @@
         <item quantity="one">%d Mal gesehen</item>
         <item quantity="other">%d Mal gesehen</item>
     </plurals>
+    <plurals name="dialog_message_mark_show_watched">
+        <item quantity="one">Dadurch wird %d Folge als gesehen markiert.</item>
+        <item quantity="other">Dadurch werden %d Folgen als gesehen markiert.</item>
+    </plurals>
+    <plurals name="backup_shows_restored">
+        <item quantity="one">%d Serie wiederhergestellt</item>
+        <item quantity="other">%d Serien wiederhergestellt</item>
+    </plurals>
+    <plurals name="backup_episodes_restored">
+        <item quantity="one">%d Folge wiederhergestellt</item>
+        <item quantity="other">%d Folgen wiederhergestellt</item>
+    </plurals>
+    <plurals name="backup_shows_skipped">
+        <item quantity="one">%d Serie übersprungen</item>
+        <item quantity="other">%d Serien übersprungen</item>
+    </plurals>
 </resources>

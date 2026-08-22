@@ -1,3 +1,4 @@
+import Components
 import DesignSystem
 import EpisodeDetail
 import SnapshotTestingLib
@@ -69,6 +70,42 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_NoOverview")
     }
 
+    func test_EpisodeDetailSheetContent_WatchedAgain() {
+        makeSheet(
+            episode: EpisodeDetailSheetInfo(
+                title: "The Walking Dead: Daryl Dixon",
+                imageUrl: nil,
+                episodeInfo: "S02E01 \u{2022} The Walking Dead",
+                overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                rating: 8.5,
+                voteCount: 1234,
+                isWatched: true,
+                playCount: 3
+            ),
+            showAllActions: true,
+            isWatched: true
+        )
+        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_WatchedAgain")
+    }
+
+    func test_EpisodeDetailSheetContent_SeenOnce() {
+        makeSheet(
+            episode: EpisodeDetailSheetInfo(
+                title: "The Walking Dead: Daryl Dixon",
+                imageUrl: nil,
+                episodeInfo: "S02E01 \u{2022} The Walking Dead",
+                overview: "Daryl washes ashore in France and struggles to piece together how he got there and why.",
+                rating: 8.5,
+                voteCount: 1234,
+                isWatched: true,
+                playCount: 1
+            ),
+            showAllActions: false,
+            isWatched: true
+        )
+        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_SeenOnce")
+    }
+
     private func makeSheet(
         episode: EpisodeDetailSheetInfo,
         showAllActions: Bool,
@@ -77,10 +114,13 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
         EpisodeDetailSheetContent(episode: episode) {
             SheetActionItem(icon: "star", label: "Rate episode", action: {})
             SheetActionItem(
-                icon: isWatched ? "checkmark.circle.fill" : "checkmark.circle",
-                label: isWatched ? "Mark unwatched" : "Mark watched",
+                icon: isWatched ? "arrow.counterclockwise" : "checkmark.circle",
+                label: isWatched ? "Watch again" : "Mark watched",
                 action: {}
             )
+            if isWatched {
+                SheetActionItem(icon: "checkmark.circle.badge.xmark", label: "Mark unwatched", action: {})
+            }
             if showAllActions {
                 SheetActionItem(icon: "tv", label: "Open show", action: {})
                 SheetActionItem(icon: "list.bullet", label: "Open season", action: {})

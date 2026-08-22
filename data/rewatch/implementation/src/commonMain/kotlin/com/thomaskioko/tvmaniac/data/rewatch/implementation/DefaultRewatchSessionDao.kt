@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.data.rewatch.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.rewatch.api.OpenRewatchSession
@@ -9,6 +10,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchCoverage
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSession
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchStatus
+import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchTotals
 import com.thomaskioko.tvmaniac.data.rewatch.api.UnsentRewatchEpisode
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Rewatch_session
@@ -42,6 +44,25 @@ public class DefaultRewatchSessionDao(
         )
         queries.lastInsertRowId().executeAsOne()
     }
+
+    override fun addSyncedEpisodeToSession(sessionId: Long, episodeId: Long, watchedAt: Long, syncedAt: Long) {
+        queries.addSyncedEpisodeToSession(
+            sessionId = sessionId,
+            episodeId = Id(episodeId),
+            watchedAt = watchedAt,
+            syncedAt = syncedAt,
+        )
+    }
+
+    override fun episodeIdForNumber(showId: Long, seasonNumber: Long, episodeNumber: Long): Long? =
+        queries.episodeIdForNumber(
+            showId = Id(showId),
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+        ).executeAsOneOrNull()?.id
+
+    override fun episodeRewatchCount(episodeId: Long): Long =
+        queries.episodeRewatchCount(Id(episodeId)).executeAsOne()
 
     override fun closeSession(sessionId: Long, closedAt: Long) {
         queries.closeSession(sessionId = sessionId, closedAt = closedAt)
@@ -84,7 +105,23 @@ public class DefaultRewatchSessionDao(
         queries.setProviderSessionId(sessionId = sessionId, providerSessionId = providerSessionId)
     }
 
-    override fun playCountForEpisode(episodeId: Long): Long = queries.playCountForEpisode(Id(episodeId)).executeAsOne()
+    override fun observeEpisodeRewatches(episodeId: Long): Flow<Long> =
+        queries.observeEpisodeRewatches(Id(episodeId))
+            .asFlow()
+            .mapToOne(dispatchers.databaseRead)
+
+    override fun observeRewatchTotals(): Flow<RewatchTotals> =
+        queries.rewatchTotals { viewings, minutes -> RewatchTotals(viewings = viewings, minutes = minutes) }
+            .asFlow()
+            .mapToOne(dispatchers.databaseRead)
+
+    override fun removeEpisodeRewatches(episodeId: Long) {
+        queries.removeEpisodeRewatches(Id(episodeId))
+    }
+
+    override fun removeSeasonRewatches(showId: Long, seasonNumber: Long) {
+        queries.removeSeasonRewatches(showId = Id(showId), seasonNumber = seasonNumber)
+    }
 
     override fun unsentEpisodes(): List<UnsentRewatchEpisode> =
         queries.unsentEpisodes().executeAsList().map { it.toUnsentRewatchEpisode() }
@@ -103,27 +140,27 @@ public class DefaultRewatchSessionDao(
         providerSessionId: Long,
         startedAt: Long,
         closedAt: Long?,
-    ) {
-        queries.transaction {
-            val existing = queries.sessionByProviderSessionId(
-                showId = Id(showId),
-                providerSessionId = providerSessionId,
-            ).executeAsOneOrNull()
+    ): Long = queries.transactionWithResult {
+        val existing = queries.sessionByProviderSessionId(
+            showId = Id(showId),
+            providerSessionId = providerSessionId,
+        ).executeAsOneOrNull()
 
-            if (existing == null) {
-                queries.insertProviderSession(
-                    showId = Id(showId),
-                    startedAt = startedAt,
-                    closedAt = closedAt,
-                    providerSessionId = providerSessionId,
-                )
-            } else {
-                queries.mergeProviderSession(
-                    startedAt = startedAt,
-                    closedAt = closedAt,
-                    sessionId = existing.id,
-                )
-            }
+        if (existing == null) {
+            queries.insertProviderSession(
+                showId = Id(showId),
+                startedAt = startedAt,
+                closedAt = closedAt,
+                providerSessionId = providerSessionId,
+            )
+            queries.lastInsertRowId().executeAsOne()
+        } else {
+            queries.mergeProviderSession(
+                startedAt = startedAt,
+                closedAt = closedAt,
+                sessionId = existing.id,
+            )
+            existing.id
         }
     }
 

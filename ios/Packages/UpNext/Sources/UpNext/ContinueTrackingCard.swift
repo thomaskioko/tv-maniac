@@ -5,11 +5,13 @@ import SwiftUI
 
 public struct ContinueTrackingCard: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
 
     private let episode: SwiftContinueTrackingEpisode
     private let dayLabelFormat: (_ count: Int) -> String
     private let tbdLabel: String
     private let onMarkWatched: () -> Void
+    private let onMarkWatchedLongPress: (() -> Void)?
     private let isUpdating: Bool
 
     public init(
@@ -17,12 +19,14 @@ public struct ContinueTrackingCard: View {
         dayLabelFormat: @escaping (_ count: Int) -> String,
         tbdLabel: String,
         onMarkWatched: @escaping () -> Void,
+        onMarkWatchedLongPress: (() -> Void)? = nil,
         isUpdating: Bool = false
     ) {
         self.episode = episode
         self.dayLabelFormat = dayLabelFormat
         self.tbdLabel = tbdLabel
         self.onMarkWatched = onMarkWatched
+        self.onMarkWatchedLongPress = onMarkWatchedLongPress
         self.isUpdating = isUpdating
     }
 
@@ -75,6 +79,13 @@ public struct ContinueTrackingCard: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(isUpdating)
+                    .highPriorityGesture(
+                        LongPressGesture().onEnded { _ in
+                            guard let onMarkWatchedLongPress else { return }
+                            Haptics.impact(isEnabled: hapticFeedbackEnabled, style: .medium)
+                            onMarkWatchedLongPress()
+                        }
+                    )
                 } else if let daysUntilAir = episode.daysUntilAir, daysUntilAir > 0 {
                     VStack(spacing: 0) {
                         Text("\(daysUntilAir)")

@@ -6,6 +6,7 @@ public data class FollowedShowEntry(
     val id: Long = 0,
     val showId: Long,
     val tmdbId: Long? = null,
+    val traktId: Long? = null,
     val followedAt: Instant,
     val pendingAction: PendingAction = PendingAction.NOTHING,
 )

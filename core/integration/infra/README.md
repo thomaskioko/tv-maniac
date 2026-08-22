@@ -87,6 +87,11 @@ graph TB
     :data:account-manager:api[api]:::multiplatform
     :data:account-manager:implementation[implementation]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+    :data:backup:implementation[implementation]:::multiplatform
+  end
   subgraph :data:calendar
     direction TB
     :data:calendar:api[api]:::multiplatform
@@ -228,11 +233,13 @@ graph TB
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
+    :domain:backup[backup]:::multiplatform
     :domain:continue-watching[continue-watching]:::multiplatform
     :domain:episode[episode]:::multiplatform
     :domain:library[library]:::multiplatform
     :domain:logout[logout]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:settings[settings]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
@@ -376,6 +383,7 @@ graph TB
   :core:integration:infra --> :core:util:api
   :core:integration:infra --> :core:util:implementation
   :core:integration:infra --> :data:account-manager:implementation
+  :core:integration:infra --> :data:backup:implementation
   :core:integration:infra --> :data:calendar:implementation
   :core:integration:infra --> :data:cast:implementation
   :core:integration:infra --> :data:continue-watching:implementation
@@ -404,6 +412,7 @@ graph TB
   :core:integration:infra --> :data:user:implementation
   :core:integration:infra --> :data:watch-status:implementation
   :core:integration:infra --> :data:watchproviders:implementation
+  :core:integration:infra --> :domain:backup
   :core:integration:infra --> :domain:continue-watching
   :core:integration:infra --> :domain:episode
   :core:integration:infra --> :domain:library
@@ -417,6 +426,7 @@ graph TB
   :core:integration:infra --> :features:profile:nav
   :core:integration:infra --> :features:progress:nav
   :core:integration:infra --> :features:root:presenter
+  :core:integration:infra --> :features:settings:presenter
   :core:integration:infra --> :i18n:implementation
   :core:integration:infra --> :navigation:api
   :core:integration:infra --> :navigation:implementation
@@ -436,6 +446,15 @@ graph TB
   :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
+  :data:backup:implementation --> :core:appconfig:api
+  :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
+  :data:backup:implementation --> :core:syncstate:api
+  :data:backup:implementation --> :core:util:api
+  :data:backup:implementation --> :data:backup:api
+  :data:backup:implementation --> :data:database:sqldelight
+  :data:backup:implementation --> :data:datastore:api
+  :data:backup:implementation --> :data:episode:api
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:calendar:implementation --> :core:base
@@ -594,6 +613,7 @@ graph TB
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
   :data:shows:implementation --> :api:tmdb:api
+  :data:shows:implementation --> :api:trakt:api
   :data:shows:implementation --> :core:base
   :data:shows:implementation --> :core:logger:api
   :data:shows:implementation --> :data:account-manager:api
@@ -662,6 +682,7 @@ graph TB
   :data:watchproviders:implementation --> :data:request-manager:api
   :data:watchproviders:implementation --> :data:watchproviders:api
   :domain:account-switcher --> :core:base
+  :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
@@ -670,6 +691,14 @@ graph TB
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
+  :domain:backup --> :core:base
+  :domain:backup --> :core:logger:api
+  :domain:backup --> :core:network-util:api
+  :domain:backup --> :core:tasks:api
+  :domain:backup --> :core:view
+  :domain:backup --> :data:backup:api
+  :domain:backup --> :data:shows:api
+  :domain:backup --> :domain:showdetails
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
@@ -689,11 +718,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:library --> :core:base
   :domain:library --> :core:logger:api
   :domain:library --> :core:network-util:api
@@ -726,9 +758,14 @@ graph TB
   :domain:notifications --> :data:seasons:api
   :domain:notifications --> :domain:showdetails
   :domain:notifications --> :i18n:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
   :domain:settings --> :data:datastore:api
+  :domain:settings --> :data:subscription:api
   :domain:settings --> :domain:theme
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
@@ -792,13 +829,16 @@ graph TB
   :features:settings:presenter --> :core:logger:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
+  :features:settings:presenter --> :data:backup:api
   :features:settings:presenter --> :data:datastore:api
   :features:settings:presenter --> :data:rewatch:api
   :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
+  :features:settings:presenter --> :domain:backup
   :features:settings:presenter --> :domain:logout
   :features:settings:presenter --> :domain:notifications
+  :features:settings:presenter --> :domain:rewatch
   :features:settings:presenter --> :domain:settings
   :features:settings:presenter --> :domain:theme
   :features:settings:presenter -.-> :features:debug:nav
@@ -811,6 +851,8 @@ graph TB
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api
   :i18n:implementation -.-> :core:network-util:api
+  :i18n:implementation -.-> :data:account-manager:api
+  :i18n:implementation -.-> :data:backup:api
   :i18n:implementation --> :i18n:api
   :navigation:implementation --> :core:base
   :navigation:implementation -.-> :features:home:nav

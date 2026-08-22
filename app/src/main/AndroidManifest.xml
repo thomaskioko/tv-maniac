@@ -51,14 +51,10 @@
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
 
-        <data
-          android:scheme="tvmaniac"
-          android:host="auth"
-          android:path="/trakt" />
-        <data
-          android:scheme="tvmaniac"
-          android:host="auth"
-          android:path="/simkl" />
+        <data android:scheme="tvmaniac" />
+        <data android:host="auth" />
+        <data android:path="/trakt" />
+        <data android:path="/simkl" />
 
       </intent-filter>
     </activity>

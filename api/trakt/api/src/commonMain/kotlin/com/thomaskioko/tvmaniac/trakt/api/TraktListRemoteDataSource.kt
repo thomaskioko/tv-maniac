@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktCreateListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 
 public interface TraktListRemoteDataSource {
@@ -24,18 +25,10 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>>
 
-    public suspend fun addShowToWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddShowToListResponse>
+    public suspend fun addShowsToWatchList(shows: List<TraktShowIds>): ApiResponse<TraktAddShowToListResponse>
 
-    public suspend fun removeShowFromWatchListByTmdbId(tmdbId: Long): ApiResponse<TraktAddRemoveShowFromListResponse>
-
-    public suspend fun addShowToWatchListById(showId: Long): ApiResponse<TraktAddShowToListResponse>
-
-    public suspend fun removeShowFromWatchListById(showId: Long): ApiResponse<TraktAddRemoveShowFromListResponse>
-
-    public suspend fun addShowsToWatchListByIds(showIds: List<Long>): ApiResponse<TraktAddShowToListResponse>
-
-    public suspend fun removeShowsFromWatchListByIds(
-        showIds: List<Long>,
+    public suspend fun removeShowsFromWatchList(
+        shows: List<TraktShowIds>,
     ): ApiResponse<TraktAddRemoveShowFromListResponse>
 
     public suspend fun addShowToList(

@@ -3,9 +3,10 @@
     <cloud-backup>
         <exclude domain="sharedpref" />
         <exclude domain="database" />
+        <exclude domain="file" path="tvmaniac-device-local.preferences_pb" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="sharedpref" />
-        <exclude domain="database" />
+        <exclude domain="file" path="tvmaniac-device-local.preferences_pb" />
     </device-transfer>
 </data-extraction-rules>

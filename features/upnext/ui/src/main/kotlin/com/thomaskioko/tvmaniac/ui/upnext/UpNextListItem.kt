@@ -47,6 +47,7 @@ internal fun UpNextListItem(
     onMarkWatched: () -> Unit,
     modifier: Modifier = Modifier,
     onLongPress: () -> Unit = {},
+    onMarkWatchedLongPress: (() -> Unit)? = null,
     isUpdating: Boolean = false,
 ) {
     Card(
@@ -153,6 +154,7 @@ internal fun UpNextListItem(
                 isWatched = false,
                 isUpdating = isUpdating,
                 onToggle = onMarkWatched,
+                onLongPress = onMarkWatchedLongPress,
                 modifier = Modifier
                     .padding(TvManiacSpacing.small)
                     .testTag(UpNextTestTags.watchedButton(item.showId)),

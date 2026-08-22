@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDate
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeEntry
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddHistoryResponse
@@ -11,7 +12,9 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.time.Instant
 
@@ -99,6 +102,62 @@ internal class SimklEpisodeWatchesDataSourceTest {
     }
 
     @Test
+    fun `should carry a watched time on every serialized episode given entries are added`() = runTest {
+        fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
+
+        dataSource.addEpisodeEntries(
+            listOf(
+                watchedEntry(episodeNumber = 1L, watchedAt = Instant.parse("2024-09-01T09:10:11Z")),
+                watchedEntry(episodeNumber = 2L, watchedAt = Instant.parse("2024-09-02T10:00:00Z")),
+            ),
+        )
+
+        val episodes = fakeRemote.lastAddedHistory!!.shows.single().seasons.single().episodes
+        episodes.map { it.watchedAt } shouldBe listOf("2024-09-01T09:10:11Z", "2024-09-02T10:00:00Z")
+
+        val payload = Json.encodeToString(fakeRemote.lastAddedHistory!!)
+        payload shouldContain """"number":1,"watched_at":"2024-09-01T09:10:11Z""""
+        payload shouldContain """"number":2,"watched_at":"2024-09-02T10:00:00Z""""
+    }
+
+    @Test
+    fun `should send the placeholder given the watched time is unknown`() = runTest {
+        fakeRemote.setAddHistoryResponse(ApiResponse.Success(SimklAddHistoryResponse()))
+
+        dataSource.addEpisodeEntries(listOf(watchedEntry(episodeNumber = 1L, watchedAt = WatchedDate.UNKNOWN)))
+
+        fakeRemote.lastAddedHistory!!.shows.single().seasons.single().episodes.single().watchedAt shouldBe
+            "1970-01-01T00:00:01Z"
+    }
+
+    @Test
+    fun `should read back as the unknown sentinel given a pulled timestamp is the documented placeholder`() = runTest {
+        fakeRemote.setAllWatchedShows(ApiResponse.Success(SIMKL_RESPONSE_PLACEHOLDER_WATCHED_AT))
+
+        val episode = dataSource.getAllWatchedShows(page = 1, limit = 100).single().episodes.single()
+
+        episode.watchedAt shouldBe WatchedDate.UNKNOWN
+    }
+
+    @Test
+    fun `should read back as the unknown sentinel given a pulled timestamp predates the year 2000`() = runTest {
+        fakeRemote.setAllWatchedShows(ApiResponse.Success(SIMKL_RESPONSE_1999_WATCHED_AT))
+
+        val episode = dataSource.getAllWatchedShows(page = 1, limit = 100).single().episodes.single()
+
+        episode.watchedAt shouldBe WatchedDate.UNKNOWN
+    }
+
+    private fun watchedEntry(episodeNumber: Long, watchedAt: Instant) = WatchedEpisodeEntry(
+        showId = 583436L,
+        episodeId = null,
+        seasonNumber = 1L,
+        episodeNumber = episodeNumber,
+        watchedAt = watchedAt,
+        pendingAction = PendingAction.NOTHING,
+    )
+
+    @Test
     fun `should remove history entries given removeEpisodeEntries receives watched entries`() = runTest {
         fakeRemote.setRemoveHistoryResponse(ApiResponse.Success(SimklRemoveHistoryResponse()))
         val entries = listOf(
@@ -157,6 +216,52 @@ private val SIMKL_RESPONSE_NULL_WATCHED_AT = SimklAllItemsResponse(
                     number = 1,
                     episodes = listOf(
                         com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedEpisode(number = 1, watchedAt = null),
+                    ),
+                ),
+            ),
+        ),
+    ),
+)
+
+private val SIMKL_RESPONSE_PLACEHOLDER_WATCHED_AT = SimklAllItemsResponse(
+    shows = listOf(
+        com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedShow(
+            status = "watching",
+            show = com.thomaskioko.tvmaniac.simkl.api.model.SimklShowEntry(
+                title = "Undated Show",
+                ids = com.thomaskioko.tvmaniac.simkl.api.model.SimklShowIds(simkl = 300L, tmdb = "77"),
+            ),
+            seasons = listOf(
+                com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedSeason(
+                    number = 1,
+                    episodes = listOf(
+                        com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedEpisode(
+                            number = 1,
+                            watchedAt = "1970-01-01T00:00:01Z",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ),
+)
+
+private val SIMKL_RESPONSE_1999_WATCHED_AT = SimklAllItemsResponse(
+    shows = listOf(
+        com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedShow(
+            status = "watching",
+            show = com.thomaskioko.tvmaniac.simkl.api.model.SimklShowEntry(
+                title = "Old Show",
+                ids = com.thomaskioko.tvmaniac.simkl.api.model.SimklShowIds(simkl = 301L, tmdb = "78"),
+            ),
+            seasons = listOf(
+                com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedSeason(
+                    number = 1,
+                    episodes = listOf(
+                        com.thomaskioko.tvmaniac.simkl.api.model.SimklWatchedEpisode(
+                            number = 1,
+                            watchedAt = "1999-06-15T20:00:00Z",
+                        ),
                     ),
                 ),
             ),

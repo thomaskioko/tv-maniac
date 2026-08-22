@@ -17,6 +17,7 @@ public enum SettingsPageRoute: String, Hashable, Identifiable, CaseIterable {
     case layout
     case discoverSections
     case posterStyle
+    case backup
 
     public var id: String {
         rawValue
@@ -36,6 +37,7 @@ public enum SettingsPageRoute: String, Hashable, Identifiable, CaseIterable {
         case .layout: "rectangle.3.group"
         case .discoverSections: "rectangle.grid.1x2"
         case .posterStyle: "photo.on.rectangle.angled"
+        case .backup: "externaldrive"
         }
     }
 }

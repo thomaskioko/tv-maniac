@@ -37,12 +37,12 @@ extension SettingsView {
             subtitle: uiState.labels.themeSubtitle,
             themes: DeviceAppTheme.sortedThemes,
             selectedTheme: store.appTheme,
-            isCustomThemesLocked: uiState.locks.customThemesLocked,
-            lockedBadgeText: uiState.locks.badgeText,
-            lockedTitle: uiState.locks.themesLockedTitle,
-            lockedMessage: uiState.locks.themesLockedMessage,
-            lockedActionText: uiState.locks.upgradeText,
-            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            isCustomThemesLocked: uiState.premium.customThemesLocked,
+            lockedBadgeText: uiState.premium.badgeText,
+            lockedTitle: uiState.premium.themesLockedTitle,
+            lockedMessage: uiState.premium.themesLockedMessage,
+            lockedActionText: uiState.premium.upgradeText,
+            lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
             onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) },
             onThemeSelected: { selectedTheme in
                 store.appTheme = selectedTheme
@@ -205,10 +205,10 @@ extension SettingsView {
             posterScale: CGFloat(uiState.posterWidth.scale),
             landscapeScale: CGFloat(uiState.landscapeWidth.scale),
             cornerRadius: CGFloat(uiState.posterCornerStyle.cornerRadius),
-            isLocked: uiState.locks.posterStyleLocked,
-            lockedBadgeText: uiState.locks.badgeText,
-            lockedActionText: uiState.locks.upgradeText,
-            lockedAccessibilityLabel: uiState.locks.lockedContentDescription,
+            isLocked: uiState.premium.posterStyleLocked,
+            lockedBadgeText: uiState.premium.badgeText,
+            lockedActionText: uiState.premium.upgradeText,
+            lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
             onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) },
             onReset: {
                 presenter.dispatch(action: PosterStyleReset())
@@ -249,5 +249,64 @@ extension SettingsView {
         case "PILL": labels.cornerPill
         default: style.name
         }
+    }
+
+    var autoBackupContent: SettingsAutoBackupContent {
+        let autoBackup = uiState.backup.autoBackup
+        return SettingsAutoBackupContent(
+            title: autoBackup.title,
+            description: autoBackup.description,
+            isOn: autoBackup.enabled,
+            locationTitle: autoBackup.locationTitle,
+            locationLabel: autoBackup.locationLabel,
+            hasLocation: autoBackup.hasLocation,
+            fileNameTitle: autoBackup.fileNameTitle,
+            fileNameMessage: autoBackup.fileNameMessage,
+            fileName: autoBackup.fileName,
+            fileNameSaveLabel: autoBackup.fileNameSaveLabel,
+            fileNameCancelLabel: autoBackup.fileNameCancelLabel,
+            scheduleTitle: autoBackup.scheduleTitle,
+            scheduleOptions: autoBackup.scheduleOptions.map { option in
+                SettingsAutoBackupScheduleOption(
+                    id: option.interval.name,
+                    label: option.label,
+                    isSelected: option.selected,
+                    onSelect: { presenter.dispatch(action: AutoBackupScheduleSelected(interval: option.interval)) }
+                )
+            },
+            lastRunLabel: autoBackup.lastRunLabel,
+            failureWarning: autoBackup.failureWarning,
+            backupNowTitle: autoBackup.backupNowTitle,
+            backupNowDescription: autoBackup.backupNowDescription,
+            isBackingUp: autoBackup.isBackingUp,
+            onToggle: { presenter.dispatch(action: AutoBackupToggled(enabled: $0)) },
+            onBackupNow: { presenter.dispatch(action: BackupNowClicked()) },
+            onChooseLocation: { presenter.dispatch(action: AutoBackupLocationClicked()) },
+            onFileNameChanged: { presenter.dispatch(action: BackupFileNameChanged(name: $0)) }
+        )
+    }
+
+    var backupContent: SettingsBackupContent {
+        SettingsBackupContent(
+            exportTitle: uiState.backup.exportTitle,
+            exportDescription: uiState.backup.exportDescription,
+            isExporting: uiState.backup.isExporting || uiState.backup.awaitingDestination,
+            importTitle: uiState.backup.importTitle,
+            importDescription: uiState.backup.importDescription,
+            isImporting: uiState.backup.isImporting || uiState.backup.awaitingSource,
+            summary: uiState.backup.summary?.toContent(),
+            summaryDismissAccessibilityLabel: String(\.cd_dismiss),
+            autoBackup: autoBackupContent,
+            isLocked: uiState.premium.backupLocked,
+            lockedBadgeText: uiState.premium.badgeText,
+            lockedTitle: uiState.premium.backupLockedTitle,
+            lockedMessage: uiState.premium.backupLockedMessage,
+            lockedActionText: uiState.premium.upgradeText,
+            lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
+            onExport: { presenter.dispatch(action: BackupExportClicked()) },
+            onImport: { presenter.dispatch(action: BackupImportClicked()) },
+            onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) },
+            onDismissSummary: { presenter.dispatch(action: BackupSummaryDismissed()) }
+        )
     }
 }

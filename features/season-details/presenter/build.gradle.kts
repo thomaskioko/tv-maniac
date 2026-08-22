@@ -22,6 +22,7 @@ kotlin {
                 api(projects.domain.ratings)
                 api(projects.domain.seasondetails)
                 api(projects.features.ratingSheet.nav)
+                api(projects.features.watchdateSelection.nav)
                 api(projects.features.seasonDetails.nav)
                 api(projects.navigation.api)
 
@@ -41,6 +42,7 @@ kotlin {
                 implementation(projects.data.cast.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.testing)
+                implementation(projects.data.rewatch.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.subscription.testing)

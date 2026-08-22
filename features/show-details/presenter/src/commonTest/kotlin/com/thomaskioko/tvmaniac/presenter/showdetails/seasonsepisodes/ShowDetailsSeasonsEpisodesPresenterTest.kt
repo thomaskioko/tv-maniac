@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.ratings.testing.FakeRatingsRepository
+import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
@@ -36,6 +37,7 @@ import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepositor
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowSeasonDetailsParam
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -63,6 +65,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     )
     private val seasonsRepository = FakeSeasonsRepository()
     private val episodeRepository = FakeEpisodeRepository()
+    private val rewatchRepository = FakeRewatchRepository()
     private val seasonDetailsRepository = FakeSeasonDetailsRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
@@ -224,6 +227,33 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
     }
 
     @Test
+    fun `should open the watch date sheet given the check button is long pressed`() = runTest {
+        seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            presenter.dispatch(
+                ShowDetailsEpisodeWatchedLongPressed(
+                    showId = SHOW_ID,
+                    episodeId = 1001L,
+                    seasonNumber = 1L,
+                    episodeNumber = 1L,
+                ),
+            )
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
+            route.param.showId shouldBe SHOW_ID
+            route.param.episodeId shouldBe 1001L
+            route.param.seasonNumber shouldBe 1L
+            route.param.episodeNumber shouldBe 1L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should open the rating sheet given quick rate is on and an episode is marked watched`() = runTest {
         datastoreRepository.saveQuickRateEnabled(true)
         seasonDetailsRepository.setContinueTrackingResult(testContinueTrackingResult)
@@ -349,6 +379,7 @@ internal class ShowDetailsSeasonsEpisodesPresenterTest {
             ),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
+                rewatchRepository = rewatchRepository,
             ),
             datastoreRepository = datastoreRepository,
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,

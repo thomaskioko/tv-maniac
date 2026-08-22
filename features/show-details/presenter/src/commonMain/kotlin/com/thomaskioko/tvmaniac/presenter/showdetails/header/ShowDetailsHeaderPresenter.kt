@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
@@ -27,7 +28,9 @@ import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
+import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -38,6 +41,8 @@ import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.scope.ShowDetailsChildScope
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionParam
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -69,6 +74,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     observeCommunityRatingInteractor: ObserveCommunityRatingInteractor,
     observeTraktListsInteractor: ObserveTraktListsInteractor,
     observeRewatchStatusInteractor: ObserveRewatchStatusInteractor,
+    observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val startRewatchSessionInteractor: StartRewatchSessionInteractor,
     private val datastoreRepository: DatastoreRepository,
     private val syncCalendarInteractor: SyncCalendarInteractor,
@@ -94,6 +100,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
         observeCommunityRatingInteractor(showId)
         observeTraktListsInteractor(showId)
         observeRewatchStatusInteractor(showId)
+        observeShowWatchProgressInteractor(showId)
 
         fetchShowDetails(forceRefresh = forceRefresh)
         refreshCommunityRating(forceRefresh = forceRefresh)
@@ -107,14 +114,16 @@ public class ShowDetailsHeaderPresenter internal constructor(
         observeCommunityRatingInteractor.flow,
         observeTraktListsInteractor.flow,
         observeRewatchStatusInteractor.flow,
+        observeShowWatchProgressInteractor.flow,
         datastoreRepository.observeMultiplePlaysEnabled(),
         loadingState.observable,
         uiMessageManager.message,
         _state,
-    ) { details, userRating, communityRating, traktLists, rewatchStatus, multiplePlaysEnabled,
-        isRefreshing, message, current,
+    ) { details, userRating, communityRating, traktLists, rewatchStatus, watchProgress,
+        multiplePlaysEnabled, isRefreshing, message, current,
         ->
         val isInList = traktLists.any { it.isShowInList }
+        val unwatchedEpisodeCount = (watchProgress.totalCount - watchProgress.watchedCount).coerceAtLeast(0)
         details.toHeaderState(localizer).copy(
             communityRating = communityRating?.rating,
             communityVotes = communityRating?.votes,
@@ -127,9 +136,19 @@ public class ShowDetailsHeaderPresenter internal constructor(
                 if (isInList) StringResourceKey.BtnInList else StringResourceKey.BtnAddToList,
             ),
             rewatchCount = rewatchStatus.finishedCount,
-            canWatchAgain = multiplePlaysEnabled && details.isInLibrary,
+            canWatchAgain = multiplePlaysEnabled && details.isInLibrary && rewatchStatus.openSession == null,
+            canMarkShowWatched = details.isInLibrary && rewatchStatus.openSession == null && unwatchedEpisodeCount > 0,
+            unwatchedEpisodeCount = unwatchedEpisodeCount,
+            markShowWatchedLabel = localizer.getString(StringResourceKey.LabelMarkShowWatched),
+            markShowWatchedTitle = localizer.getString(StringResourceKey.LabelMarkShowWatchedConfirmTitle),
+            markShowWatchedMessage = localizer.getPlural(
+                PluralsResourceKey.DialogMessageMarkShowWatched,
+                unwatchedEpisodeCount,
+                unwatchedEpisodeCount,
+            ),
             showMoreSheet = current.showMoreSheet,
             showWatchAgainConfirmation = current.showWatchAgainConfirmation,
+            showMarkShowWatchedConfirmation = current.showMarkShowWatchedConfirmation,
         )
     }.stateIn(
         scope = coroutineScope,
@@ -155,6 +174,11 @@ public class ShowDetailsHeaderPresenter internal constructor(
             }
             WatchAgainDismissed -> _state.update { it.copy(showWatchAgainConfirmation = false) }
             WatchAgainConfirmed -> onWatchAgainConfirmed()
+            MarkShowWatchedClicked -> _state.update {
+                it.copy(showMoreSheet = false, showMarkShowWatchedConfirmation = true)
+            }
+            MarkShowWatchedDismissed -> _state.update { it.copy(showMarkShowWatchedConfirmation = false) }
+            MarkShowWatchedConfirmed -> onMarkShowWatchedConfirmed()
         }
     }
 
@@ -223,6 +247,18 @@ public class ShowDetailsHeaderPresenter internal constructor(
             startRewatchSessionInteractor(StartRewatchSessionInteractor.Param(showId = showId))
                 .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
+    }
+
+    private fun onMarkShowWatchedConfirmed() {
+        _state.update { it.copy(showMarkShowWatchedConfirmation = false) }
+        navigator.navigateTo(
+            WatchDateSelectionRoute(
+                WatchDateSelectionParam(
+                    target = WatchedDateTarget.SHOW,
+                    showId = showId,
+                ),
+            ),
+        )
     }
 
     private fun updateListAvailability() {

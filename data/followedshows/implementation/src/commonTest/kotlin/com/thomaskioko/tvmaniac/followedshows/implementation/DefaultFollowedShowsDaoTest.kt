@@ -404,20 +404,85 @@ internal class DefaultFollowedShowsDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should preserve tmdb id`() {
+    fun `should return the tmdb id of the show given an entry`() {
+        insertRestoredShow(tmdbId = 4L)
         dao.upsert(
             FollowedShowEntry(
-                showId = 1L,
+                showId = 4L,
                 followedAt = Clock.System.now(),
-                tmdbId = 98765L,
                 pendingAction = PendingAction.NOTHING,
             ),
         )
 
-        val entry = dao.entryWithTraktId(1L)
+        val entry = dao.entryWithTmdbId(4L)
 
         entry.shouldNotBeNull()
-        entry.tmdbId shouldBe 98765L
+        entry.tmdbId shouldBe 4L
+        entry.traktId.shouldBeNull()
+    }
+
+    @Test
+    fun `should return entry given show has no trakt id`() {
+        insertRestoredShow(tmdbId = 4L)
+        dao.upsert(
+            FollowedShowEntry(
+                showId = 4L,
+                followedAt = Clock.System.now(),
+                pendingAction = PendingAction.UPLOAD,
+            ),
+        )
+
+        dao.entryWithTmdbId(4L).shouldNotBeNull()
+    }
+
+    @Test
+    fun `should include entry with upload pending action given show has no trakt id`() {
+        insertRestoredShow(tmdbId = 4L)
+        dao.upsert(
+            FollowedShowEntry(
+                showId = 4L,
+                followedAt = Clock.System.now(),
+                pendingAction = PendingAction.UPLOAD,
+            ),
+        )
+
+        val entries = dao.entriesWithUploadPendingAction()
+
+        entries.map { it.showId } shouldBe listOf(4L)
+    }
+
+    @Test
+    fun `should include entry with delete pending action given show has no trakt id`() {
+        insertRestoredShow(tmdbId = 4L)
+        dao.upsert(
+            FollowedShowEntry(
+                showId = 4L,
+                followedAt = Clock.System.now(),
+                pendingAction = PendingAction.DELETE,
+            ),
+        )
+
+        val entries = dao.entriesWithDeletePendingAction()
+
+        entries.map { it.showId } shouldBe listOf(4L)
+    }
+
+    private fun insertRestoredShow(tmdbId: Long) {
+        database.tvShowQueries.upsert(
+            tmdb_id = Id<TmdbId>(tmdbId),
+            name = "Restored Show",
+            overview = "",
+            language = null,
+            year = null,
+            ratings = 0.0,
+            vote_count = 0,
+            genres = null,
+            status = null,
+            episode_numbers = null,
+            season_numbers = null,
+            poster_path = null,
+            backdrop_path = null,
+        )
     }
 
     private fun insertTestShows() {

@@ -42,6 +42,7 @@ kotlin {
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.testing)
+                implementation(projects.data.rewatch.testing)
                 implementation(projects.data.subscription.testing)
                 implementation(projects.data.watchStatus.testing)
                 implementation(projects.i18n.testing)

@@ -208,6 +208,96 @@ extension SettingsScreenTest {
         )
     }
 
+    func autoBackupContent(
+        isOn: Bool = false,
+        lastRunLabel: String = "No backup saved yet",
+        failureWarning: String? = nil,
+        selectedSchedule: String = "WEEKLY"
+    ) -> SettingsAutoBackupContent {
+        SettingsAutoBackupContent(
+            title: "Automatic backup",
+            description: "Save your shows, watch history, ratings and settings to a file on a schedule",
+            isOn: isOn,
+            locationTitle: "Backup location",
+            locationLabel: "Downloads",
+            hasLocation: true,
+            fileNameTitle: "File name",
+            fileNameMessage: "Backups are saved under this name",
+            fileName: "tvmaniac-backup.json",
+            fileNameSaveLabel: "Save",
+            fileNameCancelLabel: "Cancel",
+            scheduleTitle: "How often",
+            scheduleOptions: [
+                ("DAILY", "Every day"),
+                ("WEEKLY", "Every week"),
+                ("FORTNIGHTLY", "Every two weeks"),
+                ("MONTHLY", "Every month"),
+            ].map { id, label in
+                SettingsAutoBackupScheduleOption(
+                    id: id,
+                    label: label,
+                    isSelected: id == selectedSchedule,
+                    onSelect: {}
+                )
+            },
+            lastRunLabel: lastRunLabel,
+            failureWarning: failureWarning,
+            backupNowTitle: "Back up now",
+            backupNowDescription: "Save a backup straight away",
+            onToggle: { _ in },
+            onBackupNow: {}
+        )
+    }
+
+    func backupContent(
+        locked: Bool = false,
+        isExporting: Bool = false,
+        isImporting: Bool = false,
+        summary: SettingsBackupSummaryContent? = nil,
+        autoBackup: SettingsAutoBackupContent? = nil
+    ) -> SettingsBackupContent {
+        SettingsBackupContent(
+            exportTitle: "Save a backup",
+            exportDescription: "Write your shows, watch history, ratings and settings to a file",
+            isExporting: isExporting,
+            importTitle: "Restore a backup",
+            importDescription: "Replace your shows, watch history, ratings and settings from a file",
+            isImporting: isImporting,
+            summary: summary,
+            summaryDismissAccessibilityLabel: "Dismiss",
+            autoBackup: autoBackup ?? autoBackupContent(),
+            isLocked: locked,
+            lockedBadgeText: locked ? "Premium" : "",
+            lockedTitle: locked ? "Backup is a Premium feature" : "",
+            lockedMessage: locked ? "Upgrade to Premium to save and restore your shows." : "",
+            lockedActionText: locked ? "Upgrade to Premium" : "",
+            lockedAccessibilityLabel: locked ? "Locked" : "",
+            onExport: {},
+            onImport: {},
+            onUpgradeClick: {},
+            onDismissSummary: {}
+        )
+    }
+
+    var restoreSummaryContent: SettingsBackupSummaryContent {
+        SettingsBackupSummaryContent(
+            title: "Restore complete",
+            showsRestored: "48 shows restored",
+            episodesRestored: "612 episodes restored"
+        )
+    }
+
+    var restoreSummaryContentWithSkips: SettingsBackupSummaryContent {
+        SettingsBackupSummaryContent(
+            title: "Restore complete",
+            showsRestored: "45 shows restored",
+            episodesRestored: "598 episodes restored",
+            showsSkipped: "3 shows couldn't be restored",
+            skippedShows: ["Severance", "The Bear", "Shōgun"],
+            rewatchNotice: "Rewatch history wasn't restored."
+        )
+    }
+
     func rootSections(authenticated: Bool) -> [SettingsRootSection] {
         var sections: [SettingsRootSection] = []
         if authenticated {
@@ -242,7 +332,8 @@ extension SettingsScreenTest {
         customNotificationToggles: [SettingsToggleItem]? = nil,
         customBehaviorToggles: [SettingsToggleItem]? = nil,
         fontSizePercent: Int = 100,
-        customPosterStyleItem: SettingsPosterStyleItem? = nil
+        customPosterStyleItem: SettingsPosterStyleItem? = nil,
+        customBackupContent: SettingsBackupContent? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
@@ -263,7 +354,8 @@ extension SettingsScreenTest {
             privacyLinks: privacyLinks,
             infoContent: infoContent,
             licenseSections: licenseSections,
-            accountContent: customAccountContent ?? accountContent(authenticated: authenticated)
+            accountContent: customAccountContent ?? accountContent(authenticated: authenticated),
+            backupContent: customBackupContent ?? backupContent()
         )
     }
 }

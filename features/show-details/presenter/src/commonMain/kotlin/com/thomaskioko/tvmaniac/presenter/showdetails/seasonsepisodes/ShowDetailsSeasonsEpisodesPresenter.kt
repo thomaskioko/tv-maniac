@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
-import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
@@ -25,16 +24,18 @@ import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveContinueTrackingInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObserveSeasonsInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.toContinueTrackingModels
 import com.thomaskioko.tvmaniac.presenter.showdetails.toScrollIndex
 import com.thomaskioko.tvmaniac.presenter.showdetails.toSeasonModels
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
+import com.thomaskioko.tvmaniac.ratingsheet.presenter.promptForEpisodeRating
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.scope.ShowDetailsChildScope
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionParam
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -155,9 +156,26 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
                         markPreviousEpisodes = false,
                     ),
                 ).onCompletion {
-                    showRatingPrompt(showId = action.showId, episodeId = action.episodeId)
+                    navigator.promptForEpisodeRating(
+                        interactor = shouldPromptForRatingInteractor,
+                        showId = action.showId,
+                        episodeId = action.episodeId,
+                    )
                 }
             }
+
+            is ShowDetailsEpisodeWatchedLongPressed -> navigator.navigateTo(
+                WatchDateSelectionRoute(
+                    WatchDateSelectionParam(
+                        target = WatchedDateTarget.EPISODE,
+                        showId = action.showId,
+                        episodeId = action.episodeId,
+                        seasonNumber = action.seasonNumber,
+                        episodeNumber = action.episodeNumber,
+                        isEdit = true,
+                    ),
+                ),
+            )
 
             is ShowDetailsMarkEpisodeUnwatched -> coroutineScope.launchUpdating(
                 id = action.episodeId,
@@ -194,17 +212,6 @@ public class ShowDetailsSeasonsEpisodesPresenter internal constructor(
                 .distinctUntilChanged()
                 .filter { it }
                 .collect { syncWatchStatus(forceRefresh = true) }
-        }
-    }
-
-    private suspend fun showRatingPrompt(showId: Long, episodeId: Long) {
-        val shouldPrompt = shouldPromptForRatingInteractor(
-            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
-        )
-        if (shouldPrompt) {
-            navigator.navigateTo(
-                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
-            )
         }
     }
 

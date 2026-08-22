@@ -12,7 +12,6 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.core.view.launchUpdating
-import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveUpNextSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistSectionsInteractor
 import com.thomaskioko.tvmaniac.domain.continuewatching.SyncContinueWatchingInteractor
@@ -20,13 +19,13 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
+import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.ContinueWatchingNitroFlagQualifier
 import com.thomaskioko.tvmaniac.myshows.nav.MyShowsRoot
 import com.thomaskioko.tvmaniac.myshows.nav.scope.MyShowsChildScope
 import com.thomaskioko.tvmaniac.navigation.Navigator
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
-import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
+import com.thomaskioko.tvmaniac.ratingsheet.presenter.promptForEpisodeRating
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -34,6 +33,8 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionParam
+import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import com.thomaskioko.tvmaniac.watchlistprefs.api.WatchlistPrefsRepository
 import dev.zacsweers.metro.Inject
 import io.github.thomaskioko.codegen.annotations.ChildPresenter
@@ -154,6 +155,18 @@ public class ContinueWatchingPresenter internal constructor(
             is UpNextEpisodeClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is ShowTitleClicked -> navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(showId = action.showId)))
             is MarkUpNextEpisodeWatched -> markEpisodeWatched(action)
+            is MarkUpNextEpisodeWatchedLongPressed -> navigator.navigateTo(
+                WatchDateSelectionRoute(
+                    WatchDateSelectionParam(
+                        target = WatchedDateTarget.EPISODE,
+                        showId = action.showId,
+                        episodeId = action.episodeId,
+                        seasonNumber = action.seasonNumber,
+                        episodeNumber = action.episodeNumber,
+                        isEdit = true,
+                    ),
+                ),
+            )
             is UnfollowShowFromUpNext -> unfollowShow(action.showId)
             is OpenSeasonFromUpNext -> navigator.navigateTo(
                 SeasonDetailsRoute(
@@ -186,19 +199,12 @@ public class ContinueWatchingPresenter internal constructor(
                     episodeNumber = action.episodeNumber,
                 ),
             ).onCompletion {
-                promptForRating(showId = action.showId, episodeId = action.episodeId)
+                navigator.promptForEpisodeRating(
+                    interactor = shouldPromptForRatingInteractor,
+                    showId = action.showId,
+                    episodeId = action.episodeId,
+                )
             }
-        }
-    }
-
-    private suspend fun promptForRating(showId: Long, episodeId: Long) {
-        val shouldPrompt = shouldPromptForRatingInteractor(
-            ShouldPromptForRatingInteractor.Param(showId = showId, episodeId = episodeId),
-        )
-        if (shouldPrompt) {
-            navigator.navigateTo(
-                RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.EPISODE, id = episodeId)),
-            )
         }
     }
 
@@ -215,11 +221,9 @@ public class ContinueWatchingPresenter internal constructor(
     }
 
     public fun onQueryChanged(query: String) {
-        coroutineScope.launch {
-            queryFlow.emit(query)
-            observeWatchlistSectionsInteractor(query)
-            observeUpNextSectionsInteractor(query)
-        }
+        queryFlow.value = query
+        observeWatchlistSectionsInteractor(query)
+        observeUpNextSectionsInteractor(query)
     }
 
     /**

@@ -43,10 +43,12 @@ import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.test
 import com.thomaskioko.tvmaniac.search.nav.SearchRoute
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
+import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
 import com.thomaskioko.tvmaniac.startwatching.testing.FakeStartWatchingRepository
 import com.thomaskioko.tvmaniac.topratedshows.data.api.TopRatedShowsInteractor
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -103,6 +105,35 @@ class DiscoverShowsPresenterTest {
             state.isLoading shouldBe false
             state.isEmpty shouldBe false
             state.isRefreshing shouldBe false
+            state.showError shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should show content given only the local shows have data`() = runTest {
+        startWatchingRepository.setStartWatchingShows(
+            listOf(
+                StartWatchingShow(
+                    showId = 1L,
+                    tmdbId = 11L,
+                    title = "Breaking Bad",
+                    posterPath = "/1.jpg",
+                    year = "2008",
+                    inLibrary = true,
+                ),
+            ),
+        )
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            setCatalogData(persistentListOf())
+
+            testScheduler.advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            state.isEmpty shouldBe false
+            state.isLoading shouldBe false
             state.showError shouldBe false
             cancelAndIgnoreRemainingEvents()
         }

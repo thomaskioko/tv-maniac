@@ -15,6 +15,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.data.cast.api)
                 api(projects.data.episode.api)
+                api(projects.data.rewatch.api)
                 api(projects.data.seasondetails.api)
             }
         }

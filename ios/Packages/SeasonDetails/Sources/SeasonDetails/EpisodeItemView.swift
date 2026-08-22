@@ -30,6 +30,7 @@ public struct EpisodeItemView: View {
     private let cornerRadius: CGFloat
     private let posterRadius: CGFloat
     private let onWatchedToggle: () -> Void
+    private let onWatchedLongPress: (() -> Void)?
 
     public init(
         imageUrl: String?,
@@ -46,7 +47,8 @@ public struct EpisodeItemView: View {
         shadowToken: TvManiacShadowToken? = nil,
         cornerRadius: CGFloat = Constants.defaultCornerRadius,
         posterRadius: CGFloat = Constants.defaultPosterRadius,
-        onWatchedToggle: @escaping () -> Void = {}
+        onWatchedToggle: @escaping () -> Void = {},
+        onWatchedLongPress: (() -> Void)? = nil
     ) {
         self.imageUrl = imageUrl
         self.episodeTitle = episodeTitle
@@ -63,6 +65,7 @@ public struct EpisodeItemView: View {
         self.cornerRadius = cornerRadius
         self.posterRadius = posterRadius
         self.onWatchedToggle = onWatchedToggle
+        self.onWatchedLongPress = onWatchedLongPress
     }
 
     public var body: some View {
@@ -134,6 +137,13 @@ public struct EpisodeItemView: View {
                 }
             }
             .buttonStyle(.plain)
+            .highPriorityGesture(
+                LongPressGesture().onEnded { _ in
+                    guard let onWatchedLongPress else { return }
+                    Haptics.impact(isEnabled: hapticFeedbackEnabled, style: .medium)
+                    onWatchedLongPress()
+                }
+            )
             .padding(.trailing, theme.spacing.medium)
         } else if let daysUntilAir, daysUntilAir > 0 {
             VStack(spacing: 0) {

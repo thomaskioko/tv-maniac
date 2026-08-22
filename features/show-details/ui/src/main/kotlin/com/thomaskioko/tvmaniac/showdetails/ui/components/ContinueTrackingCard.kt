@@ -35,6 +35,7 @@ internal fun ContinueTrackingCard(
     episode: ContinueTrackingEpisodeModel,
     onMarkWatched: () -> Unit,
     modifier: Modifier = Modifier,
+    onMarkWatchedLongPress: (() -> Unit)? = null,
     isUpdating: Boolean = false,
 ) {
     Card(
@@ -86,6 +87,7 @@ internal fun ContinueTrackingCard(
                     isWatched = episode.isWatched,
                     isUpdating = isUpdating,
                     onToggle = onMarkWatched,
+                    onLongPress = onMarkWatchedLongPress,
                     modifier = Modifier
                         .padding(end = TvManiacSpacing.small)
                         .testTag(ShowDetailsTestTags.continueTrackingMarkWatchedButton(episode.episodeId)),

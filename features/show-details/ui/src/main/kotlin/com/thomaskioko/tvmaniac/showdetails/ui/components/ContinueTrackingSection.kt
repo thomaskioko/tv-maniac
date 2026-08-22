@@ -45,6 +45,7 @@ internal fun ContinueTrackingSection(
     scrollIndex: Int,
     onMarkWatched: (ContinueTrackingEpisodeModel) -> Unit,
     modifier: Modifier = Modifier,
+    onMarkWatchedLongPress: ((ContinueTrackingEpisodeModel) -> Unit)? = null,
     updatingEpisodeIds: ImmutableSet<Long> = persistentSetOf(),
 ) {
     Box(
@@ -101,6 +102,7 @@ internal fun ContinueTrackingSection(
                         ContinueTrackingCard(
                             episode = episode,
                             onMarkWatched = { onMarkWatched(episode) },
+                            onMarkWatchedLongPress = onMarkWatchedLongPress?.let { { it(episode) } },
                             isUpdating = episode.episodeId in updatingEpisodeIds,
                         )
                     }

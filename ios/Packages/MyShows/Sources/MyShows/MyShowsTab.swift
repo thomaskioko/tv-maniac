@@ -285,6 +285,14 @@ public struct MyShowsTab: View {
                     episodeNumber: episode.episodeNumberValue
                 ))
             },
+            onMarkWatchedLongPress: { episode in
+                continueWatchingPresenter.dispatch(action: MarkUpNextEpisodeWatchedLongPressed(
+                    showId: episode.showId,
+                    episodeId: episode.episodeId,
+                    seasonNumber: episode.seasonNumber,
+                    episodeNumber: episode.episodeNumberValue
+                ))
+            },
             onRefresh: { try? await continueWatchingPresenter.refresh() }
         )
     }

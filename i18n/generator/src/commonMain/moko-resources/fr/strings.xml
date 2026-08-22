@@ -4,6 +4,8 @@
     <string name="label_tbd">À déterminer</string>
     <string name="label_error">Erreur</string>
     <string name="label_ok">OK</string>
+    <string name="label_save">Enregistrer</string>
+    <string name="label_cancel">Annuler</string>
 
     <string name="label_tab_discover">Découvrir</string>
     <string name="label_discover_upcoming">À venir</string>
@@ -560,5 +562,76 @@
     <string name="label_watch_status_on_hold">En pause</string>
     <string name="label_watch_status_dropped">Abandonnées</string>
 
+    <string name="label_remove_watch_confirm_title">Retirer des épisodes vus ?</string>
+    <string name="label_remove_watch_confirm_message">\"%1$s\" ne comptera plus comme vu.</string>
+
     <string name="label_rewatch_simkl_free_tier">Simkl n\'enregistre pas les revisionnages sans forfait payant. Ce décompte reste sur cet appareil.</string>
+
+    <string name="label_watched_date_title">Quand avez-vous regardé ceci ?</string>
+    <string name="label_watched_date_edit_title">Modifier la date de visionnage</string>
+    <string name="label_watched_date_just_now">À l\'instant</string>
+    <string name="label_watched_date_release_date">Date de diffusion</string>
+    <string name="label_watched_date_other">Autre date…</string>
+    <string name="label_watched_date_unknown">Date inconnue</string>
+    <string name="label_watched_date_unknown_display">Il y a longtemps</string>
+    <string name="label_mark_show_watched">Marquer la série comme vue</string>
+    <string name="label_mark_show_watched_confirm_title">Marquer la série comme vue ?</string>
+
+    <string name="settings_backup_title">Sauvegarde et restauration</string>
+    <string name="settings_backup_description">Enregistrez vos séries dans un fichier et rechargez-les</string>
+    <string name="settings_backup_export_title">Enregistrer une sauvegarde</string>
+    <string name="settings_backup_export_description">Écrire vos séries, votre historique, vos notes et vos réglages dans un fichier</string>
+    <string name="settings_backup_export_success">Sauvegarde enregistrée</string>
+    <string name="settings_backup_import_title">Restaurer une sauvegarde</string>
+    <string name="settings_backup_import_description">Remplacer les données de cet appareil par un fichier de sauvegarde</string>
+    <string name="settings_backup_restore_confirm_title">Restaurer cette sauvegarde ?</string>
+    <string name="settings_backup_restore_confirm_message">Cela remplace les séries et l\'historique de cet appareil. Une copie de vos données actuelles est enregistrée au préalable.</string>
+    <string name="settings_backup_restore_confirm_message_connected">Cela remplace les séries et l\'historique de cet appareil. Une copie de vos données actuelles est enregistrée au préalable. Vous êtes connecté à %1$s, donc les séries que vous n\'y ajoutez pas seront supprimées lors de la prochaine synchronisation.</string>
+    <string name="settings_backup_restore_confirm_button">Restaurer</string>
+    <string name="settings_backup_restore_confirm_account_button">Restaurer et synchroniser avec %1$s</string>
+    <string name="settings_backup_restore_confirm_device_button">Restaurer localement</string>
+    <string name="settings_backup_restore_summary_title">Restauration terminée</string>
+    <string name="settings_backup_restore_summary_added_to_account">Ajouté à %1$s</string>
+    <string name="settings_backup_restore_summary_rewatch">Les visionnages répétés n\'étaient pas inclus dans cette sauvegarde</string>
+    <string name="settings_auto_backup_title">Sauvegarde automatique</string>
+    <string name="settings_auto_backup_description">Enregistrez vos séries, votre historique, vos notes et vos réglages dans un fichier selon une planification</string>
+    <string name="settings_auto_backup_schedule_title">Fréquence</string>
+    <string name="settings_auto_backup_schedule_daily">Tous les jours</string>
+    <string name="settings_auto_backup_schedule_weekly">Toutes les semaines</string>
+    <string name="settings_auto_backup_schedule_fortnightly">Toutes les deux semaines</string>
+    <string name="settings_auto_backup_schedule_monthly">Tous les mois</string>
+    <string name="settings_auto_backup_location_title">Emplacement de sauvegarde</string>
+    <string name="settings_backup_file_name_title">Nom du fichier</string>
+    <string name="settings_backup_file_name_message">Les sauvegardes sont enregistrées sous ce nom</string>
+    <string name="settings_auto_backup_location_none">Choisissez où enregistrer les sauvegardes</string>
+    <string name="settings_auto_backup_last_run">Dernière sauvegarde %1$s</string>
+    <string name="settings_auto_backup_last_run_never">Aucune sauvegarde enregistrée</string>
+    <string name="settings_auto_backup_last_run_failed">La dernière sauvegarde automatique a échoué. Vérifiez que l\'emplacement est toujours disponible, puis sauvegardez maintenant.</string>
+    <string name="settings_auto_backup_now_title">Sauvegarder maintenant</string>
+    <string name="settings_auto_backup_now_description">Enregistrez une sauvegarde immédiatement, sans attendre la planification</string>
+    <string name="error_backup_save_failed">Impossible d\'enregistrer la sauvegarde. Essayez un autre emplacement.</string>
+    <string name="error_backup_location_unavailable">TvManiac ne peut plus écrire à cet emplacement. Choisissez à nouveau où enregistrer les sauvegardes.</string>
+    <string name="error_backup_file_name_invalid">Ce nom ne peut pas être utilisé. Essayez-en un sans barres obliques ni deux-points.</string>
+    <string name="error_backup_read_failed">Impossible de lire ce fichier. Il est peut-être endommagé ou provient d\'une autre application.</string>
+    <string name="error_backup_version_too_new">Cette sauvegarde a été créée avec une version plus récente de TvManiac. Mettez l\'application à jour pour la restaurer.</string>
+    <string name="error_backup_sync_in_progress">Une synchronisation est en cours. Attendez qu\'elle se termine, puis réessayez.</string>
+    <string name="label_backup_locked_title">La sauvegarde est une fonctionnalité Premium</string>
+    <string name="label_backup_locked_message">Passez à Premium pour sauvegarder et restaurer vos séries.</string>
+
+    <string name="dialog_button_just_this">Uniquement celui-ci</string>
+    <string name="dialog_button_just_this_season">Uniquement cette saison</string>
+    <string name="dialog_button_mark_all">Tout marquer</string>
+    <string name="dialog_button_mark_all_seasons">Marquer toutes les saisons</string>
+    <string name="dialog_message_episode_unwatched">Voulez-vous vraiment marquer cet épisode comme non vu ?</string>
+    <string name="dialog_title_episode_unwatched">Marquer l\'épisode comme non vu ?</string>
+    <string name="dialog_title_mark_previous">Marquer les épisodes précédents ?</string>
+    <string name="dialog_title_mark_previous_seasons">Marquer les saisons précédentes ?</string>
+    <string name="label_action_more">Plus</string>
+    <string name="label_action_watch_again">Revoir</string>
+    <string name="label_watch_again_confirm_message">Les épisodes que vous marquez à partir de maintenant comptent pour un nouveau visionnage de « %1$s ».</string>
+    <string name="label_watch_again_confirm_title">Revoir ?</string>
+    <string name="menu_mark_watched">Marquer comme vu</string>
+    <string name="menu_open_season">Ouvrir la saison</string>
+    <string name="menu_open_show">Ouvrir la série</string>
+    <string name="menu_unfollow_show">Ne plus suivre</string>
 </resources>

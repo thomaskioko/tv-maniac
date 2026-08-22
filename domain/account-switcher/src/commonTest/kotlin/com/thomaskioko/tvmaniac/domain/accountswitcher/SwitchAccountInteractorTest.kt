@@ -31,17 +31,18 @@ internal class SwitchAccountInteractorTest {
     )
 
     @Test
-    fun `should clear state and set new provider given switch`() = runTest {
+    fun `should clear state and set the new provider given the user switches accounts`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
 
-        logoutHandler.cleared shouldBe true
+        logoutHandler.accountAndTrackingDataCleared shouldBe true
+        logoutHandler.accountDataCleared shouldBe false
         accountManager.getActiveProvider() shouldBe SyncProviderSource.SIMKL
     }
 
     @Test
-    fun `should run all resync interactors given switch`() = runTest {
+    fun `should run every resync interactor given the user switches accounts`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
 
         buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
@@ -53,7 +54,7 @@ internal class SwitchAccountInteractorTest {
     }
 
     @Test
-    fun `should logout old provider before clear given active provider exists`() = runTest {
+    fun `should log out of the old provider before clearing given one is connected`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         accountManager.setAccounts(
             listOf(ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true, isActive = true)),
@@ -65,7 +66,7 @@ internal class SwitchAccountInteractorTest {
     }
 
     @Test
-    fun `should not logout given no active provider on first activation`() = runTest {
+    fun `should not log out given no provider is connected on first activation`() = runTest {
         accountManager.setActiveProvider(null)
 
         buildInteractor(backgroundScope).executeSync(SyncProviderSource.SIMKL)
@@ -75,7 +76,7 @@ internal class SwitchAccountInteractorTest {
     }
 
     @Test
-    fun `should execute in order logout then clear then setActive then resync given switch`() = runTest {
+    fun `should log out then clear then activate then resync given the user switches accounts`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         accountManager.setAccounts(
             listOf(ConnectedAccount(provider = SyncProviderSource.TRAKT, isConnected = true, isActive = true)),
@@ -84,8 +85,12 @@ internal class SwitchAccountInteractorTest {
 
         val interactor = SwitchAccountInteractor(
             logoutHandler = object : LogoutHandler {
-                override suspend fun clear() {
-                    events.add("clear")
+                override suspend fun clearAccountData() {
+                    events.add("clearAccountData")
+                }
+
+                override suspend fun clearAccountAndTrackingData() {
+                    events.add("clearAccountAndTrackingData")
                 }
             },
             accountManager = object : AccountManager by accountManager {
@@ -110,7 +115,7 @@ internal class SwitchAccountInteractorTest {
 
         events shouldBe listOf(
             "logout:TRAKT",
-            "clear",
+            "clearAccountAndTrackingData",
             "setActive:SIMKL",
             "resyncProfile",
             "resyncLibrary",

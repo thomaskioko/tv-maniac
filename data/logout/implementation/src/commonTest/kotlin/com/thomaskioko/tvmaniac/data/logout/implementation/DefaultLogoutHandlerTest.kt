@@ -18,10 +18,14 @@ import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerReposit
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -84,15 +88,57 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should empty watched_episodes given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should keep watched episodes given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
 
-        database.watchedEpisodesQueries.getWatchedEpisodes(showIdForBreakingBad).executeAsList().shouldBeEmpty()
+        database.watchedEpisodesQueries.getWatchedEpisodes(showIdForBreakingBad).executeAsList() shouldHaveSize 2
     }
 
     @Test
-    fun `should empty watched_show_sync_log given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should keep pending uploads given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.watchedEpisodesQueries.countPendingActions().executeAsOne() shouldBe 1L
+    }
+
+    @Test
+    fun `should keep followed shows given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.followedShowsQueries.countEntries().executeAsOne() shouldBe 1L
+    }
+
+    @Test
+    fun `should keep continue watching given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.continueWatchingQueries.entries().executeAsList().shouldNotBeEmpty()
+    }
+
+    @Test
+    fun `should keep watch status given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.showWatchStatusQueries.statusForShow(showIdForBreakingBad).executeAsOneOrNull().shouldNotBeNull()
+    }
+
+    @Test
+    fun `should keep user ratings given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.ratingsQueries.observeShowRating(showIdForBreakingBad).executeAsOneOrNull().shouldNotBeNull()
+    }
+
+    @Test
+    fun `should keep rewatch sessions given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.rewatchQueries.sessionsForShow(showIdForBreakingBad).executeAsList().shouldNotBeEmpty()
+    }
+
+    @Test
+    fun `should clear watched show sync log given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
 
         database.watchedShowSyncLogQueries
             .getRemoteUpdatedAt(showIdForBreakingBad, "TRAKT")
@@ -101,128 +147,141 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should empty followed_shows given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
-
-        database.followedShowsQueries.countEntries().executeAsOne() shouldBe 0L
-    }
-
-    @Test
-    fun `should empty continue_watching given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
-
-        database.continueWatchingQueries.entries().executeAsList().shouldBeEmpty()
-    }
-
-    @Test
-    fun `should empty favorite_shows given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should clear favorite shows given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
 
         database.favoritesQueries.favoriteShows().executeAsList().shouldBeEmpty()
     }
 
     @Test
-    fun `should empty trakt_list_shows given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should clear trakt lists given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
 
+        database.traktListsQueries.selectAll().executeAsList().shouldBeEmpty()
         database.traktListShowsQueries.countActiveByListId().executeAsList().shouldBeEmpty()
     }
 
     @Test
-    fun `should empty trakt_lists given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
-
-        database.traktListsQueries.selectAll().executeAsList().shouldBeEmpty()
-    }
-
-    @Test
-    fun `should empty show_watch_status given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
-
-        database.showWatchStatusQueries.statusForShow(showIdForBreakingBad).executeAsOneOrNull().shouldBeNull()
-    }
-
-    @Test
-    fun `should empty calendar_entry given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should clear calendar entries given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
 
         database.calendarQueries.hasEntriesInRange(0L, Long.MAX_VALUE).executeAsOne() shouldBe false
     }
 
     @Test
-    fun `should empty show_ratings given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should clear provider metadata given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.tvshowProviderMetaQueries
+            .providerRating(showIdForBreakingBad, Provider.TRAKT)
+            .executeAsOneOrNull()
+            .shouldBeNull()
+    }
+
+    @Test
+    fun `should clear the current account given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        fakeUserRepository.getCurrentUser().shouldBeNull()
+    }
+
+    @Test
+    fun `should clear trakt activity given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        fakeTraktActivityRepository.clearAllInvocationCount() shouldBe 1
+    }
+
+    @Test
+    fun `should clear activity sync given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        fakeActivitySyncRepository.clearAllCallCount() shouldBe 1
+    }
+
+    @Test
+    fun `should cancel in-flight sync work given the user logs out`() = runTest(testDispatcher) {
+        val job = syncCoroutineScope.scope.launch { awaitCancellation() }
+        job.isActive shouldBe true
+
+        cleaner.clearAccountData()
+
+        job.isCancelled shouldBe true
+    }
+
+    @Test
+    fun `should clear watched episodes given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
+
+        database.watchedEpisodesQueries.getWatchedEpisodes(showIdForBreakingBad).executeAsList().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should clear followed shows given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
+
+        database.followedShowsQueries.countEntries().executeAsOne() shouldBe 0L
+    }
+
+    @Test
+    fun `should clear continue watching given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
+
+        database.continueWatchingQueries.entries().executeAsList().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should clear watch status given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
+
+        database.showWatchStatusQueries.statusForShow(showIdForBreakingBad).executeAsOneOrNull().shouldBeNull()
+    }
+
+    @Test
+    fun `should clear show ratings given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
 
         database.ratingsQueries.showRatingsWithUploadPendingAction().executeAsList().shouldBeEmpty()
         database.ratingsQueries.observeShowRating(showIdForBreakingBad).executeAsOneOrNull().shouldBeNull()
     }
 
     @Test
-    fun `should empty season_ratings and episode_ratings given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should clear season and episode ratings given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
 
         database.ratingsQueries.seasonRatingsWithUploadPendingAction().executeAsList().shouldBeEmpty()
         database.ratingsQueries.episodeRatingsWithUploadPendingAction().executeAsList().shouldBeEmpty()
     }
 
     @Test
-    fun `should empty rewatch_session given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should clear rewatch sessions given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
 
         database.rewatchQueries.sessionsForShow(showIdForBreakingBad).executeAsList().shouldBeEmpty()
     }
 
     @Test
-    fun `should reset the play count given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should reset the rewatch count given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
 
-        rewatchSessionDao.playCountForEpisode(REWATCHED_EPISODE_ID) shouldBe 1L
+        rewatchSessionDao.observeEpisodeRewatches(REWATCHED_EPISODE_ID).first() shouldBe 0L
     }
 
     @Test
-    fun `should empty tvshow_provider_meta given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should clear favorites lists and calendar given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
 
-        database.tvshowProviderMetaQueries.providerRating(showIdForBreakingBad, Provider.TRAKT).executeAsOneOrNull().shouldBeNull()
+        database.favoritesQueries.favoriteShows().executeAsList().shouldBeEmpty()
+        database.traktListsQueries.selectAll().executeAsList().shouldBeEmpty()
+        database.calendarQueries.hasEntriesInRange(0L, Long.MAX_VALUE).executeAsOne() shouldBe false
     }
 
     @Test
-    fun `should preserve tvshow catalog rows given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
+    fun `should keep tvshow catalog rows given the user switches accounts`() = runTest(testDispatcher) {
+        cleaner.clearAccountAndTrackingData()
 
         database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOneOrNull() shouldBe showIdForBreakingBad
         database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(THE_WIRE_TMDB_ID)).executeAsOneOrNull() shouldBe showIdForTheWire
-    }
-
-    @Test
-    fun `should cancel in-flight sync work given clear called`() = runTest(testDispatcher) {
-        val job = syncCoroutineScope.scope.launch { awaitCancellation() }
-        job.isActive shouldBe true
-
-        cleaner.clear()
-
-        job.isCancelled shouldBe true
-    }
-
-    @Test
-    fun `should clear user data given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
-
-        fakeUserRepository.getCurrentUser().shouldBeNull()
-    }
-
-    @Test
-    fun `should clear trakt activity given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
-
-        fakeTraktActivityRepository.clearAllInvocationCount() shouldBe 1
-    }
-
-    @Test
-    fun `should clear activity sync given clear called`() = runTest(testDispatcher) {
-        cleaner.clear()
-
-        fakeActivitySyncRepository.clearAllCallCount() shouldBe 1
     }
 
     private fun addUserState() {
@@ -235,6 +294,15 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             1L,
             now,
             PendingAction.NOTHING.value,
+        )
+
+        database.watchedEpisodesQueries.upsert(
+            showIdForBreakingBad,
+            null,
+            1L,
+            2L,
+            now,
+            PendingAction.UPLOAD.value,
         )
 
         database.watchedShowSyncLogQueries.upsert(

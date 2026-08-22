@@ -35,6 +35,12 @@ public data class MarkEpisodeUnwatched(
     val episodeId: Long,
 ) : SeasonDetailsAction
 
+public data class EpisodeWatchedLongPressed(
+    val episodeId: Long,
+    val seasonNumber: Long,
+    val episodeNumber: Long,
+) : SeasonDetailsAction
+
 public data class ToggleEpisodeWatched(
     val episodeId: Long,
 ) : SeasonDetailsAction

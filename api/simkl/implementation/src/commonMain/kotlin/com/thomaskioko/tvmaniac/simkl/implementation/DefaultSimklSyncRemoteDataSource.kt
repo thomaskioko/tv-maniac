@@ -5,6 +5,8 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.authSafeRequest
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.simkl.api.SimklSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddHistoryResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddToListRequest
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddToListResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAllItemsResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklLastActivitiesResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveHistoryResponse
@@ -60,6 +62,16 @@ public class DefaultSimklSyncRemoteDataSource(
             url {
                 method = HttpMethod.Post
                 path("sync/history/remove")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+
+    override suspend fun addToList(request: SimklAddToListRequest): ApiResponse<SimklAddToListResponse> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Post
+                path("sync/add-to-list")
             }
             contentType(ContentType.Application.Json)
             setBody(request)

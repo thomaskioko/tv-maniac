@@ -51,6 +51,7 @@ import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.i18n.testing.util.BaseLocalizerTest
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.ShowDetailsCastPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.di.ShowDetailsCastChildGraph
@@ -86,7 +87,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class ShowDetailsPresenterTest {
+internal class ShowDetailsPresenterTest : BaseLocalizerTest() {
 
     private val testDispatcher = StandardTestDispatcher()
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
@@ -302,6 +303,7 @@ internal class ShowDetailsPresenterTest {
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
             observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
             observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
+            observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(episodeRepository),
             startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
             datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
@@ -366,6 +368,7 @@ internal class ShowDetailsPresenterTest {
             ),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(
                 episodeRepository = episodeRepository,
+                rewatchRepository = rewatchRepository,
             ),
             datastoreRepository = datastoreRepository,
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,

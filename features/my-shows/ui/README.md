@@ -80,6 +80,10 @@ graph TB
     direction TB
     :data:request-manager:api[api]:::multiplatform
   end
+  subgraph :data:rewatch
+    direction TB
+    :data:rewatch:api[api]:::multiplatform
+  end
   subgraph :data:seasondetails
     direction TB
     :data:seasondetails:api[api]:::multiplatform
@@ -130,6 +134,7 @@ graph TB
     :domain:episode[episode]:::multiplatform
     :domain:followedshows[followedshows]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
+    :domain:rewatch[rewatch]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:start-watching[start-watching]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
@@ -153,6 +158,7 @@ graph TB
   subgraph :features:rating-sheet
     direction TB
     :features:rating-sheet:nav[nav]:::multiplatform
+    :features:rating-sheet:presenter[presenter]:::multiplatform
   end
   subgraph :features:season-details
     direction TB
@@ -166,6 +172,10 @@ graph TB
     direction TB
     :features:start-watching:presenter[presenter]:::multiplatform
     :features:start-watching:ui[ui]:::android-library
+  end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
   end
   subgraph :i18n
     direction TB
@@ -201,6 +211,8 @@ graph TB
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:rewatch:api --> :core:network-util:api
+  :data:rewatch:api --> :data:account-manager:api
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
@@ -231,11 +243,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api
   :domain:followedshows --> :data:library:api
@@ -243,6 +258,10 @@ graph TB
   :domain:ratings --> :data:datastore:api
   :domain:ratings --> :data:ratings:api
   :domain:ratings --> :data:subscription:api
+  :domain:rewatch --> :core:base
+  :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
+  :domain:rewatch --> :data:rewatch:api
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
   :domain:showdetails --> :data:cast:api
@@ -274,8 +293,10 @@ graph TB
   :features:continue-watching:presenter --> :domain:ratings
   :features:continue-watching:presenter --> :features:my-shows:nav
   :features:continue-watching:presenter --> :features:rating-sheet:nav
+  :features:continue-watching:presenter --> :features:rating-sheet:presenter
   :features:continue-watching:presenter -.-> :features:season-details:nav
   :features:continue-watching:presenter -.-> :features:show-details:nav
+  :features:continue-watching:presenter --> :features:watchdate-selection:nav
   :features:continue-watching:presenter --> :i18n:api
   :features:continue-watching:presenter --> :navigation:api
   :features:continue-watching:ui -.-> :android-designsystem
@@ -311,6 +332,15 @@ graph TB
   :features:my-shows:ui --> :navigation:ui
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
+  :features:rating-sheet:presenter --> :core:base
+  :features:rating-sheet:presenter --> :core:logger:api
+  :features:rating-sheet:presenter --> :core:view
+  :features:rating-sheet:presenter --> :data:ratings:api
+  :features:rating-sheet:presenter --> :domain:ratings
+  :features:rating-sheet:presenter --> :features:rating-sheet:nav
+  :features:rating-sheet:presenter --> :i18n:api
+  :features:rating-sheet:presenter --> :i18n:generator
+  :features:rating-sheet:presenter --> :navigation:api
   :features:season-details:nav --> :navigation:api
   :features:show-details:nav --> :navigation:api
   :features:start-watching:presenter --> :core:base
@@ -329,6 +359,8 @@ graph TB
   :features:start-watching:ui -.-> :core:view
   :features:start-watching:ui --> :features:start-watching:presenter
   :features:start-watching:ui -.-> :i18n:generator
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
   :i18n:api --> :i18n:generator
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api

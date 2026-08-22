@@ -89,6 +89,11 @@ graph TB
     :data:account-manager:api[api]:::multiplatform
     :data:account-manager:implementation[implementation]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+    :data:backup:implementation[implementation]:::multiplatform
+  end
   subgraph :data:calendar
     direction TB
     :data:calendar:api[api]:::multiplatform
@@ -279,6 +284,7 @@ graph TB
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
+    :domain:backup[backup]:::multiplatform
     :domain:calendar[calendar]:::multiplatform
     :domain:continue-watching[continue-watching]:::multiplatform
     :domain:discover[discover]:::multiplatform
@@ -438,6 +444,12 @@ graph TB
     :features:upnext:presenter[presenter]:::multiplatform
     :features:upnext:ui[ui]:::android-library
   end
+  subgraph :features:watchdate-selection
+    direction TB
+    :features:watchdate-selection:nav[nav]:::multiplatform
+    :features:watchdate-selection:presenter[presenter]:::multiplatform
+    :features:watchdate-selection:ui[ui]:::android-library
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -523,6 +535,8 @@ graph TB
   :app -.-> :core:view
   :app -.-> :data:account-manager:api
   :app -.-> :data:account-manager:implementation
+  :app -.-> :data:backup:api
+  :app -.-> :data:backup:implementation
   :app -.-> :data:calendar:api
   :app -.-> :data:calendar:implementation
   :app -.-> :data:cast:implementation
@@ -589,6 +603,7 @@ graph TB
   :app -.-> :data:watchproviders:api
   :app -.-> :data:watchproviders:implementation
   :app -.-> :domain:account-switcher
+  :app -.-> :domain:backup
   :app -.-> :domain:calendar
   :app -.-> :domain:continue-watching
   :app -.-> :domain:discover
@@ -673,6 +688,9 @@ graph TB
   :app -.-> :features:trailers:presenter
   :app -.-> :features:trailers:ui
   :app -.-> :features:upnext:presenter
+  :app -.-> :features:watchdate-selection:nav
+  :app -.-> :features:watchdate-selection:presenter
+  :app -.-> :features:watchdate-selection:ui
   :app -.-> :i18n:api
   :app -.-> :i18n:generator
   :app -.-> :i18n:implementation
@@ -715,6 +733,15 @@ graph TB
   :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
+  :data:backup:implementation --> :core:appconfig:api
+  :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
+  :data:backup:implementation --> :core:syncstate:api
+  :data:backup:implementation --> :core:util:api
+  :data:backup:implementation --> :data:backup:api
+  :data:backup:implementation --> :data:database:sqldelight
+  :data:backup:implementation --> :data:datastore:api
+  :data:backup:implementation --> :data:episode:api
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:calendar:implementation --> :core:base
@@ -927,6 +954,7 @@ graph TB
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
   :data:shows:implementation --> :api:tmdb:api
+  :data:shows:implementation --> :api:trakt:api
   :data:shows:implementation --> :core:base
   :data:shows:implementation --> :core:logger:api
   :data:shows:implementation --> :data:account-manager:api
@@ -1005,13 +1033,16 @@ graph TB
   :data:traktauth:implementation --> :data:oauth:api
   :data:traktlists:implementation --> :api:trakt:api
   :data:traktlists:implementation --> :core:base
+  :data:traktlists:implementation --> :core:logger:api
   :data:traktlists:implementation -.-> :core:network-util:api
   :data:traktlists:implementation --> :core:util:api
+  :data:traktlists:implementation --> :data:backup:api
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
   :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
+  :data:traktlists:implementation --> :data:user:api
   :data:trendingshows:api --> :core:base
   :data:trendingshows:api --> :data:database:sqldelight
   :data:trendingshows:api --> :data:shows:api
@@ -1067,6 +1098,7 @@ graph TB
   :data:watchproviders:implementation --> :data:request-manager:api
   :data:watchproviders:implementation --> :data:watchproviders:api
   :domain:account-switcher --> :core:base
+  :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
@@ -1075,6 +1107,14 @@ graph TB
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
+  :domain:backup --> :core:base
+  :domain:backup --> :core:logger:api
+  :domain:backup --> :core:network-util:api
+  :domain:backup --> :core:tasks:api
+  :domain:backup --> :core:view
+  :domain:backup --> :data:backup:api
+  :domain:backup --> :data:shows:api
+  :domain:backup --> :domain:showdetails
   :domain:calendar --> :core:base
   :domain:calendar --> :core:util:api
   :domain:calendar --> :data:calendar:api
@@ -1106,11 +1146,14 @@ graph TB
   :domain:episode --> :core:logger:api
   :domain:episode --> :core:syncstate:api
   :domain:episode --> :core:tasks:api
+  :domain:episode --> :core:util:api
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:rewatch:api
+  :domain:episode --> :domain:rewatch
   :domain:favorites --> :core:base
   :domain:favorites --> :data:favorites:api
   :domain:feature-flags --> :core:base
@@ -1160,14 +1203,17 @@ graph TB
   :domain:recently-watched --> :data:episode:api
   :domain:rewatch --> :core:base
   :domain:rewatch --> :core:util:api
+  :domain:rewatch --> :data:account-manager:api
   :domain:rewatch --> :data:rewatch:api
   :domain:seasondetails --> :core:base
   :domain:seasondetails --> :data:cast:api
   :domain:seasondetails --> :data:episode:api
+  :domain:seasondetails --> :data:rewatch:api
   :domain:seasondetails --> :data:seasondetails:api
   :domain:settings --> :core:base
   :domain:settings --> :core:util:api
   :domain:settings --> :data:datastore:api
+  :domain:settings --> :data:subscription:api
   :domain:settings --> :domain:theme
   :domain:showdetails --> :core:base
   :domain:showdetails --> :core:util:api
@@ -1191,6 +1237,7 @@ graph TB
   :domain:statistics --> :data:database:sqldelight
   :domain:statistics --> :data:episode:api
   :domain:statistics --> :data:ratings:api
+  :domain:statistics --> :data:rewatch:api
   :domain:statistics --> :data:watch-status:api
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api
@@ -1232,8 +1279,10 @@ graph TB
   :features:continue-watching:presenter --> :domain:ratings
   :features:continue-watching:presenter --> :features:my-shows:nav
   :features:continue-watching:presenter --> :features:rating-sheet:nav
+  :features:continue-watching:presenter --> :features:rating-sheet:presenter
   :features:continue-watching:presenter -.-> :features:season-details:nav
   :features:continue-watching:presenter -.-> :features:show-details:nav
+  :features:continue-watching:presenter --> :features:watchdate-selection:nav
   :features:continue-watching:presenter --> :i18n:api
   :features:continue-watching:presenter --> :navigation:api
   :features:continue-watching:ui -.-> :android-designsystem
@@ -1303,13 +1352,16 @@ graph TB
   :features:episode-sheet:presenter --> :core:base
   :features:episode-sheet:presenter --> :core:logger:api
   :features:episode-sheet:presenter --> :core:view
+  :features:episode-sheet:presenter --> :data:datastore:api
   :features:episode-sheet:presenter --> :domain:episode
   :features:episode-sheet:presenter --> :domain:followedshows
   :features:episode-sheet:presenter --> :domain:ratings
+  :features:episode-sheet:presenter --> :domain:rewatch
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
   :features:episode-sheet:presenter --> :features:rating-sheet:nav
   :features:episode-sheet:presenter -.-> :features:season-details:nav
   :features:episode-sheet:presenter -.-> :features:show-details:nav
+  :features:episode-sheet:presenter --> :features:watchdate-selection:nav
   :features:episode-sheet:presenter --> :i18n:api
   :features:episode-sheet:presenter -.-> :i18n:generator
   :features:episode-sheet:presenter --> :navigation:api
@@ -1547,6 +1599,7 @@ graph TB
   :features:season-details:presenter -.-> :features:episode-sheet:nav
   :features:season-details:presenter --> :features:rating-sheet:nav
   :features:season-details:presenter --> :features:season-details:nav
+  :features:season-details:presenter --> :features:watchdate-selection:nav
   :features:season-details:presenter --> :navigation:api
   :features:season-details:ui -.-> :android-designsystem
   :features:season-details:ui --> :core:base
@@ -1563,13 +1616,16 @@ graph TB
   :features:settings:presenter --> :core:logger:api
   :features:settings:presenter --> :core:view
   :features:settings:presenter --> :data:account-manager:api
+  :features:settings:presenter --> :data:backup:api
   :features:settings:presenter --> :data:datastore:api
   :features:settings:presenter --> :data:rewatch:api
   :features:settings:presenter --> :data:subscription:api
   :features:settings:presenter --> :data:user:api
   :features:settings:presenter --> :domain:account-switcher
+  :features:settings:presenter --> :domain:backup
   :features:settings:presenter --> :domain:logout
   :features:settings:presenter --> :domain:notifications
+  :features:settings:presenter --> :domain:rewatch
   :features:settings:presenter --> :domain:settings
   :features:settings:presenter --> :domain:theme
   :features:settings:presenter -.-> :features:debug:nav
@@ -1608,11 +1664,13 @@ graph TB
   :features:show-details:presenter --> :domain:similarshows
   :features:show-details:presenter --> :domain:traktlists
   :features:show-details:presenter --> :features:rating-sheet:nav
+  :features:show-details:presenter --> :features:rating-sheet:presenter
   :features:show-details:presenter --> :features:root:nav
   :features:show-details:presenter -.-> :features:season-details:nav
   :features:show-details:presenter --> :features:show-details:nav
   :features:show-details:presenter --> :features:show-list:nav
   :features:show-details:presenter -.-> :features:trailers:nav
+  :features:show-details:presenter --> :features:watchdate-selection:nav
   :features:show-details:presenter --> :i18n:api
   :features:show-details:presenter --> :navigation:api
   :features:show-details:ui -.-> :android-designsystem
@@ -1709,8 +1767,10 @@ graph TB
   :features:upnext:presenter -.-> :features:episode-sheet:nav
   :features:upnext:presenter --> :features:progress:nav
   :features:upnext:presenter --> :features:rating-sheet:nav
+  :features:upnext:presenter --> :features:rating-sheet:presenter
   :features:upnext:presenter -.-> :features:season-details:nav
   :features:upnext:presenter -.-> :features:show-details:nav
+  :features:upnext:presenter --> :features:watchdate-selection:nav
   :features:upnext:presenter --> :navigation:api
   :features:upnext:ui -.-> :android-designsystem
   :features:upnext:ui -.-> :core:test-tags
@@ -1718,10 +1778,35 @@ graph TB
   :features:upnext:ui -.-> :domain:continue-watching
   :features:upnext:ui --> :features:upnext:presenter
   :features:upnext:ui -.-> :i18n:generator
+  :features:watchdate-selection:nav --> :data:episode:api
+  :features:watchdate-selection:nav --> :navigation:api
+  :features:watchdate-selection:presenter --> :core:base
+  :features:watchdate-selection:presenter --> :core:logger:api
+  :features:watchdate-selection:presenter --> :core:util:api
+  :features:watchdate-selection:presenter --> :core:view
+  :features:watchdate-selection:presenter --> :data:episode:api
+  :features:watchdate-selection:presenter --> :data:ratings:api
+  :features:watchdate-selection:presenter --> :domain:episode
+  :features:watchdate-selection:presenter --> :domain:ratings
+  :features:watchdate-selection:presenter --> :domain:rewatch
+  :features:watchdate-selection:presenter --> :features:rating-sheet:nav
+  :features:watchdate-selection:presenter --> :features:watchdate-selection:nav
+  :features:watchdate-selection:presenter --> :i18n:api
+  :features:watchdate-selection:presenter -.-> :i18n:generator
+  :features:watchdate-selection:presenter --> :navigation:api
+  :features:watchdate-selection:ui -.-> :android-designsystem
+  :features:watchdate-selection:ui --> :core:base
+  :features:watchdate-selection:ui -.-> :core:test-tags
+  :features:watchdate-selection:ui --> :features:watchdate-selection:presenter
+  :features:watchdate-selection:ui -.-> :i18n:generator
+  :features:watchdate-selection:ui --> :navigation:api
+  :features:watchdate-selection:ui --> :navigation:ui
   :i18n:api --> :i18n:generator
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api
   :i18n:implementation -.-> :core:network-util:api
+  :i18n:implementation -.-> :data:account-manager:api
+  :i18n:implementation -.-> :data:backup:api
   :i18n:implementation --> :i18n:api
   :navigation:implementation --> :core:base
   :navigation:implementation -.-> :features:home:nav

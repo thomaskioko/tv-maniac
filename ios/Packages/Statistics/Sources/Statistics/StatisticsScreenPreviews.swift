@@ -33,7 +33,7 @@ private let previewTiles: [SwiftStatisticTile] = [
     .init(id: "TopWeekday", label: "Top weekday", value: "Sunday", caption: "48 episodes"),
     .init(id: "LastThirtyDays", label: "Last 30 days", value: "24", caption: "18 days"),
     .init(id: "TitlesTracked", label: "Titles tracked", value: "128", caption: "18 completed"),
-    .init(id: "Episodes", label: "Episodes", value: "1.2K", caption: ""),
+    .init(id: "Episodes", label: "Episodes", value: "1.6K", caption: ""),
     .init(id: "AverageRating", label: "Average rating", value: "8.4", caption: "across 42 rated"),
     .init(id: "WatchStreak", label: "Watch streak", value: "9 days", caption: "longest run"),
 ]
@@ -129,7 +129,7 @@ private let previewHeatMap = SwiftWatchHeatMap(
 private let previewContentState = StatisticsScreen.State(
     isLoading: false,
     showContent: true,
-    totalWatchTime: SwiftWatchTime(days: 12, hours: 4, minutes: 30),
+    totalWatchTime: SwiftWatchTime(days: 16, hours: 5, minutes: 20),
     tiles: previewTiles,
     heatMap: previewHeatMap,
     mostWatchedShows: previewMostWatchedShows,

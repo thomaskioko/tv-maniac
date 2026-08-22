@@ -119,10 +119,10 @@ androidx.navigationevent:navigationevent-android:1.0.0
 androidx.navigationevent:navigationevent-compose-android:1.0.0
 androidx.navigationevent:navigationevent-compose:1.0.0
 androidx.navigationevent:navigationevent:1.0.0
-androidx.paging:paging-common-android:3.5.0
-androidx.paging:paging-common:3.5.0
-androidx.paging:paging-compose-android:3.5.0
-androidx.paging:paging-compose:3.5.0
+androidx.paging:paging-common-android:3.5.1
+androidx.paging:paging-common:3.5.1
+androidx.paging:paging-compose-android:3.5.1
+androidx.paging:paging-compose:3.5.1
 androidx.palette:palette:1.0.0
 androidx.print:print:1.0.0
 androidx.profileinstaller:profileinstaller:1.4.1
@@ -187,8 +187,8 @@ com.google.android.gms:play-services-tasks:18.4.0
 com.google.errorprone:error_prone_annotations:2.26.0
 com.google.firebase:firebase-abt:21.1.1
 com.google.firebase:firebase-annotations:17.0.0
-com.google.firebase:firebase-bom:34.16.0
-com.google.firebase:firebase-common:22.1.0
+com.google.firebase:firebase-bom:34.17.0
+com.google.firebase:firebase-common:22.2.0
 com.google.firebase:firebase-components:19.0.0
 com.google.firebase:firebase-config-interop:16.0.1
 com.google.firebase:firebase-config:23.1.0
@@ -203,8 +203,8 @@ com.google.firebase:firebase-measurement-connector:20.0.1
 com.google.firebase:firebase-sessions:3.0.7
 com.google.guava:listenablefuture:1.0
 com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0
-com.squareup.okhttp3:okhttp-android:5.4.0
-com.squareup.okhttp3:okhttp:5.4.0
+com.squareup.okhttp3:okhttp-android:5.5.0
+com.squareup.okhttp3:okhttp:5.5.0
 com.squareup.okio:okio-jvm:3.18.1
 com.squareup.okio:okio:3.18.1
 dev.icerock.moko:graphics-android:0.10.0
@@ -213,8 +213,8 @@ dev.icerock.moko:resources-android:0.26.4
 dev.icerock.moko:resources-compose-android:0.26.4
 dev.icerock.moko:resources-compose:0.26.4
 dev.icerock.moko:resources:0.26.4
-dev.zacsweers.metro:runtime-jvm:1.3.2
-dev.zacsweers.metro:runtime:1.3.2
+dev.zacsweers.metro:runtime-jvm:1.4.1
+dev.zacsweers.metro:runtime:1.4.1
 io.coil-kt:coil-base:2.7.0
 io.coil-kt:coil-compose-base:2.7.0
 io.coil-kt:coil-compose:2.7.0

@@ -30,12 +30,14 @@ internal enum class DefaultTestDevices(val spec: String) {
 
 public fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiDevice(
     name: String,
+    shouldCompareDarkMode: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     DefaultTestDevices.entries.forEach {
         this.captureMultiTheme(
             deviceSpec = it.spec,
             name = name,
+            shouldCompareDarkMode = shouldCompareDarkMode,
             content = content,
         )
     }
@@ -58,7 +60,7 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
         listOf(Theme.LIGHT_THEME to "light")
     }
 
-    var appTheme by mutableStateOf(Theme.DARK_THEME)
+    var appTheme by mutableStateOf(themes.first().first)
 
     this.setContent {
         CompositionLocalProvider(
@@ -74,6 +76,7 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
 
     themes.forEach { (theme, themeDesc) ->
         appTheme = theme
+        this.waitForIdle()
 
         val filename = overrideFileName ?: name
 

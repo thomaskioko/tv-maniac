@@ -30,6 +30,16 @@ public interface EpisodeRepository {
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
+    )
+
+    public suspend fun updateWatchedDate(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     /**
@@ -41,6 +51,8 @@ public interface EpisodeRepository {
         episodeId: Long,
         seasonNumber: Long,
         episodeNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     /**
@@ -68,7 +80,12 @@ public interface EpisodeRepository {
      * Mark all episodes in a season as watched.
      * Automatically adds the show to the library if not already there.
      */
-    public suspend fun markSeasonWatched(showId: Long, seasonNumber: Long)
+    public suspend fun markSeasonWatched(
+        showId: Long,
+        seasonNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
+    )
 
     /**
      * Mark all episodes in a season as watched along with all previous seasons.
@@ -77,6 +94,14 @@ public interface EpisodeRepository {
     public suspend fun markSeasonAndPreviousSeasonsWatched(
         showId: Long,
         seasonNumber: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
+    )
+
+    public suspend fun markShowWatched(
+        showId: Long,
+        watchedAt: Long? = null,
+        useReleaseDate: Boolean = false,
     )
 
     /**
@@ -109,4 +134,8 @@ public interface EpisodeRepository {
     )
 
     public suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo?
+
+    public companion object {
+        public const val ALL_SEASONS: Long = Long.MAX_VALUE
+    }
 }

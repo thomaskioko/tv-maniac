@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @ChildPresenter(scope = DiscoverChildScope::class, parentScope = DiscoverRoot::class)
@@ -156,6 +157,7 @@ public class DiscoverCatalogPresenter internal constructor(
     }
 
     private fun fetchShows(forceRefresh: Boolean = false) {
+        _state.update { it.copy(isInitial = false) }
         coroutineScope.launch {
             genreShowsInteractor(forceRefresh)
                 .collectStatus(genreLoadingState, logger, uiMessageManager, "Genres", errorToStringMapper)

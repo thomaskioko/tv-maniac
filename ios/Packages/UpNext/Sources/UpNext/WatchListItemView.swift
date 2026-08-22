@@ -5,6 +5,7 @@ import SwiftUI
 
 public struct WatchListItemView: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.hapticFeedbackEnabled) private var hapticFeedbackEnabled
 
     let episode: SwiftNextEpisode
     let premiereLabel: String
@@ -12,6 +13,7 @@ public struct WatchListItemView: View {
     let onItemClicked: (Int64, Int64) -> Void
     let onShowTitleClicked: (Int64) -> Void
     let onMarkWatched: () -> Void
+    let onMarkWatchedLongPress: (() -> Void)?
     let isUpdating: Bool
 
     public init(
@@ -21,6 +23,7 @@ public struct WatchListItemView: View {
         onItemClicked: @escaping (Int64, Int64) -> Void,
         onShowTitleClicked: @escaping (Int64) -> Void,
         onMarkWatched: @escaping () -> Void,
+        onMarkWatchedLongPress: (() -> Void)? = nil,
         isUpdating: Bool = false
     ) {
         self.episode = episode
@@ -29,6 +32,7 @@ public struct WatchListItemView: View {
         self.onItemClicked = onItemClicked
         self.onShowTitleClicked = onShowTitleClicked
         self.onMarkWatched = onMarkWatched
+        self.onMarkWatchedLongPress = onMarkWatchedLongPress
         self.isUpdating = isUpdating
     }
 
@@ -133,6 +137,13 @@ public struct WatchListItemView: View {
         }
         .buttonStyle(.plain)
         .disabled(isUpdating)
+        .highPriorityGesture(
+            LongPressGesture().onEnded { _ in
+                guard let onMarkWatchedLongPress else { return }
+                Haptics.impact(isEnabled: hapticFeedbackEnabled, style: .medium)
+                onMarkWatchedLongPress()
+            }
+        )
         .frame(maxHeight: .infinity)
         .padding(.trailing, theme.spacing.medium)
     }

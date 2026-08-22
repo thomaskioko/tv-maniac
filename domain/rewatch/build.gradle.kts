@@ -12,6 +12,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
+                api(projects.data.accountManager.api)
                 api(projects.core.util.api)
                 api(projects.data.rewatch.api)
             }

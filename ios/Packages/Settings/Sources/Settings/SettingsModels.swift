@@ -182,3 +182,179 @@ public struct SettingsAccountContent {
         self.onDismissSwitchDialog = onDismissSwitchDialog
     }
 }
+
+public struct SettingsAutoBackupScheduleOption: Identifiable {
+    public let id: String
+    public let label: String
+    public let isSelected: Bool
+    public let onSelect: () -> Void
+
+    public init(id: String, label: String, isSelected: Bool, onSelect: @escaping () -> Void) {
+        self.id = id
+        self.label = label
+        self.isSelected = isSelected
+        self.onSelect = onSelect
+    }
+}
+
+public struct SettingsAutoBackupContent {
+    public let title: String
+    public let description: String
+    public let isOn: Bool
+    public let locationTitle: String
+    public let locationLabel: String
+    public let hasLocation: Bool
+    public let fileNameTitle: String
+    public let fileNameMessage: String
+    public let fileName: String
+    public let fileNameSaveLabel: String
+    public let fileNameCancelLabel: String
+    public let scheduleTitle: String
+    public let scheduleOptions: [SettingsAutoBackupScheduleOption]
+    public let lastRunLabel: String
+    public let failureWarning: String?
+    public let backupNowTitle: String
+    public let backupNowDescription: String
+    public let isBackingUp: Bool
+    public let onToggle: (Bool) -> Void
+    public let onBackupNow: () -> Void
+    public let onChooseLocation: () -> Void
+    public let onFileNameChanged: (String) -> Void
+
+    public init(
+        title: String,
+        description: String,
+        isOn: Bool = false,
+        locationTitle: String,
+        locationLabel: String,
+        hasLocation: Bool = false,
+        fileNameTitle: String = "",
+        fileNameMessage: String = "",
+        fileName: String = "",
+        fileNameSaveLabel: String = "",
+        fileNameCancelLabel: String = "",
+        scheduleTitle: String,
+        scheduleOptions: [SettingsAutoBackupScheduleOption] = [],
+        lastRunLabel: String = "",
+        failureWarning: String? = nil,
+        backupNowTitle: String,
+        backupNowDescription: String,
+        isBackingUp: Bool = false,
+        onToggle: @escaping (Bool) -> Void = { _ in },
+        onBackupNow: @escaping () -> Void = {},
+        onChooseLocation: @escaping () -> Void = {},
+        onFileNameChanged: @escaping (String) -> Void = { _ in }
+    ) {
+        self.title = title
+        self.description = description
+        self.isOn = isOn
+        self.locationTitle = locationTitle
+        self.locationLabel = locationLabel
+        self.hasLocation = hasLocation
+        self.fileNameTitle = fileNameTitle
+        self.fileNameMessage = fileNameMessage
+        self.fileName = fileName
+        self.fileNameSaveLabel = fileNameSaveLabel
+        self.fileNameCancelLabel = fileNameCancelLabel
+        self.scheduleTitle = scheduleTitle
+        self.scheduleOptions = scheduleOptions
+        self.lastRunLabel = lastRunLabel
+        self.failureWarning = failureWarning
+        self.backupNowTitle = backupNowTitle
+        self.backupNowDescription = backupNowDescription
+        self.isBackingUp = isBackingUp
+        self.onToggle = onToggle
+        self.onBackupNow = onBackupNow
+        self.onChooseLocation = onChooseLocation
+        self.onFileNameChanged = onFileNameChanged
+    }
+}
+
+public struct SettingsBackupContent {
+    public let exportTitle: String
+    public let exportDescription: String
+    public let isExporting: Bool
+    public let importTitle: String
+    public let importDescription: String
+    public let isImporting: Bool
+    public let summary: SettingsBackupSummaryContent?
+    public let summaryDismissAccessibilityLabel: String
+    public let autoBackup: SettingsAutoBackupContent
+    public let isLocked: Bool
+    public let lockedBadgeText: String
+    public let lockedTitle: String
+    public let lockedMessage: String
+    public let lockedActionText: String
+    public let lockedAccessibilityLabel: String
+    public let onExport: () -> Void
+    public let onImport: () -> Void
+    public let onUpgradeClick: () -> Void
+    public let onDismissSummary: () -> Void
+
+    public init(
+        exportTitle: String,
+        exportDescription: String,
+        isExporting: Bool = false,
+        importTitle: String,
+        importDescription: String,
+        isImporting: Bool = false,
+        summary: SettingsBackupSummaryContent? = nil,
+        summaryDismissAccessibilityLabel: String = "",
+        autoBackup: SettingsAutoBackupContent,
+        isLocked: Bool = false,
+        lockedBadgeText: String = "",
+        lockedTitle: String = "",
+        lockedMessage: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = "",
+        onExport: @escaping () -> Void,
+        onImport: @escaping () -> Void,
+        onUpgradeClick: @escaping () -> Void = {},
+        onDismissSummary: @escaping () -> Void = {}
+    ) {
+        self.exportTitle = exportTitle
+        self.exportDescription = exportDescription
+        self.isExporting = isExporting
+        self.importTitle = importTitle
+        self.importDescription = importDescription
+        self.isImporting = isImporting
+        self.summary = summary
+        self.summaryDismissAccessibilityLabel = summaryDismissAccessibilityLabel
+        self.autoBackup = autoBackup
+        self.isLocked = isLocked
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedTitle = lockedTitle
+        self.lockedMessage = lockedMessage
+        self.lockedActionText = lockedActionText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
+        self.onExport = onExport
+        self.onImport = onImport
+        self.onUpgradeClick = onUpgradeClick
+        self.onDismissSummary = onDismissSummary
+    }
+}
+
+public struct SettingsBackupSummaryContent {
+    public let title: String
+    public let showsRestored: String
+    public let episodesRestored: String
+    public let showsSkipped: String?
+    public let skippedShows: [String]
+    public let rewatchNotice: String?
+
+    public init(
+        title: String,
+        showsRestored: String,
+        episodesRestored: String,
+        showsSkipped: String? = nil,
+        skippedShows: [String] = [],
+        rewatchNotice: String? = nil
+    ) {
+        self.title = title
+        self.showsRestored = showsRestored
+        self.episodesRestored = episodesRestored
+        self.showsSkipped = showsSkipped
+        self.skippedShows = skippedShows
+        self.rewatchNotice = rewatchNotice
+    }
+}

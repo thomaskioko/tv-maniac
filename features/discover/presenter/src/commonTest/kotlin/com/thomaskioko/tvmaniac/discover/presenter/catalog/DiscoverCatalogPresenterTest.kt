@@ -76,6 +76,22 @@ class DiscoverCatalogPresenterTest {
     }
 
     @Test
+    fun `should stop refreshing given the load finished with nothing to show`() = runTest {
+        val presenter = buildPresenter()
+
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.isRefreshing) {
+                state = awaitItem()
+            }
+
+            state.isRefreshing shouldBe false
+            state.isInitial shouldBe false
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should emit rail shows and titles when repositories have data`() = runTest {
         val presenter = buildPresenter()
 

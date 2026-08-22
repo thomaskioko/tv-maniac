@@ -81,8 +81,8 @@ internal fun BehaviorPage(
                     description = state.labels.quickRateDescription,
                     checked = state.quickRateEnabled,
                     onCheckedChange = { onAction(QuickRateToggled(it)) },
-                    locked = state.locks.quickRateLocked,
-                    lockedBadgeText = state.locks.badgeText,
+                    locked = state.premium.quickRateLocked,
+                    lockedBadgeText = state.premium.badgeText,
                 )
                 SettingsGroupDivider()
                 SwitchRow(

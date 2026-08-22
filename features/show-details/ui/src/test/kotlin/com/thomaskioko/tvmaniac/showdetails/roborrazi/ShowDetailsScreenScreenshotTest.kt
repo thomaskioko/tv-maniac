@@ -10,10 +10,13 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
+import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsDialogs
 import com.thomaskioko.tvmaniac.showdetails.ui.ShowDetailsScaffold
 import com.thomaskioko.tvmaniac.showdetails.ui.previewCastState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateInList
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateMarkShowWatched
+import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateMarkShowWatchedConfirm
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRated
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateSimkl
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHostState
@@ -44,6 +47,34 @@ class ShowDetailsScreenScreenshotTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    @Test
+    fun showDetailsMarkShowWatchedMenu() {
+        composeTestRule.captureMultiDevice("ShowDetailsMarkShowWatchedMenu") {
+            TvManiacBackground {
+                ShowDetailsScaffold(
+                    hostState = previewHostState,
+                    title = previewHeaderStateMarkShowWatched.title,
+                    isHeaderEmpty = false,
+                    listState = LazyListState(),
+                    onHostAction = {},
+                ) {
+                    item(key = "header") {
+                        ShowDetailsHeaderSection(state = previewHeaderStateMarkShowWatched, onAction = {})
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun showDetailsMarkShowWatchedConfirm() {
+        composeTestRule.captureMultiDevice("ShowDetailsMarkShowWatchedConfirm") {
+            TvManiacBackground {
+                ShowDetailsDialogs(state = previewHeaderStateMarkShowWatchedConfirm, onAction = {})
+            }
+        }
+    }
 
     @Test
     fun showDetailsLoadedState() {

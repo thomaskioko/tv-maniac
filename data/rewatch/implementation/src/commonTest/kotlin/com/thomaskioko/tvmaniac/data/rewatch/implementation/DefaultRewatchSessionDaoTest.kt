@@ -11,6 +11,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -97,17 +98,57 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should return one given no rewatch session exists for an episode`() = runTest {
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 1L
+    fun `should clear the plays of a season given the season is removed from watched`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        dao.removeSeasonRewatches(showId = showId, seasonNumber = 1L)
+
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }
 
     @Test
-    fun `should return one plus session rows given an episode was watched again`() = runTest {
+    fun `should keep the plays of other seasons given one season is removed from watched`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+
+        dao.removeSeasonRewatches(showId = showId, seasonNumber = 2L)
+
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 1L
+    }
+
+    @Test
+    fun `should report zero totals given no episode was watched again`() = runTest {
+        val totals = dao.observeRewatchTotals().first()
+
+        totals.viewings shouldBe 0L
+        totals.minutes shouldBe 0L
+    }
+
+    @Test
+    fun `should add the episode runtime for each viewing given episodes were watched again`() = runTest {
+        val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
+        dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = SECOND_REWATCHED_AT)
+
+        val totals = dao.observeRewatchTotals().first()
+
+        totals.viewings shouldBe 2L
+        totals.minutes shouldBe 80L
+    }
+
+    @Test
+    fun `should return no rewatches given no rewatch session exists for an episode`() = runTest {
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
+    }
+
+    @Test
+    fun `should count the session row given an episode was watched again`() = runTest {
         val sessionId = dao.openSession(showId = showId, startedAt = STARTED_AT)
 
         dao.addEpisodeToSession(sessionId = sessionId, episodeId = EPISODE_ID, watchedAt = REWATCHED_AT)
 
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 2L
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 1L
     }
 
     @Test
@@ -117,7 +158,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
         val secondSessionId = dao.openSession(showId = showId, startedAt = REWATCHED_AT)
         dao.addEpisodeToSession(sessionId = secondSessionId, episodeId = EPISODE_ID, watchedAt = SECOND_REWATCHED_AT)
 
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 3L
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 2L
     }
 
     @Test
@@ -233,7 +274,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
             awaitItem().shouldBeEmpty()
             cancelAndConsumeRemainingEvents()
         }
-        dao.playCountForEpisode(EPISODE_ID) shouldBe 1L
+        dao.observeEpisodeRewatches(EPISODE_ID).first() shouldBe 0L
     }
 
     private fun addShow(tmdbId: Long): Long {

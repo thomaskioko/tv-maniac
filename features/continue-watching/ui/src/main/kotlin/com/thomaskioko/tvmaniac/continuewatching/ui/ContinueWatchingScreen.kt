@@ -61,6 +61,7 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingMessa
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingShowClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ContinueWatchingState
 import com.thomaskioko.tvmaniac.continuewatching.presenter.MarkUpNextEpisodeWatched
+import com.thomaskioko.tvmaniac.continuewatching.presenter.MarkUpNextEpisodeWatchedLongPressed
 import com.thomaskioko.tvmaniac.continuewatching.presenter.RefreshContinueWatching
 import com.thomaskioko.tvmaniac.continuewatching.presenter.ShowTitleClicked
 import com.thomaskioko.tvmaniac.continuewatching.presenter.UpNextEpisodeClicked
@@ -197,6 +198,16 @@ public fun ContinueWatchingScreen(
                                 onMarkWatched = { episode ->
                                     onAction(
                                         MarkUpNextEpisodeWatched(
+                                            showId = episode.showId,
+                                            episodeId = episode.episodeId,
+                                            seasonNumber = episode.seasonNumber,
+                                            episodeNumber = episode.episodeNumber,
+                                        ),
+                                    )
+                                },
+                                onMarkWatchedLongPress = { episode ->
+                                    onAction(
+                                        MarkUpNextEpisodeWatchedLongPressed(
                                             showId = episode.showId,
                                             episodeId = episode.episodeId,
                                             seasonNumber = episode.seasonNumber,
@@ -492,6 +503,7 @@ private fun SectionedUpNextListContent(
     onEpisodeClicked: (Long, Long) -> Unit,
     onShowTitleClicked: (Long) -> Unit,
     onMarkWatched: (UpNextEpisodeItem) -> Unit,
+    onMarkWatchedLongPress: ((UpNextEpisodeItem) -> Unit)? = null,
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
@@ -518,6 +530,7 @@ private fun SectionedUpNextListContent(
                     onItemClicked = onEpisodeClicked,
                     onShowTitleClicked = { onShowTitleClicked(episode.showId) },
                     onMarkWatched = { onMarkWatched(episode) },
+                    onMarkWatchedLongPress = onMarkWatchedLongPress?.let { { it(episode) } },
                     modifier = Modifier.animateItem(),
                     isUpdating = episode.episodeId in updatingEpisodeIds,
                 )
@@ -543,6 +556,7 @@ private fun SectionedUpNextListContent(
                     onItemClicked = onEpisodeClicked,
                     onShowTitleClicked = { onShowTitleClicked(episode.showId) },
                     onMarkWatched = { onMarkWatched(episode) },
+                    onMarkWatchedLongPress = onMarkWatchedLongPress?.let { { it(episode) } },
                     modifier = Modifier.animateItem(),
                     isUpdating = episode.episodeId in updatingEpisodeIds,
                 )

@@ -30,27 +30,47 @@ public class DefaultLogoutHandler(
     private val transactionRunner: DatabaseTransactionRunner,
 ) : LogoutHandler {
 
-    override suspend fun clear() {
+    override suspend fun clearAccountData() {
+        clearAccountState()
+
+        transactionRunner {
+            deleteAccountTables()
+        }
+    }
+
+    override suspend fun clearAccountAndTrackingData() {
+        clearAccountState()
+
+        transactionRunner {
+            deleteAccountTables()
+            deleteTrackingTables()
+        }
+    }
+
+    private suspend fun clearAccountState() {
         syncCoroutineScope.cancelActiveWork()
 
         userRepository.clearUserData()
         traktActivityRepository.clearAllActivities()
         syncRepository.clearAll()
         requestManagerRepository.deleteAll()
+    }
 
-        transactionRunner {
-            database.watchedEpisodesQueries.deleteAll()
-            database.watchedShowSyncLogQueries.deleteAll()
-            database.followedShowsQueries.deleteAll()
-            database.continueWatchingQueries.deleteAll()
-            database.favoritesQueries.deleteAll()
-            database.traktListShowsQueries.deleteAll()
-            database.traktListsQueries.deleteAll()
-            database.showWatchStatusQueries.deleteAll()
-            database.calendarQueries.deleteAll()
-            ratingsDao.clearAll()
-            providerMetaDao.clearAll()
-            rewatchSessionDao.clearAll()
-        }
+    private fun deleteAccountTables() {
+        database.watchedShowSyncLogQueries.deleteAll()
+        database.favoritesQueries.deleteAll()
+        database.traktListShowsQueries.deleteAll()
+        database.traktListsQueries.deleteAll()
+        database.calendarQueries.deleteAll()
+        providerMetaDao.clearAll()
+    }
+
+    private fun deleteTrackingTables() {
+        database.watchedEpisodesQueries.deleteAll()
+        database.followedShowsQueries.deleteAll()
+        database.continueWatchingQueries.deleteAll()
+        database.showWatchStatusQueries.deleteAll()
+        ratingsDao.clearAll()
+        rewatchSessionDao.clearAll()
     }
 }

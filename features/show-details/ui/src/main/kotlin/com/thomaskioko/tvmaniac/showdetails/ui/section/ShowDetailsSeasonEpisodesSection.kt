@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes.ShowDetailsEpisodeWatchedLongPressed
 import com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes.ShowDetailsMarkEpisodeUnwatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes.ShowDetailsMarkEpisodeWatched
 import com.thomaskioko.tvmaniac.presenter.showdetails.seasonsepisodes.ShowDetailsSeasonClicked
@@ -44,6 +45,16 @@ internal fun ShowDetailsSeasonEpisodesSection(
         episodes = state.continueTrackingEpisodes,
         scrollIndex = state.continueTrackingScrollIndex,
         updatingEpisodeIds = state.updatingEpisodeIds,
+        onMarkWatchedLongPress = { episode ->
+            onAction(
+                ShowDetailsEpisodeWatchedLongPressed(
+                    showId = episode.showId,
+                    episodeId = episode.episodeId,
+                    seasonNumber = episode.seasonNumber,
+                    episodeNumber = episode.episodeNumber,
+                ),
+            )
+        },
         onMarkWatched = { episode ->
             if (episode.isWatched) {
                 onAction(
