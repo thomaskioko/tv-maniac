@@ -7,20 +7,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import com.thomaskioko.tvmaniac.compose.components.SelectableFilterChip
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.ImageQualitySelected
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsActions
+import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabels
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.UpgradeToPremiumClicked
@@ -62,30 +62,14 @@ internal fun AppearancePage(
             SettingsGroup {
                 Column(modifier = Modifier.padding(horizontal = TvManiacSpacing.medium, vertical = TvManiacSpacing.medium)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall)) {
-                        ImageQualityChip(
-                            label = state.labels.imageQualityAuto,
-                            quality = ImageQuality.AUTO,
-                            isSelected = state.imageQuality == ImageQuality.AUTO,
-                            onClick = { onAction(ImageQualitySelected(ImageQuality.AUTO)) },
-                        )
-                        ImageQualityChip(
-                            label = state.labels.imageQualityHigh,
-                            quality = ImageQuality.HIGH,
-                            isSelected = state.imageQuality == ImageQuality.HIGH,
-                            onClick = { onAction(ImageQualitySelected(ImageQuality.HIGH)) },
-                        )
-                        ImageQualityChip(
-                            label = state.labels.imageQualityMedium,
-                            quality = ImageQuality.MEDIUM,
-                            isSelected = state.imageQuality == ImageQuality.MEDIUM,
-                            onClick = { onAction(ImageQualitySelected(ImageQuality.MEDIUM)) },
-                        )
-                        ImageQualityChip(
-                            label = state.labels.imageQualityLow,
-                            quality = ImageQuality.LOW,
-                            isSelected = state.imageQuality == ImageQuality.LOW,
-                            onClick = { onAction(ImageQualitySelected(ImageQuality.LOW)) },
-                        )
+                        ImageQuality.entries.forEach { quality ->
+                            SelectableFilterChip(
+                                modifier = Modifier.testTag(SettingsTestTags.imageQualityChip(quality.name)),
+                                label = state.labels.imageQualityLabel(quality),
+                                isSelected = state.imageQuality == quality,
+                                onClick = { onAction(ImageQualitySelected(quality)) },
+                            )
+                        }
                     }
                     Text(
                         text = state.labels.imageQualityDescription,
@@ -101,39 +85,11 @@ internal fun AppearancePage(
     }
 }
 
-@Composable
-private fun ImageQualityChip(
-    label: String,
-    quality: ImageQuality,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-) {
-    FilterChip(
-        modifier = Modifier.testTag(SettingsTestTags.imageQualityChip(quality.name)),
-        selected = isSelected,
-        onClick = onClick,
-        label = {
-            Text(
-                text = label,
-                color = if (isSelected) {
-                    MaterialTheme.colorScheme.onSecondary
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-            )
-        },
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = MaterialTheme.colorScheme.secondary,
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        border = FilterChipDefaults.filterChipBorder(
-            borderColor = MaterialTheme.colorScheme.outline,
-            selectedBorderColor = MaterialTheme.colorScheme.secondary,
-            enabled = true,
-            selected = isSelected,
-        ),
-        shape = MaterialTheme.shapes.extraLarge,
-    )
+private fun SettingsLabels.imageQualityLabel(quality: ImageQuality): String = when (quality) {
+    ImageQuality.AUTO -> imageQualityAuto
+    ImageQuality.HIGH -> imageQualityHigh
+    ImageQuality.MEDIUM -> imageQualityMedium
+    ImageQuality.LOW -> imageQualityLow
 }
 
 @ThemePreviews

@@ -3,10 +3,13 @@ package com.thomaskioko.tvmaniac.settings.ui
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
 import com.thomaskioko.tvmaniac.domain.theme.ImageQuality
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupScheduleOption
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupSettings
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSettings
@@ -238,6 +241,23 @@ internal val notificationsLockedState = notificationsState.copy(
     ),
 )
 internal val privacyState = loggedInState.copy(currentPage = SettingsPage.PRIVACY, currentPageTitle = "Privacy")
+private val autoBackupSettings = AutoBackupSettings(
+    title = "Automatic backup",
+    description = "Save your shows, watch history, ratings and settings to a file on a schedule",
+    scheduleTitle = "How often",
+    scheduleLabel = "Every week",
+    scheduleOptions = persistentListOf(
+        AutoBackupScheduleOption(interval = AutoBackupInterval.DAILY, label = "Every day", selected = false),
+        AutoBackupScheduleOption(interval = AutoBackupInterval.WEEKLY, label = "Every week", selected = true),
+        AutoBackupScheduleOption(interval = AutoBackupInterval.FORTNIGHTLY, label = "Every two weeks", selected = false),
+        AutoBackupScheduleOption(interval = AutoBackupInterval.MONTHLY, label = "Every month", selected = false),
+    ),
+    locationTitle = "Backup location",
+    locationLabel = "Choose where to save backups",
+    lastRunLabel = "No backup saved yet",
+    backupNowTitle = "Back up now",
+    backupNowDescription = "Save a backup straight away, without waiting for the schedule",
+)
 internal val backupState = loggedInState.copy(
     currentPage = SettingsPage.BACKUP,
     currentPageTitle = "Backup",
@@ -246,6 +266,39 @@ internal val backupState = loggedInState.copy(
         exportDescription = "Save your tracking data and preferences to a file",
         importTitle = "Restore a backup",
         importDescription = "Replace what is on this device with a backup file",
+        autoBackup = autoBackupSettings,
+    ),
+)
+internal val backupAutoBackupOnState = backupState.copy(
+    backup = backupState.backup.copy(
+        autoBackup = autoBackupSettings.copy(
+            enabled = true,
+            hasLocation = true,
+            locationLabel = "tvmaniac-backup.json",
+            lastRunLabel = "Last backup 12 August 2026",
+        ),
+    ),
+)
+internal val backupAutoBackupNeverRunState = backupState.copy(
+    backup = backupState.backup.copy(
+        autoBackup = autoBackupSettings.copy(enabled = true),
+    ),
+)
+internal val backupAutoBackupFailedState = backupState.copy(
+    backup = backupState.backup.copy(
+        autoBackup = autoBackupSettings.copy(
+            enabled = true,
+            hasLocation = true,
+            locationLabel = "tvmaniac-backup.json",
+            lastRunLabel = "Last backup 12 August 2026",
+            failureWarning = "The last automatic backup failed. Check the location is still " +
+                "available, then back up now.",
+        ),
+    ),
+)
+internal val backupAutoBackupRunningState = backupAutoBackupOnState.copy(
+    backup = backupAutoBackupOnState.backup.copy(
+        autoBackup = backupAutoBackupOnState.backup.autoBackup.copy(isBackingUp = true),
     ),
 )
 internal val backupLockedState = backupState.copy(
@@ -379,6 +432,10 @@ internal class BackupPreviewParameterProvider : PreviewParameterProvider<Setting
                 backupRestoreConfirmConnectedState,
                 backupRestoreSummaryState,
                 backupRestoreSummaryWithSkipsState,
+                backupAutoBackupOnState,
+                backupAutoBackupNeverRunState,
+                backupAutoBackupFailedState,
+                backupAutoBackupRunningState,
             )
         }
 }

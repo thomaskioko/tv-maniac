@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.settings
 
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.subscription.api.AccountType
@@ -337,6 +338,64 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
             .assertBackupRestoreConfirmDisplayed()
             .clickBackupRestoreConfirm()
             .assertBackupRestoreConfirmDoesNotExist()
+    }
+
+    @Test
+    fun givenBackupPage_whenAutomaticBackupTurnedOn_thenScheduleAndLocationAppear() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .assertAutoBackupLocationRowDisplayed()
+            .scrollToAutoBackupToggle()
+            .assertAutoBackupDisabled()
+            .assertAutoBackupNowRowDoesNotExist()
+            .clickAutoBackupToggle()
+            .assertAutoBackupEnabled()
+            .assertAutoBackupNowRowDisplayed()
+    }
+
+    @Test
+    fun givenAutomaticBackupOn_whenScheduleSelected_thenSelectionIsPersisted() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .scrollToAutoBackupToggle()
+            .clickAutoBackupToggle()
+            .scrollToAutoBackupScheduleChip(AutoBackupInterval.MONTHLY)
+            .assertAutoBackupScheduleSelected(AutoBackupInterval.WEEKLY)
+            .clickAutoBackupScheduleChip(AutoBackupInterval.MONTHLY)
+            .assertAutoBackupScheduleSelected(AutoBackupInterval.MONTHLY)
+            .assertAutoBackupScheduleNotSelected(AutoBackupInterval.WEEKLY)
     }
 
     @Test

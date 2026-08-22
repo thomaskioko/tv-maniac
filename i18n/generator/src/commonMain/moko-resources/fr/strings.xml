@@ -599,7 +599,7 @@
     <string name="settings_auto_backup_schedule_weekly">Toutes les semaines</string>
     <string name="settings_auto_backup_schedule_fortnightly">Toutes les deux semaines</string>
     <string name="settings_auto_backup_schedule_monthly">Tous les mois</string>
-    <string name="settings_auto_backup_location_title">Emplacement des sauvegardes</string>
+    <string name="settings_auto_backup_location_title">Emplacement de sauvegarde</string>
     <string name="settings_auto_backup_location_none">Choisissez où enregistrer les sauvegardes</string>
     <string name="settings_auto_backup_last_run">Dernière sauvegarde %1$s</string>
     <string name="settings_auto_backup_last_run_never">Aucune sauvegarde enregistrée</string>
