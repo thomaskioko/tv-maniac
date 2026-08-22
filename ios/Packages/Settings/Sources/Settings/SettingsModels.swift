@@ -204,6 +204,11 @@ public struct SettingsAutoBackupContent {
     public let locationTitle: String
     public let locationLabel: String
     public let hasLocation: Bool
+    public let fileNameTitle: String
+    public let fileNameMessage: String
+    public let fileName: String
+    public let fileNameSaveLabel: String
+    public let fileNameCancelLabel: String
     public let scheduleTitle: String
     public let scheduleOptions: [SettingsAutoBackupScheduleOption]
     public let lastRunLabel: String
@@ -214,6 +219,7 @@ public struct SettingsAutoBackupContent {
     public let onToggle: (Bool) -> Void
     public let onBackupNow: () -> Void
     public let onChooseLocation: () -> Void
+    public let onFileNameChanged: (String) -> Void
 
     public init(
         title: String,
@@ -222,6 +228,11 @@ public struct SettingsAutoBackupContent {
         locationTitle: String,
         locationLabel: String,
         hasLocation: Bool = false,
+        fileNameTitle: String = "",
+        fileNameMessage: String = "",
+        fileName: String = "",
+        fileNameSaveLabel: String = "",
+        fileNameCancelLabel: String = "",
         scheduleTitle: String,
         scheduleOptions: [SettingsAutoBackupScheduleOption] = [],
         lastRunLabel: String = "",
@@ -231,7 +242,8 @@ public struct SettingsAutoBackupContent {
         isBackingUp: Bool = false,
         onToggle: @escaping (Bool) -> Void = { _ in },
         onBackupNow: @escaping () -> Void = {},
-        onChooseLocation: @escaping () -> Void = {}
+        onChooseLocation: @escaping () -> Void = {},
+        onFileNameChanged: @escaping (String) -> Void = { _ in }
     ) {
         self.title = title
         self.description = description
@@ -239,6 +251,11 @@ public struct SettingsAutoBackupContent {
         self.locationTitle = locationTitle
         self.locationLabel = locationLabel
         self.hasLocation = hasLocation
+        self.fileNameTitle = fileNameTitle
+        self.fileNameMessage = fileNameMessage
+        self.fileName = fileName
+        self.fileNameSaveLabel = fileNameSaveLabel
+        self.fileNameCancelLabel = fileNameCancelLabel
         self.scheduleTitle = scheduleTitle
         self.scheduleOptions = scheduleOptions
         self.lastRunLabel = lastRunLabel
@@ -249,6 +266,7 @@ public struct SettingsAutoBackupContent {
         self.onToggle = onToggle
         self.onBackupNow = onBackupNow
         self.onChooseLocation = onChooseLocation
+        self.onFileNameChanged = onFileNameChanged
     }
 }
 
