@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
@@ -42,6 +43,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
+
+private const val UNSELECTED_CHIP_CONTAINER_ALPHA = 0.5f
+private const val UNSELECTED_CHIP_BORDER_ALPHA = 0.8f
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -127,10 +131,12 @@ public fun SelectableFilterChip(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     FilterChip(
         modifier = modifier,
         selected = isSelected,
+        enabled = enabled,
         onClick = onClick,
         label = {
             Text(
@@ -140,18 +146,57 @@ public fun SelectableFilterChip(
         },
         shape = MaterialTheme.shapes.medium,
         colors = FilterChipDefaults.filterChipColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = UNSELECTED_CHIP_CONTAINER_ALPHA),
             selectedContainerColor = MaterialTheme.colorScheme.secondary,
             labelColor = MaterialTheme.colorScheme.onSurface,
             selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
         ),
         border = FilterChipDefaults.filterChipBorder(
-            borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+            borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = UNSELECTED_CHIP_BORDER_ALPHA),
             selectedBorderColor = Color.Transparent,
-            enabled = true,
+            enabled = enabled,
             selected = isSelected,
         ),
     )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+public fun <T> ChoiceChipGroup(
+    title: String,
+    options: List<T>,
+    isSelected: (T) -> Boolean,
+    label: (T) -> String,
+    onSelected: (T) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    testTagFor: ((T) -> String)? = null,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+        ) {
+            options.forEach { option ->
+                SelectableFilterChip(
+                    modifier = testTagFor?.let { Modifier.testTag(it(option)) } ?: Modifier,
+                    label = label(option),
+                    isSelected = isSelected(option),
+                    enabled = enabled,
+                    onClick = { onSelected(option) },
+                )
+            }
+        }
+    }
 }
 
 @Composable

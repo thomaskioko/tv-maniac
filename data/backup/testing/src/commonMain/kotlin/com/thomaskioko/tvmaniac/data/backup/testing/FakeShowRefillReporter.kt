@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.backup.testing
 
-import com.thomaskioko.tvmaniac.data.backup.api.ShowRefillProgress
 import com.thomaskioko.tvmaniac.data.backup.api.ShowRefillReporter
+import com.thomaskioko.tvmaniac.data.backup.api.model.ShowRefillProgress
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

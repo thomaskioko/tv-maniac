@@ -14,12 +14,14 @@ import com.thomaskioko.tvmaniac.data.library.LibraryRepository
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.model.LibrarySortOption
 import com.thomaskioko.tvmaniac.data.library.model.WatchProvider
+import com.thomaskioko.tvmaniac.data.library.model.WatchlistShowIds
 import com.thomaskioko.tvmaniac.data.watchproviders.api.WatchProviderDao
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.ListStyle
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.LibraryShows
 import com.thomaskioko.tvmaniac.db.WatchProviders
+import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowEntry
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsDao
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
@@ -188,7 +190,7 @@ public class DefaultLibraryRepository(
         val showIds = pendingUploads.map { it.showId }
         logger.debug(TAG, "Processing ${showIds.size} pending uploads")
 
-        return when (val response = source.addToWatchlist(showIds)) {
+        return when (val response = source.addToWatchlist(pendingUploads.map { it.toWatchlistShowIds() })) {
             is ApiResponse.Success -> {
                 val notFoundCount = response.body.notFoundCount
                 transactionRunner {
@@ -214,7 +216,7 @@ public class DefaultLibraryRepository(
         val showIds = pendingDeletes.map { it.showId }
         logger.debug(TAG, "Processing ${showIds.size} pending deletes")
 
-        return when (val response = source.removeFromWatchlist(showIds)) {
+        return when (val response = source.removeFromWatchlist(pendingDeletes.map { it.toWatchlistShowIds() })) {
             is ApiResponse.Success -> {
                 val notFoundCount = response.body.notFoundCount
                 transactionRunner {
@@ -294,3 +296,8 @@ public class DefaultLibraryRepository(
         private const val TAG = "LibraryRepository"
     }
 }
+
+private fun FollowedShowEntry.toWatchlistShowIds(): WatchlistShowIds = WatchlistShowIds(
+    tmdbId = showId,
+    traktId = traktId,
+)

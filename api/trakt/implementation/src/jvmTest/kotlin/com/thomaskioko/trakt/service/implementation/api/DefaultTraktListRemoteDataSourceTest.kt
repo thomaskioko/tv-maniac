@@ -4,9 +4,11 @@ import com.thomaskioko.trakt.service.implementation.TraktAuthGuard
 import com.thomaskioko.trakt.service.implementation.loadJson
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -127,7 +129,7 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
-    fun `should batch all trakt ids into a single POST given addShowsToWatchListByIds`() = runTest {
+    fun `should batch all shows into a single POST given addShowsToWatchList`() = runTest {
         var requestCount = 0
         var capturedBody: String? = null
 
@@ -142,7 +144,13 @@ class DefaultTraktListRemoteDataSourceTest {
         }
         val dataSource = createDataSource(engine)
 
-        dataSource.addShowsToWatchListByIds(showIds = listOf(101L, 202L, 303L))
+        dataSource.addShowsToWatchList(
+            shows = listOf(
+                TraktShowIds(traktId = 101L),
+                TraktShowIds(traktId = 202L),
+                TraktShowIds(traktId = 303L),
+            ),
+        )
 
         requestCount shouldBe 1
         capturedBody shouldContain "101"
@@ -151,7 +159,27 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
-    fun `should batch all trakt ids into a single POST given removeShowsFromWatchListByIds`() = runTest {
+    fun `should send the tmdb id under the tmdb key given the show has no trakt id`() = runTest {
+        var capturedBody: String? = null
+
+        val engine = MockEngine { request ->
+            capturedBody = request.body.toByteArray().decodeToString()
+            respond(
+                content = loadJson("trakt_add_show_response.json"),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.addShowsToWatchList(shows = listOf(TraktShowIds(tmdbId = 1396L)))
+
+        capturedBody shouldContain "\"tmdb\": 1396"
+        capturedBody!! shouldNotContain "trakt"
+    }
+
+    @Test
+    fun `should batch all shows into a single POST given removeShowsFromWatchList`() = runTest {
         var requestCount = 0
         var capturedPath: String? = null
         var capturedBody: String? = null
@@ -168,37 +196,14 @@ class DefaultTraktListRemoteDataSourceTest {
         }
         val dataSource = createDataSource(engine)
 
-        dataSource.removeShowsFromWatchListByIds(showIds = listOf(404L, 505L))
+        dataSource.removeShowsFromWatchList(
+            shows = listOf(TraktShowIds(traktId = 404L), TraktShowIds(traktId = 505L)),
+        )
 
         requestCount shouldBe 1
         capturedPath shouldBe "/sync/watchlist/remove"
         capturedBody shouldContain "404"
         capturedBody shouldContain "505"
-    }
-
-    @Test
-    fun `should use POST with body given addShowToWatchListByTmdbId is called`() = runTest {
-        var capturedMethod: HttpMethod? = null
-        var capturedPath: String? = null
-        var capturedBody: String? = null
-
-        val engine = MockEngine { request ->
-            capturedMethod = request.method
-            capturedPath = request.url.encodedPath
-            capturedBody = request.body.toByteArray().decodeToString()
-            respond(
-                content = loadJson("trakt_add_show_response.json"),
-                status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json"),
-            )
-        }
-        val dataSource = createDataSource(engine)
-
-        dataSource.addShowToWatchListByTmdbId(tmdbId = 12345)
-
-        capturedMethod shouldBe HttpMethod.Post
-        capturedPath shouldBe "/sync/watchlist"
-        capturedBody shouldContain "12345"
     }
 
     @Test

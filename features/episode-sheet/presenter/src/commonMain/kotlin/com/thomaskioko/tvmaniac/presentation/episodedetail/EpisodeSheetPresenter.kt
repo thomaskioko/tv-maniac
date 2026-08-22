@@ -71,8 +71,8 @@ public class EpisodeSheetPresenter internal constructor(
     private val uiMessageManager = UiMessageManager()
     private val actionLoadingState = ObservableLoadingCounter()
     private val showRemoveWatchConfirmation = MutableStateFlow(false)
-    private var currentEpisode: EpisodeById? = null
-    private var isMarking: Boolean = false
+    private val currentEpisode = MutableStateFlow<EpisodeById?>(null)
+    private val isMarking = MutableStateFlow(false)
 
     public val state: StateFlow<EpisodeDetailSheetState> = combine(
         observeEpisodeByIdInteractor.flow,
@@ -83,7 +83,7 @@ public class EpisodeSheetPresenter internal constructor(
         datastoreRepository.observeMultiplePlaysEnabled(),
         showRemoveWatchConfirmation,
     ) { episode, message, isTogglingWatched, userRating, rewatches, multiplePlaysEnabled, confirmRemoval ->
-        currentEpisode = episode
+        currentEpisode.value = episode
         val current = episode?.toState(
             source = param.source,
             localizer = localizer,
@@ -140,7 +140,7 @@ public class EpisodeSheetPresenter internal constructor(
     }
 
     private fun openWatchDateSelection() {
-        val episode = currentEpisode ?: return
+        val episode = currentEpisode.value ?: return
         navigator.navigateTo(
             WatchDateSelectionRoute(
                 WatchDateSelectionParam(
@@ -155,9 +155,8 @@ public class EpisodeSheetPresenter internal constructor(
     }
 
     private fun markUnwatched() {
-        val episode = currentEpisode ?: return
-        if (isMarking) return
-        isMarking = true
+        val episode = currentEpisode.value ?: return
+        if (!isMarking.compareAndSet(expect = false, update = true)) return
         appScopeLauncher.launch(TAG) {
             markEpisodeUnwatchedInteractor(
                 MarkEpisodeUnwatchedParams(
@@ -165,19 +164,19 @@ public class EpisodeSheetPresenter internal constructor(
                     episodeId = episode.episode_id.id,
                 ),
             ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
-            isMarking = false
+            isMarking.value = false
             coroutineScope.launch { navigator.dismissOverlay() }
         }
     }
 
     private fun openShow() {
-        val episode = currentEpisode ?: return
+        val episode = currentEpisode.value ?: return
         navigator.dismissOverlay()
         navigator.pushToFront(ShowDetailsRoute(ShowDetailsParam(showId = episode.show_id.id)))
     }
 
     private fun openSeason() {
-        val episode = currentEpisode ?: return
+        val episode = currentEpisode.value ?: return
         navigator.dismissOverlay()
         navigator.navigateTo(
             SeasonDetailsRoute(
@@ -191,7 +190,7 @@ public class EpisodeSheetPresenter internal constructor(
     }
 
     private fun unfollowShow() {
-        val episode = currentEpisode ?: return
+        val episode = currentEpisode.value ?: return
         navigator.dismissOverlay()
         appScopeLauncher.launch(TAG) {
             unfollowShowInteractor.executeSync(episode.show_id.id)

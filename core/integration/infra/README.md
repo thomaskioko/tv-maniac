@@ -412,6 +412,7 @@ graph TB
   :core:integration:infra --> :data:user:implementation
   :core:integration:infra --> :data:watch-status:implementation
   :core:integration:infra --> :data:watchproviders:implementation
+  :core:integration:infra --> :domain:backup
   :core:integration:infra --> :domain:continue-watching
   :core:integration:infra --> :domain:episode
   :core:integration:infra --> :domain:library
@@ -447,6 +448,7 @@ graph TB
   :data:account-manager:implementation --> :data:account-manager:api
   :data:backup:implementation --> :core:appconfig:api
   :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
   :data:backup:implementation --> :core:syncstate:api
   :data:backup:implementation --> :core:util:api
   :data:backup:implementation --> :data:backup:api
@@ -611,6 +613,7 @@ graph TB
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
   :data:shows:implementation --> :api:tmdb:api
+  :data:shows:implementation --> :api:trakt:api
   :data:shows:implementation --> :core:base
   :data:shows:implementation --> :core:logger:api
   :data:shows:implementation --> :data:account-manager:api
@@ -694,6 +697,7 @@ graph TB
   :domain:backup --> :core:tasks:api
   :domain:backup --> :core:view
   :domain:backup --> :data:backup:api
+  :domain:backup --> :data:shows:api
   :domain:backup --> :domain:showdetails
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api

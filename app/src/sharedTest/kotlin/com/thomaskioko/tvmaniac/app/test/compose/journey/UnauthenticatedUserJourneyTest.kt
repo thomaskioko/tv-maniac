@@ -6,7 +6,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testing.integration.ui.SystemDialog
 import com.thomaskioko.tvmaniac.testing.integration.ui.dismissSystemDialog
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
-import com.thomaskioko.tvmaniac.util.testing.FlakyTests
 import org.junit.Test
 
 internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
@@ -17,7 +16,6 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
     private val betterCallSaulTmdbId = 60059L
 
     @Test
-    @FlakyTests(count = 2)
     fun givenUnauthenticatedUser_whenNavigatesAllScreens_thenChangesAppearanceAndNotifications() = runAppFlowTest {
         scenarios.stubUnauthenticatedJourney()
 

@@ -66,8 +66,9 @@ public class DefaultFollowedShowsDao(
             ?.let {
                 toEntry(
                     followedId = it.followed_id,
-                    showId = it.tmdb_id?.id ?: it.trakt_id,
-                    tmdbId = it.tmdb_id?.id,
+                    showId = it.tmdb_id.id,
+                    tmdbId = it.tmdb_id.id,
+                    traktId = it.trakt_id,
                     followedAt = it.followed_at,
                     pendingAction = it.pending_action,
                 )
@@ -81,8 +82,9 @@ public class DefaultFollowedShowsDao(
             ?.let {
                 toEntry(
                     followedId = it.followed_id,
-                    showId = it.tmdb_id?.id ?: it.trakt_id,
-                    tmdbId = it.tmdb_id?.id,
+                    showId = it.tmdb_id.id,
+                    tmdbId = it.tmdb_id.id,
+                    traktId = it.trakt_id,
                     followedAt = it.followed_at,
                     pendingAction = it.pending_action,
                 )
@@ -116,8 +118,9 @@ public class DefaultFollowedShowsDao(
             .map {
                 toEntry(
                     followedId = it.followed_id,
-                    showId = it.tmdb_id?.id ?: it.trakt_id,
-                    tmdbId = it.tmdb_id?.id,
+                    showId = it.tmdb_id.id,
+                    tmdbId = it.tmdb_id.id,
+                    traktId = it.trakt_id,
                     followedAt = it.followed_at,
                     pendingAction = it.pending_action,
                 )
@@ -130,8 +133,9 @@ public class DefaultFollowedShowsDao(
             .map {
                 toEntry(
                     followedId = it.followed_id,
-                    showId = it.tmdb_id?.id ?: it.trakt_id,
-                    tmdbId = it.tmdb_id?.id,
+                    showId = it.tmdb_id.id,
+                    tmdbId = it.tmdb_id.id,
+                    traktId = it.trakt_id,
                     followedAt = it.followed_at,
                     pendingAction = it.pending_action,
                 )
@@ -144,8 +148,9 @@ public class DefaultFollowedShowsDao(
             .map {
                 toEntry(
                     followedId = it.followed_id,
-                    showId = it.tmdb_id?.id ?: it.trakt_id,
-                    tmdbId = it.tmdb_id?.id,
+                    showId = it.tmdb_id.id,
+                    tmdbId = it.tmdb_id.id,
+                    traktId = it.trakt_id,
                     followedAt = it.followed_at,
                     pendingAction = it.pending_action,
                 )
@@ -188,10 +193,12 @@ public class DefaultFollowedShowsDao(
         tmdbId: Long?,
         followedAt: Long,
         pendingAction: String,
+        traktId: Long? = null,
     ): FollowedShowEntry = FollowedShowEntry(
         id = followedId,
         showId = showId,
         tmdbId = tmdbId,
+        traktId = traktId,
         followedAt = Instant.fromEpochMilliseconds(followedAt),
         pendingAction = PendingAction.fromValue(pendingAction),
     )

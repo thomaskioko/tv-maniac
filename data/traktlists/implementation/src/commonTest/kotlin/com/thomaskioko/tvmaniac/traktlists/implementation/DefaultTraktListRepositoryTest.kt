@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktListResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktNotFoundShowsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.assertions.throwables.shouldThrow
@@ -442,28 +443,12 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
         sortHow: String,
     ): ApiResponse<List<TraktFollowedShowResponse>> = error("not used")
 
-    override suspend fun addShowToWatchListByTmdbId(
-        tmdbId: Long,
+    override suspend fun addShowsToWatchList(
+        shows: List<TraktShowIds>,
     ): ApiResponse<TraktAddShowToListResponse> = error("not used")
 
-    override suspend fun removeShowFromWatchListByTmdbId(
-        tmdbId: Long,
-    ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
-
-    override suspend fun addShowToWatchListById(
-        showId: Long,
-    ): ApiResponse<TraktAddShowToListResponse> = error("not used")
-
-    override suspend fun removeShowFromWatchListById(
-        showId: Long,
-    ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
-
-    override suspend fun addShowsToWatchListByIds(
-        showIds: List<Long>,
-    ): ApiResponse<TraktAddShowToListResponse> = error("not used")
-
-    override suspend fun removeShowsFromWatchListByIds(
-        showIds: List<Long>,
+    override suspend fun removeShowsFromWatchList(
+        shows: List<TraktShowIds>,
     ): ApiResponse<TraktAddRemoveShowFromListResponse> = error("not used")
 
     override suspend fun addShowToList(

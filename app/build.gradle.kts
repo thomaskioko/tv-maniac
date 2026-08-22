@@ -40,6 +40,16 @@ android {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    develocity.testRetry {
+        maxRetries = providers.environmentVariable("CI").map { 2 }.orElse(0)
+        failOnPassedAfterRetry = false
+        filter {
+            includeClasses.add("com.thomaskioko.tvmaniac.app.test.compose.*")
+        }
+    }
+}
+
 dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.features.root.ui)
@@ -271,7 +281,6 @@ dependencies {
     testImplementation(projects.data.oauth.testing)
     testImplementation(projects.data.traktauth.testing)
     testImplementation(projects.core.locale.testing)
-    testImplementation(projects.core.util.testing)
     testImplementation(projects.core.featureFlags.testing)
 
     testImplementation(libs.firebase.config)
@@ -304,7 +313,6 @@ dependencies {
     androidTestImplementation(projects.data.oauth.testing)
     androidTestImplementation(projects.data.traktauth.testing)
     androidTestImplementation(projects.core.locale.testing)
-    androidTestImplementation(projects.core.util.testing)
 
     androidTestImplementation(libs.androidx.compose.ui.test)
     androidTestImplementation(libs.androidx.monitor)

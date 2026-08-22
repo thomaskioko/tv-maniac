@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.view
 
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -7,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.uuid.Uuid
 
 public enum class UiMessageType {
     Error,
@@ -16,14 +16,14 @@ public enum class UiMessageType {
 
 public data class UiMessage(
     val message: String,
-    val id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
+    val id: Long = nextUiMessageId(),
     val sourceId: String? = null,
     val type: UiMessageType = UiMessageType.Error,
 )
 
 public fun UiMessage(
     t: Throwable,
-    id: Long = Uuid.random().getMostSignificantBitsFromBytes(),
+    id: Long = nextUiMessageId(),
     sourceId: String? = null,
     fallbackMessage: String = DEFAULT_ERROR_MESSAGE,
 ): UiMessage = UiMessage(
@@ -34,12 +34,9 @@ public fun UiMessage(
 
 internal const val DEFAULT_ERROR_MESSAGE = "Something went wrong. Please try again."
 
-internal fun Uuid.getMostSignificantBitsFromBytes(): Long {
-    val bytes = this.toByteArray()
-    return bytes.sliceArray(0..7).fold(0L) { acc, byte ->
-        (acc shl 8) or (byte.toLong() and 0xFF)
-    }
-}
+private val uiMessageIds = atomic(0L)
+
+internal fun nextUiMessageId(): Long = uiMessageIds.incrementAndGet()
 
 public class UiMessageManager {
     private val mutex = Mutex()
