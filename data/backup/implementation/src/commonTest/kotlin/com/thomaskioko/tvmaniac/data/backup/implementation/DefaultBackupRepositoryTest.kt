@@ -1,9 +1,9 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeRestoredListWriter
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
@@ -202,17 +202,17 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
         followShow()
         watchEpisode(season = 1, episode = 1)
 
-        val result = repository.writeBackup(LOCATION)
+        val result = repository.writeBackup(LOCATION, FILE_NAME)
 
         result shouldBe BackupResult.Success(showCount = 1, episodeCount = 1)
-        destination.contentsAt(LOCATION).shouldNotBeNull()
+        destination.contentsAt("$LOCATION/$FILE_NAME").shouldNotBeNull()
     }
 
     @Test
     fun `should report failure given the destination cannot be written`() = runTest(testDispatcher) {
         destination.setWriteException(IllegalStateException("no permission"))
 
-        val result = repository.writeBackup(LOCATION)
+        val result = repository.writeBackup(LOCATION, FILE_NAME)
 
         result.shouldBeInstanceOf<BackupResult.Failed>().reason shouldBe BackupFailure.WriteFailed
     }
@@ -221,7 +221,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
     fun `should report failure given the file reads back as something else`() = runTest(testDispatcher) {
         destination.setReadException(IllegalStateException("truncated"))
 
-        val result = repository.writeBackup(LOCATION)
+        val result = repository.writeBackup(LOCATION, FILE_NAME)
 
         result.shouldBeInstanceOf<BackupResult.Failed>().reason shouldBe BackupFailure.VerificationFailed
     }
@@ -286,6 +286,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
         private const val TRAKT_ID = 1388L
         private const val SHOW_TITLE = "Breaking Bad"
         private const val NOW = 1_700_000_000_000L
+        private const val FILE_NAME = "tvmaniac-backup.json"
         private const val LOCATION = "content://downloads/backup.json"
     }
 }

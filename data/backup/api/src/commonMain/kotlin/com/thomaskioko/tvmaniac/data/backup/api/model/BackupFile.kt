@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.backup.api
+package com.thomaskioko.tvmaniac.data.backup.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -735,6 +735,7 @@ graph TB
   :data:account-manager:implementation --> :data:account-manager:api
   :data:backup:implementation --> :core:appconfig:api
   :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
   :data:backup:implementation --> :core:syncstate:api
   :data:backup:implementation --> :core:util:api
   :data:backup:implementation --> :data:backup:api
@@ -1637,7 +1638,6 @@ graph TB
   :features:settings:ui -.-> :core:test-tags
   :features:settings:ui -.-> :core:view
   :features:settings:ui -.-> :data:account-manager:api
-  :features:settings:ui -.-> :data:backup:api
   :features:settings:ui -.-> :data:datastore:api
   :features:settings:ui -.-> :domain:theme
   :features:settings:ui --> :features:settings:presenter

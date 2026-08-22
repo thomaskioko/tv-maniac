@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
-import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFile
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupShow
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id

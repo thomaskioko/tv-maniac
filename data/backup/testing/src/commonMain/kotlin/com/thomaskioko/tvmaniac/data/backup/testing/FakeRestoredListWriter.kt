@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.backup.testing
 
-import com.thomaskioko.tvmaniac.data.backup.api.BackupList
 import com.thomaskioko.tvmaniac.data.backup.api.RestoredListWriter
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
 
 public class FakeRestoredListWriter : RestoredListWriter {
 
