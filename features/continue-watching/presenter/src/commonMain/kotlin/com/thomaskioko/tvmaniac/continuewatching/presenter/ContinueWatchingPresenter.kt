@@ -221,11 +221,9 @@ public class ContinueWatchingPresenter internal constructor(
     }
 
     public fun onQueryChanged(query: String) {
-        coroutineScope.launch {
-            queryFlow.emit(query)
-            observeWatchlistSectionsInteractor(query)
-            observeUpNextSectionsInteractor(query)
-        }
+        queryFlow.value = query
+        observeWatchlistSectionsInteractor(query)
+        observeUpNextSectionsInteractor(query)
     }
 
     /**

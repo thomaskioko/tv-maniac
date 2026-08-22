@@ -224,17 +224,13 @@ public class LibraryPresenter internal constructor(
     }
 
     private fun updateQuery(query: String) {
-        coroutineScope.launch {
-            queryFlow.emit(query)
-            observeLibrary()
-        }
+        queryFlow.value = query
+        observeLibrary()
     }
 
     private fun clearQuery() {
-        coroutineScope.launch {
-            queryFlow.emit("")
-            observeLibrary()
-        }
+        queryFlow.value = ""
+        observeLibrary()
     }
 
     private fun toggleSearchActive() {
