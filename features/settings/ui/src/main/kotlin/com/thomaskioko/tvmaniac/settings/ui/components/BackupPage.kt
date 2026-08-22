@@ -11,24 +11,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DriveFileRenameOutline
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.thomaskioko.tvmaniac.compose.components.ChoiceChipGroup
@@ -37,6 +46,7 @@ import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.components.tvManiacTextFieldColors
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupLocationClicked
@@ -46,6 +56,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupToggled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupFileNameChanged
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
@@ -63,6 +74,7 @@ import com.thomaskioko.tvmaniac.settings.ui.BackupPreviewParameterProvider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroupDivider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsNavigationRow
+import com.thomaskioko.tvmaniac.settings.ui.backupAutoBackupOnState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 
 private const val BACKUP_PICKER_MIME_TYPE = "application/*"
@@ -119,6 +131,7 @@ private fun BackupPageContent(
     val locked = state.premium.backupLocked
     val backup = state.backup
     val summary = backup.summary
+    var editingFileName by remember { mutableStateOf(false) }
 
     PremiumOverlay(
         locked = locked,
@@ -166,6 +179,15 @@ private fun BackupPageContent(
                         enabled = !locked,
                         onClick = { onAction(AutoBackupLocationClicked) },
                     )
+                    SettingsGroupDivider()
+                    SettingsNavigationRow(
+                        modifier = Modifier.testTag(SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG),
+                        icon = Icons.Filled.DriveFileRenameOutline,
+                        title = backup.autoBackup.fileNameTitle,
+                        description = backup.autoBackup.fileName,
+                        enabled = !locked,
+                        onClick = { editingFileName = true },
+                    )
                 }
             }
 
@@ -195,6 +217,55 @@ private fun BackupPageContent(
     BackupRestoreConfirmDialog(
         confirm = backup.confirm,
         onAction = onAction,
+    )
+
+    if (editingFileName) {
+        BackupFileNameDialog(
+            settings = backup.autoBackup,
+            onConfirm = { name ->
+                editingFileName = false
+                onAction(BackupFileNameChanged(name))
+            },
+            onDismiss = { editingFileName = false },
+        )
+    }
+}
+
+@Composable
+internal fun BackupFileNameDialog(
+    settings: AutoBackupSettings,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf(settings.fileName) }
+
+    TvManiacAlertDialog(
+        title = settings.fileNameTitle,
+        message = settings.fileNameMessage,
+        confirmButtonText = settings.fileNameSaveLabel,
+        dismissButtonText = settings.fileNameCancelLabel,
+        onConfirm = { onConfirm(name) },
+        onDismiss = onDismiss,
+        confirmButtonTestTag = SettingsTestTags.BACKUP_FILE_NAME_SAVE_BUTTON_TEST_TAG,
+        dismissButtonTestTag = SettingsTestTags.BACKUP_FILE_NAME_CANCEL_BUTTON_TEST_TAG,
+        content = {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(SettingsTestTags.BACKUP_FILE_NAME_FIELD_TEST_TAG),
+                value = name,
+                onValueChange = { name = it },
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodyMedium,
+                shape = MaterialTheme.shapes.medium,
+                colors = tvManiacTextFieldColors(),
+                keyboardOptions = KeyboardOptions(
+                    autoCorrectEnabled = false,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(onDone = { onConfirm(name) }),
+            )
+        },
     )
 }
 
@@ -395,6 +466,17 @@ private fun BackupRestoreSummaryContent(
 
         Spacer(modifier = Modifier.height(TvManiacSpacing.large))
     }
+}
+
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun BackupFileNameDialogPreview() {
+    BackupFileNameDialog(
+        settings = backupAutoBackupOnState.backup.autoBackup,
+        onConfirm = {},
+        onDismiss = {},
+    )
 }
 
 @ThemePreviews
