@@ -11,6 +11,8 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
+import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
@@ -143,6 +145,53 @@ public class DefaultDatastoreRepository(
         dataStore.data.map { preferences ->
             preferences[KEY_BACKGROUND_SYNC_ENABLED] ?: true
         }
+
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_AUTO_BACKUP_ENABLED] = enabled
+        }
+    }
+
+    override fun observeAutoBackupEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_AUTO_BACKUP_ENABLED] ?: false
+        }
+
+    override suspend fun saveAutoBackupInterval(interval: AutoBackupInterval) {
+        dataStore.edit { preferences ->
+            preferences[KEY_AUTO_BACKUP_INTERVAL] = interval.name
+        }
+    }
+
+    override fun observeAutoBackupInterval(): Flow<AutoBackupInterval> =
+        dataStore.data.map { preferences ->
+            AutoBackupInterval.fromName(preferences[KEY_AUTO_BACKUP_INTERVAL])
+        }
+
+    override suspend fun saveBackupFolder(folder: String?) {
+        dataStore.edit { preferences ->
+            when (folder) {
+                null -> preferences.remove(KEY_BACKUP_FOLDER)
+                else -> preferences[KEY_BACKUP_FOLDER] = folder
+            }
+        }
+    }
+
+    override fun observeBackupFolder(): Flow<String?> =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FOLDER] }
+
+    override suspend fun getBackupFolder(): String? =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FOLDER] }.first()
+
+    override suspend fun saveBackupFileName(fileName: String) {
+        dataStore.edit { preferences -> preferences[KEY_BACKUP_FILE_NAME] = fileName }
+    }
+
+    override fun observeBackupFileName(): Flow<String> =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FILE_NAME] ?: BackupFileName.Default }
+
+    override suspend fun getBackupFileName(): String =
+        dataStore.data.map { preferences -> preferences[KEY_BACKUP_FILE_NAME] ?: BackupFileName.Default }.first()
 
     override suspend fun setLastSyncTimestamp(timestamp: Long) {
         dataStore.edit { preferences ->
@@ -488,5 +537,9 @@ public class DefaultDatastoreRepository(
         public val KEY_QUICK_RATE_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("quick_rate_enabled")
         public val KEY_MULTIPLE_PLAYS_ENABLED: Preferences.Key<Boolean> =
             booleanPreferencesKey("multiple_plays_enabled")
+        public val KEY_AUTO_BACKUP_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("auto_backup_enabled")
+        public val KEY_BACKUP_FOLDER: Preferences.Key<String> = stringPreferencesKey("backup_folder")
+        public val KEY_BACKUP_FILE_NAME: Preferences.Key<String> = stringPreferencesKey("backup_file_name")
+        public val KEY_AUTO_BACKUP_INTERVAL: Preferences.Key<String> = stringPreferencesKey("auto_backup_interval")
     }
 }

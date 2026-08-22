@@ -412,6 +412,7 @@ graph TB
   :core:integration:infra --> :data:user:implementation
   :core:integration:infra --> :data:watch-status:implementation
   :core:integration:infra --> :data:watchproviders:implementation
+  :core:integration:infra --> :domain:backup
   :core:integration:infra --> :domain:continue-watching
   :core:integration:infra --> :domain:episode
   :core:integration:infra --> :domain:library
@@ -447,6 +448,7 @@ graph TB
   :data:account-manager:implementation --> :data:account-manager:api
   :data:backup:implementation --> :core:appconfig:api
   :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
   :data:backup:implementation --> :core:syncstate:api
   :data:backup:implementation --> :core:util:api
   :data:backup:implementation --> :data:backup:api

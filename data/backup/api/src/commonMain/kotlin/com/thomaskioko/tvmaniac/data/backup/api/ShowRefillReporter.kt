@@ -1,11 +1,7 @@
 package com.thomaskioko.tvmaniac.data.backup.api
 
+import com.thomaskioko.tvmaniac.data.backup.api.model.ShowRefillProgress
 import kotlinx.coroutines.flow.StateFlow
-
-public data class ShowRefillProgress(
-    val completed: Int = 0,
-    val total: Int = 0,
-)
 
 public interface ShowRefillReporter {
     public val progress: StateFlow<ShowRefillProgress>

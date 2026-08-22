@@ -37,7 +37,8 @@ AND (
 AND (
     :followedOnly = 0
     OR followed_shows.id IS NOT NULL
-);
+)
+ORDER BY COALESCE(followed_shows.followed_at, 0) DESC, tvshow.id;
 
 countLibraryShows:
 SELECT COUNT(*) FROM tvshow

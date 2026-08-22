@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.traktlists.implementation
 
 import com.thomaskioko.tvmaniac.core.logger.Logger
-import com.thomaskioko.tvmaniac.data.backup.api.BackupList
 import com.thomaskioko.tvmaniac.data.backup.api.RestoredListWriter
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.shows.api.ShowTraktIdResolver
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListDao

@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.data.backup.api
+package com.thomaskioko.tvmaniac.data.backup.api.model
 
 public sealed interface RestoreResult {
     public data class Restored(val summary: RestoreSummary) : RestoreResult

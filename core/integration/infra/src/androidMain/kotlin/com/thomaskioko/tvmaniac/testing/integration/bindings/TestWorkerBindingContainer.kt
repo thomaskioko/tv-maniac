@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.testing.integration.bindings
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.tasks.implementation.AndroidTaskScheduler
 import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.domain.backup.AutoBackupWorker
+import com.thomaskioko.tvmaniac.domain.backup.RestoredShowsRefillWorker
 import com.thomaskioko.tvmaniac.domain.continuewatching.ContinueWatchingSyncWorker
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
@@ -24,6 +26,8 @@ import dev.zacsweers.metro.SingleIn
         PendingUploadsWorker::class,
         AndroidTaskScheduler::class,
         ContinueWatchingSyncWorker::class,
+        RestoredShowsRefillWorker::class,
+        AutoBackupWorker::class,
     ],
 )
 public object TestWorkerBindingContainer {

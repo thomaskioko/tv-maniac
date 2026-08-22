@@ -4,8 +4,8 @@ import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.view.InvokeError
 import com.thomaskioko.tvmaniac.core.view.InvokeSuccess
 import com.thomaskioko.tvmaniac.data.backup.api.BackupExportException
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -21,16 +21,16 @@ internal class ExportBackupInteractorTest {
 
     @Test
     fun `should write to the given location given a backup is exported`() = runTest {
-        interactor.executeSync(ExportBackupInteractor.Params(LOCATION))
+        interactor.executeSync(ExportBackupInteractor.Params(LOCATION, FILE_NAME))
 
-        repository.lastWriteLocation shouldBe LOCATION
+        repository.lastWriteLocation shouldBe "$LOCATION/$FILE_NAME"
     }
 
     @Test
     fun `should report success given the backup is written`() = runTest {
         repository.setWriteResult(BackupResult.Success(showCount = 3, episodeCount = 42))
 
-        interactor(ExportBackupInteractor.Params(LOCATION)).toList().last() shouldBe InvokeSuccess
+        interactor(ExportBackupInteractor.Params(LOCATION, FILE_NAME)).toList().last() shouldBe InvokeSuccess
     }
 
     @Test
@@ -38,7 +38,7 @@ internal class ExportBackupInteractorTest {
         repository.setWriteResult(BackupResult.Failed(BackupFailure.VerificationFailed))
 
         val failure = assertFailsWith<BackupExportException> {
-            interactor.executeSync(ExportBackupInteractor.Params(LOCATION))
+            interactor.executeSync(ExportBackupInteractor.Params(LOCATION, FILE_NAME))
         }
 
         failure.reason shouldBe BackupFailure.VerificationFailed
@@ -48,12 +48,13 @@ internal class ExportBackupInteractorTest {
     fun `should report an error given the repository throws`() = runTest {
         repository.setCreateException(IllegalStateException("database is locked"))
 
-        val status = interactor(ExportBackupInteractor.Params(LOCATION)).toList().last()
+        val status = interactor(ExportBackupInteractor.Params(LOCATION, FILE_NAME)).toList().last()
 
         status.shouldBeInstanceOf<InvokeError>()
     }
 
     private companion object {
+        private const val FILE_NAME = "tvmaniac-backup.json"
         private const val LOCATION = "content://downloads/backup.json"
     }
 }

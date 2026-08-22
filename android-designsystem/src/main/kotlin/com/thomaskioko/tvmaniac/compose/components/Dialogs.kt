@@ -43,6 +43,7 @@ public fun TvManiacAlertDialog(
     neutralButtonText: String? = null,
     onNeutral: (() -> Unit)? = null,
     neutralButtonTestTag: String? = null,
+    content: (@Composable () -> Unit)? = null,
 ) {
     val density = LocalDensity.current
     val containerWidth = with(density) {
@@ -71,11 +72,14 @@ public fun TvManiacAlertDialog(
             )
         },
         text = {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium)) {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                content?.invoke()
+            }
         },
         confirmButton = {
             if (dismissButtonText != null && neutralButtonText != null && onNeutral != null) {

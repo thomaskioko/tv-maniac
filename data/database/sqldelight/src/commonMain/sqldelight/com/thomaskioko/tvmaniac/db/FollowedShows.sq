@@ -136,7 +136,7 @@ INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
 LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
-ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC;
+ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC, tvshow.id ASC;
 
 searchFollowedShows:
 SELECT

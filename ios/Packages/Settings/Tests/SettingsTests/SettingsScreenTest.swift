@@ -242,6 +242,54 @@ class SettingsScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_Importing")
     }
 
+    func test_SettingsScreen_Backup_AutoBackupOn() {
+        SettingsScreen(
+            state: makeState(
+                page: .backup,
+                authenticated: true,
+                customBackupContent: backupContent(
+                    autoBackup: autoBackupContent(isOn: true, lastRunLabel: "Last backup 12 August 2026")
+                )
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_AutoBackupOn")
+    }
+
+    func test_SettingsScreen_Backup_AutoBackupNeverRun() {
+        SettingsScreen(
+            state: makeState(
+                page: .backup,
+                authenticated: true,
+                customBackupContent: backupContent(autoBackup: autoBackupContent(isOn: true))
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_AutoBackupNeverRun")
+    }
+
+    func test_SettingsScreen_Backup_AutoBackupFailed() {
+        SettingsScreen(
+            state: makeState(
+                page: .backup,
+                authenticated: true,
+                customBackupContent: backupContent(
+                    autoBackup: autoBackupContent(
+                        isOn: true,
+                        lastRunLabel: "Last backup 12 August 2026",
+                        failureWarning: "The last automatic backup failed. Check the location is still available, then back up now.",
+                        selectedSchedule: "MONTHLY"
+                    )
+                )
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_Backup_AutoBackupFailed")
+    }
+
     func test_SettingsScreen_Backup_RestoreSummary() {
         SettingsScreen(
             state: makeState(page: .backup, authenticated: true, customBackupContent: backupContent(summary: restoreSummaryContent)),

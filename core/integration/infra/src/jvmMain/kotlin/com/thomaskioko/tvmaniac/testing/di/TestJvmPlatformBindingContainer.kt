@@ -6,9 +6,12 @@ import androidx.datastore.preferences.core.Preferences
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
+import com.thomaskioko.tvmaniac.core.base.DeviceLocalDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
+import com.thomaskioko.tvmaniac.data.backup.api.BackupLocationPermissions
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupLocationPermissions
 import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
@@ -43,6 +46,27 @@ public object TestJvmPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideAuthStore(): AuthStore = FakeAuthStore()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideBackupLocationPermissions(): BackupLocationPermissions =
+        FakeBackupLocationPermissions()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @DeviceLocalDataStore
+    public fun provideDeviceLocalDataStore(
+        @IoCoroutineScope scope: CoroutineScope,
+    ): DataStore<Preferences> {
+        val tempDir = Files.createTempDirectory("tvmaniac-test-device-local")
+        tempDir.toFile().deleteOnExit()
+        return PreferenceDataStoreFactory.createWithPath(
+            corruptionHandler = null,
+            migrations = emptyList(),
+            scope = scope,
+            produceFile = { tempDir.resolve("device-local.preferences_pb").toString().toPath() },
+        )
+    }
 
     @Provides
     @SingleIn(AppScope::class)

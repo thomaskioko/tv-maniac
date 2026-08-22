@@ -9,10 +9,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class AdaptiveApiRateLimiter : ApiRateLimiter {
+public class AdaptiveApiRateLimiter(
+    private val random: Random = Random.Default,
+) : ApiRateLimiter {
 
     private val semaphore = Semaphore(MAX_CONCURRENT_API_CALLS)
 
@@ -23,8 +26,8 @@ public class AdaptiveApiRateLimiter : ApiRateLimiter {
         val currentBackoff = _backoffMultiplier.value
         if (currentBackoff > 0) {
             val exponentialDelay = calculateExponentialDelay(currentBackoff)
-            val jitter = Random.nextLong(0, MAX_JITTER_MS)
-            delay(exponentialDelay + jitter)
+            val jitter = random.nextLong(0, MAX_JITTER_MS)
+            delay((exponentialDelay + jitter).milliseconds)
         }
 
         return semaphore.withPermit { block() }

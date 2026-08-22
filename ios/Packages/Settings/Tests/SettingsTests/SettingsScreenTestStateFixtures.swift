@@ -208,11 +208,53 @@ extension SettingsScreenTest {
         )
     }
 
+    func autoBackupContent(
+        isOn: Bool = false,
+        lastRunLabel: String = "No backup saved yet",
+        failureWarning: String? = nil,
+        selectedSchedule: String = "WEEKLY"
+    ) -> SettingsAutoBackupContent {
+        SettingsAutoBackupContent(
+            title: "Automatic backup",
+            description: "Save your shows, watch history, ratings and settings to a file on a schedule",
+            isOn: isOn,
+            locationTitle: "Backup location",
+            locationLabel: "Downloads",
+            hasLocation: true,
+            fileNameTitle: "File name",
+            fileNameMessage: "Backups are saved under this name",
+            fileName: "tvmaniac-backup.json",
+            fileNameSaveLabel: "Save",
+            fileNameCancelLabel: "Cancel",
+            scheduleTitle: "How often",
+            scheduleOptions: [
+                ("DAILY", "Every day"),
+                ("WEEKLY", "Every week"),
+                ("FORTNIGHTLY", "Every two weeks"),
+                ("MONTHLY", "Every month"),
+            ].map { id, label in
+                SettingsAutoBackupScheduleOption(
+                    id: id,
+                    label: label,
+                    isSelected: id == selectedSchedule,
+                    onSelect: {}
+                )
+            },
+            lastRunLabel: lastRunLabel,
+            failureWarning: failureWarning,
+            backupNowTitle: "Back up now",
+            backupNowDescription: "Save a backup straight away",
+            onToggle: { _ in },
+            onBackupNow: {}
+        )
+    }
+
     func backupContent(
         locked: Bool = false,
         isExporting: Bool = false,
         isImporting: Bool = false,
-        summary: SettingsBackupSummaryContent? = nil
+        summary: SettingsBackupSummaryContent? = nil,
+        autoBackup: SettingsAutoBackupContent? = nil
     ) -> SettingsBackupContent {
         SettingsBackupContent(
             exportTitle: "Save a backup",
@@ -223,6 +265,7 @@ extension SettingsScreenTest {
             isImporting: isImporting,
             summary: summary,
             summaryDismissAccessibilityLabel: "Dismiss",
+            autoBackup: autoBackup ?? autoBackupContent(),
             isLocked: locked,
             lockedBadgeText: locked ? "Premium" : "",
             lockedTitle: locked ? "Backup is a Premium feature" : "",
