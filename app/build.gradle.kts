@@ -281,7 +281,6 @@ dependencies {
     testImplementation(projects.data.oauth.testing)
     testImplementation(projects.data.traktauth.testing)
     testImplementation(projects.core.locale.testing)
-    testImplementation(projects.core.util.testing)
     testImplementation(projects.core.featureFlags.testing)
 
     testImplementation(libs.firebase.config)
@@ -314,7 +313,6 @@ dependencies {
     androidTestImplementation(projects.data.oauth.testing)
     androidTestImplementation(projects.data.traktauth.testing)
     androidTestImplementation(projects.core.locale.testing)
-    androidTestImplementation(projects.core.util.testing)
 
     androidTestImplementation(libs.androidx.compose.ui.test)
     androidTestImplementation(libs.androidx.monitor)
