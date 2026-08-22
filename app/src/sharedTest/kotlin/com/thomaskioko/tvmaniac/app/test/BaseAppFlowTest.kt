@@ -120,6 +120,7 @@ internal class AppFlowScope(
             mockHandler = MockEngineHandler.handler,
             graph = graph,
             rootRobot = rootRobot,
+            composeUi = composeUi,
         )
     }
 
