@@ -4,6 +4,7 @@
     <string name="label_tbd">TBD</string>
     <string name="label_error">Fehler</string>
     <string name="label_ok">OK</string>
+    <string name="label_save">Speichern</string>
     <string name="label_cancel">Abbrechen</string>
 
     <string name="label_tab_discover">Entdecken</string>
@@ -606,6 +607,8 @@
     <string name="settings_auto_backup_schedule_fortnightly">Alle zwei Wochen</string>
     <string name="settings_auto_backup_schedule_monthly">Monatlich</string>
     <string name="settings_auto_backup_location_title">Speicherort</string>
+    <string name="settings_backup_file_name_title">Dateiname</string>
+    <string name="settings_backup_file_name_message">Sicherungen werden unter diesem Namen gespeichert</string>
     <string name="settings_auto_backup_location_none">Wählen Sie, wo Sicherungen gespeichert werden</string>
     <string name="settings_auto_backup_last_run">Letzte Sicherung %1$s</string>
     <string name="settings_auto_backup_last_run_never">Noch keine Sicherung gespeichert</string>
@@ -614,6 +617,7 @@
     <string name="settings_auto_backup_now_description">Sofort eine Sicherung speichern, ohne auf den Zeitplan zu warten</string>
     <string name="error_backup_save_failed">Sicherung konnte nicht gespeichert werden. Versuchen Sie einen anderen Speicherort.</string>
     <string name="error_backup_location_unavailable">TvManiac kann an diesem Speicherort nicht mehr schreiben. Wählen Sie erneut, wo Sicherungen gespeichert werden.</string>
+    <string name="error_backup_file_name_invalid">Dieser Name kann nicht verwendet werden. Versuchen Sie einen ohne Schrägstriche oder Doppelpunkte.</string>
     <string name="error_backup_read_failed">Diese Datei konnte nicht gelesen werden. Sie ist möglicherweise beschädigt oder stammt aus einer anderen App.</string>
     <string name="error_backup_version_too_new">Diese Sicherung wurde mit einer neueren Version von TvManiac erstellt. Aktualisieren Sie die App, um sie wiederherzustellen.</string>
     <string name="error_backup_sync_in_progress">Eine Synchronisierung läuft. Warten Sie, bis sie abgeschlossen ist, und versuchen Sie es erneut.</string>
