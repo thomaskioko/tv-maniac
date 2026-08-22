@@ -254,6 +254,11 @@ private val autoBackupSettings = AutoBackupSettings(
     ),
     locationTitle = "Backup location",
     locationLabel = "Choose where to save backups",
+    fileNameTitle = "File name",
+    fileNameMessage = "Backups are saved under this name",
+    fileName = "tvmaniac-backup.json",
+    fileNameSaveLabel = "Save",
+    fileNameCancelLabel = "Cancel",
     lastRunLabel = "No backup saved yet",
     backupNowTitle = "Back up now",
     backupNowDescription = "Save a backup straight away, without waiting for the schedule",
@@ -274,7 +279,7 @@ internal val backupAutoBackupOnState = backupState.copy(
         autoBackup = autoBackupSettings.copy(
             enabled = true,
             hasLocation = true,
-            locationLabel = "tvmaniac-backup.json",
+            locationLabel = "Download",
             lastRunLabel = "Last backup 12 August 2026",
         ),
     ),
@@ -289,7 +294,7 @@ internal val backupAutoBackupFailedState = backupState.copy(
         autoBackup = autoBackupSettings.copy(
             enabled = true,
             hasLocation = true,
-            locationLabel = "tvmaniac-backup.json",
+            locationLabel = "Download",
             lastRunLabel = "Last backup 12 August 2026",
             failureWarning = "The last automatic backup failed. Check the location is still " +
                 "available, then back up now.",

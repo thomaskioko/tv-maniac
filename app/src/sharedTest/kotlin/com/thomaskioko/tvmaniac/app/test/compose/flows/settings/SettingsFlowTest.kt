@@ -399,6 +399,59 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    fun givenBackupPage_whenFileNameChanged_thenSelectionIsPersisted() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .assertBackupFileName("tvmaniac-backup.json")
+            .clickBackupFileNameRow()
+            .replaceBackupFileName("my shows")
+            .clickBackupFileNameSave()
+            .assertBackupFileName("my shows.json")
+    }
+
+    @Test
+    fun givenBackupFileNameDialog_whenCancelled_thenNameIsUnchanged() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openBackupPage()
+            .clickBackupFileNameRow()
+            .replaceBackupFileName("discarded")
+            .clickBackupFileNameCancel()
+            .assertBackupFileName("tvmaniac-backup.json")
+    }
+
+    @Test
     fun givenConnectedAccount_whenBackupRestoreRequested_thenDeviceOnlyChoiceIsReachable() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 

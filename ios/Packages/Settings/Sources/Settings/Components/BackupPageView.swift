@@ -7,6 +7,8 @@ private let disabledOpacity: Double = 0.38
 
 struct BackupPageView: View {
     @Environment(\.appTheme) private var appTheme
+    @State private var editingFileName = false
+    @State private var fileNameDraft = ""
     private let content: SettingsBackupContent
 
     init(content: SettingsBackupContent) {
@@ -21,6 +23,8 @@ struct BackupPageView: View {
                 importRow
                 SettingsRowDivider()
                 locationRow
+                SettingsRowDivider()
+                fileNameRow
             }
 
             if let summary = content.summary {
@@ -32,6 +36,17 @@ struct BackupPageView: View {
             }
 
             autoBackupSection
+        }
+        .alert(content.autoBackup.fileNameTitle, isPresented: $editingFileName) {
+            TextField(content.autoBackup.fileNameTitle, text: $fileNameDraft)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+            Button(content.autoBackup.fileNameSaveLabel) {
+                content.autoBackup.onFileNameChanged(fileNameDraft)
+            }
+            Button(content.autoBackup.fileNameCancelLabel, role: .cancel) {}
+        } message: {
+            Text(content.autoBackup.fileNameMessage)
         }
         .premiumOverlay(
             isLocked: content.isLocked,
@@ -142,6 +157,39 @@ struct BackupPageView: View {
         .testTag(SettingsTestTags.shared.AUTO_BACKUP_LOCATION_ROW_TEST_TAG)
         .accessibilityLabel(content.autoBackup.locationTitle)
         .accessibilityHint(content.autoBackup.locationLabel)
+    }
+
+    private var fileNameRow: some View {
+        Button {
+            fileNameDraft = content.autoBackup.fileName
+            editingFileName = true
+        } label: {
+            HStack(spacing: appTheme.spacing.medium) {
+                SettingsIconChip("pencil")
+
+                VStack(alignment: .leading, spacing: appTheme.spacing.xxSmall) {
+                    Text(content.autoBackup.fileNameTitle)
+                        .textStyle(appTheme.typography.bodyLarge)
+                        .foregroundColor(appTheme.colors.onSurface)
+                    Text(content.autoBackup.fileName)
+                        .textStyle(appTheme.typography.bodySmall)
+                        .foregroundColor(appTheme.colors.onSurfaceVariant)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+            }
+            .padding(.horizontal, appTheme.spacing.medium)
+            .padding(.vertical, appTheme.spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(content.isLocked)
+        .testTag(SettingsTestTags.shared.BACKUP_FILE_NAME_ROW_TEST_TAG)
+        .accessibilityLabel(content.autoBackup.fileNameTitle)
+        .accessibilityHint(content.autoBackup.fileName)
     }
 
     private var autoBackupSection: some View {

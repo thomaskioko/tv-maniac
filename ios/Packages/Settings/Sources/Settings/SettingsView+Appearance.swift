@@ -260,6 +260,11 @@ extension SettingsView {
             locationTitle: autoBackup.locationTitle,
             locationLabel: autoBackup.locationLabel,
             hasLocation: autoBackup.hasLocation,
+            fileNameTitle: autoBackup.fileNameTitle,
+            fileNameMessage: autoBackup.fileNameMessage,
+            fileName: autoBackup.fileName,
+            fileNameSaveLabel: autoBackup.fileNameSaveLabel,
+            fileNameCancelLabel: autoBackup.fileNameCancelLabel,
             scheduleTitle: autoBackup.scheduleTitle,
             scheduleOptions: autoBackup.scheduleOptions.map { option in
                 SettingsAutoBackupScheduleOption(
@@ -276,7 +281,8 @@ extension SettingsView {
             isBackingUp: autoBackup.isBackingUp,
             onToggle: { presenter.dispatch(action: AutoBackupToggled(enabled: $0)) },
             onBackupNow: { presenter.dispatch(action: BackupNowClicked()) },
-            onChooseLocation: { presenter.dispatch(action: AutoBackupLocationClicked()) }
+            onChooseLocation: { presenter.dispatch(action: AutoBackupLocationClicked()) },
+            onFileNameChanged: { presenter.dispatch(action: BackupFileNameChanged(name: $0)) }
         )
     }
 

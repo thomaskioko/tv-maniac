@@ -76,6 +76,7 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
 
     themes.forEach { (theme, themeDesc) ->
         appTheme = theme
+        this.waitForIdle()
 
         val filename = overrideFileName ?: name
 
