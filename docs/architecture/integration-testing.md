@@ -25,11 +25,39 @@ For the patterns used to write new tests, see [`flow-test-patterns.md`](flow-tes
 - `TvManiacTestActivity`: renders `RootScreen` inside the test graph. Wraps the content in `CompositionLocalProvider(LocalAutoAdvanceEnabled provides false)` so the Discover featured pager auto-advance `LaunchedEffect` is disabled during tests, keeping pager assertions deterministic.
 - `BaseAppFlowTest` (`app/src/sharedTest/.../BaseAppFlowTest.kt`): abstract class annotated `@RunWith(AndroidJUnit4::class)` and `@Config(sdk = [33], application = TvManiacTestApplication::class)`. Exposes one helper, `runAppFlowTest(block: AppFlowScope.() -> Unit)`.
 
-When a test runs, `runAppFlowTest` resets the shared `MockEngineHandler`, calls `application.resetAppComponent()`, and then opens v2 `runAndroidComposeUiTest<TvManiacTestActivity>` from `androidx.compose.ui.test.v2`. The latter installs a fresh `TestDispatcher` before launching the activity. The lambda's `AppFlowScope` receiver hands the test `composeUi`, `graph`, `activityGraph`, a synthetic `componentContext`, lazy robots (`discoverRobot`, `showDetailsRobot`, and others), and a `scenarios` instance that shares the same handler and graph.
+When a test runs, `runAppFlowTest` resets the shared `MockEngineHandler`, calls `application.resetAppComponent()`, creates one `StandardTestDispatcher`, installs it with `Dispatchers.setMain`, and passes it as the `effectContext` of v2 `runAndroidComposeUiTest<TvManiacTestActivity>` from `androidx.compose.ui.test.v2`. The lambda's `AppFlowScope` receiver hands the test `composeUi`, `graph`, `activityGraph`, a synthetic `componentContext`, lazy robots (`discoverRobot`, `showDetailsRobot`, and others), and a `scenarios` instance that shares the same handler, graph, and `composeUi`.
 
-### Per-test graph reset
+### One scheduler for the whole test
 
-`AppCoroutineDispatchers` captures `Dispatchers.Main.immediate` at first graph access. Without `resetAppComponent()` between tests, the second test's coroutines would be scheduled on the first test's `TestDispatcher`, which is already stopped. The reset ensures the dispatcher captured inside the graph belongs to the active test scheduler.
+`runAndroidComposeUiTest` does not install anything as `Dispatchers.Main`. Read from
+`androidx.compose.ui:ui-test-android:1.12.0`: `setMain` appears nowhere in the artifact, composition
+is given a private `StandardTestDispatcher`, and the `runTest` body is given a second one whose
+`TestCoroutineScheduler` the library removes from the shared context on purpose. `MainTestClockImpl`
+advances only the composition scheduler, and nothing bridges it to the clock Robolectric uses for its
+main looper.
+
+That matters because presenters never read the injected dispatchers. `LifecycleOwner.coroutineScope`
+defaults to `Dispatchers.Main.immediate`, and `asValue` names it twice more. Left alone, every
+presenter, store, and data access object runs on the Handler backed main looper while recomposition
+runs on the composition scheduler, and `waitUntil` bounds both against the wall clock. Work parked
+behind a `delay` in app code then never resumes at all: no `debounce`, no `WhileSubscribed` stop
+timeout, no retry backoff.
+
+`Dispatchers.setMain(testDispatcher)` is what puts them on one timeline, because it is the only way
+to redirect an expression the production code hardcodes. Passing the same dispatcher as
+`effectContext` makes composition and `MainTestClock` share that scheduler too. `resetAppComponent()`
+still runs between tests so the graph does not hold a dispatcher belonging to a finished test.
+
+### Scenario setup must never block the test thread
+
+Every dispatcher role resolves to the scheduler the test thread advances, so a `runBlocking` in setup
+deadlocks: it holds the one thread that could complete the work it is waiting on. `Scenarios.runSetup`
+starts the work undispatched, which completes it inline when nothing actually suspends, and waits for
+idleness only when it does. Prefer a synchronous setter on a fake over a suspending one.
+
+Two ordering rules follow, both enforced by `stubActiveProvider`. A stub registered later wins for a
+given path, so an override registers after the catalog set; pass it as the `overrides` block. Sign-in
+comes last, because it starts a sync that must find every response already registered.
 
 ### Test-only `CompositionLocal` overrides
 

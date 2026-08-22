@@ -87,13 +87,13 @@ jobs:
                     git diff --cached --quiet --exit-code -- '**/README.md' \
                       || { echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files."; exit 1; }
 
-    locale-parity:
+    localization-check:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v7
 
-            -   name: Check Locale Parity
-                run: python3 scripts/ci/check-locale-parity.py
+            -   name: Check Localization
+                run: python3 scripts/ci/check-localization.py
 
     dependency-guard:
         runs-on: ubuntu-latest
@@ -190,14 +190,32 @@ jobs:
             -   name: 🐘 Setup Gradle Environment
                 uses: ./.github/actions/setup-gradle
 
-            -   name: Run Linux Tests
-                run: ./gradlew linuxTest -Papp.debugOnly=false
+            -   name: Run Unit Tests
+                run: ./gradlew linuxTest -Papp.debugOnly=false -x :app:testDebugUnitTest
 
             -   name: Upload Test Reports
                 uses: actions/upload-artifact@v7
                 if: ${{ !cancelled() }}
                 with:
                     name: linux-test-report
+                    path: '**/build/reports/*'
+
+    integration-test:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v7
+
+            -   name: 🐘 Setup Gradle Environment
+                uses: ./.github/actions/setup-gradle
+
+            -   name: Run Integration Tests
+                run: ./gradlew :app:testDebugUnitTest -Papp.debugOnly=false --continue
+
+            -   name: Upload Test Reports
+                uses: actions/upload-artifact@v7
+                if: ${{ !cancelled() }}
+                with:
+                    name: integration-test-report
                     path: '**/build/reports/*'
 
     ios-test:

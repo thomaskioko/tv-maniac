@@ -20,6 +20,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -72,6 +73,7 @@ public class DefaultEpisodesDao(
         episodeQueries.episodeById(Id<EpisodeId>(episodeId))
             .asFlow()
             .mapToOneOrNull(dispatchers.databaseRead)
+            .catch { emit(null) }
 
     override suspend fun getEpisodeByShowSeasonEpisodeNumber(
         showId: Long,

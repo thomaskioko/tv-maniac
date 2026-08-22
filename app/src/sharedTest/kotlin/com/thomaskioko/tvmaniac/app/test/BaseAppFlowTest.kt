@@ -3,7 +3,6 @@ package com.thomaskioko.tvmaniac.app.test
 import androidx.compose.ui.test.AndroidComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runAndroidComposeUiTest
-import androidx.datastore.preferences.core.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.arkivanov.decompose.ComponentContext
@@ -32,54 +31,18 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.StatisticsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.WatchDateSelectionRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
-import com.thomaskioko.tvmaniac.util.testing.FlakyTestRule
-import kotlinx.coroutines.runBlocking
-import org.junit.Rule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-/**
- * Base for app-level flow tests that drive the real `TvManiacTestActivity` through Compose.
- *
- * Subclasses wrap their assertions in [runAppFlowTest] which:
- *   * resets the singleton [MockEngineHandler] so stubs from the prior test do not leak,
- *   * recreates the [TestAppComponent] so `Dispatchers.Main.immediate` is captured AFTER
- *     `runAndroidComposeUiTest` installs its own [kotlinx.coroutines.test.TestDispatcher],
- *   * launches the activity inside the v2 `runTest` scope so Compose's main clock and the
- *     coroutines test scheduler share a single [kotlinx.coroutines.test.TestScheduler],
- *   * logs the fake Trakt repository out as a default starting state.
- *
- * The v2 [runAndroidComposeUiTest][androidx.compose.ui.test.v2.runAndroidComposeUiTest] uses
- * `StandardTestDispatcher` semantics: dispatched coroutines queue rather than running
- * immediately. Robots advance the scheduler through `waitForIdle` / `mainClock` calls inside
- * the existing assertion helpers.
- *
- * `@Config(application = TvManiacTestApplication::class)` is honoured by Robolectric;
- * instrumentation ignores it because `TvManiacInstrumentationRunner.newApplication` returns the
- * same Application subclass.
- */
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33], application = TvManiacTestApplication::class)
 @OptIn(ExperimentalTestApi::class)
 internal abstract class BaseAppFlowTest {
 
-    @get:Rule
-    val flakyRule = FlakyTestRule()
-
-    private fun clearPersistedPreferencesViaCurrentGraph(application: TvManiacTestApplication) {
-        runBlocking {
-            application.graph.dataStore.edit { it.clear() }
-        }
-    }
-
-    /**
-     * Runs [block] inside `runAndroidComposeUiTest<TvManiacTestActivity>`, providing an
-     * [AppFlowScope] with all robots, the dependency graph, and ready-made scenarios.
-     *
-     * The scope is rebuilt on every call. The application graph is reset before the activity
-     * launches so the [kotlinx.coroutines.test.TestDispatcher] installed by
-     * [runAndroidComposeUiTest] is the one captured by `AppCoroutineDispatchers`.
-     */
     protected fun runAppFlowTest(block: AppFlowScope.() -> Unit) {
         MockEngineHandler.handler.reset()
         val application = InstrumentationRegistry.getInstrumentation()
@@ -88,17 +51,22 @@ internal abstract class BaseAppFlowTest {
 
         application.resetAppComponent()
         application.clearPersistentTestState()
-        clearPersistedPreferencesViaCurrentGraph(application)
 
-        runAndroidComposeUiTest<TvManiacTestActivity> {
-            val graph = application.graph
-            graph.traktAuthRepository.logout()
-            val scope = AppFlowScope(this, graph)
-            try {
-                scope.block()
-            } finally {
-                scope.tearDown()
+        val testDispatcher = StandardTestDispatcher()
+        Dispatchers.setMain(testDispatcher)
+        try {
+            runAndroidComposeUiTest<TvManiacTestActivity>(effectContext = testDispatcher) {
+                val graph = application.graph
+                graph.traktAuthRepository.logout()
+                val scope = AppFlowScope(this, graph)
+                try {
+                    scope.block()
+                } finally {
+                    scope.tearDown()
+                }
             }
+        } finally {
+            Dispatchers.resetMain()
         }
     }
 }
@@ -147,6 +115,7 @@ internal class AppFlowScope(
             mockHandler = MockEngineHandler.handler,
             graph = graph,
             rootRobot = rootRobot,
+            composeUi = composeUi,
         )
     }
 

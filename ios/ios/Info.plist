@@ -11,6 +11,7 @@
 		<string>com.thomaskioko.tvmaniac.pendinguploads</string>
 		<string>com.thomaskioko.tvmaniac.watchlistsync</string>
 		<string>com.thomaskioko.tvmaniac.showrefill</string>
+		<string>com.thomaskioko.tvmaniac.autobackup</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -37,6 +38,10 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

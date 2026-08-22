@@ -735,6 +735,7 @@ graph TB
   :data:account-manager:implementation --> :data:account-manager:api
   :data:backup:implementation --> :core:appconfig:api
   :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
   :data:backup:implementation --> :core:syncstate:api
   :data:backup:implementation --> :core:util:api
   :data:backup:implementation --> :data:backup:api
@@ -953,6 +954,7 @@ graph TB
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
   :data:shows:implementation --> :api:tmdb:api
+  :data:shows:implementation --> :api:trakt:api
   :data:shows:implementation --> :core:base
   :data:shows:implementation --> :core:logger:api
   :data:shows:implementation --> :data:account-manager:api
@@ -1031,13 +1033,16 @@ graph TB
   :data:traktauth:implementation --> :data:oauth:api
   :data:traktlists:implementation --> :api:trakt:api
   :data:traktlists:implementation --> :core:base
+  :data:traktlists:implementation --> :core:logger:api
   :data:traktlists:implementation -.-> :core:network-util:api
   :data:traktlists:implementation --> :core:util:api
+  :data:traktlists:implementation --> :data:backup:api
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
   :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
+  :data:traktlists:implementation --> :data:user:api
   :data:trendingshows:api --> :core:base
   :data:trendingshows:api --> :data:database:sqldelight
   :data:trendingshows:api --> :data:shows:api
@@ -1108,6 +1113,7 @@ graph TB
   :domain:backup --> :core:tasks:api
   :domain:backup --> :core:view
   :domain:backup --> :data:backup:api
+  :domain:backup --> :data:shows:api
   :domain:backup --> :domain:showdetails
   :domain:calendar --> :core:base
   :domain:calendar --> :core:util:api
@@ -1632,7 +1638,6 @@ graph TB
   :features:settings:ui -.-> :core:test-tags
   :features:settings:ui -.-> :core:view
   :features:settings:ui -.-> :data:account-manager:api
-  :features:settings:ui -.-> :data:backup:api
   :features:settings:ui -.-> :data:datastore:api
   :features:settings:ui -.-> :domain:theme
   :features:settings:ui --> :features:settings:presenter

@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.toSyncError
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
 import com.thomaskioko.tvmaniac.data.backup.api.ShowRefillReporter
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.shows.api.ShowTraktIdResolver
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
@@ -18,6 +19,7 @@ import kotlinx.coroutines.withContext
 public class SyncRestoredShowsInteractor(
     private val backupRepository: BackupRepository,
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
+    private val traktIdResolver: ShowTraktIdResolver,
     private val refillReporter: ShowRefillReporter,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
@@ -35,6 +37,8 @@ public class SyncRestoredShowsInteractor(
         refillReporter.begin(showIds.size)
 
         withContext(dispatchers.io) {
+            resolveTraktIds(showIds)
+
             for (showId in showIds) {
                 currentCoroutineContext().ensureActive()
 
@@ -60,6 +64,14 @@ public class SyncRestoredShowsInteractor(
         }
 
         refillReporter.clear()
+    }
+
+    private suspend fun resolveTraktIds(showIds: List<Long>) {
+        val resolved = runCatching { traktIdResolver.resolveMissingTraktIds(showIds) }
+            .onFailure { logger.warning(TAG, "Trakt id resolution failed: ${it.message}") }
+            .getOrNull()
+            ?: return
+        if (resolved > 0) logger.debug(TAG, "Resolved $resolved trakt ids for restored shows")
     }
 
     private companion object {

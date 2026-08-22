@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
-import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFile
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupShow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe

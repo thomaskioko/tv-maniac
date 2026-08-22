@@ -11,37 +11,57 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DriveFileRenameOutline
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
+import com.thomaskioko.tvmaniac.compose.components.ChoiceChipGroup
 import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
+import com.thomaskioko.tvmaniac.compose.components.SwitchRow
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.components.tvManiacTextFieldColors
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.i18n.MR
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupLocationClicked
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupScheduleSelected
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupSettings
+import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupToggled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupFileNameChanged
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmedWithAccount
+import com.thomaskioko.tvmaniac.settings.presenter.BackupNowClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDialog
 import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreSummary
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceCancelled
@@ -54,13 +74,10 @@ import com.thomaskioko.tvmaniac.settings.ui.BackupPreviewParameterProvider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroupDivider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsNavigationRow
+import com.thomaskioko.tvmaniac.settings.ui.backupAutoBackupOnState
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 private const val BACKUP_PICKER_MIME_TYPE = "application/*"
-private const val BACKUP_FILE_TIMESTAMP_PATTERN = "yyyyMMdd-HHmmss"
 
 @Composable
 internal fun BackupPage(
@@ -70,8 +87,8 @@ internal fun BackupPage(
 ) {
     val inInspectionMode = LocalInspectionMode.current
 
-    val createDocumentLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument(BACKUP_PICKER_MIME_TYPE),
+    val openFolderLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree(),
     ) { uri ->
         if (uri != null) {
             onAction(BackupDestinationSelected(uri.toString()))
@@ -92,7 +109,7 @@ internal fun BackupPage(
 
     LaunchedEffect(state.backup.awaitingDestination) {
         if (state.backup.awaitingDestination && !inInspectionMode) {
-            createDocumentLauncher.launch(backupFileName())
+            openFolderLauncher.launch(null)
         }
     }
 
@@ -114,6 +131,7 @@ private fun BackupPageContent(
     val locked = state.premium.backupLocked
     val backup = state.backup
     val summary = backup.summary
+    var editingFileName by remember { mutableStateOf(false) }
 
     PremiumOverlay(
         locked = locked,
@@ -152,6 +170,24 @@ private fun BackupPageContent(
                         loadingTestTag = SettingsTestTags.BACKUP_IMPORTING_INDICATOR_TEST_TAG,
                         onClick = { onAction(BackupImportClicked) },
                     )
+                    SettingsGroupDivider()
+                    SettingsNavigationRow(
+                        modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_LOCATION_ROW_TEST_TAG),
+                        icon = Icons.Filled.FolderOpen,
+                        title = backup.autoBackup.locationTitle,
+                        description = backup.autoBackup.locationLabel,
+                        enabled = !locked,
+                        onClick = { onAction(AutoBackupLocationClicked) },
+                    )
+                    SettingsGroupDivider()
+                    SettingsNavigationRow(
+                        modifier = Modifier.testTag(SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG),
+                        icon = Icons.Filled.DriveFileRenameOutline,
+                        title = backup.autoBackup.fileNameTitle,
+                        description = backup.autoBackup.fileName,
+                        enabled = !locked,
+                        onClick = { editingFileName = true },
+                    )
                 }
             }
 
@@ -165,6 +201,16 @@ private fun BackupPageContent(
             }
 
             item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
+
+            item {
+                AutoBackupSection(
+                    settings = backup.autoBackup,
+                    enabled = !locked,
+                    onAction = onAction,
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(TvManiacSpacing.large)) }
         }
     }
 
@@ -172,6 +218,129 @@ private fun BackupPageContent(
         confirm = backup.confirm,
         onAction = onAction,
     )
+
+    if (editingFileName) {
+        BackupFileNameDialog(
+            settings = backup.autoBackup,
+            onConfirm = { name ->
+                editingFileName = false
+                onAction(BackupFileNameChanged(name))
+            },
+            onDismiss = { editingFileName = false },
+        )
+    }
+}
+
+@Composable
+internal fun BackupFileNameDialog(
+    settings: AutoBackupSettings,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf(settings.fileName) }
+
+    TvManiacAlertDialog(
+        title = settings.fileNameTitle,
+        message = settings.fileNameMessage,
+        confirmButtonText = settings.fileNameSaveLabel,
+        dismissButtonText = settings.fileNameCancelLabel,
+        onConfirm = { onConfirm(name) },
+        onDismiss = onDismiss,
+        confirmButtonTestTag = SettingsTestTags.BACKUP_FILE_NAME_SAVE_BUTTON_TEST_TAG,
+        dismissButtonTestTag = SettingsTestTags.BACKUP_FILE_NAME_CANCEL_BUTTON_TEST_TAG,
+        content = {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(SettingsTestTags.BACKUP_FILE_NAME_FIELD_TEST_TAG),
+                value = name,
+                onValueChange = { name = it },
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodyMedium,
+                shape = MaterialTheme.shapes.medium,
+                colors = tvManiacTextFieldColors(),
+                keyboardOptions = KeyboardOptions(
+                    autoCorrectEnabled = false,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(onDone = { onConfirm(name) }),
+            )
+        },
+    )
+}
+
+@Composable
+private fun AutoBackupSection(
+    settings: AutoBackupSettings,
+    enabled: Boolean,
+    onAction: (SettingsActions) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        SettingsGroup {
+            SwitchRow(
+                modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_TOGGLE_TEST_TAG),
+                icon = Icons.Filled.Schedule,
+                title = settings.title,
+                description = settings.description,
+                checked = settings.enabled,
+                onCheckedChange = { onAction(AutoBackupToggled(it)) },
+            )
+
+            if (settings.enabled) {
+                SettingsGroupDivider()
+
+                SettingsNavigationRow(
+                    modifier = Modifier.testTag(SettingsTestTags.AUTO_BACKUP_NOW_ROW_TEST_TAG),
+                    icon = Icons.Filled.Bolt,
+                    title = settings.backupNowTitle,
+                    description = settings.backupNowDescription,
+                    enabled = enabled && settings.hasLocation && !settings.isBackingUp,
+                    isLoading = settings.isBackingUp,
+                    loadingTestTag = SettingsTestTags.AUTO_BACKUP_NOW_INDICATOR_TEST_TAG,
+                    onClick = { onAction(BackupNowClicked) },
+                )
+            }
+        }
+
+        if (settings.enabled) {
+            Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
+
+            SettingsGroup {
+                ChoiceChipGroup(
+                    title = settings.scheduleTitle,
+                    options = settings.scheduleOptions,
+                    isSelected = { it.selected },
+                    enabled = enabled,
+                    label = { it.label },
+                    testTagFor = { SettingsTestTags.autoBackupScheduleChip(it.interval.name) },
+                    onSelected = { onAction(AutoBackupScheduleSelected(it.interval)) },
+                    modifier = Modifier.padding(TvManiacSpacing.medium),
+                )
+            }
+
+            Text(
+                text = settings.lastRunLabel,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(horizontal = TvManiacSpacing.large, vertical = TvManiacSpacing.xSmall)
+                    .testTag(SettingsTestTags.AUTO_BACKUP_LAST_RUN_TEST_TAG),
+            )
+
+            val failureWarning = settings.failureWarning
+            if (failureWarning != null) {
+                Text(
+                    text = failureWarning,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .padding(horizontal = TvManiacSpacing.large)
+                        .testTag(SettingsTestTags.AUTO_BACKUP_FAILURE_TEST_TAG),
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -200,6 +369,9 @@ private fun BackupRestoreConfirmDialog(
             onDismiss = { onAction(BackupImportCancelled) },
             confirmButtonTestTag = SettingsTestTags.BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG,
             dismissButtonTestTag = SettingsTestTags.BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG,
+            neutralButtonText = confirm.deviceLabel,
+            onNeutral = { onAction(BackupImportConfirmed) },
+            neutralButtonTestTag = SettingsTestTags.BACKUP_RESTORE_DEVICE_ONLY_BUTTON_TEST_TAG,
         )
     }
 }
@@ -296,9 +468,15 @@ private fun BackupRestoreSummaryContent(
     }
 }
 
-private fun backupFileName(): String {
-    val timestamp = SimpleDateFormat(BACKUP_FILE_TIMESTAMP_PATTERN, Locale.US).format(Date())
-    return "${BackupFormat.FILE_PREFIX}$timestamp${BackupFormat.FILE_EXTENSION}"
+@ThemePreviews
+@PreviewWrapper(TvManiacPreviewWrapperProvider::class)
+@Composable
+private fun BackupFileNameDialogPreview() {
+    BackupFileNameDialog(
+        settings = backupAutoBackupOnState.backup.autoBackup,
+        onConfirm = {},
+        onDismiss = {},
+    )
 }
 
 @ThemePreviews
