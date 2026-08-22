@@ -735,6 +735,7 @@ graph TB
   :data:account-manager:implementation --> :data:account-manager:api
   :data:backup:implementation --> :core:appconfig:api
   :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
   :data:backup:implementation --> :core:syncstate:api
   :data:backup:implementation --> :core:util:api
   :data:backup:implementation --> :data:backup:api

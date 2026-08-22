@@ -10,6 +10,8 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.OutputStream
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -22,8 +24,7 @@ public class AndroidBackupDestination(
             File(location).writeText(contents)
             return
         }
-        val stream = context.contentResolver.openOutputStream(location.toUri(), TRUNCATE_WRITE_MODE)
-            ?: throw BackupLocationUnreadableException(location)
+        val stream = openOutputStreamOrThrow(location)
         stream.use { it.write(contents.toByteArray()) }
     }
 
@@ -39,6 +40,15 @@ public class AndroidBackupDestination(
     }
 
     override fun safetyCopyLocation(): String = File(context.filesDir, BackupFormat.SAFETY_COPY_NAME).path
+
+    private fun openOutputStreamOrThrow(location: String): OutputStream = try {
+        context.contentResolver.openOutputStream(location.toUri(), TRUNCATE_WRITE_MODE)
+            ?: throw BackupLocationUnreadableException(location)
+    } catch (security: SecurityException) {
+        throw BackupLocationUnreadableException(location, security)
+    } catch (missing: FileNotFoundException) {
+        throw BackupLocationUnreadableException(location, missing)
+    }
 
     private fun isContentUri(location: String): Boolean = location.toUri().scheme == CONTENT_SCHEME
 

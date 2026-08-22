@@ -2,8 +2,8 @@ package com.thomaskioko.tvmaniac.domain.backup
 
 import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
 import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe

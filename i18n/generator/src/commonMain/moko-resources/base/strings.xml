@@ -607,6 +607,7 @@
     <string name="settings_backup_restore_summary_added_to_account">Added to %1$s</string>
     <string name="settings_backup_restore_summary_rewatch">Repeat viewings were not included in this backup</string>
     <string name="error_backup_save_failed">Could not save the backup. Try another location.</string>
+    <string name="error_backup_location_unavailable">TvManiac can no longer write to that location. Choose where to save backups again.</string>
     <string name="error_backup_read_failed">Could not read that file. It may be damaged or from another app.</string>
     <string name="error_backup_version_too_new">This backup was made by a newer version of TvManiac. Update the app to restore it.</string>
     <string name="error_backup_sync_in_progress">A sync is running. Wait for it to finish, then try again.</string>

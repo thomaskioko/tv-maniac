@@ -3,25 +3,26 @@ package com.thomaskioko.tvmaniac.data.backup.implementation
 import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
-import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisode
-import com.thomaskioko.tvmaniac.data.backup.api.BackupEpisodeRating
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
-import com.thomaskioko.tvmaniac.data.backup.api.BackupList
-import com.thomaskioko.tvmaniac.data.backup.api.BackupListShow
-import com.thomaskioko.tvmaniac.data.backup.api.BackupPreferences
-import com.thomaskioko.tvmaniac.data.backup.api.BackupRating
+import com.thomaskioko.tvmaniac.data.backup.api.BackupLocationUnreadableException
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
-import com.thomaskioko.tvmaniac.data.backup.api.BackupSeason
-import com.thomaskioko.tvmaniac.data.backup.api.BackupSeasonRating
-import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
-import com.thomaskioko.tvmaniac.data.backup.api.BackupWatchedEpisode
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
 import com.thomaskioko.tvmaniac.data.backup.api.RestoredListWriter
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupEpisode
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupEpisodeRating
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFile
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupListShow
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupPreferences
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupRating
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupSeason
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupSeasonRating
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupShow
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupWatchedEpisode
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
@@ -72,6 +73,8 @@ public class DefaultBackupRepository(
 
         try {
             destination.write(location, contents)
+        } catch (unreadable: BackupLocationUnreadableException) {
+            return BackupResult.Failed(BackupFailure.LocationUnavailable, unreadable)
         } catch (error: Throwable) {
             return BackupResult.Failed(BackupFailure.WriteFailed, error)
         }

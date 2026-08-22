@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
-import com.thomaskioko.tvmaniac.data.backup.api.ShowRefillProgress
 import com.thomaskioko.tvmaniac.data.backup.api.ShowRefillReporter
+import com.thomaskioko.tvmaniac.data.backup.api.model.ShowRefillProgress
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn

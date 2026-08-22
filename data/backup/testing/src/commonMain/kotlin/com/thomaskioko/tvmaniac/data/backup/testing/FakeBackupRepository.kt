@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.data.backup.testing
 
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFile
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 
 public class FakeBackupRepository : BackupRepository {
 

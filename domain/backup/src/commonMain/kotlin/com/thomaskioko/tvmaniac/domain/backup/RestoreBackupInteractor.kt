@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.backup
 import com.thomaskioko.tvmaniac.core.base.interactor.ResultInteractor
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
 import dev.zacsweers.metro.Inject
 
 @Inject

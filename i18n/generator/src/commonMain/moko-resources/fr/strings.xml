@@ -593,6 +593,7 @@
     <string name="settings_backup_restore_summary_added_to_account">Ajouté à %1$s</string>
     <string name="settings_backup_restore_summary_rewatch">Les visionnages répétés n\'étaient pas inclus dans cette sauvegarde</string>
     <string name="error_backup_save_failed">Impossible d\'enregistrer la sauvegarde. Essayez un autre emplacement.</string>
+    <string name="error_backup_location_unavailable">TvManiac ne peut plus écrire à cet emplacement. Choisissez à nouveau où enregistrer les sauvegardes.</string>
     <string name="error_backup_read_failed">Impossible de lire ce fichier. Il est peut-être endommagé ou provient d\'une autre application.</string>
     <string name="error_backup_version_too_new">Cette sauvegarde a été créée avec une version plus récente de TvManiac. Mettez l\'application à jour pour la restaurer.</string>
     <string name="error_backup_sync_in_progress">Une synchronisation est en cours. Attendez qu\'elle se termine, puis réessayez.</string>
