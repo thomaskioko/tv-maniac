@@ -9,7 +9,19 @@ import com.thomaskioko.tvmaniac.db.WatchStatus;
 backupShows:
 SELECT DISTINCT
     tvshow.tmdb_id,
-    tvshow.name
+    tvshow.name,
+    tvshow.overview,
+    tvshow.poster_path,
+    tvshow.backdrop_path,
+    tvshow.year,
+    tvshow.language,
+    tvshow.status,
+    tvshow.runtime,
+    tvshow.ratings,
+    tvshow.vote_count,
+    tvshow.genres,
+    tvshow.season_numbers,
+    tvshow.episode_numbers
 FROM tvshow
 WHERE tvshow.id IN (
     SELECT show_id FROM followed_shows WHERE pending_action != 'DELETE'
@@ -82,3 +94,76 @@ INNER JOIN season ON season.id = episode.season_id
 INNER JOIN tvshow ON tvshow.id = episode.show_id
 WHERE episode_ratings.pending_action != 'DELETE'
   AND episode_ratings.user_rating IS NOT NULL;
+
+-- Seasons and episodes travel with the file so a restore renders without a network call. Both key on
+-- the id the network layer assigns, which is a TMDB id rather than a local row id, so the rule that
+-- no local id reaches the file still holds. Images, casts and trailers stay out.
+backupSeasons:
+SELECT
+    tvshow.tmdb_id,
+    season.id,
+    season.season_number,
+    season.title,
+    season.episode_count,
+    season.overview,
+    season.image_url
+FROM season
+INNER JOIN tvshow ON tvshow.id = season.show_id
+WHERE 1 = 1
+  AND tvshow.id IN (
+    SELECT show_id FROM followed_shows WHERE pending_action != 'DELETE'
+    UNION
+    SELECT show_id FROM watched_episodes WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    UNION
+    SELECT show_id FROM show_ratings WHERE pending_action != 'DELETE' AND user_rating IS NOT NULL
+    UNION
+    SELECT show_id FROM show_watch_status WHERE status IS NOT NULL
+  );
+
+backupEpisodes:
+SELECT
+    tvshow.tmdb_id,
+    episode.season_id,
+    episode.id,
+    episode.episode_number,
+    episode.title,
+    episode.overview,
+    episode.runtime,
+    episode.vote_count,
+    episode.ratings,
+    episode.image_url,
+    episode.first_aired
+FROM episode
+INNER JOIN tvshow ON tvshow.id = episode.show_id
+WHERE 1 = 1
+  AND tvshow.id IN (
+    SELECT show_id FROM followed_shows WHERE pending_action != 'DELETE'
+    UNION
+    SELECT show_id FROM watched_episodes WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    UNION
+    SELECT show_id FROM show_ratings WHERE pending_action != 'DELETE' AND user_rating IS NOT NULL
+    UNION
+    SELECT show_id FROM show_watch_status WHERE status IS NOT NULL
+  );
+
+-- `id` is the Trakt list id and is read only to group the members below onto their list. It is
+-- dropped before the file is written, because a list is recreated on the provider by name.
+backupLists:
+SELECT
+    trakt_lists.id,
+    trakt_lists.name,
+    trakt_lists.description,
+    trakt_lists.created_at
+FROM trakt_lists
+ORDER BY trakt_lists.name ASC;
+
+backupListShows:
+SELECT
+    trakt_list_shows.list_id,
+    tvshow.tmdb_id AS tmdb_id,
+    trakt_list_shows.listed_at
+FROM trakt_list_shows
+INNER JOIN show_trakt ON show_trakt.trakt_id = trakt_list_shows.trakt_id
+INNER JOIN tvshow ON tvshow.id = show_trakt.show_id
+WHERE trakt_list_shows.pending_action != 'DELETE'
+ORDER BY trakt_list_shows.listed_at DESC, tvshow.tmdb_id ASC;

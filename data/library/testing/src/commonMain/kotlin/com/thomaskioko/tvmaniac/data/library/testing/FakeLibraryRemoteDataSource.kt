@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
+import com.thomaskioko.tvmaniac.data.library.model.WatchlistShowIds
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
 
 public class FakeLibraryRemoteDataSource : LibraryRemoteDataSource {
@@ -15,8 +16,8 @@ public class FakeLibraryRemoteDataSource : LibraryRemoteDataSource {
         ApiResponse.Success(WatchlistSyncResult(notFoundCount = 0))
     private var removeResponse: ApiResponse<WatchlistSyncResult> =
         ApiResponse.Success(WatchlistSyncResult(notFoundCount = 0))
-    private val addedShowIds = mutableListOf<List<Long>>()
-    private val removedShowIds = mutableListOf<List<Long>>()
+    private val addedShows = mutableListOf<List<WatchlistShowIds>>()
+    private val removedShows = mutableListOf<List<WatchlistShowIds>>()
 
     public fun setWatchlist(shows: List<RemoteFollowedShow>) {
         watchlistResponse = ApiResponse.Success(shows)
@@ -34,20 +35,20 @@ public class FakeLibraryRemoteDataSource : LibraryRemoteDataSource {
         removeResponse = response
     }
 
-    public fun addedShowIds(): List<List<Long>> = addedShowIds
+    public fun addedShows(): List<List<WatchlistShowIds>> = addedShows
 
-    public fun removedShowIds(): List<List<Long>> = removedShowIds
+    public fun removedShows(): List<List<WatchlistShowIds>> = removedShows
 
     override suspend fun getWatchlist(): ApiResponse<List<RemoteFollowedShow>> =
         watchlistResponse
 
-    override suspend fun addToWatchlist(showIds: List<Long>): ApiResponse<WatchlistSyncResult> {
-        addedShowIds.add(showIds)
+    override suspend fun addToWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> {
+        addedShows.add(shows)
         return addResponse
     }
 
-    override suspend fun removeFromWatchlist(showIds: List<Long>): ApiResponse<WatchlistSyncResult> {
-        removedShowIds.add(showIds)
+    override suspend fun removeFromWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> {
+        removedShows.add(shows)
         return removeResponse
     }
 }

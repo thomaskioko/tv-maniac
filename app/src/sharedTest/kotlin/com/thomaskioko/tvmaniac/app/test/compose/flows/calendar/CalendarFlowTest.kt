@@ -4,7 +4,6 @@ import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testing.integration.TEST_NEXT_WEEK
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
-import com.thomaskioko.tvmaniac.util.testing.FlakyTests
 import org.junit.Test
 
 internal class CalendarFlowTest : BaseAppFlowTest() {
@@ -31,7 +30,6 @@ internal class CalendarFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    @FlakyTests(count = 3)
     fun authenticatedUserCalendarJourney() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 

@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
@@ -99,8 +100,88 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         click(SettingsTestTags.BACKUP_RESTORE_CONFIRM_BUTTON_TEST_TAG)
     }
 
+    fun assertBackupRestoreDeviceOnlyDisplayed() = apply {
+        assertExists(SettingsTestTags.BACKUP_RESTORE_DEVICE_ONLY_BUTTON_TEST_TAG)
+    }
+
+    fun clickBackupRestoreDeviceOnly() = apply {
+        click(SettingsTestTags.BACKUP_RESTORE_DEVICE_ONLY_BUTTON_TEST_TAG)
+    }
+
     fun clickBackupRestoreDismiss() = apply {
         click(SettingsTestTags.BACKUP_RESTORE_DISMISS_BUTTON_TEST_TAG)
+    }
+
+    fun scrollToAutoBackupToggle() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.AUTO_BACKUP_TOGGLE_TEST_TAG)
+    }
+
+    fun assertAutoBackupEnabled() = apply {
+        assertChecked(SettingsTestTags.AUTO_BACKUP_TOGGLE_TEST_TAG)
+    }
+
+    fun assertAutoBackupDisabled() = apply {
+        assertUnchecked(SettingsTestTags.AUTO_BACKUP_TOGGLE_TEST_TAG)
+    }
+
+    fun clickAutoBackupToggle() = apply {
+        click(SettingsTestTags.AUTO_BACKUP_TOGGLE_TEST_TAG)
+    }
+
+    fun assertAutoBackupLocationRowDisplayed() = apply {
+        assertExists(SettingsTestTags.AUTO_BACKUP_LOCATION_ROW_TEST_TAG)
+    }
+
+    fun assertAutoBackupLocationRowDoesNotExist() = apply {
+        assertDoesNotExist(SettingsTestTags.AUTO_BACKUP_LOCATION_ROW_TEST_TAG)
+    }
+
+    fun assertAutoBackupNowRowDisplayed() = apply {
+        assertExists(SettingsTestTags.AUTO_BACKUP_NOW_ROW_TEST_TAG)
+    }
+
+    fun assertAutoBackupNowRowDoesNotExist() = apply {
+        assertDoesNotExist(SettingsTestTags.AUTO_BACKUP_NOW_ROW_TEST_TAG)
+    }
+
+    fun scrollToAutoBackupScheduleChip(interval: AutoBackupInterval) = apply {
+        scrollToListTag(
+            SettingsTestTags.LIST_TEST_TAG,
+            SettingsTestTags.autoBackupScheduleChip(interval.name),
+        )
+    }
+
+    fun clickAutoBackupScheduleChip(interval: AutoBackupInterval) = apply {
+        click(SettingsTestTags.autoBackupScheduleChip(interval.name))
+    }
+
+    fun assertAutoBackupScheduleSelected(interval: AutoBackupInterval) = apply {
+        assertSelected(SettingsTestTags.autoBackupScheduleChip(interval.name))
+    }
+
+    fun assertAutoBackupScheduleNotSelected(interval: AutoBackupInterval) = apply {
+        assertNotSelected(SettingsTestTags.autoBackupScheduleChip(interval.name))
+    }
+
+    fun clickBackupFileNameRow() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG)
+        click(SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG)
+    }
+
+    fun assertBackupFileName(name: String) = apply {
+        assertNodeHasText(SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG, name)
+    }
+
+    fun replaceBackupFileName(name: String) = apply {
+        replaceText(SettingsTestTags.BACKUP_FILE_NAME_FIELD_TEST_TAG, name)
+    }
+
+    fun clickBackupFileNameSave() = apply {
+        click(SettingsTestTags.BACKUP_FILE_NAME_SAVE_BUTTON_TEST_TAG)
+    }
+
+    fun clickBackupFileNameCancel() = apply {
+        click(SettingsTestTags.BACKUP_FILE_NAME_CANCEL_BUTTON_TEST_TAG)
     }
 
     fun openInfoPage() = apply {

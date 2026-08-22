@@ -1,12 +1,12 @@
 package com.thomaskioko.tvmaniac.data.backup.testing
 
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFile
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 
 public class FakeBackupRepository : BackupRepository {
 
@@ -23,7 +23,14 @@ public class FakeBackupRepository : BackupRepository {
         private set
 
     public var lastRestoreLocation: String? = null
+    public var lastRestoreSyncedWithConnectedAccount: Boolean? = null
         private set
+
+    private var showsNeedingMetadata: List<Long> = emptyList()
+
+    public fun setShowsNeedingMetadata(ids: List<Long>) {
+        showsNeedingMetadata = ids
+    }
 
     public fun setBackup(file: BackupFile) {
         backup = file
@@ -46,16 +53,19 @@ public class FakeBackupRepository : BackupRepository {
         return backup
     }
 
-    override suspend fun writeBackup(location: String): BackupResult {
-        lastWriteLocation = location
+    override suspend fun writeBackup(folder: String, fileName: String): BackupResult {
+        lastWriteLocation = "$folder/$fileName"
         createException?.let { throw it }
         return writeResult
     }
 
-    override suspend fun restoreBackup(location: String): RestoreResult {
+    override suspend fun restoreBackup(location: String, syncWithConnectedAccount: Boolean): RestoreResult {
         lastRestoreLocation = location
+        lastRestoreSyncedWithConnectedAccount = syncWithConnectedAccount
         return restoreResult
     }
+
+    override suspend fun showsNeedingMetadata(): List<Long> = showsNeedingMetadata
 }
 
 public class FakeBackupDestination : BackupDestination {
@@ -63,9 +73,14 @@ public class FakeBackupDestination : BackupDestination {
     private val files = mutableMapOf<String, String>()
     private var writeException: Throwable? = null
     private var readException: Throwable? = null
+    private var defaultFolder: String? = null
 
     public var lastWriteLocation: String? = null
         private set
+
+    public fun setDefaultFolder(folder: String?) {
+        defaultFolder = folder
+    }
 
     public fun setWriteException(exception: Throwable) {
         writeException = exception
@@ -81,10 +96,12 @@ public class FakeBackupDestination : BackupDestination {
 
     public fun contentsAt(location: String): String? = files[location]
 
-    override fun write(location: String, contents: String) {
+    override fun write(folder: String, fileName: String, contents: String): String {
         writeException?.let { throw it }
+        val location = "$folder/$fileName"
         lastWriteLocation = location
         files[location] = contents
+        return location
     }
 
     override fun read(location: String): String {
@@ -92,9 +109,11 @@ public class FakeBackupDestination : BackupDestination {
         return files[location] ?: throw IllegalStateException("Nothing written to $location")
     }
 
-    override fun safetyCopyLocation(): String = SAFETY_COPY_LOCATION
+    override fun safetyCopyFolder(): String = SAFETY_COPY_FOLDER
+
+    override fun defaultBackupFolder(): String? = defaultFolder
 
     public companion object {
-        public const val SAFETY_COPY_LOCATION: String = "safety-copy"
+        public const val SAFETY_COPY_FOLDER: String = "safety-copy"
     }
 }

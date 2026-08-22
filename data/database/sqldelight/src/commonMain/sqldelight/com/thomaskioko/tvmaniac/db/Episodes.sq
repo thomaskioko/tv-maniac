@@ -174,7 +174,9 @@ LEFT OUTER JOIN watched_episodes
             AND watched_episodes.episode_number = episode.episode_number
         )
     )
-WHERE episode.id = :episodeId;
+WHERE episode.id = :episodeId
+ORDER BY watched_episodes.episode_id IS NULL, watched_episodes.watched_at DESC, watched_episodes.id DESC
+LIMIT 1;
 
 episodesBySeasonId:
 SELECT

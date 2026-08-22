@@ -12,8 +12,9 @@ internal class SimklCalendarJourneyTest : BaseAppFlowTest() {
     @Test
     fun givenSimklSession_whenCalendarOpened_thenShowsTrackedShowEpisode() = runAppFlowTest {
         scenarios.stubUnauthenticatedState()
-        scenarios.stubActiveProvider(SyncProviderSource.SIMKL)
-        scenarios.simkl.stubPlanToWatchWatchlist()
+        scenarios.stubActiveProvider(SyncProviderSource.SIMKL) {
+            scenarios.simkl.stubPlanToWatchWatchlist()
+        }
 
         homeRobot
             .clickMyShowsTab()

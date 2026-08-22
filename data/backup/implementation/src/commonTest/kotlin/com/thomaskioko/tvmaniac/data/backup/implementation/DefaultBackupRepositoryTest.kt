@@ -1,10 +1,11 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFailure
 import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
-import com.thomaskioko.tvmaniac.data.backup.api.BackupResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupResult
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeRestoredListWriter
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.DbTransactionRunner
@@ -45,6 +46,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
 
     private val datastoreRepository = FakeDatastoreRepository()
     private val destination = FakeBackupDestination()
+    private val restoredListWriter = FakeRestoredListWriter()
     private lateinit var repository: DefaultBackupRepository
     private var showId: Id<ShowId> = Id(0L)
 
@@ -58,6 +60,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
             dispatchers = dispatchers,
             destination = destination,
             syncObserver = FakeSyncObserver(),
+            restoredListWriter = restoredListWriter,
             transactionRunner = DbTransactionRunner(database),
         )
         showId = insertShow()
@@ -69,7 +72,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should carry the format version given a backup is created`() = runTest(testDispatcher) {
+    fun `should include the format version given a backup is created`() = runTest(testDispatcher) {
         val backup = repository.createBackup()
 
         backup.version shouldBe BackupFormat.VERSION
@@ -126,6 +129,39 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should include a custom list and its members given lists exist`() = runTest(testDispatcher) {
+        addShowToList(listId = 42L, listName = "Comfort watches", traktId = TRAKT_ID)
+
+        val backup = repository.createBackup()
+
+        val list = backup.lists.single()
+        list.name shouldBe "Comfort watches"
+        list.shows.single().tmdbId shouldBe BREAKING_BAD_TMDB_ID
+    }
+
+    @Test
+    fun `should leave out a member pending removal given a list is exported`() = runTest(testDispatcher) {
+        addShowToList(listId = 42L, listName = "Comfort watches", traktId = TRAKT_ID)
+        database.traktListShowsQueries.updatePendingAction(PendingAction.DELETE.value, 42L, TRAKT_ID)
+
+        val backup = repository.createBackup()
+
+        backup.lists.single().shows.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should write no list id and no trakt id given a list is serialized`() = runTest(testDispatcher) {
+        addShowToList(listId = 42L, listName = "Comfort watches", traktId = TRAKT_ID)
+
+        val contents = BackupJson.encode(repository.createBackup())
+
+        contents shouldContain "Comfort watches"
+        contents shouldNotContain "\"$TRAKT_ID\""
+        contents shouldNotContain "listId"
+        contents shouldNotContain "slug"
+    }
+
+    @Test
     fun `should write no local row id given a backup is serialized`() = runTest(testDispatcher) {
         followShow()
         watchEpisode(season = 1, episode = 1)
@@ -133,7 +169,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
 
         val contents = BackupJson.encode(repository.createBackup())
 
-        contents shouldContain "\"tmdbId\": $BREAKING_BAD_TMDB_ID"
+        contents shouldContain "\"tmdbId\":$BREAKING_BAD_TMDB_ID"
         contents shouldNotContain "showId"
         contents shouldNotContain "episodeId"
         contents shouldNotContain "seasonId"
@@ -166,17 +202,17 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
         followShow()
         watchEpisode(season = 1, episode = 1)
 
-        val result = repository.writeBackup(LOCATION)
+        val result = repository.writeBackup(LOCATION, FILE_NAME)
 
         result shouldBe BackupResult.Success(showCount = 1, episodeCount = 1)
-        destination.contentsAt(LOCATION).shouldNotBeNull()
+        destination.contentsAt("$LOCATION/$FILE_NAME").shouldNotBeNull()
     }
 
     @Test
     fun `should report failure given the destination cannot be written`() = runTest(testDispatcher) {
         destination.setWriteException(IllegalStateException("no permission"))
 
-        val result = repository.writeBackup(LOCATION)
+        val result = repository.writeBackup(LOCATION, FILE_NAME)
 
         result.shouldBeInstanceOf<BackupResult.Failed>().reason shouldBe BackupFailure.WriteFailed
     }
@@ -185,7 +221,7 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
     fun `should report failure given the file reads back as something else`() = runTest(testDispatcher) {
         destination.setReadException(IllegalStateException("truncated"))
 
-        val result = repository.writeBackup(LOCATION)
+        val result = repository.writeBackup(LOCATION, FILE_NAME)
 
         result.shouldBeInstanceOf<BackupResult.Failed>().reason shouldBe BackupFailure.VerificationFailed
     }
@@ -198,6 +234,12 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
         val backup = repository.createBackup()
 
         backup.shows.single().rating.shouldBeNull()
+    }
+
+    private fun addShowToList(listId: Long, listName: String, traktId: Long) {
+        showIdForTraktId(traktId = traktId, tmdbId = BREAKING_BAD_TMDB_ID)
+        database.traktListsQueries.upsert(listId, "comfort-watches", listName, null, 1, NOW.toString())
+        database.traktListShowsQueries.upsert(listId, traktId, NOW.toString(), PendingAction.NOTHING.value)
     }
 
     private fun insertShow(): Id<ShowId> {
@@ -241,8 +283,10 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
 
     private companion object {
         private const val BREAKING_BAD_TMDB_ID = 1396L
+        private const val TRAKT_ID = 1388L
         private const val SHOW_TITLE = "Breaking Bad"
         private const val NOW = 1_700_000_000_000L
+        private const val FILE_NAME = "tvmaniac-backup.json"
         private const val LOCATION = "content://downloads/backup.json"
     }
 }

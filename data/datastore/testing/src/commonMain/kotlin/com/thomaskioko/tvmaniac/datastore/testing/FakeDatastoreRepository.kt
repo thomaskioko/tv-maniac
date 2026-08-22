@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.datastore.testing
 
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
+import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.ImageQuality
@@ -21,6 +23,10 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val openTrailersInYoutubeFlow = MutableStateFlow(false)
     private val includeSpecialsFlow = MutableStateFlow(false)
     private val lastTraktUserId: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val autoBackupEnabledFlow = MutableStateFlow(false)
+    private val autoBackupIntervalFlow = MutableStateFlow(AutoBackupInterval.Default)
+    private val backupFolderFlow = MutableStateFlow<String?>(null)
+    private val backupFileNameFlow = MutableStateFlow(BackupFileName.Default)
     private val backgroundSyncEnabledFlow = MutableStateFlow(true)
     private val lastSyncTimestampFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     private val episodeNotificationsEnabledFlow = MutableStateFlow(false)
@@ -100,6 +106,34 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeBackgroundSyncEnabled(): Flow<Boolean> = backgroundSyncEnabledFlow.asStateFlow()
+
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        autoBackupEnabledFlow.value = enabled
+    }
+
+    override fun observeAutoBackupEnabled(): Flow<Boolean> = autoBackupEnabledFlow.asStateFlow()
+
+    override suspend fun saveAutoBackupInterval(interval: AutoBackupInterval) {
+        autoBackupIntervalFlow.value = interval
+    }
+
+    override fun observeAutoBackupInterval(): Flow<AutoBackupInterval> = autoBackupIntervalFlow.asStateFlow()
+
+    override suspend fun saveBackupFolder(folder: String?) {
+        backupFolderFlow.value = folder
+    }
+
+    override fun observeBackupFolder(): Flow<String?> = backupFolderFlow.asStateFlow()
+
+    override suspend fun getBackupFolder(): String? = backupFolderFlow.value
+
+    override suspend fun saveBackupFileName(fileName: String) {
+        backupFileNameFlow.value = fileName
+    }
+
+    override fun observeBackupFileName(): Flow<String> = backupFileNameFlow.asStateFlow()
+
+    override suspend fun getBackupFileName(): String = backupFileNameFlow.value
 
     override suspend fun setLastSyncTimestamp(timestamp: Long) {
         lastSyncTimestampFlow.value = timestamp

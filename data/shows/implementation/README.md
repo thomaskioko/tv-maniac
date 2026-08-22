@@ -9,6 +9,10 @@ graph TB
     direction TB
     :api:tmdb:api[api]:::multiplatform
   end
+  subgraph :api:trakt
+    direction TB
+    :api:trakt:api[api]:::multiplatform
+  end
   subgraph :core
     direction TB
     :core:base[base]:::multiplatform
@@ -41,6 +45,7 @@ graph TB
   end
 
   :api:tmdb:api --> :core:network-util:api
+  :api:trakt:api --> :core:network-util:api
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
@@ -50,6 +55,7 @@ graph TB
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
   :data:shows:implementation --> :api:tmdb:api
+  :data:shows:implementation --> :api:trakt:api
   :data:shows:implementation --> :core:base
   :data:shows:implementation --> :core:logger:api
   :data:shows:implementation --> :data:account-manager:api

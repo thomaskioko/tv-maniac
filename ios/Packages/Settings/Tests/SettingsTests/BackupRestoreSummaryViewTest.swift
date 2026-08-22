@@ -8,13 +8,15 @@ import XCTest
 
 class BackupRestoreSummaryViewTest: SnapshotTestCase {
     func test_BackupRestoreSummaryView() {
-        BackupRestoreSummaryView(content: restoreSummaryContent)
+        BackupRestoreSummaryView(content: restoreSummaryContent, dismissAccessibilityLabel: "Dismiss", onDismiss: {})
+            .padding()
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "BackupRestoreSummaryView")
     }
 
     func test_BackupRestoreSummaryView_WithSkips() {
-        BackupRestoreSummaryView(content: restoreSummaryContentWithSkips)
+        BackupRestoreSummaryView(content: restoreSummaryContentWithSkips, dismissAccessibilityLabel: "Dismiss", onDismiss: {})
+            .padding()
             .appPreview()
             .assertSnapshot(layout: .defaultDevice, testName: "BackupRestoreSummaryView_WithSkips")
     }

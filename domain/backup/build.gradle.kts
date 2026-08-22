@@ -12,16 +12,24 @@ kotlin {
             dependencies {
                 api(projects.core.base)
                 api(projects.core.view)
+                api(projects.core.logger.api)
+                api(projects.core.networkUtil.api)
+                api(projects.core.tasks.api)
                 api(projects.data.backup.api)
-
-                implementation(libs.coroutines.core)
+                api(projects.data.shows.api)
+                api(projects.domain.showdetails)
+                api(libs.coroutines.core)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.logger.testing)
+                implementation(projects.core.tasks.testing)
+                implementation(projects.core.util.testing)
                 implementation(projects.data.backup.testing)
+                implementation(projects.data.datastore.testing)
             }
         }
     }

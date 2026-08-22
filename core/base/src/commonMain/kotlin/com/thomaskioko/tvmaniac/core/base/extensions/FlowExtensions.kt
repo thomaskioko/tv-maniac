@@ -26,9 +26,9 @@ public fun Flow<Boolean>.minTrueDuration(
                 if (mark == null) {
                     emit(false)
                 } else {
-                    val elapsed = mark.elapsedNow()
-                    if (elapsed < min) {
-                        delay(min - elapsed)
+                    val remaining = min - mark.elapsedNow()
+                    if (remaining.isPositive()) {
+                        delay(remaining)
                     }
                     trueAt = null
                     emit(false)

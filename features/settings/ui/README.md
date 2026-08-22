@@ -108,6 +108,10 @@ graph TB
     direction TB
     :data:showdetails:api[api]:::multiplatform
   end
+  subgraph :data:shows
+    direction TB
+    :data:shows:api[api]:::multiplatform
+  end
   subgraph :data:similar
     direction TB
     :data:similar:api[api]:::multiplatform
@@ -201,6 +205,8 @@ graph TB
   :data:seasondetails:api --> :data:database:sqldelight
   :data:seasons:api --> :data:database:sqldelight
   :data:showdetails:api --> :data:database:sqldelight
+  :data:shows:api --> :data:account-manager:api
+  :data:shows:api --> :data:database:sqldelight
   :data:similar:api --> :data:database:sqldelight
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
@@ -220,8 +226,13 @@ graph TB
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
   :domain:backup --> :core:base
+  :domain:backup --> :core:logger:api
+  :domain:backup --> :core:network-util:api
+  :domain:backup --> :core:tasks:api
   :domain:backup --> :core:view
   :domain:backup --> :data:backup:api
+  :domain:backup --> :data:shows:api
+  :domain:backup --> :domain:showdetails
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
@@ -339,7 +350,6 @@ graph TB
   :features:settings:ui -.-> :core:test-tags
   :features:settings:ui -.-> :core:view
   :features:settings:ui -.-> :data:account-manager:api
-  :features:settings:ui -.-> :data:backup:api
   :features:settings:ui -.-> :data:datastore:api
   :features:settings:ui -.-> :domain:theme
   :features:settings:ui --> :features:settings:presenter

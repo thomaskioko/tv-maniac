@@ -4,32 +4,52 @@ import SwiftUI
 public struct BackupRestoreSummaryView: View {
     @Environment(\.appTheme) private var appTheme
     private let content: SettingsBackupSummaryContent
+    private let dismissAccessibilityLabel: String
+    private let onDismiss: () -> Void
 
-    public init(content: SettingsBackupSummaryContent) {
+    public init(
+        content: SettingsBackupSummaryContent,
+        dismissAccessibilityLabel: String,
+        onDismiss: @escaping () -> Void
+    ) {
         self.content = content
+        self.dismissAccessibilityLabel = dismissAccessibilityLabel
+        self.onDismiss = onDismiss
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
-                Text(content.title)
-                    .textStyle(appTheme.typography.titleLarge)
-                    .foregroundColor(appTheme.colors.onSurface)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: appTheme.spacing.medium) {
+            header
 
-                countsCard
+            countsCard
 
-                if let showsSkipped = content.showsSkipped {
-                    skippedCard(message: showsSkipped)
-                }
-
-                if let rewatchNotice = content.rewatchNotice {
-                    Text(rewatchNotice)
-                        .textStyle(appTheme.typography.bodySmall)
-                        .foregroundColor(appTheme.colors.onSurfaceVariant)
-                }
+            if let showsSkipped = content.showsSkipped {
+                skippedCard(message: showsSkipped)
             }
-            .padding(appTheme.spacing.medium)
+
+            if let rewatchNotice = content.rewatchNotice {
+                Text(rewatchNotice)
+                    .textStyle(appTheme.typography.bodySmall)
+                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+            }
+        }
+    }
+
+    private var header: some View {
+        HStack(spacing: appTheme.spacing.medium) {
+            Text(content.title)
+                .textStyle(appTheme.typography.titleLarge)
+                .foregroundColor(appTheme.colors.onSurface)
+
+            Spacer()
+
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .foregroundColor(appTheme.colors.onSurfaceVariant)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .accessibilityLabel(dismissAccessibilityLabel)
         }
     }
 
@@ -72,14 +92,22 @@ public struct BackupRestoreSummaryView: View {
 
 #if DEBUG
     #Preview {
-        BackupRestoreSummaryView(content: SettingsPreviewSamples.restoreSummaryContent)
-            .padding()
-            .appPreview()
+        BackupRestoreSummaryView(
+            content: SettingsPreviewSamples.restoreSummaryContent,
+            dismissAccessibilityLabel: "Dismiss",
+            onDismiss: {}
+        )
+        .padding()
+        .appPreview()
     }
 
     #Preview("With Skips") {
-        BackupRestoreSummaryView(content: SettingsPreviewSamples.restoreSummaryContentWithSkips)
-            .padding()
-            .appPreview()
+        BackupRestoreSummaryView(
+            content: SettingsPreviewSamples.restoreSummaryContentWithSkips,
+            dismissAccessibilityLabel: "Dismiss",
+            onDismiss: {}
+        )
+        .padding()
+        .appPreview()
     }
 #endif

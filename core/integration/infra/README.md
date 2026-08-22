@@ -90,6 +90,7 @@ graph TB
   subgraph :data:backup
     direction TB
     :data:backup:api[api]:::multiplatform
+    :data:backup:implementation[implementation]:::multiplatform
   end
   subgraph :data:calendar
     direction TB
@@ -382,6 +383,7 @@ graph TB
   :core:integration:infra --> :core:util:api
   :core:integration:infra --> :core:util:implementation
   :core:integration:infra --> :data:account-manager:implementation
+  :core:integration:infra --> :data:backup:implementation
   :core:integration:infra --> :data:calendar:implementation
   :core:integration:infra --> :data:cast:implementation
   :core:integration:infra --> :data:continue-watching:implementation
@@ -410,6 +412,7 @@ graph TB
   :core:integration:infra --> :data:user:implementation
   :core:integration:infra --> :data:watch-status:implementation
   :core:integration:infra --> :data:watchproviders:implementation
+  :core:integration:infra --> :domain:backup
   :core:integration:infra --> :domain:continue-watching
   :core:integration:infra --> :domain:episode
   :core:integration:infra --> :domain:library
@@ -423,6 +426,7 @@ graph TB
   :core:integration:infra --> :features:profile:nav
   :core:integration:infra --> :features:progress:nav
   :core:integration:infra --> :features:root:presenter
+  :core:integration:infra --> :features:settings:presenter
   :core:integration:infra --> :i18n:implementation
   :core:integration:infra --> :navigation:api
   :core:integration:infra --> :navigation:implementation
@@ -442,6 +446,15 @@ graph TB
   :data:account-manager:api --> :data:database:sqldelight
   :data:account-manager:implementation --> :core:base
   :data:account-manager:implementation --> :data:account-manager:api
+  :data:backup:implementation --> :core:appconfig:api
+  :data:backup:implementation --> :core:base
+  :data:backup:implementation --> :core:logger:api
+  :data:backup:implementation --> :core:syncstate:api
+  :data:backup:implementation --> :core:util:api
+  :data:backup:implementation --> :data:backup:api
+  :data:backup:implementation --> :data:database:sqldelight
+  :data:backup:implementation --> :data:datastore:api
+  :data:backup:implementation --> :data:episode:api
   :data:calendar:api --> :core:network-util:api
   :data:calendar:api --> :data:account-manager:api
   :data:calendar:implementation --> :core:base
@@ -600,6 +613,7 @@ graph TB
   :data:shows:api --> :data:account-manager:api
   :data:shows:api --> :data:database:sqldelight
   :data:shows:implementation --> :api:tmdb:api
+  :data:shows:implementation --> :api:trakt:api
   :data:shows:implementation --> :core:base
   :data:shows:implementation --> :core:logger:api
   :data:shows:implementation --> :data:account-manager:api
@@ -678,8 +692,13 @@ graph TB
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
   :domain:backup --> :core:base
+  :domain:backup --> :core:logger:api
+  :domain:backup --> :core:network-util:api
+  :domain:backup --> :core:tasks:api
   :domain:backup --> :core:view
   :domain:backup --> :data:backup:api
+  :domain:backup --> :data:shows:api
+  :domain:backup --> :domain:showdetails
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api

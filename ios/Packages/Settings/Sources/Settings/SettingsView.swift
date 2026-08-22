@@ -18,12 +18,9 @@ public struct SettingsView: View {
     @State private var showingErrorAlert: Bool = false
     @State var showPolicy = false
     @State var showNotificationPermissionDeniedAlert = false
-    @State private var pendingBackupURL: URL?
-    @State private var showingBackupExporter = false
+    @State private var showingBackupFolderPicker = false
     @State private var showingImportConfirm = false
     @State private var showingImportSource = false
-    @State private var pendingImportSummary: BackupRestoreSummary?
-    @State private var showingImportSummary = false
     @Environment(\.openURL) var openURL
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -119,19 +116,16 @@ public struct SettingsView: View {
             store.fontSizePercent = Int(newValue)
         }
         .settingsPosterStyleObservers(uiState: uiState, store: store)
-        .settingsBackupExporter(
+        .settingsBackupFolderPicker(
             uiState: uiState,
             presenter: presenter,
-            pendingURL: $pendingBackupURL,
-            isPresented: $showingBackupExporter
+            isPresented: $showingBackupFolderPicker
         )
         .settingsBackupImporter(
             uiState: uiState,
             presenter: presenter,
             showingConfirm: $showingImportConfirm,
-            showingSource: $showingImportSource,
-            pendingSummary: $pendingImportSummary,
-            showingSummary: $showingImportSummary
+            showingSource: $showingImportSource
         )
         .screenTag(SettingsTestTags.shared.SCREEN_TEST_TAG)
     }

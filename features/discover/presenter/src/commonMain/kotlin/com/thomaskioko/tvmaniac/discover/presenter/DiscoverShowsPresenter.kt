@@ -58,9 +58,12 @@ public class DiscoverShowsPresenter(
     public val state: StateFlow<DiscoverViewState> = combine(
         featuredPresenter.state,
         catalogPresenter.state,
-    ) { featured, catalog ->
+        upNextPresenter.state,
+        startWatchingPresenter.state,
+    ) { featured, catalog, upNext, startWatching ->
         val isRefreshing = featured.isRefreshing || catalog.isRefreshing
-        val isEmpty = featured.isEmpty && catalog.isEmpty
+        val hasLocalShows = upNext.nextEpisodes.isNotEmpty() || startWatching.startWatchingShows.isNotEmpty()
+        val isEmpty = featured.isEmpty && catalog.isEmpty && !hasLocalShows
         val message = featured.message ?: catalog.message
         DiscoverViewState(
             isRefreshing = isRefreshing,
