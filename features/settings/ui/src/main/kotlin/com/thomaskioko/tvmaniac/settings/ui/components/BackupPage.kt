@@ -38,7 +38,6 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFormat
 import com.thomaskioko.tvmaniac.i18n.MR
 import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupLocationClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AutoBackupScheduleSelected
@@ -65,12 +64,8 @@ import com.thomaskioko.tvmaniac.settings.ui.SettingsGroup
 import com.thomaskioko.tvmaniac.settings.ui.SettingsGroupDivider
 import com.thomaskioko.tvmaniac.settings.ui.SettingsNavigationRow
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 private const val BACKUP_PICKER_MIME_TYPE = "application/*"
-private const val BACKUP_FILE_TIMESTAMP_PATTERN = "yyyyMMdd-HHmmss"
 
 @Composable
 internal fun BackupPage(
@@ -80,8 +75,8 @@ internal fun BackupPage(
 ) {
     val inInspectionMode = LocalInspectionMode.current
 
-    val createDocumentLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument(BACKUP_PICKER_MIME_TYPE),
+    val openFolderLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree(),
     ) { uri ->
         if (uri != null) {
             onAction(BackupDestinationSelected(uri.toString()))
@@ -102,7 +97,7 @@ internal fun BackupPage(
 
     LaunchedEffect(state.backup.awaitingDestination) {
         if (state.backup.awaitingDestination && !inInspectionMode) {
-            createDocumentLauncher.launch(backupFileName())
+            openFolderLauncher.launch(null)
         }
     }
 
@@ -400,11 +395,6 @@ private fun BackupRestoreSummaryContent(
 
         Spacer(modifier = Modifier.height(TvManiacSpacing.large))
     }
-}
-
-private fun backupFileName(): String {
-    val timestamp = SimpleDateFormat(BACKUP_FILE_TIMESTAMP_PATTERN, Locale.US).format(Date())
-    return "${BackupFormat.FILE_PREFIX}$timestamp${BackupFormat.FILE_EXTENSION}"
 }
 
 @ThemePreviews

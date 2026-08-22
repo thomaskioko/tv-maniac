@@ -109,6 +109,7 @@ public class SettingsPresenter internal constructor(
     private val backupExportState = ObservableLoadingCounter()
     private val accountSwitchState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
+    private var backupFolder: String? = null
 
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
@@ -125,6 +126,9 @@ public class SettingsPresenter internal constructor(
         observePremiumAccessInteractor(Unit)
         observeRewatchSupportInteractor(Unit)
         observeAutoBackupInteractor(Unit)
+        coroutineScope.launch {
+            datastoreRepository.observeBackupFolder().collect { backupFolder = it }
+        }
     }
 
     public val state: StateFlow<SettingsState> = combine(
@@ -434,7 +438,7 @@ public class SettingsPresenter internal constructor(
 
     private fun currentBackup(): BackupSettings = _state.value.backup
 
-    private fun saveAutoBackupLocation(location: String) {
+    private fun saveBackupFolder(location: String): Boolean {
         _state.update {
             it.copy(
                 backup = currentBackup().copy(
@@ -450,9 +454,10 @@ public class SettingsPresenter internal constructor(
                     UiMessage(localizer.getString(StringResourceKey.ErrorBackupLocationUnavailable)),
                 )
             }
-            return
+            return false
         }
-        coroutineScope.launch { datastoreRepository.saveAutoBackupLocation(location) }
+        coroutineScope.launch { datastoreRepository.saveBackupFolder(location) }
+        return true
     }
 
     private fun handleBackupNow() {
@@ -511,17 +516,25 @@ public class SettingsPresenter internal constructor(
     )
 
     private fun handleBackupExportClicked() {
-        _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
+        val folder = backupFolder
+        if (folder == null) {
+            _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
+            return
+        }
+        exportTo(folder)
     }
 
     private fun handleBackupDestination(location: String) {
-        if (_state.value.backup.choosingAutoBackupLocation) {
-            saveAutoBackupLocation(location)
-            return
-        }
-        _state.update { it.copy(backup = currentBackup().copy(awaitingDestination = false)) }
+        val exportWasWaiting = !_state.value.backup.choosingAutoBackupLocation
+        if (!saveBackupFolder(location)) return
+        if (exportWasWaiting) exportTo(location)
+    }
+
+    private fun exportTo(folder: String) {
         coroutineScope.launch {
-            exportBackupInteractor(ExportBackupInteractor.Params(location))
+            exportBackupInteractor(
+                ExportBackupInteractor.Params(folder, datastoreRepository.getBackupFileName()),
+            )
                 .collectStatus(
                     counter = backupExportState,
                     logger = logger,

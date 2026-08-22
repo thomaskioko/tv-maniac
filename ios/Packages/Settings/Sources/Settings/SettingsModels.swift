@@ -213,6 +213,7 @@ public struct SettingsAutoBackupContent {
     public let isBackingUp: Bool
     public let onToggle: (Bool) -> Void
     public let onBackupNow: () -> Void
+    public let onChooseLocation: () -> Void
 
     public init(
         title: String,
@@ -229,7 +230,8 @@ public struct SettingsAutoBackupContent {
         backupNowDescription: String,
         isBackingUp: Bool = false,
         onToggle: @escaping (Bool) -> Void = { _ in },
-        onBackupNow: @escaping () -> Void = {}
+        onBackupNow: @escaping () -> Void = {},
+        onChooseLocation: @escaping () -> Void = {}
     ) {
         self.title = title
         self.description = description
@@ -246,6 +248,7 @@ public struct SettingsAutoBackupContent {
         self.isBackingUp = isBackingUp
         self.onToggle = onToggle
         self.onBackupNow = onBackupNow
+        self.onChooseLocation = onChooseLocation
     }
 }
 

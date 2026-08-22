@@ -2,7 +2,8 @@ package com.thomaskioko.tvmaniac.data.backup.implementation
 
 import android.content.Context
 import android.content.Intent
-import android.provider.OpenableColumns
+import android.net.Uri
+import android.provider.DocumentsContract
 import androidx.core.net.toUri
 import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.logger.Logger
@@ -37,15 +38,25 @@ public class AndroidBackupLocationPermissions(
 
         val name = try {
             context.contentResolver
-                .query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
+                .query(documentUri(uri), arrayOf(DocumentsContract.Document.COLUMN_DISPLAY_NAME), null, null, null)
                 ?.use { cursor ->
                     if (cursor.moveToFirst() && !cursor.isNull(0)) cursor.getString(0) else null
                 }
-        } catch (security: SecurityException) {
-            logger.warning(TAG, "Cannot read the name of $location: ${security.message}")
+        } catch (error: RuntimeException) {
+            logger.warning(TAG, "Cannot read the name of $location: ${error.message}")
             null
         }
         return name ?: uri.lastPathSegment ?: location
+    }
+
+    /**
+     * A folder arrives as a tree address, which no provider will answer a query about. Only the
+     * document address built from it can be asked for a name.
+     */
+    private fun documentUri(uri: Uri): Uri = when {
+        DocumentsContract.isTreeUri(uri) ->
+            DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
+        else -> uri
     }
 
     private companion object {

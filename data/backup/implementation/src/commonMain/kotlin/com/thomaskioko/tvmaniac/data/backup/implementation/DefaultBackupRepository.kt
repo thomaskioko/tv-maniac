@@ -67,12 +67,12 @@ public class DefaultBackupRepository(
         preferences = readPreferences(),
     )
 
-    override suspend fun writeBackup(location: String): BackupResult {
+    override suspend fun writeBackup(folder: String, fileName: String): BackupResult {
         val backup = createBackup()
         val contents = BackupJson.encode(backup)
 
-        try {
-            destination.write(location, contents)
+        val written = try {
+            destination.write(folder, fileName, contents)
         } catch (unreadable: BackupLocationUnreadableException) {
             return BackupResult.Failed(BackupFailure.LocationUnavailable, unreadable)
         } catch (error: Throwable) {
@@ -80,7 +80,7 @@ public class DefaultBackupRepository(
         }
 
         val verified = try {
-            BackupJson.decode(destination.read(location))
+            BackupJson.decode(destination.read(written))
         } catch (error: Throwable) {
             return BackupResult.Failed(BackupFailure.VerificationFailed, error)
         }
@@ -107,7 +107,7 @@ public class DefaultBackupRepository(
         }
 
         return syncObserver.trackSync(RESTORE_OPERATION) {
-            val safetyCopy = writeBackup(destination.safetyCopyLocation())
+            val safetyCopy = writeBackup(destination.safetyCopyFolder(), BackupFormat.SAFETY_COPY_NAME)
             if (safetyCopy is BackupResult.Failed) {
                 return@trackSync RestoreResult.Failed(RestoreFailure.SafetyCopyFailed, safetyCopy.cause)
             }

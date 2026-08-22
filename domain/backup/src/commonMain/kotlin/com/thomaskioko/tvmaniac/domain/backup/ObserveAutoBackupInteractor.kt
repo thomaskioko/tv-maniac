@@ -19,7 +19,7 @@ public class ObserveAutoBackupInteractor(
     override fun createObservable(params: Unit): Flow<AutoBackupState> = combine(
         datastoreRepository.observeAutoBackupEnabled(),
         datastoreRepository.observeAutoBackupInterval(),
-        datastoreRepository.observeAutoBackupLocation(),
+        datastoreRepository.observeBackupFolder(),
         autoBackupPreferences.observeStatus(),
     ) { enabled, interval, location, status ->
         AutoBackupState(

@@ -550,7 +550,7 @@ internal class DefaultBackupRepositoryRestoreTest : BaseDatabaseTest() {
         ),
     )
 
-    private fun safetyCopy(): String? = destination.contentsAt(FakeBackupDestination.SAFETY_COPY_LOCATION)
+    private fun safetyCopy(): String? = destination.contentsAt("${FakeBackupDestination.SAFETY_COPY_FOLDER}/${BackupFormat.SAFETY_COPY_NAME}")
 
     private fun watchedEpisodes() = database.watchedEpisodesQueries
         .getWatchedEpisodes(database.tvShowQueries.getShowIdByTmdbId(Id<TmdbId>(BREAKING_BAD_TMDB_ID)).executeAsOne())
