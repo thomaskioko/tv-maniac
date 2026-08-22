@@ -2,12 +2,19 @@ package com.thomaskioko.tvmaniac.simkl.implementation
 
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddToListRequest
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddToListResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAllItemsResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklListShow
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklListStatus
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklShowIds
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.toByteArray
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -32,6 +39,67 @@ internal class DefaultSimklSyncRemoteDataSourceTest {
         }
         client.attributes.put(IsAuthenticated) { true }
         return DefaultSimklSyncRemoteDataSource(httpClient = client)
+    }
+
+    @Test
+    fun `should post the show to the plan to watch list given addToList is called`() = runTest {
+        var capturedMethod: HttpMethod? = null
+        var capturedPath: String? = null
+        var capturedBody: String? = null
+
+        val engine = MockEngine { request ->
+            capturedMethod = request.method
+            capturedPath = request.url.encodedPath
+            capturedBody = request.body.toByteArray().decodeToString()
+            respond(
+                content = SIMKL_ADD_TO_LIST_RESPONSE,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.addToList(
+            SimklAddToListRequest(
+                shows = listOf(
+                    SimklListShow(
+                        ids = SimklShowIds(tmdb = "1396"),
+                        to = SimklListStatus.PLAN_TO_WATCH,
+                    ),
+                ),
+            ),
+        )
+
+        capturedMethod shouldBe HttpMethod.Post
+        capturedPath shouldBe "/sync/add-to-list"
+        capturedBody shouldContain "\"tmdb\": \"1396\""
+        capturedBody shouldContain "\"to\": \"plantowatch\""
+    }
+
+    @Test
+    fun `should report shows Simkl could not match given addToList is called`() = runTest {
+        val engine = MockEngine {
+            respond(
+                content = SIMKL_ADD_TO_LIST_NOT_FOUND_RESPONSE,
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        val result = dataSource.addToList(
+            SimklAddToListRequest(
+                shows = listOf(
+                    SimklListShow(
+                        ids = SimklShowIds(tmdb = "999999"),
+                        to = SimklListStatus.PLAN_TO_WATCH,
+                    ),
+                ),
+            ),
+        )
+
+        val success = result.shouldBeInstanceOf<ApiResponse.Success<SimklAddToListResponse>>()
+        success.body.notFound?.shows?.size shouldBe 1
     }
 
     @Test
@@ -234,5 +302,43 @@ private val SIMKL_ALL_ITEMS_RESPONSE_MISSING_TMDB = """
       "seasons": []
     }
   ]
+}
+""".trimIndent()
+
+private val SIMKL_ADD_TO_LIST_RESPONSE = """
+{
+  "added": {
+    "shows": [
+      {
+        "title": "Breaking Bad",
+        "year": 2008,
+        "to": "plantowatch",
+        "ids": {
+          "simkl": 2090,
+          "tmdb": "1396"
+        }
+      }
+    ]
+  },
+  "not_found": {
+    "shows": []
+  }
+}
+""".trimIndent()
+
+private val SIMKL_ADD_TO_LIST_NOT_FOUND_RESPONSE = """
+{
+  "added": {
+    "shows": []
+  },
+  "not_found": {
+    "shows": [
+      {
+        "ids": {
+          "tmdb": "999999"
+        }
+      }
+    ]
+  }
 }
 """.trimIndent()

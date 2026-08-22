@@ -3,6 +3,8 @@ package com.thomaskioko.tvmaniac.simkl.testing
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.simkl.api.SimklSyncRemoteDataSource
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddHistoryResponse
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddToListRequest
+import com.thomaskioko.tvmaniac.simkl.api.model.SimklAddToListResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklAllItemsResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklLastActivitiesResponse
 import com.thomaskioko.tvmaniac.simkl.api.model.SimklRemoveHistoryResponse
@@ -13,12 +15,16 @@ public class FakeSimklSyncRemoteDataSource(
     private var allWatchedShowsResponse: ApiResponse<SimklAllItemsResponse> = ApiResponse.Unauthenticated,
     private var addHistoryResponse: ApiResponse<SimklAddHistoryResponse> = ApiResponse.Unauthenticated,
     private var removeHistoryResponse: ApiResponse<SimklRemoveHistoryResponse> = ApiResponse.Unauthenticated,
+    private var addToListResponse: ApiResponse<SimklAddToListResponse> = ApiResponse.Unauthenticated,
 ) : SimklSyncRemoteDataSource {
 
     public var lastAddedHistory: SimklSyncHistoryRequest? = null
         private set
 
     public var lastRemovedHistory: SimklSyncHistoryRequest? = null
+        private set
+
+    public var lastAddedToList: SimklAddToListRequest? = null
         private set
 
     public fun setLastActivities(response: ApiResponse<SimklLastActivitiesResponse>) {
@@ -37,6 +43,10 @@ public class FakeSimklSyncRemoteDataSource(
         removeHistoryResponse = response
     }
 
+    public fun setAddToListResponse(response: ApiResponse<SimklAddToListResponse>) {
+        addToListResponse = response
+    }
+
     override suspend fun getLastActivities(): ApiResponse<SimklLastActivitiesResponse> =
         lastActivitiesResponse
 
@@ -51,5 +61,10 @@ public class FakeSimklSyncRemoteDataSource(
     override suspend fun removeWatchedHistory(request: SimklSyncHistoryRequest): ApiResponse<SimklRemoveHistoryResponse> {
         lastRemovedHistory = request
         return removeHistoryResponse
+    }
+
+    override suspend fun addToList(request: SimklAddToListRequest): ApiResponse<SimklAddToListResponse> {
+        lastAddedToList = request
+        return addToListResponse
     }
 }

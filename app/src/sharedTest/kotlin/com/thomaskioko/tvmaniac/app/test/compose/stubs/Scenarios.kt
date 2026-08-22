@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.app.test.compose.stubs
 
+import androidx.compose.ui.test.ComposeUiTest
 import androidx.datastore.preferences.core.edit
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountAuthState
 import com.thomaskioko.tvmaniac.accountmanager.api.AuthState
@@ -13,8 +14,10 @@ import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
 import com.thomaskioko.tvmaniac.testing.integration.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.testing.integration.TEST_TODAY
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.runBlocking
-import kotlin.time.Clock
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
 internal const val TEST_ACCESS_TOKEN: String = "test-access"
@@ -34,8 +37,22 @@ internal class Scenarios(
     mockHandler: MockEngineHandler,
     private val graph: TestAppComponent,
     private val rootRobot: RootRobot,
+    private val composeUi: ComposeUiTest,
 ) {
     private val http: HttpScenarios = HttpScenarios(mockHandler)
+
+    private fun runSetup(block: suspend () -> Unit) {
+        var failure: Throwable? = null
+        val job = CoroutineScope(Dispatchers.Main).launch(start = CoroutineStart.UNDISPATCHED) {
+            runCatching { block() }.onFailure { failure = it }
+        }
+        if (!job.isCompleted) composeUi.waitForIdle()
+        check(job.isCompleted) {
+            "Scenario setup did not complete. It must not block the test thread, because every " +
+                "dispatcher role resolves to the scheduler this thread advances."
+        }
+        failure?.let { throw it }
+    }
 
     val auth: Auth = Auth()
     val discover: Discover = Discover()
@@ -51,8 +68,8 @@ internal class Scenarios(
     val settings: Settings = Settings()
 
     fun signInAndDismissRationale() {
-        stubLoggedInUser(SyncProviderSource.TRAKT)
         stubProfileEndpoints(SyncProviderSource.TRAKT)
+        stubLoggedInUser(SyncProviderSource.TRAKT)
         rootRobot.dismissNotificationRationale()
     }
 
@@ -98,17 +115,17 @@ internal class Scenarios(
     }
 
     fun stubAuthenticatedSimklProfile() {
-        stubLoggedInUser(SyncProviderSource.SIMKL)
         stubProfileEndpoints(SyncProviderSource.SIMKL)
         stubLibrarySyncEndpoints(SyncProviderSource.SIMKL)
         simkl.stubActivities()
+        stubLoggedInUser(SyncProviderSource.SIMKL)
     }
 
     fun stubAuthenticatedSimklStartWatching() {
-        stubLoggedInUser(SyncProviderSource.SIMKL)
         stubProfileEndpoints(SyncProviderSource.SIMKL)
         stubWatchlistSyncEndpoints(SyncProviderSource.SIMKL)
         simkl.stubActivities()
+        stubLoggedInUser(SyncProviderSource.SIMKL)
     }
 
     fun stubAuthenticatedSync() {
@@ -144,16 +161,22 @@ internal class Scenarios(
      * Always pair this with [stubPublicCatalog]: it is the only source of TMDB/discover coverage
      * for either provider.
      */
-    fun stubActiveProvider(provider: SyncProviderSource) {
+    fun stubActiveProvider(
+        provider: SyncProviderSource,
+        overrides: () -> Unit = {},
+    ) {
         when (provider) {
             SyncProviderSource.TRAKT -> {
                 stubLoggedInUser(SyncProviderSource.TRAKT)
                 http.stubTraktAuthenticatedEndpoints()
+                overrides()
             }
             SyncProviderSource.SIMKL -> {
                 flags.enableSimklLogin()
                 http.stubSimklAuthenticatedEndpoints()
-                // Sign in LAST (see TRAKT note) so login-triggered sync finds its stubs.
+                // Overrides register after the catalog set because the last stub for a path wins,
+                // and before sign-in because login-triggered sync must find them already there.
+                overrides()
                 stubLoggedInUser(SyncProviderSource.SIMKL)
             }
         }
@@ -222,12 +245,12 @@ internal class Scenarios(
                 accessToken = accessToken,
                 refreshToken = refreshToken,
                 isAuthorized = true,
-                expiresAt = Clock.System.now() + tokenLifetimeSeconds.seconds,
+                expiresAt = graph.dateTimeProvider.now() + tokenLifetimeSeconds.seconds,
                 tokenLifetimeSeconds = tokenLifetimeSeconds,
             )
             graph.traktAuthRepository.setAuthState(authState)
             graph.traktAuthRepository.setRefreshOutcome(TokenRefreshResult.Success(authState))
-            runBlocking { graph.traktAuthRepository.setState(AccountAuthState.LOGGED_IN) }
+            runSetup { graph.traktAuthRepository.setState(AccountAuthState.LOGGED_IN) }
             // Mirror the production sign-in path: a successful OAuth handshake
             // calls `saveTokens` which emits `loginEvents`. The fake's
             // `setState(LOGGED_IN)` only flips state, so we also emit the
@@ -242,12 +265,12 @@ internal class Scenarios(
             refreshToken: String = "simkl-test-refresh",
             tokenLifetimeSeconds: Long = 3600,
         ) {
-            runBlocking {
+            runSetup {
                 graph.authStateHolder.saveTokens(
                     provider = SyncProviderSource.SIMKL,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
-                    expiresAtSeconds = (Clock.System.now() + tokenLifetimeSeconds.seconds).epochSeconds,
+                    expiresAtSeconds = (graph.dateTimeProvider.now() + tokenLifetimeSeconds.seconds).epochSeconds,
                 )
             }
         }
@@ -357,7 +380,7 @@ internal class Scenarios(
 
     inner class Settings {
         fun disableMultiplePlays() {
-            runBlocking {
+            runSetup {
                 graph.dataStore.edit { preferences ->
                     preferences[DefaultDatastoreRepository.KEY_MULTIPLE_PLAYS_ENABLED] = false
                 }

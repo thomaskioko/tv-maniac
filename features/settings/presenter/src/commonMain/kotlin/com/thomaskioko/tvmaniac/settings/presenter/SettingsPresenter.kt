@@ -18,10 +18,13 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreFailure
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreResult
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.BackupLocationPermissions
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreFailure
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreResult
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
+import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
+import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
@@ -30,7 +33,11 @@ import com.thomaskioko.tvmaniac.datastore.api.SeasonSortOrder
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
 import com.thomaskioko.tvmaniac.domain.accountswitcher.ConnectAndSwitchProviderInteractor
 import com.thomaskioko.tvmaniac.domain.accountswitcher.PrepareAccountSwitchInteractor
+import com.thomaskioko.tvmaniac.domain.backup.AutoBackupResult
+import com.thomaskioko.tvmaniac.domain.backup.AutoBackupState
+import com.thomaskioko.tvmaniac.domain.backup.BackupNowInteractor
 import com.thomaskioko.tvmaniac.domain.backup.ExportBackupInteractor
+import com.thomaskioko.tvmaniac.domain.backup.ObserveAutoBackupInteractor
 import com.thomaskioko.tvmaniac.domain.backup.RestoreBackupInteractor
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ToggleEpisodeNotificationsInteractor
@@ -91,6 +98,9 @@ public class SettingsPresenter internal constructor(
     private val connectAndSwitchProviderInteractor: ConnectAndSwitchProviderInteractor,
     private val exportBackupInteractor: ExportBackupInteractor,
     private val restoreBackupInteractor: RestoreBackupInteractor,
+    private val backupNowInteractor: BackupNowInteractor,
+    private val backupLocationPermissions: BackupLocationPermissions,
+    observeAutoBackupInteractor: ObserveAutoBackupInteractor,
     private val labelsMapper: SettingsLabelsMapper,
 ) : ComponentContext by componentContext {
 
@@ -100,6 +110,7 @@ public class SettingsPresenter internal constructor(
     private val backupExportState = ObservableLoadingCounter()
     private val accountSwitchState = ObservableLoadingCounter()
     private val uiMessageManager = UiMessageManager()
+    private var backupFolder: String? = null
 
     private val _state: MutableStateFlow<SettingsState> =
         MutableStateFlow(SettingsState.DEFAULT_STATE)
@@ -115,6 +126,10 @@ public class SettingsPresenter internal constructor(
         observeSettingsPreferencesInteractor(Unit)
         observePremiumAccessInteractor(Unit)
         observeRewatchSupportInteractor(Unit)
+        observeAutoBackupInteractor(Unit)
+        coroutineScope.launch {
+            datastoreRepository.observeBackupFolder().collect { backupFolder = it }
+        }
     }
 
     public val state: StateFlow<SettingsState> = combine(
@@ -132,8 +147,10 @@ public class SettingsPresenter internal constructor(
         accountSwitchFlag.observe(),
         observePremiumAccessInteractor.flow,
         observeRewatchSupportInteractor.flow,
+        observeAutoBackupInteractor.flow,
     ) { currentState, isProcessingAuth, isTogglingNotifications, isExportingBackup, isSwitchingAccount,
         preferences, isLoggedIn, activeProvider, message, userProfile, simklEnabled, accountSwitchEnabled, premiumAccess, supportsRewatch,
+        autoBackup,
         ->
         val username = userProfile?.let { it.fullName ?: it.username }
         val switchTarget = resolveSwitchTarget(isLoggedIn, activeProvider, simklEnabled, accountSwitchEnabled)
@@ -150,6 +167,7 @@ public class SettingsPresenter internal constructor(
             multiplePlaysEnabled = preferences.multiplePlaysEnabled,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
+            activeProviderName = activeProvider?.displayName,
             authProviders = authProviderOptions(simklEnabled),
             accountConnectedDescription = activeProvider?.let { connectedDescription(it) },
             switchTargetProvider = switchTarget,
@@ -179,8 +197,14 @@ public class SettingsPresenter internal constructor(
                 isImporting = currentState.backup.isImporting,
                 awaitingDestination = currentState.backup.awaitingDestination,
                 awaitingSource = currentState.backup.awaitingSource,
+                syncWithConnectedAccount = currentState.backup.syncWithConnectedAccount,
+                choosingAutoBackupLocation = currentState.backup.choosingAutoBackupLocation,
                 confirm = currentState.backup.confirm,
                 summary = currentState.backup.summary,
+                autoBackup = buildAutoBackupSettings(
+                    state = autoBackup,
+                    isBackingUp = currentState.backup.autoBackup.isBackingUp,
+                ),
             ),
             currentPageTitle = resolvePageTitle(currentState.currentPage),
             rootGroups = buildRootGroups(),
@@ -361,7 +385,9 @@ public class SettingsPresenter internal constructor(
 
             is BackupImportClicked -> handleImportClicked()
 
-            is BackupImportConfirmed -> handleImportConfirmed()
+            is BackupImportConfirmed -> handleImportConfirmed(syncWithConnectedAccount = false)
+
+            is BackupImportConfirmedWithAccount -> handleImportConfirmed(syncWithConnectedAccount = true)
 
             is BackupImportCancelled -> _state.update { it.copy(backup = backupLabels) }
 
@@ -372,8 +398,38 @@ public class SettingsPresenter internal constructor(
             is BackupSummaryDismissed -> _state.update { it.copy(backup = backupLabels) }
 
             is BackupDestinationCancelled -> {
-                _state.update { it.copy(backup = backupLabels) }
+                _state.update {
+                    it.copy(
+                        backup = currentBackup().copy(
+                            awaitingDestination = false,
+                            choosingAutoBackupLocation = false,
+                        ),
+                    )
+                }
             }
+
+            is AutoBackupToggled -> {
+                coroutineScope.launch { datastoreRepository.setAutoBackupEnabled(action.enabled) }
+            }
+
+            is AutoBackupScheduleSelected -> {
+                coroutineScope.launch { datastoreRepository.saveAutoBackupInterval(action.interval) }
+            }
+
+            is AutoBackupLocationClicked -> {
+                _state.update {
+                    it.copy(
+                        backup = currentBackup().copy(
+                            awaitingDestination = true,
+                            choosingAutoBackupLocation = true,
+                        ),
+                    )
+                }
+            }
+
+            is BackupFileNameChanged -> saveBackupFileName(action.name)
+
+            is BackupNowClicked -> handleBackupNow()
 
             is SettingsMessageShown -> {
                 coroutineScope.launch {
@@ -383,14 +439,123 @@ public class SettingsPresenter internal constructor(
         }
     }
 
+    private fun currentBackup(): BackupSettings = _state.value.backup
+
+    private fun saveBackupFolder(location: String): Boolean {
+        _state.update {
+            it.copy(
+                backup = currentBackup().copy(
+                    awaitingDestination = false,
+                    choosingAutoBackupLocation = false,
+                ),
+            )
+        }
+        if (!backupLocationPermissions.persist(location)) {
+            logger.warning(TAG, "Cannot keep write access to the chosen backup location")
+            coroutineScope.launch {
+                uiMessageManager.emitMessage(
+                    UiMessage(localizer.getString(StringResourceKey.ErrorBackupLocationUnavailable)),
+                )
+            }
+            return false
+        }
+        coroutineScope.launch { datastoreRepository.saveBackupFolder(location) }
+        return true
+    }
+
+    private fun saveBackupFileName(name: String) {
+        val fileName = BackupFileName.sanitize(name)
+        if (fileName == null) {
+            coroutineScope.launch {
+                uiMessageManager.emitMessage(
+                    UiMessage(localizer.getString(StringResourceKey.ErrorBackupFileNameInvalid)),
+                )
+            }
+            return
+        }
+        coroutineScope.launch { datastoreRepository.saveBackupFileName(fileName) }
+    }
+
+    private fun handleBackupNow() {
+        _state.update { it.copy(backup = currentBackup().copy(autoBackup = currentBackup().autoBackup.copy(isBackingUp = true))) }
+        coroutineScope.launch {
+            val result = backupNowInteractor.executeSync(Unit)
+            _state.update { it.copy(backup = currentBackup().copy(autoBackup = currentBackup().autoBackup.copy(isBackingUp = false))) }
+            if (result is AutoBackupResult.Failed || result is AutoBackupResult.LocationLost) {
+                uiMessageManager.emitMessage(
+                    UiMessage(localizer.getString(StringResourceKey.SettingsAutoBackupLastRunFailed)),
+                )
+            }
+        }
+    }
+
+    private fun buildAutoBackupSettings(state: AutoBackupState, isBackingUp: Boolean): AutoBackupSettings =
+        AutoBackupSettings(
+            title = localizer.getString(StringResourceKey.SettingsAutoBackupTitle),
+            description = localizer.getString(StringResourceKey.SettingsAutoBackupDescription),
+            enabled = state.enabled,
+            scheduleTitle = localizer.getString(StringResourceKey.SettingsAutoBackupScheduleTitle),
+            scheduleLabel = scheduleLabel(state.interval),
+            scheduleOptions = AutoBackupInterval.entries
+                .map { interval ->
+                    AutoBackupScheduleOption(
+                        interval = interval,
+                        label = scheduleLabel(interval),
+                        selected = interval == state.interval,
+                    )
+                }
+                .toImmutableList(),
+            locationTitle = localizer.getString(StringResourceKey.SettingsAutoBackupLocationTitle),
+            locationLabel = state.location?.let { backupLocationPermissions.displayName(it) }
+                ?: localizer.getString(StringResourceKey.SettingsAutoBackupLocationNone),
+            hasLocation = state.location != null,
+            fileNameTitle = localizer.getString(StringResourceKey.SettingsBackupFileNameTitle),
+            fileNameMessage = localizer.getString(StringResourceKey.SettingsBackupFileNameMessage),
+            fileName = state.fileName,
+            fileNameSaveLabel = localizer.getString(StringResourceKey.LabelSave),
+            fileNameCancelLabel = localizer.getString(StringResourceKey.LabelCancel),
+            lastRunLabel = when (val date = state.lastRunDate) {
+                null -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRunNever)
+                else -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRun, date)
+            },
+            failureWarning = when {
+                state.lastRunFailed -> localizer.getString(StringResourceKey.SettingsAutoBackupLastRunFailed)
+                else -> null
+            },
+            backupNowTitle = localizer.getString(StringResourceKey.SettingsAutoBackupNowTitle),
+            backupNowDescription = localizer.getString(StringResourceKey.SettingsAutoBackupNowDescription),
+            isBackingUp = isBackingUp,
+        )
+
+    private fun scheduleLabel(interval: AutoBackupInterval): String = localizer.getString(
+        when (interval) {
+            AutoBackupInterval.DAILY -> StringResourceKey.SettingsAutoBackupScheduleDaily
+            AutoBackupInterval.WEEKLY -> StringResourceKey.SettingsAutoBackupScheduleWeekly
+            AutoBackupInterval.FORTNIGHTLY -> StringResourceKey.SettingsAutoBackupScheduleFortnightly
+            AutoBackupInterval.MONTHLY -> StringResourceKey.SettingsAutoBackupScheduleMonthly
+        },
+    )
+
     private fun handleBackupExportClicked() {
-        _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
+        val folder = backupFolder
+        if (folder == null) {
+            _state.update { it.copy(backup = backupLabels.copy(awaitingDestination = true)) }
+            return
+        }
+        exportTo(folder)
     }
 
     private fun handleBackupDestination(location: String) {
-        _state.update { it.copy(backup = backupLabels) }
+        val exportWasWaiting = !_state.value.backup.choosingAutoBackupLocation
+        if (!saveBackupFolder(location)) return
+        if (exportWasWaiting) exportTo(location)
+    }
+
+    private fun exportTo(folder: String) {
         coroutineScope.launch {
-            exportBackupInteractor(ExportBackupInteractor.Params(location))
+            exportBackupInteractor(
+                ExportBackupInteractor.Params(folder, datastoreRepository.getBackupFileName()),
+            )
                 .collectStatus(
                     counter = backupExportState,
                     logger = logger,
@@ -406,14 +571,26 @@ public class SettingsPresenter internal constructor(
         _state.update { it.copy(backup = backupLabels.copy(confirm = buildRestoreConfirm())) }
     }
 
-    private fun handleImportConfirmed() {
-        _state.update { it.copy(backup = backupLabels.copy(awaitingSource = true)) }
+    private fun handleImportConfirmed(syncWithConnectedAccount: Boolean) {
+        _state.update {
+            it.copy(
+                backup = backupLabels.copy(
+                    awaitingSource = true,
+                    syncWithConnectedAccount = syncWithConnectedAccount,
+                ),
+            )
+        }
     }
 
     private fun handleBackupSource(location: String) {
+        val syncWithConnectedAccount = _state.value.backup.syncWithConnectedAccount
         coroutineScope.launch {
             _state.update { it.copy(backup = backupLabels.copy(isImporting = true)) }
-            when (val result = restoreBackupInteractor.executeSync(RestoreBackupInteractor.Params(location))) {
+            val params = RestoreBackupInteractor.Params(
+                location = location,
+                syncWithConnectedAccount = syncWithConnectedAccount,
+            )
+            when (val result = restoreBackupInteractor.executeSync(params)) {
                 is RestoreResult.Restored ->
                     _state.update { it.copy(backup = backupLabels.copy(summary = buildRestoreSummary(result.summary))) }
 
@@ -444,20 +621,29 @@ public class SettingsPresenter internal constructor(
         )
     }
 
-    private fun buildRestoreConfirm(): BackupRestoreConfirm {
+    private fun buildRestoreConfirm(): BackupRestoreConfirmationDialog {
+        val title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle)
+        val cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary)
         val provider = state.value.activeProvider
-        return BackupRestoreConfirm(
-            title = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmTitle),
-            message = if (provider == null) {
-                localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage)
-            } else {
-                localizer.getString(
-                    StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
-                    provider.displayName,
-                )
-            },
-            confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
-            cancelLabel = localizer.getString(StringResourceKey.LabelSettingsTraktDialogButtonSecondary),
+            ?: return BackupRestoreConfirmationDialog.Local(
+                title = title,
+                message = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmMessage),
+                cancelLabel = cancelLabel,
+                confirmLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmButton),
+            )
+
+        return BackupRestoreConfirmationDialog.Connected(
+            title = title,
+            message = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmMessageConnected,
+                provider.displayName,
+            ),
+            cancelLabel = cancelLabel,
+            accountLabel = localizer.getString(
+                StringResourceKey.SettingsBackupRestoreConfirmAccountButton,
+                provider.displayName,
+            ),
+            deviceLabel = localizer.getString(StringResourceKey.SettingsBackupRestoreConfirmDeviceButton),
         )
     }
 

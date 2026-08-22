@@ -182,17 +182,16 @@ extension SettingsView {
             isProcessingAuth: uiState.isProcessingAuth,
             logoutLabel: uiState.labels.logout,
             loginLabel: uiState.labels.login,
-            providerName: providerDisplayName(uiState.activeProvider),
-            providerLogoName: uiState.activeProvider?.name == "SIMKL" ? "SimklMono" : "TraktMono",
+            providerName: uiState.activeProviderName ?? "",
+            providerLogoName: uiState.activeProvider?.logoAssetName ?? SyncProviderSource.trakt.logoAssetName,
             authProviders: uiState.authProviders.map { option in
                 SwiftAuthProvider(
                     id: option.provider.name,
                     label: option.label,
-                    logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
+                    logoName: option.provider.logoAssetName
                 )
             },
-            switchTargetLogoName: uiState.switchTargetProvider?
-                .name == "SIMKL" ? "SimklMono" : (uiState.switchTargetProvider != nil ? "TraktMono" : nil),
+            switchTargetLogoName: uiState.switchTargetProvider?.logoAssetName,
             switchActionLabel: uiState.switchActionLabel,
             isSwitching: uiState.isSwitching,
             showSwitchConfirmation: showingSwitchAlert,
@@ -213,10 +212,6 @@ extension SettingsView {
             onConfirmSwitch: { presenter.dispatch(action: ConfirmSwitchDiscard()) },
             onDismissSwitchDialog: { presenter.dispatch(action: DismissSwitchDialog()) }
         )
-    }
-
-    func providerDisplayName(_ provider: SyncProviderSource?) -> String {
-        provider?.name == "SIMKL" ? "Simkl" : "Trakt"
     }
 
     // MARK: - Notification Handling

@@ -18,6 +18,10 @@ public class DefaultRequestManagerRepository(
     private val dateTimeProvider: DateTimeProvider,
 ) : RequestManagerRepository {
 
+    override fun upsert(entityId: Long, requestType: String) {
+        upsert(entityId = entityId, requestType = requestType, timestamp = dateTimeProvider.now())
+    }
+
     override fun upsert(entityId: Long, requestType: String, timestamp: Instant) {
         val _ = database.lastRequestsQueries.upsert(
             entity_id = entityId,

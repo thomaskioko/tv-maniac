@@ -34,6 +34,10 @@ graph TB
     direction TB
     :data:account-manager:api[api]:::multiplatform
   end
+  subgraph :data:backup
+    direction TB
+    :data:backup:api[api]:::multiplatform
+  end
   subgraph :data:database
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
@@ -55,6 +59,10 @@ graph TB
     :data:traktlists:api[api]:::multiplatform
     :data:traktlists:implementation[implementation]:::multiplatform
   end
+  subgraph :data:user
+    direction TB
+    :data:user:api[api]:::multiplatform
+  end
 
   :api:trakt:api --> :core:network-util:api
   :core:base --> :core:logger:api
@@ -67,13 +75,19 @@ graph TB
   :data:shows:api --> :data:database:sqldelight
   :data:traktlists:implementation --> :api:trakt:api
   :data:traktlists:implementation --> :core:base
+  :data:traktlists:implementation --> :core:logger:api
   :data:traktlists:implementation -.-> :core:network-util:api
   :data:traktlists:implementation --> :core:util:api
+  :data:traktlists:implementation --> :data:backup:api
   :data:traktlists:implementation --> :data:database:sqldelight
   :data:traktlists:implementation -.-> :data:followedshows:api
   :data:traktlists:implementation --> :data:request-manager:api
   :data:traktlists:implementation --> :data:shows:api
   :data:traktlists:implementation --> :data:traktlists:api
+  :data:traktlists:implementation --> :data:user:api
+  :data:user:api --> :core:network-util:api
+  :data:user:api --> :data:account-manager:api
+  :data:user:api --> :data:database:sqldelight
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

@@ -1,8 +1,8 @@
 package com.thomaskioko.tvmaniac.data.backup.implementation
 
-import com.thomaskioko.tvmaniac.data.backup.api.BackupFile
-import com.thomaskioko.tvmaniac.data.backup.api.BackupShow
-import com.thomaskioko.tvmaniac.data.backup.api.RestoreSummary
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupFile
+import com.thomaskioko.tvmaniac.data.backup.api.model.BackupShow
+import com.thomaskioko.tvmaniac.data.backup.api.model.RestoreSummary
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.db.EpisodeId
 import com.thomaskioko.tvmaniac.db.Id
@@ -20,7 +20,11 @@ internal class BackupImporter(
 
     private val restoreQueries = database.restoreQueries
 
-    fun import(backup: BackupFile, includeSpecials: Boolean): RestoreSummary = transactionRunner {
+    fun import(
+        backup: BackupFile,
+        includeSpecials: Boolean,
+        syncWithConnectedAccount: Boolean,
+    ): RestoreSummary = transactionRunner {
         clearRestoredTables()
 
         var showCount = 0
@@ -38,9 +42,13 @@ internal class BackupImporter(
 
             showCount++
             restoreSeasonsAndEpisodes(show, showId)
-            episodeCount += restoreShow(show, showId)
-            skippedSeasonRatings += restoreSeasonRatings(show, showId)
-            skippedEpisodeRatings += restoreEpisodeRatings(show, showId)
+            episodeCount += restoreShow(
+                show = show,
+                showId = showId,
+                syncWithConnectedAccount = syncWithConnectedAccount,
+            )
+            skippedSeasonRatings += restoreSeasonRatings(show, showId, syncWithConnectedAccount)
+            skippedEpisodeRatings += restoreEpisodeRatings(show, showId, syncWithConnectedAccount)
             recalculateMetadata(showId, includeSpecials)
         }
 
@@ -53,6 +61,7 @@ internal class BackupImporter(
             skippedSeasonRatings = skippedSeasonRatings,
             skippedEpisodeRatings = skippedEpisodeRatings,
             rewatchSessionsKept = restoreQueries.rewatchSessionCount().executeAsOne().toInt(),
+            listsNotRestored = backup.lists.size,
         )
     }
 
@@ -120,13 +129,20 @@ internal class BackupImporter(
         }
     }
 
-    private fun restoreShow(show: BackupShow, showId: Id<ShowId>): Int {
+    private fun restoreShow(show: BackupShow, showId: Id<ShowId>, syncWithConnectedAccount: Boolean): Int {
         show.followedAt?.let { followedAt ->
-            restoreQueries.restoreFollowedShow(
-                showId = showId,
-                tmdbId = Id(show.tmdbId),
-                followedAt = followedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreFollowedShowForUpload(
+                    showId = showId,
+                    tmdbId = Id(show.tmdbId),
+                    followedAt = followedAt,
+                )
+                else -> restoreQueries.restoreFollowedShow(
+                    showId = showId,
+                    tmdbId = Id(show.tmdbId),
+                    followedAt = followedAt,
+                )
+            }
         }
 
         watchStatusOrNull(show.watchStatus)?.let { status ->
@@ -138,26 +154,41 @@ internal class BackupImporter(
         }
 
         show.rating?.takeIf { it.value in RATING_RANGE }?.let { rating ->
-            restoreQueries.restoreShowRating(
-                showId = showId,
-                userRating = rating.value,
-                ratedAt = rating.ratedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreShowRatingForUpload(
+                    showId = showId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+                else -> restoreQueries.restoreShowRating(
+                    showId = showId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+            }
         }
 
         show.watchedEpisodes.forEach { episode ->
-            restoreQueries.restoreWatchedEpisode(
-                showId = showId,
-                seasonNumber = episode.season,
-                episodeNumber = episode.episode,
-                watchedAt = episode.watchedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreWatchedEpisodeForUpload(
+                    showId = showId,
+                    seasonNumber = episode.season,
+                    episodeNumber = episode.episode,
+                    watchedAt = episode.watchedAt,
+                )
+                else -> restoreQueries.restoreWatchedEpisode(
+                    showId = showId,
+                    seasonNumber = episode.season,
+                    episodeNumber = episode.episode,
+                    watchedAt = episode.watchedAt,
+                )
+            }
         }
 
         return show.watchedEpisodes.size
     }
 
-    private fun restoreSeasonRatings(show: BackupShow, showId: Id<ShowId>): Int {
+    private fun restoreSeasonRatings(show: BackupShow, showId: Id<ShowId>, syncWithConnectedAccount: Boolean): Int {
         var skipped = 0
         show.seasonRatings.forEach { rating ->
             val seasonId = restoreQueries.seasonIdForNumber(showId, rating.season).executeAsOneOrNull()
@@ -165,16 +196,23 @@ internal class BackupImporter(
                 skipped++
                 return@forEach
             }
-            restoreQueries.restoreSeasonRating(
-                seasonId = seasonId,
-                userRating = rating.value,
-                ratedAt = rating.ratedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreSeasonRatingForUpload(
+                    seasonId = seasonId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+                else -> restoreQueries.restoreSeasonRating(
+                    seasonId = seasonId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+            }
         }
         return skipped
     }
 
-    private fun restoreEpisodeRatings(show: BackupShow, showId: Id<ShowId>): Int {
+    private fun restoreEpisodeRatings(show: BackupShow, showId: Id<ShowId>, syncWithConnectedAccount: Boolean): Int {
         var skipped = 0
         show.episodeRatings.forEach { rating ->
             val episodeId = restoreQueries
@@ -184,11 +222,18 @@ internal class BackupImporter(
                 skipped++
                 return@forEach
             }
-            restoreQueries.restoreEpisodeRating(
-                episodeId = episodeId,
-                userRating = rating.value,
-                ratedAt = rating.ratedAt,
-            )
+            when {
+                syncWithConnectedAccount -> restoreQueries.restoreEpisodeRatingForUpload(
+                    episodeId = episodeId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+                else -> restoreQueries.restoreEpisodeRating(
+                    episodeId = episodeId,
+                    userRating = rating.value,
+                    ratedAt = rating.ratedAt,
+                )
+            }
         }
         return skipped
     }

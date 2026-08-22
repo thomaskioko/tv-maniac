@@ -7,8 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Movie
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thomaskioko.tvmaniac.compose.components.ChoiceChipGroup
 import com.thomaskioko.tvmaniac.compose.components.PremiumOverlay
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
@@ -111,30 +108,30 @@ internal fun PosterStylePage(
                 cornerStyle = state.posterCornerStyle,
             )
 
-            PosterStyleControl(
+            ChoiceChipGroup(
                 title = labels.postersLabel,
                 options = PosterWidth.entries,
-                selected = state.posterWidth,
+                isSelected = { it == state.posterWidth },
                 enabled = !locked,
                 label = labels::widthLabel,
                 testTagFor = { SettingsTestTags.posterWidthChip(it.name) },
                 onSelected = { onAction(PosterWidthSelected(it)) },
             )
 
-            PosterStyleControl(
+            ChoiceChipGroup(
                 title = labels.landscapeLabel,
                 options = PosterWidth.entries,
-                selected = state.landscapeWidth,
+                isSelected = { it == state.landscapeWidth },
                 enabled = !locked,
                 label = labels::widthLabel,
                 testTagFor = { SettingsTestTags.landscapeWidthChip(it.name) },
                 onSelected = { onAction(LandscapeWidthSelected(it)) },
             )
 
-            PosterStyleControl(
+            ChoiceChipGroup(
                 title = labels.cornerLabel,
                 options = PosterCornerStyle.entries,
-                selected = state.posterCornerStyle,
+                isSelected = { it == state.posterCornerStyle },
                 enabled = !locked,
                 label = labels::cornerStyleLabel,
                 testTagFor = { SettingsTestTags.posterCornerStyleChip(it.name) },
@@ -270,64 +267,6 @@ private fun PosterStylePreviewCard(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun <T> PosterStyleControl(
-    title: String,
-    options: List<T>,
-    selected: T,
-    enabled: Boolean,
-    label: (T) -> String,
-    testTagFor: (T) -> String,
-    onSelected: (T) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
-            verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
-        ) {
-            options.forEach { option ->
-                FilterChip(
-                    modifier = Modifier.testTag(testTagFor(option)),
-                    selected = option == selected,
-                    enabled = enabled,
-                    onClick = { onSelected(option) },
-                    label = {
-                        Text(
-                            text = label(option),
-                            color = if (option == selected) {
-                                MaterialTheme.colorScheme.onSecondary
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            },
-                        )
-                    },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    ),
-                    border = FilterChipDefaults.filterChipBorder(
-                        borderColor = MaterialTheme.colorScheme.outline,
-                        selectedBorderColor = MaterialTheme.colorScheme.secondary,
-                        enabled = enabled,
-                        selected = option == selected,
-                    ),
-                )
-            }
-        }
     }
 }
 

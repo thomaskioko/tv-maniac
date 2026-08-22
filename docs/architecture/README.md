@@ -40,7 +40,7 @@ sequenceDiagram
     participant Interactor as ShowDetails SubjectInteractor
     participant Store as ShowDetailsStore
     participant DAO as SQLDelight DAO
-    participant API as TMDB / Trakt API
+    participant API as TMDB / Trakt / Simkl API
 
     User->>UI: tap show
     UI->>Presenter: dispatch(ShowClicked)
