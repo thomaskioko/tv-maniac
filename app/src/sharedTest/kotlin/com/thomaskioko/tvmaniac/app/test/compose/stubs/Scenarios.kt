@@ -18,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
 internal const val TEST_ACCESS_TOKEN: String = "test-access"
@@ -246,7 +245,7 @@ internal class Scenarios(
                 accessToken = accessToken,
                 refreshToken = refreshToken,
                 isAuthorized = true,
-                expiresAt = Clock.System.now() + tokenLifetimeSeconds.seconds,
+                expiresAt = graph.dateTimeProvider.now() + tokenLifetimeSeconds.seconds,
                 tokenLifetimeSeconds = tokenLifetimeSeconds,
             )
             graph.traktAuthRepository.setAuthState(authState)
@@ -271,7 +270,7 @@ internal class Scenarios(
                     provider = SyncProviderSource.SIMKL,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
-                    expiresAtSeconds = (Clock.System.now() + tokenLifetimeSeconds.seconds).epochSeconds,
+                    expiresAtSeconds = (graph.dateTimeProvider.now() + tokenLifetimeSeconds.seconds).epochSeconds,
                 )
             }
         }

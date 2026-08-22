@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfi
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import com.thomaskioko.tvmaniac.oauth.testing.FakeOAuthLauncher
 import com.thomaskioko.tvmaniac.traktauth.testing.FakeTraktAuthRepository
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
@@ -20,6 +21,7 @@ interface TestAppComponent {
     val oAuthLauncher: FakeOAuthLauncher
     val authStateHolder: AuthStateHolder
     val featureFlagsRemoteConfig: FakeFeatureFlagsRemoteConfig
+    val dateTimeProvider: DateTimeProvider
 
     @AppPreferencesDataStore
     val dataStore: DataStore<Preferences>
