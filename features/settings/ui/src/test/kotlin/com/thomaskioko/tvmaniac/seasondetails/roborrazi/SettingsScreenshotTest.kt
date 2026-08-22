@@ -29,6 +29,7 @@ import com.thomaskioko.tvmaniac.settings.ui.backupRestoreSummaryWithSkipsState
 import com.thomaskioko.tvmaniac.settings.ui.backupState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorLockedState
 import com.thomaskioko.tvmaniac.settings.ui.behaviorState
+import com.thomaskioko.tvmaniac.settings.ui.components.BackupFileNameDialog
 import com.thomaskioko.tvmaniac.settings.ui.defaultState
 import com.thomaskioko.tvmaniac.settings.ui.discoverSectionsState
 import com.thomaskioko.tvmaniac.settings.ui.fontSizeScaledLayoutState
@@ -387,6 +388,19 @@ class SettingsScreenshotTest {
                 SettingsScreen(
                     state = backupAutoBackupRunningState,
                     onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenBackupPageFileNameDialog() {
+        composeTestRule.captureMultiDevice("SettingsScreenBackupPageFileNameDialog") {
+            TvManiacBackground {
+                BackupFileNameDialog(
+                    settings = backupAutoBackupOnState.backup.autoBackup,
+                    onConfirm = {},
+                    onDismiss = {},
                 )
             }
         }

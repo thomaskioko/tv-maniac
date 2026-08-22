@@ -28,6 +28,7 @@ import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
+import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
 import com.thomaskioko.tvmaniac.datastore.api.PosterCornerStyle
 import com.thomaskioko.tvmaniac.datastore.api.PosterWidth
@@ -65,6 +66,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupDestinationSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BackupExportClicked
+import com.thomaskioko.tvmaniac.settings.presenter.BackupFileNameChanged
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportCancelled
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportClicked
 import com.thomaskioko.tvmaniac.settings.presenter.BackupImportConfirmed
@@ -1115,6 +1117,35 @@ class SettingsPresenterTest {
 
         presenter.state.test {
             expectMostRecentItem().message.shouldNotBeNull()
+        }
+    }
+
+    @Test
+    fun `should save the file name given a usable one is entered`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupFileNameChanged("my shows"))
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.getBackupFileName() shouldBe "my shows.json"
+
+        presenter.state.test {
+            expectMostRecentItem().backup.autoBackup.fileName shouldBe "my shows.json"
+        }
+    }
+
+    @Test
+    fun `should refuse the file name given it cannot be used`() = runTest {
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(BackupFileNameChanged("nested/name"))
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.getBackupFileName() shouldBe BackupFileName.Default
+
+        presenter.state.test {
+            expectMostRecentItem().message.shouldNotBeNull().message shouldBe
+                localizer.getString(StringResourceKey.ErrorBackupFileNameInvalid)
         }
     }
 

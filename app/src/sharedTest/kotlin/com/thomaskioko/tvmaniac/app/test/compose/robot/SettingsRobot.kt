@@ -163,6 +163,27 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         assertNotSelected(SettingsTestTags.autoBackupScheduleChip(interval.name))
     }
 
+    fun clickBackupFileNameRow() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG)
+        click(SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG)
+    }
+
+    fun assertBackupFileName(name: String) = apply {
+        assertNodeHasText(SettingsTestTags.BACKUP_FILE_NAME_ROW_TEST_TAG, name)
+    }
+
+    fun replaceBackupFileName(name: String) = apply {
+        replaceText(SettingsTestTags.BACKUP_FILE_NAME_FIELD_TEST_TAG, name)
+    }
+
+    fun clickBackupFileNameSave() = apply {
+        click(SettingsTestTags.BACKUP_FILE_NAME_SAVE_BUTTON_TEST_TAG)
+    }
+
+    fun clickBackupFileNameCancel() = apply {
+        click(SettingsTestTags.BACKUP_FILE_NAME_CANCEL_BUTTON_TEST_TAG)
+    }
+
     fun openInfoPage() = apply {
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG)
         click(SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG)
