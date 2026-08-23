@@ -1,15 +1,16 @@
 package com.thomaskioko.root.model
 
-public object DeepLinkParser {
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
 
-    public const val SCHEME: String = "tvmaniac"
+public interface DeepLinkParser {
+    public fun parse(url: String?): DeepLinkDestination?
+}
 
-    private const val HOST_SHOW = "show"
-    private const val HOST_EPISODE = "episode"
-    private const val SHOW_SEGMENTS = 1
-    private const val EPISODE_SEGMENTS = 3
+@ContributesBinding(AppScope::class)
+public class DefaultDeepLinkParser : DeepLinkParser {
 
-    public fun parse(url: String?): DeepLinkDestination? {
+    override fun parse(url: String?): DeepLinkDestination? {
         val remainder = url?.trim()?.removePrefixOrNull("$SCHEME://") ?: return null
         val segments = remainder.substringBefore('?')
             .substringBefore('#')
@@ -45,4 +46,12 @@ public object DeepLinkParser {
 
     private fun String.removePrefixOrNull(prefix: String): String? =
         if (startsWith(prefix, ignoreCase = true)) substring(prefix.length) else null
+
+    private companion object {
+        const val SCHEME = "tvmaniac"
+        const val HOST_SHOW = "show"
+        const val HOST_EPISODE = "episode"
+        const val SHOW_SEGMENTS = 1
+        const val EPISODE_SEGMENTS = 3
+    }
 }
