@@ -36,8 +36,10 @@ kotlin {
                 api(libs.coroutines.core)
 
                 implementation(projects.core.view)
+                implementation(projects.domain.episode)
                 implementation(projects.domain.theme)
                 implementation(projects.features.debug.nav)
+                implementation(projects.features.episodeSheet.nav)
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.features.settings.presenter)
                 implementation(projects.features.showDetails.nav)

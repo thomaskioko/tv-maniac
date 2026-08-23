@@ -276,6 +276,21 @@ abstract class DefaultRootPresenterTest {
     }
 
     @Test
+    fun `should open show details given an episode deep link that is not cached`() = runTest(testDispatcher) {
+        presenter.activeTabStack.test {
+            awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
+
+            presenter.onDeepLink(
+                DeepLinkDestination.Episode(showId = 1399, seasonNumber = 1, episodeNumber = 2),
+            )
+            runCurrent()
+
+            awaitItem().active.configuration shouldBe
+                ShowDetailsRoute(param = ShowDetailsParam(showId = 1399))
+        }
+    }
+
+    @Test
     fun `should return initial theme state`() = runTest(testDispatcher) {
         presenter.appUiState.value shouldBe AppUiState()
     }

@@ -16,6 +16,12 @@ public sealed class DeepLinkDestination {
         val forceRefresh: Boolean = false,
     ) : DeepLinkDestination()
 
+    public data class Episode(
+        val showId: Long,
+        val seasonNumber: Long,
+        val episodeNumber: Long,
+    ) : DeepLinkDestination()
+
     public data object DebugMenu : DeepLinkDestination()
 
     public companion object {
