@@ -3,7 +3,7 @@ package com.thomaskioko.root.model
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
-class DeepLinkParserTest {
+class DefaultDeepLinkParserTest {
 
     private val parser = DefaultDeepLinkParser()
 
