@@ -23,6 +23,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.thomaskioko.root.model.DeepLinkDestination
+import com.thomaskioko.root.model.DeepLinkParser
 import com.thomaskioko.tvmaniac.app.di.ActivityGraph
 import com.thomaskioko.tvmaniac.app.ui.di.AppRootContent
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
@@ -108,15 +109,21 @@ public class MainActivity : ComponentActivity() {
             }
         }
 
-        handleNotificationIntent(intent)
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleNotificationIntent(intent)
+        handleIntent(intent)
     }
 
-    private fun handleNotificationIntent(intent: Intent?) {
+    private fun handleIntent(intent: Intent?) {
+        val destination = DeepLinkParser.parse(intent?.dataString)
+        if (destination != null) {
+            graph.rootPresenter.onDeepLink(destination)
+            return
+        }
+
         val deepLink = intent?.getStringExtra(DeepLinkDestination.EXTRA_DEEP_LINK)
         if (deepLink == DeepLinkDestination.DEEP_LINK_DEBUG_MENU) {
             graph.rootPresenter.onDeepLink(DeepLinkDestination.DebugMenu)
