@@ -9,6 +9,8 @@ import androidx.core.app.NotificationManagerCompat
 import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationChannel
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationIconProvider
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.DEEP_LINK_DEBUG_MENU
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_DEEP_LINK
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -58,8 +60,6 @@ public class DebugNotificationManager(
     }
 
     public companion object {
-        public const val EXTRA_DEEP_LINK: String = "extra_deep_link"
-        public const val DEEP_LINK_DEBUG_MENU: String = "debug_menu"
         private const val NOTIFICATION_ID: Int = 9999
     }
 }

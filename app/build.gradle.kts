@@ -53,6 +53,8 @@ tasks.withType<Test>().configureEach {
 dependencies {
     implementation(projects.androidDesignsystem)
     implementation(projects.features.root.ui)
+    implementation(projects.deeplink.api)
+    implementation(projects.deeplink.implementation)
     implementation(projects.features.root.nav)
     implementation(projects.api.simkl.implementation)
     implementation(projects.api.tmdb.implementation)

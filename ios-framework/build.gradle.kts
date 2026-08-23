@@ -68,6 +68,7 @@ scaffold {
             export(projects.features.watchdateSelection.presenter)
             export(projects.features.featureFlags.presenter)
             export(projects.features.root.presenter)
+            export(projects.deeplink.api)
             export(projects.features.root.nav)
             export(projects.core.testTags)
 
@@ -124,6 +125,8 @@ kotlin {
                 api(projects.features.root.presenter)
                 implementation(projects.features.seasonDetails.nav)
                 api(projects.features.showDetails.nav)
+                api(projects.deeplink.api)
+                api(projects.deeplink.implementation)
                 api(projects.features.root.nav)
                 api(projects.features.discover.nav)
                 api(projects.features.progress.nav)

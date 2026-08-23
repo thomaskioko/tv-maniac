@@ -24,6 +24,7 @@ kotlin {
                 api(projects.core.syncstate.api)
                 api(projects.data.accountManager.api)
                 api(projects.data.datastore.api)
+                api(projects.deeplink.api)
                 api(projects.domain.episode)
                 api(projects.domain.logout)
                 api(projects.domain.user)
