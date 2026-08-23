@@ -13,5 +13,11 @@ kotlin {
                 api(projects.domain.theme)
             }
         }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
+            }
+        }
     }
 }
