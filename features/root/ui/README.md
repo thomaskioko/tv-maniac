@@ -144,6 +144,10 @@ graph TB
     direction TB
     :data:watchproviders:api[api]:::multiplatform
   end
+  subgraph :deeplink
+    direction TB
+    :deeplink:api[api]:::multiplatform
+  end
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
@@ -398,6 +402,7 @@ graph TB
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
+  :features:root:presenter --> :deeplink:api
   :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme

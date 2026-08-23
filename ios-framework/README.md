@@ -284,6 +284,11 @@ graph TB
     :data:watchproviders:api[api]:::multiplatform
     :data:watchproviders:implementation[implementation]:::multiplatform
   end
+  subgraph :deeplink
+    direction TB
+    :deeplink:api[api]:::multiplatform
+    :deeplink:implementation[implementation]:::multiplatform
+  end
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
@@ -889,6 +894,7 @@ graph TB
   :data:watchproviders:implementation --> :data:database:sqldelight
   :data:watchproviders:implementation --> :data:request-manager:api
   :data:watchproviders:implementation --> :data:watchproviders:api
+  :deeplink:implementation --> :deeplink:api
   :domain:account-switcher --> :core:base
   :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
@@ -1224,6 +1230,7 @@ graph TB
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
+  :features:root:presenter --> :deeplink:api
   :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme
@@ -1506,6 +1513,8 @@ graph TB
   :ios-framework -.-> :data:watchlist-prefs:implementation
   :ios-framework -.-> :data:watchproviders:api
   :ios-framework -.-> :data:watchproviders:implementation
+  :ios-framework --> :deeplink:api
+  :ios-framework --> :deeplink:implementation
   :ios-framework --> :domain:calendar
   :ios-framework --> :domain:continue-watching
   :ios-framework --> :domain:favorites
