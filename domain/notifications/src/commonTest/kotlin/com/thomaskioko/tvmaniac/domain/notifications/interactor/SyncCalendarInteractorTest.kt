@@ -129,6 +129,7 @@ private class CountingCalendarEpisodeRepository : EpisodeRepository {
     override fun observeUnwatchedCountInPreviousSeasons(showId: Long, seasonNumber: Long): Flow<Long> = flowOf(0L)
     override suspend fun getUpcomingEpisodesFromFollowedShows(limit: Duration): List<UpcomingEpisode> = emptyList()
     override suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo? = null
+    override suspend fun getEpisodeId(showId: Long, seasonNumber: Long, episodeNumber: Long): Long? = null
     override suspend fun syncUpcomingEpisodes(startDate: String, days: Int, forceRefresh: Boolean) {
         syncUpcomingCount++
         lastForceRefresh = forceRefresh
