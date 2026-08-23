@@ -24,6 +24,7 @@ kotlin {
                 api(projects.core.syncstate.api)
                 api(projects.data.accountManager.api)
                 api(projects.data.datastore.api)
+                api(projects.domain.episode)
                 api(projects.domain.logout)
                 api(projects.domain.user)
                 api(projects.features.home.presenter)
@@ -36,7 +37,6 @@ kotlin {
                 api(libs.coroutines.core)
 
                 implementation(projects.core.view)
-                implementation(projects.domain.episode)
                 implementation(projects.domain.theme)
                 implementation(projects.features.debug.nav)
                 implementation(projects.features.episodeSheet.nav)
