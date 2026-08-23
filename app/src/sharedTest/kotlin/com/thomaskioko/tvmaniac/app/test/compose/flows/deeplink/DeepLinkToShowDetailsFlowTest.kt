@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.app.test.compose.flows.deeplink
 
-import com.thomaskioko.root.model.DeepLinkParser
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import org.junit.Test
 
@@ -14,12 +13,23 @@ internal class DeepLinkToShowDetailsFlowTest : BaseAppFlowTest() {
 
         discoverRobot.assertFeaturedPagerDisplayed()
 
-        activityGraph.rootPresenter.onDeepLink(
-            requireNotNull(DeepLinkParser.parse("tvmaniac://show/$breakingBadTmdbId")),
-        )
+        activityGraph.rootPresenter.onDeepLinkUrl("tvmaniac://show/$breakingBadTmdbId")
 
         showDetailsRobot
             .waitForIdle()
             .assertShowDetailsDisplayed()
+    }
+
+    @Test
+    fun unknownDeepLinkLeavesDiscoverShowing() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot.assertFeaturedPagerDisplayed()
+
+        activityGraph.rootPresenter.onDeepLinkUrl("tvmaniac://show/not-a-number")
+
+        discoverRobot
+            .waitForIdle()
+            .assertFeaturedPagerDisplayed()
     }
 }
