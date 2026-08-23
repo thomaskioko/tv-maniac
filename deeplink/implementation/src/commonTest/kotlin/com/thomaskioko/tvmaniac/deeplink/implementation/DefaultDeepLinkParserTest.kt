@@ -1,5 +1,6 @@
-package com.thomaskioko.root.model
+package com.thomaskioko.tvmaniac.deeplink.implementation
 
+import com.thomaskioko.tvmaniac.deeplink.api.DeepLink
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
@@ -10,13 +11,13 @@ class DefaultDeepLinkParserTest {
     @Test
     fun `should return show details given a show url`() {
         parser.parse("tvmaniac://show/1399") shouldBe
-            DeepLinkDestination.ShowDetails(showId = 1399)
+            DeepLink.ShowDetails(showId = 1399)
     }
 
     @Test
     fun `should return episode given an episode url`() {
         parser.parse("tvmaniac://episode/1399/1/2") shouldBe
-            DeepLinkDestination.Episode(
+            DeepLink.Episode(
                 showId = 1399,
                 seasonNumber = 1,
                 episodeNumber = 2,
@@ -26,7 +27,7 @@ class DefaultDeepLinkParserTest {
     @Test
     fun `should ignore a query string given a url carrying one`() {
         parser.parse("tvmaniac://show/1399?source=widget") shouldBe
-            DeepLinkDestination.ShowDetails(showId = 1399)
+            DeepLink.ShowDetails(showId = 1399)
     }
 
     @Test
