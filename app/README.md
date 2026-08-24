@@ -314,6 +314,7 @@ graph TB
     :domain:theme[theme]:::multiplatform
     :domain:traktlists[traktlists]:::multiplatform
     :domain:user[user]:::multiplatform
+    :domain:widget[widget]:::multiplatform
   end
   subgraph :features:calendar
     direction TB
@@ -635,6 +636,7 @@ graph TB
   :app -.-> :domain:theme
   :app -.-> :domain:traktlists
   :app -.-> :domain:user
+  :app -.-> :domain:widget
   :app -.-> :features:calendar:presenter
   :app -.-> :features:continue-watching:presenter
   :app -.-> :features:debug:nav
@@ -1257,6 +1259,10 @@ graph TB
   :domain:user --> :data:account-manager:api
   :domain:user --> :data:traktlists:api
   :domain:user --> :data:user:api
+  :domain:widget --> :core:base
+  :domain:widget --> :core:logger:api
+  :domain:widget --> :core:tasks:api
+  :domain:widget --> :data:upnext:api
   :features:calendar:presenter -.-> :core:base
   :features:calendar:presenter --> :core:logger:api
   :features:calendar:presenter --> :core:view
