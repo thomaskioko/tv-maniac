@@ -1,14 +1,14 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
-import com.thomaskioko.tvmaniac.core.filestore.testing.FakeFileStore
+import com.thomaskioko.tvmaniac.core.files.testing.FakeFileManager
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
 class WidgetSnapshotWriterTest {
 
     private val directory = "/containers/group.com.thomaskioko.tvmaniac"
-    private val fileStore = FakeFileStore()
-    private val writer = DefaultWidgetSnapshotWriter(fileStore)
+    private val fileManager = FakeFileManager()
+    private val writer = DefaultWidgetSnapshotWriter(fileManager)
 
     @Test
     fun `should write a snapshot that decodes back to what was given`() {
@@ -28,7 +28,7 @@ class WidgetSnapshotWriterTest {
 
         writer.write(directory, snapshot)
 
-        val contents = fileStore.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
+        val contents = fileManager.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
         WidgetSnapshotJson.decode(checkNotNull(contents)) shouldBe snapshot
     }
 
@@ -36,7 +36,7 @@ class WidgetSnapshotWriterTest {
     fun `should write an empty snapshot given an empty watchlist`() {
         writer.write(directory, WidgetSnapshot(writtenAtMillis = 0, entries = emptyList()))
 
-        val contents = fileStore.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
+        val contents = fileManager.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
         WidgetSnapshotJson.decode(checkNotNull(contents)).entries shouldBe emptyList()
     }
 
@@ -59,7 +59,7 @@ class WidgetSnapshotWriterTest {
         writer.write(directory, WidgetSnapshot(writtenAtMillis = 1, entries = emptyList()))
         writer.write(directory, second)
 
-        val contents = fileStore.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
+        val contents = fileManager.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
         WidgetSnapshotJson.decode(checkNotNull(contents)) shouldBe second
     }
 }

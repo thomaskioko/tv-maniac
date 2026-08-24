@@ -13,7 +13,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
-                api(projects.core.filestore.api)
+                api(projects.core.files.api)
                 api(projects.core.logger.api)
                 api(projects.core.tasks.api)
                 api(projects.data.upnext.api)
@@ -25,7 +25,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.core.filestore.testing)
+                implementation(projects.core.files.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.upnext.testing)
             }

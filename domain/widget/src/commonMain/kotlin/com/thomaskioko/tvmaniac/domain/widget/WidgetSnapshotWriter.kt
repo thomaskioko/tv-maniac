@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
-import com.thomaskioko.tvmaniac.core.filestore.api.FileStore
+import com.thomaskioko.tvmaniac.core.files.api.FileManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 
@@ -10,11 +10,11 @@ public interface WidgetSnapshotWriter {
 
 @ContributesBinding(AppScope::class)
 public class DefaultWidgetSnapshotWriter(
-    private val fileStore: FileStore,
+    private val fileManager: FileManager,
 ) : WidgetSnapshotWriter {
 
     override fun write(directoryPath: String, snapshot: WidgetSnapshot) {
-        fileStore.writeText(
+        fileManager.writeToFile(
             directoryPath = directoryPath,
             fileName = SNAPSHOT_FILE_NAME,
             contents = WidgetSnapshotJson.encode(snapshot),

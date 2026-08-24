@@ -49,9 +49,9 @@ graph TB
     :core:feature-flags:api[api]:::multiplatform
     :core:feature-flags:implementation[implementation]:::multiplatform
   end
-  subgraph :core:filestore
+  subgraph :core:files
     direction TB
-    :core:filestore:api[api]:::multiplatform
+    :core:files:api[api]:::multiplatform
   end
   subgraph :core:imageloading
     direction TB
@@ -1264,7 +1264,7 @@ graph TB
   :domain:user --> :data:traktlists:api
   :domain:user --> :data:user:api
   :domain:widget --> :core:base
-  :domain:widget --> :core:filestore:api
+  :domain:widget --> :core:files:api
   :domain:widget --> :core:logger:api
   :domain:widget --> :core:tasks:api
   :domain:widget --> :data:upnext:api
