@@ -301,6 +301,7 @@ include(
     ":domain:theme",
     ":domain:traktlists",
     ":domain:user",
+    ":domain:widget",
     ":i18n:api",
     ":i18n:generator",
     ":i18n:implementation",
