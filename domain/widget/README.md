@@ -10,6 +10,10 @@ graph TB
     :core:base[base]:::multiplatform
     :core:view[view]:::multiplatform
   end
+  subgraph :core:filestore
+    direction TB
+    :core:filestore:api[api]:::multiplatform
+  end
   subgraph :core:logger
     direction TB
     :core:logger:api[api]:::multiplatform
@@ -31,6 +35,7 @@ graph TB
   :core:base --> :core:view
   :core:view --> :core:logger:api
   :domain:widget --> :core:base
+  :domain:widget --> :core:filestore:api
   :domain:widget --> :core:logger:api
   :domain:widget --> :core:tasks:api
   :domain:widget --> :data:upnext:api

@@ -1,19 +1,14 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
+import com.thomaskioko.tvmaniac.core.filestore.testing.FakeFileStore
 import io.kotest.matchers.shouldBe
-import okio.FileSystem
-import kotlin.test.AfterTest
 import kotlin.test.Test
 
 class WidgetSnapshotWriterTest {
 
-    private val directory = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "widget-snapshot-writer-test"
-    private val writer = DefaultWidgetSnapshotWriter()
-
-    @AfterTest
-    fun tearDown() {
-        FileSystem.SYSTEM.deleteRecursively(directory, mustExist = false)
-    }
+    private val directory = "/containers/group.com.thomaskioko.tvmaniac"
+    private val fileStore = FakeFileStore()
+    private val writer = DefaultWidgetSnapshotWriter(fileStore)
 
     @Test
     fun `should write a snapshot that decodes back to what was given`() {
@@ -31,25 +26,22 @@ class WidgetSnapshotWriterTest {
             ),
         )
 
-        writer.write(directory.toString(), snapshot)
+        writer.write(directory, snapshot)
 
-        val path = directory / DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME
-        val contents = FileSystem.SYSTEM.read(path) { readUtf8() }
-        WidgetSnapshotJson.decode(contents) shouldBe snapshot
+        val contents = fileStore.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
+        WidgetSnapshotJson.decode(checkNotNull(contents)) shouldBe snapshot
     }
 
     @Test
-    fun `should create the directory given it does not exist yet`() {
-        val nested = directory / "nested"
+    fun `should write an empty snapshot given an empty watchlist`() {
+        writer.write(directory, WidgetSnapshot(writtenAtMillis = 0, entries = emptyList()))
 
-        writer.write(nested.toString(), WidgetSnapshot(writtenAtMillis = 0, entries = emptyList()))
-
-        FileSystem.SYSTEM.exists(nested / DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME) shouldBe true
+        val contents = fileStore.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
+        WidgetSnapshotJson.decode(checkNotNull(contents)).entries shouldBe emptyList()
     }
 
     @Test
     fun `should replace a snapshot written earlier`() {
-        val first = WidgetSnapshot(writtenAtMillis = 1, entries = emptyList())
         val second = WidgetSnapshot(
             writtenAtMillis = 2,
             entries = listOf(
@@ -64,10 +56,10 @@ class WidgetSnapshotWriterTest {
             ),
         )
 
-        writer.write(directory.toString(), first)
-        writer.write(directory.toString(), second)
+        writer.write(directory, WidgetSnapshot(writtenAtMillis = 1, entries = emptyList()))
+        writer.write(directory, second)
 
-        val path = directory / DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME
-        WidgetSnapshotJson.decode(FileSystem.SYSTEM.read(path) { readUtf8() }) shouldBe second
+        val contents = fileStore.contentsOf(directory, DefaultWidgetSnapshotWriter.SNAPSHOT_FILE_NAME)
+        WidgetSnapshotJson.decode(checkNotNull(contents)) shouldBe second
     }
 }

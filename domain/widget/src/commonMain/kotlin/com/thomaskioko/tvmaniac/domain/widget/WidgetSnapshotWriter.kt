@@ -1,23 +1,24 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
+import com.thomaskioko.tvmaniac.core.filestore.api.FileStore
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
-import okio.FileSystem
-import okio.Path.Companion.toPath
 
 public interface WidgetSnapshotWriter {
     public fun write(directoryPath: String, snapshot: WidgetSnapshot)
 }
 
 @ContributesBinding(AppScope::class)
-public class DefaultWidgetSnapshotWriter : WidgetSnapshotWriter {
+public class DefaultWidgetSnapshotWriter(
+    private val fileStore: FileStore,
+) : WidgetSnapshotWriter {
 
     override fun write(directoryPath: String, snapshot: WidgetSnapshot) {
-        val directory = directoryPath.toPath()
-        FileSystem.SYSTEM.createDirectories(directory)
-        FileSystem.SYSTEM.write(directory / SNAPSHOT_FILE_NAME) {
-            writeUtf8(WidgetSnapshotJson.encode(snapshot))
-        }
+        fileStore.writeText(
+            directoryPath = directoryPath,
+            fileName = SNAPSHOT_FILE_NAME,
+            contents = WidgetSnapshotJson.encode(snapshot),
+        )
     }
 
     public companion object {
