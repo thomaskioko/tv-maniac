@@ -17,6 +17,8 @@ import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.minTrueDuration
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkParser
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
@@ -24,8 +26,6 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
-import com.thomaskioko.tvmaniac.deeplink.api.DeepLink
-import com.thomaskioko.tvmaniac.deeplink.api.DeepLinkParser
 import com.thomaskioko.tvmaniac.domain.episode.ResolveEpisodeIdInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ResolveEpisodeIdParams
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor

@@ -119,8 +119,8 @@ kotlin {
             api(projects.features.myShows.nav)
             api(projects.i18n.implementation)
             api(projects.navigation.api)
-            api(projects.deeplink.api)
-            api(projects.deeplink.implementation)
+            api(projects.core.deeplink.api)
+            api(projects.core.deeplink.implementation)
             api(projects.navigation.implementation)
 
             api(libs.decompose.decompose)

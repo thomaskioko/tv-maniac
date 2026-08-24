@@ -20,6 +20,10 @@ graph TB
     direction TB
     :core:connectivity:api[api]:::multiplatform
   end
+  subgraph :core:deeplink
+    direction TB
+    :core:deeplink:api[api]:::multiplatform
+  end
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
@@ -143,10 +147,6 @@ graph TB
   subgraph :data:watchproviders
     direction TB
     :data:watchproviders:api[api]:::multiplatform
-  end
-  subgraph :deeplink
-    direction TB
-    :deeplink:api[api]:::multiplatform
   end
   subgraph :domain
     direction TB
@@ -397,12 +397,12 @@ graph TB
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
+  :features:root:presenter --> :core:deeplink:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
-  :features:root:presenter --> :deeplink:api
   :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme

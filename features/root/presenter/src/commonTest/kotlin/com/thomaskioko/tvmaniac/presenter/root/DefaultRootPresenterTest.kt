@@ -9,9 +9,9 @@ import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.root.model.AppUiState
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
-import com.thomaskioko.tvmaniac.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.domain.theme.Theme
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.util.getString

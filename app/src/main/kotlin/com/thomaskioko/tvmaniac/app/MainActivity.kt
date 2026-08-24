@@ -27,11 +27,11 @@ import com.thomaskioko.tvmaniac.app.ui.di.AppRootContent
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.DEEP_LINK_DEBUG_MENU
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_DEEP_LINK
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
-import com.thomaskioko.tvmaniac.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.domain.theme.Theme
 
 public class MainActivity : ComponentActivity() {

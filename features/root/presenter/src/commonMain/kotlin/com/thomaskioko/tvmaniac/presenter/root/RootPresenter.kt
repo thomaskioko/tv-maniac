@@ -5,7 +5,7 @@ import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.AppUiState
 import com.thomaskioko.root.model.NotificationPermissionState
-import com.thomaskioko.tvmaniac.deeplink.api.DeepLink
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.navigation.SheetChild
 import com.thomaskioko.tvmaniac.presenter.home.HomePresenter
 import com.thomaskioko.tvmaniac.presenter.root.model.ConnectivityBannerState

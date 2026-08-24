@@ -38,6 +38,11 @@ graph TB
     :core:connectivity:api[api]:::multiplatform
     :core:connectivity:implementation[implementation]:::multiplatform
   end
+  subgraph :core:deeplink
+    direction TB
+    :core:deeplink:api[api]:::multiplatform
+    :core:deeplink:implementation[implementation]:::multiplatform
+  end
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
@@ -284,11 +289,6 @@ graph TB
     :data:watchproviders:api[api]:::multiplatform
     :data:watchproviders:implementation[implementation]:::multiplatform
   end
-  subgraph :deeplink
-    direction TB
-    :deeplink:api[api]:::multiplatform
-    :deeplink:implementation[implementation]:::multiplatform
-  end
   subgraph :domain
     direction TB
     :domain:account-switcher[account-switcher]:::multiplatform
@@ -496,6 +496,7 @@ graph TB
   :core:base --> :core:view
   :core:connectivity:implementation -.-> :core:base
   :core:connectivity:implementation --> :core:connectivity:api
+  :core:deeplink:implementation --> :core:deeplink:api
   :core:feature-flags:implementation --> :core:appconfig:api
   :core:feature-flags:implementation --> :core:base
   :core:feature-flags:implementation --> :core:feature-flags:api
@@ -894,7 +895,6 @@ graph TB
   :data:watchproviders:implementation --> :data:database:sqldelight
   :data:watchproviders:implementation --> :data:request-manager:api
   :data:watchproviders:implementation --> :data:watchproviders:api
-  :deeplink:implementation --> :deeplink:api
   :domain:account-switcher --> :core:base
   :domain:account-switcher --> :core:logger:api
   :domain:account-switcher --> :data:account-manager:api
@@ -1225,12 +1225,12 @@ graph TB
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
+  :features:root:presenter --> :core:deeplink:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
-  :features:root:presenter --> :deeplink:api
   :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme
@@ -1420,6 +1420,8 @@ graph TB
   :ios-framework -.-> :core:base
   :ios-framework -.-> :core:connectivity:api
   :ios-framework -.-> :core:connectivity:implementation
+  :ios-framework --> :core:deeplink:api
+  :ios-framework --> :core:deeplink:implementation
   :ios-framework --> :core:feature-flags:api
   :ios-framework -.-> :core:feature-flags:implementation
   :ios-framework -.-> :core:locale:api
@@ -1513,8 +1515,6 @@ graph TB
   :ios-framework -.-> :data:watchlist-prefs:implementation
   :ios-framework -.-> :data:watchproviders:api
   :ios-framework -.-> :data:watchproviders:implementation
-  :ios-framework --> :deeplink:api
-  :ios-framework --> :deeplink:implementation
   :ios-framework --> :domain:calendar
   :ios-framework --> :domain:continue-watching
   :ios-framework --> :domain:favorites
