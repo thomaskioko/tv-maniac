@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AppGroupIdentifier</key>
+	<string>group.$(BUNDLE_ID)</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.thomaskioko.tvmaniac.tokenrefresh</string>
@@ -12,6 +14,7 @@
 		<string>com.thomaskioko.tvmaniac.watchlistsync</string>
 		<string>com.thomaskioko.tvmaniac.showrefill</string>
 		<string>com.thomaskioko.tvmaniac.autobackup</string>
+		<string>com.thomaskioko.tvmaniac.widgetrefresh</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
