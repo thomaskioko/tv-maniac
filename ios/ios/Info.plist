@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AppGroupIdentifier</key>
-	<string>group.$(BUNDLE_ID)</string>
+	<string>$(APP_GROUP_ID)</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.thomaskioko.tvmaniac.tokenrefresh</string>

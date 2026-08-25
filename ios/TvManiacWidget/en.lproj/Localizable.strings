@@ -1,0 +1,4 @@
+"widget_up_next_name" = "Up Next";
+"widget_up_next_description" = "See the next episode to watch from your watchlist.";
+"widget_empty_watchlist" = "Nothing to watch next. Track a show to see it here.";
+"widget_season_episode" = "S%1$@ | E%2$@";
