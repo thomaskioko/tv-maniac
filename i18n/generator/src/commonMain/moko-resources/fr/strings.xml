@@ -634,4 +634,8 @@
     <string name="menu_open_season">Ouvrir la saison</string>
     <string name="menu_open_show">Ouvrir la série</string>
     <string name="menu_unfollow_show">Ne plus suivre</string>
+    <string name="widget_up_next_name">À suivre</string>
+    <string name="widget_up_next_description">Affiche le prochain épisode à regarder de votre liste.</string>
+    <string name="widget_empty_watchlist">Rien à regarder. Suivez une série pour la voir ici.</string>
+    <string name="widget_season_episode">S%1$s | E%2$s</string>
 </resources>
