@@ -1,0 +1,4 @@
+"widget_up_next_name" = "À suivre";
+"widget_up_next_description" = "Affiche le prochain épisode à regarder de votre liste.";
+"widget_empty_watchlist" = "Rien à regarder. Suivez une série pour la voir ici.";
+"widget_season_episode" = "S%1$@ | E%2$@";
