@@ -7,9 +7,9 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.destroy
 import com.arkivanov.essenty.lifecycle.resume
 import com.thomaskioko.root.model.AppUiState
-import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.theme.Theme
@@ -269,7 +269,7 @@ abstract class DefaultRootPresenterTest {
         presenter.activeTabStack.test {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
-            presenter.onDeepLink(DeepLinkDestination.DebugMenu)
+            presenter.onDeepLink(DeepLink.DebugMenu)
 
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
         }
@@ -281,7 +281,7 @@ abstract class DefaultRootPresenterTest {
             awaitItem().active.instance.shouldBeInstanceOf<RootChild>()
 
             presenter.onDeepLink(
-                DeepLinkDestination.Episode(showId = 1399, seasonNumber = 1, episodeNumber = 2),
+                DeepLink.Episode(showId = 1399, seasonNumber = 1, episodeNumber = 2),
             )
             runCurrent()
 

@@ -4,8 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.AppUiState
-import com.thomaskioko.root.model.DeepLinkDestination
-import com.thomaskioko.root.model.DeepLinkParser
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
@@ -19,6 +17,8 @@ import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.minTrueDuration
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkParser
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
@@ -313,9 +313,9 @@ public class DefaultRootPresenter(
         onDeepLink(destination)
     }
 
-    override fun onDeepLink(destination: DeepLinkDestination) {
+    override fun onDeepLink(destination: DeepLink) {
         when (destination) {
-            is DeepLinkDestination.ShowDetails -> {
+            is DeepLink.ShowDetails -> {
                 navigator.navigateTo(
                     ShowDetailsRoute(
                         param = ShowDetailsParam(
@@ -325,7 +325,7 @@ public class DefaultRootPresenter(
                     ),
                 )
             }
-            is DeepLinkDestination.SeasonDetails -> {
+            is DeepLink.SeasonDetails -> {
                 navigator.navigateTo(
                     SeasonDetailsRoute(
                         param = SeasonDetailsUiParam(
@@ -337,14 +337,14 @@ public class DefaultRootPresenter(
                     ),
                 )
             }
-            is DeepLinkDestination.Episode -> openEpisode(destination)
-            is DeepLinkDestination.DebugMenu -> {
+            is DeepLink.Episode -> openEpisode(destination)
+            is DeepLink.DebugMenu -> {
                 navigator.navigateTo(DebugRoute)
             }
         }
     }
 
-    private fun openEpisode(destination: DeepLinkDestination.Episode) {
+    private fun openEpisode(destination: DeepLink.Episode) {
         navigator.navigateTo(
             ShowDetailsRoute(param = ShowDetailsParam(showId = destination.showId)),
         )

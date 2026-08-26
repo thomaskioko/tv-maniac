@@ -110,7 +110,7 @@ public struct RootNavigationView: View {
         }
         .debugTapGesture(isEnabled: appDelegate.isDebug) {
             rootPresenter.onDeepLink(
-                destination: DeepLinkDestination.DebugMenu.shared
+                destination: DeepLink.DebugMenu.shared
             )
         }
         .onChange(of: notificationPermissionState.requestPermission) { _, _ in

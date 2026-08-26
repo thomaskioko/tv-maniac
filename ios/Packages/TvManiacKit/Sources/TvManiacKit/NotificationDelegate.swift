@@ -39,7 +39,7 @@ public class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
             return
         }
 
-        rootPresenter.onDeepLink(destination: DeepLinkDestination.ShowDetails(showId: showId, forceRefresh: false))
+        rootPresenter.onDeepLink(destination: DeepLink.ShowDetails(showId: showId, forceRefresh: false))
     }
 
     private func navigateToLibrary() {

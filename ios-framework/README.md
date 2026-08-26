@@ -38,6 +38,11 @@ graph TB
     :core:connectivity:api[api]:::multiplatform
     :core:connectivity:implementation[implementation]:::multiplatform
   end
+  subgraph :core:deeplink
+    direction TB
+    :core:deeplink:api[api]:::multiplatform
+    :core:deeplink:implementation[implementation]:::multiplatform
+  end
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
@@ -491,6 +496,7 @@ graph TB
   :core:base --> :core:view
   :core:connectivity:implementation -.-> :core:base
   :core:connectivity:implementation --> :core:connectivity:api
+  :core:deeplink:implementation --> :core:deeplink:api
   :core:feature-flags:implementation --> :core:appconfig:api
   :core:feature-flags:implementation --> :core:base
   :core:feature-flags:implementation --> :core:feature-flags:api
@@ -1219,6 +1225,7 @@ graph TB
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
+  :features:root:presenter --> :core:deeplink:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view
@@ -1413,6 +1420,8 @@ graph TB
   :ios-framework -.-> :core:base
   :ios-framework -.-> :core:connectivity:api
   :ios-framework -.-> :core:connectivity:implementation
+  :ios-framework --> :core:deeplink:api
+  :ios-framework --> :core:deeplink:implementation
   :ios-framework --> :core:feature-flags:api
   :ios-framework -.-> :core:feature-flags:implementation
   :ios-framework -.-> :core:locale:api

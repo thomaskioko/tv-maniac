@@ -35,6 +35,11 @@ graph TB
     :core:connectivity:api[api]:::multiplatform
     :core:connectivity:implementation[implementation]:::multiplatform
   end
+  subgraph :core:deeplink
+    direction TB
+    :core:deeplink:api[api]:::multiplatform
+    :core:deeplink:implementation[implementation]:::multiplatform
+  end
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
@@ -359,6 +364,7 @@ graph TB
   :core:base --> :core:view
   :core:connectivity:implementation -.-> :core:base
   :core:connectivity:implementation --> :core:connectivity:api
+  :core:deeplink:implementation --> :core:deeplink:api
   :core:feature-flags:implementation --> :core:appconfig:api
   :core:feature-flags:implementation --> :core:base
   :core:feature-flags:implementation --> :core:feature-flags:api
@@ -374,6 +380,8 @@ graph TB
   :core:integration:infra --> :core:base
   :core:integration:infra --> :core:connectivity:api
   :core:integration:infra --> :core:connectivity:implementation
+  :core:integration:infra --> :core:deeplink:api
+  :core:integration:infra --> :core:deeplink:implementation
   :core:integration:infra --> :core:feature-flags:api
   :core:integration:infra --> :core:feature-flags:implementation
   :core:integration:infra --> :core:integration:stubs
@@ -810,6 +818,7 @@ graph TB
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
+  :features:root:presenter --> :core:deeplink:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view

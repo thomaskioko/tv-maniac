@@ -1,12 +1,19 @@
-package com.thomaskioko.root.model
+package com.thomaskioko.tvmaniac.core.deeplink.implementation
 
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkParser
+import com.thomaskioko.tvmaniac.core.deeplink.implementation.DeepLinkGrammar.EPISODE_SEGMENTS
+import com.thomaskioko.tvmaniac.core.deeplink.implementation.DeepLinkGrammar.HOST_EPISODE
+import com.thomaskioko.tvmaniac.core.deeplink.implementation.DeepLinkGrammar.HOST_SHOW
+import com.thomaskioko.tvmaniac.core.deeplink.implementation.DeepLinkGrammar.SCHEME
+import com.thomaskioko.tvmaniac.core.deeplink.implementation.DeepLinkGrammar.SHOW_SEGMENTS
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 
 @ContributesBinding(AppScope::class)
 public class DefaultDeepLinkParser : DeepLinkParser {
 
-    override fun parse(url: String?): DeepLinkDestination? {
+    override fun parse(url: String?): DeepLink? {
         val remainder = url?.trim()?.removePrefixOrNull("$SCHEME://") ?: return null
         val segments = remainder.substringBefore('?')
             .substringBefore('#')
@@ -22,18 +29,18 @@ public class DefaultDeepLinkParser : DeepLinkParser {
         }
     }
 
-    private fun parseShow(path: List<String>): DeepLinkDestination? {
+    private fun parseShow(path: List<String>): DeepLink? {
         if (path.size != SHOW_SEGMENTS) return null
         val showId = path[0].toLongOrNull() ?: return null
-        return DeepLinkDestination.ShowDetails(showId = showId)
+        return DeepLink.ShowDetails(showId = showId)
     }
 
-    private fun parseEpisode(path: List<String>): DeepLinkDestination? {
+    private fun parseEpisode(path: List<String>): DeepLink? {
         if (path.size != EPISODE_SEGMENTS) return null
         val showId = path[0].toLongOrNull() ?: return null
         val seasonNumber = path[1].toLongOrNull() ?: return null
         val episodeNumber = path[2].toLongOrNull() ?: return null
-        return DeepLinkDestination.Episode(
+        return DeepLink.Episode(
             showId = showId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
@@ -42,12 +49,4 @@ public class DefaultDeepLinkParser : DeepLinkParser {
 
     private fun String.removePrefixOrNull(prefix: String): String? =
         if (startsWith(prefix, ignoreCase = true)) substring(prefix.length) else null
-
-    private companion object {
-        const val SCHEME = "tvmaniac"
-        const val HOST_SHOW = "show"
-        const val HOST_EPISODE = "episode"
-        const val SHOW_SEGMENTS = 1
-        const val EPISODE_SEGMENTS = 3
-    }
 }

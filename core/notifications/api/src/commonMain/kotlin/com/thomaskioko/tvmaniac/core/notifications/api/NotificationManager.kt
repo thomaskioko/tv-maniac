@@ -13,5 +13,7 @@ public interface NotificationManager {
         public const val EXTRA_SHOW_ID: String = "show_id"
         public const val EXTRA_SEASON_ID: String = "season_id"
         public const val EXTRA_SEASON_NUMBER: String = "season_number"
+        public const val EXTRA_DEEP_LINK: String = "extra_deep_link"
+        public const val DEEP_LINK_DEBUG_MENU: String = "debug_menu"
     }
 }

@@ -1,31 +1,26 @@
-package com.thomaskioko.root.model
+package com.thomaskioko.tvmaniac.core.deeplink.api
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-public sealed class DeepLinkDestination {
+public sealed class DeepLink {
     public data class ShowDetails(
         val showId: Long,
         val forceRefresh: Boolean = true,
-    ) : DeepLinkDestination()
+    ) : DeepLink()
 
     public data class SeasonDetails(
         val showId: Long,
         val seasonId: Long,
         val seasonNumber: Long,
         val forceRefresh: Boolean = false,
-    ) : DeepLinkDestination()
+    ) : DeepLink()
 
     public data class Episode(
         val showId: Long,
         val seasonNumber: Long,
         val episodeNumber: Long,
-    ) : DeepLinkDestination()
+    ) : DeepLink()
 
-    public data object DebugMenu : DeepLinkDestination()
-
-    public companion object {
-        public const val EXTRA_DEEP_LINK: String = "extra_deep_link"
-        public const val DEEP_LINK_DEBUG_MENU: String = "debug_menu"
-    }
+    public data object DebugMenu : DeepLink()
 }

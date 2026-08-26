@@ -22,12 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.tvmaniac.app.di.ActivityGraph
 import com.thomaskioko.tvmaniac.app.ui.di.AppRootContent
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacTheme
 import com.thomaskioko.tvmaniac.compose.util.LocalBlurUnwatchedEnabled
 import com.thomaskioko.tvmaniac.compose.util.LocalHapticFeedbackEnabled
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.DEEP_LINK_DEBUG_MENU
+import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_DEEP_LINK
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_FROM_NOTIFICATION
 import com.thomaskioko.tvmaniac.core.notifications.api.NotificationManager.Companion.EXTRA_SHOW_ID
 import com.thomaskioko.tvmaniac.domain.theme.Theme
@@ -123,16 +125,16 @@ public class MainActivity : ComponentActivity() {
             return
         }
 
-        val deepLink = intent?.getStringExtra(DeepLinkDestination.EXTRA_DEEP_LINK)
-        if (deepLink == DeepLinkDestination.DEEP_LINK_DEBUG_MENU) {
-            graph.rootPresenter.onDeepLink(DeepLinkDestination.DebugMenu)
+        val deepLink = intent?.getStringExtra(EXTRA_DEEP_LINK)
+        if (deepLink == DEEP_LINK_DEBUG_MENU) {
+            graph.rootPresenter.onDeepLink(DeepLink.DebugMenu)
             return
         }
 
         if (intent?.getBooleanExtra(EXTRA_FROM_NOTIFICATION, false) != true) return
         val showId = intent.getLongExtra(EXTRA_SHOW_ID, -1L)
         if (showId != -1L) {
-            graph.rootPresenter.onDeepLink(DeepLinkDestination.ShowDetails(showId = showId))
+            graph.rootPresenter.onDeepLink(DeepLink.ShowDetails(showId = showId))
         }
     }
 }
