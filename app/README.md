@@ -1546,10 +1546,12 @@ graph TB
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
+  :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme
   :features:root:presenter --> :domain:user
   :features:root:presenter -.-> :features:debug:nav
+  :features:root:presenter -.-> :features:episode-sheet:nav
   :features:root:presenter --> :features:home:presenter
   :features:root:presenter --> :features:root:nav
   :features:root:presenter -.-> :features:season-details:nav

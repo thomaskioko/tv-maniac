@@ -277,6 +277,16 @@ public class DefaultEpisodeRepository(
             )
         }
 
+    override suspend fun getEpisodeId(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Long? = episodesDao.getEpisodeByShowSeasonEpisodeNumber(
+        showId = showId,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
+    )?.episode_id?.id
+
     private suspend fun getIncludeSpecials(): Boolean = datastoreRepository.getIncludeSpecials()
 
     private suspend fun cancelPendingSeasonNotifications(
