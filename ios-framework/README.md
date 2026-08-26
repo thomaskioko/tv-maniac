@@ -48,6 +48,11 @@ graph TB
     :core:feature-flags:api[api]:::multiplatform
     :core:feature-flags:implementation[implementation]:::multiplatform
   end
+  subgraph :core:files
+    direction TB
+    :core:files:api[api]:::multiplatform
+    :core:files:implementation[implementation]:::multiplatform
+  end
   subgraph :core:imageloading
     direction TB
     :core:imageloading:api[api]:::multiplatform
@@ -501,6 +506,7 @@ graph TB
   :core:feature-flags:implementation --> :core:base
   :core:feature-flags:implementation --> :core:feature-flags:api
   :core:feature-flags:implementation --> :core:logger:api
+  :core:files:implementation --> :core:files:api
   :core:imageloading:api --> :domain:theme
   :core:locale:implementation -.-> :core:base
   :core:locale:implementation --> :core:locale:api
@@ -1424,6 +1430,8 @@ graph TB
   :ios-framework --> :core:deeplink:implementation
   :ios-framework --> :core:feature-flags:api
   :ios-framework -.-> :core:feature-flags:implementation
+  :ios-framework --> :core:files:api
+  :ios-framework --> :core:files:implementation
   :ios-framework -.-> :core:locale:api
   :ios-framework -.-> :core:locale:implementation
   :ios-framework -.-> :core:logger:api

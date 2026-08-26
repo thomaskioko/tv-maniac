@@ -137,6 +137,7 @@ dependencies {
     implementation(projects.domain.calendar)
     implementation(projects.domain.discover)
     implementation(projects.domain.episode)
+    implementation(projects.domain.widget)
     implementation(projects.domain.followedshows)
     implementation(projects.domain.genre)
     implementation(projects.domain.notifications)
