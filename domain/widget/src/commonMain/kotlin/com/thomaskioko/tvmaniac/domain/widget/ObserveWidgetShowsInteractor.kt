@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
 import com.thomaskioko.tvmaniac.core.base.interactor.SubjectInteractor
+import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
 import com.thomaskioko.tvmaniac.upnext.api.UpNextRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import dev.zacsweers.metro.Inject
