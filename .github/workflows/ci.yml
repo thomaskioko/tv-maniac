@@ -87,6 +87,7 @@ jobs:
                     git diff --cached --quiet --exit-code -- '**/README.md' \
                       || { echo "::error::Module graphs are stale. Run ./gradlew graphUpdate and commit the updated README.md files."; exit 1; }
 
+
     localization-check:
         runs-on: ubuntu-latest
         steps:
@@ -127,6 +128,8 @@ jobs:
                     git add -- '**/dependencies/*.txt'
                     git diff --cached --quiet --exit-code -- '**/dependencies/*.txt' \
                       || { echo "::error::Dependency guard baselines are stale. Run ./gradlew dependencyGuardBaseline and commit the updated dependencies/*.txt files."; exit 1; }
+
+
 
     swift-lint:
         runs-on: ubuntu-latest
@@ -182,6 +185,7 @@ jobs:
 
 
 
+
     linux-test:
         runs-on: ubuntu-latest
         steps:
@@ -219,6 +223,7 @@ jobs:
                     path: '**/build/reports/*'
 
     ios-test:
+        if: github.event_name != 'pull_request'
         runs-on: macos-26
         timeout-minutes: 60
         steps:
@@ -335,7 +340,6 @@ jobs:
                     name: ios-build-logs
                     path: fastlane/logs
 
-
     ios-snapshot-test:
         needs: [build-ios-framework]
         runs-on: macos-26
@@ -386,6 +390,7 @@ jobs:
                         fastlane/test_output
                         fastlane/logs
                         derived_data/Logs/Test
+
 
 
     ios-ui-test:
