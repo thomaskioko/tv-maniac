@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.PathSensitivity
+
 plugins {
     alias(libs.plugins.app.kmp)
 }
@@ -28,4 +30,10 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    inputs.file(rootProject.file("ios/Packages/Models/Tests/ModelsTests/Fixtures/widget-snapshot.json"))
+        .withPropertyName("widgetSnapshotFixture")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 }
