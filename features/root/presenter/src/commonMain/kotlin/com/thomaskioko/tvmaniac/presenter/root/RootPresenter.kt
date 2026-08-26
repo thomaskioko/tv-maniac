@@ -55,6 +55,8 @@ public interface RootPresenter {
 
     public fun onDeepLink(destination: DeepLinkDestination)
 
+    public fun onDeepLinkUrl(url: String?)
+
     public fun onToastShown(id: Long)
 
     public fun onDismissAccountLimitBanner()

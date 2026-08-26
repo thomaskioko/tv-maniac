@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.AppUiState
 import com.thomaskioko.root.model.DeepLinkDestination
+import com.thomaskioko.root.model.DeepLinkParser
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
@@ -89,6 +90,7 @@ public class DefaultRootPresenter(
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
     private val resolveEpisodeIdInteractor: ResolveEpisodeIdInteractor,
+    private val deepLinkParser: DeepLinkParser,
     private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
     private val syncObserver: SyncObserver,
@@ -304,6 +306,11 @@ public class DefaultRootPresenter(
                 datastoreRepository.setEpisodeNotificationsEnabled(true)
             }
         }
+    }
+
+    override fun onDeepLinkUrl(url: String?) {
+        val destination = deepLinkParser.parse(url) ?: return
+        onDeepLink(destination)
     }
 
     override fun onDeepLink(destination: DeepLinkDestination) {
