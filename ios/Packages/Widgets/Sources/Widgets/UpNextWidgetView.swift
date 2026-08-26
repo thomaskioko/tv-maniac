@@ -4,13 +4,14 @@ import WidgetKit
 
 public struct UpNextWidgetView: View {
     @Environment(\.appTheme) private var theme
-    @Environment(\.widgetFamily) private var family
     @Environment(\.widgetRenderingMode) private var renderingMode
 
     private let state: UpNextWidgetState
+    private let family: WidgetFamily
 
-    public init(state: UpNextWidgetState) {
+    public init(state: UpNextWidgetState, family: WidgetFamily) {
         self.state = state
+        self.family = family
     }
 
     public var body: some View {
