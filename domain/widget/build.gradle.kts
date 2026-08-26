@@ -17,15 +17,12 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.tasks.api)
                 api(projects.data.upnext.api)
-
-                implementation(libs.kotlinx.serialization.json)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
-                implementation(projects.core.files.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.upnext.testing)
             }
