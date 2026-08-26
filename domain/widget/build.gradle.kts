@@ -25,6 +25,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(libs.kotlinx.serialization.json)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.upnext.testing)
             }

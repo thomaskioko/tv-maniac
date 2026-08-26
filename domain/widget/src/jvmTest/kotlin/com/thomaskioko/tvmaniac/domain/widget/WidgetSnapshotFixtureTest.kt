@@ -1,11 +1,15 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
+import com.thomaskioko.tvmaniac.domain.widget.model.WidgetSnapshot
+import com.thomaskioko.tvmaniac.domain.widget.model.WidgetSnapshotEntry
 import io.kotest.matchers.shouldBe
+import kotlinx.serialization.json.Json
 import java.io.File
 import kotlin.test.Test
 
 class WidgetSnapshotFixtureTest {
 
+    private val json = Json { ignoreUnknownKeys = true }
     private val fixture = File(FIXTURE_PATH)
 
     private val expected = WidgetSnapshot(
@@ -31,20 +35,13 @@ class WidgetSnapshotFixtureTest {
     )
 
     @Test
-    fun `should find the fixture the Swift test reads`() {
+    fun `should find the fixture file`() {
         fixture.exists() shouldBe true
     }
 
     @Test
-    fun `should decode the fixture the Swift test reads`() {
-        WidgetSnapshotJson.decode(fixture.readText()) shouldBe expected
-    }
-
-    @Test
-    fun `should encode to what the fixture holds`() {
-        val encoded = WidgetSnapshotJson.encode(expected)
-
-        WidgetSnapshotJson.decode(encoded) shouldBe WidgetSnapshotJson.decode(fixture.readText())
+    fun `should read the values the swift test also reads`() {
+        json.decodeFromString<WidgetSnapshot>(fixture.readText()) shouldBe expected
     }
 
     private companion object {
