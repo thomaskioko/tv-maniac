@@ -95,12 +95,22 @@ final class UpNextWidgetViewTest: SnapshotTestCase {
 
     private func assert(state: UpNextWidgetState, family: WidgetFamily, name: String) {
         let size = size(for: family)
-        UpNextWidgetView(state: state, family: family)
-            .frame(width: size.width, height: size.height)
-            .assertSnapshot(
-                layout: .fixed(width: size.width, height: size.height),
-                testName: name
-            )
+
+        for (suffix, theme) in themes {
+            UpNextWidgetView(state: state, family: family)
+                .appTheme(theme)
+                .frame(width: size.width, height: size.height)
+                .background(theme.colors.surface)
+                .assertSnapshot(
+                    layout: .fixed(width: size.width, height: size.height),
+                    styles: .light,
+                    testName: "\(name)_\(suffix)"
+                )
+        }
+    }
+
+    private var themes: [(String, TvManiacTheme)] {
+        [("Light", LightTheme()), ("Dark", DarkTheme())]
     }
 
     private func size(for family: WidgetFamily) -> CGSize {
