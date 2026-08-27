@@ -22,6 +22,10 @@ graph TB
     direction TB
     :core:tasks:api[api]:::multiplatform
   end
+  subgraph :core:util
+    direction TB
+    :core:util:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -38,6 +42,7 @@ graph TB
   :domain:widget --> :core:files:api
   :domain:widget --> :core:logger:api
   :domain:widget --> :core:tasks:api
+  :domain:widget --> :core:util:api
   :domain:widget --> :data:upnext:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
