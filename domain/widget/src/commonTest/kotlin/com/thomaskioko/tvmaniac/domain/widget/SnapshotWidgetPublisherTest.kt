@@ -15,9 +15,11 @@ class SnapshotWidgetPublisherTest {
     private val bridge = FakeWidgetManager()
     private val fileManager = FakeFileManager()
     private val jsonFileManager = DefaultJsonFileManager(fileManager)
+    private val posterDownloader = FakePosterDownloader()
     private val publisher = SnapshotWidgetPublisher(
         widgetManager = bridge,
         jsonFileManager = jsonFileManager,
+        posterDownloader = posterDownloader,
         dateTimeProvider = FakeDateTimeProvider(),
     )
 
@@ -72,6 +74,54 @@ class SnapshotWidgetPublisherTest {
 
         val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
         written?.entries shouldBe emptyList()
+    }
+
+    @Test
+    fun `should request the poster at the widget size`() = runTest {
+        bridge.setContainerPath(directory)
+
+        publisher.publish(listOf(show()))
+
+        posterDownloader.getRequestedUrls().single() shouldBe "https://image.tmdb.org/t/p/w185/poster.jpg"
+    }
+
+    @Test
+    fun `should name the poster after the show`() = runTest {
+        bridge.setContainerPath(directory)
+
+        publisher.publish(listOf(show()))
+
+        val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
+        written?.entries?.single()?.posterFileName shouldBe "1396.jpg"
+    }
+
+    @Test
+    fun `should write no poster name given the download fails`() = runTest {
+        bridge.setContainerPath(directory)
+        posterDownloader.setSucceeds(false)
+
+        publisher.publish(listOf(show()))
+
+        val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
+        written?.entries?.single()?.posterFileName shouldBe null
+    }
+
+    @Test
+    fun `should write no poster name given the show has none`() = runTest {
+        bridge.setContainerPath(directory)
+
+        publisher.publish(listOf(show().copy(posterUrl = null)))
+
+        posterDownloader.getRequestedUrls() shouldBe emptyList()
+    }
+
+    @Test
+    fun `should keep only the posters it wrote`() = runTest {
+        bridge.setContainerPath(directory)
+
+        publisher.publish(listOf(show()))
+
+        posterDownloader.getKeptFileNames() shouldBe setOf("1396.jpg")
     }
 
     private fun show() = WidgetShow(
