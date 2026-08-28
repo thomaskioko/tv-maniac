@@ -30,6 +30,7 @@ kotlin {
                 implementation(projects.core.files.implementation)
                 implementation(projects.core.files.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.tasks.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.upnext.testing)
             }
