@@ -77,6 +77,16 @@ class SnapshotWidgetPublisherTest {
     }
 
     @Test
+    fun `should delete every poster given the watchlist was cleared`() = runTest {
+        bridge.setContainerPath(directory)
+        publisher.publish(listOf(show()))
+
+        publisher.publish(emptyList())
+
+        posterDownloader.getKeptFileNames() shouldBe emptySet()
+    }
+
+    @Test
     fun `should request the poster at the widget size`() = runTest {
         bridge.setContainerPath(directory)
 
