@@ -69,3 +69,31 @@ struct UpNextWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
+
+private let previewItems: [UpNextItem] = [
+    UpNextItem(id: 1396, showName: "Breaking Bad", episodeName: "Pilot", seasonEpisodeLabel: "S01 | E01"),
+    UpNextItem(id: 60059, showName: "Better Call Saul", episodeName: "Uno", seasonEpisodeLabel: "S01 | E01"),
+    UpNextItem(id: 1399, showName: "Game of Thrones", episodeName: "Winter Is Coming", seasonEpisodeLabel: "S01 | E01"),
+    UpNextItem(id: 82856, showName: "The Mandalorian", episodeName: "Chapter 1", seasonEpisodeLabel: "S01 | E01"),
+]
+
+#Preview("Small", as: .systemSmall) {
+    UpNextWidget()
+} timeline: {
+    UpNextEntry(date: .now, state: .placeholder)
+    UpNextEntry(date: .now, state: .content(items: previewItems, lastUpdated: nil))
+}
+
+#Preview("Medium", as: .systemMedium) {
+    UpNextWidget()
+} timeline: {
+    UpNextEntry(date: .now, state: .content(items: previewItems, lastUpdated: nil))
+    UpNextEntry(date: .now, state: .empty(message: String(localized: "widget_empty_watchlist")))
+}
+
+#Preview("Large", as: .systemLarge) {
+    UpNextWidget()
+} timeline: {
+    UpNextEntry(date: .now, state: .content(items: previewItems, lastUpdated: nil))
+    UpNextEntry(date: .now, state: .empty(message: String(localized: "widget_empty_watchlist")))
+}
