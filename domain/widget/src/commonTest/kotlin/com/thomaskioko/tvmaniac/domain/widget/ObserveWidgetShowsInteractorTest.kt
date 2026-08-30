@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe

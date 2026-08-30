@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.domain.widget
+package com.thomaskioko.tvmaniac.domain.widget.model
 
 public data class WidgetShow(
     val tmdbId: Long,

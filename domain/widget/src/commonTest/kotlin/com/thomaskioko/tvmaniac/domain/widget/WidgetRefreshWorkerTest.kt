@@ -20,38 +20,41 @@ class WidgetRefreshWorkerTest {
     @Test
     fun `should publish the shows given a widget is installed`() = runTest(testDispatcher) {
         repository.setNextEpisodesForWatchlist(listOf(episode()))
-        val publisher = RecordingWidgetPublisher(installed = true)
+        val publisher = FakeWidgetPublisher().apply { setInstalled(true) }
 
         buildWorker(publisher).doWork() shouldBe WorkerResult.Success
 
-        publisher.published?.single()?.showName shouldBe "Breaking Bad"
+        publisher.getPublishedShows()?.single()?.showName shouldBe "Breaking Bad"
     }
 
     @Test
     fun `should publish nothing given no widget is installed`() = runTest(testDispatcher) {
         repository.setNextEpisodesForWatchlist(listOf(episode()))
-        val publisher = RecordingWidgetPublisher(installed = false)
+        val publisher = FakeWidgetPublisher().apply { setInstalled(false) }
 
         buildWorker(publisher).doWork() shouldBe WorkerResult.Success
 
-        publisher.published shouldBe null
+        publisher.getPublishedShows() shouldBe null
     }
 
     @Test
     fun `should ask to retry given publishing fails`() = runTest(testDispatcher) {
         repository.setNextEpisodesForWatchlist(listOf(episode()))
-        val publisher = RecordingWidgetPublisher(installed = true, failWith = IllegalStateException("no container"))
+        val publisher = FakeWidgetPublisher().apply {
+            setInstalled(true)
+            setFailure(IllegalStateException("no container"))
+        }
 
         buildWorker(publisher).doWork() shouldBe WorkerResult.Retry("no container")
     }
 
     @Test
     fun `should publish an empty list given an empty watchlist`() = runTest(testDispatcher) {
-        val publisher = RecordingWidgetPublisher(installed = true)
+        val publisher = FakeWidgetPublisher().apply { setInstalled(true) }
 
         buildWorker(publisher).doWork() shouldBe WorkerResult.Success
 
-        publisher.published shouldBe emptyList()
+        publisher.getPublishedShows() shouldBe emptyList()
     }
 
     private fun buildWorker(publisher: WidgetPublisher) = WidgetRefreshWorker(
@@ -77,20 +80,4 @@ class WidgetRefreshWorkerTest {
         watchedCount = 0,
         totalCount = 62,
     )
-}
-
-private class RecordingWidgetPublisher(
-    private val installed: Boolean,
-    private val failWith: Exception? = null,
-) : WidgetPublisher {
-
-    var published: List<WidgetShow>? = null
-        private set
-
-    override suspend fun hasInstalledWidgets(): Boolean = installed
-
-    override suspend fun publish(shows: List<WidgetShow>) {
-        failWith?.let { throw it }
-        published = shows
-    }
 }

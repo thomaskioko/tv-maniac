@@ -1,4 +1,4 @@
-package com.thomaskioko.tvmaniac.domain.widget
+package com.thomaskioko.tvmaniac.domain.widget.model
 
 import kotlinx.serialization.Serializable
 
