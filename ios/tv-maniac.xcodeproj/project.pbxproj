@@ -17,6 +17,7 @@
 		D6FE6A5B303E221400F89B66 /* TvManiacWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D6FE6A4C303E221300F89B66 /* TvManiacWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D6FE7590303E257000F89B66 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = D6FE758F303E257000F89B66 /* DesignSystem */; };
 		D6FE7592303E257500F89B66 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = D6FE7591303E257500F89B66 /* Models */; };
+		D6FE7594303E257900F89B66 /* Widgets in Frameworks */ = {isa = PBXBuildFile; productRef = D6FE7593303E257900F89B66 /* Widgets */; };
 		D6FEA700000000000001AA01 /* MyShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA01 /* MyShows */; };
 		D6FEA700000000000001AA02 /* Search in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA02 /* Search */; };
 		D6FEA700000000000001AA03 /* Library in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA03 /* Library */; };
@@ -147,6 +148,7 @@
 				D6FE7590303E257000F89B66 /* DesignSystem in Frameworks */,
 				D6FE6A50303E221300F89B66 /* SwiftUI.framework in Frameworks */,
 				D6FE7592303E257500F89B66 /* Models in Frameworks */,
+				D6FE7594303E257900F89B66 /* Widgets in Frameworks */,
 				D6FE6A4E303E221300F89B66 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,6 +291,7 @@
 			packageProductDependencies = (
 				D6FE758F303E257000F89B66 /* DesignSystem */,
 				D6FE7591303E257500F89B66 /* Models */,
+				D6FE7593303E257900F89B66 /* Widgets */,
 			);
 			productName = TvManiacWidget;
 			productReference = D6FE6A4C303E221300F89B66 /* TvManiacWidget.appex */;
@@ -324,6 +327,8 @@
 			knownRegions = (
 				en,
 				Base,
+				fr,
+				de,
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
@@ -850,6 +855,10 @@
 		D6FE7591303E257500F89B66 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Models;
+		};
+		D6FE7593303E257900F89B66 /* Widgets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Widgets;
 		};
 		D6FEA700000000000002AA01 /* MyShows */ = {
 			isa = XCSwiftPackageProductDependency;

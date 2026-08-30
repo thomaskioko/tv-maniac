@@ -18,6 +18,11 @@ let package = Package(
         .target(
             name: "Models"
         ),
+        .testTarget(
+            name: "ModelsTests",
+            dependencies: ["Models"],
+            resources: [.process("Fixtures")]
+        ),
     ],
     swiftLanguageModes: [.v5]
 )
