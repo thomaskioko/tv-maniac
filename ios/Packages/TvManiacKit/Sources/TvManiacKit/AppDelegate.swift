@@ -10,7 +10,8 @@ import UserNotifications
 public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public lazy var appGraph: IosApplicationGraph = IosApplicationGraphCompanion.shared.create(
         isDebug: Self.isDebugBuild,
-        remoteConfigBridge: Self.makeRemoteConfigBridge()
+        remoteConfigBridge: Self.makeRemoteConfigBridge(),
+        widgetManager: IosWidgetManager()
     )
 
     public lazy var logger = appGraph.logger

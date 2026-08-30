@@ -126,6 +126,7 @@ kotlin {
                 implementation(projects.features.seasonDetails.nav)
                 api(projects.features.showDetails.nav)
                 api(projects.core.files.api)
+                api(projects.domain.widget)
                 api(projects.core.files.implementation)
                 api(projects.core.deeplink.api)
                 api(projects.core.deeplink.implementation)

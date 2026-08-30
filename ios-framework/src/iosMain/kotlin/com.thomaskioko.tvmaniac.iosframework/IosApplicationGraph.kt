@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.domain.widget.WidgetManager
 import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
@@ -30,6 +31,7 @@ public interface IosApplicationGraph {
         public fun create(
             @Provides @IsDebugBuild isDebug: Boolean,
             @Provides remoteConfigBridge: RemoteConfigBridge,
+            @Provides widgetManager: WidgetManager,
         ): IosApplicationGraph
     }
 }

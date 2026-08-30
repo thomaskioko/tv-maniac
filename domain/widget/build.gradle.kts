@@ -18,6 +18,7 @@ kotlin {
                 api(projects.core.files.api)
                 api(projects.core.logger.api)
                 api(projects.core.tasks.api)
+                api(projects.core.util.api)
                 api(projects.data.upnext.api)
             }
         }
@@ -26,7 +27,11 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(projects.core.files.implementation)
+                implementation(projects.core.files.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.tasks.testing)
+                implementation(projects.core.util.testing)
                 implementation(projects.data.upnext.testing)
             }
         }
