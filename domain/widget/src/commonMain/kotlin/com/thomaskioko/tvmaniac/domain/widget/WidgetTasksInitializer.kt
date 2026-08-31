@@ -22,8 +22,18 @@ public class WidgetTasksInitializer(
     public fun init() {
         if (widgetPublishers.isEmpty()) return
 
-        scheduler.schedulePeriodic(WidgetRefreshWorker.REQUEST)
         publishOnChange()
+        updateRefreshSchedule()
+    }
+
+    private fun updateRefreshSchedule() {
+        coroutineScope.launch {
+            if (widgetPublishers.any { it.hasInstalledWidgets() }) {
+                scheduler.schedulePeriodic(WidgetRefreshWorker.REQUEST)
+            } else {
+                scheduler.cancel(WidgetRefreshWorker.WORKER_NAME)
+            }
+        }
     }
 
     private fun publishOnChange() {
