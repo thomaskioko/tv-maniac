@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <receiver
+            android:name="com.thomaskioko.tvmaniac.ui.widget.UpNextWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_up_next_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/up_next_widget_info" />
+        </receiver>
+
+    </application>
+
+</manifest>
