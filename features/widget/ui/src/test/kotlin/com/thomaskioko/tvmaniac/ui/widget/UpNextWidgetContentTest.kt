@@ -27,9 +27,9 @@ class UpNextWidgetContentTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun `should show one episode given the small size`() = runGlanceAppWidgetUnitTest {
+    fun `should show one episode given a short size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(SMALL)
+        setAppWidgetSize(SHORT)
         provideComposable { Content(items) }
 
         onNode(hasTestTag(WidgetTestTags.episodeRow(BREAKING_BAD))).assertExists()
@@ -37,38 +37,38 @@ class UpNextWidgetContentTest {
     }
 
     @Test
-    fun `should show two episodes given the medium size`() = runGlanceAppWidgetUnitTest {
+    fun `should show one episode given a wide but short size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(MEDIUM)
+        setAppWidgetSize(WIDE_SHORT)
         provideComposable { Content(items) }
 
         onNode(hasTestTag(WidgetTestTags.episodeRow(BREAKING_BAD))).assertExists()
-        onNode(hasTestTag(WidgetTestTags.episodeRow(BETTER_CALL_SAUL))).assertExists()
-        onNode(hasTestTag(WidgetTestTags.episodeRow(GAME_OF_THRONES))).assertDoesNotExist()
+        onNode(hasTestTag(WidgetTestTags.episodeRow(BETTER_CALL_SAUL))).assertDoesNotExist()
     }
 
     @Test
-    fun `should show four episodes given the large size`() = runGlanceAppWidgetUnitTest {
+    fun `should show three episodes given a tall size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(LARGE)
+        setAppWidgetSize(TALL)
         provideComposable { Content(items) }
 
-        items.forEach { onNode(hasTestTag(WidgetTestTags.episodeRow(it.showId))).assertExists() }
+        items.take(3).forEach { onNode(hasTestTag(WidgetTestTags.episodeRow(it.showId))).assertExists() }
+        onNode(hasTestTag(WidgetTestTags.episodeRow(THE_MANDALORIAN))).assertDoesNotExist()
     }
 
     @Test
-    fun `should show the episode name given the large size`() = runGlanceAppWidgetUnitTest {
+    fun `should show the episode name given a wide size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(LARGE)
+        setAppWidgetSize(WIDE_TALL)
         provideComposable { Content(items) }
 
         onNode(hasText("Pilot")).assertExists()
     }
 
     @Test
-    fun `should hide the episode name given the medium size`() = runGlanceAppWidgetUnitTest {
+    fun `should hide the episode name given a narrow size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(MEDIUM)
+        setAppWidgetSize(TALL)
         provideComposable { Content(items) }
 
         onNode(hasText("Pilot")).assertDoesNotExist()
@@ -77,10 +77,10 @@ class UpNextWidgetContentTest {
     @Test
     fun `should open its own episode given a row is tapped`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(LARGE)
+        setAppWidgetSize(WIDE_TALL)
         provideComposable { Content(items) }
 
-        items.forEach { item ->
+        items.take(3).forEach { item ->
             onNode(hasTestTag(WidgetTestTags.episodeRow(item.showId)))
                 .assert(hasStartActivityClickAction(intentFor(item)))
         }
@@ -89,7 +89,7 @@ class UpNextWidgetContentTest {
     @Test
     fun `should name the show on every poster`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(LARGE)
+        setAppWidgetSize(WIDE_TALL)
         provideComposable { Content(items) }
 
         onNode(hasContentDescriptionEqualTo("Breaking Bad")).assertExists()
@@ -98,7 +98,7 @@ class UpNextWidgetContentTest {
     @Test
     fun `should show the empty message given no episodes`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(MEDIUM)
+        setAppWidgetSize(WIDE_SHORT)
         provideComposable { Content(emptyList()) }
 
         onNode(hasTestTag(WidgetTestTags.EMPTY_STATE_TEST_TAG))
@@ -108,16 +108,16 @@ class UpNextWidgetContentTest {
     @Test
     fun `should show no episode row given no episodes`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(SMALL)
+        setAppWidgetSize(SHORT)
         provideComposable { Content(emptyList()) }
 
         onNode(hasTestTag(WidgetTestTags.episodeRow(BREAKING_BAD))).assertDoesNotExist()
     }
 
     @Test
-    fun `should show the widget name given the smallest size`() = runGlanceAppWidgetUnitTest {
+    fun `should show the widget name given the shortest size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
-        setAppWidgetSize(SMALL)
+        setAppWidgetSize(SHORT)
         provideComposable { Content(items) }
 
         onNode(hasTestTag(WidgetTestTags.TITLE_TEST_TAG)).assertHasText(TITLE)
@@ -167,8 +167,9 @@ class UpNextWidgetContentTest {
         private const val GAME_OF_THRONES = 1399L
         private const val THE_MANDALORIAN = 82856L
 
-        private val SMALL = DpSize(110.dp, 110.dp)
-        private val MEDIUM = DpSize(250.dp, 110.dp)
-        private val LARGE = DpSize(250.dp, 250.dp)
+        private val SHORT = DpSize(109.dp, 115.dp)
+        private val WIDE_SHORT = DpSize(245.dp, 115.dp)
+        private val TALL = DpSize(180.dp, 230.dp)
+        private val WIDE_TALL = DpSize(245.dp, 230.dp)
     }
 }

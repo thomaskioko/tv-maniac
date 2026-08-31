@@ -21,11 +21,11 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
-import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.semantics.semantics
 import androidx.glance.semantics.testTag
@@ -75,10 +75,10 @@ internal fun UpNextWidgetContent(
             if (index > 0) Spacer(modifier = GlanceModifier.height(ROW_SPACING))
             EpisodeRow(
                 item = item,
-                showEpisodeName = size.height >= LARGE_HEIGHT,
+                showEpisodeName = size.width >= WIDE_WIDTH,
                 modifier = GlanceModifier
                     .fillMaxWidth()
-                    .defaultWeight()
+                    .height(ROW_HEIGHT)
                     .clickable(itemAction(item))
                     .semantics { testTag = WidgetTestTags.episodeRow(item.showId) },
             )
@@ -135,8 +135,7 @@ private fun EpisodeRow(
 @Composable
 private fun Poster(item: UpNextWidgetItem) {
     val modifier = GlanceModifier
-        .width(POSTER_WIDTH)
-        .fillMaxHeight()
+        .size(width = POSTER_WIDTH, height = ROW_HEIGHT)
         .cornerRadius(4.dp)
         .semantics { testTag = WidgetTestTags.poster(item.showId) }
 
@@ -179,14 +178,11 @@ private fun GlanceModifier.systemCornerRadius(): GlanceModifier =
         this
     }
 
-private fun visibleCount(size: DpSize): Int = when {
-    size.height >= LARGE_HEIGHT -> 4
-    size.width >= MEDIUM_WIDTH -> 2
-    else -> 1
-}
+private fun visibleCount(size: DpSize): Int = if (size.height >= TALL_HEIGHT) 3 else 1
 
 private val WIDGET_PADDING = 8.dp
 private val ROW_SPACING = 4.dp
+private val ROW_HEIGHT = 60.dp
 private val POSTER_WIDTH = 40.dp
-private val MEDIUM_WIDTH = 200.dp
-private val LARGE_HEIGHT = 200.dp
+private val TALL_HEIGHT = 200.dp
+internal val WIDE_WIDTH = 245.dp
