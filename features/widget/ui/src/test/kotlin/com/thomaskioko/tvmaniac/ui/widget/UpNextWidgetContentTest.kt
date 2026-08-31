@@ -57,6 +57,15 @@ class UpNextWidgetContentTest {
     }
 
     @Test
+    fun `should show four episodes given the tallest size`() = runGlanceAppWidgetUnitTest {
+        setContext(context)
+        setAppWidgetSize(WIDE_TALLEST)
+        provideComposable { Content(items) }
+
+        items.forEach { onNode(hasTestTag(WidgetTestTags.episodeRow(it.showId))).assertExists() }
+    }
+
+    @Test
     fun `should show the episode name given a wide size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
         setAppWidgetSize(WIDE_TALL)
@@ -171,5 +180,6 @@ class UpNextWidgetContentTest {
         private val WIDE_SHORT = DpSize(245.dp, 115.dp)
         private val TALL = DpSize(180.dp, 230.dp)
         private val WIDE_TALL = DpSize(245.dp, 230.dp)
+        private val WIDE_TALLEST = DpSize(245.dp, 340.dp)
     }
 }

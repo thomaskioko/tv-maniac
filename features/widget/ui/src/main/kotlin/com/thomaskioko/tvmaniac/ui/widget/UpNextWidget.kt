@@ -48,13 +48,15 @@ public class UpNextWidget : GlanceAppWidget() {
     }
 
     private companion object {
-        private const val MAX_VISIBLE = 3
+        private const val MAX_VISIBLE = 4
 
         private val WIDGET_SIZES = setOf(
             DpSize(109.dp, 115.dp),
             DpSize(WIDE_WIDTH, 115.dp),
             DpSize(180.dp, 230.dp),
             DpSize(WIDE_WIDTH, 230.dp),
+            DpSize(180.dp, 340.dp),
+            DpSize(WIDE_WIDTH, 340.dp),
         )
     }
 }

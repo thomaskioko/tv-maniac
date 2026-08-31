@@ -78,7 +78,7 @@ internal fun UpNextWidgetContent(
                 showEpisodeName = size.width >= WIDE_WIDTH,
                 modifier = GlanceModifier
                     .fillMaxWidth()
-                    .height(ROW_HEIGHT)
+                    .defaultWeight()
                     .clickable(itemAction(item))
                     .semantics { testTag = WidgetTestTags.episodeRow(item.showId) },
             )
@@ -135,7 +135,7 @@ private fun EpisodeRow(
 @Composable
 private fun Poster(item: UpNextWidgetItem) {
     val modifier = GlanceModifier
-        .size(width = POSTER_WIDTH, height = ROW_HEIGHT)
+        .size(width = POSTER_WIDTH, height = POSTER_HEIGHT)
         .cornerRadius(4.dp)
         .semantics { testTag = WidgetTestTags.poster(item.showId) }
 
@@ -178,11 +178,16 @@ private fun GlanceModifier.systemCornerRadius(): GlanceModifier =
         this
     }
 
-private fun visibleCount(size: DpSize): Int = if (size.height >= TALL_HEIGHT) 3 else 1
+private fun visibleCount(size: DpSize): Int = when {
+    size.height >= TALLEST_HEIGHT -> 4
+    size.height >= TALL_HEIGHT -> 3
+    else -> 1
+}
 
 private val WIDGET_PADDING = 8.dp
 private val ROW_SPACING = 4.dp
-private val ROW_HEIGHT = 60.dp
 private val POSTER_WIDTH = 40.dp
+private val POSTER_HEIGHT = 60.dp
 private val TALL_HEIGHT = 200.dp
+private val TALLEST_HEIGHT = 330.dp
 internal val WIDE_WIDTH = 245.dp
