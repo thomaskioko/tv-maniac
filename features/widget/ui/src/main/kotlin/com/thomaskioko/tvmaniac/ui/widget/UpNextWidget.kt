@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
 import androidx.glance.action.Action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.PreviewSizeMode
@@ -44,7 +45,7 @@ public class UpNextWidget : GlanceAppWidget() {
     }
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
-        provideContent { WidgetBody(context, previewItems(context)) }
+        provideContent { WidgetBody(context, previewItems(context), GlanceModifier.systemCornerRadius()) }
     }
 
     private companion object {
@@ -56,7 +57,11 @@ public class UpNextWidget : GlanceAppWidget() {
 }
 
 @Composable
-private fun WidgetBody(context: Context, items: List<UpNextWidgetItem>) {
+private fun WidgetBody(
+    context: Context,
+    items: List<UpNextWidgetItem>,
+    modifier: GlanceModifier = GlanceModifier,
+) {
     WidgetTheme {
         UpNextWidgetContent(
             title = widget_up_next_name.resolve(context),
@@ -64,6 +69,7 @@ private fun WidgetBody(context: Context, items: List<UpNextWidgetItem>) {
             items = items,
             openApp = context.openAppAction(),
             itemAction = { item -> context.openItemAction(item) },
+            modifier = modifier,
         )
     }
 }
@@ -90,15 +96,15 @@ internal fun Context.seasonEpisodeLabel(seasonNumber: Long, episodeNumber: Long)
         episodeNumber.toString().padStart(2, '0'),
     )
 
-private fun Context.openAppAction(): Action =
+internal fun Context.openAppAction(): Action =
     actionStartActivity(packageManager.getLaunchIntentForPackage(packageName) ?: Intent())
 
-private fun Context.openItemAction(item: UpNextWidgetItem): Action {
+internal fun Context.openItemAction(item: UpNextWidgetItem): Action {
     val url = item.url ?: return openAppAction()
     return actionStartActivity(Intent(Intent.ACTION_VIEW, url.toUri()).setPackage(packageName))
 }
 
-private fun previewItems(context: Context): List<UpNextWidgetItem> = listOf(
+internal fun previewItems(context: Context): List<UpNextWidgetItem> = listOf(
     previewItem(context, 1396, "Breaking Bad", "Pilot"),
     previewItem(context, 60059, "Better Call Saul", "Uno"),
     previewItem(context, 1399, "Game of Thrones", "Winter Is Coming"),

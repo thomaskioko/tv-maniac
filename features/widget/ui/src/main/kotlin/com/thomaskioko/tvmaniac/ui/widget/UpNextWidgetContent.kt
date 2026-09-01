@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.ui.widget
 
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,29 +42,33 @@ internal fun UpNextWidgetContent(
     items: List<UpNextWidgetItem>,
     openApp: Action,
     itemAction: (UpNextWidgetItem) -> Action,
+    modifier: GlanceModifier = GlanceModifier,
 ) {
     val size = LocalSize.current
+    val compact = size.height < COMPACT_HEIGHT
 
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
             .appWidgetBackground()
             .background(GlanceTheme.colors.widgetBackground)
-            .systemCornerRadius()
-            .padding(WIDGET_PADDING),
+            .then(modifier)
+            .padding(if (compact) COMPACT_PADDING else WIDGET_PADDING),
     ) {
-        Text(
-            text = title,
-            maxLines = 1,
-            style = TextStyle(
-                color = GlanceTheme.colors.primary,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-            modifier = GlanceModifier
-                .padding(bottom = 4.dp)
-                .semantics { testTag = WidgetTestTags.TITLE_TEST_TAG },
-        )
+        if (!compact) {
+            Text(
+                text = title,
+                maxLines = 1,
+                style = TextStyle(
+                    color = GlanceTheme.colors.primary,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                modifier = GlanceModifier
+                    .padding(bottom = 4.dp)
+                    .semantics { testTag = WidgetTestTags.TITLE_TEST_TAG },
+            )
+        }
 
         if (items.isEmpty()) {
             EmptyState(message = emptyMessage, openApp = openApp)
@@ -73,7 +78,9 @@ internal fun UpNextWidgetContent(
         items.take(visibleCount(size)).forEachIndexed { index, item ->
             EpisodeRow(
                 item = item,
-                showEpisodeName = size.width >= WIDE_WIDTH,
+                compact = compact,
+                showEpisodeName = !compact && size.width >= WIDE_WIDTH,
+                showInlineLabel = compact && size.width >= WIDE_WIDTH,
                 modifier = GlanceModifier
                     .fillMaxWidth()
                     .defaultWeight()
@@ -88,53 +95,64 @@ internal fun UpNextWidgetContent(
 @Composable
 private fun EpisodeRow(
     item: UpNextWidgetItem,
+    compact: Boolean,
     showEpisodeName: Boolean,
+    showInlineLabel: Boolean,
     modifier: GlanceModifier,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Poster(item = item)
+        Poster(
+            item = item,
+            width = if (compact) COMPACT_POSTER_WIDTH else POSTER_WIDTH,
+            height = if (compact) COMPACT_POSTER_HEIGHT else POSTER_HEIGHT,
+        )
 
         Spacer(modifier = GlanceModifier.width(8.dp))
 
-        Column(modifier = GlanceModifier.defaultWeight()) {
+        if (showInlineLabel) {
             Text(
                 text = item.showName,
                 maxLines = 1,
-                style = TextStyle(
-                    color = GlanceTheme.colors.onSurface,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
+                style = showNameStyle(),
+                modifier = GlanceModifier.defaultWeight(),
             )
             Text(
                 text = item.seasonEpisodeLabel,
                 maxLines = 1,
-                style = TextStyle(
-                    color = GlanceTheme.colors.onSurfaceVariant,
-                    fontSize = 11.sp,
-                ),
+                style = supportingStyle(),
             )
-            if (showEpisodeName && item.episodeName.isNotBlank()) {
-                Text(
-                    text = item.episodeName,
-                    maxLines = 1,
-                    style = TextStyle(
-                        color = GlanceTheme.colors.onSurfaceVariant,
-                        fontSize = 11.sp,
-                    ),
-                )
+        } else {
+            Column(modifier = GlanceModifier.defaultWeight()) {
+                Text(text = item.showName, maxLines = 1, style = showNameStyle())
+                Text(text = item.seasonEpisodeLabel, maxLines = 1, style = supportingStyle())
+                if (showEpisodeName && item.episodeName.isNotBlank()) {
+                    Text(text = item.episodeName, maxLines = 1, style = supportingStyle())
+                }
             }
         }
     }
 }
 
 @Composable
-private fun Poster(item: UpNextWidgetItem) {
+private fun showNameStyle(): TextStyle = TextStyle(
+    color = GlanceTheme.colors.onSurface,
+    fontSize = 13.sp,
+    fontWeight = FontWeight.Medium,
+)
+
+@Composable
+private fun supportingStyle(): TextStyle = TextStyle(
+    color = GlanceTheme.colors.onSurfaceVariant,
+    fontSize = 11.sp,
+)
+
+@Composable
+private fun Poster(item: UpNextWidgetItem, width: Dp, height: Dp) {
     val modifier = GlanceModifier
-        .size(width = POSTER_WIDTH, height = POSTER_HEIGHT)
+        .size(width = width, height = height)
         .cornerRadius(4.dp)
         .semantics { testTag = WidgetTestTags.poster(item.showId) }
 
@@ -170,7 +188,7 @@ private fun EmptyState(message: String, openApp: Action) {
     }
 }
 
-private fun GlanceModifier.systemCornerRadius(): GlanceModifier =
+internal fun GlanceModifier.systemCornerRadius(): GlanceModifier =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         cornerRadius(android.R.dimen.system_app_widget_background_radius)
     } else {
@@ -178,6 +196,7 @@ private fun GlanceModifier.systemCornerRadius(): GlanceModifier =
     }
 
 internal fun visibleCount(size: DpSize): Int {
+    if (size.height < COMPACT_HEIGHT) return 1
     val available = size.height - (WIDGET_PADDING * 2) - TITLE_HEIGHT
     return ((available + ROW_SPACING) / (POSTER_HEIGHT + ROW_SPACING)).toInt().coerceIn(1, MAX_VISIBLE)
 }
@@ -185,8 +204,12 @@ internal fun visibleCount(size: DpSize): Int {
 internal const val MAX_VISIBLE: Int = 6
 
 private val WIDGET_PADDING = 8.dp
+private val COMPACT_PADDING = 4.dp
 private val ROW_SPACING = 4.dp
 private val TITLE_HEIGHT = 24.dp
 private val POSTER_WIDTH = 40.dp
 private val POSTER_HEIGHT = 60.dp
+private val COMPACT_POSTER_WIDTH = 32.dp
+private val COMPACT_POSTER_HEIGHT = 48.dp
+private val COMPACT_HEIGHT = 100.dp
 private val WIDE_WIDTH = 245.dp
