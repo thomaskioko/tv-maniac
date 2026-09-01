@@ -14,7 +14,6 @@ dependencies {
     api(projects.core.base)
     api(projects.core.deeplink.api)
     api(projects.core.logger.api)
-    api(projects.core.tasks.api)
     api(projects.domain.widget)
 
     api(libs.androidx.compose.runtime)

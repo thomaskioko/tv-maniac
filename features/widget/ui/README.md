@@ -67,7 +67,6 @@ graph TB
   :features:widget:ui --> :core:base
   :features:widget:ui --> :core:deeplink:api
   :features:widget:ui --> :core:logger:api
-  :features:widget:ui --> :core:tasks:api
   :features:widget:ui -.-> :core:test-tags
   :features:widget:ui --> :domain:widget
   :features:widget:ui -.-> :i18n:generator
