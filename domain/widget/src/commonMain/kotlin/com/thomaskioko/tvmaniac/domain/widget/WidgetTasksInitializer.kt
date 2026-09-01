@@ -26,7 +26,7 @@ public class WidgetTasksInitializer(
         updateRefreshSchedule()
     }
 
-    private fun updateRefreshSchedule() {
+    public fun updateRefreshSchedule() {
         coroutineScope.launch {
             if (widgetPublishers.any { it.hasInstalledWidgets() }) {
                 scheduler.schedulePeriodic(WidgetRefreshWorker.REQUEST)

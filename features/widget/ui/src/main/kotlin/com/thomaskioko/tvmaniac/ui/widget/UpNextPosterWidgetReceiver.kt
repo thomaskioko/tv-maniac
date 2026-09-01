@@ -5,9 +5,9 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.thomaskioko.tvmaniac.ui.widget.di.widgetGraph
 
-public class UpNextWidgetReceiver : GlanceAppWidgetReceiver() {
+public class UpNextPosterWidgetReceiver : GlanceAppWidgetReceiver() {
 
-    override val glanceAppWidget: GlanceAppWidget = UpNextWidget()
+    override val glanceAppWidget: GlanceAppWidget = UpNextPosterWidget()
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)

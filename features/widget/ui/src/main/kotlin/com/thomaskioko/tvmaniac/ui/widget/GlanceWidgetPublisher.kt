@@ -16,10 +16,14 @@ public class GlanceWidgetPublisher(
     @ApplicationContext private val context: Context,
 ) : WidgetPublisher {
 
-    override suspend fun hasInstalledWidgets(): Boolean =
-        GlanceAppWidgetManager(context).getGlanceIds(UpNextWidget::class.java).isNotEmpty()
+    override suspend fun hasInstalledWidgets(): Boolean {
+        val manager = GlanceAppWidgetManager(context)
+        return manager.getGlanceIds(UpNextWidget::class.java).isNotEmpty() ||
+            manager.getGlanceIds(UpNextPosterWidget::class.java).isNotEmpty()
+    }
 
     override suspend fun publish(shows: List<WidgetShow>) {
         UpNextWidget().updateAll(context)
+        UpNextPosterWidget().updateAll(context)
     }
 }

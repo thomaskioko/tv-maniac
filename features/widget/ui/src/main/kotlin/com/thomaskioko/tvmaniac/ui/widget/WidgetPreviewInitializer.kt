@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.setWidgetPreviews
 import com.thomaskioko.tvmaniac.core.base.ApplicationContext
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
@@ -28,18 +29,19 @@ public class WidgetPreviewInitializer(
 
     public fun init() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
-        publishPreview()
+        publishPreviews()
     }
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    private fun publishPreview() {
-        if (hasPublishedPreview()) return
-
+    private fun publishPreviews() {
         coroutineScope.launch {
             try {
-                val result = GlanceAppWidgetManager(context).setWidgetPreviews<UpNextWidgetReceiver>()
-                if (result == GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED) {
-                    logger.debug(TAG, "Widget preview not published, rate limited")
+                val manager = GlanceAppWidgetManager(context)
+                if (!hasPublishedPreview(UpNextWidgetReceiver::class.java)) {
+                    report(manager.setWidgetPreviews<UpNextWidgetReceiver>())
+                }
+                if (!hasPublishedPreview(UpNextPosterWidgetReceiver::class.java)) {
+                    report(manager.setWidgetPreviews<UpNextPosterWidgetReceiver>())
                 }
             } catch (cancellation: CancellationException) {
                 throw cancellation
@@ -49,9 +51,15 @@ public class WidgetPreviewInitializer(
         }
     }
 
+    private fun report(result: Int) {
+        if (result == GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED) {
+            logger.debug(TAG, "Widget preview not published, rate limited")
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    private fun hasPublishedPreview(): Boolean {
-        val provider = ComponentName(context, UpNextWidgetReceiver::class.java)
+    private fun hasPublishedPreview(receiver: Class<out GlanceAppWidgetReceiver>): Boolean {
+        val provider = ComponentName(context, receiver)
         val info = AppWidgetManager.getInstance(context)
             .installedProviders
             .firstOrNull { it.provider == provider }

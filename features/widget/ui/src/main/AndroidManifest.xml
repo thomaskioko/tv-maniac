@@ -16,6 +16,18 @@
                 android:resource="@xml/up_next_widget_info" />
         </receiver>
 
+        <receiver
+            android:name="com.thomaskioko.tvmaniac.ui.widget.UpNextPosterWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_next_episode_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/up_next_poster_widget_info" />
+        </receiver>
+
     </application>
 
 </manifest>

@@ -7,17 +7,24 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 
-internal suspend fun Context.loadPoster(url: String?): Bitmap? {
+internal suspend fun Context.loadPoster(
+    url: String?,
+    widthPx: Int = ROW_POSTER_WIDTH_PX,
+    heightPx: Int = ROW_POSTER_HEIGHT_PX,
+): Bitmap? {
     if (url.isNullOrBlank()) return null
 
     val request = ImageRequest.Builder(this)
         .data(url)
-        .size(POSTER_WIDTH_PX, POSTER_HEIGHT_PX)
+        .size(widthPx, heightPx)
         .allowHardware(false)
         .build()
 
     return (imageLoader.execute(request) as? SuccessResult)?.drawable?.toBitmap()
 }
 
-private const val POSTER_WIDTH_PX = 185
-private const val POSTER_HEIGHT_PX = 278
+private const val ROW_POSTER_WIDTH_PX = 185
+private const val ROW_POSTER_HEIGHT_PX = 278
+
+internal const val TILE_POSTER_WIDTH_PX: Int = 500
+internal const val TILE_POSTER_HEIGHT_PX: Int = 750
