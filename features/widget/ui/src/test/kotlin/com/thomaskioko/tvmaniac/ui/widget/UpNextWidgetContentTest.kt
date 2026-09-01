@@ -77,9 +77,18 @@ class UpNextWidgetContentTest {
     }
 
     @Test
-    fun `should hide the episode name given a narrow size`() = runGlanceAppWidgetUnitTest {
+    fun `should show the episode name given a narrow size`() = runGlanceAppWidgetUnitTest {
         setContext(context)
         setAppWidgetSize(TALL)
+        provideComposable { Content(items) }
+
+        onNode(hasText("Pilot")).assertExists()
+    }
+
+    @Test
+    fun `should hide the episode name given a wide strip`() = runGlanceAppWidgetUnitTest {
+        setContext(context)
+        setAppWidgetSize(WIDE_STRIP)
         provideComposable { Content(items) }
 
         onNode(hasText("Pilot")).assertDoesNotExist()

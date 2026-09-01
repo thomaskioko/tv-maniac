@@ -79,7 +79,7 @@ internal fun UpNextWidgetContent(
             EpisodeRow(
                 item = item,
                 compact = compact,
-                showEpisodeName = !compact && size.width >= WIDE_WIDTH,
+                showEpisodeName = !compact,
                 showInlineLabel = compact && size.width >= WIDE_WIDTH,
                 modifier = GlanceModifier
                     .fillMaxWidth()
