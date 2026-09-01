@@ -26,9 +26,9 @@ import kotlinx.coroutines.flow.onStart
 
 public class UpNextWidget : GlanceAppWidget() {
 
-    override val sizeMode: SizeMode = SizeMode.Responsive(WIDGET_SIZES)
+    override val sizeMode: SizeMode = SizeMode.Exact
 
-    override val previewSizeMode: PreviewSizeMode = SizeMode.Responsive(WIDGET_SIZES)
+    override val previewSizeMode: PreviewSizeMode = SizeMode.Responsive(PREVIEW_SIZES)
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val graph = context.widgetGraph
@@ -48,15 +48,9 @@ public class UpNextWidget : GlanceAppWidget() {
     }
 
     private companion object {
-        private const val MAX_VISIBLE = 4
-
-        private val WIDGET_SIZES = setOf(
-            DpSize(109.dp, 115.dp),
-            DpSize(WIDE_WIDTH, 115.dp),
+        private val PREVIEW_SIZES = setOf(
             DpSize(180.dp, 230.dp),
-            DpSize(WIDE_WIDTH, 230.dp),
-            DpSize(180.dp, 340.dp),
-            DpSize(WIDE_WIDTH, 340.dp),
+            DpSize(245.dp, 340.dp),
         )
     }
 }

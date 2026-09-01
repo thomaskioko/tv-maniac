@@ -178,16 +178,16 @@ private fun GlanceModifier.systemCornerRadius(): GlanceModifier =
         this
     }
 
-private fun visibleCount(size: DpSize): Int = when {
-    size.height >= TALLEST_HEIGHT -> 4
-    size.height >= TALL_HEIGHT -> 3
-    else -> 1
+internal fun visibleCount(size: DpSize): Int {
+    val available = size.height - (WIDGET_PADDING * 2) - TITLE_HEIGHT
+    return ((available + ROW_SPACING) / (POSTER_HEIGHT + ROW_SPACING)).toInt().coerceIn(1, MAX_VISIBLE)
 }
+
+internal const val MAX_VISIBLE: Int = 6
 
 private val WIDGET_PADDING = 8.dp
 private val ROW_SPACING = 4.dp
+private val TITLE_HEIGHT = 24.dp
 private val POSTER_WIDTH = 40.dp
 private val POSTER_HEIGHT = 60.dp
-private val TALL_HEIGHT = 200.dp
-private val TALLEST_HEIGHT = 330.dp
-internal val WIDE_WIDTH = 245.dp
+private val WIDE_WIDTH = 245.dp

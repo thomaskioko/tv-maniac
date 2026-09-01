@@ -17,6 +17,7 @@ import androidx.glance.testing.unit.hasTestTag
 import androidx.glance.testing.unit.hasText
 import androidx.test.core.app.ApplicationProvider
 import com.thomaskioko.tvmaniac.testtags.widget.WidgetTestTags
+import io.kotest.matchers.shouldBe
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -130,6 +131,16 @@ class UpNextWidgetContentTest {
         provideComposable { Content(items) }
 
         onNode(hasTestTag(WidgetTestTags.TITLE_TEST_TAG)).assertHasText(TITLE)
+    }
+
+    @Test
+    fun `should cap the episode count given a very tall size`() {
+        visibleCount(DpSize(245.dp, 900.dp)) shouldBe MAX_VISIBLE
+    }
+
+    @Test
+    fun `should show one episode given a size with room for none`() {
+        visibleCount(DpSize(109.dp, 60.dp)) shouldBe 1
     }
 
     @Composable

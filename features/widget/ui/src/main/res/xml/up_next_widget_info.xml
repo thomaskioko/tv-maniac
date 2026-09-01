@@ -8,7 +8,7 @@
     android:minResizeHeight="115dp"
     android:minResizeWidth="109dp"
     android:minWidth="109dp"
-    android:maxResizeHeight="360dp"
+    android:maxResizeHeight="422dp"
     android:maxResizeWidth="400dp"
     android:resizeMode="horizontal|vertical"
     android:targetCellHeight="2"
