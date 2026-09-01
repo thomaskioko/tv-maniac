@@ -23,7 +23,6 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
@@ -72,13 +71,13 @@ internal fun UpNextWidgetContent(
         }
 
         items.take(visibleCount(size)).forEachIndexed { index, item ->
-            if (index > 0) Spacer(modifier = GlanceModifier.height(ROW_SPACING))
             EpisodeRow(
                 item = item,
                 showEpisodeName = size.width >= WIDE_WIDTH,
                 modifier = GlanceModifier
                     .fillMaxWidth()
                     .defaultWeight()
+                    .padding(top = if (index == 0) 0.dp else ROW_SPACING)
                     .clickable(itemAction(item))
                     .semantics { testTag = WidgetTestTags.episodeRow(item.showId) },
             )

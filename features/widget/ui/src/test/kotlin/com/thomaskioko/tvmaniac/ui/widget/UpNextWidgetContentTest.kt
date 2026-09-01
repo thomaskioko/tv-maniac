@@ -17,6 +17,7 @@ import androidx.glance.testing.unit.hasTestTag
 import androidx.glance.testing.unit.hasText
 import androidx.test.core.app.ApplicationProvider
 import com.thomaskioko.tvmaniac.testtags.widget.WidgetTestTags
+import io.kotest.matchers.ints.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -134,6 +135,11 @@ class UpNextWidgetContentTest {
     }
 
     @Test
+    fun `should fit the title and every row in one glance container`() {
+        (1 + MAX_VISIBLE) shouldBeLessThanOrEqual MAX_CONTAINER_CHILDREN
+    }
+
+    @Test
     fun `should cap the episode count given a very tall size`() {
         visibleCount(DpSize(245.dp, 900.dp)) shouldBe MAX_VISIBLE
     }
@@ -179,6 +185,8 @@ class UpNextWidgetContentTest {
     )
 
     private companion object {
+        private const val MAX_CONTAINER_CHILDREN = 10
+
         private const val TITLE = "Up Next"
         private const val EMPTY_MESSAGE = "Nothing to watch next. Track a show to see it here."
 
