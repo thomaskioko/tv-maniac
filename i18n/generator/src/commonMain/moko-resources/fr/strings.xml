@@ -636,6 +636,8 @@
     <string name="menu_unfollow_show">Ne plus suivre</string>
     <string name="widget_up_next_name">À suivre</string>
     <string name="widget_up_next_description">Affiche le prochain épisode à regarder de votre liste.</string>
+    <string name="widget_next_episode_name">Prochain épisode</string>
+    <string name="widget_next_episode_description">Affiche l'affiche du prochain épisode de votre liste.</string>
     <string name="widget_empty_watchlist">Rien à regarder. Suivez une série pour la voir ici.</string>
     <string name="widget_season_episode">S%1$s | E%2$s</string>
 </resources>

@@ -633,6 +633,8 @@
     <string name="label_backup_locked_message">Upgrade to Premium to save and restore your shows.</string>
     <string name="widget_up_next_name">Up Next</string>
     <string name="widget_up_next_description">See the next episode to watch from your watchlist.</string>
+    <string name="widget_next_episode_name">Next Episode</string>
+    <string name="widget_next_episode_description">See the poster for the next episode on your watchlist.</string>
     <string name="widget_empty_watchlist">Nothing to watch next. Track a show to see it here.</string>
     <string name="widget_season_episode">S%1$s | E%2$s</string>
 </resources>
