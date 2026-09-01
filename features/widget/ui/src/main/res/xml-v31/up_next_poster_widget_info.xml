@@ -10,7 +10,7 @@
     android:minResizeWidth="@dimen/up_next_poster_widget_min_width"
     android:minWidth="@dimen/up_next_poster_widget_min_width"
     android:resizeMode="horizontal|vertical"
-    android:targetCellHeight="@integer/up_next_widget_cell_height"
-    android:targetCellWidth="@integer/up_next_widget_cell_width"
+    android:targetCellHeight="@integer/up_next_poster_widget_cell_height"
+    android:targetCellWidth="@integer/up_next_poster_widget_cell_width"
     android:updatePeriodMillis="@integer/up_next_widget_update_period_millis"
     android:widgetCategory="home_screen" />
