@@ -135,6 +135,34 @@ class UpNextWidgetContentTest {
     }
 
     @Test
+    fun `should show one episode given a wide strip`() = runGlanceAppWidgetUnitTest {
+        setContext(context)
+        setAppWidgetSize(WIDE_STRIP)
+        provideComposable { Content(items) }
+
+        onNode(hasTestTag(WidgetTestTags.episodeRow(BREAKING_BAD))).assertExists()
+        onNode(hasTestTag(WidgetTestTags.episodeRow(BETTER_CALL_SAUL))).assertDoesNotExist()
+    }
+
+    @Test
+    fun `should hide the widget name given a wide strip`() = runGlanceAppWidgetUnitTest {
+        setContext(context)
+        setAppWidgetSize(WIDE_STRIP)
+        provideComposable { Content(items) }
+
+        onNode(hasTestTag(WidgetTestTags.TITLE_TEST_TAG)).assertDoesNotExist()
+    }
+
+    @Test
+    fun `should show the season label given a wide strip`() = runGlanceAppWidgetUnitTest {
+        setContext(context)
+        setAppWidgetSize(WIDE_STRIP)
+        provideComposable { Content(items) }
+
+        onNode(hasText("S01 | E01")).assertExists()
+    }
+
+    @Test
     fun `should fit the title and every row in one glance container`() {
         (1 + MAX_VISIBLE) shouldBeLessThanOrEqual MAX_CONTAINER_CHILDREN
     }
@@ -200,5 +228,6 @@ class UpNextWidgetContentTest {
         private val TALL = DpSize(180.dp, 230.dp)
         private val WIDE_TALL = DpSize(245.dp, 230.dp)
         private val WIDE_TALLEST = DpSize(245.dp, 340.dp)
+        private val WIDE_STRIP = DpSize(245.dp, 56.dp)
     }
 }

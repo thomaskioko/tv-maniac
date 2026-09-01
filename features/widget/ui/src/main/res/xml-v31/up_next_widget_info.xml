@@ -6,7 +6,7 @@
     android:maxResizeHeight="@dimen/up_next_widget_max_resize_height"
     android:maxResizeWidth="@dimen/up_next_widget_max_resize_width"
     android:minHeight="@dimen/up_next_widget_min_height"
-    android:minResizeHeight="@dimen/up_next_widget_min_height"
+    android:minResizeHeight="@dimen/up_next_widget_min_resize_height"
     android:minResizeWidth="@dimen/up_next_widget_min_width"
     android:minWidth="@dimen/up_next_widget_min_width"
     android:resizeMode="horizontal|vertical"

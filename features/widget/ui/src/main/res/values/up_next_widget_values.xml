@@ -2,10 +2,16 @@
 <resources>
     <dimen name="up_next_widget_min_width">109dp</dimen>
     <dimen name="up_next_widget_min_height">115dp</dimen>
+    <dimen name="up_next_widget_min_resize_height">56dp</dimen>
     <dimen name="up_next_widget_max_resize_width">400dp</dimen>
     <dimen name="up_next_widget_max_resize_height">422dp</dimen>
 
     <integer name="up_next_widget_cell_width">2</integer>
     <integer name="up_next_widget_cell_height">2</integer>
     <integer name="up_next_widget_update_period_millis">0</integer>
+
+    <dimen name="up_next_poster_widget_min_width">109dp</dimen>
+    <dimen name="up_next_poster_widget_min_height">115dp</dimen>
+    <dimen name="up_next_poster_widget_max_resize_width">306dp</dimen>
+    <dimen name="up_next_poster_widget_max_resize_height">422dp</dimen>
 </resources>

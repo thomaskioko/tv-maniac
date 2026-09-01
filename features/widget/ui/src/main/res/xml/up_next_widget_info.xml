@@ -4,7 +4,7 @@
     android:description="@string/widget_up_next_description"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:minHeight="@dimen/up_next_widget_min_height"
-    android:minResizeHeight="@dimen/up_next_widget_min_height"
+    android:minResizeHeight="@dimen/up_next_widget_min_resize_height"
     android:minResizeWidth="@dimen/up_next_widget_min_width"
     android:minWidth="@dimen/up_next_widget_min_width"
     android:resizeMode="horizontal|vertical"
