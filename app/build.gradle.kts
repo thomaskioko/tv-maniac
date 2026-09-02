@@ -90,6 +90,7 @@ dependencies {
     implementation(projects.features.showDetails.ui)
     implementation(projects.features.showList.ui)
     implementation(projects.features.trailers.ui)
+    implementation(projects.features.widget.ui)
     implementation(projects.features.root.presenter)
     implementation(projects.core.logger.api)
     implementation(projects.core.logger.implementation)

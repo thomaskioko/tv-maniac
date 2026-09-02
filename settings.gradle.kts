@@ -101,6 +101,7 @@ include(
     ":features:statistics:ui",
     ":features:trailers:presenter",
     ":features:trailers:ui",
+    ":features:widget:ui",
     ":api:simkl:api",
     ":api:simkl:implementation",
     ":api:simkl:testing",

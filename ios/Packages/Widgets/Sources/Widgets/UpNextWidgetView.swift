@@ -40,7 +40,7 @@ public struct UpNextWidgetView: View {
         switch family {
         case .systemSmall: 1
         case .systemMedium: 2
-        default: 4
+        default: 5
         }
     }
 }
@@ -134,7 +134,7 @@ private struct PosterView: View {
             }
         }
         .frame(width: posterWidth, height: posterHeight)
-        .clipShape(ContainerRelativeShape())
+        .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
         .accessibilityLabel(showName)
     }
 
@@ -173,7 +173,7 @@ private struct PlaceholderContent: View {
                     Rectangle()
                         .fill(theme.colors.surfaceVariant)
                         .frame(width: 36, height: 54)
-                        .clipShape(ContainerRelativeShape())
+                        .clipShape(RoundedRectangle(cornerRadius: theme.shapes.small))
 
                     VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                         shape(widthRatio: 0.7)

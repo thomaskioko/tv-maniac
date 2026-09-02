@@ -96,13 +96,24 @@ class SnapshotWidgetPublisherTest {
     }
 
     @Test
+    fun `should request the poster at the widget size given a full url`() = runTest {
+        bridge.setContainerPath(directory)
+
+        publisher.publish(
+            listOf(show().copy(posterUrl = "https://image.tmdb.org/t/p/original/poster.jpg")),
+        )
+
+        posterDownloader.getRequestedUrls().single() shouldBe "https://image.tmdb.org/t/p/w185/poster.jpg"
+    }
+
+    @Test
     fun `should name the poster after the show`() = runTest {
         bridge.setContainerPath(directory)
 
         publisher.publish(listOf(show()))
 
         val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
-        written?.entries?.single()?.posterFileName shouldBe "1396.jpg"
+        written?.entries?.single()?.posterFileName shouldBe "1396-w185.jpg"
     }
 
     @Test
@@ -131,7 +142,7 @@ class SnapshotWidgetPublisherTest {
 
         publisher.publish(listOf(show()))
 
-        posterDownloader.getKeptFileNames() shouldBe setOf("1396.jpg")
+        posterDownloader.getKeptFileNames() shouldBe setOf("1396-w185.jpg")
     }
 
     private fun show() = WidgetShow(

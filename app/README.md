@@ -460,6 +460,10 @@ graph TB
     :features:watchdate-selection:presenter[presenter]:::multiplatform
     :features:watchdate-selection:ui[ui]:::android-library
   end
+  subgraph :features:widget
+    direction TB
+    :features:widget:ui[ui]:::android-library
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -704,6 +708,7 @@ graph TB
   :app -.-> :features:watchdate-selection:nav
   :app -.-> :features:watchdate-selection:presenter
   :app -.-> :features:watchdate-selection:ui
+  :app -.-> :features:widget:ui
   :app -.-> :i18n:api
   :app -.-> :i18n:generator
   :app -.-> :i18n:implementation
@@ -1824,6 +1829,13 @@ graph TB
   :features:watchdate-selection:ui -.-> :i18n:generator
   :features:watchdate-selection:ui --> :navigation:api
   :features:watchdate-selection:ui --> :navigation:ui
+  :features:widget:ui -.-> :android-designsystem
+  :features:widget:ui --> :core:base
+  :features:widget:ui --> :core:deeplink:api
+  :features:widget:ui --> :core:logger:api
+  :features:widget:ui -.-> :core:test-tags
+  :features:widget:ui --> :domain:widget
+  :features:widget:ui -.-> :i18n:generator
   :i18n:api --> :i18n:generator
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api

@@ -24,19 +24,33 @@ class WidgetTasksInitializerTest {
     private val interactor = ObserveWidgetShowsInteractor(repository)
 
     @Test
-    fun `should schedule the refresh worker given a publisher exists`() = runTest(testDispatcher) {
-        buildInitializer(FakeWidgetPublisher()).init()
+    fun `should schedule the refresh worker given a widget is added`() = runTest(testDispatcher) {
+        val publisher = FakeWidgetPublisher().apply { setInstalled(true) }
+
+        buildInitializer(publisher).init()
         runCurrent()
 
         scheduler.getScheduledRequests().single().id shouldBe WidgetRefreshWorker.WORKER_NAME
     }
 
     @Test
-    fun `should schedule nothing given no publisher exists`() = runTest(testDispatcher) {
+    fun `should cancel the refresh worker given no widget is added`() = runTest(testDispatcher) {
+        val publisher = FakeWidgetPublisher().apply { setInstalled(false) }
+
+        buildInitializer(publisher).init()
+        runCurrent()
+
+        scheduler.getScheduledRequests() shouldBe emptyList()
+        scheduler.getCancelledIds().single() shouldBe WidgetRefreshWorker.WORKER_NAME
+    }
+
+    @Test
+    fun `should touch no schedule given no publisher exists`() = runTest(testDispatcher) {
         buildInitializer().init()
         runCurrent()
 
         scheduler.getScheduledRequests() shouldBe emptyList()
+        scheduler.getCancelledIds() shouldBe emptyList()
     }
 
     @Test
