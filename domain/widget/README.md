@@ -26,6 +26,14 @@ graph TB
     direction TB
     :core:util:api[api]:::multiplatform
   end
+  subgraph :data:datastore
+    direction TB
+    :data:datastore:api[api]:::multiplatform
+  end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -34,15 +42,22 @@ graph TB
     direction TB
     :domain:widget[widget]:::multiplatform
   end
+  subgraph :i18n
+    direction TB
+    :i18n:generator[generator]:::multiplatform
+  end
 
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:view --> :core:logger:api
+  :data:datastore:api --> :i18n:generator
   :domain:widget --> :core:base
   :domain:widget --> :core:files:api
   :domain:widget --> :core:logger:api
   :domain:widget --> :core:tasks:api
   :domain:widget --> :core:util:api
+  :domain:widget --> :data:datastore:api
+  :domain:widget --> :data:subscription:api
   :domain:widget --> :data:upnext:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
