@@ -26,6 +26,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         public let licenseSections: [SettingsLicenseSection]
         public let accountContent: SettingsAccountContent
         public let backupContent: SettingsBackupContent
+        public let widgetAppearanceItem: SettingsWidgetAppearanceItem
 
         public init(
             isLoading: Bool,
@@ -47,7 +48,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             infoContent: SettingsInfoContent,
             licenseSections: [SettingsLicenseSection],
             accountContent: SettingsAccountContent,
-            backupContent: SettingsBackupContent
+            backupContent: SettingsBackupContent,
+            widgetAppearanceItem: SettingsWidgetAppearanceItem
         ) {
             self.isLoading = isLoading
             self.rootTitle = rootTitle
@@ -69,6 +71,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             self.licenseSections = licenseSections
             self.accountContent = accountContent
             self.backupContent = backupContent
+            self.widgetAppearanceItem = widgetAppearanceItem
         }
     }
 
@@ -148,6 +151,8 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             DiscoverSectionsPageView(toggles: state.discoverSectionToggles)
         case .posterStyle:
             PosterStylePageView(item: state.posterStyleItem)
+        case .widgetAppearance:
+            WidgetAppearancePageView(item: state.widgetAppearanceItem)
         case .backup:
             BackupPageView(content: state.backupContent)
         }

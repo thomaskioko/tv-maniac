@@ -152,6 +152,42 @@
             )
         }
 
+        static var widgetThemeOptions: [SettingsWidgetThemeOption] {
+            [
+                SettingsWidgetThemeOption(id: "match_app", label: "App Theme", onSelect: {}),
+                SettingsWidgetThemeOption(id: "system", label: "System", onSelect: {}),
+                SettingsWidgetThemeOption(id: "light", label: "Light", onSelect: {}),
+                SettingsWidgetThemeOption(id: "dark", label: "Dark", onSelect: {}),
+                SettingsWidgetThemeOption(id: "crimson", label: "Crimson", onSelect: {}),
+            ]
+        }
+
+        static var widgetAppearanceItem: SettingsWidgetAppearanceItem {
+            SettingsWidgetAppearanceItem(
+                description: "Choose the theme for your home screen widgets",
+                livePreviewLabel: "Live preview",
+                themeLabel: "Theme",
+                options: widgetThemeOptions,
+                selectedOptionId: "crimson",
+                previewTheme: CrimsonTheme()
+            )
+        }
+
+        static var lockedWidgetAppearanceItem: SettingsWidgetAppearanceItem {
+            SettingsWidgetAppearanceItem(
+                description: "Choose the theme for your home screen widgets",
+                livePreviewLabel: "Live preview",
+                themeLabel: "Theme",
+                options: widgetThemeOptions,
+                selectedOptionId: "match_app",
+                previewTheme: LightTheme(),
+                isLocked: true,
+                lockedBadgeText: "Premium",
+                lockedActionText: "Upgrade to Premium",
+                lockedAccessibilityLabel: "Locked"
+            )
+        }
+
         static var lockedPosterStyleItem: SettingsPosterStyleItem {
             SettingsPosterStyleItem(
                 title: "Poster style",

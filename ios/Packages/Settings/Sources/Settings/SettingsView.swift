@@ -50,7 +50,8 @@ public struct SettingsView: View {
             infoContent: infoContent,
             licenseSections: licenseSections,
             accountContent: accountContent,
-            backupContent: backupContent
+            backupContent: backupContent,
+            widgetAppearanceItem: widgetAppearanceItem
         )
     }
 

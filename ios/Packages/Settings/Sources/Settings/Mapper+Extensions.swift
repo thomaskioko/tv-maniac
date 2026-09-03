@@ -15,6 +15,7 @@ public extension SettingsPage {
         if self == SettingsPage.discoverSections { return .discoverSections }
         if self == SettingsPage.posterStyle { return .posterStyle }
         if self == SettingsPage.backup { return .backup }
+        if self == SettingsPage.widgetAppearance { return .widgetAppearance }
         return .root
     }
 }
