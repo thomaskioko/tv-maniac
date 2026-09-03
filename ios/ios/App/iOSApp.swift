@@ -26,76 +26,95 @@ struct iOSApp: App {
     @State private var dragOffsetX: CGFloat = 0
     @State private var dragOffsetY: CGFloat = 0
 
+    @State private var pendingDeepLinkUrl: String?
+
     var body: some Scene {
         WindowGroup {
-            if let holder = componentHolder {
-                RootToastForwarder(
-                    rootPresenter: holder.component.rootPresenter,
-                    navigator: holder.component.navigator,
-                    registry: screenRegistry
-                )
-                .environmentObject(appDelegate)
-                .environment(toastManager)
-                .overlay(alignment: .top) {
-                    if let toast = toastManager.toast {
-                        ToastView(
-                            type: toast.type,
-                            title: toast.title,
-                            message: toast.message,
-                            loading: toast.loading,
-                            onCancelTapped: {
-                                toastManager.dismiss()
-                            }
-                        )
-                        .offset(x: dragOffsetX, y: dragOffsetY)
-                        .highPriorityGesture(
-                            DragGesture()
-                                .onChanged { value in
-                                    dragOffsetX = value.translation.width
-                                    dragOffsetY = min(0, value.translation.height)
+            Group {
+                if let holder = componentHolder {
+                    RootToastForwarder(
+                        rootPresenter: holder.component.rootPresenter,
+                        navigator: holder.component.navigator,
+                        registry: screenRegistry
+                    )
+                    .environmentObject(appDelegate)
+                    .environment(toastManager)
+                    .overlay(alignment: .top) {
+                        if let toast = toastManager.toast {
+                            ToastView(
+                                type: toast.type,
+                                title: toast.title,
+                                message: toast.message,
+                                loading: toast.loading,
+                                onCancelTapped: {
+                                    toastManager.dismiss()
                                 }
-                                .onEnded { value in
-                                    if value.translation.height < -50 || abs(value.translation.width) > 50 {
-                                        toastManager.dismiss()
-                                        dragOffsetX = 0
-                                        dragOffsetY = 0
-                                    } else {
-                                        withAnimation(.spring()) {
+                            )
+                            .offset(x: dragOffsetX, y: dragOffsetY)
+                            .highPriorityGesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        dragOffsetX = value.translation.width
+                                        dragOffsetY = min(0, value.translation.height)
+                                    }
+                                    .onEnded { value in
+                                        if value.translation.height < -50 || abs(value.translation.width) > 50 {
+                                            toastManager.dismiss()
                                             dragOffsetX = 0
                                             dragOffsetY = 0
+                                        } else {
+                                            withAnimation(.spring()) {
+                                                dragOffsetX = 0
+                                                dragOffsetY = 0
+                                            }
                                         }
                                     }
+                            )
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .padding(.top, 8)
+                            .onChange(of: toastManager.toast) { _, newValue in
+                                if newValue == nil {
+                                    dragOffsetX = 0
+                                    dragOffsetY = 0
                                 }
-                        )
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .padding(.top, 8)
-                        .onChange(of: toastManager.toast) { _, newValue in
-                            if newValue == nil {
-                                dragOffsetX = 0
-                                dragOffsetY = 0
                             }
                         }
                     }
-                }
-                .animation(.spring(), value: toastManager.toast)
-                .provideWidthSizeClass()
-                .onAppear {
-                    authRegistry.register(presenterGraph: holder.component, appGraph: appDelegate.appGraph)
-                    appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)
-                    handleScenePhaseChange(scenePhase, lifecycle: holder.lifecycle)
-                }
-                .onChange(of: scenePhase) { _, newPhase in
-                    handleScenePhaseChange(newPhase, lifecycle: holder.lifecycle)
-                }
-            } else {
-                Color.clear.onAppear {
-                    componentHolder = ComponentHolder { context in
-                        appDelegate.appGraph.viewPresenterGraphFactory.createGraph(
-                            componentContext: context
-                        )
+                    .animation(.spring(), value: toastManager.toast)
+                    .provideWidthSizeClass()
+                    .onAppear {
+                        authRegistry.register(presenterGraph: holder.component, appGraph: appDelegate.appGraph)
+                        appDelegate.configureNotificationDelegate(rootPresenter: holder.component.rootPresenter)
+                        handleScenePhaseChange(scenePhase, lifecycle: holder.lifecycle)
+                        if let url = pendingDeepLinkUrl {
+                            pendingDeepLinkUrl = nil
+                            holder.component.rootPresenter.onDeepLinkUrl(url: url)
+                        }
+                    }
+                    .onChange(of: scenePhase) { _, newPhase in
+                        handleScenePhaseChange(newPhase, lifecycle: holder.lifecycle)
+                    }
+                } else {
+                    Color.clear.onAppear {
+                        componentHolder = ComponentHolder { context in
+                            appDelegate.appGraph.viewPresenterGraphFactory.createGraph(
+                                componentContext: context
+                            )
+                        }
                     }
                 }
             }
+            .onOpenURL { url in
+                openDeepLink(url)
+            }
+        }
+    }
+
+    private func openDeepLink(_ url: URL) {
+        if let holder = componentHolder {
+            holder.component.rootPresenter.onDeepLinkUrl(url: url.absoluteString)
+        } else {
+            pendingDeepLinkUrl = url.absoluteString
         }
     }
 

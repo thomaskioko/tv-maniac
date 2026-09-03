@@ -8,4 +8,5 @@ public enum class ScreenSource {
     DISCOVER,
     UP_NEXT,
     CALENDAR,
+    DEEP_LINK,
 }

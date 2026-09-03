@@ -17,12 +17,14 @@ public class ObservePremiumAccessInteractor(
         subscriptionManager.observeAccess(SubscriptionFeature.EpisodeNotifications),
         subscriptionManager.observeAccess(SubscriptionFeature.QuickRate),
         subscriptionManager.observeAccess(SubscriptionFeature.CloudBackup),
-    ) { customThemes, episodeNotifications, quickRate, backup ->
+        subscriptionManager.observeAccess(SubscriptionFeature.WidgetTheming),
+    ) { customThemes, episodeNotifications, quickRate, backup, widgetTheming ->
         PremiumAccess(
             backup = backup,
             customThemes = customThemes,
             episodeNotifications = episodeNotifications,
             quickRate = quickRate,
+            widgetTheming = widgetTheming,
         )
     }
 }

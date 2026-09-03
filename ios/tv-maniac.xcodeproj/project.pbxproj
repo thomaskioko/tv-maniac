@@ -7,11 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D6C17E51000000000000000C /* TvManiacTestTags in Frameworks */ = {isa = PBXBuildFile; productRef = D6C17E51000000000000000B /* TvManiacTestTags */; };
 		D60D952B2CDBE1160039884B /* TvManiacKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60D952A2CDBE1160039884B /* TvManiacKit */; };
 		D60F8D272EC8060C00916042 /* TraktAuthKit in Frameworks */ = {isa = PBXBuildFile; productRef = D60F8D262EC8060C00916042 /* TraktAuthKit */; };
 		D6A2A0EC2EC800000001CD83 /* CoreKit in Frameworks */ = {isa = PBXBuildFile; productRef = D6A2A0ED2EC800000001CD83 /* CoreKit */; };
+		D6C17E51000000000000000C /* TvManiacTestTags in Frameworks */ = {isa = PBXBuildFile; productRef = D6C17E51000000000000000B /* TvManiacTestTags */; };
 		D6F1A0012F61B0A100000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */; };
+		D6FE6A4E303E221300F89B66 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FE6A4D303E221300F89B66 /* WidgetKit.framework */; };
+		D6FE6A50303E221300F89B66 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6FE6A4F303E221300F89B66 /* SwiftUI.framework */; };
+		D6FE6A5B303E221400F89B66 /* TvManiacWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D6FE6A4C303E221300F89B66 /* TvManiacWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D6FE7590303E257000F89B66 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = D6FE758F303E257000F89B66 /* DesignSystem */; };
+		D6FE7592303E257500F89B66 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = D6FE7591303E257500F89B66 /* Models */; };
+		D6FE7594303E257900F89B66 /* Widgets in Frameworks */ = {isa = PBXBuildFile; productRef = D6FE7593303E257900F89B66 /* Widgets */; };
 		D6FEA700000000000001AA01 /* MyShows in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA01 /* MyShows */; };
 		D6FEA700000000000001AA02 /* Search in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA02 /* Search */; };
 		D6FEA700000000000001AA03 /* Library in Frameworks */ = {isa = PBXBuildFile; productRef = D6FEA700000000000002AA03 /* Library */; };
@@ -30,6 +36,23 @@
 		E9AC834C26CEE00D00829A0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9AC834B26CEE00D00829A0D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D6C17E510000000000000007 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7555FF73242A565900829871 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7555FF7A242A565900829871;
+			remoteInfo = "tv-maniac";
+		};
+		D6FE6A59303E221400F89B66 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7555FF73242A565900829871 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D6FE6A4B303E221300F89B66;
+			remoteInfo = TvManiacWidget;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		7555FFB4242A642300829871 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -41,15 +64,39 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6FE6A5C303E221400F89B66 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D6FE6A5B303E221400F89B66 /* TvManiacWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7555FF7B242A565900829871 /* tv-maniac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tv-maniac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6C17E510000000000000001 /* tvmaniacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tvmaniacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6F1A0002F61B0A100000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		D6FE6A4C303E221300F89B66 /* TvManiacWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TvManiacWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6FE6A4D303E221300F89B66 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		D6FE6A4F303E221300F89B66 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		E9AC834B26CEE00D00829A0D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D6FE6A5F303E221400F89B66 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D6FE6A4B303E221300F89B66 /* TvManiacWidget */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D639FA9E2F77530500F3C67B /* Firebase */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Firebase; sourceTree = "<group>"; };
@@ -57,6 +104,7 @@
 		D68A22262F415DC30034550F /* Config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Config; sourceTree = "<group>"; };
 		D6A2A0EB2EC7FD8C0001CD82 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
 		D6C17E510000000000000002 /* tvmaniacUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = tvmaniacUITests; sourceTree = "<group>"; };
+		D6FE6A51303E221300F89B66 /* TvManiacWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D6FE6A5F303E221400F89B66 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TvManiacWidget; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +141,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D6FE6A49303E221300F89B66 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D6FE7590303E257000F89B66 /* DesignSystem in Frameworks */,
+				D6FE6A50303E221300F89B66 /* SwiftUI.framework in Frameworks */,
+				D6FE7592303E257500F89B66 /* Models in Frameworks */,
+				D6FE7594303E257900F89B66 /* Widgets in Frameworks */,
+				D6FE6A4E303E221300F89B66 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -103,6 +163,7 @@
 				7555FF7D242A565900829871 /* ios */,
 				D6A2A0EB2EC7FD8C0001CD82 /* Packages */,
 				D6C17E510000000000000002 /* tvmaniacUITests */,
+				D6FE6A51303E221300F89B66 /* TvManiacWidget */,
 				7555FF7C242A565900829871 /* Products */,
 				D6619D2A2C8738F200D273E7 /* Frameworks */,
 			);
@@ -113,6 +174,7 @@
 			children = (
 				7555FF7B242A565900829871 /* tv-maniac.app */,
 				D6C17E510000000000000001 /* tvmaniacUITests.xctest */,
+				D6FE6A4C303E221300F89B66 /* TvManiacWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -132,6 +194,8 @@
 		D6619D2A2C8738F200D273E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D6FE6A4D303E221300F89B66 /* WidgetKit.framework */,
+				D6FE6A4F303E221300F89B66 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -149,10 +213,12 @@
 				7555FF79242A565900829871 /* Resources */,
 				D6CDA52D2F417A820021240C /* Copy GoogleService-Info.plist */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
+				D6FE6A5C303E221400F89B66 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D6FE6A5A303E221400F89B66 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D65009DC2CF644BE00394D67 /* App */,
@@ -206,6 +272,31 @@
 			productReference = D6C17E510000000000000001 /* tvmaniacUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		D6FE6A4B303E221300F89B66 /* TvManiacWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D6FE6A60303E221400F89B66 /* Build configuration list for PBXNativeTarget "TvManiacWidget" */;
+			buildPhases = (
+				D6FE6A48303E221300F89B66 /* Sources */,
+				D6FE6A49303E221300F89B66 /* Frameworks */,
+				D6FE6A4A303E221300F89B66 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D6FE6A51303E221300F89B66 /* TvManiacWidget */,
+			);
+			name = TvManiacWidget;
+			packageProductDependencies = (
+				D6FE758F303E257000F89B66 /* DesignSystem */,
+				D6FE7591303E257500F89B66 /* Models */,
+				D6FE7593303E257900F89B66 /* Widgets */,
+			);
+			productName = TvManiacWidget;
+			productReference = D6FE6A4C303E221300F89B66 /* TvManiacWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -213,7 +304,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 1540;
 				ORGANIZATIONNAME = orgName;
 				TargetAttributes = {
@@ -224,6 +315,9 @@
 						CreatedOnToolsVersion = 26.5;
 						TestTargetID = 7555FF7A242A565900829871;
 					};
+					D6FE6A4B303E221300F89B66 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 				};
 			};
 			buildConfigurationList = 7555FF76242A565900829871 /* Build configuration list for PBXProject "tv-maniac" */;
@@ -233,6 +327,8 @@
 			knownRegions = (
 				en,
 				Base,
+				fr,
+				de,
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
@@ -243,6 +339,7 @@
 			targets = (
 				7555FF7A242A565900829871 /* tv-maniac */,
 				D6997E342C95A04600D18112 /* tvmaniacUITests */,
+				D6FE6A4B303E221300F89B66 /* TvManiacWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -258,6 +355,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D6C17E510000000000000005 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6FE6A4A303E221300F89B66 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -320,23 +424,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXContainerItemProxy section */
-		D6C17E510000000000000007 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7555FF73242A565900829871 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7555FF7A242A565900829871;
-			remoteInfo = "tv-maniac";
+		D6FE6A48303E221300F89B66 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXContainerItemProxy section */
+/* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		D6C17E510000000000000006 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7555FF7A242A565900829871 /* tv-maniac */;
 			targetProxy = D6C17E510000000000000007 /* PBXContainerItemProxy */;
+		};
+		D6FE6A5A303E221400F89B66 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D6FE6A4B303E221300F89B66 /* TvManiacWidget */;
+			targetProxy = D6FE6A59303E221400F89B66 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -488,6 +594,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "ios/tv-maniac.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -528,6 +635,7 @@
 			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(EMBEDDED_CONTENT_CONTAINS_SWIFT)";
+				CODE_SIGN_ENTITLEMENTS = "ios/tv-maniac.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -605,6 +713,83 @@
 			};
 			name = Release;
 		};
+		D6FE6A5D303E221400F89B66 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TvManiacWidget/TvManiacWidget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 2M53227BD2;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TvManiacWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TvManiacWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 orgName. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID).widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D6FE6A5E303E221400F89B66 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TvManiacWidget/TvManiacWidget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2M53227BD2;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TvManiacWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TvManiacWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 orgName. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID).widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -635,6 +820,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		D6FE6A60303E221400F89B66 /* Build configuration list for PBXNativeTarget "TvManiacWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6FE6A5D303E221400F89B66 /* Debug */,
+				D6FE6A5E303E221400F89B66 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -649,6 +843,22 @@
 		D6A2A0ED2EC800000001CD83 /* CoreKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CoreKit;
+		};
+		D6C17E51000000000000000B /* TvManiacTestTags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TvManiacTestTags;
+		};
+		D6FE758F303E257000F89B66 /* DesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DesignSystem;
+		};
+		D6FE7591303E257500F89B66 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+		D6FE7593303E257900F89B66 /* Widgets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Widgets;
 		};
 		D6FEA700000000000002AA01 /* MyShows */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -705,10 +915,6 @@
 		D6FEA700000000000002AA14 /* Root */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Root;
-		};
-		D6C17E51000000000000000B /* TvManiacTestTags */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = TvManiacTestTags;
 		};
 		D6FEA700000000000002AA15 /* TvManiac */ = {
 			isa = XCSwiftPackageProductDependency;

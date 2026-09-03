@@ -102,6 +102,11 @@
     <string name="settings_poster_corner_classic">Classic</string>
     <string name="settings_poster_corner_rounded">Rounded</string>
     <string name="settings_poster_corner_pill">Pill</string>
+    <string name="settings_widget_title">Widget appearance</string>
+    <string name="settings_widget_description">Choose the theme for your home screen widgets</string>
+    <string name="settings_widget_theme_label">Theme</string>
+    <string name="settings_widget_theme_match_app">App Theme</string>
+    <string name="settings_widget_live_preview">Live preview</string>
     <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
     <string name="label_settings_connect_title">Connect</string>
     <string name="label_settings_account_sync_description">Save your progress, discover new titles, and sync your content across all devices.</string>
@@ -631,4 +636,10 @@
     <string name="error_backup_sync_in_progress">A sync is running. Wait for it to finish, then try again.</string>
     <string name="label_backup_locked_title">Backup is a Premium feature</string>
     <string name="label_backup_locked_message">Upgrade to Premium to save and restore your shows.</string>
+    <string name="widget_up_next_name">Up Next</string>
+    <string name="widget_up_next_description">See the next episode to watch from your watchlist.</string>
+    <string name="widget_next_episode_name">Next Episode</string>
+    <string name="widget_next_episode_description">See the poster for the next episode on your watchlist.</string>
+    <string name="widget_empty_watchlist">Nothing to watch next. Track a show to see it here.</string>
+    <string name="widget_season_episode">S%1$s | E%2$s</string>
 </resources>

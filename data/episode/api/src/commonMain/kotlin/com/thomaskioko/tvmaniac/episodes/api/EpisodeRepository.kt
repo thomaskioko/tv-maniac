@@ -135,6 +135,12 @@ public interface EpisodeRepository {
 
     public suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo?
 
+    public suspend fun getEpisodeId(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Long?
+
     public companion object {
         public const val ALL_SEASONS: Long = Long.MAX_VALUE
     }

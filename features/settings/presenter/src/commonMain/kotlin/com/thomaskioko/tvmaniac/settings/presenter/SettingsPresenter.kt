@@ -188,6 +188,7 @@ public class SettingsPresenter internal constructor(
             posterWidth = preferences.layout.posterWidth,
             landscapeWidth = preferences.layout.landscapeWidth,
             posterCornerStyle = preferences.layout.posterCornerStyle,
+            widgetTheme = preferences.widgetTheme?.toThemeModel(),
             isDebugMenuEnabled = preferences.debugMenuEnabled,
             message = message,
             premium = labelsMapper.toPremiumState(premiumAccess),
@@ -376,6 +377,13 @@ public class SettingsPresenter internal constructor(
                     datastoreRepository.savePosterWidth(PosterWidth.STANDARD)
                     datastoreRepository.saveLandscapeWidth(PosterWidth.STANDARD)
                     datastoreRepository.savePosterCornerStyle(PosterCornerStyle.SHARP)
+                }
+            }
+
+            is WidgetThemeSelected -> {
+                if (state.value.premium.widgetThemingLocked) return
+                coroutineScope.launch {
+                    datastoreRepository.saveWidgetTheme(action.theme?.toAppTheme())
                 }
             }
 
@@ -689,6 +697,7 @@ public class SettingsPresenter internal constructor(
         SettingsPage.ACCOUNT,
         SettingsPage.LAYOUT,
         SettingsPage.BACKUP,
+        SettingsPage.WIDGET_APPEARANCE,
         -> SettingsPage.ROOT
 
         SettingsPage.DISCOVER_SECTIONS,
@@ -806,6 +815,7 @@ public class SettingsPresenter internal constructor(
             SettingsPage.DISCOVER_SECTIONS -> StringResourceKey.SettingsDiscoverSectionsTitle
             SettingsPage.POSTER_STYLE -> StringResourceKey.SettingsPosterStyleTitle
             SettingsPage.BACKUP -> StringResourceKey.SettingsBackupTitle
+            SettingsPage.WIDGET_APPEARANCE -> StringResourceKey.SettingsWidgetTitle
         },
     )
 
@@ -886,6 +896,11 @@ public class SettingsPresenter internal constructor(
                             page = SettingsPage.PRIVACY,
                             title = localizer.getString(StringResourceKey.LabelSettingsSectionPrivacy),
                             summary = localizer.getString(StringResourceKey.LabelSettingsPrivacyDescription),
+                        ),
+                        SettingsCategoryItem(
+                            page = SettingsPage.WIDGET_APPEARANCE,
+                            title = localizer.getString(StringResourceKey.SettingsWidgetTitle),
+                            summary = localizer.getString(StringResourceKey.SettingsWidgetDescription),
                         ),
                         SettingsCategoryItem(
                             page = SettingsPage.BACKUP,

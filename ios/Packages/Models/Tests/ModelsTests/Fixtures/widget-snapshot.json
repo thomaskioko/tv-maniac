@@ -1,0 +1,21 @@
+{
+  "writtenAtMillis": 1724400000000,
+  "themeName": "DARK_THEME",
+  "entries": [
+    {
+      "tmdbId": 1396,
+      "showName": "Breaking Bad",
+      "episodeName": "Pilot",
+      "seasonNumber": 1,
+      "episodeNumber": 1,
+      "posterFileName": "1396.jpg"
+    },
+    {
+      "tmdbId": 60059,
+      "showName": "Better Call Saul",
+      "episodeName": "Uno",
+      "seasonNumber": 1,
+      "episodeNumber": 1
+    }
+  ]
+}

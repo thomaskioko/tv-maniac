@@ -311,6 +311,7 @@ extension SettingsScreenTest {
             navItem(.behavior, "Behavior", "Sync, specials, and trailers"),
             navItem(.notifications, "Notifications", "Episode release alerts"),
             navItem(.privacy, "Privacy", "Crash reporting and privacy policy"),
+            navItem(.widgetAppearance, "Widget appearance", "Choose the theme for your home screen widgets"),
         ]))
         sections.append(SettingsRootSection(id: "about", label: "About", items: [
             navItem(.info, "Info", "App version and source code"),
@@ -323,6 +324,36 @@ extension SettingsScreenTest {
         SettingsNavigationItem(id: route.rawValue, icon: route.iconName, title: title, subtitle: subtitle, onTap: {})
     }
 
+    func widgetAppearanceItem(
+        selectedOptionId: String = "match_app",
+        previewTheme: TvManiacTheme = LightTheme(),
+        isLocked: Bool = false
+    ) -> SettingsWidgetAppearanceItem {
+        SettingsWidgetAppearanceItem(
+            description: "Choose the theme for your home screen widgets",
+            livePreviewLabel: "Live preview",
+            themeLabel: "Theme",
+            options: [
+                SettingsWidgetThemeOption(id: "match_app", label: "App Theme", onSelect: {}),
+                SettingsWidgetThemeOption(id: "system", label: "System", onSelect: {}),
+                SettingsWidgetThemeOption(id: "light", label: "Light", onSelect: {}),
+                SettingsWidgetThemeOption(id: "dark", label: "Dark", onSelect: {}),
+                SettingsWidgetThemeOption(id: "autumn", label: "Autumn", onSelect: {}),
+                SettingsWidgetThemeOption(id: "aqua", label: "Aqua", onSelect: {}),
+                SettingsWidgetThemeOption(id: "amber", label: "Amber", onSelect: {}),
+                SettingsWidgetThemeOption(id: "snow", label: "Snow", onSelect: {}),
+                SettingsWidgetThemeOption(id: "terminal", label: "Terminal", onSelect: {}),
+                SettingsWidgetThemeOption(id: "crimson", label: "Crimson", onSelect: {}),
+            ],
+            selectedOptionId: selectedOptionId,
+            previewTheme: previewTheme,
+            isLocked: isLocked,
+            lockedBadgeText: isLocked ? "Premium" : "",
+            lockedActionText: isLocked ? "Upgrade to Premium" : "",
+            lockedAccessibilityLabel: isLocked ? "Locked" : ""
+        )
+    }
+
     func makeState(
         page: SettingsPageRoute,
         authenticated: Bool,
@@ -333,7 +364,8 @@ extension SettingsScreenTest {
         customBehaviorToggles: [SettingsToggleItem]? = nil,
         fontSizePercent: Int = 100,
         customPosterStyleItem: SettingsPosterStyleItem? = nil,
-        customBackupContent: SettingsBackupContent? = nil
+        customBackupContent: SettingsBackupContent? = nil,
+        customWidgetAppearanceItem: SettingsWidgetAppearanceItem? = nil
     ) -> SettingsScreen<ThemeItemModel>.State {
         SettingsScreen<ThemeItemModel>.State(
             isLoading: isLoading,
@@ -355,7 +387,8 @@ extension SettingsScreenTest {
             infoContent: infoContent,
             licenseSections: licenseSections,
             accountContent: customAccountContent ?? accountContent(authenticated: authenticated),
-            backupContent: customBackupContent ?? backupContent()
+            backupContent: customBackupContent ?? backupContent(),
+            widgetAppearanceItem: customWidgetAppearanceItem ?? widgetAppearanceItem()
         )
     }
 }

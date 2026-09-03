@@ -4,6 +4,7 @@ TEST_DEVICE = "iPhone 17 Pro"
 TEST_OS = "26.5"
 TEST_DESTINATION = "platform=iOS Simulator,OS=#{TEST_OS},name=#{TEST_DEVICE}"
 PACKAGE_NAME = "com.thomaskioko.tvmaniac"
+WIDGET_PACKAGE_NAME = "#{PACKAGE_NAME}.widget"
 PROJECT_DIR = File.expand_path('..', Dir.pwd)
 DERIVED_DATA_PATH = "#{PROJECT_DIR}/derived_data"
 COMPILATION_CACHE_PATH = "#{PROJECT_DIR}/compilation_cache"
@@ -195,7 +196,7 @@ platform :ios do
     api_key = get_api_key
     match(
       type: "appstore",
-      app_identifier: PACKAGE_NAME,
+      app_identifier: [PACKAGE_NAME, WIDGET_PACKAGE_NAME],
       git_url: ENV["MATCH_GIT_URL"]&.strip,
       readonly: true,
       api_key: api_key,
@@ -244,6 +245,16 @@ platform :ios do
       code_sign_identity: "Apple Distribution",
       profile_name: "match AppStore #{PACKAGE_NAME}",
       bundle_identifier: PACKAGE_NAME,
+    )
+
+    update_code_signing_settings(
+      path: "ios/tv-maniac.xcodeproj",
+      use_automatic_signing: false,
+      team_id: "2M53227BD2",
+      targets: ["TvManiacWidget"],
+      code_sign_identity: "Apple Distribution",
+      profile_name: "match AppStore #{WIDGET_PACKAGE_NAME}",
+      bundle_identifier: WIDGET_PACKAGE_NAME,
     )
 
     build_kmp_framework(configuration: "release", device_platform: "device")

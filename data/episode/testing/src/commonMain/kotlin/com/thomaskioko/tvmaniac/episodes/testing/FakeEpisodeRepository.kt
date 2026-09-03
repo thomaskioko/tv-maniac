@@ -85,6 +85,7 @@ public class FakeEpisodeRepository : EpisodeRepository {
     private val upcomingEpisodesFlow = MutableStateFlow<List<UpcomingEpisode>>(emptyList())
     private val recentlyWatchedFlow = MutableStateFlow<List<RecentlyWatchedEpisode>>(emptyList())
     private val showMetadataSyncInfo = mutableMapOf<Long, ShowMetadataSyncInfo?>()
+    private val episodeIds = mutableMapOf<Triple<Long, Long, Long>, Long?>()
 
     public var lastMarkEpisodeWatchedCall: MarkEpisodeWatchedCall? = null
         private set
@@ -145,6 +146,15 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     public fun setShowMetadataSyncInfo(showId: Long, info: ShowMetadataSyncInfo?) {
         showMetadataSyncInfo[showId] = info
+    }
+
+    public fun setEpisodeId(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+        episodeId: Long?,
+    ) {
+        episodeIds[Triple(showId, seasonNumber, episodeNumber)] = episodeId
     }
 
     override fun observeEpisodeById(episodeId: Long): Flow<EpisodeById?> =
@@ -285,4 +295,10 @@ public class FakeEpisodeRepository : EpisodeRepository {
 
     override suspend fun getShowMetadataSyncInfo(showId: Long): ShowMetadataSyncInfo? =
         showMetadataSyncInfo[showId]
+
+    override suspend fun getEpisodeId(
+        showId: Long,
+        seasonNumber: Long,
+        episodeNumber: Long,
+    ): Long? = episodeIds[Triple(showId, seasonNumber, episodeNumber)]
 }

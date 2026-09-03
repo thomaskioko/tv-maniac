@@ -104,6 +104,10 @@ public data class PosterCornerStyleSelected(
 
 public data object PosterStyleReset : SettingsActions
 
+public data class WidgetThemeSelected(
+    val theme: ThemeModel?,
+) : SettingsActions
+
 public data class SettingsMessageShown(val id: Long) : SettingsActions
 
 public data object BackupExportClicked : SettingsActions

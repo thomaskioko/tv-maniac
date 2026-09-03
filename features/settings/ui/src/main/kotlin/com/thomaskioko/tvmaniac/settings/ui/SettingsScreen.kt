@@ -53,6 +53,7 @@ import com.thomaskioko.tvmaniac.settings.ui.components.NotificationsPage
 import com.thomaskioko.tvmaniac.settings.ui.components.PosterStylePage
 import com.thomaskioko.tvmaniac.settings.ui.components.PrivacyPage
 import com.thomaskioko.tvmaniac.settings.ui.components.SettingsRootContent
+import com.thomaskioko.tvmaniac.settings.ui.components.WidgetAppearancePage
 import com.thomaskioko.tvmaniac.testtags.settings.SettingsTestTags
 import io.github.thomaskioko.codegen.annotations.ScreenUi
 
@@ -164,6 +165,10 @@ internal fun SettingsScreen(
                             onAction = onAction,
                         )
                         SettingsPage.POSTER_STYLE -> PosterStylePage(
+                            state = state,
+                            onAction = onAction,
+                        )
+                        SettingsPage.WIDGET_APPEARANCE -> WidgetAppearancePage(
                             state = state,
                             onAction = onAction,
                         )

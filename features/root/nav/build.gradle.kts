@@ -3,6 +3,7 @@ plugins {
 }
 
 scaffold {
+    useMetro()
     useSerialization()
 }
 
@@ -11,6 +12,12 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.domain.theme)
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(libs.bundles.unittest)
             }
         }
     }

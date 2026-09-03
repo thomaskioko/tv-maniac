@@ -99,6 +99,11 @@
     <string name="settings_poster_corner_classic">Klassisch</string>
     <string name="settings_poster_corner_rounded">Abgerundet</string>
     <string name="settings_poster_corner_pill">Pille</string>
+    <string name="settings_widget_title">Widget-Darstellung</string>
+    <string name="settings_widget_description">Design deiner Startbildschirm-Widgets wählen</string>
+    <string name="settings_widget_theme_label">Design</string>
+    <string name="settings_widget_theme_match_app">App-Design</string>
+    <string name="settings_widget_live_preview">Live-Vorschau</string>
     <string name="label_settings_trakt_authentication">Verbinden &amp; Inhalte synchronisieren</string>
     <string name="label_settings_connect_title">Verbinden</string>
     <string name="label_settings_account_sync_description">Speichere deinen Fortschritt, entdecke neue Titel und synchronisiere deine Inhalte auf allen Geräten.</string>
@@ -636,4 +641,10 @@
     <string name="menu_open_season">Staffel öffnen</string>
     <string name="menu_open_show">Serie öffnen</string>
     <string name="menu_unfollow_show">Nicht mehr folgen</string>
+    <string name="widget_up_next_name">Als Nächstes</string>
+    <string name="widget_up_next_description">Zeigt die nächste Folge aus deiner Merkliste.</string>
+    <string name="widget_next_episode_name">Nächste Folge</string>
+    <string name="widget_next_episode_description">Zeigt das Poster der nächsten Folge aus deiner Merkliste.</string>
+    <string name="widget_empty_watchlist">Nichts zum Weiterschauen. Verfolge eine Serie, um sie hier zu sehen.</string>
+    <string name="widget_season_episode">S%1$s | E%2$s</string>
 </resources>

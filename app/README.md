@@ -39,10 +39,19 @@ graph TB
     :core:connectivity:api[api]:::multiplatform
     :core:connectivity:implementation[implementation]:::multiplatform
   end
+  subgraph :core:deeplink
+    direction TB
+    :core:deeplink:api[api]:::multiplatform
+    :core:deeplink:implementation[implementation]:::multiplatform
+  end
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
     :core:feature-flags:implementation[implementation]:::multiplatform
+  end
+  subgraph :core:files
+    direction TB
+    :core:files:api[api]:::multiplatform
   end
   subgraph :core:imageloading
     direction TB
@@ -309,6 +318,7 @@ graph TB
     :domain:theme[theme]:::multiplatform
     :domain:traktlists[traktlists]:::multiplatform
     :domain:user[user]:::multiplatform
+    :domain:widget[widget]:::multiplatform
   end
   subgraph :features:calendar
     direction TB
@@ -450,6 +460,10 @@ graph TB
     :features:watchdate-selection:presenter[presenter]:::multiplatform
     :features:watchdate-selection:ui[ui]:::android-library
   end
+  subgraph :features:widget
+    direction TB
+    :features:widget:ui[ui]:::android-library
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -516,6 +530,8 @@ graph TB
   :app -.-> :core:appconfig:implementation
   :app -.-> :core:base
   :app -.-> :core:connectivity:implementation
+  :app -.-> :core:deeplink:api
+  :app -.-> :core:deeplink:implementation
   :app -.-> :core:feature-flags:api
   :app -.-> :core:feature-flags:implementation
   :app -.-> :core:imageloading:implementation
@@ -628,6 +644,7 @@ graph TB
   :app -.-> :domain:theme
   :app -.-> :domain:traktlists
   :app -.-> :domain:user
+  :app -.-> :domain:widget
   :app -.-> :features:calendar:presenter
   :app -.-> :features:continue-watching:presenter
   :app -.-> :features:debug:nav
@@ -691,6 +708,7 @@ graph TB
   :app -.-> :features:watchdate-selection:nav
   :app -.-> :features:watchdate-selection:presenter
   :app -.-> :features:watchdate-selection:ui
+  :app -.-> :features:widget:ui
   :app -.-> :i18n:api
   :app -.-> :i18n:generator
   :app -.-> :i18n:implementation
@@ -705,6 +723,7 @@ graph TB
   :core:base --> :core:view
   :core:connectivity:implementation -.-> :core:base
   :core:connectivity:implementation --> :core:connectivity:api
+  :core:deeplink:implementation --> :core:deeplink:api
   :core:feature-flags:implementation --> :core:appconfig:api
   :core:feature-flags:implementation --> :core:base
   :core:feature-flags:implementation --> :core:feature-flags:api
@@ -1249,6 +1268,14 @@ graph TB
   :domain:user --> :data:account-manager:api
   :domain:user --> :data:traktlists:api
   :domain:user --> :data:user:api
+  :domain:widget --> :core:base
+  :domain:widget --> :core:files:api
+  :domain:widget --> :core:logger:api
+  :domain:widget --> :core:tasks:api
+  :domain:widget --> :core:util:api
+  :domain:widget --> :data:datastore:api
+  :domain:widget --> :data:subscription:api
+  :domain:widget --> :data:upnext:api
   :features:calendar:presenter -.-> :core:base
   :features:calendar:presenter --> :core:logger:api
   :features:calendar:presenter --> :core:view
@@ -1541,15 +1568,18 @@ graph TB
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
+  :features:root:presenter --> :core:deeplink:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
+  :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme
   :features:root:presenter --> :domain:user
   :features:root:presenter -.-> :features:debug:nav
+  :features:root:presenter -.-> :features:episode-sheet:nav
   :features:root:presenter --> :features:home:presenter
   :features:root:presenter --> :features:root:nav
   :features:root:presenter -.-> :features:season-details:nav
@@ -1801,6 +1831,15 @@ graph TB
   :features:watchdate-selection:ui -.-> :i18n:generator
   :features:watchdate-selection:ui --> :navigation:api
   :features:watchdate-selection:ui --> :navigation:ui
+  :features:widget:ui -.-> :android-designsystem
+  :features:widget:ui --> :core:base
+  :features:widget:ui --> :core:deeplink:api
+  :features:widget:ui --> :core:logger:api
+  :features:widget:ui -.-> :core:test-tags
+  :features:widget:ui --> :data:datastore:api
+  :features:widget:ui -.-> :domain:theme
+  :features:widget:ui --> :domain:widget
+  :features:widget:ui -.-> :i18n:generator
   :i18n:api --> :i18n:generator
   :i18n:implementation --> :core:base
   :i18n:implementation --> :core:locale:api

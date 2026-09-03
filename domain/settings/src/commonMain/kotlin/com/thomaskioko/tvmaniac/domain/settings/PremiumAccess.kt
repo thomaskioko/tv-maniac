@@ -5,4 +5,5 @@ public data class PremiumAccess(
     val customThemes: Boolean = false,
     val episodeNotifications: Boolean = false,
     val quickRate: Boolean = false,
+    val widgetTheming: Boolean = false,
 )

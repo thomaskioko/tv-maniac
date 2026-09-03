@@ -35,6 +35,11 @@ graph TB
     :core:connectivity:api[api]:::multiplatform
     :core:connectivity:implementation[implementation]:::multiplatform
   end
+  subgraph :core:deeplink
+    direction TB
+    :core:deeplink:api[api]:::multiplatform
+    :core:deeplink:implementation[implementation]:::multiplatform
+  end
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
@@ -254,6 +259,10 @@ graph TB
     direction TB
     :features:discover:nav[nav]:::multiplatform
   end
+  subgraph :features:episode-sheet
+    direction TB
+    :features:episode-sheet:nav[nav]:::multiplatform
+  end
   subgraph :features:home
     direction TB
     :features:home:nav[nav]:::multiplatform
@@ -355,6 +364,7 @@ graph TB
   :core:base --> :core:view
   :core:connectivity:implementation -.-> :core:base
   :core:connectivity:implementation --> :core:connectivity:api
+  :core:deeplink:implementation --> :core:deeplink:api
   :core:feature-flags:implementation --> :core:appconfig:api
   :core:feature-flags:implementation --> :core:base
   :core:feature-flags:implementation --> :core:feature-flags:api
@@ -370,6 +380,8 @@ graph TB
   :core:integration:infra --> :core:base
   :core:integration:infra --> :core:connectivity:api
   :core:integration:infra --> :core:connectivity:implementation
+  :core:integration:infra --> :core:deeplink:api
+  :core:integration:infra --> :core:deeplink:implementation
   :core:integration:infra --> :core:feature-flags:api
   :core:integration:infra --> :core:feature-flags:implementation
   :core:integration:infra --> :core:integration:stubs
@@ -788,6 +800,7 @@ graph TB
   :domain:user --> :data:user:api
   :features:debug:nav --> :navigation:api
   :features:discover:nav --> :navigation:api
+  :features:episode-sheet:nav --> :navigation:api
   :features:home:nav --> :navigation:api
   :features:home:presenter --> :core:base
   :features:home:presenter --> :domain:user
@@ -805,15 +818,18 @@ graph TB
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
+  :features:root:presenter --> :core:deeplink:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
+  :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme
   :features:root:presenter --> :domain:user
   :features:root:presenter -.-> :features:debug:nav
+  :features:root:presenter -.-> :features:episode-sheet:nav
   :features:root:presenter --> :features:home:presenter
   :features:root:presenter --> :features:root:nav
   :features:root:presenter -.-> :features:season-details:nav

@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.model.AppUiState
-import com.thomaskioko.root.model.DeepLinkDestination
 import com.thomaskioko.root.model.NotificationPermissionState
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
@@ -18,6 +17,8 @@ import com.thomaskioko.tvmaniac.core.base.extensions.componentCoroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.base.extensions.minTrueDuration
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
+import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkParser
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessage
@@ -25,8 +26,13 @@ import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.debug.nav.DebugRoute
+import com.thomaskioko.tvmaniac.domain.episode.ResolveEpisodeIdInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ResolveEpisodeIdParams
 import com.thomaskioko.tvmaniac.domain.logout.LogoutInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetRoute
+import com.thomaskioko.tvmaniac.espisodedetails.nav.model.ScreenSource
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.NavDestination
@@ -83,6 +89,8 @@ public class DefaultRootPresenter(
     private val accountManager: AccountManager,
     private val updateUserProfileData: UpdateUserProfileData,
     private val logoutInteractor: LogoutInteractor,
+    private val resolveEpisodeIdInteractor: ResolveEpisodeIdInteractor,
+    private val deepLinkParser: DeepLinkParser,
     private val logger: Logger,
     private val datastoreRepository: DatastoreRepository,
     private val syncObserver: SyncObserver,
@@ -300,9 +308,14 @@ public class DefaultRootPresenter(
         }
     }
 
-    override fun onDeepLink(destination: DeepLinkDestination) {
+    override fun onDeepLinkUrl(url: String?) {
+        val destination = deepLinkParser.parse(url) ?: return
+        onDeepLink(destination)
+    }
+
+    override fun onDeepLink(destination: DeepLink) {
         when (destination) {
-            is DeepLinkDestination.ShowDetails -> {
+            is DeepLink.ShowDetails -> {
                 navigator.navigateTo(
                     ShowDetailsRoute(
                         param = ShowDetailsParam(
@@ -312,7 +325,7 @@ public class DefaultRootPresenter(
                     ),
                 )
             }
-            is DeepLinkDestination.SeasonDetails -> {
+            is DeepLink.SeasonDetails -> {
                 navigator.navigateTo(
                     SeasonDetailsRoute(
                         param = SeasonDetailsUiParam(
@@ -324,9 +337,33 @@ public class DefaultRootPresenter(
                     ),
                 )
             }
-            is DeepLinkDestination.DebugMenu -> {
+            is DeepLink.Episode -> openEpisode(destination)
+            is DeepLink.DebugMenu -> {
                 navigator.navigateTo(DebugRoute)
             }
+        }
+    }
+
+    private fun openEpisode(destination: DeepLink.Episode) {
+        navigator.navigateTo(
+            ShowDetailsRoute(param = ShowDetailsParam(showId = destination.showId)),
+        )
+        coroutineScope.launch {
+            val episodeId = resolveEpisodeIdInteractor.executeSync(
+                ResolveEpisodeIdParams(
+                    showId = destination.showId,
+                    seasonNumber = destination.seasonNumber,
+                    episodeNumber = destination.episodeNumber,
+                ),
+            ) ?: return@launch
+            navigator.navigateTo(
+                EpisodeSheetRoute(
+                    param = EpisodeSheetParam(
+                        episodeId = episodeId,
+                        source = ScreenSource.DEEP_LINK,
+                    ),
+                ),
+            )
         }
     }
 

@@ -20,6 +20,10 @@ graph TB
     direction TB
     :core:connectivity:api[api]:::multiplatform
   end
+  subgraph :core:deeplink
+    direction TB
+    :core:deeplink:api[api]:::multiplatform
+  end
   subgraph :core:feature-flags
     direction TB
     :core:feature-flags:api[api]:::multiplatform
@@ -167,6 +171,10 @@ graph TB
   subgraph :features:discover
     direction TB
     :features:discover:nav[nav]:::multiplatform
+  end
+  subgraph :features:episode-sheet
+    direction TB
+    :features:episode-sheet:nav[nav]:::multiplatform
   end
   subgraph :features:home
     direction TB
@@ -361,6 +369,7 @@ graph TB
   :domain:user --> :data:user:api
   :features:debug:nav --> :navigation:api
   :features:discover:nav --> :navigation:api
+  :features:episode-sheet:nav --> :navigation:api
   :features:home:nav --> :navigation:api
   :features:home:presenter --> :core:base
   :features:home:presenter --> :domain:user
@@ -388,15 +397,18 @@ graph TB
   :features:root:nav --> :domain:theme
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
+  :features:root:presenter --> :core:deeplink:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view
   :features:root:presenter --> :data:account-manager:api
   :features:root:presenter --> :data:datastore:api
+  :features:root:presenter --> :domain:episode
   :features:root:presenter --> :domain:logout
   :features:root:presenter -.-> :domain:theme
   :features:root:presenter --> :domain:user
   :features:root:presenter -.-> :features:debug:nav
+  :features:root:presenter -.-> :features:episode-sheet:nav
   :features:root:presenter --> :features:home:presenter
   :features:root:presenter --> :features:root:nav
   :features:root:presenter -.-> :features:season-details:nav
