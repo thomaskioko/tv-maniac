@@ -102,6 +102,11 @@
     <string name="settings_poster_corner_classic">Classic</string>
     <string name="settings_poster_corner_rounded">Rounded</string>
     <string name="settings_poster_corner_pill">Pill</string>
+    <string name="settings_widget_title">Widget appearance</string>
+    <string name="settings_widget_description">Choose the theme for your home screen widgets</string>
+    <string name="settings_widget_theme_label">Theme</string>
+    <string name="settings_widget_theme_match_app">App Theme</string>
+    <string name="settings_widget_live_preview">Live preview</string>
     <string name="label_settings_trakt_authentication">Connect &amp; Sync Your Content</string>
     <string name="label_settings_connect_title">Connect</string>
     <string name="label_settings_account_sync_description">Save your progress, discover new titles, and sync your content across all devices.</string>
