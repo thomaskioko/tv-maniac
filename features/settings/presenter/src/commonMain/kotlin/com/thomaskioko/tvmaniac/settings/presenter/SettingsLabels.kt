@@ -42,6 +42,7 @@ public data class SettingsLabels(
     val fontSizePreview: String = "",
     val fontSizeReset: String = "",
     val posterStyle: PosterStyleLabels = PosterStyleLabels(),
+    val widgetAppearance: WidgetAppearanceLabels = WidgetAppearanceLabels(),
     val privacyPolicy: String = "",
     val appName: String = "",
     val version: String = "",
@@ -84,4 +85,12 @@ public data class PosterStyleLabels(
     val cornerClassic: String = "",
     val cornerRounded: String = "",
     val cornerPill: String = "",
+)
+
+public data class WidgetAppearanceLabels(
+    val title: String = "",
+    val subtitle: String = "",
+    val livePreview: String = "",
+    val themeLabel: String = "",
+    val matchAppTheme: String = "",
 )
