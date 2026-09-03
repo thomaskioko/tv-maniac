@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.settings.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -111,8 +111,7 @@ private fun WidgetLivePreview(
     theme: ThemeModel,
     modifier: Modifier = Modifier,
 ) {
-    val isSystemDark = LocalConfiguration.current.isNightModeActive
-    val colors = theme.theme.toColorScheme(isSystemInDarkTheme = isSystemDark)
+    val colors = theme.theme.toColorScheme(isSystemInDarkTheme = isSystemInDarkTheme())
 
     Column(
         modifier = modifier,
