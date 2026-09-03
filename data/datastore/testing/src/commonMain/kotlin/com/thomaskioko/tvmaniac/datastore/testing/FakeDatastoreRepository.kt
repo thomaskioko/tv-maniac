@@ -191,6 +191,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val posterWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
     private val landscapeWidthFlow = MutableStateFlow(PosterWidth.STANDARD)
     private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.SHARP)
+    private val widgetThemeFlow = MutableStateFlow<AppTheme?>(null)
     private val quickRateEnabledFlow = MutableStateFlow(false)
     private val multiplePlaysEnabledFlow = MutableStateFlow(true)
 
@@ -296,6 +297,12 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observePosterCornerStyle(): Flow<PosterCornerStyle> = posterCornerStyleFlow.asStateFlow()
+
+    override suspend fun saveWidgetTheme(appTheme: AppTheme?) {
+        widgetThemeFlow.value = appTheme
+    }
+
+    override fun observeWidgetTheme(): Flow<AppTheme?> = widgetThemeFlow.asStateFlow()
 
     override suspend fun saveQuickRateEnabled(enabled: Boolean) {
         quickRateEnabledFlow.value = enabled

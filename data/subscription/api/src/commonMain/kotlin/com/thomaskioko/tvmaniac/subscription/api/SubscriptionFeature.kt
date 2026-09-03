@@ -8,4 +8,5 @@ public enum class SubscriptionFeature {
     QuickRate,
     Statistics,
     CloudBackup,
+    WidgetTheming,
 }

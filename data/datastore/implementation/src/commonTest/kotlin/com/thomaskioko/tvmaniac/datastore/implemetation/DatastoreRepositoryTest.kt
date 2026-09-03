@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreReposit
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_ACCOUNT_TYPE
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_QUICK_RATE_ENABLED
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_THEME
+import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_WIDGET_THEME
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -43,6 +44,7 @@ internal class DatastoreRepositoryTest {
             it.remove(KEY_THEME)
             it.remove(KEY_ACCOUNT_TYPE)
             it.remove(KEY_QUICK_RATE_ENABLED)
+            it.remove(KEY_WIDGET_THEME)
         }
         preferencesScope.cancel()
     }
@@ -106,6 +108,24 @@ internal class DatastoreRepositoryTest {
             repository.saveQuickRateEnabled(true)
             awaitItem() shouldBe false
             awaitItem() shouldBe true
+        }
+    }
+
+    @Test
+    fun `should emit no widget theme given nothing has been saved`() = runTest {
+        repository.observeWidgetTheme().test { awaitItem() shouldBe null }
+    }
+
+    @Test
+    fun `should clear the widget theme given it is saved as null`() = runTest {
+        repository.observeWidgetTheme().test {
+            awaitItem() shouldBe null
+
+            repository.saveWidgetTheme(AppTheme.CRIMSON_THEME)
+            awaitItem() shouldBe AppTheme.CRIMSON_THEME
+
+            repository.saveWidgetTheme(null)
+            awaitItem() shouldBe null
         }
     }
 }
