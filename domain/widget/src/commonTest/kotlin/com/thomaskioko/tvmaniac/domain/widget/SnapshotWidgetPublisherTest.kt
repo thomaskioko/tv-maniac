@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.domain.widget
 
 import com.thomaskioko.tvmaniac.core.files.implementation.DefaultJsonFileManager
 import com.thomaskioko.tvmaniac.core.files.testing.FakeFileManager
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetSnapshot
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
@@ -22,6 +23,7 @@ class SnapshotWidgetPublisherTest {
         posterDownloader = posterDownloader,
         dateTimeProvider = FakeDateTimeProvider(),
     )
+    private val theme = AppTheme.SYSTEM_THEME
 
     @Test
     fun `should report widgets are installed given one is added`() = runTest {
@@ -41,7 +43,7 @@ class SnapshotWidgetPublisherTest {
     fun `should write the shows given a container exists`() = runTest {
         bridge.setContainerPath(directory)
 
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
         val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
         written?.entries?.single()?.showName shouldBe "Breaking Bad"
@@ -51,7 +53,7 @@ class SnapshotWidgetPublisherTest {
     fun `should reload the widget given the shows were written`() = runTest {
         bridge.setContainerPath(directory)
 
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
         bridge.getReloadCount() shouldBe 1
     }
@@ -60,7 +62,7 @@ class SnapshotWidgetPublisherTest {
     fun `should write nothing given no container exists`() = runTest {
         bridge.setContainerPath(null)
 
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
         fileManager.contentsOf(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME) shouldBe null
         bridge.getReloadCount() shouldBe 0
@@ -70,7 +72,7 @@ class SnapshotWidgetPublisherTest {
     fun `should write an empty list given no shows`() = runTest {
         bridge.setContainerPath(directory)
 
-        publisher.publish(emptyList())
+        publisher.publish(emptyList(), theme)
 
         val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
         written?.entries shouldBe emptyList()
@@ -79,9 +81,9 @@ class SnapshotWidgetPublisherTest {
     @Test
     fun `should delete every poster given the watchlist was cleared`() = runTest {
         bridge.setContainerPath(directory)
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
-        publisher.publish(emptyList())
+        publisher.publish(emptyList(), theme)
 
         posterDownloader.getKeptFileNames() shouldBe emptySet()
     }
@@ -90,7 +92,7 @@ class SnapshotWidgetPublisherTest {
     fun `should request the poster at the widget size`() = runTest {
         bridge.setContainerPath(directory)
 
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
         posterDownloader.getRequestedUrls().single() shouldBe "https://image.tmdb.org/t/p/w185/poster.jpg"
     }
@@ -101,6 +103,7 @@ class SnapshotWidgetPublisherTest {
 
         publisher.publish(
             listOf(show().copy(posterUrl = "https://image.tmdb.org/t/p/original/poster.jpg")),
+            theme,
         )
 
         posterDownloader.getRequestedUrls().single() shouldBe "https://image.tmdb.org/t/p/w185/poster.jpg"
@@ -110,7 +113,7 @@ class SnapshotWidgetPublisherTest {
     fun `should name the poster after the show`() = runTest {
         bridge.setContainerPath(directory)
 
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
         val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
         written?.entries?.single()?.posterFileName shouldBe "1396-w185.jpg"
@@ -121,7 +124,7 @@ class SnapshotWidgetPublisherTest {
         bridge.setContainerPath(directory)
         posterDownloader.setSucceeds(false)
 
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
         val written = jsonFileManager.getFileContent(directory, SnapshotWidgetPublisher.SNAPSHOT_FILE_NAME, WidgetSnapshot::class)
         written?.entries?.single()?.posterFileName shouldBe null
@@ -131,7 +134,7 @@ class SnapshotWidgetPublisherTest {
     fun `should write no poster name given the show has none`() = runTest {
         bridge.setContainerPath(directory)
 
-        publisher.publish(listOf(show().copy(posterUrl = null)))
+        publisher.publish(listOf(show().copy(posterUrl = null)), theme)
 
         posterDownloader.getRequestedUrls() shouldBe emptyList()
     }
@@ -140,7 +143,7 @@ class SnapshotWidgetPublisherTest {
     fun `should keep only the posters it wrote`() = runTest {
         bridge.setContainerPath(directory)
 
-        publisher.publish(listOf(show()))
+        publisher.publish(listOf(show()), theme)
 
         posterDownloader.getKeptFileNames() shouldBe setOf("1396-w185.jpg")
     }

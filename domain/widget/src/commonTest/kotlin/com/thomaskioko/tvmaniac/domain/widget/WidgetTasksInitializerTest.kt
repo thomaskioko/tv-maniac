@@ -2,6 +2,9 @@ package com.thomaskioko.tvmaniac.domain.widget
 
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
@@ -22,6 +25,11 @@ class WidgetTasksInitializerTest {
     private val scheduler = FakeBackgroundTaskScheduler()
     private val repository = FakeUpNextRepository()
     private val interactor = ObserveWidgetShowsInteractor(repository)
+    private val datastoreRepository = FakeDatastoreRepository()
+    private val themeInteractor = ObserveWidgetThemeInteractor(
+        datastoreRepository = datastoreRepository,
+        subscriptionManager = FakeSubscriptionManager(),
+    )
 
     @Test
     fun `should schedule the refresh worker given a widget is added`() = runTest(testDispatcher) {
@@ -90,6 +98,20 @@ class WidgetTasksInitializerTest {
     }
 
     @Test
+    fun `should publish again given the widget theme changed`() = runTest(testDispatcher) {
+        repository.setNextEpisodesForWatchlist(listOf(episode()))
+        val publisher = FakeWidgetPublisher().apply { setInstalled(true) }
+
+        buildInitializer(publisher).init()
+        runCurrent()
+
+        datastoreRepository.saveWidgetTheme(AppTheme.CRIMSON_THEME)
+        runCurrent()
+
+        publisher.getPublishedTheme() shouldBe AppTheme.CRIMSON_THEME
+    }
+
+    @Test
     fun `should keep collecting given publishing fails`() = runTest(testDispatcher) {
         repository.setNextEpisodesForWatchlist(listOf(episode()))
         val publisher = FakeWidgetPublisher().apply {
@@ -113,6 +135,7 @@ class WidgetTasksInitializerTest {
     private fun buildInitializer(vararg publishers: WidgetPublisher) = WidgetTasksInitializer(
         scheduler = scheduler,
         observeWidgetShowsInteractor = interactor,
+        observeWidgetThemeInteractor = themeInteractor,
         widgetPublishers = publishers.toSet(),
         logger = FakeLogger(),
         coroutineScope = collectScope,

@@ -2,10 +2,12 @@ import Foundation
 
 public struct WidgetSnapshot: Codable, Equatable {
     public let writtenAtMillis: Int64
+    public let themeName: String?
     public let entries: [WidgetSnapshotEntry]
 
-    public init(writtenAtMillis: Int64, entries: [WidgetSnapshotEntry]) {
+    public init(writtenAtMillis: Int64, themeName: String? = nil, entries: [WidgetSnapshotEntry]) {
         self.writtenAtMillis = writtenAtMillis
+        self.themeName = themeName
         self.entries = entries
     }
 

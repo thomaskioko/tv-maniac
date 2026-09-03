@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class WidgetSnapshot(
     val writtenAtMillis: Long,
+    val themeName: String,
     val entries: List<WidgetSnapshotEntry>,
 )
 

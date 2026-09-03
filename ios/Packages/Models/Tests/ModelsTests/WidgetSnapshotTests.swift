@@ -5,6 +5,7 @@ import XCTest
 final class WidgetSnapshotTests: XCTestCase {
     private let expected = WidgetSnapshot(
         writtenAtMillis: 1_724_400_000_000,
+        themeName: "DARK_THEME",
         entries: [
             WidgetSnapshotEntry(
                 tmdbId: 1396,
@@ -35,6 +36,19 @@ final class WidgetSnapshotTests: XCTestCase {
         let decoded = try JSONDecoder().decode(WidgetSnapshot.self, from: fixtureData())
 
         XCTAssertNil(decoded.entries.last?.posterFileName)
+    }
+
+    func testDecodesADocumentWrittenBeforeTheThemeWasCarried() throws {
+        let contents = """
+        {
+          "writtenAtMillis": 1,
+          "entries": []
+        }
+        """
+
+        let decoded = try JSONDecoder().decode(WidgetSnapshot.self, from: Data(contents.utf8))
+
+        XCTAssertNil(decoded.themeName)
     }
 
     func testDecodesADocumentCarryingAFieldItDoesNotKnow() throws {
