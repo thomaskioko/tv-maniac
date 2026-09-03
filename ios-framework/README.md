@@ -1059,6 +1059,8 @@ graph TB
   :domain:widget --> :core:logger:api
   :domain:widget --> :core:tasks:api
   :domain:widget --> :core:util:api
+  :domain:widget --> :data:datastore:api
+  :domain:widget --> :data:subscription:api
   :domain:widget --> :data:upnext:api
   :features:calendar:presenter -.-> :core:base
   :features:calendar:presenter --> :core:logger:api

@@ -51,7 +51,7 @@ internal fun UpNextWidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .appWidgetBackground()
-            .background(GlanceTheme.colors.widgetBackground)
+            .background(GlanceTheme.colors.surface)
             .then(modifier)
             .padding(if (compact) COMPACT_PADDING else WIDGET_PADDING),
     ) {
@@ -60,9 +60,9 @@ internal fun UpNextWidgetContent(
                 text = title,
                 maxLines = 1,
                 style = TextStyle(
-                    color = GlanceTheme.colors.primary,
+                    color = GlanceTheme.colors.onSurface,
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Bold,
                 ),
                 modifier = GlanceModifier
                     .padding(bottom = 4.dp)

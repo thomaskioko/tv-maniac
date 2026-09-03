@@ -150,7 +150,7 @@ public val CrimsonColorScheme: ColorScheme = darkColorScheme(
     outline = md_theme_crimson_outline,
 )
 
-internal fun Theme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = when (this) {
+public fun Theme.toColorScheme(isSystemInDarkTheme: Boolean): ColorScheme = when (this) {
     Theme.LIGHT_THEME -> LightColorScheme
     Theme.DARK_THEME -> DarkColorScheme
     Theme.TERMINAL_THEME -> TerminalColorScheme

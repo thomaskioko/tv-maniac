@@ -44,17 +44,7 @@ public class DefaultDatastoreRepository(
 
     override fun observeTheme(): Flow<AppTheme> =
         dataStore.data.map { preferences ->
-            when (preferences[KEY_THEME]) {
-                AppTheme.LIGHT_THEME.name -> AppTheme.LIGHT_THEME
-                AppTheme.DARK_THEME.name -> AppTheme.DARK_THEME
-                AppTheme.TERMINAL_THEME.name -> AppTheme.TERMINAL_THEME
-                AppTheme.AUTUMN_THEME.name -> AppTheme.AUTUMN_THEME
-                AppTheme.AQUA_THEME.name -> AppTheme.AQUA_THEME
-                AppTheme.AMBER_THEME.name -> AppTheme.AMBER_THEME
-                AppTheme.SNOW_THEME.name -> AppTheme.SNOW_THEME
-                AppTheme.CRIMSON_THEME.name -> AppTheme.CRIMSON_THEME
-                else -> AppTheme.SYSTEM_THEME
-            }
+            preferences[KEY_THEME].toAppTheme() ?: AppTheme.SYSTEM_THEME
         }
 
     override suspend fun saveLanguage(languageCode: String) {
@@ -467,6 +457,21 @@ public class DefaultDatastoreRepository(
             }
         }
 
+    override suspend fun saveWidgetTheme(appTheme: AppTheme?) {
+        dataStore.edit { preferences ->
+            if (appTheme == null) {
+                preferences.remove(KEY_WIDGET_THEME)
+            } else {
+                preferences[KEY_WIDGET_THEME] = appTheme.name
+            }
+        }
+    }
+
+    override fun observeWidgetTheme(): Flow<AppTheme?> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_WIDGET_THEME].toAppTheme()
+        }
+
     override suspend fun saveQuickRateEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[KEY_QUICK_RATE_ENABLED] = enabled
@@ -496,6 +501,8 @@ public class DefaultDatastoreRepository(
             PosterWidth.LARGE.name -> PosterWidth.LARGE
             else -> PosterWidth.STANDARD
         }
+
+    private fun String?.toAppTheme(): AppTheme? = AppTheme.entries.firstOrNull { it.name == this }
 
     public companion object {
         private const val FONT_SIZE_DEFAULT = 100
@@ -534,6 +541,7 @@ public class DefaultDatastoreRepository(
         public val KEY_POSTER_WIDTH: Preferences.Key<String> = stringPreferencesKey("poster_width")
         public val KEY_LANDSCAPE_WIDTH: Preferences.Key<String> = stringPreferencesKey("landscape_width")
         public val KEY_POSTER_CORNER_STYLE: Preferences.Key<String> = stringPreferencesKey("poster_corner_style")
+        public val KEY_WIDGET_THEME: Preferences.Key<String> = stringPreferencesKey("widget_theme")
         public val KEY_QUICK_RATE_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("quick_rate_enabled")
         public val KEY_MULTIPLE_PLAYS_ENABLED: Preferences.Key<Boolean> =
             booleanPreferencesKey("multiple_plays_enabled")

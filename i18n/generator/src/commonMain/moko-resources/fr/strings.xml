@@ -98,6 +98,11 @@
     <string name="settings_poster_corner_classic">Classique</string>
     <string name="settings_poster_corner_rounded">Arrondi</string>
     <string name="settings_poster_corner_pill">Pilule</string>
+    <string name="settings_widget_title">Apparence du widget</string>
+    <string name="settings_widget_description">Choisir le thème de vos widgets d\'écran d\'accueil</string>
+    <string name="settings_widget_theme_label">Thème</string>
+    <string name="settings_widget_theme_match_app">Thème de l\'app</string>
+    <string name="settings_widget_live_preview">Aperçu en direct</string>
     <string name="label_settings_trakt_authentication">Connectez et synchronisez votre contenu</string>
     <string name="label_settings_connect_title">Connexion</string>
     <string name="label_settings_account_sync_description">Enregistrez votre progression, découvrez de nouveaux titres et synchronisez votre contenu sur tous vos appareils.</string>

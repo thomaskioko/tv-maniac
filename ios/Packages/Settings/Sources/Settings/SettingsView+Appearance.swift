@@ -52,6 +52,42 @@ extension SettingsView {
         )
     }
 
+    // MARK: - Widget Appearance
+
+    var widgetAppearanceItem: SettingsWidgetAppearanceItem {
+        let labels = uiState.labels.widgetAppearance
+        let selected = uiState.widgetTheme?.toDeviceAppTheme()
+        let effective = selected ?? store.appTheme
+        return SettingsWidgetAppearanceItem(
+            description: labels.subtitle,
+            livePreviewLabel: labels.livePreview,
+            themeLabel: labels.themeLabel,
+            options: widgetThemeOptions(matchAppLabel: labels.matchAppTheme),
+            selectedOptionId: selected?.rawValue ?? matchAppThemeId,
+            previewTheme: effective.designSystemTheme,
+            isLocked: uiState.premium.widgetThemingLocked,
+            lockedBadgeText: uiState.premium.badgeText,
+            lockedActionText: uiState.premium.upgradeText,
+            lockedAccessibilityLabel: uiState.premium.lockedContentDescription,
+            onUpgradeClick: { presenter.dispatch(action: UpgradeToPremiumClicked()) }
+        )
+    }
+
+    private func widgetThemeOptions(matchAppLabel: String) -> [SettingsWidgetThemeOption] {
+        let matchApp = SettingsWidgetThemeOption(
+            id: matchAppThemeId,
+            label: matchAppLabel,
+            onSelect: { presenter.dispatch(action: WidgetThemeSelected(theme: nil)) }
+        )
+        return [matchApp] + DeviceAppTheme.sortedThemes.map { theme in
+            SettingsWidgetThemeOption(
+                id: theme.rawValue,
+                label: theme.displayName,
+                onSelect: { presenter.dispatch(action: WidgetThemeSelected(theme: theme.toThemeModel())) }
+            )
+        }
+    }
+
     // MARK: - Image Quality
 
     var imageQualityItem: SettingsImageQualityItem {
@@ -310,3 +346,5 @@ extension SettingsView {
         )
     }
 }
+
+private let matchAppThemeId = "match_app"

@@ -32,6 +32,14 @@ graph TB
     direction TB
     :core:util:api[api]:::multiplatform
   end
+  subgraph :data:datastore
+    direction TB
+    :data:datastore:api[api]:::multiplatform
+  end
+  subgraph :data:subscription
+    direction TB
+    :data:subscription:api[api]:::multiplatform
+  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -56,18 +64,23 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:view --> :core:logger:api
+  :data:datastore:api --> :i18n:generator
   :domain:theme --> :i18n:generator
   :domain:widget --> :core:base
   :domain:widget --> :core:files:api
   :domain:widget --> :core:logger:api
   :domain:widget --> :core:tasks:api
   :domain:widget --> :core:util:api
+  :domain:widget --> :data:datastore:api
+  :domain:widget --> :data:subscription:api
   :domain:widget --> :data:upnext:api
   :features:widget:ui -.-> :android-designsystem
   :features:widget:ui --> :core:base
   :features:widget:ui --> :core:deeplink:api
   :features:widget:ui --> :core:logger:api
   :features:widget:ui -.-> :core:test-tags
+  :features:widget:ui --> :data:datastore:api
+  :features:widget:ui -.-> :domain:theme
   :features:widget:ui --> :domain:widget
   :features:widget:ui -.-> :i18n:generator
 

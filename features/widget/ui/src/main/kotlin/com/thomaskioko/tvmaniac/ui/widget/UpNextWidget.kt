@@ -16,6 +16,7 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkUrls
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
 import com.thomaskioko.tvmaniac.i18n.MR.strings.widget_empty_watchlist
 import com.thomaskioko.tvmaniac.i18n.MR.strings.widget_season_episode
@@ -40,12 +41,21 @@ public class UpNextWidget : GlanceAppWidget() {
             .take(MAX_VISIBLE)
 
         val items = shows.map { it.toWidgetItem(context, graph.deepLinkUrls) }
+        val theme = context.widgetTheme()
 
-        provideContent { WidgetBody(context, items) }
+        provideContent { WidgetBody(context, items, theme) }
     }
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
-        provideContent { WidgetBody(context, previewItems(context), GlanceModifier.systemCornerRadius()) }
+        val theme = context.widgetTheme()
+        provideContent {
+            WidgetBody(
+                context = context,
+                items = previewItems(context),
+                theme = theme,
+                modifier = GlanceModifier.systemCornerRadius(),
+            )
+        }
     }
 
     private companion object {
@@ -60,9 +70,10 @@ public class UpNextWidget : GlanceAppWidget() {
 private fun WidgetBody(
     context: Context,
     items: List<UpNextWidgetItem>,
+    theme: AppTheme,
     modifier: GlanceModifier = GlanceModifier,
 ) {
-    WidgetTheme {
+    WidgetTheme(theme) {
         UpNextWidgetContent(
             title = widget_up_next_name.resolve(context),
             emptyMessage = widget_empty_watchlist.resolve(context),
@@ -95,6 +106,13 @@ internal fun Context.seasonEpisodeLabel(seasonNumber: Long, episodeNumber: Long)
         seasonNumber.toString().padStart(2, '0'),
         episodeNumber.toString().padStart(2, '0'),
     )
+
+internal suspend fun Context.widgetTheme(): AppTheme {
+    val interactor = widgetGraph.observeWidgetThemeInteractor
+    return interactor.flow
+        .onStart { interactor(Unit) }
+        .first()
+}
 
 internal fun Context.openAppAction(): Action =
     actionStartActivity(packageManager.getLaunchIntentForPackage(packageName) ?: Intent())

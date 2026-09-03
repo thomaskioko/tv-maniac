@@ -27,6 +27,7 @@ import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
 import com.thomaskioko.tvmaniac.data.logout.testing.FakeLogoutHandler
 import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.api.BackupFileName
 import com.thomaskioko.tvmaniac.datastore.api.DiscoverSection
@@ -99,11 +100,13 @@ import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeSelected
 import com.thomaskioko.tvmaniac.settings.presenter.UpgradeToPremiumClicked
 import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
+import com.thomaskioko.tvmaniac.settings.presenter.WidgetThemeSelected
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -378,6 +381,64 @@ class SettingsPresenterTest {
         datastoreRepository.observePosterWidth().first() shouldBe PosterWidth.STANDARD
         datastoreRepository.observeLandscapeWidth().first() shouldBe PosterWidth.STANDARD
         datastoreRepository.observePosterCornerStyle().first() shouldBe PosterCornerStyle.SHARP
+    }
+
+    @Test
+    fun `should persist and reflect the widget theme while unlocked`() = runTest {
+        presenter.state.test {
+            awaitItem().widgetTheme shouldBe null
+
+            presenter.dispatch(WidgetThemeSelected(ThemeModel.CRIMSON))
+            var state = awaitItem()
+            while (state.widgetTheme == null) {
+                state = awaitItem()
+            }
+            state.widgetTheme shouldBe ThemeModel.CRIMSON
+
+            datastoreRepository.observeWidgetTheme().first() shouldBe AppTheme.CRIMSON_THEME
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should clear the widget theme given match app is selected`() = runTest {
+        datastoreRepository.saveWidgetTheme(AppTheme.CRIMSON_THEME)
+
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.widgetTheme == null) {
+                state = awaitItem()
+            }
+            state.widgetTheme shouldBe ThemeModel.CRIMSON
+
+            presenter.dispatch(WidgetThemeSelected(null))
+            awaitItem().widgetTheme shouldBe null
+
+            datastoreRepository.observeWidgetTheme().first() shouldBe null
+        }
+    }
+
+    @Test
+    fun `should ignore the widget theme while locked`() = runTest {
+        subscriptionManager.setAccess(SubscriptionFeature.WidgetTheming, false)
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(WidgetThemeSelected(ThemeModel.CRIMSON))
+        testScheduler.advanceUntilIdle()
+
+        datastoreRepository.observeWidgetTheme().first() shouldBe null
+    }
+
+    @Test
+    fun `should include the widget appearance entry in the root groups`() = runTest {
+        presenter.state.test {
+            var state = awaitItem()
+            while (state.rootGroups.isEmpty()) {
+                state = awaitItem()
+            }
+            state.rootGroups.flatMap { it.items }.map { it.page } shouldContain SettingsPage.WIDGET_APPEARANCE
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test

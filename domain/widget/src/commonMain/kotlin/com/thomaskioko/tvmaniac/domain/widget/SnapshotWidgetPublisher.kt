@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.domain.widget
 
 import com.thomaskioko.tvmaniac.core.files.api.JsonFileManager
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetSnapshot
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetSnapshotEntry
@@ -19,7 +20,7 @@ public class SnapshotWidgetPublisher(
         widgetManager.hasInstalledWidgets { continuation.resume(it) }
     }
 
-    override suspend fun publish(shows: List<WidgetShow>) {
+    override suspend fun publish(shows: List<WidgetShow>, theme: AppTheme) {
         val directoryPath = widgetManager.containerPath() ?: return
         val postersPath = "$directoryPath/$POSTERS_FOLDER_NAME"
 
@@ -31,6 +32,7 @@ public class SnapshotWidgetPublisher(
             fileName = SNAPSHOT_FILE_NAME,
             value = WidgetSnapshot(
                 writtenAtMillis = dateTimeProvider.nowMillis(),
+                themeName = theme.name,
                 entries = entries,
             ),
             type = WidgetSnapshot::class,

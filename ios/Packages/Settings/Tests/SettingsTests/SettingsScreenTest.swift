@@ -82,6 +82,35 @@ class SettingsScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_PosterStyle_Locked")
     }
 
+    func test_SettingsScreen_WidgetAppearance() {
+        SettingsScreen(
+            state: makeState(
+                page: .widgetAppearance,
+                authenticated: true,
+                customWidgetAppearanceItem: widgetAppearanceItem(
+                    selectedOptionId: "crimson",
+                    previewTheme: CrimsonTheme()
+                )
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_WidgetAppearance")
+    }
+
+    func test_SettingsScreen_WidgetAppearance_Locked() {
+        SettingsScreen(
+            state: makeState(
+                page: .widgetAppearance,
+                authenticated: true,
+                customWidgetAppearanceItem: widgetAppearanceItem(isLocked: true)
+            ),
+            onBack: {}
+        )
+        .appPreview()
+        .assertSnapshot(layout: .defaultDevice, testName: "SettingsScreen_WidgetAppearance_Locked")
+    }
+
     func test_SettingsScreen_Appearance() {
         SettingsScreen(state: makeState(page: .appearance, authenticated: true), onBack: {})
             .appPreview()

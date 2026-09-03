@@ -1,4 +1,5 @@
 import Components
+import DesignSystem
 import Foundation
 import Models
 import SwiftUI
@@ -225,6 +226,69 @@ public struct SettingsPosterStyleItem: Equatable {
             && lhs.posterScale == rhs.posterScale
             && lhs.landscapeScale == rhs.landscapeScale
             && lhs.cornerRadius == rhs.cornerRadius
+            && lhs.isLocked == rhs.isLocked
+    }
+}
+
+public struct SettingsWidgetThemeOption: Identifiable, Equatable {
+    public let id: String
+    public let label: String
+    public let onSelect: () -> Void
+
+    public init(id: String, label: String, onSelect: @escaping () -> Void) {
+        self.id = id
+        self.label = label
+        self.onSelect = onSelect
+    }
+
+    public static func == (lhs: SettingsWidgetThemeOption, rhs: SettingsWidgetThemeOption) -> Bool {
+        lhs.id == rhs.id && lhs.label == rhs.label
+    }
+}
+
+public struct SettingsWidgetAppearanceItem: Equatable {
+    public let description: String
+    public let livePreviewLabel: String
+    public let themeLabel: String
+    public let options: [SettingsWidgetThemeOption]
+    public let selectedOptionId: String
+    public let previewTheme: TvManiacTheme
+    public let isLocked: Bool
+    public let lockedBadgeText: String
+    public let lockedActionText: String
+    public let lockedAccessibilityLabel: String
+    public let onUpgradeClick: () -> Void
+
+    public init(
+        description: String,
+        livePreviewLabel: String,
+        themeLabel: String,
+        options: [SettingsWidgetThemeOption],
+        selectedOptionId: String,
+        previewTheme: TvManiacTheme,
+        isLocked: Bool = false,
+        lockedBadgeText: String = "",
+        lockedActionText: String = "",
+        lockedAccessibilityLabel: String = "",
+        onUpgradeClick: @escaping () -> Void = {}
+    ) {
+        self.description = description
+        self.livePreviewLabel = livePreviewLabel
+        self.themeLabel = themeLabel
+        self.options = options
+        self.selectedOptionId = selectedOptionId
+        self.previewTheme = previewTheme
+        self.isLocked = isLocked
+        self.lockedBadgeText = lockedBadgeText
+        self.lockedActionText = lockedActionText
+        self.lockedAccessibilityLabel = lockedAccessibilityLabel
+        self.onUpgradeClick = onUpgradeClick
+    }
+
+    public static func == (lhs: SettingsWidgetAppearanceItem, rhs: SettingsWidgetAppearanceItem) -> Bool {
+        lhs.description == rhs.description
+            && lhs.selectedOptionId == rhs.selectedOptionId
+            && lhs.options == rhs.options
             && lhs.isLocked == rhs.isLocked
     }
 }

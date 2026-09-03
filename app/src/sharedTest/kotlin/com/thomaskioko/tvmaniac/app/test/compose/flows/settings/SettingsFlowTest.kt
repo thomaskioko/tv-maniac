@@ -66,6 +66,33 @@ internal class SettingsFlowTest : BaseAppFlowTest() {
     }
 
     @Test
+    fun givenSettings_whenWidgetThemeSelected_thenSelectionIsPersisted() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        discoverRobot
+            .assertDiscoverScreenDisplayed()
+
+        scenarios.stubUsersMeUnauthorized()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSettingsButton()
+
+        settingsRobot
+            .assertSettingsScreenDisplayed()
+            .openWidgetAppearancePage()
+            .assertWidgetThemeSelected(null)
+            .assertWidgetThemeNotSelected(ThemeModel.CRIMSON)
+            .clickWidgetThemeChip(ThemeModel.CRIMSON)
+            .assertWidgetThemeSelected(ThemeModel.CRIMSON)
+            .assertWidgetThemeNotSelected(null)
+    }
+
+    @Test
     fun givenAuthenticatedUser_whenTraktAccountClicked_thenShowsLogoutDialog() = runAppFlowTest {
         scenarios.discover.stubBrowseGraph()
 

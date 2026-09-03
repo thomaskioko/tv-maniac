@@ -484,6 +484,10 @@ public interface DatastoreRepository {
      */
     public fun observePosterCornerStyle(): Flow<PosterCornerStyle>
 
+    public suspend fun saveWidgetTheme(appTheme: AppTheme?)
+
+    public fun observeWidgetTheme(): Flow<AppTheme?>
+
     /**
      * Saves whether the rating sheet opens after an episode is marked watched.
      *

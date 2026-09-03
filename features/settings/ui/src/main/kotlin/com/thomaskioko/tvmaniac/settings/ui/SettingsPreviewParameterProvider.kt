@@ -22,6 +22,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.SettingsLabels
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsPage
 import com.thomaskioko.tvmaniac.settings.presenter.SettingsState
 import com.thomaskioko.tvmaniac.settings.presenter.ThemeModel
+import com.thomaskioko.tvmaniac.settings.presenter.WidgetAppearanceLabels
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -111,6 +112,13 @@ private val previewLabels = SettingsLabels(
         cornerClassic = "Classic",
         cornerRounded = "Rounded",
         cornerPill = "Pill",
+    ),
+    widgetAppearance = WidgetAppearanceLabels(
+        title = "Widget appearance",
+        subtitle = "Choose the theme for your home screen widgets",
+        livePreview = "Live preview",
+        themeLabel = "Theme",
+        matchAppTheme = "App Theme",
     ),
     privacyPolicy = "Privacy Policy",
     appName = "TvManiac",
@@ -210,6 +218,22 @@ internal val posterStyleMixedState = posterStyleState.copy(
     posterWidth = PosterWidth.LARGE,
     landscapeWidth = PosterWidth.COMPACT,
     posterCornerStyle = PosterCornerStyle.ROUNDED,
+)
+internal val widgetAppearanceState = loggedInState.copy(
+    currentPage = SettingsPage.WIDGET_APPEARANCE,
+    currentPageTitle = "Widget appearance",
+    widgetTheme = ThemeModel.CRIMSON,
+)
+internal val widgetAppearanceLockedState = widgetAppearanceState.copy(
+    widgetTheme = null,
+    premium = PremiumState(
+        widgetThemingLocked = true,
+        badgeText = "Premium",
+        themesLockedTitle = "Widget appearance is a Premium feature",
+        themesLockedMessage = "Upgrade to Premium to change how your widgets look.",
+        upgradeText = "Upgrade to Premium",
+        lockedContentDescription = "Locked",
+    ),
 )
 internal val appearanceLockedState = appearanceState.copy(
     premium = PremiumState(
@@ -421,6 +445,16 @@ internal class SettingsPreviewParameterProvider : PreviewParameterProvider<Setti
                 discoverSectionsState,
                 posterStyleState,
                 behaviorState,
+            )
+        }
+}
+
+internal class WidgetAppearancePreviewParameterProvider : PreviewParameterProvider<SettingsState> {
+    override val values: Sequence<SettingsState>
+        get() {
+            return sequenceOf(
+                widgetAppearanceState,
+                widgetAppearanceLockedState,
             )
         }
 }

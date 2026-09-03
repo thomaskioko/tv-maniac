@@ -2,6 +2,8 @@ package com.thomaskioko.tvmaniac.domain.widget
 
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
+import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
@@ -16,6 +18,10 @@ class WidgetRefreshWorkerTest {
     private val testDispatcher = StandardTestDispatcher()
     private val repository = FakeUpNextRepository()
     private val interactor = ObserveWidgetShowsInteractor(repository)
+    private val themeInteractor = ObserveWidgetThemeInteractor(
+        datastoreRepository = FakeDatastoreRepository(),
+        subscriptionManager = FakeSubscriptionManager(),
+    )
 
     @Test
     fun `should publish the shows given a widget is installed`() = runTest(testDispatcher) {
@@ -59,6 +65,7 @@ class WidgetRefreshWorkerTest {
 
     private fun buildWorker(publisher: WidgetPublisher) = WidgetRefreshWorker(
         observeWidgetShowsInteractor = interactor,
+        observeWidgetThemeInteractor = themeInteractor,
         widgetPublishers = setOf(publisher),
         logger = FakeLogger(),
     )

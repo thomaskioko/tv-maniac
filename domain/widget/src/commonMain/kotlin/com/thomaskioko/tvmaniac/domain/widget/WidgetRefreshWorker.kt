@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.onStart
 @ContributesIntoSet(AppScope::class)
 public class WidgetRefreshWorker(
     private val observeWidgetShowsInteractor: ObserveWidgetShowsInteractor,
+    private val observeWidgetThemeInteractor: ObserveWidgetThemeInteractor,
     private val widgetPublishers: Set<WidgetPublisher>,
     private val logger: Logger,
 ) : BackgroundWorker {
@@ -31,7 +32,10 @@ public class WidgetRefreshWorker(
             val shows = observeWidgetShowsInteractor.flow
                 .onStart { observeWidgetShowsInteractor(Unit) }
                 .first()
-            widgetPublishers.forEach { it.publish(shows) }
+            val theme = observeWidgetThemeInteractor.flow
+                .onStart { observeWidgetThemeInteractor(Unit) }
+                .first()
+            widgetPublishers.forEach { it.publish(shows, theme) }
             WorkerResult.Success
         } catch (cancellation: CancellationException) {
             throw cancellation

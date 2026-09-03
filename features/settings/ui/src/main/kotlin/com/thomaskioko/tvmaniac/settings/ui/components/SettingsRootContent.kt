@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -78,6 +79,7 @@ private fun rootRowTestTag(page: SettingsPage): String = when (page) {
     SettingsPage.INFO -> SettingsTestTags.ABOUT_INFO_ROW_TEST_TAG
     SettingsPage.LICENSES -> SettingsTestTags.ABOUT_LICENSES_ROW_TEST_TAG
     SettingsPage.ACCOUNT -> SettingsTestTags.ACCOUNT_TRAKT_ROW_TEST_TAG
+    SettingsPage.WIDGET_APPEARANCE -> SettingsTestTags.WIDGET_APPEARANCE_ROW_TEST_TAG
     SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS, SettingsPage.POSTER_STYLE -> ""
 }
 
@@ -91,6 +93,7 @@ private fun rootRowIcon(page: SettingsPage): ImageVector = when (page) {
     SettingsPage.INFO -> Icons.Filled.Info
     SettingsPage.LICENSES -> Icons.Filled.Description
     SettingsPage.ACCOUNT -> Icons.Filled.Person
+    SettingsPage.WIDGET_APPEARANCE -> Icons.Filled.Widgets
     SettingsPage.ROOT, SettingsPage.DISCOVER_SECTIONS, SettingsPage.POSTER_STYLE -> Icons.Filled.Info
 }
 

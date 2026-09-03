@@ -14,6 +14,7 @@ class WidgetSnapshotFixtureTest {
 
     private val expected = WidgetSnapshot(
         writtenAtMillis = 1_724_400_000_000,
+        themeName = "DARK_THEME",
         entries = listOf(
             WidgetSnapshotEntry(
                 tmdbId = 1396,
