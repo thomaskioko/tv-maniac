@@ -12,6 +12,7 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLink
 import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkUrls
+import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.domain.widget.model.WidgetShow
 import com.thomaskioko.tvmaniac.i18n.MR.strings.widget_empty_watchlist
 import com.thomaskioko.tvmaniac.i18n.resolve
@@ -34,13 +35,20 @@ public class UpNextPosterWidget : GlanceAppWidget() {
             .firstOrNull()
 
         val item = show?.toTileItem(context, graph.deepLinkUrls)
+        val theme = context.widgetTheme()
 
-        provideContent { PosterBody(context, item) }
+        provideContent { PosterBody(context, item, theme) }
     }
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        val theme = context.widgetTheme()
         provideContent {
-            PosterBody(context, previewItems(context).first(), GlanceModifier.systemCornerRadius())
+            PosterBody(
+                context = context,
+                item = previewItems(context).first(),
+                theme = theme,
+                modifier = GlanceModifier.systemCornerRadius(),
+            )
         }
     }
 
@@ -53,9 +61,10 @@ public class UpNextPosterWidget : GlanceAppWidget() {
 private fun PosterBody(
     context: Context,
     item: UpNextWidgetItem?,
+    theme: AppTheme,
     modifier: GlanceModifier = GlanceModifier,
 ) {
-    WidgetTheme {
+    WidgetTheme(theme) {
         UpNextPosterWidgetContent(
             emptyMessage = widget_empty_watchlist.resolve(context),
             item = item,

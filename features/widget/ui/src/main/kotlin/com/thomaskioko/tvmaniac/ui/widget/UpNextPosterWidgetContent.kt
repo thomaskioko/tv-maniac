@@ -42,7 +42,7 @@ internal fun UpNextPosterWidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .appWidgetBackground()
-            .background(GlanceTheme.colors.widgetBackground)
+            .background(GlanceTheme.colors.surface)
             .then(modifier)
             .padding(TILE_PADDING)
             .clickable(if (item == null) openApp else itemAction(item)),

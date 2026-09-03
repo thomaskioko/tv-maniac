@@ -14,6 +14,7 @@ dependencies {
     api(projects.core.base)
     api(projects.core.deeplink.api)
     api(projects.core.logger.api)
+    api(projects.data.datastore.api)
     api(projects.domain.widget)
 
     api(libs.androidx.compose.runtime)
@@ -23,6 +24,7 @@ dependencies {
 
     implementation(projects.androidDesignsystem)
     implementation(projects.core.testTags)
+    implementation(projects.domain.theme)
     implementation(projects.i18n.generator)
 
     implementation(libs.androidx.annotation)

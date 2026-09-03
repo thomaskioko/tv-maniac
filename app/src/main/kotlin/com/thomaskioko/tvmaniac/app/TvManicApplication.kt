@@ -8,6 +8,7 @@ import androidx.work.WorkerFactory
 import com.thomaskioko.tvmaniac.app.di.ApplicationGraph
 import com.thomaskioko.tvmaniac.core.deeplink.api.DeepLinkUrls
 import com.thomaskioko.tvmaniac.domain.widget.ObserveWidgetShowsInteractor
+import com.thomaskioko.tvmaniac.domain.widget.ObserveWidgetThemeInteractor
 import com.thomaskioko.tvmaniac.domain.widget.WidgetTasksInitializer
 import com.thomaskioko.tvmaniac.ui.widget.di.WidgetGraph
 import dev.zacsweers.metro.createGraphFactory
@@ -22,6 +23,9 @@ public class TvManicApplication : Application(), Configuration.Provider, WidgetG
 
     override val observeWidgetShowsInteractor: ObserveWidgetShowsInteractor
         get() = graph.observeWidgetShowsInteractor
+
+    override val observeWidgetThemeInteractor: ObserveWidgetThemeInteractor
+        get() = graph.observeWidgetThemeInteractor
 
     override val widgetTasksInitializer: WidgetTasksInitializer
         get() = graph.widgetTasksInitializer

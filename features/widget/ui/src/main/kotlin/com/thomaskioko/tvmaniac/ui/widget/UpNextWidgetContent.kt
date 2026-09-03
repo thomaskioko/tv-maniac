@@ -51,7 +51,7 @@ internal fun UpNextWidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .appWidgetBackground()
-            .background(GlanceTheme.colors.widgetBackground)
+            .background(GlanceTheme.colors.surface)
             .then(modifier)
             .padding(if (compact) COMPACT_PADDING else WIDGET_PADDING),
     ) {

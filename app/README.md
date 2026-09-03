@@ -1273,6 +1273,8 @@ graph TB
   :domain:widget --> :core:logger:api
   :domain:widget --> :core:tasks:api
   :domain:widget --> :core:util:api
+  :domain:widget --> :data:datastore:api
+  :domain:widget --> :data:subscription:api
   :domain:widget --> :data:upnext:api
   :features:calendar:presenter -.-> :core:base
   :features:calendar:presenter --> :core:logger:api
@@ -1834,6 +1836,8 @@ graph TB
   :features:widget:ui --> :core:deeplink:api
   :features:widget:ui --> :core:logger:api
   :features:widget:ui -.-> :core:test-tags
+  :features:widget:ui --> :data:datastore:api
+  :features:widget:ui -.-> :domain:theme
   :features:widget:ui --> :domain:widget
   :features:widget:ui -.-> :i18n:generator
   :i18n:api --> :i18n:generator
