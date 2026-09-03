@@ -218,6 +218,23 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         )
     }
 
+    fun openWidgetAppearancePage() = apply {
+        scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.WIDGET_APPEARANCE_ROW_TEST_TAG)
+        click(SettingsTestTags.WIDGET_APPEARANCE_ROW_TEST_TAG)
+    }
+
+    fun clickWidgetThemeChip(theme: ThemeModel?) = apply {
+        click(SettingsTestTags.widgetThemeChip(theme.tagName()))
+    }
+
+    fun assertWidgetThemeSelected(theme: ThemeModel?) = apply {
+        assertSelected(SettingsTestTags.widgetThemeChip(theme.tagName()))
+    }
+
+    fun assertWidgetThemeNotSelected(theme: ThemeModel?) = apply {
+        assertNotSelected(SettingsTestTags.widgetThemeChip(theme.tagName()))
+    }
+
     fun scrollToTraktAccountRow() = apply {
         scrollToListTag(SettingsTestTags.LIST_TEST_TAG, SettingsTestTags.TRAKT_ACCOUNT_ROW_TEST_TAG)
     }
@@ -344,3 +361,5 @@ internal class SettingsRobot(composeUi: ComposeUiTest) : BaseRobot<SettingsRobot
         assertExists(SettingsTestTags.SWITCHING_INDICATOR_TEST_TAG)
     }
 }
+
+private fun ThemeModel?.tagName(): String = this?.name ?: "match_app"

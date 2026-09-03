@@ -44,6 +44,8 @@ import com.thomaskioko.tvmaniac.settings.ui.posterStyleLockedState
 import com.thomaskioko.tvmaniac.settings.ui.posterStyleMixedState
 import com.thomaskioko.tvmaniac.settings.ui.posterStyleState
 import com.thomaskioko.tvmaniac.settings.ui.privacyState
+import com.thomaskioko.tvmaniac.settings.ui.widgetAppearanceLockedState
+import com.thomaskioko.tvmaniac.settings.ui.widgetAppearanceState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -171,6 +173,30 @@ class SettingsScreenshotTest {
             TvManiacBackground {
                 SettingsScreen(
                     state = posterStyleMixedState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenWidgetAppearancePage() {
+        composeTestRule.captureMultiDevice("SettingsScreenWidgetAppearancePage") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = widgetAppearanceState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun settingsScreenWidgetAppearancePageLocked() {
+        composeTestRule.captureMultiDevice("SettingsScreenWidgetAppearancePageLocked") {
+            TvManiacBackground {
+                SettingsScreen(
+                    state = widgetAppearanceLockedState,
                     onAction = {},
                 )
             }
