@@ -224,6 +224,8 @@
     <string name="label_settings_include_specials">Special Seasons</string>
     <string name="label_settings_include_specials_description">Display Specials and bonus seasons</string>
 
+    <string name="label_settings_custom_watch_date">Custom watch date</string>
+    <string name="label_settings_custom_watch_date_description">Choose the date and time when marking an episode, season or show as watched</string>
     <string name="label_settings_quick_rate">Quick Rate</string>
     <string name="label_settings_quick_rate_description">Show rating prompt after marking an episode as watched</string>
     <string name="label_settings_multiple_plays">Multiple plays</string>
