@@ -129,4 +129,5 @@ public data class BackupPreferences(
     @SerialName("posterCornerStyle") val posterCornerStyle: String? = null,
     @SerialName("quickRateEnabled") val quickRateEnabled: Boolean? = null,
     @SerialName("multiplePlaysEnabled") val multiplePlaysEnabled: Boolean? = null,
+    @SerialName("customWatchDateEnabled") val customWatchDateEnabled: Boolean? = null,
 )
