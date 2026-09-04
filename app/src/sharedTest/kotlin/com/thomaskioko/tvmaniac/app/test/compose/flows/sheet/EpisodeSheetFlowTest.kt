@@ -67,6 +67,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
     @Test
     fun givenEpisodeSheet_whenMarkWatchedClicked_thenMarksEpisodeWatched() = runAppFlowTest {
+        scenarios.settings.enableCustomWatchDate()
         scenarios.stubAuthenticatedSync()
 
         openEpisodeSheetFromUpNextCard()
@@ -88,6 +89,7 @@ internal class EpisodeSheetFlowTest : BaseAppFlowTest() {
 
     @Test
     fun givenWatchedEpisode_whenMarkedWatchedAgain_thenSheetShowsPlayCount() = runAppFlowTest {
+        scenarios.settings.enableCustomWatchDate()
         scenarios.stubAuthenticatedSync()
 
         rootRobot.dismissNotificationRationale()
