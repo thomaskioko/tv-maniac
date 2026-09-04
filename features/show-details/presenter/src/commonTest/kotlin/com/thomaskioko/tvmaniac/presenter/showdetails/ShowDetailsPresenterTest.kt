@@ -23,6 +23,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
 import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
@@ -312,6 +313,7 @@ internal class ShowDetailsPresenterTest : BaseLocalizerTest() {
                 watchAgainInteractor = WatchAgainInteractor(rewatchRepository),
                 dateTimeProvider = dateTimeProvider,
             ),
+            shouldPickWatchDateInteractor = ShouldPickWatchDateInteractor(datastoreRepository),
             datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,

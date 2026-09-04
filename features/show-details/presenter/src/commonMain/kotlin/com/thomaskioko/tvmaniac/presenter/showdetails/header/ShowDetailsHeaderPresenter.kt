@@ -19,6 +19,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
@@ -55,7 +56,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -80,6 +80,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val startRewatchSessionInteractor: StartRewatchSessionInteractor,
     private val markWatchedAtInteractor: MarkWatchedAtInteractor,
+    private val shouldPickWatchDateInteractor: ShouldPickWatchDateInteractor,
     private val datastoreRepository: DatastoreRepository,
     private val syncCalendarInteractor: SyncCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
@@ -256,7 +257,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     private fun onMarkShowWatchedConfirmed() {
         _state.update { it.copy(showMarkShowWatchedConfirmation = false) }
         coroutineScope.launch {
-            if (datastoreRepository.observeCustomWatchDateEnabled().first()) {
+            if (shouldPickWatchDateInteractor()) {
                 navigator.navigateTo(
                     WatchDateSelectionRoute(
                         WatchDateSelectionParam(

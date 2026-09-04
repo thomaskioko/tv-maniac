@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
@@ -46,7 +47,6 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -65,6 +65,7 @@ public class EpisodeSheetPresenter internal constructor(
     private val navigator: Navigator,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
     private val markWatchedAtInteractor: MarkWatchedAtInteractor,
+    private val shouldPickWatchDateInteractor: ShouldPickWatchDateInteractor,
     private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val datastoreRepository: DatastoreRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -149,7 +150,7 @@ public class EpisodeSheetPresenter internal constructor(
     private fun markWatched() {
         val episode = currentEpisode.value ?: return
         coroutineScope.launch {
-            if (datastoreRepository.observeCustomWatchDateEnabled().first()) {
+            if (shouldPickWatchDateInteractor()) {
                 navigator.navigateTo(
                     WatchDateSelectionRoute(
                         WatchDateSelectionParam(

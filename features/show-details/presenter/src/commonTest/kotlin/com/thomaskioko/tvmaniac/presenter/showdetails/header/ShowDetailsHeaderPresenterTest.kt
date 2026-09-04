@@ -24,6 +24,7 @@ import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRep
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
@@ -543,6 +544,7 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
                 watchAgainInteractor = WatchAgainInteractor(rewatchRepository),
                 dateTimeProvider = dateTimeProvider,
             ),
+            shouldPickWatchDateInteractor = ShouldPickWatchDateInteractor(datastoreRepository),
             datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,

@@ -16,7 +16,6 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.view)
-                api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.seasondetails.api)
                 api(projects.domain.episode)
