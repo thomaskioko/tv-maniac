@@ -22,6 +22,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.testing.FakeRewatchRepository
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
@@ -30,6 +31,7 @@ import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.WatchAgainInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
@@ -457,6 +459,7 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
 
     @Test
     fun `should open the watch date sheet given mark show watched is confirmed`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         val presenter = buildPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -467,6 +470,19 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
         val route = navigator.lastActivatedOverlay.shouldBeInstanceOf<WatchDateSelectionRoute>()
         route.param.target shouldBe WatchedDateTarget.SHOW
         route.param.showId shouldBe SHOW_ID
+    }
+
+    @Test
+    fun `should mark the show watched given confirmed and custom watch date is off`() = runTest {
+        val presenter = buildPresenter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        presenter.dispatch(MarkShowWatchedClicked)
+        presenter.dispatch(MarkShowWatchedConfirmed)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        episodeRepository.lastMarkShowWatchedCall.shouldNotBeNull().showId shouldBe SHOW_ID
+        navigator.lastActivatedOverlay.shouldBeNull()
     }
 
     @Test
@@ -522,6 +538,11 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
             observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(episodeRepository),
             startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            markWatchedAtInteractor = MarkWatchedAtInteractor(
+                episodeRepository = episodeRepository,
+                watchAgainInteractor = WatchAgainInteractor(rewatchRepository),
+                dateTimeProvider = dateTimeProvider,
+            ),
             datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,
