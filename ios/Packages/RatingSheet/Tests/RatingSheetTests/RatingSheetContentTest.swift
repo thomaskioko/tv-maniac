@@ -6,23 +6,26 @@ import XCTest
 
 class RatingSheetContentTest: SnapshotTestCase {
     func test_RatingSheetContent_Unrated() {
-        makeSheet(userRating: nil)
+        buildRatingSheet(title: "Lioness", subtitle: "2023", userRating: nil)
             .assertSnapshot(layout: .defaultDevice, testName: "RatingSheetContent_Unrated")
     }
 
     func test_RatingSheetContent_Rated() {
-        makeSheet(userRating: 8)
+        buildRatingSheet(title: "Sacrificial Soldiers", subtitle: "Lioness • S1E1", userRating: 8)
             .assertSnapshot(layout: .defaultDevice, testName: "RatingSheetContent_Rated")
     }
 
-    func test_RatingSheetContent_HalfRated() {
-        makeSheet(userRating: 7)
-            .assertSnapshot(layout: .defaultDevice, testName: "RatingSheetContent_HalfRated")
+    func test_RatingSheetContent_SeasonRated() {
+        buildRatingSheet(title: "Season 1", subtitle: "Lioness", userRating: 7)
+            .assertSnapshot(layout: .defaultDevice, testName: "RatingSheetContent_SeasonRated")
     }
 
-    private func makeSheet(userRating: Int?) -> some View {
+    private func buildRatingSheet(title: String, subtitle: String?, userRating: Int?) -> some View {
         RatingSheetContent(
-            title: "Your rating",
+            headerLabel: "You're rating",
+            title: title,
+            subtitle: subtitle,
+            scoreLabel: "Your rating",
             removeLabel: "Remove rating",
             userRating: userRating,
             onRatingSelected: { _ in },
