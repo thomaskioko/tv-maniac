@@ -30,9 +30,10 @@ public class ObserveSettingsPreferencesInteractor(
             datastoreRepository.observeMultiplePlaysEnabled(),
             datastoreRepository.observeLayoutPreferences(),
             datastoreRepository.observeWidgetTheme(),
+            datastoreRepository.observeCustomWatchDateEnabled(),
         ) { imageQuality, theme, openTrailersInYoutube, includeSpecials, backgroundSyncEnabled,
             lastSyncTimestamp, episodeNotificationsEnabled, crashReportingEnabled, debugMenuEnabled,
-            quickRateEnabled, multiplePlaysEnabled, layout, widgetTheme,
+            quickRateEnabled, multiplePlaysEnabled, layout, widgetTheme, customWatchDateEnabled,
             ->
             val lastSyncDate = lastSyncTimestamp?.let { dateTimeProvider.epochToDisplayDateTime(it) }
             SettingsPreferences(
@@ -50,6 +51,7 @@ public class ObserveSettingsPreferencesInteractor(
                 multiplePlaysEnabled = multiplePlaysEnabled,
                 layout = layout,
                 widgetTheme = widgetTheme?.let { Theme.valueOf(it.name) },
+                customWatchDateEnabled = customWatchDateEnabled,
             )
         }
     }
@@ -70,4 +72,5 @@ public data class SettingsPreferences(
     val multiplePlaysEnabled: Boolean,
     val layout: LayoutPreferences,
     val widgetTheme: Theme?,
+    val customWatchDateEnabled: Boolean,
 )
