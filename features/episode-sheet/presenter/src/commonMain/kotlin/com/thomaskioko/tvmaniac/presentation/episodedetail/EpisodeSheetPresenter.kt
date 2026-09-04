@@ -17,9 +17,12 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
+import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveEpisodeRewatchesInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
@@ -28,6 +31,7 @@ import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetParam
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
+import com.thomaskioko.tvmaniac.ratingsheet.presenter.promptForEpisodeRating
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsUiParam
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
@@ -42,6 +46,7 @@ import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -59,6 +64,8 @@ public class EpisodeSheetPresenter internal constructor(
     private val observeEpisodeRewatchesInteractor: ObserveEpisodeRewatchesInteractor,
     private val navigator: Navigator,
     private val markEpisodeUnwatchedInteractor: MarkEpisodeUnwatchedInteractor,
+    private val markWatchedAtInteractor: MarkWatchedAtInteractor,
+    private val shouldPromptForRatingInteractor: ShouldPromptForRatingInteractor,
     private val datastoreRepository: DatastoreRepository,
     private val unfollowShowInteractor: UnfollowShowInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -116,7 +123,7 @@ public class EpisodeSheetPresenter internal constructor(
 
     public fun dispatch(action: EpisodeSheetAction) {
         when (action) {
-            is EpisodeSheetAction.MarkWatched -> openWatchDateSelection()
+            is EpisodeSheetAction.MarkWatched -> markWatched()
             is EpisodeSheetAction.MarkUnwatched -> showRemoveWatchConfirmation.value = true
             is EpisodeSheetAction.RemoveWatchDismissed -> showRemoveWatchConfirmation.value = false
             is EpisodeSheetAction.RemoveWatchConfirmed -> {
@@ -139,19 +146,52 @@ public class EpisodeSheetPresenter internal constructor(
         }
     }
 
-    private fun openWatchDateSelection() {
+    private fun markWatched() {
         val episode = currentEpisode.value ?: return
-        navigator.navigateTo(
-            WatchDateSelectionRoute(
-                WatchDateSelectionParam(
+        coroutineScope.launch {
+            if (datastoreRepository.observeCustomWatchDateEnabled().first()) {
+                navigator.navigateTo(
+                    WatchDateSelectionRoute(
+                        WatchDateSelectionParam(
+                            target = WatchedDateTarget.EPISODE,
+                            showId = episode.show_id.id,
+                            episodeId = episode.episode_id.id,
+                            seasonNumber = episode.season_number,
+                            episodeNumber = episode.episode_number,
+                        ),
+                    ),
+                )
+            } else {
+                markWatchedNow(episode)
+            }
+        }
+    }
+
+    private fun markWatchedNow(episode: EpisodeById) {
+        if (!isMarking.compareAndSet(expect = false, update = true)) return
+        val wasWatched = episode.is_watched != 0L
+        appScopeLauncher.launch(TAG) {
+            markWatchedAtInteractor(
+                MarkWatchedAtParams(
                     target = WatchedDateTarget.EPISODE,
                     showId = episode.show_id.id,
                     episodeId = episode.episode_id.id,
                     seasonNumber = episode.season_number,
                     episodeNumber = episode.episode_number,
                 ),
-            ),
-        )
+            ).collectStatus(actionLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
+            isMarking.value = false
+            coroutineScope.launch {
+                navigator.dismissOverlay()
+                if (!wasWatched) {
+                    navigator.promptForEpisodeRating(
+                        interactor = shouldPromptForRatingInteractor,
+                        showId = episode.show_id.id,
+                        episodeId = episode.episode_id.id,
+                    )
+                }
+            }
+        }
     }
 
     private fun markUnwatched() {
