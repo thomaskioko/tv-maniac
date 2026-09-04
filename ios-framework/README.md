@@ -955,6 +955,7 @@ graph TB
   :domain:episode -.-> :core:view
   :domain:episode --> :data:account-manager:api
   :domain:episode --> :data:database:sqldelight
+  :domain:episode --> :data:datastore:api
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
@@ -1143,6 +1144,7 @@ graph TB
   :features:episode-sheet:presenter --> :domain:rewatch
   :features:episode-sheet:presenter --> :features:episode-sheet:nav
   :features:episode-sheet:presenter --> :features:rating-sheet:nav
+  :features:episode-sheet:presenter --> :features:rating-sheet:presenter
   :features:episode-sheet:presenter -.-> :features:season-details:nav
   :features:episode-sheet:presenter -.-> :features:show-details:nav
   :features:episode-sheet:presenter --> :features:watchdate-selection:nav
