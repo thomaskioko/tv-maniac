@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.ratingsheet.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,19 +12,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StarHalf
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -32,7 +29,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -94,31 +96,34 @@ internal fun RatingSheetContent(
                 .fillMaxWidth()
                 .padding(horizontal = TvManiacSpacing.medium)
                 .padding(top = TvManiacSpacing.xSmall),
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.large),
         ) {
-            Text(
-                text = state.title,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+            RatingTargetHeader(
+                headerLabel = state.headerLabel,
+                title = state.title,
+                subtitle = state.subtitle,
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall)) {
-                for (star in 1..STAR_COUNT) {
-                    val value = star * POINTS_PER_STAR
-                    RatingStar(
-                        value = value,
-                        userRating = userRating,
-                        onClick = { onAction(RatingSheetAction.RatingSelected(value)) },
-                    )
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small)) {
+                Text(
+                    text = state.scoreLabel,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+
+                ScoreGrid(
+                    userRating = userRating,
+                    onScoreSelected = { onAction(RatingSheetAction.RatingSelected(it)) },
+                )
             }
 
             if (userRating != null) {
                 FilledHorizontalIconButton(
                     text = state.removeRatingLabel,
                     onClick = { onAction(RatingSheetAction.RatingCleared) },
-                    modifier = Modifier.testTag(RatingSheetTestTags.CLEAR_RATING_BUTTON),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .testTag(RatingSheetTestTags.CLEAR_RATING_BUTTON),
                     imageVector = Icons.Outlined.DeleteOutline,
                     shape = CircleShape,
                     containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.65f),
@@ -131,34 +136,99 @@ internal fun RatingSheetContent(
 }
 
 @Composable
-private fun RatingStar(
-    value: Int,
+private fun RatingTargetHeader(
+    headerLabel: String,
+    title: String,
+    subtitle: String?,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
+    ) {
+        Text(
+            text = headerLabel.uppercase(),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.secondary,
+        )
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        if (subtitle != null) {
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ScoreGrid(
     userRating: Int?,
+    onScoreSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
+    ) {
+        (1..MAX_SCORE).chunked(SCORES_PER_ROW).forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall)) {
+                row.forEach { value ->
+                    ScoreTile(
+                        value = value,
+                        selected = userRating == value,
+                        onClick = { onScoreSelected(value) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScoreTile(
+    value: Int,
+    selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val filled = userRating != null && userRating >= value
-    val half = userRating != null && userRating == value - 1
     val performHaptic = rememberHapticFeedback()
     Box(
         modifier = modifier
-            .size(40.dp)
-            .testTag(RatingSheetTestTags.starRating(value))
+            .height(SCORE_TILE_HEIGHT)
+            .clip(MaterialTheme.shapes.medium)
+            .background(
+                if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surfaceVariant,
+            )
+            .border(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = if (selected) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = UNSELECTED_TILE_BORDER_ALPHA),
+                ),
+                shape = MaterialTheme.shapes.medium,
+            )
+            .testTag(RatingSheetTestTags.score(value))
+            .semantics {
+                contentDescription = value.toString()
+                this.selected = selected
+            }
             .clickable {
                 performHaptic()
                 onClick()
             },
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            imageVector = when {
-                filled -> Icons.Filled.Star
-                half -> Icons.AutoMirrored.Filled.StarHalf
-                else -> Icons.Outlined.StarOutline
-            },
-            contentDescription = value.toString(),
-            modifier = Modifier.size(32.dp),
-            tint = if (filled || half) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant,
+        Text(
+            text = value.toString(),
+            style = MaterialTheme.typography.titleMedium,
+            color = if (selected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -186,7 +256,7 @@ private fun SheetGrabber(modifier: Modifier = Modifier) {
 @Composable
 private fun RatingSheetContentUnratedPreview() {
     RatingSheetContent(
-        state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = null),
+        state = previewState(title = "Lioness", subtitle = "2023", userRating = null),
         onAction = {},
     )
 }
@@ -196,7 +266,7 @@ private fun RatingSheetContentUnratedPreview() {
 @Composable
 private fun RatingSheetContentRatedPreview() {
     RatingSheetContent(
-        state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 8),
+        state = previewState(title = "Sacrificial Soldiers", subtitle = "Lioness • S1E1", userRating = 8),
         onAction = {},
     )
 }
@@ -204,15 +274,26 @@ private fun RatingSheetContentRatedPreview() {
 @ThemePreviews
 @PreviewWrapper(TvManiacPreviewWrapperProvider::class)
 @Composable
-private fun RatingSheetContentHalfRatedPreview() {
+private fun RatingSheetContentSeasonRatedPreview() {
     RatingSheetContent(
-        state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 7),
+        state = previewState(title = "Season 1", subtitle = "Lioness", userRating = 7),
         onAction = {},
     )
 }
 
+private fun previewState(title: String, subtitle: String?, userRating: Int?) = RatingSheetState(
+    headerLabel = "You're rating",
+    title = title,
+    subtitle = subtitle,
+    scoreLabel = "Your rating",
+    removeRatingLabel = "Remove rating",
+    userRating = userRating,
+)
+
 private val sheetShape: CornerBasedShape
     @Composable get() = MaterialTheme.shapes.large.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
 
-private const val STAR_COUNT = 5
-private const val POINTS_PER_STAR = 2
+private const val MAX_SCORE = 10
+private const val SCORES_PER_ROW = 5
+private val SCORE_TILE_HEIGHT = 56.dp
+private const val UNSELECTED_TILE_BORDER_ALPHA = 0.8f
