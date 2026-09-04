@@ -490,6 +490,7 @@ class SeasonPresenterTest {
 
     @Test
     fun `should not open the rating sheet given previous episodes are marked watched too`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         datastoreRepository.saveQuickRateEnabled(true)
         seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
         castRepository.setSeasonCast(emptyList())
@@ -519,6 +520,7 @@ class SeasonPresenterTest {
 
     @Test
     fun `should not open the rating sheet given a whole season is marked watched`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         datastoreRepository.saveQuickRateEnabled(true)
         seasonDetailsRepository.setSeasonsResult(buildSeasonDetailsWithEpisodes())
         castRepository.setSeasonCast(emptyList())
@@ -604,6 +606,7 @@ class SeasonPresenterTest {
 
     @Test
     fun `should mark only current episode when SecondaryDialogAction is dispatched from mark previous episodes dialog`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
@@ -699,6 +702,7 @@ class SeasonPresenterTest {
 
     @Test
     fun `should mark season with previous seasons when ConfirmDialogAction is dispatched from mark previous seasons dialog`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
@@ -733,6 +737,7 @@ class SeasonPresenterTest {
 
     @Test
     fun `should mark only current season when SecondaryDialogAction is dispatched from mark previous seasons dialog`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
@@ -834,7 +839,34 @@ class SeasonPresenterTest {
     }
 
     @Test
+    fun `should mark season watched without the sheet given custom watch date is off`() = runTest {
+        val initialDetails = buildSeasonDetailsWithEpisodes()
+        seasonDetailsRepository.setSeasonsResult(initialDetails)
+        castRepository.setSeasonCast(emptyList())
+        episodeRepository.setUnwatchedCountInPreviousSeasons(0L)
+
+        presenter.state.test {
+            awaitItem() shouldBe SeasonDetailsModel.Empty
+            awaitItem()
+
+            presenter.dispatch(MarkSeasonAsWatched(hasUnwatchedInPreviousSeasons = false))
+
+            awaitItem().dialogState.shouldBeInstanceOf<SeasonDialogState.WatchSeasonConfirmation>()
+
+            presenter.dispatch(ConfirmDialogAction)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            cancelAndIgnoreRemainingEvents()
+
+            episodeRepository.lastMarkSeasonWatchedCall.shouldNotBeNull()
+            navigator.activatedOverlays.none { it is WatchDateSelectionRoute } shouldBe true
+        }
+    }
+
+    @Test
     fun `should mark season watched after confirming dialog when no unwatched previous seasons`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
@@ -1179,6 +1211,7 @@ class SeasonPresenterTest {
 
     @Test
     fun `should show watch dialog when ToggleSeasonWatched is dispatched for unwatched season`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         val initialDetails = buildSeasonDetailsWithEpisodes()
         seasonDetailsRepository.setSeasonsResult(initialDetails)
         castRepository.setSeasonCast(emptyList())
@@ -1314,6 +1347,7 @@ class SeasonPresenterTest {
             ),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
+            datastoreRepository = datastoreRepository,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )

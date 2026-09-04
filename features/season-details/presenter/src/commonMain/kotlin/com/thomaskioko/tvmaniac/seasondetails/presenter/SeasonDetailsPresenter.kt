@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.data.ratings.api.RatingEntityType
+import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
@@ -51,6 +52,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -76,6 +78,7 @@ public class SeasonDetailsPresenter internal constructor(
     observeSeasonWatchProgressInteractor: ObserveSeasonWatchProgressInteractor,
     observeUnwatchedInPreviousSeasonsInteractor: ObserveUnwatchedInPreviousSeasonsInteractor,
     observeRatingInteractor: ObserveRatingInteractor,
+    private val datastoreRepository: DatastoreRepository,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -325,7 +328,7 @@ public class SeasonDetailsPresenter internal constructor(
     }
 
     private suspend fun execute(change: WatchChange, fromConfirmation: Boolean = false) {
-        if (fromConfirmation) {
+        if (fromConfirmation && datastoreRepository.observeCustomWatchDateEnabled().first()) {
             val route = watchDateRouteOrNull(change)
             if (route != null) {
                 navigator.navigateTo(route)
