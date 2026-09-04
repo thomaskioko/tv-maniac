@@ -16,7 +16,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.SeasonCast
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
@@ -1348,7 +1348,7 @@ class SeasonPresenterTest {
             ),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             shouldPromptForRatingInteractor = shouldPromptForRatingInteractor,
-            shouldPickWatchDateInteractor = ShouldPickWatchDateInteractor(datastoreRepository),
+            shouldShowDatePickerInteractor = ShouldShowDatePickerInteractor(datastoreRepository),
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),
         )

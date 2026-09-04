@@ -5,10 +5,10 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-class ShouldPickWatchDateInteractorTest {
+class ShouldShowDatePickerInteractorTest {
     private val datastoreRepository = FakeDatastoreRepository()
 
-    private val interactor = ShouldPickWatchDateInteractor(
+    private val interactor = ShouldShowDatePickerInteractor(
         datastoreRepository = datastoreRepository,
     )
 

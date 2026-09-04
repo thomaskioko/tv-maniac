@@ -5,7 +5,7 @@ import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.first
 
 @Inject
-public class ShouldPickWatchDateInteractor(
+public class ShouldShowDatePickerInteractor(
     private val datastoreRepository: DatastoreRepository,
 ) {
     public suspend operator fun invoke(): Boolean =

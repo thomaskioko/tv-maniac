@@ -18,7 +18,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
@@ -473,7 +473,7 @@ internal class EpisodeSheetPresenterTest {
                 subscriptionManager = FakeSubscriptionManager(),
                 ratingsRepository = ratingsRepository,
             ),
-            shouldPickWatchDateInteractor = ShouldPickWatchDateInteractor(datastoreRepository),
+            shouldShowDatePickerInteractor = ShouldShowDatePickerInteractor(datastoreRepository),
             observeEpisodeRewatchesInteractor = ObserveEpisodeRewatchesInteractor(rewatchRepository),
             datastoreRepository = datastoreRepository,
             unfollowShowInteractor = UnfollowShowInteractor(

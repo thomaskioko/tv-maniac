@@ -16,7 +16,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedParams
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedParams
-import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.seasondetails.FetchPreviousSeasonsInteractor
@@ -77,7 +77,7 @@ public class SeasonDetailsPresenter internal constructor(
     observeSeasonWatchProgressInteractor: ObserveSeasonWatchProgressInteractor,
     observeUnwatchedInPreviousSeasonsInteractor: ObserveUnwatchedInPreviousSeasonsInteractor,
     observeRatingInteractor: ObserveRatingInteractor,
-    private val shouldPickWatchDateInteractor: ShouldPickWatchDateInteractor,
+    private val shouldShowDatePickerInteractor: ShouldShowDatePickerInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -327,7 +327,7 @@ public class SeasonDetailsPresenter internal constructor(
     }
 
     private suspend fun execute(change: WatchChange, fromConfirmation: Boolean = false) {
-        if (fromConfirmation && shouldPickWatchDateInteractor()) {
+        if (fromConfirmation && shouldShowDatePickerInteractor()) {
             val route = watchDateRouteOrNull(change)
             if (route != null) {
                 navigator.navigateTo(route)

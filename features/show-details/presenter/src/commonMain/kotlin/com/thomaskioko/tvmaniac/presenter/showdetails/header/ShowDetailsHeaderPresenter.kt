@@ -19,7 +19,7 @@ import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
-import com.thomaskioko.tvmaniac.domain.episode.ShouldPickWatchDateInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
@@ -80,7 +80,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val startRewatchSessionInteractor: StartRewatchSessionInteractor,
     private val markWatchedAtInteractor: MarkWatchedAtInteractor,
-    private val shouldPickWatchDateInteractor: ShouldPickWatchDateInteractor,
+    private val shouldShowDatePickerInteractor: ShouldShowDatePickerInteractor,
     private val datastoreRepository: DatastoreRepository,
     private val syncCalendarInteractor: SyncCalendarInteractor,
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
@@ -257,7 +257,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     private fun onMarkShowWatchedConfirmed() {
         _state.update { it.copy(showMarkShowWatchedConfirmation = false) }
         coroutineScope.launch {
-            if (shouldPickWatchDateInteractor()) {
+            if (shouldShowDatePickerInteractor()) {
                 navigator.navigateTo(
                     WatchDateSelectionRoute(
                         WatchDateSelectionParam(
