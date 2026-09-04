@@ -503,6 +503,20 @@ public interface DatastoreRepository {
     public fun observeQuickRateEnabled(): Flow<Boolean>
 
     /**
+     * Saves whether the watch date sheet opens before a watch is recorded.
+     *
+     * @param enabled Whether custom watch date entry is enabled.
+     */
+    public suspend fun saveCustomWatchDateEnabled(enabled: Boolean)
+
+    /**
+     * Observes whether the watch date sheet opens before a watch is recorded.
+     *
+     * @return A Flow of Boolean, true if custom watch date entry is enabled. Defaults to false.
+     */
+    public fun observeCustomWatchDateEnabled(): Flow<Boolean>
+
+    /**
      * Saves whether a show can be marked watched more than once.
      *
      * @param enabled Whether more than one play is allowed.

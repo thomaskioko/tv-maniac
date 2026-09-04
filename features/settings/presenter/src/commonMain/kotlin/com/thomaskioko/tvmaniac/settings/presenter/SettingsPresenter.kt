@@ -164,6 +164,7 @@ public class SettingsPresenter internal constructor(
             openTrailersInYoutube = preferences.openTrailersInYoutube,
             includeSpecials = preferences.includeSpecials,
             quickRateEnabled = preferences.quickRateEnabled,
+            customWatchDateEnabled = preferences.customWatchDateEnabled,
             multiplePlaysEnabled = preferences.multiplePlaysEnabled,
             isAuthenticated = isLoggedIn,
             activeProvider = activeProvider,
@@ -289,6 +290,12 @@ public class SettingsPresenter internal constructor(
                 if (state.value.premium.quickRateLocked) return
                 coroutineScope.launch {
                     datastoreRepository.saveQuickRateEnabled(action.enabled)
+                }
+            }
+
+            is CustomWatchDateToggled -> {
+                coroutineScope.launch {
+                    datastoreRepository.saveCustomWatchDateEnabled(action.enabled)
                 }
             }
 

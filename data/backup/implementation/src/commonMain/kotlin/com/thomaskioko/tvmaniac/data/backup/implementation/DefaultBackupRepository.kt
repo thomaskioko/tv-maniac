@@ -259,6 +259,7 @@ public class DefaultBackupRepository(
         posterCornerStyle = datastoreRepository.observePosterCornerStyle().first().name,
         quickRateEnabled = datastoreRepository.observeQuickRateEnabled().first(),
         multiplePlaysEnabled = datastoreRepository.observeMultiplePlaysEnabled().first(),
+        customWatchDateEnabled = datastoreRepository.observeCustomWatchDateEnabled().first(),
     )
 
     private suspend fun writePreferences(preferences: BackupPreferences) {
@@ -287,6 +288,7 @@ public class DefaultBackupRepository(
         enumOrNull<PosterCornerStyle>(preferences.posterCornerStyle)?.let { datastoreRepository.savePosterCornerStyle(it) }
         preferences.quickRateEnabled?.let { datastoreRepository.saveQuickRateEnabled(it) }
         preferences.multiplePlaysEnabled?.let { datastoreRepository.saveMultiplePlaysEnabled(it) }
+        preferences.customWatchDateEnabled?.let { datastoreRepository.saveCustomWatchDateEnabled(it) }
     }
 
     private inline fun <reified T : Enum<T>> enumOrNull(name: String?): T? =

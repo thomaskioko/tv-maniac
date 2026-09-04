@@ -16,6 +16,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
 
     @Test
     fun seasonUserJourney() = runAppFlowTest {
+        scenarios.settings.enableCustomWatchDate()
         scenarios.discover.stubBrowseGraph()
 
         discoverRobot
@@ -153,6 +154,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
 
     @Test
     fun givenNoUnwatchedPreviousSeasons_whenSeasonToggledWatched_thenConfirmationDialogGatesTheWrite() = runAppFlowTest {
+        scenarios.settings.enableCustomWatchDate()
         scenarios.discover.stubBrowseGraph()
 
         discoverRobot

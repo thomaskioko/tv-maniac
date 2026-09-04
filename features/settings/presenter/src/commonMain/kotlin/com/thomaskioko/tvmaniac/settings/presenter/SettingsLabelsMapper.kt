@@ -49,6 +49,8 @@ public class SettingsLabelsMapper(
         includeSpecialsDescription = localizer.getString(StringResourceKey.LabelSettingsIncludeSpecialsDescription),
         quickRateTitle = localizer.getString(StringResourceKey.LabelSettingsQuickRate),
         quickRateDescription = localizer.getString(StringResourceKey.LabelSettingsQuickRateDescription),
+        customWatchDateTitle = localizer.getString(StringResourceKey.LabelSettingsCustomWatchDate),
+        customWatchDateDescription = localizer.getString(StringResourceKey.LabelSettingsCustomWatchDateDescription),
         multiplePlaysTitle = localizer.getString(StringResourceKey.LabelSettingsMultiplePlays),
         multiplePlaysDescription = localizer.getString(StringResourceKey.LabelSettingsMultiplePlaysDescription),
         youtubeTitle = localizer.getString(StringResourceKey.LabelSettingsYoutube),

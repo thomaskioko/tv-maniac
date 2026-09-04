@@ -112,6 +112,20 @@ internal class DatastoreRepositoryTest {
     }
 
     @Test
+    fun `should emit disabled custom watch date given nothing has been saved`() = runTest {
+        repository.observeCustomWatchDateEnabled().test { awaitItem() shouldBe false }
+    }
+
+    @Test
+    fun `should emit enabled custom watch date when updated`() = runTest {
+        repository.observeCustomWatchDateEnabled().test {
+            repository.saveCustomWatchDateEnabled(true)
+            awaitItem() shouldBe false
+            awaitItem() shouldBe true
+        }
+    }
+
+    @Test
     fun `should emit no widget theme given nothing has been saved`() = runTest {
         repository.observeWidgetTheme().test { awaitItem() shouldBe null }
     }

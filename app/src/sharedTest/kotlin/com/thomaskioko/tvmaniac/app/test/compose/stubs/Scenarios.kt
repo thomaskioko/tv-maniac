@@ -386,5 +386,13 @@ internal class Scenarios(
                 }
             }
         }
+
+        fun enableCustomWatchDate() {
+            runSetup {
+                graph.dataStore.edit { preferences ->
+                    preferences[DefaultDatastoreRepository.KEY_CUSTOM_WATCH_DATE_ENABLED] = true
+                }
+            }
+        }
     }
 }

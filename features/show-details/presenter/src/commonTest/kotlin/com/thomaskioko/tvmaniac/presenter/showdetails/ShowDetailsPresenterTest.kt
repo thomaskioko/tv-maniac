@@ -21,7 +21,9 @@ import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRep
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeWatchedInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
 import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
@@ -31,6 +33,7 @@ import com.thomaskioko.tvmaniac.domain.ratings.RefreshCommunityRatingInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveRewatchStatusInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.WatchAgainInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchCastInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchSeasonsEpisodesInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FetchTrailersInteractor
@@ -305,6 +308,12 @@ internal class ShowDetailsPresenterTest : BaseLocalizerTest() {
             observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(episodeRepository),
             startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
+            markWatchedAtInteractor = MarkWatchedAtInteractor(
+                episodeRepository = episodeRepository,
+                watchAgainInteractor = WatchAgainInteractor(rewatchRepository),
+                dateTimeProvider = dateTimeProvider,
+            ),
+            shouldShowDatePickerInteractor = ShouldShowDatePickerInteractor(datastoreRepository),
             datastoreRepository = datastoreRepository,
             syncCalendarInteractor = SyncCalendarInteractor(
                 episodeRepository = episodeRepository,

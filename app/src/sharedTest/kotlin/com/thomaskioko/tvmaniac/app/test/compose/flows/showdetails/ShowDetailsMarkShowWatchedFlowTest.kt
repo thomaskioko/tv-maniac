@@ -10,6 +10,7 @@ internal class ShowDetailsMarkShowWatchedFlowTest : BaseAppFlowTest() {
 
     @Test
     fun givenFollowedShow_whenMarkShowWatchedConfirmed_thenWatchDateSelectionOpens() = runAppFlowTest {
+        scenarios.settings.enableCustomWatchDate()
         scenarios.stubAuthenticatedSync()
 
         rootRobot

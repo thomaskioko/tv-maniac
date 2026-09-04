@@ -16,10 +16,14 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.db.EpisodeById
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.domain.episode.MarkEpisodeUnwatchedInteractor
+import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveEpisodeByIdInteractor
+import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
 import com.thomaskioko.tvmaniac.domain.followedshows.UnfollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ShouldPromptForRatingInteractor
 import com.thomaskioko.tvmaniac.domain.rewatch.ObserveEpisodeRewatchesInteractor
+import com.thomaskioko.tvmaniac.domain.rewatch.WatchAgainInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.espisodedetails.nav.model.EpisodeSheetParam
@@ -31,9 +35,12 @@ import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.nav.SeasonDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
+import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -62,6 +69,7 @@ internal class EpisodeSheetPresenterTest {
     private val navigator = FakeNavigator()
     private val datastoreRepository = FakeDatastoreRepository()
     private val rewatchRepository = FakeRewatchRepository()
+    private val dateTimeProvider = FakeDateTimeProvider()
 
     @BeforeTest
     fun setUp() {
@@ -111,6 +119,7 @@ internal class EpisodeSheetPresenterTest {
 
     @Test
     fun `should open the watched date sheet given MarkWatched is dispatched`() = runTest {
+        datastoreRepository.saveCustomWatchDateEnabled(true)
         episodeRepository.setEpisodeById(testEpisode(isWatched = false))
 
         val presenter = createPresenter()
@@ -131,6 +140,27 @@ internal class EpisodeSheetPresenterTest {
             route.param.episodeNumber shouldBe 1L
             episodeRepository.lastMarkEpisodeWatchedCall.shouldBeNull()
             navigator.overlayDismissCount shouldBe 0
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should mark the episode watched given MarkWatched is dispatched and custom watch date is off`() = runTest {
+        episodeRepository.setEpisodeById(testEpisode(isWatched = false))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            testDispatcher.scheduler.advanceUntilIdle()
+            awaitItem()
+
+            presenter.dispatch(EpisodeSheetAction.MarkWatched)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            episodeRepository.lastMarkEpisodeWatchedCall.shouldNotBeNull()
+            navigator.activatedOverlays.none { it is WatchDateSelectionRoute } shouldBe true
+            navigator.overlayDismissCount shouldBe 1
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -433,6 +463,17 @@ internal class EpisodeSheetPresenterTest {
             observeEpisodeByIdInteractor = ObserveEpisodeByIdInteractor(episodeRepository),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             markEpisodeUnwatchedInteractor = MarkEpisodeUnwatchedInteractor(episodeRepository, rewatchRepository),
+            markWatchedAtInteractor = MarkWatchedAtInteractor(
+                episodeRepository = episodeRepository,
+                watchAgainInteractor = WatchAgainInteractor(rewatchRepository),
+                dateTimeProvider = dateTimeProvider,
+            ),
+            shouldPromptForRatingInteractor = ShouldPromptForRatingInteractor(
+                datastoreRepository = datastoreRepository,
+                subscriptionManager = FakeSubscriptionManager(),
+                ratingsRepository = ratingsRepository,
+            ),
+            shouldShowDatePickerInteractor = ShouldShowDatePickerInteractor(datastoreRepository),
             observeEpisodeRewatchesInteractor = ObserveEpisodeRewatchesInteractor(rewatchRepository),
             datastoreRepository = datastoreRepository,
             unfollowShowInteractor = UnfollowShowInteractor(

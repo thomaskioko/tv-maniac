@@ -32,6 +32,15 @@ extension SettingsView {
         ))
 
         toggles.append(SettingsToggleItem(
+            id: "custom-watch-date",
+            icon: "calendar.badge.clock",
+            title: uiState.labels.customWatchDateTitle,
+            subtitle: uiState.labels.customWatchDateDescription,
+            isOn: uiState.customWatchDateEnabled,
+            onToggle: { presenter.dispatch(action: CustomWatchDateToggled(enabled: $0)) }
+        ))
+
+        toggles.append(SettingsToggleItem(
             id: "quick-rate",
             icon: "star.fill",
             title: uiState.labels.quickRateTitle,

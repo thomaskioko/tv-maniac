@@ -53,6 +53,10 @@ public data class QuickRateToggled(
     val enabled: Boolean,
 ) : SettingsActions
 
+public data class CustomWatchDateToggled(
+    val enabled: Boolean,
+) : SettingsActions
+
 public data class MultiplePlaysToggled(
     val enabled: Boolean,
 ) : SettingsActions

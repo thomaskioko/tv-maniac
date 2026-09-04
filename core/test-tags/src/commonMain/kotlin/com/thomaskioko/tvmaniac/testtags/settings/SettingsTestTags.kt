@@ -20,6 +20,7 @@ public object SettingsTestTags {
     public const val HAPTIC_FEEDBACK_TOGGLE_TEST_TAG: String = "settings_haptic_feedback_toggle"
     public const val SEASON_ORDER_TOGGLE_TEST_TAG: String = "settings_season_order_toggle"
     public const val BLUR_UNWATCHED_TOGGLE_TEST_TAG: String = "settings_blur_unwatched_toggle"
+    public const val CUSTOM_WATCH_DATE_TOGGLE_TEST_TAG: String = "settings_custom_watch_date_toggle"
     public const val QUICK_RATE_TOGGLE_TEST_TAG: String = "settings_quick_rate_toggle"
     public const val MULTIPLE_PLAYS_TOGGLE_TEST_TAG: String = "settings_multiple_plays_toggle"
     public const val DISCOVER_SECTIONS_ROW_TEST_TAG: String = "settings_discover_sections_row"

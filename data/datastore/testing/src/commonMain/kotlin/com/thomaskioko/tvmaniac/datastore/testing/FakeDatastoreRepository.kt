@@ -193,6 +193,7 @@ public class FakeDatastoreRepository : DatastoreRepository {
     private val posterCornerStyleFlow = MutableStateFlow(PosterCornerStyle.SHARP)
     private val widgetThemeFlow = MutableStateFlow<AppTheme?>(null)
     private val quickRateEnabledFlow = MutableStateFlow(false)
+    private val customWatchDateEnabledFlow = MutableStateFlow(false)
     private val multiplePlaysEnabledFlow = MutableStateFlow(true)
 
     override suspend fun saveGenreShowCategory(category: String) {
@@ -309,6 +310,12 @@ public class FakeDatastoreRepository : DatastoreRepository {
     }
 
     override fun observeQuickRateEnabled(): Flow<Boolean> = quickRateEnabledFlow.asStateFlow()
+
+    override suspend fun saveCustomWatchDateEnabled(enabled: Boolean) {
+        customWatchDateEnabledFlow.value = enabled
+    }
+
+    override fun observeCustomWatchDateEnabled(): Flow<Boolean> = customWatchDateEnabledFlow.asStateFlow()
 
     override suspend fun saveMultiplePlaysEnabled(enabled: Boolean) {
         multiplePlaysEnabledFlow.value = enabled

@@ -77,6 +77,7 @@ import com.thomaskioko.tvmaniac.settings.presenter.BackupRestoreConfirmationDial
 import com.thomaskioko.tvmaniac.settings.presenter.BackupSourceSelected
 import com.thomaskioko.tvmaniac.settings.presenter.BlurUnwatchedToggled
 import com.thomaskioko.tvmaniac.settings.presenter.ConfirmSwitchDiscard
+import com.thomaskioko.tvmaniac.settings.presenter.CustomWatchDateToggled
 import com.thomaskioko.tvmaniac.settings.presenter.DiscoverSectionToggled
 import com.thomaskioko.tvmaniac.settings.presenter.DismissLogoutDialog
 import com.thomaskioko.tvmaniac.settings.presenter.DismissSwitchDialog
@@ -892,6 +893,31 @@ class SettingsPresenterTest {
             expectMostRecentItem().episodeNotificationsEnabled shouldBe false
         }
         datastoreRepository.observeEpisodeNotificationsEnabled().first() shouldBe false
+    }
+
+    @Test
+    fun `should enable custom watch date given the toggle is switched on`() = runTest {
+        presenter.dispatch(CustomWatchDateToggled(true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().customWatchDateEnabled shouldBe true
+        }
+        datastoreRepository.observeCustomWatchDateEnabled().first() shouldBe true
+    }
+
+    @Test
+    fun `should disable custom watch date given the toggle is switched off`() = runTest {
+        presenter.dispatch(CustomWatchDateToggled(true))
+        testScheduler.advanceUntilIdle()
+
+        presenter.dispatch(CustomWatchDateToggled(false))
+        testScheduler.advanceUntilIdle()
+
+        presenter.state.test {
+            expectMostRecentItem().customWatchDateEnabled shouldBe false
+        }
+        datastoreRepository.observeCustomWatchDateEnabled().first() shouldBe false
     }
 
     @Test

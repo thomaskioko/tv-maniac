@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.filled.Sync
@@ -18,6 +19,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.settings.presenter.BackgroundSyncToggled
+import com.thomaskioko.tvmaniac.settings.presenter.CustomWatchDateToggled
 import com.thomaskioko.tvmaniac.settings.presenter.IncludeSpecialsToggled
 import com.thomaskioko.tvmaniac.settings.presenter.MultiplePlaysToggled
 import com.thomaskioko.tvmaniac.settings.presenter.QuickRateToggled
@@ -72,6 +74,15 @@ internal fun BehaviorPage(
                     description = state.labels.includeSpecialsDescription,
                     checked = state.includeSpecials,
                     onCheckedChange = { onAction(IncludeSpecialsToggled(it)) },
+                )
+                SettingsGroupDivider()
+                SwitchRow(
+                    modifier = Modifier.testTag(SettingsTestTags.CUSTOM_WATCH_DATE_TOGGLE_TEST_TAG),
+                    icon = Icons.Filled.EditCalendar,
+                    title = state.labels.customWatchDateTitle,
+                    description = state.labels.customWatchDateDescription,
+                    checked = state.customWatchDateEnabled,
+                    onCheckedChange = { onAction(CustomWatchDateToggled(it)) },
                 )
                 SettingsGroupDivider()
                 SwitchRow(
