@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.seasons.testing
 
+import com.thomaskioko.tvmaniac.db.SeasonById
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.seasons.api.FollowedShowSeason
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsRepository
@@ -11,6 +12,7 @@ public class FakeSeasonsRepository : SeasonsRepository {
 
     private var seasonsResult = MutableStateFlow<List<ShowSeasons>>(emptyList())
     private var latestSeasonsResult = MutableStateFlow<List<FollowedShowSeason>>(emptyList())
+    private val seasonById = MutableStateFlow<SeasonById?>(null)
 
     public fun setSeasonsResult(result: List<ShowSeasons>) {
         seasonsResult.value = result
@@ -20,6 +22,10 @@ public class FakeSeasonsRepository : SeasonsRepository {
         latestSeasonsResult.value = result
     }
 
+    public fun setSeasonById(season: SeasonById?) {
+        seasonById.value = season
+    }
+
     override fun observeSeasonsByShowId(id: Long): Flow<List<ShowSeasons>> = seasonsResult.asStateFlow()
 
     override fun getSeasonsByShowId(id: Long, includeSpecials: Boolean): List<ShowSeasons> =
@@ -27,4 +33,6 @@ public class FakeSeasonsRepository : SeasonsRepository {
 
     override suspend fun getLatestSeasonsForFollowedShows(): List<FollowedShowSeason> =
         latestSeasonsResult.value
+
+    override fun observeSeasonById(seasonId: Long): Flow<SeasonById?> = seasonById.asStateFlow()
 }

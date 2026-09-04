@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.seasons.implementation
 
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
+import com.thomaskioko.tvmaniac.db.SeasonById
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.seasons.api.FollowedShowSeason
 import com.thomaskioko.tvmaniac.seasons.api.SeasonsDao
@@ -40,4 +41,6 @@ public class DefaultSeasonsRepository(
             )
         }
     }
+
+    override fun observeSeasonById(seasonId: Long): Flow<SeasonById?> = seasonsDao.observeSeasonById(seasonId)
 }

@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.seasons.api
 import com.thomaskioko.tvmaniac.db.GetSeasonByShowAndNumber
 import com.thomaskioko.tvmaniac.db.LatestSeasonPerFollowedShow
 import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.SeasonById
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import kotlinx.coroutines.flow.Flow
 
@@ -17,6 +18,8 @@ public interface SeasonsDao {
     public fun observeSeasonsByShowId(showId: Long, includeSpecials: Boolean = true): Flow<List<ShowSeasons>>
 
     public suspend fun getSeasonByShowAndNumber(showId: Long, seasonNumber: Long): GetSeasonByShowAndNumber?
+
+    public fun observeSeasonById(seasonId: Long): Flow<SeasonById?>
 
     public suspend fun getLatestSeasonPerFollowedShow(): List<LatestSeasonPerFollowedShow>
 

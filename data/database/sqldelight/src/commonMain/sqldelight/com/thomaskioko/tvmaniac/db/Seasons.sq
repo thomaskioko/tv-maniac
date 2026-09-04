@@ -103,6 +103,16 @@ LIMIT 1;
 updateImageUrl:
 UPDATE season SET image_url = ? WHERE id = ?;
 
+seasonById:
+SELECT
+    season.id AS season_id,
+    season.title,
+    season.season_number,
+    tvshow.name AS show_name
+FROM season
+INNER JOIN tvshow ON tvshow.id = season.show_id
+WHERE season.id = :seasonId;
+
 getSeasonWithShowInfo:
 SELECT
     tvshow.tmdb_id AS show_id,
