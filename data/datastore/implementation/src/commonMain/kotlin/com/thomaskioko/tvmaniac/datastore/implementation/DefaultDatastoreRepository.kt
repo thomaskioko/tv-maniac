@@ -483,6 +483,17 @@ public class DefaultDatastoreRepository(
             preferences[KEY_QUICK_RATE_ENABLED] ?: false
         }
 
+    override suspend fun saveCustomWatchDateEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[KEY_CUSTOM_WATCH_DATE_ENABLED] = enabled
+        }
+    }
+
+    override fun observeCustomWatchDateEnabled(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_CUSTOM_WATCH_DATE_ENABLED] ?: false
+        }
+
     override suspend fun saveMultiplePlaysEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[KEY_MULTIPLE_PLAYS_ENABLED] = enabled
@@ -543,6 +554,8 @@ public class DefaultDatastoreRepository(
         public val KEY_POSTER_CORNER_STYLE: Preferences.Key<String> = stringPreferencesKey("poster_corner_style")
         public val KEY_WIDGET_THEME: Preferences.Key<String> = stringPreferencesKey("widget_theme")
         public val KEY_QUICK_RATE_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("quick_rate_enabled")
+        public val KEY_CUSTOM_WATCH_DATE_ENABLED: Preferences.Key<Boolean> =
+            booleanPreferencesKey("custom_watch_date_enabled")
         public val KEY_MULTIPLE_PLAYS_ENABLED: Preferences.Key<Boolean> =
             booleanPreferencesKey("multiple_plays_enabled")
         public val KEY_AUTO_BACKUP_ENABLED: Preferences.Key<Boolean> = booleanPreferencesKey("auto_backup_enabled")
