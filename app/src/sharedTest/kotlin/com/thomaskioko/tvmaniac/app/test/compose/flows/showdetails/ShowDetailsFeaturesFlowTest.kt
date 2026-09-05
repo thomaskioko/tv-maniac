@@ -64,7 +64,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         showListRobot
             .assertSheetDisplayed()
-            .assertTraktListItemDisplayed(favoritesListTraktId)
+            .assertListItemDisplayed(favoritesListTraktId)
     }
 
     @Test

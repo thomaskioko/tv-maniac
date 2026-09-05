@@ -74,7 +74,7 @@ internal fun ShowListSheetContent(
         when {
             state.isLoading -> LoadingContent()
             state.lists.isEmpty() -> EmptyListContent(state)
-            else -> TraktListItems(state, onAction)
+            else -> ListItems(state, onAction)
         }
 
         Spacer(modifier = Modifier.height(TvManiacSpacing.medium))
@@ -84,7 +84,7 @@ internal fun ShowListSheetContent(
 }
 
 @Composable
-private fun TraktListItems(
+private fun ListItems(
     state: ShowListState,
     onAction: (ShowListAction) -> Unit,
 ) {
@@ -92,7 +92,7 @@ private fun TraktListItems(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(ShowListTestTags.traktListItem(list.id))
+                .testTag(ShowListTestTags.listItem(list.id))
                 .padding(vertical = TvManiacSpacing.xxSmall),
             shape = MaterialTheme.shapes.large,
             colors = CardDefaults.cardColors(
@@ -120,7 +120,7 @@ private fun TraktListItems(
                     )
                     Text(
                         text = list.showCountText,
-                        modifier = Modifier.testTag(ShowListTestTags.traktListItemShowCount(list.id)),
+                        modifier = Modifier.testTag(ShowListTestTags.listItemShowCount(list.id)),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -130,7 +130,7 @@ private fun TraktListItems(
                     CircularProgressIndicator(
                         modifier = Modifier
                             .size(24.dp)
-                            .testTag(ShowListTestTags.traktListItemProgress(list.id)),
+                            .testTag(ShowListTestTags.listItemProgress(list.id)),
                         strokeWidth = 2.dp,
                         color = MaterialTheme.colorScheme.secondary,
                     )
@@ -145,7 +145,7 @@ private fun TraktListItems(
                                 ),
                             )
                         },
-                        modifier = Modifier.testTag(ShowListTestTags.traktListItemSwitch(list.id)),
+                        modifier = Modifier.testTag(ShowListTestTags.listItemSwitch(list.id)),
                     )
                 }
             }

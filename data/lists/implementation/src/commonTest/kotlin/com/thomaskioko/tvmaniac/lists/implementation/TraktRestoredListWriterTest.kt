@@ -18,7 +18,7 @@ import kotlin.test.Test
 internal class TraktRestoredListWriterTest {
 
     private val listRepository = FakeListRepository()
-    private val listDao = RecordingTraktListDao()
+    private val listDao = RecordingListDao()
     private val userRepository = FakeUserRepository()
     private val traktIdResolver = FakeShowTraktIdResolver()
 
@@ -113,7 +113,7 @@ internal class TraktRestoredListWriterTest {
         createdAt = LISTED_AT,
     )
 
-    private inner class RecordingTraktListDao : ListDao {
+    private inner class RecordingListDao : ListDao {
         private val lists = MutableStateFlow<List<UserListEntity>>(emptyList())
         private var pendingName: String? = null
         private var pendingId: Long = 0

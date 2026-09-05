@@ -34,8 +34,8 @@ internal class ShowListRobot(composeUi: ComposeUiTest) : BaseRobot<ShowListRobot
         click(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG)
     }
 
-    fun assertTraktListItemDisplayed(listId: Long) = apply {
-        assertExists(ShowListTestTags.traktListItem(listId))
+    fun assertListItemDisplayed(listId: Long) = apply {
+        assertExists(ShowListTestTags.listItem(listId))
     }
 
     fun clickCloseSheetButton() = apply {
@@ -63,19 +63,19 @@ internal class ShowListRobot(composeUi: ComposeUiTest) : BaseRobot<ShowListRobot
     }
 
     fun clickListSwitch(listId: Long) = apply {
-        click(ShowListTestTags.traktListItemSwitch(listId))
+        click(ShowListTestTags.listItemSwitch(listId))
     }
 
     fun assertListSwitchIsChecked(listId: Long) = apply {
-        assertChecked(ShowListTestTags.traktListItemSwitch(listId))
+        assertChecked(ShowListTestTags.listItemSwitch(listId))
     }
 
     fun assertListSwitchIsUnchecked(listId: Long) = apply {
-        assertUnchecked(ShowListTestTags.traktListItemSwitch(listId))
+        assertUnchecked(ShowListTestTags.listItemSwitch(listId))
     }
 
     fun assertTraktListShowCountText(listId: Long, expectedText: String) = apply {
-        assertNodeHasText(ShowListTestTags.traktListItemShowCount(listId), expectedText)
+        assertNodeHasText(ShowListTestTags.listItemShowCount(listId), expectedText)
     }
 
     private companion object {
