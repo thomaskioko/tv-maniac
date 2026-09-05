@@ -367,7 +367,7 @@ jobs:
                 uses: actions/cache/restore@v6
                 with:
                     path: derived_data
-                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.pbxproj', 'ios/Packages/**/Package.swift') }}
                     restore-keys: |
                         ${{ runner.os }}-snapshot-derived-data-
 
@@ -379,7 +379,7 @@ jobs:
                 uses: actions/cache/save@v6
                 with:
                     path: derived_data
-                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'ios/Packages/**/Package.swift') }}
+                    key: ${{ runner.os }}-snapshot-derived-data-${{ hashFiles('ios/tv-maniac.xcodeproj/project.pbxproj', 'ios/Packages/**/Package.swift') }}
 
             -   name: Upload test results
                 uses: actions/upload-artifact@v7
