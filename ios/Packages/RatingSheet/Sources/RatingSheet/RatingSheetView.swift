@@ -19,6 +19,8 @@ public struct RatingSheetView: View {
             headerLabel: state.headerLabel,
             title: state.title,
             subtitle: state.subtitle,
+            posterUrl: state.posterUrl,
+            backdropUrl: state.backdropUrl,
             scoreLabel: state.scoreLabel,
             removeLabel: state.removeRatingLabel,
             userRating: state.userRating as? Int,
