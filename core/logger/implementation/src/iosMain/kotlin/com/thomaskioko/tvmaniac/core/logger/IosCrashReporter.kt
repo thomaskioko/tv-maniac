@@ -6,17 +6,30 @@ import dev.zacsweers.metro.SingleIn
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class IosCrashReporter(
-    private val bridge: CrashReportingBridge,
+public class IosCrashReporter internal constructor(
+    private val crashlytics: Crashlytics,
+    private val configuration: CrashlyticsConfiguration,
 ) : CrashReporter {
-    override fun setCollectionEnabled(enabled: Boolean): Unit = bridge.setCollectionEnabled(enabled)
 
-    override fun recordException(throwable: Throwable, keys: Map<String, String>) {
-        keys.forEach { (key, value) -> bridge.setCustomKey(key, value) }
-        bridge.recordException(throwable, keys[CrashReportKeys.TAG].orEmpty())
+    override fun setCollectionEnabled(enabled: Boolean) {
+        if (configuration.isConfigured) configuration.setCollectionEnabled(enabled)
     }
 
-    override fun setCustomKey(key: String, value: String): Unit = bridge.setCustomKey(key, value)
-    override fun setUserId(userId: String): Unit = bridge.setUserId(userId)
-    override fun log(message: String): Unit = bridge.log(message)
+    override fun recordException(throwable: Throwable, keys: Map<String, String>) {
+        keys.forEach { (key, value) -> crashlytics.setCustomValue(key, value) }
+        crashlytics.sendHandledException(throwable)
+        keys.keys.forEach { key -> crashlytics.setCustomValue(key, "") }
+    }
+
+    override fun setCustomKey(key: String, value: String) {
+        crashlytics.setCustomValue(key, value)
+    }
+
+    override fun setUserId(userId: String) {
+        crashlytics.setUserId(userId)
+    }
+
+    override fun log(message: String) {
+        crashlytics.logMessage(message)
+    }
 }

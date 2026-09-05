@@ -24,7 +24,11 @@ kotlin {
             implementation(libs.kotlinx.atomicfu)
         }
 
-        jvmTest.dependencies {
+        iosMain.dependencies {
+            implementation(libs.crashkios.crashlytics)
+        }
+
+        commonTest.dependencies {
             implementation(libs.bundles.unittest)
             implementation(projects.core.logger.testing)
         }
