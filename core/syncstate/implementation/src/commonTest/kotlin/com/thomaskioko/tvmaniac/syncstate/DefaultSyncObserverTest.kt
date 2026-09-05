@@ -1,7 +1,11 @@
 package com.thomaskioko.tvmaniac.syncstate
 
 import app.cash.turbine.test
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CompletableDeferred
@@ -14,7 +18,8 @@ import kotlin.test.assertFailsWith
 
 internal class DefaultSyncObserverTest {
 
-    private val underTest = DefaultSyncObserver()
+    private val logger = FakeLogger()
+    private val underTest = DefaultSyncObserver(logger)
 
     @Test
     fun `should update isSyncing during the block and false after given single op`() = runTest {
@@ -114,6 +119,37 @@ internal class DefaultSyncObserverTest {
         }
 
         underTest.isSyncing.value shouldBe false
+    }
+
+    @Test
+    fun `should record a logged error with the sync key given a mark watched failure`() = runTest {
+        val cause = IllegalStateException("boom")
+
+        underTest.log(SyncError.MarkWatchedFailed(showId = 1L, cause = cause))
+
+        logger.recordedErrors shouldHaveSize 1
+        logger.recordedErrors.first().throwable shouldBe cause
+        logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.SYNC to "mark-watched")
+    }
+
+    @Test
+    fun `should write a breadcrumb only given an account limit error`() = runTest {
+        underTest.log(SyncError.AccountLimitExceeded(message = "limit", cause = IllegalStateException("limit")))
+
+        logger.recordedErrors.shouldBeEmpty()
+        logger.recordedWarnings shouldHaveSize 1
+        logger.recordedWarnings.first().keys shouldBe mapOf(CrashReportKeys.SYNC to "account-limit")
+    }
+
+    @Test
+    fun `should write a breadcrumb only given a tracked sync throws`() = runTest {
+        assertFailsWith<IllegalStateException> {
+            underTest.trackSync("library-sync") { throw IllegalStateException("boom") }
+        }
+
+        logger.recordedErrors.shouldBeEmpty()
+        logger.recordedWarnings shouldHaveSize 1
+        logger.recordedWarnings.first().keys shouldBe mapOf(CrashReportKeys.SYNC to "library-sync")
     }
 
     @Test

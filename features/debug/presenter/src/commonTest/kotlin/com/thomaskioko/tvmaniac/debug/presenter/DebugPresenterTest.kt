@@ -10,6 +10,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.continuewatching.testing.FakeContinueWatchingRepository
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.notifications.testing.FakeNotificationManager
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
@@ -37,8 +38,10 @@ import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -210,6 +213,7 @@ class DebugPresenterTest {
                 "upnext-sync",
                 "feature-flags",
                 "test-crash",
+                "report-test-error",
             )
             state.items.first { it.id == "test-crash" }.role shouldBe DebugItemRole.Destructive
             state.title shouldBe localizer.getString(StringResourceKey.LabelDebugMenuTitle)
@@ -301,6 +305,18 @@ class DebugPresenterTest {
         datastoreRepository.observeAccountType().test {
             awaitItem() shouldBe null
         }
+    }
+
+    @Test
+    fun `should record a test error given ReportTestError`() = runTest {
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.dispatch(ReportTestError)
+
+        logger.recordedErrors shouldHaveSize 1
+        logger.recordedErrors.first().throwable.shouldBeInstanceOf<DebugTelemetryException>()
+        logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.DEBUG to "true")
     }
 
     @Test
