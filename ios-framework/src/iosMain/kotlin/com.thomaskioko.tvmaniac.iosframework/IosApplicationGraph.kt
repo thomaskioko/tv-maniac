@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.appconfig.AppMetadata
 import com.thomaskioko.tvmaniac.appconfig.DebugConfig
 import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
+import com.thomaskioko.tvmaniac.core.logger.CrashlyticsCollection
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.domain.widget.WidgetManager
@@ -32,6 +33,7 @@ public interface IosApplicationGraph {
             @Provides @IsDebugBuild isDebug: Boolean,
             @Provides remoteConfigBridge: RemoteConfigBridge,
             @Provides widgetManager: WidgetManager,
+            @Provides crashlyticsCollection: CrashlyticsCollection,
         ): IosApplicationGraph
     }
 }
