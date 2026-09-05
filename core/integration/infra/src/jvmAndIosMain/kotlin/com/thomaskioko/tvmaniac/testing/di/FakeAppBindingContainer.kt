@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.base.TmdbApi
 import com.thomaskioko.tvmaniac.core.base.TraktApi
 import com.thomaskioko.tvmaniac.core.base.di.BaseBindingContainer
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.CrashReporter
 import com.thomaskioko.tvmaniac.discover.nav.DiscoverRoot
 import com.thomaskioko.tvmaniac.domain.episode.PendingUploadsWorker
 import com.thomaskioko.tvmaniac.domain.library.LibrarySyncWorker
@@ -233,11 +234,13 @@ public object FakeAppBindingContainer {
         navRootSerializer: NavRootSerializer,
         baseRouteSerializer: BaseRouteSerializer,
         navRoots: Set<NavRoot>,
+        crashReporter: CrashReporter,
     ): Navigator = DefaultNavigator(
         navRouteSerializer = navRouteSerializer,
         navRootSerializer = navRootSerializer,
         baseRouteSerializer = baseRouteSerializer,
         navRoots = navRoots,
+        crashReporter = crashReporter,
     )
 
     @Provides
