@@ -214,6 +214,24 @@ class ApiErrorReportingPluginTest {
     }
 
     @Test
+    fun `should report a failed status once given its body does not deserialize`() = runTest {
+        val engine = MockEngine { _ ->
+            respond(
+                content = """not json""",
+                status = HttpStatusCode.Unauthorized,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+
+        createClient(engine).requestTestPath()
+
+        reported.size shouldBe 1
+        val (failure, _) = reported.first()
+        failure.status shouldBe 401
+        failure.kind shouldBe ApiFailureKind.Expected
+    }
+
+    @Test
     fun `should report failure as expected given device is offline`() = runTest {
         val engine = MockEngine { _ -> throw NoInternetException }
 

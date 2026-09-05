@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationExcepti
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.NoInternetException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.httpStatusToKind
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.toEndpointTemplate
+import io.ktor.client.call.HttpClientCall
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.api.ClientPlugin
@@ -70,20 +71,29 @@ public val ApiErrorReportingPlugin: ClientPlugin<ApiErrorReportingPluginConfig> 
     }
 
     client.responsePipeline.intercept(HttpResponsePipeline.Receive) {
+        val alreadyReported = !context.response.status.isSuccess()
         try {
             proceed()
         } catch (e: CancellationException) {
             throw e
         } catch (e: ContentConvertException) {
-            val body = context.response.errorBody()
-            onFailure(context.request.toApiFailure(provider, status = null, kind = ApiFailureKind.Unexpected, body = body), e)
+            if (!alreadyReported) reportUnreadableBody(provider, onFailure, context, e)
             throw e
         } catch (e: SerializationException) {
-            val body = context.response.errorBody()
-            onFailure(context.request.toApiFailure(provider, status = null, kind = ApiFailureKind.Unexpected, body = body), e)
+            if (!alreadyReported) reportUnreadableBody(provider, onFailure, context, e)
             throw e
         }
     }
+}
+
+private suspend fun reportUnreadableBody(
+    provider: String,
+    onFailure: (ApiFailure, Throwable) -> Unit,
+    call: HttpClientCall,
+    cause: Throwable,
+) {
+    val body = call.response.errorBody()
+    onFailure(call.request.toApiFailure(provider, status = null, kind = ApiFailureKind.Unexpected, body = body), cause)
 }
 
 private const val ERROR_BODY_LIMIT = 500
