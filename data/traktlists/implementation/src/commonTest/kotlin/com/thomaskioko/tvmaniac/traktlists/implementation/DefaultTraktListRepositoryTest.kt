@@ -427,6 +427,8 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
     override suspend fun getListItems(
         userSlug: String,
         listId: Long,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<TraktListItemResponse>> {
         itemsCalls += userSlug to listId
         itemsErrorByListId[listId]?.let { return it }
@@ -441,6 +443,8 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
     override suspend fun getWatchList(
         sortBy: String,
         sortHow: String,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<TraktFollowedShowResponse>> = error("not used")
 
     override suspend fun addShowsToWatchList(

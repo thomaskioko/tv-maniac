@@ -39,6 +39,8 @@ public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
     override suspend fun getWatchList(
         sortBy: String,
         sortHow: String,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<TraktFollowedShowResponse>> = watchListResponse
 
     override suspend fun addShowsToWatchList(
@@ -64,6 +66,8 @@ public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
     override suspend fun getListItems(
         userSlug: String,
         listId: Long,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<TraktListItemResponse>> =
         error("FakeTraktListRemoteDataSource: getListItems not configured")
 

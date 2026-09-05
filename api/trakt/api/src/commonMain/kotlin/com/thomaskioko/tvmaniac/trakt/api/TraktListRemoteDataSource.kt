@@ -19,11 +19,18 @@ public interface TraktListRemoteDataSource {
     public suspend fun getListItems(
         userSlug: String,
         listId: Long,
+        page: Int = TRAKT_FIRST_PAGE,
+        limit: Int = TRAKT_PAGE_LIMIT,
     ): ApiResponse<List<TraktListItemResponse>>
 
     public suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse>
 
-    public suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>>
+    public suspend fun getWatchList(
+        sortBy: String,
+        sortHow: String,
+        page: Int = TRAKT_FIRST_PAGE,
+        limit: Int = TRAKT_PAGE_LIMIT,
+    ): ApiResponse<List<TraktFollowedShowResponse>>
 
     public suspend fun addShowsToWatchList(shows: List<TraktShowIds>): ApiResponse<TraktAddShowToListResponse>
 
