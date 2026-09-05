@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -46,12 +47,32 @@ class WidgetRefreshWorkerTest {
     @Test
     fun `should ask to retry given publishing fails`() = runTest(testDispatcher) {
         repository.setNextEpisodesForWatchlist(listOf(episode()))
+        val cause = IllegalStateException("no container")
+        val publisher = FakeWidgetPublisher().apply {
+            setInstalled(true)
+            setFailure(cause)
+        }
+
+        val result = buildWorker(publisher).doWork()
+
+        result.shouldBeInstanceOf<WorkerResult.Retry>()
+        result.message shouldBe "no container"
+        result.cause shouldBe cause
+    }
+
+    @Test
+    fun `should not log the failure itself given publishing fails`() = runTest(testDispatcher) {
+        repository.setNextEpisodesForWatchlist(listOf(episode()))
         val publisher = FakeWidgetPublisher().apply {
             setInstalled(true)
             setFailure(IllegalStateException("no container"))
         }
+        val logger = FakeLogger()
 
-        buildWorker(publisher).doWork() shouldBe WorkerResult.Retry("no container")
+        buildWorker(publisher, logger).doWork()
+
+        logger.recordedErrors.size shouldBe 0
+        logger.breadcrumbs.size shouldBe 0
     }
 
     @Test
@@ -63,11 +84,11 @@ class WidgetRefreshWorkerTest {
         publisher.getPublishedShows() shouldBe emptyList()
     }
 
-    private fun buildWorker(publisher: WidgetPublisher) = WidgetRefreshWorker(
+    private fun buildWorker(publisher: WidgetPublisher, logger: FakeLogger = FakeLogger()) = WidgetRefreshWorker(
         observeWidgetShowsInteractor = interactor,
         observeWidgetThemeInteractor = themeInteractor,
         widgetPublishers = setOf(publisher),
-        logger = FakeLogger(),
+        logger = logger,
     )
 
     private fun episode() = NextEpisodeWithShow(

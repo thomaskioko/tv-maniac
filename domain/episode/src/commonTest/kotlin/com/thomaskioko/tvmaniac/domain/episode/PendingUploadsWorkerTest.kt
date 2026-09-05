@@ -63,12 +63,25 @@ internal class PendingUploadsWorkerTest {
     @Test
     fun `should return Retry when syncPendingEpisodes throws`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
-        syncRepository.setPendingEpisodesError(RuntimeException("network down"))
+        val cause = RuntimeException("network down")
+        syncRepository.setPendingEpisodesError(cause)
 
         val result = worker.doWork()
 
         result.shouldBeInstanceOf<WorkerResult.Retry>()
         result.message shouldBe "network down"
+        result.cause shouldBe cause
+    }
+
+    @Test
+    fun `should not log the failure itself given syncPendingEpisodes throws`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        syncRepository.setPendingEpisodesError(RuntimeException("network down"))
+
+        worker.doWork()
+
+        logger.recordedErrors.size shouldBe 0
+        logger.breadcrumbs.size shouldBe 0
     }
 
     @Test
