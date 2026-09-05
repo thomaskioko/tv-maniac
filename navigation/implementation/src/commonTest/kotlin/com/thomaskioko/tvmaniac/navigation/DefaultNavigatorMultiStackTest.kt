@@ -7,6 +7,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -190,6 +191,7 @@ internal class DefaultNavigatorMultiStackTest {
             navRootSerializer = DefaultNavRootSerializer(rootBindings),
             baseRouteSerializer = DefaultBaseRouteSerializer(routeBindings, rootBindings, navRoots),
             navRoots = navRoots,
+            crashReporter = FakeCrashReporter(),
         )
     }
 

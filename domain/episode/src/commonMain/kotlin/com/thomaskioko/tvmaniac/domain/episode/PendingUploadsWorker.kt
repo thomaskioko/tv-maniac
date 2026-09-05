@@ -44,7 +44,6 @@ public class PendingUploadsWorker(
             logger.debug(TAG, "Pending uploads sync cancelled: ${cancellation.message}")
             WorkerResult.Retry("Cancelled, will retry")
         } catch (exception: Exception) {
-            logger.error(TAG, "Pending uploads sync failed: ${exception.message}")
             syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, exception))
             WorkerResult.Retry(exception.message ?: "Pending uploads sync failed")
         }

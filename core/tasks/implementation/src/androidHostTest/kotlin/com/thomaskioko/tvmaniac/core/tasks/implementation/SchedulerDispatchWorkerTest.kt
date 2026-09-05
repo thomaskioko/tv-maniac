@@ -7,6 +7,7 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
@@ -42,12 +43,58 @@ class SchedulerDispatchWorkerTest {
     }
 
     @Test
+    fun `should write a breadcrumb only given the worker requests a retry with a cause`() = runTest {
+        val logger = FakeLogger()
+        val cause = IllegalStateException("later")
+        workerFactory.register(RecordingWorker(WORKER_NAME, WorkerResult.Retry("later", cause)))
+
+        buildWorker(WORKER_NAME, logger).doWork()
+
+        logger.recordedWarnings.size shouldBe 1
+        logger.recordedWarnings[0].throwable shouldBe cause
+        logger.recordedWarnings[0].keys shouldBe mapOf(
+            CrashReportKeys.WORKER to WORKER_NAME,
+            CrashReportKeys.ATTEMPT to "1",
+            CrashReportKeys.RESULT to "retry",
+        )
+        logger.recordedErrors.size shouldBe 0
+    }
+
+    @Test
     fun `should report failure given the worker fails permanently`() = runTest {
         workerFactory.register(RecordingWorker(WORKER_NAME, WorkerResult.Failure("gone")))
 
         val result = buildWorker(WORKER_NAME).doWork()
 
         result shouldBe ListenableWorker.Result.failure()
+    }
+
+    @Test
+    fun `should record an error with worker and attempt keys given the worker fails with a cause`() = runTest {
+        val logger = FakeLogger()
+        val cause = IllegalStateException("gone")
+        workerFactory.register(RecordingWorker(WORKER_NAME, WorkerResult.Failure("gone", cause)))
+
+        buildWorker(WORKER_NAME, logger).doWork()
+
+        logger.recordedErrors.size shouldBe 1
+        logger.recordedErrors[0].throwable shouldBe cause
+        logger.recordedErrors[0].keys shouldBe mapOf(
+            CrashReportKeys.WORKER to WORKER_NAME,
+            CrashReportKeys.ATTEMPT to "1",
+            CrashReportKeys.RESULT to "failure",
+        )
+    }
+
+    @Test
+    fun `should write a breadcrumb only given the worker fails with no cause`() = runTest {
+        val logger = FakeLogger()
+        workerFactory.register(RecordingWorker(WORKER_NAME, WorkerResult.Failure("gone")))
+
+        buildWorker(WORKER_NAME, logger).doWork()
+
+        logger.recordedErrors.size shouldBe 0
+        logger.breadcrumbs shouldBe listOf("[$TAG] Task [$WORKER_NAME] failed")
     }
 
     @Test
@@ -74,6 +121,23 @@ class SchedulerDispatchWorkerTest {
     }
 
     @Test
+    fun `should record an error with worker and attempt keys given the worker throws`() = runTest {
+        val logger = FakeLogger()
+        val cause = IllegalStateException("boom")
+        workerFactory.register(ThrowingWorker(WORKER_NAME, cause))
+
+        buildWorker(WORKER_NAME, logger).doWork()
+
+        logger.recordedErrors.size shouldBe 1
+        logger.recordedErrors[0].throwable shouldBe cause
+        logger.recordedErrors[0].keys shouldBe mapOf(
+            CrashReportKeys.WORKER to WORKER_NAME,
+            CrashReportKeys.ATTEMPT to "1",
+            CrashReportKeys.RESULT to "threw",
+        )
+    }
+
+    @Test
     fun `should let a cancellation through given the worker is cancelled`() = runTest {
         workerFactory.register(ThrowingWorker(WORKER_NAME, CancellationException("stopped")))
 
@@ -82,6 +146,18 @@ class SchedulerDispatchWorkerTest {
         runCatching { worker.doWork() }
             .exceptionOrNull()
             .let { it is CancellationException } shouldBe true
+    }
+
+    @Test
+    fun `should record nothing given the worker is cancelled`() = runTest {
+        val logger = FakeLogger()
+        workerFactory.register(ThrowingWorker(WORKER_NAME, CancellationException("stopped")))
+
+        runCatching { buildWorker(WORKER_NAME, logger).doWork() }
+
+        logger.recordedErrors.size shouldBe 0
+        logger.recordedWarnings.size shouldBe 0
+        logger.breadcrumbs.size shouldBe 0
     }
 
     @Test
@@ -97,7 +173,7 @@ class SchedulerDispatchWorkerTest {
         other.ran shouldBe true
     }
 
-    private fun buildWorker(workerName: String?): SchedulerDispatchWorker {
+    private fun buildWorker(workerName: String?, logger: FakeLogger = FakeLogger()): SchedulerDispatchWorker {
         val inputData = when (workerName) {
             null -> Data.EMPTY
             else -> Data.Builder().putString("worker_name", workerName).build()
@@ -114,7 +190,7 @@ class SchedulerDispatchWorkerTest {
                         context = appContext,
                         params = workerParameters,
                         workerFactory = workerFactory,
-                        logger = FakeLogger(),
+                        logger = logger,
                     )
                 },
             )
@@ -124,6 +200,7 @@ class SchedulerDispatchWorkerTest {
     private companion object {
         private const val WORKER_NAME = "com.thomaskioko.tvmaniac.autobackup"
         private const val OTHER_WORKER_NAME = "com.thomaskioko.tvmaniac.librarysync"
+        private const val TAG = "SchedulerDispatchWorker"
     }
 }
 

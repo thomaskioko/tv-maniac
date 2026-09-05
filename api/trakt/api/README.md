@@ -13,6 +13,10 @@ graph TB
     direction TB
     :core:connectivity:api[api]:::multiplatform
   end
+  subgraph :core:logger
+    direction TB
+    :core:logger:api[api]:::multiplatform
+  end
   subgraph :core:network-util
     direction TB
     :core:network-util:api[api]:::multiplatform
@@ -20,6 +24,7 @@ graph TB
 
   :api:trakt:api --> :core:network-util:api
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
 classDef multiplatform fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000;

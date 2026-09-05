@@ -44,6 +44,13 @@ class DebugScreenTest: SnapshotTestCase {
             subtitle: "Trigger a fatal error",
             onTap: {}
         ),
+        DebugMenuItem(
+            id: "report-test-error",
+            icon: "exclamationmark.triangle",
+            title: "Report test error",
+            subtitle: "Send a non-fatal report with the current context keys to Crashlytics",
+            onTap: {}
+        ),
     ]
 
     func test_DebugScreen() {

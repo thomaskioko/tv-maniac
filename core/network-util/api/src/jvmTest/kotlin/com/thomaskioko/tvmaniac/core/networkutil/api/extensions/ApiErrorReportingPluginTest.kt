@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiFailure
+import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiFailureKind
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiHttpException
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.AuthenticationException
@@ -8,7 +10,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.model.NoInternetException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -33,13 +35,14 @@ import kotlin.test.Test
 
 class ApiErrorReportingPluginTest {
 
-    private val reported = mutableListOf<Pair<String, Throwable>>()
+    private val reported = mutableListOf<Pair<ApiFailure, Throwable>>()
 
     private fun createClient(engine: MockEngine, maxRetries: Int = 0): HttpClient = HttpClient(engine) {
         install(ContentNegotiation) { json() }
 
         install(ApiErrorReportingPlugin) {
-            onError = { message, throwable -> reported.add(message to throwable) }
+            provider = "trakt"
+            onFailure = { failure, throwable -> reported.add(failure to throwable) }
         }
 
         if (maxRetries > 0) {
@@ -83,9 +86,13 @@ class ApiErrorReportingPluginTest {
         createClient(engine).requestTestPath()
 
         reported.size shouldBe 1
-        reported.first().first shouldContain "HTTP 400"
-        reported.first().first shouldContain "bad request"
-        val throwable = reported.first().second.shouldBeInstanceOf<ApiHttpException>()
+        val (failure, throwable) = reported.first()
+        failure.provider shouldBe "trakt"
+        failure.method shouldBe "GET"
+        failure.endpointTemplate shouldBe "test"
+        failure.status shouldBe 400
+        failure.kind shouldBe ApiFailureKind.Unexpected
+        throwable.shouldBeInstanceOf<ApiHttpException>()
         throwable.code shouldBe 400
     }
 
@@ -102,7 +109,8 @@ class ApiErrorReportingPluginTest {
             install(ContentNegotiation) { json() }
 
             install(ApiErrorReportingPlugin) {
-                onError = { message, throwable -> reported.add(message to throwable) }
+                provider = "trakt"
+                onFailure = { failure, throwable -> reported.add(failure to throwable) }
             }
 
             HttpResponseValidator {
@@ -122,7 +130,9 @@ class ApiErrorReportingPluginTest {
 
         result.shouldBeInstanceOf<ApiResponse.Error.HttpError<JsonObject>>()
         reported.size shouldBe 1
-        reported.first().first shouldContain "bad request"
+        val (failure, _) = reported.first()
+        failure.status shouldBe 500
+        failure.kind shouldBe ApiFailureKind.Unexpected
     }
 
     @Test
@@ -138,7 +148,7 @@ class ApiErrorReportingPluginTest {
         createClient(engine, maxRetries = 2).requestTestPath()
 
         reported.size shouldBe 1
-        reported.first().first shouldContain "HTTP 500"
+        reported.first().first.status shouldBe 500
     }
 
     @Test
@@ -177,7 +187,10 @@ class ApiErrorReportingPluginTest {
 
         result.shouldBeInstanceOf<ApiResponse.Error.NetworkFailure>()
         reported.size shouldBe 1
-        reported.first().second.shouldBeInstanceOf<HttpRequestTimeoutException>()
+        val (failure, throwable) = reported.first()
+        failure.status shouldBe null
+        failure.kind shouldBe ApiFailureKind.Expected
+        throwable.shouldBeInstanceOf<HttpRequestTimeoutException>()
     }
 
     @Test
@@ -194,28 +207,50 @@ class ApiErrorReportingPluginTest {
 
         result.shouldBeInstanceOf<ApiResponse.Error.SerializationError>()
         reported.size shouldBe 1
-        reported.first().first shouldContain "Deserialization failed"
-        reported.first().first shouldContain "not json"
+        val (failure, _) = reported.first()
+        failure.status shouldBe null
+        failure.kind shouldBe ApiFailureKind.Unexpected
+        failure.body shouldBe "not json"
     }
 
     @Test
-    fun `should not report failure given device is offline`() = runTest {
+    fun `should report a failed status once given its body does not deserialize`() = runTest {
+        val engine = MockEngine { _ ->
+            respond(
+                content = """not json""",
+                status = HttpStatusCode.Unauthorized,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+
+        createClient(engine).requestTestPath()
+
+        reported.size shouldBe 1
+        val (failure, _) = reported.first()
+        failure.status shouldBe 401
+        failure.kind shouldBe ApiFailureKind.Expected
+    }
+
+    @Test
+    fun `should report failure as expected given device is offline`() = runTest {
         val engine = MockEngine { _ -> throw NoInternetException }
 
         val result = createClient(engine).requestTestPath()
 
         result.shouldBeInstanceOf<ApiResponse.Error.OfflineError>()
-        reported.shouldBeEmpty()
+        reported.size shouldBe 1
+        reported.first().first.kind shouldBe ApiFailureKind.Expected
     }
 
     @Test
-    fun `should not report failure given user is not authenticated`() = runTest {
+    fun `should report failure as expected given user is not authenticated`() = runTest {
         val engine = MockEngine { _ -> throw AuthenticationException(message = "User is not authenticated") }
 
         val result = createClient(engine).requestTestPath()
 
         result.shouldBeInstanceOf<ApiResponse.Unauthenticated>()
-        reported.shouldBeEmpty()
+        reported.size shouldBe 1
+        reported.first().first.kind shouldBe ApiFailureKind.Expected
     }
 
     @Test
@@ -231,5 +266,38 @@ class ApiErrorReportingPluginTest {
         }
 
         reported.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should strip numeric ids and the query string from the endpoint template`() = runTest {
+        val engine = MockEngine { _ ->
+            respondError(
+                status = HttpStatusCode.BadRequest,
+                content = loadJson("error_response.json"),
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val client = HttpClient(engine) {
+            install(ContentNegotiation) { json() }
+            install(ApiErrorReportingPlugin) {
+                provider = "trakt"
+                onFailure = { failure, throwable -> reported.add(failure to throwable) }
+            }
+        }
+
+        client.safeRequest<JsonObject> {
+            url {
+                path("shows", "1234", "seasons", "5")
+                parameters.append("access_token", "super-secret-token")
+            }
+            method = HttpMethod.Get
+        }
+
+        reported.size shouldBe 1
+        val failure = reported.first().first
+        failure.endpointTemplate shouldBe "shows/{id}/seasons/{id}"
+        failure.endpointTemplate.shouldNotContain("access_token")
+        failure.endpointTemplate.shouldNotContain("super-secret-token")
+        failure.endpointTemplate.shouldNotContain("?")
     }
 }

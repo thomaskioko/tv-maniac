@@ -48,6 +48,7 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:view --> :core:logger:api
   :data:database:sqldelight --> :core:logger:api
   :data:watchproviders:api --> :data:database:sqldelight

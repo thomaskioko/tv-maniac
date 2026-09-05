@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.debug.presenter.DebugItemIcon
 import com.thomaskioko.tvmaniac.debug.presenter.DebugItemRole
 import com.thomaskioko.tvmaniac.debug.presenter.DebugState
 import com.thomaskioko.tvmaniac.debug.presenter.OpenFeatureFlags
+import com.thomaskioko.tvmaniac.debug.presenter.ReportTestError
 import com.thomaskioko.tvmaniac.debug.presenter.TriggerDebugNotification
 import com.thomaskioko.tvmaniac.debug.presenter.TriggerDelayedDebugNotification
 import com.thomaskioko.tvmaniac.debug.presenter.TriggerLibrarySync
@@ -87,6 +88,13 @@ private fun previewItems(accountType: AccountType): ImmutableList<DebugItem> = l
         title = "Test Crash",
         subtitle = "Trigger a test crash for Crashlytics",
         action = TriggerTestCrash,
+    ),
+    DebugItem(
+        id = "report-test-error",
+        icon = DebugItemIcon.Warning,
+        title = "Report test error",
+        subtitle = "Send a non-fatal report with the current context keys to Crashlytics",
+        action = ReportTestError,
     ),
 ).toImmutableList()
 

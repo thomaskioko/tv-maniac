@@ -26,10 +26,6 @@ graph TB
     direction TB
     :core:notifications:api[api]:::multiplatform
   end
-  subgraph :core:syncstate
-    direction TB
-    :core:syncstate:api[api]:::multiplatform
-  end
   subgraph :core:tasks
     direction TB
     :core:tasks:api[api]:::multiplatform
@@ -108,6 +104,7 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:cast:api --> :data:database:sqldelight
@@ -131,7 +128,6 @@ graph TB
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
   :domain:notifications --> :core:notifications:api
-  :domain:notifications --> :core:syncstate:api
   :domain:notifications --> :core:tasks:api
   :domain:notifications --> :core:util:api
   :domain:notifications --> :data:account-manager:api

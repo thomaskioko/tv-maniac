@@ -26,8 +26,7 @@ public class RestoredShowsRefillWorker(
         logger.debug(TAG, "Metadata refill cancelled: ${cancellation.message}")
         WorkerResult.Retry("Cancelled, will retry")
     } catch (cause: Exception) {
-        logger.error(TAG, "Metadata refill failed: ${cause.message}")
-        WorkerResult.Failure(cause.message)
+        WorkerResult.Failure(cause.message, cause)
     }
 
     public companion object {

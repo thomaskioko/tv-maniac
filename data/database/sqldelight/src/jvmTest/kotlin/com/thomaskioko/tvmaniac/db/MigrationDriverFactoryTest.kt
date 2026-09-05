@@ -7,16 +7,15 @@ import app.cash.sqldelight.db.SqlCursor
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlPreparedStatement
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
-import com.thomaskioko.tvmaniac.core.logger.Logger
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
 class MigrationDriverFactoryTest {
 
-    private val logger = object : Logger {
-        override fun error(message: String, throwable: Throwable) = Unit
-        override fun error(tag: String, message: String) = Unit
-    }
+    private val logger = FakeLogger()
 
     private val schemaVersion = TvManiacDatabase.Schema.version
 
@@ -30,6 +29,7 @@ class MigrationDriverFactoryTest {
         result shouldBe driver
         builder.deletions shouldBe 0
         driver.closed shouldBe false
+        logger.recordedErrors.shouldBeEmpty()
     }
 
     @Test
@@ -43,6 +43,11 @@ class MigrationDriverFactoryTest {
         result shouldBe fresh
         stale.closed shouldBe true
         builder.deletions shouldBe 1
+        val recorded = logger.recordedErrors.single()
+        recorded.keys shouldBe mapOf(
+            CrashReportKeys.SCHEMA_FROM to (schemaVersion - 1).toString(),
+            CrashReportKeys.SCHEMA_TO to schemaVersion.toString(),
+        )
     }
 
     @Test
@@ -56,6 +61,8 @@ class MigrationDriverFactoryTest {
         result shouldBe fresh
         broken.closed shouldBe true
         builder.deletions shouldBe 1
+        val recorded = logger.recordedErrors.single()
+        recorded.keys shouldBe mapOf(CrashReportKeys.SCHEMA_TO to schemaVersion.toString())
     }
 
     @Test
@@ -67,6 +74,8 @@ class MigrationDriverFactoryTest {
 
         result shouldBe fresh
         builder.deletions shouldBe 1
+        val recorded = logger.recordedErrors.single()
+        recorded.keys shouldBe mapOf(CrashReportKeys.SCHEMA_TO to schemaVersion.toString())
     }
 
     @Test

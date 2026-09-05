@@ -61,7 +61,7 @@ public class DefaultUpcomingShowsRepository(
     override fun getPagedUpcomingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
         return Pager(
             config = pagingConfig,
-            remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+            remoteMediator = PaginatedRemoteMediator(logger = logger, source = "UpcomingShows") { page -> fetchPage(page, forceRefresh) },
             pagingSourceFactory = dao::getPagedUpcomingShows,
         )
             .flow

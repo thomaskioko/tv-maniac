@@ -5,12 +5,17 @@
 <!--region graph-->
 ```mermaid
 graph TB
+  subgraph :core:logger
+    direction TB
+    :core:logger:api[api]:::multiplatform
+  end
   subgraph :core:syncstate
     direction TB
     :core:syncstate:api[api]:::multiplatform
     :core:syncstate:implementation[implementation]:::multiplatform
   end
 
+  :core:syncstate:implementation --> :core:logger:api
   :core:syncstate:implementation --> :core:syncstate:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

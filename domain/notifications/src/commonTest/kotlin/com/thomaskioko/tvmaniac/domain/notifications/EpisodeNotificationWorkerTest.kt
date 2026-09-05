@@ -15,10 +15,10 @@ import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -40,7 +40,6 @@ class EpisodeNotificationWorkerTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val notificationManager = FakeNotificationManager()
     private val dateTimeProvider = FakeDateTimeProvider()
-    private val syncObserver = FakeSyncObserver()
 
     private val scheduleInteractor = ScheduleEpisodeNotificationsInteractor(
         datastoreRepository = datastoreRepository,
@@ -68,12 +67,13 @@ class EpisodeNotificationWorkerTest {
         dispatchers = dispatchers,
     )
 
+    private val logger = FakeLogger()
+
     private val worker = EpisodeNotificationWorker(
         syncCalendarInteractor = lazyOf(syncCalendarInteractor),
         refreshInteractor = lazyOf(refreshInteractor),
         scheduleInteractor = lazyOf(scheduleInteractor),
-        syncObserver = syncObserver,
-        logger = FakeLogger(),
+        logger = logger,
     )
 
     @Test
@@ -106,6 +106,68 @@ class EpisodeNotificationWorkerTest {
 
         syncGate.complete(Unit)
         result.await() shouldBe WorkerResult.Success
+    }
+
+    @Test
+    fun `should return a failure carrying the cause given scheduling throws`() = runTest(testDispatcher) {
+        val currentTime = 1_000_000L
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+        datastoreRepository.setEpisodeNotificationsEnabled(true)
+        episodeRepository.setUpcomingEpisodes(
+            listOf(upcomingEpisode(episodeId = 301, firstAired = currentTime + 1.hours.inWholeMilliseconds)),
+        )
+        val cause = IllegalStateException("localization failed")
+        val failingWorker = EpisodeNotificationWorker(
+            syncCalendarInteractor = lazyOf(syncCalendarInteractor),
+            refreshInteractor = lazyOf(refreshInteractor),
+            scheduleInteractor = lazyOf(
+                ScheduleEpisodeNotificationsInteractor(
+                    datastoreRepository = datastoreRepository,
+                    episodeRepository = episodeRepository,
+                    notificationManager = notificationManager,
+                    localizer = TestLocalizer(failure = cause),
+                    dateTimeProvider = dateTimeProvider,
+                    logger = logger,
+                    dispatchers = dispatchers,
+                ),
+            ),
+            logger = logger,
+        )
+
+        val result = failingWorker.doWork()
+
+        result.shouldBeInstanceOf<WorkerResult.Failure>()
+        (result as WorkerResult.Failure).cause shouldBe cause
+    }
+
+    @Test
+    fun `should not log the failure itself given scheduling throws`() = runTest(testDispatcher) {
+        val currentTime = 1_000_000L
+        dateTimeProvider.setCurrentTimeMillis(currentTime)
+        datastoreRepository.setEpisodeNotificationsEnabled(true)
+        episodeRepository.setUpcomingEpisodes(
+            listOf(upcomingEpisode(episodeId = 302, firstAired = currentTime + 1.hours.inWholeMilliseconds)),
+        )
+        val failingWorker = EpisodeNotificationWorker(
+            syncCalendarInteractor = lazyOf(syncCalendarInteractor),
+            refreshInteractor = lazyOf(refreshInteractor),
+            scheduleInteractor = lazyOf(
+                ScheduleEpisodeNotificationsInteractor(
+                    datastoreRepository = datastoreRepository,
+                    episodeRepository = episodeRepository,
+                    notificationManager = notificationManager,
+                    localizer = TestLocalizer(failure = IllegalStateException("localization failed")),
+                    dateTimeProvider = dateTimeProvider,
+                    logger = logger,
+                    dispatchers = dispatchers,
+                ),
+            ),
+            logger = logger,
+        )
+
+        failingWorker.doWork()
+
+        logger.recordedErrors.size shouldBe 0
     }
 
     private fun upcomingEpisode(episodeId: Long, firstAired: Long) = UpcomingEpisode(

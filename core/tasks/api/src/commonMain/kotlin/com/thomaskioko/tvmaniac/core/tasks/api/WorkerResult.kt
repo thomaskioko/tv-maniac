@@ -12,8 +12,8 @@ public sealed class WorkerResult {
     public data object Success : WorkerResult()
 
     /** The work failed transiently and should be retried by the OS. */
-    public data class Retry(val message: String? = null) : WorkerResult()
+    public data class Retry(val message: String? = null, val cause: Throwable? = null) : WorkerResult()
 
     /** The work failed permanently. The OS will not retry automatically. */
-    public data class Failure(val message: String? = null) : WorkerResult()
+    public data class Failure(val message: String? = null, val cause: Throwable? = null) : WorkerResult()
 }

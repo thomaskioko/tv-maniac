@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.ApiErrorReportingPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.InternetConnectionPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.reportApiFailure
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import com.thomaskioko.tvmaniac.oauth.api.OAuthRepository
 import io.ktor.client.HttpClient
@@ -50,7 +51,8 @@ internal fun traktHttpClient(
         install(ContentNegotiation) { json(json = json) }
 
         install(ApiErrorReportingPlugin) {
-            onError = { message, throwable -> kermitLogger.error("Network Error : TraktApi", message, throwable) }
+            provider = "trakt"
+            onFailure = { failure, throwable -> kermitLogger.reportApiFailure("TraktApi", failure, throwable) }
         }
 
         install(InternetConnectionPlugin) {

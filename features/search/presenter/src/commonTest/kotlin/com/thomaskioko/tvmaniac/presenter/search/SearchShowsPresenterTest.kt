@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.domain.genre.FetchGenreContentInteractor
@@ -43,6 +44,7 @@ import kotlin.test.Test
 
 internal class SearchShowsPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
+    private val logger = FakeLogger()
     private val fakeSearchRepository = FakeSearchRepository()
     private val genreRepository = FakeGenreRepository()
     private val fakeLocalizer = FakeLocalizer()
@@ -347,6 +349,8 @@ internal class SearchShowsPresenterTest {
             presenter.dispatch(QueryChanged("test"))
             advanceUntilIdle()
             expectMostRecentItem().uiState.shouldBeInstanceOf<SearchUiState.Error>()
+            logger.recordedErrors.first().throwable.message shouldBe "Network error"
+            logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.SOURCE to "Search")
 
             presenter.dispatch(ClearQuery)
             advanceUntilIdle()
@@ -432,7 +436,7 @@ internal class SearchShowsPresenterTest {
             ),
         ),
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
-        logger = FakeLogger(),
+        logger = logger,
         mapper = Mapper(
             formatterUtil = FakeFormatterUtil(),
             localizer = fakeLocalizer,

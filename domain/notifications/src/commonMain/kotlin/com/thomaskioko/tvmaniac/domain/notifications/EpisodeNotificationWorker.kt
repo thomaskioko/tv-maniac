@@ -7,8 +7,6 @@ import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.RefreshUpcomingSeasonDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
-import com.thomaskioko.tvmaniac.syncstate.api.SyncError
-import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.SingleIn
@@ -20,7 +18,6 @@ public class EpisodeNotificationWorker(
     private val syncCalendarInteractor: Lazy<SyncCalendarInteractor>,
     private val refreshInteractor: Lazy<RefreshUpcomingSeasonDetailsInteractor>,
     private val scheduleInteractor: Lazy<ScheduleEpisodeNotificationsInteractor>,
-    private val syncObserver: SyncObserver,
     private val logger: Logger,
 ) : BackgroundWorker {
 
@@ -45,9 +42,7 @@ public class EpisodeNotificationWorker(
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (throwable: Exception) {
-            logger.error(TAG, "Notification scheduling failed: ${throwable.message}")
-            syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, throwable))
-            WorkerResult.Failure(throwable.message)
+            WorkerResult.Failure(throwable.message, throwable)
         }
     }
 

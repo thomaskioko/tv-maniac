@@ -3,18 +3,16 @@ package com.thomaskioko.tvmaniac.core.paging
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.shows.api.model.ShowEntity
 import kotlinx.coroutines.CancellationException
 
-/**
- * Generic RemoteMediator for loading remote data into a database, then fetching it from the
- * database.
- *
- * @param fetch Executes the remote fetch.
- * @param EM Entity model.
- */
-public class PaginatedRemoteMediator<EM : Any>(private val fetch: suspend (page: Long) -> FetchResult) :
-    RemoteMediator<Int, EM>() {
+public class PaginatedRemoteMediator<EM : Any>(
+    private val logger: Logger,
+    private val source: String,
+    private val fetch: suspend (page: Long) -> FetchResult,
+) : RemoteMediator<Int, EM>() {
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, EM>): MediatorResult {
         return when (val page = getNextPageNumber(loadType, state)) {
@@ -29,7 +27,7 @@ public class PaginatedRemoteMediator<EM : Any>(private val fetch: suspend (page:
             LoadType.PREPEND -> null
             LoadType.APPEND -> {
                 val lastItem = state.lastItemOrNull() as? ShowEntity
-                lastItem?.page?.plus(1) ?: 1 // If lastItem is null, we start from page 1
+                lastItem?.page?.plus(1) ?: 1
             }
         }
     }
@@ -39,15 +37,27 @@ public class PaginatedRemoteMediator<EM : Any>(private val fetch: suspend (page:
             when (val result = fetch(page)) {
                 is FetchResult.Success ->
                     MediatorResult.Success(endOfPaginationReached = result.endOfPaginationReached)
-                is FetchResult.Error -> MediatorResult.Error(result.error)
+                is FetchResult.Error -> {
+                    reportFailure(result.error)
+                    MediatorResult.Error(result.error)
+                }
                 is FetchResult.NoFetch ->
-                    MediatorResult.Success(endOfPaginationReached = false) // Changed this to false
+                    MediatorResult.Success(endOfPaginationReached = false)
             }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            reportFailure(e)
             MediatorResult.Error(e)
         }
+    }
+
+    private fun reportFailure(throwable: Throwable) {
+        logger.error(LOG_TAG, "Paging fetch failed", throwable, mapOf(CrashReportKeys.SOURCE to source))
+    }
+
+    private companion object {
+        const val LOG_TAG: String = "PaginatedRemoteMediator"
     }
 }
 

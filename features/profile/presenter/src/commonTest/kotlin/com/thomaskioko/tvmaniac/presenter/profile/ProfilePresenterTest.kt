@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.library.model.LibraryItem
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
@@ -461,6 +462,8 @@ internal class ProfilePresenterTest {
             val loaded = awaitItem()
             val error = loaded.favorites.shouldBeInstanceOf<SectionState.Error>()
             error.message.message shouldBe "favorites boom"
+            logger.recordedErrors.first().throwable.message shouldBe "favorites boom"
+            logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.SOURCE to "Profile")
 
             loaded.library.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
         }

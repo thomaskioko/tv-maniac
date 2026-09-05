@@ -14,6 +14,8 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
+import com.thomaskioko.tvmaniac.core.logger.CrashReporter
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import kotlin.reflect.KClass
@@ -45,6 +47,7 @@ public class DefaultNavigator(
     private val navRootSerializer: NavRootSerializer,
     private val baseRouteSerializer: BaseRouteSerializer,
     private val navRoots: Set<NavRoot>,
+    private val crashReporter: CrashReporter,
 ) : Navigator {
     init {
         require(navRoots.isNotEmpty()) {
@@ -67,11 +70,16 @@ public class DefaultNavigator(
     override val activeRoot: Value<NavRoot> get() = activeRootValue
 
     override fun navigateTo(route: NavRoute) {
+        recordScreen(route)
         if (route is OverlayRoute) {
             overlayNavigation.activate(route)
             return
         }
         multiStackSource.navigate(MultiStackNavEvent.Push(route))
+    }
+
+    private fun recordScreen(route: NavRoute) {
+        crashReporter.setCustomKey(CrashReportKeys.SCREEN, route::class.simpleName.orEmpty())
     }
 
     override fun navigateBack() {
@@ -87,10 +95,12 @@ public class DefaultNavigator(
     }
 
     override fun bringToFront(route: NavRoute) {
+        recordScreen(route)
         multiStackSource.navigate(MultiStackNavEvent.BringToFront(route))
     }
 
     override fun pushToFront(route: NavRoute) {
+        recordScreen(route)
         multiStackSource.navigate(MultiStackNavEvent.PushToFront(route))
     }
 

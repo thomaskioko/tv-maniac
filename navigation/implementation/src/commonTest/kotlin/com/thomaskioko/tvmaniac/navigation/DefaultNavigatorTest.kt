@@ -6,6 +6,8 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
 import com.thomaskioko.tvmaniac.moreshows.nav.MoreShowsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
@@ -19,6 +21,8 @@ internal class DefaultNavigatorTest {
     @Serializable
     private data object PrimaryRoot : NavRoot
 
+    private val crashReporter = FakeCrashReporter()
+
     @Test
     fun `should push new route on top of stack given pushNew`() {
         val (navigator, stack) = newNavigator()
@@ -27,6 +31,15 @@ internal class DefaultNavigatorTest {
 
         stack.value.active.configuration shouldBe ShowDetailsRoute(ShowDetailsParam(42))
         stack.value.backStack.map { it.configuration } shouldBe listOf(PrimaryRoot)
+    }
+
+    @Test
+    fun `should set the screen key given navigateTo`() {
+        val (navigator, _) = newNavigator()
+
+        navigator.navigateTo(ShowDetailsRoute(ShowDetailsParam(42)))
+
+        crashReporter.customKeys[CrashReportKeys.SCREEN] shouldBe "ShowDetailsRoute"
     }
 
     @Test
@@ -168,6 +181,7 @@ internal class DefaultNavigatorTest {
                 navRoots = setOf(PrimaryRoot),
             ),
             navRoots = setOf(PrimaryRoot),
+            crashReporter = crashReporter,
         )
         val lifecycle = LifecycleRegistry().apply { resume() }
         val context = DefaultComponentContext(lifecycle = lifecycle)

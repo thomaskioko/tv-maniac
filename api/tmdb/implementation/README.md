@@ -42,6 +42,7 @@ graph TB
   :core:base --> :core:logger:api
   :core:base --> :core:view
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:view --> :core:logger:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
