@@ -2,12 +2,14 @@ package com.thomaskioko.tvmaniac.traktlists.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.apiFetcher
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fetchPages
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAKT_LIST_ITEMS_SYNC
+import com.thomaskioko.tvmaniac.trakt.api.TRAKT_PAGE_LIMIT
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import com.thomaskioko.tvmaniac.traktlists.api.TraktListShowDao
@@ -35,7 +37,9 @@ public class TraktListItemsStore(
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<TraktListItemsKey, TraktListItemsKey> by storeBuilder(
     fetcher = apiFetcher { key: TraktListItemsKey ->
-        val response = traktListRemoteDataSource.getListItems(userSlug = key.userSlug, listId = key.listId)
+        val response = fetchPages(limit = TRAKT_PAGE_LIMIT) { page, limit ->
+            traktListRemoteDataSource.getListItems(userSlug = key.userSlug, listId = key.listId, page = page, limit = limit)
+        }
         if (response is ApiResponse.Error.HttpError && response.code == 404) {
             ApiResponse.Success(emptyList())
         } else {
