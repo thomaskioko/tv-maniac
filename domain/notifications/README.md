@@ -26,10 +26,6 @@ graph TB
     direction TB
     :core:notifications:api[api]:::multiplatform
   end
-  subgraph :core:syncstate
-    direction TB
-    :core:syncstate:api[api]:::multiplatform
-  end
   subgraph :core:tasks
     direction TB
     :core:tasks:api[api]:::multiplatform
@@ -132,7 +128,6 @@ graph TB
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
   :domain:notifications --> :core:notifications:api
-  :domain:notifications --> :core:syncstate:api
   :domain:notifications --> :core:tasks:api
   :domain:notifications --> :core:util:api
   :domain:notifications --> :data:account-manager:api

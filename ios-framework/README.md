@@ -995,7 +995,6 @@ graph TB
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
   :domain:notifications --> :core:notifications:api
-  :domain:notifications --> :core:syncstate:api
   :domain:notifications --> :core:tasks:api
   :domain:notifications --> :core:util:api
   :domain:notifications --> :data:account-manager:api
