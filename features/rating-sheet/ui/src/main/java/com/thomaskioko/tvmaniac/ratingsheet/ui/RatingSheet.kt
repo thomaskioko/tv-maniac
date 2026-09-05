@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -38,9 +41,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thomaskioko.tvmaniac.compose.components.AsyncImageComposable
 import com.thomaskioko.tvmaniac.compose.components.FilledHorizontalIconButton
+import com.thomaskioko.tvmaniac.compose.components.PosterPlaceholder
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
+import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.compose.util.rememberHapticFeedback
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
@@ -102,6 +108,8 @@ internal fun RatingSheetContent(
                 headerLabel = state.headerLabel,
                 title = state.title,
                 subtitle = state.subtitle,
+                posterUrl = state.posterUrl,
+                backdropUrl = state.backdropUrl,
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.small)) {
@@ -140,29 +148,72 @@ private fun RatingTargetHeader(
     headerLabel: String,
     title: String,
     subtitle: String?,
+    posterUrl: String?,
+    backdropUrl: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
+        verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xSmall),
     ) {
         Text(
             text = headerLabel.uppercase(),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.secondary,
         )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        if (subtitle != null) {
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(TvManiacSpacing.small),
+            verticalAlignment = Alignment.Top,
+        ) {
+            when {
+                backdropUrl != null -> RatingTargetImage(imageUrl = backdropUrl, imageType = ImageType.Backdrop)
+                posterUrl != null -> RatingTargetImage(imageUrl = posterUrl, imageType = ImageType.Poster)
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.xxSmall),
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun RatingTargetImage(
+    imageUrl: String,
+    imageType: ImageType,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .height(HEADER_IMAGE_HEIGHT)
+            .aspectRatio(imageType.aspect)
+            .clip(MaterialTheme.shapes.medium),
+    ) {
+        PosterPlaceholder(
+            modifier = Modifier.fillMaxSize(),
+            imageSize = HEADER_IMAGE_PLACEHOLDER_ICON_SIZE,
+        )
+        AsyncImageComposable(
+            model = imageUrl,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
     }
 }
 
@@ -256,7 +307,7 @@ private fun SheetGrabber(modifier: Modifier = Modifier) {
 @Composable
 private fun RatingSheetContentUnratedPreview() {
     RatingSheetContent(
-        state = previewState(title = "Lioness", subtitle = "2023", userRating = null),
+        state = previewState(title = "Lioness", subtitle = "2023", posterUrl = "/lioness.jpg", userRating = null),
         onAction = {},
     )
 }
@@ -266,7 +317,12 @@ private fun RatingSheetContentUnratedPreview() {
 @Composable
 private fun RatingSheetContentRatedPreview() {
     RatingSheetContent(
-        state = previewState(title = "Sacrificial Soldiers", subtitle = "Lioness • S1E1", userRating = 8),
+        state = previewState(
+            title = "Sacrificial Soldiers",
+            subtitle = "Lioness • S1E1",
+            backdropUrl = "/sacrificial-soldiers.jpg",
+            userRating = 8,
+        ),
         onAction = {},
     )
 }
@@ -276,15 +332,23 @@ private fun RatingSheetContentRatedPreview() {
 @Composable
 private fun RatingSheetContentSeasonRatedPreview() {
     RatingSheetContent(
-        state = previewState(title = "Season 1", subtitle = "Lioness", userRating = 7),
+        state = previewState(title = "Season 1", subtitle = "Lioness", posterUrl = "/season-1.jpg", userRating = 7),
         onAction = {},
     )
 }
 
-private fun previewState(title: String, subtitle: String?, userRating: Int?) = RatingSheetState(
+private fun previewState(
+    title: String,
+    subtitle: String?,
+    userRating: Int?,
+    posterUrl: String? = null,
+    backdropUrl: String? = null,
+) = RatingSheetState(
     headerLabel = "You're rating",
     title = title,
     subtitle = subtitle,
+    posterUrl = posterUrl,
+    backdropUrl = backdropUrl,
     scoreLabel = "Your rating",
     removeRatingLabel = "Remove rating",
     userRating = userRating,
@@ -296,4 +360,6 @@ private val sheetShape: CornerBasedShape
 private const val MAX_SCORE = 10
 private const val SCORES_PER_ROW = 5
 private val SCORE_TILE_HEIGHT = 56.dp
+private val HEADER_IMAGE_HEIGHT = 72.dp
+private val HEADER_IMAGE_PLACEHOLDER_ICON_SIZE = 24.dp
 private const val UNSELECTED_TILE_BORDER_ALPHA = 0.8f
