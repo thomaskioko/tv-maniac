@@ -8,16 +8,17 @@ import dev.zacsweers.metro.SingleIn
 @ContributesBinding(AppScope::class)
 public class IosCrashReporter internal constructor(
     private val crashlytics: Crashlytics,
-    private val collection: CrashlyticsCollection,
+    private val configuration: CrashlyticsConfiguration,
 ) : CrashReporter {
 
     override fun setCollectionEnabled(enabled: Boolean) {
-        collection.setEnabled(enabled)
+        if (configuration.isConfigured) configuration.setCollectionEnabled(enabled)
     }
 
     override fun recordException(throwable: Throwable, keys: Map<String, String>) {
         keys.forEach { (key, value) -> crashlytics.setCustomValue(key, value) }
         crashlytics.sendHandledException(throwable)
+        keys.keys.forEach { key -> crashlytics.setCustomValue(key, "") }
     }
 
     override fun setCustomKey(key: String, value: String) {
