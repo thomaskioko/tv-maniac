@@ -59,18 +59,11 @@ public inline fun <Key : Any, reified Output : Any> apiFetcher(
  *
  * Note: Token expiry for authenticated users is handled upstream by the active provider's Ktor
  * Auth plugin, which refreshes the token and surfaces a session-expired error to the presentation layer.
- *
- * @param onSkipped Optional callback invoked with a message when a fetch is skipped
- *   due to missing authentication. Useful for debug logging.
  */
-public suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(
-    key: Key,
-    onSkipped: ((String) -> Unit)? = null,
-) {
+public suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(key: Key) {
     try {
         get(key)
-    } catch (e: AuthenticationException) {
-        onSkipped?.invoke("Skipping Store.get: ${e.message}")
+    } catch (_: AuthenticationException) {
     }
 }
 
@@ -82,18 +75,11 @@ public suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(
  *
  * Note: Token expiry for authenticated users is handled upstream by the active provider's Ktor
  * Auth plugin, which refreshes the token and surfaces a session-expired error to the presentation layer.
- *
- * @param onSkipped Optional callback invoked with a message when a fetch is skipped
- *   due to missing authentication. Useful for debug logging.
  */
-public suspend fun <Key : Any, Output : Any> Store<Key, Output>.fresh(
-    key: Key,
-    onSkipped: ((String) -> Unit)? = null,
-) {
+public suspend fun <Key : Any, Output : Any> Store<Key, Output>.fresh(key: Key) {
     try {
         fresh(key)
-    } catch (e: AuthenticationException) {
-        onSkipped?.invoke("Skipping Store.fresh: ${e.message}")
+    } catch (_: AuthenticationException) {
     }
 }
 

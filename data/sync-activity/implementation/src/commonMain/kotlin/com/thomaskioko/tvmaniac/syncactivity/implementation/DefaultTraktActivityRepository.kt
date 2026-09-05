@@ -1,7 +1,6 @@
 package com.thomaskioko.tvmaniac.syncactivity.implementation
 
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
-import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.syncactivity.api.TraktActivityDao
@@ -17,13 +16,12 @@ public class DefaultTraktActivityRepository(
     private val store: TraktActivityStore,
     private val activityDao: TraktActivityDao,
     private val dispatchers: AppCoroutineDispatchers,
-    private val logger: Logger,
 ) : TraktActivityRepository {
 
     override suspend fun fetchLatestActivities(forceRefresh: Boolean) {
         when {
-            forceRefresh -> store.fresh(Unit) { logger.debug(TAG, it) }
-            else -> store.get(Unit) { logger.debug(TAG, it) }
+            forceRefresh -> store.fresh(Unit)
+            else -> store.get(Unit)
         }
     }
 
@@ -31,9 +29,5 @@ public class DefaultTraktActivityRepository(
         withContext(dispatchers.io) {
             activityDao.deleteAll()
         }
-    }
-
-    private companion object {
-        private const val TAG = "TraktActivityRepository"
     }
 }

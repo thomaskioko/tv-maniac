@@ -54,7 +54,6 @@ graph TB
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
   :data:sync-activity:implementation --> :core:base
-  :data:sync-activity:implementation --> :core:logger:api
   :data:sync-activity:implementation --> :core:network-util:api
   :data:sync-activity:implementation --> :core:util:api
   :data:sync-activity:implementation --> :data:account-manager:api

@@ -14,7 +14,6 @@ kotlin {
                 api(libs.store5)
                 api(projects.api.tmdb.api)
                 api(projects.core.base)
-                api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
                 api(projects.core.util.api)
                 api(projects.data.accountManager.api)

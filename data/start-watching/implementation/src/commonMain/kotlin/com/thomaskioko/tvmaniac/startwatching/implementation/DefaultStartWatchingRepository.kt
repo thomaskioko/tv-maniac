@@ -2,7 +2,6 @@ package com.thomaskioko.tvmaniac.startwatching.implementation
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
-import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingDao
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.shareIn
 public class DefaultStartWatchingRepository(
     private val startWatchingStore: StartWatchingWatchlistStore,
     private val accountManager: AccountManager,
-    private val logger: Logger,
     dao: StartWatchingDao,
     @IoCoroutineScope scope: CoroutineScope,
 ) : StartWatchingRepository {
@@ -36,13 +34,12 @@ public class DefaultStartWatchingRepository(
         if (accountManager.getActiveProvider() == null) return
 
         when {
-            forceRefresh -> startWatchingStore.fresh(Unit) { logger.debug(TAG, it) }
-            else -> startWatchingStore.get(Unit) { logger.debug(TAG, it) }
+            forceRefresh -> startWatchingStore.fresh(Unit)
+            else -> startWatchingStore.get(Unit)
         }
     }
 
     private companion object {
-        private const val TAG = "StartWatchingRepository"
         private const val SHARING_STOP_TIMEOUT_MS = 5_000L
     }
 }
