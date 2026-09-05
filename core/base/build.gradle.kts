@@ -26,6 +26,7 @@ kotlin {
         }
 
         commonTest.dependencies {
+            implementation(projects.core.logger.testing)
             implementation(libs.bundles.unittest)
         }
     }

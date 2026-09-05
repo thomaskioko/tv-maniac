@@ -39,8 +39,8 @@ public class CompositeLogger(
         loggers.forEach { it.error(tag, message) }
     }
 
-    override fun error(tag: String, message: String, throwable: Throwable) {
-        loggers.forEach { it.error(tag, message, throwable) }
+    override fun error(tag: String, message: String, throwable: Throwable, keys: Map<String, String>) {
+        loggers.forEach { it.error(tag, message, throwable, keys) }
     }
 
     override fun info(message: String, throwable: Throwable) {
@@ -59,6 +59,10 @@ public class CompositeLogger(
         loggers.forEach { it.warning(tag, message) }
     }
 
+    override fun warning(tag: String, message: String, throwable: Throwable, keys: Map<String, String>) {
+        loggers.forEach { it.warning(tag, message, throwable, keys) }
+    }
+
     override fun verbose(message: String) {
         loggers.forEach { it.verbose(message) }
     }
@@ -67,8 +71,8 @@ public class CompositeLogger(
         loggers.forEach { it.verbose(tag, message) }
     }
 
-    override fun recordException(throwable: Throwable, tag: String) {
-        loggers.forEach { it.recordException(throwable, tag) }
+    override fun recordException(throwable: Throwable, keys: Map<String, String>) {
+        loggers.forEach { it.recordException(throwable, keys) }
     }
 
     override fun setUserId(userId: String) {

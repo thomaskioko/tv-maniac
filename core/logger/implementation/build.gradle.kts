@@ -21,6 +21,12 @@ kotlin {
             api(projects.core.base)
             api(projects.core.logger.api)
             implementation(libs.kermit)
+            implementation(libs.kotlinx.atomicfu)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.bundles.unittest)
+            implementation(projects.core.logger.testing)
         }
     }
 }

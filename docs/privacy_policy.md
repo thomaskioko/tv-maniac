@@ -18,6 +18,8 @@ Anonymized data is transmitted to external services to improve the Application.
 - [Google Play Services](https://www.google.com/policies/privacy/)
 - [Firebase Crashlytics](https://firebase.google.com/support/privacy/)
 
+When the Application crashes or an unexpected error occurs, it sends a diagnostic report to Firebase Crashlytics. The report contains the exception type, message and stack trace, the name of the screen that was open, the name of the data provider (Trakt, Simkl or TMDB), the endpoint path with ids and query parameters removed, the HTTP status code, the Application version, the device model and the operating system version. The report never contains your account id, username or email address. Turning off "Crash Reporting" in Settings stops every report, including non-fatal errors and breadcrumbs.
+
 Disclosure may occur:
 - As required by law (e.g., subpoena).
 - To protect rights or safety.
