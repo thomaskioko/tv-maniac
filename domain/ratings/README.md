@@ -34,6 +34,10 @@ graph TB
     direction TB
     :data:datastore:api[api]:::multiplatform
   end
+  subgraph :data:episode
+    direction TB
+    :data:episode:api[api]:::multiplatform
+  end
   subgraph :data:followedshows
     direction TB
     :data:followedshows:api[api]:::multiplatform
@@ -42,9 +46,21 @@ graph TB
     direction TB
     :data:ratings:api[api]:::multiplatform
   end
+  subgraph :data:seasons
+    direction TB
+    :data:seasons:api[api]:::multiplatform
+  end
+  subgraph :data:showdetails
+    direction TB
+    :data:showdetails:api[api]:::multiplatform
+  end
   subgraph :data:subscription
     direction TB
     :data:subscription:api[api]:::multiplatform
+  end
+  subgraph :data:upnext
+    direction TB
+    :data:upnext:api[api]:::multiplatform
   end
   subgraph :domain
     direction TB
@@ -62,13 +78,22 @@ graph TB
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:datastore:api --> :i18n:generator
+  :data:episode:api --> :data:account-manager:api
+  :data:episode:api --> :data:database:sqldelight
+  :data:episode:api --> :data:followedshows:api
+  :data:episode:api --> :data:upnext:api
   :data:ratings:api --> :core:network-util:api
   :data:ratings:api --> :data:account-manager:api
   :data:ratings:api --> :data:database:sqldelight
   :data:ratings:api --> :data:followedshows:api
+  :data:seasons:api --> :data:database:sqldelight
+  :data:showdetails:api --> :data:database:sqldelight
   :domain:ratings --> :core:base
   :domain:ratings --> :data:datastore:api
+  :domain:ratings --> :data:episode:api
   :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:seasons:api
+  :domain:ratings --> :data:showdetails:api
   :domain:ratings --> :data:subscription:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;
