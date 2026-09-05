@@ -430,6 +430,8 @@
     <string name="label_debug_sync_login_required">Melden Sie sich bei Trakt an, um Daten zu synchronisieren</string>
     <string name="label_debug_trigger_crash_title">Testabsturz</string>
     <string name="label_debug_trigger_crash_description">Einen Testabsturz für Crashlytics auslösen</string>
+    <string name="label_debug_report_test_error_title">Testfehler melden</string>
+    <string name="label_debug_report_test_error_description">Einen nicht fatalen Bericht mit den aktuellen Kontextschlüsseln an Crashlytics senden</string>
     <string name="label_debug_account_type_title">Kontotyp</string>
     <string name="label_debug_account_type_description">Kontotyp aktualisieren</string>
     <string name="label_debug_account_type_premium">Premium</string>
