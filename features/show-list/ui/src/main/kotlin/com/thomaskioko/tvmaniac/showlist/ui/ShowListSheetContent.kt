@@ -73,7 +73,7 @@ internal fun ShowListSheetContent(
 
         when {
             state.isLoading -> LoadingContent()
-            state.traktLists.isEmpty() -> EmptyListContent(state)
+            state.lists.isEmpty() -> EmptyListContent(state)
             else -> TraktListItems(state, onAction)
         }
 
@@ -88,7 +88,7 @@ private fun TraktListItems(
     state: ShowListState,
     onAction: (ShowListAction) -> Unit,
 ) {
-    state.traktLists.forEach { list ->
+    state.lists.forEach { list ->
         Card(
             modifier = Modifier
                 .fillMaxWidth()

@@ -74,6 +74,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:lists
+    direction TB
+    :data:lists:api[api]:::multiplatform
+  end
   subgraph :data:request-manager
     direction TB
     :data:request-manager:api[api]:::multiplatform
@@ -106,10 +110,6 @@ graph TB
     direction TB
     :data:trailers:api[api]:::multiplatform
   end
-  subgraph :data:traktlists
-    direction TB
-    :data:traktlists:api[api]:::multiplatform
-  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -128,11 +128,11 @@ graph TB
     :domain:episode[episode]:::multiplatform
     :domain:favorites[favorites]:::multiplatform
     :domain:library[library]:::multiplatform
+    :domain:lists[lists]:::multiplatform
     :domain:recently-watched[recently-watched]:::multiplatform
     :domain:rewatch[rewatch]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
-    :domain:traktlists[traktlists]:::multiplatform
     :domain:user[user]:::multiplatform
   end
   subgraph :features:home
@@ -239,6 +239,9 @@ graph TB
   :domain:library -.-> :data:request-manager:api
   :domain:library --> :domain:showdetails
   :domain:library --> :domain:sync-activity
+  :domain:lists --> :core:base
+  :domain:lists --> :data:lists:api
+  :domain:lists --> :data:user:api
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api
   :domain:rewatch --> :core:base
@@ -259,12 +262,9 @@ graph TB
   :domain:showdetails --> :data:watchproviders:api
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api
-  :domain:traktlists --> :core:base
-  :domain:traktlists --> :data:traktlists:api
-  :domain:traktlists --> :data:user:api
   :domain:user --> :core:base
   :domain:user --> :data:account-manager:api
-  :domain:user --> :data:traktlists:api
+  :domain:user --> :data:lists:api
   :domain:user --> :data:user:api
   :features:home:nav --> :navigation:api
   :features:profile:nav --> :navigation:api
@@ -277,8 +277,8 @@ graph TB
   :features:profile:presenter --> :domain:continue-watching
   :features:profile:presenter --> :domain:favorites
   :features:profile:presenter --> :domain:library
+  :features:profile:presenter --> :domain:lists
   :features:profile:presenter --> :domain:recently-watched
-  :features:profile:presenter --> :domain:traktlists
   :features:profile:presenter --> :domain:user
   :features:profile:presenter -.-> :features:home:nav
   :features:profile:presenter --> :features:profile:nav

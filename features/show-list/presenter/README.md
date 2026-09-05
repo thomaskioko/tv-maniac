@@ -34,9 +34,9 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
-  subgraph :data:traktlists
+  subgraph :data:lists
     direction TB
-    :data:traktlists:api[api]:::multiplatform
+    :data:lists:api[api]:::multiplatform
   end
   subgraph :data:user
     direction TB
@@ -44,7 +44,7 @@ graph TB
   end
   subgraph :domain
     direction TB
-    :domain:traktlists[traktlists]:::multiplatform
+    :domain:lists[lists]:::multiplatform
   end
   subgraph :features:show-list
     direction TB
@@ -71,16 +71,16 @@ graph TB
   :data:user:api --> :core:network-util:api
   :data:user:api --> :data:account-manager:api
   :data:user:api --> :data:database:sqldelight
-  :domain:traktlists --> :core:base
-  :domain:traktlists --> :data:traktlists:api
-  :domain:traktlists --> :data:user:api
+  :domain:lists --> :core:base
+  :domain:lists --> :data:lists:api
+  :domain:lists --> :data:user:api
   :features:show-list:nav --> :navigation:api
   :features:show-list:presenter --> :core:base
   :features:show-list:presenter --> :core:feature-flags:api
   :features:show-list:presenter --> :core:logger:api
   :features:show-list:presenter --> :core:view
   :features:show-list:presenter --> :data:account-manager:api
-  :features:show-list:presenter --> :domain:traktlists
+  :features:show-list:presenter --> :domain:lists
   :features:show-list:presenter --> :features:show-list:nav
   :features:show-list:presenter --> :i18n:api
   :features:show-list:presenter -.-> :i18n:generator

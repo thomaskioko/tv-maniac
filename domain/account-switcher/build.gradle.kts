@@ -16,7 +16,7 @@ kotlin {
                 api(projects.data.episode.api)
                 api(projects.data.library.api)
                 api(projects.data.logout.api)
-                api(projects.data.traktlists.api)
+                api(projects.data.lists.api)
                 api(projects.domain.continueWatching)
                 api(projects.domain.library)
                 api(projects.domain.user)
@@ -31,7 +31,7 @@ kotlin {
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.library.testing)
                 implementation(projects.data.logout.testing)
-                implementation(projects.data.traktlists.testing)
+                implementation(projects.data.lists.testing)
             }
         }
     }

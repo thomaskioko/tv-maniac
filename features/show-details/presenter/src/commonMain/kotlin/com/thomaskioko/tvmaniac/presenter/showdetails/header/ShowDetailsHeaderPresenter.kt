@@ -20,6 +20,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtParams
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ObserveListsForShowInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
@@ -30,7 +31,6 @@ import com.thomaskioko.tvmaniac.domain.rewatch.StartRewatchSessionInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.followedshows.api.FollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
@@ -75,7 +75,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     observableShowDetailsInteractor: ObservableShowDetailsInteractor,
     observeRatingInteractor: ObserveRatingInteractor,
     observeCommunityRatingInteractor: ObserveCommunityRatingInteractor,
-    observeTraktListsInteractor: ObserveTraktListsInteractor,
+    observeListsForShowInteractor: ObserveListsForShowInteractor,
     observeRewatchStatusInteractor: ObserveRewatchStatusInteractor,
     observeShowWatchProgressInteractor: ObserveShowWatchProgressInteractor,
     private val startRewatchSessionInteractor: StartRewatchSessionInteractor,
@@ -103,7 +103,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
         observableShowDetailsInteractor(showId)
         observeRatingInteractor(ObserveRatingInteractor.Param(RatingEntityType.SHOW, showId))
         observeCommunityRatingInteractor(showId)
-        observeTraktListsInteractor(showId)
+        observeListsForShowInteractor(showId)
         observeRewatchStatusInteractor(showId)
         observeShowWatchProgressInteractor(showId)
 
@@ -117,17 +117,17 @@ public class ShowDetailsHeaderPresenter internal constructor(
         observableShowDetailsInteractor.flow,
         observeRatingInteractor.flow,
         observeCommunityRatingInteractor.flow,
-        observeTraktListsInteractor.flow,
+        observeListsForShowInteractor.flow,
         observeRewatchStatusInteractor.flow,
         observeShowWatchProgressInteractor.flow,
         datastoreRepository.observeMultiplePlaysEnabled(),
         loadingState.observable,
         uiMessageManager.message,
         _state,
-    ) { details, userRating, communityRating, traktLists, rewatchStatus, watchProgress,
+    ) { details, userRating, communityRating, lists, rewatchStatus, watchProgress,
         multiplePlaysEnabled, isRefreshing, message, current,
         ->
-        val isInList = traktLists.any { it.isShowInList }
+        val isInList = lists.any { it.isShowInList }
         val unwatchedEpisodeCount = (watchProgress.totalCount - watchProgress.watchedCount).coerceAtLeast(0)
         details.toHeaderState(localizer).copy(
             communityRating = communityRating?.rating,

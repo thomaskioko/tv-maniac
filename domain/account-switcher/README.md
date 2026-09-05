@@ -70,6 +70,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:lists
+    direction TB
+    :data:lists:api[api]:::multiplatform
+  end
   subgraph :data:logout
     direction TB
     :data:logout:api[api]:::multiplatform
@@ -105,10 +109,6 @@ graph TB
   subgraph :data:trailers
     direction TB
     :data:trailers:api[api]:::multiplatform
-  end
-  subgraph :data:traktlists
-    direction TB
-    :data:traktlists:api[api]:::multiplatform
   end
   subgraph :data:upnext
     direction TB
@@ -173,8 +173,8 @@ graph TB
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
+  :domain:account-switcher --> :data:lists:api
   :domain:account-switcher --> :data:logout:api
-  :domain:account-switcher --> :data:traktlists:api
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
@@ -239,7 +239,7 @@ graph TB
   :domain:sync-activity --> :data:sync-activity:api
   :domain:user --> :core:base
   :domain:user --> :data:account-manager:api
-  :domain:user --> :data:traktlists:api
+  :domain:user --> :data:lists:api
   :domain:user --> :data:user:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

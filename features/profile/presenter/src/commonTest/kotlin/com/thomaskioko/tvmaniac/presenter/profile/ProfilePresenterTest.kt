@@ -24,8 +24,8 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.ObserveWatchlistPreviewI
 import com.thomaskioko.tvmaniac.domain.favorites.ObserveFavoritesInteractor
 import com.thomaskioko.tvmaniac.domain.favorites.SyncFavoritesInteractor
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ObserveUserListsInteractor
 import com.thomaskioko.tvmaniac.domain.recentlywatched.ObserveRecentlyWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveUserListsInteractor
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.episodes.api.model.RecentlyWatchedEpisode
@@ -35,6 +35,8 @@ import com.thomaskioko.tvmaniac.favorites.testing.FakeFavoritesRepository
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.lists.api.UserListEntity
+import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
 import com.thomaskioko.tvmaniac.navigation.testing.TestNavigator
@@ -50,8 +52,6 @@ import com.thomaskioko.tvmaniac.profile.presenter.model.ProfileStats
 import com.thomaskioko.tvmaniac.profile.presenter.model.SectionState
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
-import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.upnext.api.model.NextEpisodeWithShow
 import com.thomaskioko.tvmaniac.upnext.testing.FakeUpNextRepository
 import io.kotest.matchers.shouldBe
@@ -78,7 +78,7 @@ internal class ProfilePresenterTest {
     private val authManager = FakeAuthManager()
     private val simklAuthManager = FakeAuthManager(SyncProviderSource.SIMKL)
     private val simklFlag = FakeFeatureFlag(initial = false)
-    private val traktListRepository = FakeTraktListRepository()
+    private val listRepository = FakeListRepository()
     private val upNextRepository = FakeUpNextRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val libraryRepository = FakeLibraryRepository()
@@ -113,7 +113,7 @@ internal class ProfilePresenterTest {
 
     private val updateUserProfileData = UpdateUserProfileData(
         userRepository = userRepository,
-        traktListRepository = traktListRepository,
+        listRepository = listRepository,
         activeProviderFeatures = { FakeProviderFeatures(supportsLists = true) },
         dispatchers = testDispatchers,
     )
@@ -381,7 +381,7 @@ internal class ProfilePresenterTest {
     fun `should map each section to content when data is available`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
         userRepository.setUserProfile(testProfile)
-        traktListRepository.setLists(listOf(createListEntity()))
+        listRepository.setLists(listOf(createListEntity()))
         upNextRepository.setNextEpisodesForWatchlist(listOf(createNextEpisode()))
         episodeRepository.setRecentlyWatched(listOf(createRecentlyWatched()))
         libraryRepository.setLibraryItems(listOf(createLibraryItem()))
@@ -544,7 +544,7 @@ internal class ProfilePresenterTest {
         )
     }
 
-    private fun createListEntity(): TraktListEntity = TraktListEntity(
+    private fun createListEntity(): UserListEntity = UserListEntity(
         id = 1,
         slug = "favorites",
         name = "Favorites",
@@ -628,7 +628,7 @@ internal class ProfilePresenterTest {
             logger = logger,
             syncFavoritesInteractor = SyncFavoritesInteractor(favoritesRepository, testDispatchers),
             observeUserProfileInteractor = observeUserProfileInteractor,
-            observeUserListsInteractor = ObserveUserListsInteractor(traktListRepository),
+            observeUserListsInteractor = ObserveUserListsInteractor(listRepository),
             observeUpNextInteractor = ObserveUpNextInteractor(upNextRepository),
             observeCompletedShowsInteractor = ObserveCompletedShowsInteractor(upNextRepository),
             observeRecentlyWatchedInteractor = ObserveRecentlyWatchedInteractor(episodeRepository),

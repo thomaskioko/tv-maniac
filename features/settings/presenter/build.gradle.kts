@@ -57,7 +57,7 @@ kotlin {
                 implementation(projects.data.subscription.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.library.testing)
-                implementation(projects.data.traktlists.testing)
+                implementation(projects.data.lists.testing)
                 implementation(projects.data.logout.testing)
                 implementation(projects.data.rewatch.testing)
                 implementation(projects.data.user.testing)

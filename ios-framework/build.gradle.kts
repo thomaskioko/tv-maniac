@@ -180,9 +180,9 @@ kotlin {
                 api(projects.data.calendar.api)
                 api(projects.core.featureFlags.api)
                 implementation(projects.data.calendar.implementation)
-                implementation(projects.data.traktlists.api)
-                implementation(projects.data.traktlists.implementation)
-                implementation(projects.domain.traktlists)
+                implementation(projects.data.lists.api)
+                implementation(projects.data.lists.implementation)
+                implementation(projects.domain.lists)
 
                 implementation(projects.api.simkl.implementation)
                 implementation(projects.api.tmdb.api)

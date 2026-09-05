@@ -5,7 +5,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListCopy
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListState
-import com.thomaskioko.tvmaniac.presentation.showlist.model.TraktListModel
+import com.thomaskioko.tvmaniac.presentation.showlist.model.UserListModel
 import kotlinx.collections.immutable.persistentListOf
 
 private val previewCopy = ShowListCopy(
@@ -38,8 +38,8 @@ internal val loggedInWithLists = ShowListState(
     isLoggedIn = true,
     isLoading = false,
     labels = previewCopy,
-    traktLists = persistentListOf(
-        TraktListModel(
+    lists = persistentListOf(
+        UserListModel(
             id = 1L,
             slug = "favorites",
             name = "Favorites",
@@ -47,7 +47,7 @@ internal val loggedInWithLists = ShowListState(
             showCountText = "12 shows",
             isShowInList = true,
         ),
-        TraktListModel(
+        UserListModel(
             id = 2L,
             slug = "watch-later",
             name = "Watch Later",
@@ -55,7 +55,7 @@ internal val loggedInWithLists = ShowListState(
             showCountText = "5 shows",
             isShowInList = false,
         ),
-        TraktListModel(
+        UserListModel(
             id = 3L,
             slug = "sci-fi-marathon",
             name = "Sci-Fi Marathon",
@@ -68,7 +68,7 @@ internal val loggedInWithLists = ShowListState(
 
 internal val loggedInEmpty = loggedInWithLists.copy(
     isLoading = false,
-    traktLists = persistentListOf(),
+    lists = persistentListOf(),
 )
 
 internal val loggedInWithCreateField = loggedInWithLists.copy(
@@ -83,8 +83,8 @@ internal val loggedInWithCreateLoading = loggedInWithLists.copy(
 )
 
 internal val loggedInWithToggleInFlight = loggedInWithLists.copy(
-    traktLists = persistentListOf(
-        TraktListModel(
+    lists = persistentListOf(
+        UserListModel(
             id = 1L,
             slug = "favorites",
             name = "Favorites",
@@ -93,7 +93,7 @@ internal val loggedInWithToggleInFlight = loggedInWithLists.copy(
             isShowInList = true,
             isToggling = true,
         ),
-        TraktListModel(
+        UserListModel(
             id = 2L,
             slug = "watch-later",
             name = "Watch Later",
