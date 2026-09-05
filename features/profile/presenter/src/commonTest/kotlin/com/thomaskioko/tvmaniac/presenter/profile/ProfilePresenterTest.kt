@@ -463,7 +463,7 @@ internal class ProfilePresenterTest {
             val error = loaded.favorites.shouldBeInstanceOf<SectionState.Error>()
             error.message.message shouldBe "favorites boom"
             logger.recordedErrors.first().throwable.message shouldBe "favorites boom"
-            logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.SOURCE to "ProfilePresenter")
+            logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.SOURCE to "Profile")
 
             loaded.library.shouldBeInstanceOf<SectionState.Content<ProfileShowItem>>()
         }

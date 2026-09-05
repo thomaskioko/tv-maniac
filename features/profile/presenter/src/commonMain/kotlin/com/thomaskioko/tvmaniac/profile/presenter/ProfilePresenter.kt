@@ -312,7 +312,7 @@ public class ProfilePresenter internal constructor(
         val mapped = transform(items)
         if (mapped.isEmpty()) SectionState.Empty else SectionState.Content(mapped)
     }.catch { error ->
-        logger.error(LOG_TAG, "Profile section failed", error, mapOf(CrashReportKeys.SOURCE to LOG_TAG))
+        logger.error(LOG_TAG, "Profile section failed", error, mapOf(CrashReportKeys.SOURCE to PROFILE_SOURCE_ID))
         emit(SectionState.Error(UiMessage(errorToStringMapper.mapError(error))))
     }
 
@@ -432,3 +432,4 @@ private fun AuthError.toUiMessage(localizer: Localizer): UiMessage = when (this)
 }
 
 private const val LOG_TAG = "ProfilePresenter"
+private const val PROFILE_SOURCE_ID = "Profile"
