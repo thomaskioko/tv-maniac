@@ -44,8 +44,7 @@ public class LibrarySyncWorker(
             logger.debug(TAG, "Library sync cancelled: ${e.message}")
             WorkerResult.Retry("Cancelled, will retry")
         } catch (e: Exception) {
-            logger.error(TAG, "Library sync failed: ${e.message}")
-            WorkerResult.Failure(e.message)
+            WorkerResult.Failure(e.message, e)
         }
     }
 

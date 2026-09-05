@@ -46,8 +46,7 @@ public class ContinueWatchingSyncWorker(
             logger.debug(TAG, "Continue Watching sync cancelled: ${e.message}")
             WorkerResult.Retry("Cancelled, will retry")
         } catch (e: Exception) {
-            logger.error(TAG, "Continue Watching sync failed: ${e.message}")
-            WorkerResult.Failure(e.message)
+            WorkerResult.Failure(e.message, e)
         }
     }
 

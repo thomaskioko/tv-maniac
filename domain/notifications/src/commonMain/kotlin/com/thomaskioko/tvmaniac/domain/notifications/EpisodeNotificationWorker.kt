@@ -45,9 +45,8 @@ public class EpisodeNotificationWorker(
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (throwable: Exception) {
-            logger.error(TAG, "Notification scheduling failed: ${throwable.message}")
             syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, throwable))
-            WorkerResult.Failure(throwable.message)
+            WorkerResult.Failure(throwable.message, throwable)
         }
     }
 
