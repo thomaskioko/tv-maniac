@@ -69,6 +69,8 @@ public class RatingSheetPresenter internal constructor(
             headerLabel = headerLabel,
             title = target.title(),
             subtitle = target.subtitle(),
+            posterUrl = target.posterUrl(),
+            backdropUrl = target.backdropUrl(),
             scoreLabel = scoreLabel,
             removeRatingLabel = removeRatingLabel,
             userRating = when (pending) {
@@ -131,6 +133,14 @@ public class RatingSheetPresenter internal constructor(
         is RatingTarget.Season -> showName
         is RatingTarget.Episode -> "$showName • S${seasonNumber}E$episodeNumber"
     }
+
+    private fun RatingTarget?.posterUrl(): String? = when (this) {
+        is RatingTarget.Show -> posterUrl
+        is RatingTarget.Season -> posterUrl
+        else -> null
+    }
+
+    private fun RatingTarget?.backdropUrl(): String? = (this as? RatingTarget.Episode)?.backdropUrl
 
     @AssistedFactory
     public fun interface Factory {

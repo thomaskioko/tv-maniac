@@ -116,6 +116,8 @@ internal class RatingSheetPresenterTest {
             val state = expectMostRecentItem()
             state.title shouldBe "Lioness"
             state.subtitle shouldBe "2023"
+            state.posterUrl shouldBe "/lioness.jpg"
+            state.backdropUrl.shouldBeNull()
         }
     }
 
@@ -136,7 +138,13 @@ internal class RatingSheetPresenterTest {
     @Test
     fun `should emit season title and show name given season target`() = runTest {
         seasonsRepository.setSeasonById(
-            SeasonById(season_id = Id(2L), title = "Season 1", season_number = 1L, show_name = "Lioness"),
+            SeasonById(
+                season_id = Id(2L),
+                title = "Season 1",
+                season_number = 1L,
+                image_url = "/season-1.jpg",
+                show_name = "Lioness",
+            ),
         )
 
         val presenter = createPresenter(RatingSheetParam(ratingType = RatingEntityType.SEASON, id = 2L))
@@ -146,6 +154,8 @@ internal class RatingSheetPresenterTest {
             val state = expectMostRecentItem()
             state.title shouldBe "Season 1"
             state.subtitle shouldBe "Lioness"
+            state.posterUrl shouldBe "/season-1.jpg"
+            state.backdropUrl.shouldBeNull()
         }
     }
 
@@ -162,6 +172,8 @@ internal class RatingSheetPresenterTest {
             val state = expectMostRecentItem()
             state.title shouldBe "Sacrificial Soldiers"
             state.subtitle shouldBe "Lioness • S1E1"
+            state.backdropUrl shouldBe "/sacrificial-soldiers.jpg"
+            state.posterUrl.shouldBeNull()
         }
     }
 
@@ -207,7 +219,7 @@ internal class RatingSheetPresenterTest {
         ratings = 0.0,
         status = null,
         vote_count = 0L,
-        poster_path = null,
+        poster_path = "/lioness.jpg",
         backdrop_path = null,
         genres = null,
         season_numbers = null,
@@ -223,7 +235,7 @@ internal class RatingSheetPresenterTest {
         overview = "",
         vote_count = 0L,
         ratings = 0.0,
-        image_url = null,
+        image_url = "/sacrificial-soldiers.jpg",
         runtime = null,
         first_aired = null,
         season_number = seasonNumber,
