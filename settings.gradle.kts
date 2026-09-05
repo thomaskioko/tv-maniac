@@ -302,6 +302,7 @@ include(
     ":domain:similarshows",
     ":domain:statistics",
     ":domain:sync-activity",
+    ":domain:telemetry",
     ":domain:theme",
     ":domain:traktlists",
     ":domain:user",
