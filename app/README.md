@@ -530,6 +530,7 @@ graph TB
   :app -.-> :core:appconfig:api
   :app -.-> :core:appconfig:implementation
   :app -.-> :core:base
+  :app -.-> :core:connectivity:api
   :app -.-> :core:connectivity:implementation
   :app -.-> :core:deeplink:api
   :app -.-> :core:deeplink:implementation
