@@ -70,7 +70,7 @@ internal class PendingUploadsWorkerTest {
 
         result.shouldBeInstanceOf<WorkerResult.Retry>()
         result.message shouldBe "network down"
-        result.cause shouldBe cause
+        result.cause shouldBe null
     }
 
     @Test

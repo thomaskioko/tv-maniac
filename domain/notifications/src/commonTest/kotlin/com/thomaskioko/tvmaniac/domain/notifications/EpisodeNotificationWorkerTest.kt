@@ -15,7 +15,6 @@ import com.thomaskioko.tvmaniac.episodes.api.model.UpcomingEpisode
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.seasons.testing.FakeSeasonsRepository
-import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
@@ -41,7 +40,6 @@ class EpisodeNotificationWorkerTest {
     private val episodeRepository = FakeEpisodeRepository()
     private val notificationManager = FakeNotificationManager()
     private val dateTimeProvider = FakeDateTimeProvider()
-    private val syncObserver = FakeSyncObserver()
 
     private val scheduleInteractor = ScheduleEpisodeNotificationsInteractor(
         datastoreRepository = datastoreRepository,
@@ -75,7 +73,6 @@ class EpisodeNotificationWorkerTest {
         syncCalendarInteractor = lazyOf(syncCalendarInteractor),
         refreshInteractor = lazyOf(refreshInteractor),
         scheduleInteractor = lazyOf(scheduleInteractor),
-        syncObserver = syncObserver,
         logger = logger,
     )
 
@@ -134,7 +131,6 @@ class EpisodeNotificationWorkerTest {
                     dispatchers = dispatchers,
                 ),
             ),
-            syncObserver = syncObserver,
             logger = logger,
         )
 
@@ -166,7 +162,6 @@ class EpisodeNotificationWorkerTest {
                     dispatchers = dispatchers,
                 ),
             ),
-            syncObserver = syncObserver,
             logger = logger,
         )
 

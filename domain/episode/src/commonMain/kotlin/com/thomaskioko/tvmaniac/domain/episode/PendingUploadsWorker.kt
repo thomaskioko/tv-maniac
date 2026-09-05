@@ -45,7 +45,7 @@ public class PendingUploadsWorker(
             WorkerResult.Retry("Cancelled, will retry")
         } catch (exception: Exception) {
             syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, exception))
-            WorkerResult.Retry(exception.message ?: "Pending uploads sync failed", exception)
+            WorkerResult.Retry(exception.message ?: "Pending uploads sync failed")
         }
     }
 
