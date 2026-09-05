@@ -13,7 +13,7 @@ public class IosCrashReporter(
 
     override fun recordException(throwable: Throwable, keys: Map<String, String>) {
         keys.forEach { (key, value) -> bridge.setCustomKey(key, value) }
-        bridge.recordException(throwable, keys[TAG_KEY].orEmpty())
+        bridge.recordException(throwable, keys[CrashReportKeys.TAG].orEmpty())
     }
 
     override fun setCustomKey(key: String, value: String): Unit = bridge.setCustomKey(key, value)

@@ -22,12 +22,12 @@ public class FirebaseCrashLogger(
     }
 
     override fun error(tag: String, message: String, throwable: Throwable, keys: Map<String, String>) {
-        val reportKeys = keys + (TAG_KEY to tag)
+        val reportKeys = keys + (CrashReportKeys.TAG to tag)
         if (markReported(dedupeKey(throwable, reportKeys))) {
             crashReporter.log("[$tag] $message")
             crashReporter.recordException(throwable, reportKeys)
         } else {
-            crashReporter.log(breadcrumb(tag, message, throwable, reportKeys + (REPEAT_KEY to "true")))
+            crashReporter.log(breadcrumb(tag, message, throwable, reportKeys + (CrashReportKeys.REPEAT to "true")))
         }
     }
 
@@ -58,13 +58,13 @@ public class FirebaseCrashLogger(
     private fun dedupeKey(throwable: Throwable, keys: Map<String, String>): String =
         listOf(
             throwable::class.qualifiedName.orEmpty(),
-            keys[TAG_KEY].orEmpty(),
-            keys[ENDPOINT_KEY].orEmpty(),
-            keys[STATUS_KEY].orEmpty(),
+            keys[CrashReportKeys.TAG].orEmpty(),
+            keys[CrashReportKeys.ENDPOINT].orEmpty(),
+            keys[CrashReportKeys.STATUS].orEmpty(),
         ).joinToString(separator = "|")
 
     private fun breadcrumb(tag: String, message: String, throwable: Throwable, keys: Map<String, String>): String {
-        val repeatSuffix = keys[REPEAT_KEY]?.let { ": $REPEAT_KEY" }.orEmpty()
+        val repeatSuffix = keys[CrashReportKeys.REPEAT]?.let { ": ${CrashReportKeys.REPEAT}" }.orEmpty()
         return "[$tag] $message: ${throwable::class.simpleName}: ${throwable.message}$repeatSuffix"
     }
 }
