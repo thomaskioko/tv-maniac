@@ -129,7 +129,7 @@ public class DebugPresenter internal constructor(
                 LOG_TAG,
                 "Test error report",
                 DebugTelemetryException(),
-                mapOf(CrashReportKeys.DEBUG to "true"),
+                mapOf(CrashReportKeys.DEBUG_REPORT to "true"),
             )
             is DismissSnackbar -> coroutineScope.launch { uiMessageManager.clearMessage(action.messageId) }
             is SetAccountType -> coroutineScope.launch {

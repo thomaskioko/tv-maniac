@@ -316,7 +316,7 @@ class DebugPresenterTest {
 
         logger.recordedErrors shouldHaveSize 1
         logger.recordedErrors.first().throwable.shouldBeInstanceOf<DebugTelemetryException>()
-        logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.DEBUG to "true")
+        logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.DEBUG_REPORT to "true")
     }
 
     @Test
