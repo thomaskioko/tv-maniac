@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.logger
 
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashlyticsConfiguration
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
@@ -8,6 +9,8 @@ private class FakeCrashlytics : Crashlytics {
     private val customValuesMap: MutableMap<String, String> = mutableMapOf()
     private val messagesList: MutableList<String> = mutableListOf()
     var recordedException: Throwable? = null
+        private set
+    var valuesAtSend: Map<String, String> = emptyMap()
         private set
     var recordedUserId: String? = null
         private set
@@ -21,6 +24,7 @@ private class FakeCrashlytics : Crashlytics {
 
     override fun sendHandledException(throwable: Throwable) {
         recordedException = throwable
+        valuesAtSend = customValuesMap.toMap()
     }
 
     override fun setUserId(userId: String) {
@@ -32,20 +36,11 @@ private class FakeCrashlytics : Crashlytics {
     }
 }
 
-private class FakeCrashlyticsCollection : CrashlyticsCollection {
-    var enabled: Boolean? = null
-        private set
-
-    override fun setEnabled(enabled: Boolean) {
-        this.enabled = enabled
-    }
-}
-
 class IosCrashReporterTest {
 
     private val fakeCrashlytics = FakeCrashlytics()
-    private val fakeCollection = FakeCrashlyticsCollection()
-    private val reporter = IosCrashReporter(fakeCrashlytics, fakeCollection)
+    private val configuration = FakeCrashlyticsConfiguration()
+    private val reporter = IosCrashReporter(fakeCrashlytics, configuration)
 
     @Test
     fun `should send handled exception with custom values given keys`() {
@@ -57,20 +52,37 @@ class IosCrashReporterTest {
         )
 
         fakeCrashlytics.recordedException shouldBe throwable
-        fakeCrashlytics.customValues shouldContainExactly mapOf(CrashReportKeys.TAG to "Network", CrashReportKeys.SCREEN to "Home")
+        fakeCrashlytics.valuesAtSend shouldContainExactly mapOf(CrashReportKeys.TAG to "Network", CrashReportKeys.SCREEN to "Home")
     }
 
     @Test
-    fun `should log a breadcrumb`() {
+    fun `should log a breadcrumb given a message`() {
         reporter.log("navigated to Home")
 
         fakeCrashlytics.messages shouldBe listOf("navigated to Home")
     }
 
     @Test
-    fun `should forward the collection toggle to Firebase`() {
+    fun `should forward the collection toggle to Firebase given Firebase is configured`() {
         reporter.setCollectionEnabled(false)
 
-        fakeCollection.enabled shouldBe false
+        configuration.enabled shouldBe false
+    }
+
+    @Test
+    fun `should not touch Firebase given it is not configured`() {
+        val unconfigured = FakeCrashlyticsConfiguration(isConfigured = false)
+        val unconfiguredReporter = IosCrashReporter(fakeCrashlytics, unconfigured)
+
+        unconfiguredReporter.setCollectionEnabled(false)
+
+        unconfigured.enabled shouldBe null
+    }
+
+    @Test
+    fun `should clear the report keys after sending given keys`() {
+        reporter.recordException(IllegalStateException("boom"), mapOf(CrashReportKeys.ENDPOINT to "shows/{id}"))
+
+        fakeCrashlytics.customValues shouldBe mapOf(CrashReportKeys.ENDPOINT to "")
     }
 }

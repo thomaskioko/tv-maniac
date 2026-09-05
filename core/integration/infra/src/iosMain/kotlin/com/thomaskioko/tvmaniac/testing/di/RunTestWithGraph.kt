@@ -1,6 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.di
 
-import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashlyticsCollection
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashlyticsConfiguration
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeRemoteConfigBridge
 import dev.zacsweers.metro.createGraphFactory
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ public fun runTestWithGraph(
     try {
         val graph = createGraphFactory<TestGraph.Factory>().create(
             remoteConfigBridge = FakeRemoteConfigBridge(),
-            crashlyticsCollection = FakeCrashlyticsCollection(),
+            crashlyticsConfiguration = FakeCrashlyticsConfiguration(isConfigured = false),
         )
         testBody(graph)
     } finally {

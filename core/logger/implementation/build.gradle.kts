@@ -35,6 +35,7 @@ kotlin {
 
         iosTest.dependencies {
             implementation(libs.bundles.unittest)
+            implementation(projects.core.logger.testing)
         }
     }
 }
