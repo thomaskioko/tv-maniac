@@ -996,7 +996,6 @@ graph TB
   :data:start-watching:api --> :data:account-manager:api
   :data:start-watching:implementation --> :api:tmdb:api
   :data:start-watching:implementation --> :core:base
-  :data:start-watching:implementation --> :core:logger:api
   :data:start-watching:implementation --> :core:network-util:api
   :data:start-watching:implementation --> :core:util:api
   :data:start-watching:implementation --> :data:account-manager:api
@@ -1013,7 +1012,6 @@ graph TB
   :data:sync-activity:api --> :core:network-util:api
   :data:sync-activity:api --> :data:account-manager:api
   :data:sync-activity:implementation --> :core:base
-  :data:sync-activity:implementation --> :core:logger:api
   :data:sync-activity:implementation --> :core:network-util:api
   :data:sync-activity:implementation --> :core:util:api
   :data:sync-activity:implementation --> :data:account-manager:api
