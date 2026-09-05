@@ -258,5 +258,10 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.bundles.unittest)
         }
+
+        iosTest.dependencies {
+            implementation(projects.core.featureFlags.testing)
+            implementation(projects.core.logger.testing)
+        }
     }
 }

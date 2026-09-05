@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.presenter.root
 
 import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashlyticsConfiguration
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeRemoteConfigBridge
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -10,7 +11,10 @@ import dev.zacsweers.metro.createGraphFactory
 
 internal class DefaultRootPresenterIosTest : DefaultRootPresenterTest() {
     private val testGraph: TestGraph by lazy {
-        createGraphFactory<TestGraph.Factory>().create(remoteConfigBridge = FakeRemoteConfigBridge())
+        createGraphFactory<TestGraph.Factory>().create(
+            remoteConfigBridge = FakeRemoteConfigBridge(),
+            crashlyticsConfiguration = FakeCrashlyticsConfiguration(isConfigured = false),
+        )
     }
 
     override val rootPresenterFactory: RootPresenter.Factory

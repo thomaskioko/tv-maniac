@@ -1,13 +1,17 @@
 package com.thomaskioko.tvmaniac.presenter.home
 
 import com.arkivanov.decompose.ComponentContext
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashlyticsConfiguration
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeRemoteConfigBridge
 import com.thomaskioko.tvmaniac.testing.di.TestGraph
 import dev.zacsweers.metro.createGraphFactory
 
 internal class HomePresenterIosTest : HomePresenterTest() {
     private val testGraph: TestGraph by lazy {
-        createGraphFactory<TestGraph.Factory>().create(remoteConfigBridge = FakeRemoteConfigBridge())
+        createGraphFactory<TestGraph.Factory>().create(
+            remoteConfigBridge = FakeRemoteConfigBridge(),
+            crashlyticsConfiguration = FakeCrashlyticsConfiguration(isConfigured = false),
+        )
     }
 
     override fun createHomePresenter(componentContext: ComponentContext): HomePresenter =
