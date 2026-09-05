@@ -451,7 +451,7 @@ graph TB
   :core:notifications:implementation --> :core:logger:api
   :core:notifications:implementation --> :core:notifications:api
   :core:notifications:implementation --> :core:util:api
-  :core:syncstate:implementation -.-> :core:logger:api
+  :core:syncstate:implementation --> :core:logger:api
   :core:syncstate:implementation --> :core:syncstate:api
   :core:tasks:implementation --> :core:logger:api
   :core:tasks:implementation --> :core:tasks:api
