@@ -13,6 +13,7 @@ kotlin {
             api(libs.ktor.core)
             api(libs.store5)
             api(projects.core.connectivity.api)
+            api(projects.core.logger.api)
         }
 
         commonTest.dependencies {
@@ -21,6 +22,7 @@ kotlin {
             implementation(libs.ktor.negotiation)
             implementation(libs.ktor.serialization.json)
             implementation(libs.kotlinx.serialization.json)
+            implementation(projects.core.logger.testing)
         }
 
         jvmTest.dependencies {
