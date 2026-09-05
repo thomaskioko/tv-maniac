@@ -12,7 +12,7 @@ public interface Logger {
 
     public fun error(tag: String, message: String)
 
-    public fun error(tag: String, message: String, throwable: Throwable): Unit = Unit
+    public fun error(tag: String, message: String, throwable: Throwable, keys: Map<String, String> = emptyMap()): Unit = Unit
 
     public fun info(message: String, throwable: Throwable): Unit = Unit
 
@@ -22,11 +22,13 @@ public interface Logger {
 
     public fun warning(tag: String, message: String): Unit = Unit
 
+    public fun warning(tag: String, message: String, throwable: Throwable, keys: Map<String, String> = emptyMap()): Unit = Unit
+
     public fun verbose(message: String): Unit = Unit
 
     public fun verbose(tag: String, message: String): Unit = Unit
 
-    public fun recordException(throwable: Throwable, tag: String = "") {}
+    public fun recordException(throwable: Throwable, keys: Map<String, String> = emptyMap()) {}
 
     public fun setUserId(userId: String) {}
 
