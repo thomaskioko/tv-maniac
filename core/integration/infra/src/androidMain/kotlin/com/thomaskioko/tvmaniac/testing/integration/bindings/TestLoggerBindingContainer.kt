@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.testing.integration.bindings
 
+import com.thomaskioko.tvmaniac.core.logger.AndroidCrashReporter
 import com.thomaskioko.tvmaniac.core.logger.CompositeLogger
 import com.thomaskioko.tvmaniac.core.logger.CrashReporter
 import com.thomaskioko.tvmaniac.core.logger.FirebaseCrashLogger
@@ -21,6 +22,7 @@ import dev.zacsweers.metro.SingleIn
         CompositeLogger::class,
         KermitLogger::class,
         FirebaseCrashLogger::class,
+        AndroidCrashReporter::class,
         LoggingInitializerModule::class,
     ],
 )
