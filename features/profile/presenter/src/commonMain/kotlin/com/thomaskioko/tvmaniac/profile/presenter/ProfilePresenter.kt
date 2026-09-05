@@ -12,6 +12,7 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
@@ -310,7 +311,10 @@ public class ProfilePresenter internal constructor(
     ): Flow<SectionState<R>> = map { items ->
         val mapped = transform(items)
         if (mapped.isEmpty()) SectionState.Empty else SectionState.Content(mapped)
-    }.catch { emit(SectionState.Error(UiMessage(errorToStringMapper.mapError(it)))) }
+    }.catch { error ->
+        logger.error(LOG_TAG, "Profile section failed", error, mapOf(CrashReportKeys.SOURCE to LOG_TAG))
+        emit(SectionState.Error(UiMessage(errorToStringMapper.mapError(error))))
+    }
 
     private fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
         buildList {
@@ -426,3 +430,5 @@ private fun AuthError.toUiMessage(localizer: Localizer): UiMessage = when (this)
     AuthError.NoBrowserAvailable -> UiMessage(localizer.getString(StringResourceKey.ErrorLoginNoBrowser))
     AuthError.Unknown -> UiMessage(localizer.getString(StringResourceKey.ErrorUnknown))
 }
+
+private const val LOG_TAG = "ProfilePresenter"
