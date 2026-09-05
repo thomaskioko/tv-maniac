@@ -429,6 +429,7 @@
     <string name="label_debug_trigger_crash_description">Déclencher un crash de test pour Crashlytics</string>
     <string name="label_debug_report_test_error_title">Signaler une erreur de test</string>
     <string name="label_debug_report_test_error_description">Envoyer un rapport non fatal avec les clés de contexte actuelles à Crashlytics</string>
+    <string name="label_debug_report_test_error_sent">Erreur envoyée</string>
     <string name="label_debug_account_type_title">Type de compte</string>
     <string name="label_debug_account_type_description">Mettre à jour le type de compte</string>
     <string name="label_debug_account_type_premium">Premium</string>

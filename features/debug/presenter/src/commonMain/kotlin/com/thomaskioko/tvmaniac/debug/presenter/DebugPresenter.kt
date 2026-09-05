@@ -125,12 +125,15 @@ public class DebugPresenter internal constructor(
             TriggerUpNextSync -> runIfLoggedIn { triggerUpNextSync() }
             OpenFeatureFlags -> navigator.navigateTo(FeatureFlagsRoute)
             TriggerTestCrash -> throw RuntimeException("Test crash triggered from Debug Menu")
-            ReportTestError -> logger.error(
-                LOG_TAG,
-                "Test error report",
-                DebugTelemetryException(),
-                mapOf(CrashReportKeys.DEBUG_REPORT to "true"),
-            )
+            ReportTestError -> {
+                logger.error(
+                    LOG_TAG,
+                    "Test error report",
+                    DebugTelemetryException(),
+                    mapOf(CrashReportKeys.DEBUG_REPORT to "true"),
+                )
+                uiMessageManager.emitMessage(UiMessage(localizer.getString(StringResourceKey.LabelDebugReportTestErrorSent)))
+            }
             is DismissSnackbar -> coroutineScope.launch { uiMessageManager.clearMessage(action.messageId) }
             is SetAccountType -> coroutineScope.launch {
                 datastoreRepository.saveAccountType(

@@ -313,10 +313,14 @@ class DebugPresenterTest {
         advanceUntilIdle()
 
         presenter.dispatch(ReportTestError)
+        advanceUntilIdle()
 
         logger.recordedErrors shouldHaveSize 1
         logger.recordedErrors.first().throwable.shouldBeInstanceOf<DebugTelemetryException>()
         logger.recordedErrors.first().keys shouldBe mapOf(CrashReportKeys.DEBUG_REPORT to "true")
+        presenter.state.test {
+            expectMostRecentItem().message?.message shouldBe localizer.getString(StringResourceKey.LabelDebugReportTestErrorSent)
+        }
     }
 
     @Test
