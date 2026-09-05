@@ -28,12 +28,7 @@ kotlin {
             implementation(libs.crashkios.crashlytics)
         }
 
-        jvmTest.dependencies {
-            implementation(libs.bundles.unittest)
-            implementation(projects.core.logger.testing)
-        }
-
-        iosTest.dependencies {
+        commonTest.dependencies {
             implementation(libs.bundles.unittest)
             implementation(projects.core.logger.testing)
         }
