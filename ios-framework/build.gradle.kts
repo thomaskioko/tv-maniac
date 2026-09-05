@@ -147,6 +147,7 @@ kotlin {
                 api(projects.core.notifications.api)
                 api(projects.core.notifications.implementation)
                 implementation(projects.domain.notifications)
+                implementation(projects.domain.telemetry)
                 api(projects.domain.settings)
 
                 api(projects.data.watchlistPrefs.api)

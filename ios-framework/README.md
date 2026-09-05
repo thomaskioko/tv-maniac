@@ -319,6 +319,7 @@ graph TB
     :domain:start-watching[start-watching]:::multiplatform
     :domain:statistics[statistics]:::multiplatform
     :domain:sync-activity[sync-activity]:::multiplatform
+    :domain:telemetry[telemetry]:::multiplatform
     :domain:theme[theme]:::multiplatform
     :domain:traktlists[traktlists]:::multiplatform
     :domain:user[user]:::multiplatform
@@ -1050,6 +1051,11 @@ graph TB
   :domain:statistics --> :data:watch-status:api
   :domain:sync-activity --> :core:base
   :domain:sync-activity --> :data:sync-activity:api
+  :domain:telemetry --> :core:base
+  :domain:telemetry --> :core:connectivity:api
+  :domain:telemetry --> :core:logger:api
+  :domain:telemetry --> :data:account-manager:api
+  :domain:telemetry --> :data:subscription:api
   :domain:theme --> :i18n:generator
   :domain:traktlists --> :core:base
   :domain:traktlists --> :data:traktlists:api
@@ -1548,6 +1554,7 @@ graph TB
   :ios-framework --> :domain:recently-watched
   :ios-framework --> :domain:settings
   :ios-framework --> :domain:start-watching
+  :ios-framework -.-> :domain:telemetry
   :ios-framework -.-> :domain:theme
   :ios-framework -.-> :domain:traktlists
   :ios-framework -.-> :domain:user

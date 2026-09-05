@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.logger
 
+import com.google.firebase.crashlytics.CustomKeysAndValues
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -15,13 +16,15 @@ public class AndroidCrashReporter(
         crashlytics?.isCrashlyticsCollectionEnabled = enabled
     }
 
-    override fun recordException(throwable: Throwable) {
-        crashlytics?.recordException(throwable)
-    }
-
-    override fun recordException(throwable: Throwable, tag: String) {
-        crashlytics?.setCustomKey("tag", tag)
-        crashlytics?.recordException(throwable)
+    override fun recordException(throwable: Throwable, keys: Map<String, String>) {
+        if (keys.isEmpty()) {
+            crashlytics?.recordException(throwable)
+        } else {
+            val customKeysAndValues = CustomKeysAndValues.Builder()
+                .apply { keys.forEach { (key, value) -> putString(key, value) } }
+                .build()
+            crashlytics?.recordException(throwable, customKeysAndValues)
+        }
     }
 
     override fun setCustomKey(key: String, value: String) {

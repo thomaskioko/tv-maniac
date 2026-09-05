@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.core.base.coroutines
 
+import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CancellationException
@@ -9,7 +10,7 @@ import kotlin.test.Test
 
 internal class AppScopeLauncherTest {
 
-    private val logger = RecordingLogger()
+    private val logger = FakeLogger()
 
     @Test
     fun `should run block on injected scope`() = runTest {
@@ -20,7 +21,7 @@ internal class AppScopeLauncherTest {
         runCurrent()
 
         ran shouldBe true
-        logger.errors shouldHaveSize 0
+        logger.recordedErrors shouldHaveSize 0
     }
 
     @Test
@@ -31,11 +32,12 @@ internal class AppScopeLauncherTest {
         launcher.launch("FollowShowInteractor") { throw cause }
         runCurrent()
 
-        logger.errors shouldBe listOf(
-            LoggedError(
+        logger.recordedErrors shouldBe listOf(
+            FakeLogger.RecordedError(
                 tag = "FollowShowInteractor",
                 message = "Background job failed",
                 throwable = cause,
+                keys = emptyMap(),
             ),
         )
     }
@@ -50,6 +52,6 @@ internal class AppScopeLauncherTest {
         runCurrent()
 
         job.isCancelled shouldBe true
-        logger.errors shouldHaveSize 0
+        logger.recordedErrors shouldHaveSize 0
     }
 }
