@@ -3,6 +3,7 @@ package com.thomaskioko.tvmaniac.core.tasks.implementation
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerFactory
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
@@ -40,27 +41,37 @@ public class SchedulerDispatchWorker(
         logger.debug(TAG, "Starting task [$workerName]")
 
         return try {
-            when (worker.doWork()) {
+            when (val result = worker.doWork()) {
                 is WorkerResult.Success -> {
                     logger.debug(TAG, "Task [$workerName] completed successfully")
                     Result.success()
                 }
                 is WorkerResult.Retry -> {
-                    logger.debug(TAG, "Task [$workerName] requested retry")
+                    val keys = reportKeys(workerName, "retry")
+                    result.cause?.let { logger.warning(TAG, "Task [$workerName] requested retry", it, keys) }
+                        ?: logger.warning(TAG, "Task [$workerName] requested retry")
                     Result.retry()
                 }
                 is WorkerResult.Failure -> {
-                    logger.error(TAG, "Task [$workerName] failed")
+                    val keys = reportKeys(workerName, "failure")
+                    result.cause?.let { logger.error(TAG, "Task [$workerName] failed", it, keys) }
+                        ?: logger.error(TAG, "Task [$workerName] failed")
                     Result.failure()
                 }
             }
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (throwable: Throwable) {
-            logger.error(TAG, "Task [$workerName] threw: ${throwable.message}")
+            logger.error(TAG, "Task [$workerName] threw: ${throwable.message}", throwable, reportKeys(workerName, "threw"))
             Result.failure()
         }
     }
+
+    private fun reportKeys(workerName: String, result: String): Map<String, String> = mapOf(
+        CrashReportKeys.WORKER to workerName,
+        CrashReportKeys.ATTEMPT to runAttemptCount.toString(),
+        CrashReportKeys.RESULT to result,
+    )
 
     internal companion object {
         internal const val KEY_WORKER_NAME = "worker_name"

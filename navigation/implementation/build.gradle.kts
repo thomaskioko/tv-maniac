@@ -21,6 +21,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.bundles.unittest)
             implementation(libs.kotlinx.serialization.json)
+            implementation(projects.core.logger.testing)
             implementation(projects.features.discover.nav)
             implementation(projects.features.library.nav)
             implementation(projects.features.moreShows.nav)

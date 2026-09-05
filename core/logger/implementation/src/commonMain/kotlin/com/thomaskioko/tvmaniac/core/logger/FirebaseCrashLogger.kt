@@ -64,7 +64,7 @@ public class FirebaseCrashLogger(
         ).joinToString(separator = "|")
 
     private fun breadcrumb(tag: String, message: String, throwable: Throwable, keys: Map<String, String>): String {
-        val repeatSuffix = keys[CrashReportKeys.REPEAT]?.let { ": ${CrashReportKeys.REPEAT}" }.orEmpty()
+        val repeatSuffix = keys[CrashReportKeys.REPEAT]?.let { ": ${CrashReportKeys.REPEAT}=$it" }.orEmpty()
         return "[$tag] $message: ${throwable::class.simpleName}: ${throwable.message}$repeatSuffix"
     }
 }

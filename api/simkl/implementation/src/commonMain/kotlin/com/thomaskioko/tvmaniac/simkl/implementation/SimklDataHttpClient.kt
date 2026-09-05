@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.simkl.implementation
 
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.ApiErrorReportingPlugin
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.reportApiFailure
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
@@ -25,6 +27,11 @@ internal fun simklDataHttpClient(
     kermitLogger: KermitLogger,
 ): HttpClient = HttpClient(httpClientEngine) {
     install(ContentNegotiation) { json(json = json) }
+
+    install(ApiErrorReportingPlugin) {
+        provider = "simkl"
+        onFailure = { failure, throwable -> kermitLogger.reportApiFailure("SimklApi", failure, throwable) }
+    }
 
     install(HttpRequestRetry) {
         retryIf(3) { _, httpResponse ->

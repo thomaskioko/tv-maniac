@@ -45,7 +45,7 @@ public class DefaultTrendingShowsRepository(
     override fun getPagedTrendingShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
         return Pager(
             config = CommonPagingConfig.pagingConfig,
-            remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+            remoteMediator = PaginatedRemoteMediator(logger = logger, source = "TrendingShows") { page -> fetchPage(page, forceRefresh) },
             pagingSourceFactory = dao::getPagedTrendingShows,
         )
             .flow

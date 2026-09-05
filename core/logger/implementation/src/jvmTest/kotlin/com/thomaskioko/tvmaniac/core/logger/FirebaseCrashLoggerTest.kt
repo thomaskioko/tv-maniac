@@ -51,7 +51,7 @@ class FirebaseCrashLoggerTest {
 
         crashReporter.recordedExceptions shouldHaveSize 1
         crashReporter.breadcrumbs shouldHaveSize 2
-        crashReporter.breadcrumbs.last() shouldContain "repeat"
+        crashReporter.breadcrumbs.last() shouldContain "repeat=true"
     }
 
     @Test

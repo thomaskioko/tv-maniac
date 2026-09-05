@@ -43,6 +43,7 @@ graph TB
   end
 
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
   :data:ratings:api --> :core:network-util:api

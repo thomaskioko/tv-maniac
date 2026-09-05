@@ -446,10 +446,12 @@ graph TB
   :core:logger:implementation --> :core:base
   :core:logger:implementation --> :core:logger:api
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:notifications:implementation -.-> :core:base
   :core:notifications:implementation --> :core:logger:api
   :core:notifications:implementation --> :core:notifications:api
   :core:notifications:implementation --> :core:util:api
+  :core:syncstate:implementation --> :core:logger:api
   :core:syncstate:implementation --> :core:syncstate:api
   :core:tasks:implementation --> :core:logger:api
   :core:tasks:implementation --> :core:tasks:api
@@ -761,7 +763,6 @@ graph TB
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
   :domain:notifications --> :core:notifications:api
-  :domain:notifications --> :core:syncstate:api
   :domain:notifications --> :core:tasks:api
   :domain:notifications --> :core:util:api
   :domain:notifications --> :data:account-manager:api

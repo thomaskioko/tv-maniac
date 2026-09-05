@@ -7,6 +7,7 @@ import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
@@ -46,6 +47,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val SEARCH_SOURCE_ID = "Search"
+private const val LOG_TAG = "SearchShowsPresenter"
 
 private fun String.isSearchable(): Boolean = trim().length >= SearchShowState.SEARCH_QUERY_LENGTH
 
@@ -184,6 +186,7 @@ public class SearchShowsPresenter(
                     }
                 }
                 .catch { error ->
+                    logger.error(LOG_TAG, "Search failed", error, mapOf(CrashReportKeys.SOURCE to SEARCH_SOURCE_ID))
                     uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = SEARCH_SOURCE_ID))
                 }
                 .collect { results -> handleSearchResults(results) }
@@ -210,6 +213,7 @@ public class SearchShowsPresenter(
             emit(Unit)
         }
             .catch { error ->
+                logger.error(LOG_TAG, "Search failed", error, mapOf(CrashReportKeys.SOURCE to SEARCH_SOURCE_ID))
                 _state.update { it.copy(isUpdating = false) }
                 uiMessageManager.emitMessage(UiMessage(message = errorToStringMapper.mapError(error), sourceId = SEARCH_SOURCE_ID))
             }

@@ -40,8 +40,7 @@ public class WidgetRefreshWorker(
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (throwable: Exception) {
-            logger.error(TAG, "Widget refresh failed: ${throwable.message}")
-            WorkerResult.Retry(throwable.message)
+            WorkerResult.Retry(throwable.message, throwable)
         }
     }
 

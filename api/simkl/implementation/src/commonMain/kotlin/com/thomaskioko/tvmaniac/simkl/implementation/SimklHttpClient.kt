@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.api.AuthError
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.ApiErrorReportingPlugin
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.IsAuthenticated
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.reportApiFailure
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.HttpExceptions
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import io.ktor.client.HttpClient
@@ -43,7 +44,8 @@ internal fun simklHttpClient(
         install(ContentNegotiation) { json(json = json) }
 
         install(ApiErrorReportingPlugin) {
-            onError = { message, throwable -> kermitLogger.error("Network Error : SimklApi", message, throwable) }
+            provider = "simkl"
+            onFailure = { failure, throwable -> kermitLogger.reportApiFailure("SimklApi", failure, throwable) }
         }
 
         install(HttpRequestRetry) {
