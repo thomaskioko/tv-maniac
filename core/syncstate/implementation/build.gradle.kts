@@ -12,7 +12,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.syncstate.api)
             api(libs.coroutines.core)
-            implementation(projects.core.logger.api)
+            api(projects.core.logger.api)
         }
 
         commonTest.dependencies {
