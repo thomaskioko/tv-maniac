@@ -21,6 +21,7 @@ public class ObserveRatingTargetInteractor(
             RatingTarget.Show(
                 title = show.name,
                 year = show.year?.takeIf { it.isNotBlank() },
+                posterUrl = show.poster_path,
             )
         }
         RatingEntityType.SEASON -> seasonsRepository.observeSeasonById(params.id).map { season ->
@@ -28,6 +29,7 @@ public class ObserveRatingTargetInteractor(
                 RatingTarget.Season(
                     title = it.title,
                     showName = it.show_name,
+                    posterUrl = it.image_url,
                 )
             }
         }
@@ -38,6 +40,7 @@ public class ObserveRatingTargetInteractor(
                     showName = it.show_name,
                     seasonNumber = it.season_number,
                     episodeNumber = it.episode_number,
+                    backdropUrl = it.image_url,
                 )
             }
         }
