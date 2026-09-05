@@ -2,7 +2,7 @@ import Components
 import Foundation
 import Models
 
-public struct SwiftTraktListItem: Identifiable, Equatable {
+public struct SwiftListItem: Identifiable, Equatable {
     public var id: Int64 {
         listId
     }

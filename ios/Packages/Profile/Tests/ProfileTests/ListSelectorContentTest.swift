@@ -6,9 +6,9 @@ import SnapshotTestingLib
 import SwiftUI
 import XCTest
 
-class TraktListSelectorContentTest: SnapshotTestCase {
-    private let sampleLists: [SwiftTraktListItem] = [
-        SwiftTraktListItem(
+class ListSelectorContentTest: SnapshotTestCase {
+    private let sampleLists: [SwiftListItem] = [
+        SwiftListItem(
             listId: 1,
             slug: "favorites",
             name: "Favorites",
@@ -16,7 +16,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             showCountText: "12 shows",
             isShowInList: true
         ),
-        SwiftTraktListItem(
+        SwiftListItem(
             listId: 2,
             slug: "watch-later",
             name: "Watch Later",
@@ -24,7 +24,7 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             showCountText: "5 shows",
             isShowInList: false
         ),
-        SwiftTraktListItem(
+        SwiftListItem(
             listId: 3,
             slug: "sci-fi-marathon",
             name: "Sci-Fi Marathon",
@@ -34,12 +34,12 @@ class TraktListSelectorContentTest: SnapshotTestCase {
         ),
     ]
 
-    func test_TraktListSelector_WithLists() {
-        TraktListSelectorContent(
-            state: TraktListSelectorContent.State(
+    func test_ListSelector_WithLists() {
+        ListSelectorContent(
+            state: ListSelectorContent.State(
                 title: "Loki",
                 posterUrl: nil,
-                traktLists: sampleLists
+                lists: sampleLists
             ),
             onToggle: { _, _ in },
             onShowCreateField: {},
@@ -49,15 +49,15 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             onDismiss: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_WithLists")
+        .assertSnapshot(layout: .defaultDevice, testName: "ListSelector_WithLists")
     }
 
-    func test_TraktListSelector_WithCreateField() {
-        TraktListSelectorContent(
-            state: TraktListSelectorContent.State(
+    func test_ListSelector_WithCreateField() {
+        ListSelectorContent(
+            state: ListSelectorContent.State(
                 title: "Loki",
                 posterUrl: nil,
-                traktLists: sampleLists,
+                lists: sampleLists,
                 showCreateField: true,
                 createListName: "My New List"
             ),
@@ -69,15 +69,15 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             onDismiss: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_WithCreateField")
+        .assertSnapshot(layout: .defaultDevice, testName: "ListSelector_WithCreateField")
     }
 
-    func test_TraktListSelector_Empty() {
-        TraktListSelectorContent(
-            state: TraktListSelectorContent.State(
+    func test_ListSelector_Empty() {
+        ListSelectorContent(
+            state: ListSelectorContent.State(
                 title: "Loki",
                 posterUrl: nil,
-                traktLists: []
+                lists: []
             ),
             onToggle: { _, _ in },
             onShowCreateField: {},
@@ -87,6 +87,6 @@ class TraktListSelectorContentTest: SnapshotTestCase {
             onDismiss: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "TraktListSelector_Empty")
+        .assertSnapshot(layout: .defaultDevice, testName: "ListSelector_Empty")
     }
 }

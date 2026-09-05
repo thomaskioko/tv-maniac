@@ -3,11 +3,11 @@ import DesignSystem
 import Models
 import SwiftUI
 
-public struct TraktListSelectorContent: View {
+public struct ListSelectorContent: View {
     public struct State {
         public let title: String
         public let posterUrl: String?
-        public let traktLists: [SwiftTraktListItem]
+        public let lists: [SwiftListItem]
         public let showCreateField: Bool
         public let isCreatingList: Bool
         public let createListName: String
@@ -21,7 +21,7 @@ public struct TraktListSelectorContent: View {
         public init(
             title: String,
             posterUrl: String?,
-            traktLists: [SwiftTraktListItem],
+            lists: [SwiftListItem],
             showCreateField: Bool = false,
             isCreatingList: Bool = false,
             createListName: String = "",
@@ -34,7 +34,7 @@ public struct TraktListSelectorContent: View {
         ) {
             self.title = title
             self.posterUrl = posterUrl
-            self.traktLists = traktLists
+            self.lists = lists
             self.showCreateField = showCreateField
             self.isCreatingList = isCreatingList
             self.createListName = createListName
@@ -79,7 +79,7 @@ public struct TraktListSelectorContent: View {
             Form {
                 posterSection
 
-                if !state.traktLists.isEmpty {
+                if !state.lists.isEmpty {
                     listsSection
                 } else {
                     emptySection
@@ -148,7 +148,7 @@ public struct TraktListSelectorContent: View {
 
     private var listsSection: some View {
         Section {
-            ForEach(state.traktLists) { list in
+            ForEach(state.lists) { list in
                 HStack {
                     VStack(alignment: .leading) {
                         Text(list.name)
