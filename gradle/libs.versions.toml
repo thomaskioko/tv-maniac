@@ -150,6 +150,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+crashkios-crashlytics = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashkios" }
 
 decompose-decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
 decompose-extensions-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
@@ -161,7 +162,6 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-config = { module = "com.google.firebase:firebase-config", version = "23.1.0" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.0" }
 
-crashkios-crashlytics = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashkios" }
 
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 
