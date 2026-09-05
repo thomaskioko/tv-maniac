@@ -2,6 +2,8 @@
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import java.net.URI
 
 plugins {
@@ -80,6 +82,12 @@ scaffold {
 }
 
 kotlin {
+    targets.withType<KotlinNativeTarget>().configureEach {
+        binaries.withType<TestExecutable>().configureEach {
+            linkerOpts("-U", "_FIRCLSExceptionRecordNSException", "-U", "_FIRCheckLinkDependencies")
+        }
+    }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -257,6 +265,11 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.bundles.unittest)
+        }
+
+        iosTest.dependencies {
+            implementation(projects.core.featureFlags.testing)
+            implementation(projects.core.logger.testing)
         }
     }
 }
