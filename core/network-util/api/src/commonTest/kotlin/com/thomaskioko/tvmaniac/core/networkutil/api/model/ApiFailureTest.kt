@@ -80,6 +80,20 @@ class ApiFailureTest {
     }
 
     @Test
+    fun `should append the body to the message when present`() {
+        val failure = ApiFailure(
+            provider = "trakt",
+            method = "GET",
+            endpointTemplate = "shows/{id}",
+            status = 500,
+            kind = ApiFailureKind.Unexpected,
+            body = "upstream down",
+        )
+
+        failure.toLogMessage() shouldBe "HTTP 500 GET shows/{id}: upstream down"
+    }
+
+    @Test
     fun `should build a short message without a status when absent`() {
         val failure = ApiFailure(
             provider = "trakt",

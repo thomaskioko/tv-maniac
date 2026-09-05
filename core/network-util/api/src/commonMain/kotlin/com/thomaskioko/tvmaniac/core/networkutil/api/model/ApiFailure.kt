@@ -14,8 +14,10 @@ public enum class ApiFailureKind {
     Unexpected,
 }
 
-public fun ApiFailure.toLogMessage(): String =
-    if (status != null) "HTTP $status $method $endpointTemplate" else "$method $endpointTemplate failed"
+public fun ApiFailure.toLogMessage(): String {
+    val summary = if (status != null) "HTTP $status $method $endpointTemplate" else "$method $endpointTemplate failed"
+    return if (body == null) summary else "$summary: $body"
+}
 
 internal fun httpStatusToKind(status: Int): ApiFailureKind = when (status) {
     401, 404, 408, 420, 429 -> ApiFailureKind.Expected
