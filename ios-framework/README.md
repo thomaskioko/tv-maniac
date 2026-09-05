@@ -516,11 +516,13 @@ graph TB
   :core:logger:implementation --> :core:base
   :core:logger:implementation --> :core:logger:api
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:network-util:implementation --> :core:network-util:api
   :core:notifications:implementation -.-> :core:base
   :core:notifications:implementation --> :core:logger:api
   :core:notifications:implementation --> :core:notifications:api
   :core:notifications:implementation --> :core:util:api
+  :core:paging --> :core:logger:api
   :core:paging -.-> :data:shows:api
   :core:syncstate:implementation --> :core:syncstate:api
   :core:tasks:implementation --> :core:logger:api

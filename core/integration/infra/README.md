@@ -446,6 +446,7 @@ graph TB
   :core:logger:implementation --> :core:base
   :core:logger:implementation --> :core:logger:api
   :core:network-util:api --> :core:connectivity:api
+  :core:network-util:api --> :core:logger:api
   :core:notifications:implementation -.-> :core:base
   :core:notifications:implementation --> :core:logger:api
   :core:notifications:implementation --> :core:notifications:api
