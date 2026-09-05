@@ -1003,7 +1003,10 @@ graph TB
   :domain:notifications --> :i18n:api
   :domain:ratings --> :core:base
   :domain:ratings --> :data:datastore:api
+  :domain:ratings --> :data:episode:api
   :domain:ratings --> :data:ratings:api
+  :domain:ratings --> :data:seasons:api
+  :domain:ratings --> :data:showdetails:api
   :domain:ratings --> :data:subscription:api
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api

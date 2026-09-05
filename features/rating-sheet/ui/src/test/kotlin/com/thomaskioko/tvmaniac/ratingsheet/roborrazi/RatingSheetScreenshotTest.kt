@@ -28,7 +28,7 @@ class RatingSheetScreenshotTest {
         composeTestRule.captureMultiDevice("RatingSheetUnrated") {
             TvManiacBackground {
                 RatingSheetContent(
-                    state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = null),
+                    state = ratingSheetState(title = "Lioness", subtitle = "2023", posterUrl = "/lioness.jpg", userRating = null),
                     onAction = {},
                 )
             }
@@ -40,7 +40,12 @@ class RatingSheetScreenshotTest {
         composeTestRule.captureMultiDevice("RatingSheetRated") {
             TvManiacBackground {
                 RatingSheetContent(
-                    state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 8),
+                    state = ratingSheetState(
+                        title = "Sacrificial Soldiers",
+                        subtitle = "Lioness • S1E1",
+                        backdropUrl = "/sacrificial-soldiers.jpg",
+                        userRating = 8,
+                    ),
                     onAction = {},
                 )
             }
@@ -48,14 +53,31 @@ class RatingSheetScreenshotTest {
     }
 
     @Test
-    fun ratingSheetHalfRated() {
-        composeTestRule.captureMultiDevice("RatingSheetHalfRated") {
+    fun ratingSheetSeasonRated() {
+        composeTestRule.captureMultiDevice("RatingSheetSeasonRated") {
             TvManiacBackground {
                 RatingSheetContent(
-                    state = RatingSheetState(title = "Your rating", removeRatingLabel = "Remove rating", userRating = 7),
+                    state = ratingSheetState(title = "Season 1", subtitle = "Lioness", posterUrl = "/season-1.jpg", userRating = 7),
                     onAction = {},
                 )
             }
         }
     }
+
+    private fun ratingSheetState(
+        title: String,
+        subtitle: String?,
+        userRating: Int?,
+        posterUrl: String? = null,
+        backdropUrl: String? = null,
+    ) = RatingSheetState(
+        headerLabel = "You're rating",
+        title = title,
+        subtitle = subtitle,
+        posterUrl = posterUrl,
+        backdropUrl = backdropUrl,
+        scoreLabel = "Your rating",
+        removeRatingLabel = "Remove rating",
+        userRating = userRating,
+    )
 }

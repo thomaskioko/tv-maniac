@@ -13,7 +13,10 @@ kotlin {
                 api(libs.coroutines.core)
                 api(projects.core.base)
                 api(projects.data.datastore.api)
+                api(projects.data.episode.api)
                 api(projects.data.ratings.api)
+                api(projects.data.seasons.api)
+                api(projects.data.showdetails.api)
                 api(projects.data.subscription.api)
             }
         }
@@ -23,7 +26,10 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
                 implementation(projects.data.datastore.testing)
+                implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.testing)
+                implementation(projects.data.seasons.testing)
+                implementation(projects.data.showdetails.testing)
                 implementation(projects.data.subscription.testing)
             }
         }

@@ -10,7 +10,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
     private val favoritesListTraktId = 34223248L
-    private val ratedStarValue = 8
+    private val ratedScoreValue = 8
 
     @Test
     fun givenShowDetails_whenOpened_thenInteractiveSurfacesAreExercised() = runAppFlowTest {
@@ -85,7 +85,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         ratingSheetRobot
             .assertSheetDisplayed()
             .assertClearRatingButtonDoesNotExist()
-            .clickStar(ratedStarValue)
+            .clickScore(ratedScoreValue)
             .assertClearRatingButtonDisplayed()
             .clickClearRatingButton()
             .assertClearRatingButtonDoesNotExist()
@@ -122,7 +122,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
         ratingSheetRobot
             .assertSheetDisplayed()
             .assertClearRatingButtonDoesNotExist()
-            .clickStar(ratedStarValue)
+            .clickScore(ratedScoreValue)
             .assertClearRatingButtonDisplayed()
             .clickClearRatingButton()
             .assertClearRatingButtonDoesNotExist()

@@ -2,11 +2,14 @@ package com.thomaskioko.tvmaniac.seasons.implementation
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.GetSeasonByShowAndNumber
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.LatestSeasonPerFollowedShow
 import com.thomaskioko.tvmaniac.db.Season
+import com.thomaskioko.tvmaniac.db.SeasonById
+import com.thomaskioko.tvmaniac.db.SeasonId
 import com.thomaskioko.tvmaniac.db.ShowIdResolver
 import com.thomaskioko.tvmaniac.db.ShowSeasons
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
@@ -71,6 +74,11 @@ public class DefaultSeasonsDao(
                 seasonNumber = seasonNumber,
             ).executeAsOneOrNull()
         }
+
+    override fun observeSeasonById(seasonId: Long): Flow<SeasonById?> =
+        seasonQueries.seasonById(Id<SeasonId>(seasonId))
+            .asFlow()
+            .mapToOneOrNull(dispatcher.io)
 
     override suspend fun getLatestSeasonPerFollowedShow(): List<LatestSeasonPerFollowedShow> =
         withContext(dispatcher.databaseRead) {

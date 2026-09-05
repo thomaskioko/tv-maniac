@@ -12,7 +12,9 @@ import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.ObserveRatingTargetInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.RateInteractor
+import com.thomaskioko.tvmaniac.domain.ratings.RatingTarget
 import com.thomaskioko.tvmaniac.domain.ratings.RemoveRatingInteractor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -40,6 +42,7 @@ public class RatingSheetPresenter internal constructor(
     @Assisted private val param: RatingSheetParam,
     componentContext: ComponentContext,
     observeRatingInteractor: ObserveRatingInteractor,
+    observeRatingTargetInteractor: ObserveRatingTargetInteractor,
     private val rateInteractor: RateInteractor,
     private val removeRatingInteractor: RemoveRatingInteractor,
     private val navigator: Navigator,
@@ -52,16 +55,23 @@ public class RatingSheetPresenter internal constructor(
     private val coroutineScope = componentContext.coroutineScope()
     private val uiMessageManager = UiMessageManager()
     private val ratingLoadingState = ObservableLoadingCounter()
-    private val title = localizer.getString(StringResourceKey.LabelRatingSheetTitle)
+    private val headerLabel = localizer.getString(StringResourceKey.LabelRatingSheetHeader)
+    private val scoreLabel = localizer.getString(StringResourceKey.LabelRatingSheetTitle)
     private val removeRatingLabel = localizer.getString(StringResourceKey.LabelActionRemoveRating)
     private val pendingSelection = MutableStateFlow<PendingSelection>(PendingSelection.None)
 
     public val state: StateFlow<RatingSheetState> = combine(
         observeRatingInteractor.flow,
+        observeRatingTargetInteractor.flow,
         pendingSelection,
-    ) { savedRating, pending ->
+    ) { savedRating, target, pending ->
         RatingSheetState(
-            title = title,
+            headerLabel = headerLabel,
+            title = target.title(),
+            subtitle = target.subtitle(),
+            posterUrl = target.posterUrl(),
+            backdropUrl = target.backdropUrl(),
+            scoreLabel = scoreLabel,
             removeRatingLabel = removeRatingLabel,
             userRating = when (pending) {
                 PendingSelection.None -> savedRating
@@ -72,13 +82,18 @@ public class RatingSheetPresenter internal constructor(
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = RatingSheetState(title = title, removeRatingLabel = removeRatingLabel),
+        initialValue = RatingSheetState(
+            headerLabel = headerLabel,
+            scoreLabel = scoreLabel,
+            removeRatingLabel = removeRatingLabel,
+        ),
     )
 
     public val stateValue: Value<RatingSheetState> = state.asValue(coroutineScope)
 
     init {
         observeRatingInteractor(ObserveRatingInteractor.Param(param.ratingType, param.id))
+        observeRatingTargetInteractor(ObserveRatingTargetInteractor.Param(param.ratingType, param.id))
     }
 
     public fun dispatch(action: RatingSheetAction) {
@@ -104,6 +119,28 @@ public class RatingSheetPresenter internal constructor(
                 .collectStatus(ratingLoadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
         }
     }
+
+    private fun RatingTarget?.title(): String = when (this) {
+        null -> ""
+        is RatingTarget.Show -> title
+        is RatingTarget.Season -> title
+        is RatingTarget.Episode -> title
+    }
+
+    private fun RatingTarget?.subtitle(): String? = when (this) {
+        null -> null
+        is RatingTarget.Show -> year
+        is RatingTarget.Season -> showName
+        is RatingTarget.Episode -> "$showName • S${seasonNumber}E$episodeNumber"
+    }
+
+    private fun RatingTarget?.posterUrl(): String? = when (this) {
+        is RatingTarget.Show -> posterUrl
+        is RatingTarget.Season -> posterUrl
+        else -> null
+    }
+
+    private fun RatingTarget?.backdropUrl(): String? = (this as? RatingTarget.Episode)?.backdropUrl
 
     @AssistedFactory
     public fun interface Factory {

@@ -16,7 +16,12 @@ public struct RatingSheetView: View {
 
     public var body: some View {
         RatingSheetContent(
+            headerLabel: state.headerLabel,
             title: state.title,
+            subtitle: state.subtitle,
+            posterUrl: state.posterUrl,
+            backdropUrl: state.backdropUrl,
+            scoreLabel: state.scoreLabel,
             removeLabel: state.removeRatingLabel,
             userRating: state.userRating as? Int,
             onRatingSelected: { rating in

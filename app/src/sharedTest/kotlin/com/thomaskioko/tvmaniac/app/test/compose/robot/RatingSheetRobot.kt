@@ -26,8 +26,8 @@ internal class RatingSheetRobot(composeUi: ComposeUiTest) : BaseRobot<RatingShee
         assertDoesNotExist(RatingSheetTestTags.CLEAR_RATING_BUTTON)
     }
 
-    fun clickStar(rating: Int) = apply {
-        click(RatingSheetTestTags.starRating(rating))
+    fun clickScore(rating: Int) = apply {
+        click(RatingSheetTestTags.score(rating))
     }
 
     fun clickClearRatingButton() = apply {

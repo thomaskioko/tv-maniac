@@ -12,7 +12,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
     private val secondEpisodeTraktId = 73641L
     private val thirdEpisodeTraktId = 73484L
     private val seasonTwoFirstEpisodeTraktId = 73489L
-    private val ratedStarValue = 8
+    private val ratedScoreValue = 8
 
     @Test
     fun seasonUserJourney() = runAppFlowTest {
@@ -210,7 +210,7 @@ internal class SeasonFlowTest : BaseAppFlowTest() {
         ratingSheetRobot
             .assertSheetDisplayed()
             .assertClearRatingButtonDoesNotExist()
-            .clickStar(ratedStarValue)
+            .clickScore(ratedScoreValue)
             .assertClearRatingButtonDisplayed()
             .clickClearRatingButton()
             .assertClearRatingButtonDoesNotExist()

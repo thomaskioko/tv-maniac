@@ -31,7 +31,10 @@ kotlin {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.base.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.data.episode.testing)
                 implementation(projects.data.ratings.testing)
+                implementation(projects.data.seasons.testing)
+                implementation(projects.data.showdetails.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)
             }
