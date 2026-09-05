@@ -155,8 +155,8 @@ public class DefaultLibraryRepository(
 
         val sortOption = currentSortOption()
         when {
-            forceRefresh -> libraryStore.fresh(sortOption) { logger.debug(TAG, it) }
-            else -> libraryStore.get(sortOption) { logger.debug(TAG, it) }
+            forceRefresh -> libraryStore.fresh(sortOption)
+            else -> libraryStore.get(sortOption)
         }
 
         logger.debug(TAG, "Sync completed")

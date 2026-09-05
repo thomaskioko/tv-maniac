@@ -110,10 +110,7 @@ internal class UserStatsStoreTest : BaseDatabaseTest() {
             errorMessage = "Endpoint not found",
         )
 
-        var skippedMessage: String? = null
-        store.get("test-user") { skippedMessage = it }
-
-        skippedMessage.shouldNotBeNull()
+        store.get("test-user")
 
         userStatsDao.observeUserProfileStats("test-user").test {
             awaitItem().shouldBeNull()
