@@ -18,5 +18,5 @@ public object CrashReportKeys {
     public const val SIGNED_IN: String = "signed_in"
     public const val PREMIUM: String = "premium"
     public const val CONNECTIVITY: String = "connectivity"
-    public const val DEBUG: String = "debug"
+    public const val DEBUG_REPORT: String = "debug"
 }
