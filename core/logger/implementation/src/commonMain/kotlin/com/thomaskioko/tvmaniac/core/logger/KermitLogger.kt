@@ -30,7 +30,7 @@ public class KermitLogger : Logger {
         KermitLogger.withTag(tag).e(message)
     }
 
-    override fun error(tag: String, message: String, throwable: Throwable) {
+    override fun error(tag: String, message: String, throwable: Throwable, keys: Map<String, String>) {
         KermitLogger.withTag(tag).e(message, throwable)
     }
 
@@ -48,6 +48,10 @@ public class KermitLogger : Logger {
 
     override fun warning(tag: String, message: String) {
         KermitLogger.withTag(tag).w(message)
+    }
+
+    override fun warning(tag: String, message: String, throwable: Throwable, keys: Map<String, String>) {
+        KermitLogger.withTag(tag).w(message, throwable)
     }
 
     override fun verbose(message: String) {
