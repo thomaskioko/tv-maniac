@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.tasks.implementation
 
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
@@ -44,6 +45,7 @@ public class IosTaskScheduler(
     private val lock = reentrantLock()
     private val activeRequests = mutableMapOf<String, PeriodicTaskRequest>()
     private val registeredTaskIds = mutableSetOf<String>()
+    private val attemptCounts = mutableMapOf<String, Int>()
 
     init {
         val names = workerFactory.workerNames
@@ -183,13 +185,8 @@ public class IosTaskScheduler(
 
         logger.debug(TAG, "Starting immediate execution of [$taskId]")
         appCoroutineScope.launch {
-            try {
-                worker.doWork()
+            if (runWorker(taskId, worker)) {
                 logger.debug(TAG, "Immediate execution of [$taskId] completed")
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                logger.error(TAG, "Immediate execution of [$taskId] failed: ${e.message}")
             }
         }
     }
@@ -231,18 +228,55 @@ public class IosTaskScheduler(
 
         appCoroutineScope.launch {
             try {
-                val result = worker.doWork()
-                val success = result is WorkerResult.Success
+                val success = runWorker(taskId, worker)
                 completeTask(success)
-                logger.debug(TAG, "Task [$taskId] completed with result: $result")
+                logger.debug(TAG, "Task [$taskId] completed with result: $success")
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Throwable) {
-                completeTask(false)
-                logger.error(TAG, "Task [$taskId] failed: ${e.message}")
             }
         }
     }
+
+    internal suspend fun runWorker(taskId: String, worker: BackgroundWorker): Boolean {
+        val attempt = lock.withLock {
+            val next = (attemptCounts[taskId] ?: 0) + 1
+            attemptCounts[taskId] = next
+            next
+        }
+
+        return try {
+            when (val result = worker.doWork()) {
+                is WorkerResult.Success -> {
+                    lock.withLock { attemptCounts.remove(taskId) }
+                    logger.debug(TAG, "Task [$taskId] completed successfully")
+                    true
+                }
+                is WorkerResult.Retry -> {
+                    val keys = reportKeys(taskId, attempt, "retry")
+                    result.cause?.let { logger.warning(TAG, "Task [$taskId] requested retry", it, keys) }
+                        ?: logger.warning(TAG, "Task [$taskId] requested retry")
+                    false
+                }
+                is WorkerResult.Failure -> {
+                    val keys = reportKeys(taskId, attempt, "failure")
+                    result.cause?.let { logger.error(TAG, "Task [$taskId] failed", it, keys) }
+                        ?: logger.error(TAG, "Task [$taskId] failed")
+                    false
+                }
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            logger.error(TAG, "Task [$taskId] threw: ${e.message}", e, reportKeys(taskId, attempt, "threw"))
+            false
+        }
+    }
+
+    private fun reportKeys(taskId: String, attempt: Int, result: String): Map<String, String> = mapOf(
+        CrashReportKeys.WORKER to taskId,
+        CrashReportKeys.ATTEMPT to attempt.toString(),
+        CrashReportKeys.RESULT to result,
+    )
 
     private fun logPendingRequests(reason: String) {
         scheduler.getPendingTaskRequestsWithCompletionHandler { array ->
