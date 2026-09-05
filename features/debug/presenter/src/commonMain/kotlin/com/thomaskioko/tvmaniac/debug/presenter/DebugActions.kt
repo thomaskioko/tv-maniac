@@ -20,4 +20,6 @@ public data object OpenFeatureFlags : DebugActions
 
 public data object TriggerTestCrash : DebugActions
 
+public data object ReportTestError : DebugActions
+
 public data class SetAccountType(val accountType: AccountType) : DebugActions

@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
@@ -124,6 +125,12 @@ public class DebugPresenter internal constructor(
             TriggerUpNextSync -> runIfLoggedIn { triggerUpNextSync() }
             OpenFeatureFlags -> navigator.navigateTo(FeatureFlagsRoute)
             TriggerTestCrash -> throw RuntimeException("Test crash triggered from Debug Menu")
+            ReportTestError -> logger.error(
+                LOG_TAG,
+                "Test error report",
+                DebugTelemetryException(),
+                mapOf(CrashReportKeys.DEBUG to "true"),
+            )
             is DismissSnackbar -> coroutineScope.launch { uiMessageManager.clearMessage(action.messageId) }
             is SetAccountType -> coroutineScope.launch {
                 datastoreRepository.saveAccountType(
@@ -217,6 +224,13 @@ public class DebugPresenter internal constructor(
             subtitle = localizer.getString(StringResourceKey.LabelDebugTriggerCrashDescription),
             action = TriggerTestCrash,
         )
+        items += DebugItem(
+            id = "report-test-error",
+            icon = DebugItemIcon.Warning,
+            title = localizer.getString(StringResourceKey.LabelDebugReportTestErrorTitle),
+            subtitle = localizer.getString(StringResourceKey.LabelDebugReportTestErrorDescription),
+            action = ReportTestError,
+        )
         return items.toImmutableList()
     }
 
@@ -295,3 +309,5 @@ public class DebugPresenter internal constructor(
         else -> "${duration.inWholeSeconds.coerceAtLeast(0)}s"
     }
 }
+
+private const val LOG_TAG = "DebugPresenter"
