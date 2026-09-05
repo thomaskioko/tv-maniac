@@ -3,14 +3,9 @@ package com.thomaskioko.tvmaniac.datastore.implemetation
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.datastore.api.AppTheme
 import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository
-import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_ACCOUNT_TYPE
-import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_QUICK_RATE_ENABLED
-import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_THEME
-import com.thomaskioko.tvmaniac.datastore.implementation.DefaultDatastoreRepository.Companion.KEY_WIDGET_THEME
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -18,6 +13,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
+import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
@@ -25,7 +21,7 @@ internal class DatastoreRepositoryTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private var preferencesScope: CoroutineScope = CoroutineScope(testDispatcher + Job())
-    private val testFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "test.preferences_pb"
+    private val testFile = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "datastore-test-${Random.nextLong()}.preferences_pb"
     private val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
         corruptionHandler = null,
         migrations = emptyList(),
@@ -39,14 +35,9 @@ internal class DatastoreRepositoryTest {
     )
 
     @AfterTest
-    fun clearDataStore() = runTest {
-        dataStore.edit {
-            it.remove(KEY_THEME)
-            it.remove(KEY_ACCOUNT_TYPE)
-            it.remove(KEY_QUICK_RATE_ENABLED)
-            it.remove(KEY_WIDGET_THEME)
-        }
+    fun deleteDataStore() {
         preferencesScope.cancel()
+        FileSystem.SYSTEM.delete(testFile, mustExist = false)
     }
 
     @Test
