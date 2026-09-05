@@ -108,6 +108,7 @@ SELECT
     season.id AS season_id,
     season.title,
     season.season_number,
+    season.image_url,
     tvshow.name AS show_name
 FROM season
 INNER JOIN tvshow ON tvshow.id = season.show_id
