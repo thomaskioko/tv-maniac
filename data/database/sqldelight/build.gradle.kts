@@ -25,6 +25,7 @@ kotlin {
 
         jvmTest {
             dependencies {
+                implementation(projects.core.logger.testing)
                 implementation(projects.data.database.sqldelight)
                 implementation(libs.sqldelight.driver.jvm)
                 implementation(libs.sqldelight.jdbc.driver)

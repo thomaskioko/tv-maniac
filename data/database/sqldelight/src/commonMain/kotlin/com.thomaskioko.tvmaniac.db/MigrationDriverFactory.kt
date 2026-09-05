@@ -2,6 +2,7 @@ package com.thomaskioko.tvmaniac.db
 
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
@@ -24,12 +25,23 @@ public class MigrationDriverFactory(
             if (version == expectedVersion) {
                 driver
             } else {
-                logger.warning(LOG_TAG, "On-disk schema version $version does not match $expectedVersion; rebuilding database")
+                val message = "On-disk schema version $version does not match $expectedVersion; rebuilding database"
+                logger.error(
+                    LOG_TAG,
+                    message,
+                    IllegalStateException(message),
+                    mapOf(CrashReportKeys.SCHEMA_FROM to version.toString(), CrashReportKeys.SCHEMA_TO to expectedVersion.toString()),
+                )
                 closeQuietly(driver)
                 rebuild()
             }
         } catch (throwable: Throwable) {
-            logger.warning(LOG_TAG, "Database open or migration failed (${throwable.message}); rebuilding database")
+            logger.error(
+                LOG_TAG,
+                "Database open or migration failed (${throwable.message}); rebuilding database",
+                throwable,
+                mapOf(CrashReportKeys.SCHEMA_TO to expectedVersion.toString()),
+            )
             closeQuietly(driver)
             rebuild()
         }

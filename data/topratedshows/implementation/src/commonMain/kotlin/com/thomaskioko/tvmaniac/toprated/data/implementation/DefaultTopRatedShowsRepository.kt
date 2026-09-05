@@ -40,7 +40,7 @@ public class DefaultTopRatedShowsRepository(
     override fun getPagedTopRatedShows(forceRefresh: Boolean): Flow<PagingData<ShowEntity>> {
         return Pager(
             config = pagingConfig,
-            remoteMediator = PaginatedRemoteMediator { page -> fetchPage(page, forceRefresh) },
+            remoteMediator = PaginatedRemoteMediator(logger = logger, source = "TopRatedShows") { page -> fetchPage(page, forceRefresh) },
             pagingSourceFactory = dao::getPagedTopRatedShows,
         )
             .flow
