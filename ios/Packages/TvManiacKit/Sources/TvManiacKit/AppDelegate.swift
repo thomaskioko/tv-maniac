@@ -11,7 +11,8 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
     public lazy var appGraph: IosApplicationGraph = IosApplicationGraphCompanion.shared.create(
         isDebug: Self.isDebugBuild,
         remoteConfigBridge: Self.makeRemoteConfigBridge(),
-        widgetManager: IosWidgetManager()
+        widgetManager: IosWidgetManager(),
+        crashlyticsCollection: FirebaseCrashlyticsCollection()
     )
 
     public lazy var logger = appGraph.logger
@@ -41,7 +42,6 @@ public class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         super.init()
         if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
             FirebaseApp.configure()
-            CrashReportingBridgeHolder.shared.bridge = FirebaseCrashlyticsBridge()
         }
         ImageCacheManager.configure()
         // Force IosTaskScheduler construction so BGTask handlers are registered
