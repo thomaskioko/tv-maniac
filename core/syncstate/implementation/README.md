@@ -15,7 +15,7 @@ graph TB
     :core:syncstate:implementation[implementation]:::multiplatform
   end
 
-  :core:syncstate:implementation -.-> :core:logger:api
+  :core:syncstate:implementation --> :core:logger:api
   :core:syncstate:implementation --> :core:syncstate:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

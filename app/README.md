@@ -749,7 +749,7 @@ graph TB
   :core:notifications:implementation --> :core:util:api
   :core:paging --> :core:logger:api
   :core:paging -.-> :data:shows:api
-  :core:syncstate:implementation -.-> :core:logger:api
+  :core:syncstate:implementation --> :core:logger:api
   :core:syncstate:implementation --> :core:syncstate:api
   :core:tasks:implementation --> :core:logger:api
   :core:tasks:implementation --> :core:tasks:api
