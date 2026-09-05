@@ -152,6 +152,7 @@ dependencies {
     implementation(projects.domain.library)
     implementation(projects.domain.recentlyWatched)
     implementation(projects.domain.syncActivity)
+    implementation(projects.domain.telemetry)
     implementation(projects.domain.user)
     implementation(projects.data.logout.api)
     implementation(projects.data.logout.implementation)
