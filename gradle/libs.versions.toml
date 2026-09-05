@@ -42,6 +42,7 @@ compose-bom = "2026.08.00"
 compose-constraintlayout = "1.1.2"
 compose-runtime = "1.12.0"
 coroutines = "1.11.0"
+crashkios = "0.9.0"
 datetime = "0.8.0-0.6.x-compat"
 decompose = "3.5.0"
 firebase-bom = "34.18.0"
@@ -159,6 +160,8 @@ essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-config = { module = "com.google.firebase:firebase-config", version = "23.1.0" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.0" }
+
+crashkios-crashlytics = { module = "co.touchlab.crashkios:crashlytics", version.ref = "crashkios" }
 
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 
