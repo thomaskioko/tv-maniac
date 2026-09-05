@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.testing.di
 
 import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.logger.CrashlyticsCollection
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
@@ -31,6 +32,9 @@ public interface TestGraph {
 
     @DependencyGraph.Factory
     public fun interface Factory {
-        public fun create(@Provides remoteConfigBridge: RemoteConfigBridge): TestGraph
+        public fun create(
+            @Provides remoteConfigBridge: RemoteConfigBridge,
+            @Provides crashlyticsCollection: CrashlyticsCollection,
+        ): TestGraph
     }
 }

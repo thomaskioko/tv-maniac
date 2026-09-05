@@ -9,7 +9,6 @@ import com.thomaskioko.tvmaniac.appconfig.IosAppConfigBindingContainer
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
 import com.thomaskioko.tvmaniac.core.logger.IosCrashReporter
-import com.thomaskioko.tvmaniac.core.logger.IosCrashReporterBindingContainer
 import com.thomaskioko.tvmaniac.core.notifications.implementation.IosNotificationManager
 import com.thomaskioko.tvmaniac.core.tasks.implementation.IosTaskScheduler
 import com.thomaskioko.tvmaniac.datastore.implementation.DATA_STORE_FILE_NAME
@@ -53,7 +52,6 @@ import kotlin.random.Random
         IosOAuthLauncher::class,
         IosNotificationManager::class,
         IosCrashReporter::class,
-        IosCrashReporterBindingContainer::class,
         IosTaskScheduler::class,
     ],
 )
