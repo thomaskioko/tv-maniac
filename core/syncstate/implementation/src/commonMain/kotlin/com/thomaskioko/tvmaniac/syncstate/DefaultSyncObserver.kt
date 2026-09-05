@@ -1,5 +1,7 @@
 package com.thomaskioko.tvmaniac.syncstate
 
+import com.thomaskioko.tvmaniac.core.logger.CrashReportKeys
+import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
@@ -18,7 +20,9 @@ import kotlinx.coroutines.sync.withLock
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class DefaultSyncObserver : SyncObserver {
+public class DefaultSyncObserver(
+    private val logger: Logger,
+) : SyncObserver {
 
     private val mutex = Mutex()
     private var activeCount: Int = 0
@@ -45,7 +49,8 @@ public class DefaultSyncObserver : SyncObserver {
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (throwable: Throwable) {
-            log(SyncError.BackgroundSyncFailed(operationId, throwable))
+            logger.warning(LOG_TAG, "Sync [$operationId] failed", throwable, mapOf(CrashReportKeys.SYNC to operationId))
+            mutableErrors.tryEmit(SyncError.BackgroundSyncFailed(operationId, throwable))
             throw throwable
         } finally {
             decrement()
@@ -53,8 +58,26 @@ public class DefaultSyncObserver : SyncObserver {
     }
 
     override fun log(error: SyncError) {
+        report(error)
         mutableErrors.tryEmit(error)
     }
+
+    private fun report(error: SyncError) {
+        val keys = mapOf(CrashReportKeys.SYNC to error.operation)
+        when (error) {
+            is SyncError.AccountLimitExceeded -> logger.warning(LOG_TAG, "Account limit exceeded", error.cause, keys)
+            else -> logger.error(LOG_TAG, "Sync [${error.operation}] failed", error.cause, keys)
+        }
+    }
+
+    private val SyncError.operation: String
+        get() = when (this) {
+            is SyncError.BackgroundSyncFailed -> operationId
+            is SyncError.MarkWatchedFailed -> "mark-watched"
+            is SyncError.MarkUnwatchedFailed -> "mark-unwatched"
+            is SyncError.BatchMarkFailed -> "batch-mark"
+            is SyncError.AccountLimitExceeded -> "account-limit"
+        }
 
     private suspend fun increment() {
         mutex.withLock {
@@ -73,5 +96,6 @@ public class DefaultSyncObserver : SyncObserver {
 
     private companion object {
         private const val BUFFER_CAPACITY = 16
+        private const val LOG_TAG = "SyncObserver"
     }
 }
