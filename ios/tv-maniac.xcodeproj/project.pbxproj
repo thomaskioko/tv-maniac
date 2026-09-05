@@ -89,7 +89,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		D6FE6A5F303E221400F89B66 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		D6FE6A5F303E221400F89B66 /* Exceptions for "TvManiacWidget" folder in "TvManiacWidget" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -99,12 +99,73 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D639FA9E2F77530500F3C67B /* Firebase */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Firebase; sourceTree = "<group>"; };
-		D65009DC2CF644BE00394D67 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
-		D68A22262F415DC30034550F /* Config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Config; sourceTree = "<group>"; };
-		D6A2A0EB2EC7FD8C0001CD82 /* Packages */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Packages; sourceTree = "<group>"; };
-		D6C17E510000000000000002 /* tvmaniacUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = tvmaniacUITests; sourceTree = "<group>"; };
-		D6FE6A51303E221300F89B66 /* TvManiacWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D6FE6A5F303E221400F89B66 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TvManiacWidget; sourceTree = "<group>"; };
+		D639FA9E2F77530500F3C67B /* Firebase */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		D65009DC2CF644BE00394D67 /* App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D68A22262F415DC30034550F /* Config */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		D6A2A0EB2EC7FD8C0001CD82 /* Packages */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		D6C17E510000000000000002 /* tvmaniacUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = tvmaniacUITests;
+			sourceTree = "<group>";
+		};
+		D6FE6A51303E221300F89B66 /* TvManiacWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D6FE6A5F303E221400F89B66 /* Exceptions for "TvManiacWidget" folder in "TvManiacWidget" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = TvManiacWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -214,6 +275,7 @@
 				D6CDA52D2F417A820021240C /* Copy GoogleService-Info.plist */,
 				7555FFB4242A642300829871 /* Embed Frameworks */,
 				D6FE6A5C303E221400F89B66 /* Embed Foundation Extensions */,
+				306C2A0776A5D8454204D8A4 /* Upload debug symbols to Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -331,8 +393,6 @@
 				de,
 			);
 			mainGroup = 7555FF72242A565900829871;
-			packageReferences = (
-			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -371,6 +431,30 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		306C2A0776A5D8454204D8A4 /* Upload debug symbols to Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Upload debug symbols to Crashlytics";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" != \"Debug\" ] || [ -n \"${CI}\" ]; then\n  exit 0\nfi\n\nPLIST=\"${SRCROOT}/ios/Firebase/${CONFIGURATION}/GoogleService-Info.plist\"\nRUN_SCRIPT=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n\nif [ ! -f \"$PLIST\" ] || [ ! -x \"$RUN_SCRIPT\" ]; then\n  exit 0\nfi\n\n\"$RUN_SCRIPT\" -gsp \"$PLIST\" -p ios\n";
+		};
 		D693F87E2DCB93950060350C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
