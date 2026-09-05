@@ -90,6 +90,18 @@ class IosTaskSchedulerTest {
         scheduler.runWorker("task-attempts", RecordingWorker(WorkerResult.Retry("later", cause)))
         logger.recordedWarnings[2].keys[CrashReportKeys.ATTEMPT] shouldBe "1"
     }
+
+    @Test
+    fun `should clear the attempt after a failure`() = runTest {
+        val cause = IllegalStateException("later")
+
+        scheduler.runWorker("task-failure", RecordingWorker(WorkerResult.Retry("later", cause)))
+        scheduler.runWorker("task-failure", RecordingWorker(WorkerResult.Failure("gone", cause)))
+        logger.recordedErrors.last().keys[CrashReportKeys.ATTEMPT] shouldBe "2"
+
+        scheduler.runWorker("task-failure", RecordingWorker(WorkerResult.Retry("later", cause)))
+        logger.recordedWarnings.last().keys[CrashReportKeys.ATTEMPT] shouldBe "1"
+    }
 }
 
 private object EmptyWorkerFactory : WorkerFactory {

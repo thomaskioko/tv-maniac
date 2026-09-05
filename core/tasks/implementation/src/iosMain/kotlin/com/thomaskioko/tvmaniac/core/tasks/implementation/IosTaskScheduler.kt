@@ -258,6 +258,7 @@ public class IosTaskScheduler(
                     false
                 }
                 is WorkerResult.Failure -> {
+                    lock.withLock { attemptCounts.remove(taskId) }
                     val keys = reportKeys(taskId, attempt, "failure")
                     result.cause?.let { logger.error(TAG, "Task [$taskId] failed", it, keys) }
                         ?: logger.error(TAG, "Task [$taskId] failed")
