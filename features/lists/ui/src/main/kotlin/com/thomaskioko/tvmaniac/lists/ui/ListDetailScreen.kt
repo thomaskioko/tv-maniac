@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,7 +39,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.thomaskioko.tvmaniac.compose.components.EmptyStateView
-import com.thomaskioko.tvmaniac.compose.components.HapticRow
 import com.thomaskioko.tvmaniac.compose.components.InlineSectionError
 import com.thomaskioko.tvmaniac.compose.components.LoadingIndicator
 import com.thomaskioko.tvmaniac.compose.components.PosterCard
@@ -126,12 +126,27 @@ internal fun ListDetailScreen(
             )
         },
     ) { contentPadding ->
-        ListDetailBody(
-            state = state,
-            lazyPagingItems = lazyPagingItems,
-            contentPadding = contentPadding,
-            onAction = onAction,
-        )
+        if (state.canRefresh) {
+            PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { onAction(ListDetailAction.RefreshList) },
+                modifier = Modifier.padding(top = contentPadding.calculateTopPadding()),
+            ) {
+                ListDetailBody(
+                    state = state,
+                    lazyPagingItems = lazyPagingItems,
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                    onAction = onAction,
+                )
+            }
+        } else {
+            ListDetailBody(
+                state = state,
+                lazyPagingItems = lazyPagingItems,
+                contentPadding = contentPadding,
+                onAction = onAction,
+            )
+        }
     }
 
     state.removeConfirmation?.let { confirmation ->
@@ -252,21 +267,16 @@ private fun ListDetailGrid(
         ) { index ->
             val show = lazyPagingItems[index]
             if (show != null) {
-                HapticRow(
+                PosterCard(
+                    imageUrl = show.posterUrl,
                     onClick = { onAction(ListDetailAction.ShowClicked(show.tmdbId)) },
                     onLongClick = { onAction(ListDetailAction.RemoveRequested(show.tmdbId)) },
+                    title = show.title,
                     modifier = Modifier
                         .animateItem()
                         .fillMaxWidth()
                         .testTag(ListDetailTestTags.showCard(show.tmdbId)),
-                ) {
-                    PosterCard(
-                        imageUrl = show.posterUrl,
-                        onClick = { onAction(ListDetailAction.ShowClicked(show.tmdbId)) },
-                        title = show.title,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+                )
             }
         }
 

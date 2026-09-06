@@ -60,6 +60,7 @@ internal val listDetailContentState: ListDetailState = ListDetailState(
     title = LIST_TITLE,
     emptyMessage = LIST_EMPTY_MESSAGE,
     pagingDataFlow = flowOf(PagingData.from(listDetailShows)),
+    canRefresh = true,
 )
 
 internal val listDetailLoadMoreErrorState: ListDetailState = ListDetailState(

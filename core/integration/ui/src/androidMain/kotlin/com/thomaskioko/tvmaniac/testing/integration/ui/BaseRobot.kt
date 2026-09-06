@@ -19,6 +19,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -150,6 +151,12 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
         awaitTagOnce(tag, useUnmergedTree)
         composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree)
             .performSemanticsAction(SemanticsActions.OnLongClick)
+        composeUi.waitForIdle()
+    }
+
+    public fun longClickWithTouch(tag: String, useUnmergedTree: Boolean = false): T = self().apply {
+        awaitTagOnce(tag, useUnmergedTree)
+        composeUi.onNode(matcher = hasTestTag(tag), useUnmergedTree = useUnmergedTree).performTouchInput { longClick() }
         composeUi.waitForIdle()
     }
 

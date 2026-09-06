@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.compose.components
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +38,7 @@ public fun PosterCard(
     imageUrl: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    onLongClick: (() -> Unit)? = null,
     title: String? = null,
     imageWidth: Dp = ImageType.Poster.width,
     aspectRatio: Float = ImageType.Poster.aspect,
@@ -49,6 +51,7 @@ public fun PosterCard(
 ) {
     PosterCard(
         onClick = onClick,
+        onLongClick = onLongClick,
         modifier = modifier,
         shape = shape,
         imageWidth = imageWidth,
@@ -109,21 +112,34 @@ private fun LibraryOverlay(
 internal fun PosterCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
     imageWidth: Dp = ImageType.Poster.width,
     shape: Shape = RectangleShape,
     content: @Composable () -> Unit,
 ) {
-    Card(
-        onClick = onClick,
-        modifier = modifier
-            .width(imageWidth),
-        shape = shape,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = TvManiacElevation.medium,
-        ),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-    ) {
-        content()
+    val elevation = CardDefaults.cardElevation(defaultElevation = TvManiacElevation.medium)
+    val colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    if (onLongClick == null) {
+        Card(
+            onClick = onClick,
+            modifier = modifier.width(imageWidth),
+            shape = shape,
+            elevation = elevation,
+            colors = colors,
+        ) {
+            content()
+        }
+    } else {
+        Card(
+            modifier = modifier.width(imageWidth),
+            shape = shape,
+            elevation = elevation,
+            colors = colors,
+        ) {
+            Box(modifier = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)) {
+                content()
+            }
+        }
     }
 }
 

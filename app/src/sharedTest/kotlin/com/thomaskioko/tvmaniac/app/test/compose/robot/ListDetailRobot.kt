@@ -21,7 +21,7 @@ internal class ListDetailRobot(composeUi: ComposeUiTest) : BaseRobot<ListDetailR
     }
 
     fun longClickShowCard(tmdbId: Long) = apply {
-        longClick(ListDetailTestTags.showCard(tmdbId))
+        longClickWithTouch(ListDetailTestTags.showCard(tmdbId))
     }
 
     fun assertRemoveConfirmationDisplayed() = apply {
