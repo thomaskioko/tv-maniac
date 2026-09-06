@@ -49,25 +49,6 @@ public struct SwiftProfileStats: Equatable {
     }
 }
 
-public struct SwiftProfileList: Identifiable, Equatable {
-    public let id: Int64
-    public let name: String
-    public let itemCountLabel: String
-    public let posterUrls: [String]
-
-    public init(
-        id: Int64,
-        name: String,
-        itemCountLabel: String,
-        posterUrls: [String]
-    ) {
-        self.id = id
-        self.name = name
-        self.itemCountLabel = itemCountLabel
-        self.posterUrls = posterUrls
-    }
-}
-
 public struct SwiftProfileShow: Identifiable, Equatable {
     public let id: Int64
     public let title: String

@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.DebugRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.DiscoverRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.EpisodeSheetRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.HomeRobot
+import com.thomaskioko.tvmaniac.app.test.compose.robot.ListsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.MyShowsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ProfileRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.ProgressRobot
@@ -101,6 +102,7 @@ internal class AppFlowScope(
     val seasonDetailsRobot: SeasonDetailsRobot by lazy { SeasonDetailsRobot(composeUi) }
     val progressRobot: ProgressRobot by lazy { ProgressRobot(composeUi) }
     val profileRobot: ProfileRobot by lazy { ProfileRobot(composeUi) }
+    val listsRobot: ListsRobot by lazy { ListsRobot(composeUi) }
     val settingsRobot: SettingsRobot by lazy { SettingsRobot(composeUi) }
     val statisticsRobot: StatisticsRobot by lazy { StatisticsRobot(composeUi) }
     val debugRobot: DebugRobot by lazy { DebugRobot(composeUi) }

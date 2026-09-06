@@ -363,6 +363,11 @@ graph TB
     :features:library:nav[nav]:::multiplatform
     :features:library:presenter[presenter]:::multiplatform
   end
+  subgraph :features:lists
+    direction TB
+    :features:lists:nav[nav]:::multiplatform
+    :features:lists:presenter[presenter]:::multiplatform
+  end
   subgraph :features:more-shows
     direction TB
     :features:more-shows:nav[nav]:::multiplatform
@@ -1195,6 +1200,15 @@ graph TB
   :features:library:presenter --> :features:library:nav
   :features:library:presenter -.-> :features:show-details:nav
   :features:library:presenter --> :navigation:api
+  :features:lists:nav --> :navigation:api
+  :features:lists:presenter --> :core:base
+  :features:lists:presenter --> :core:logger:api
+  :features:lists:presenter --> :core:view
+  :features:lists:presenter -.-> :data:lists:api
+  :features:lists:presenter --> :domain:lists
+  :features:lists:presenter --> :features:lists:nav
+  :features:lists:presenter --> :i18n:api
+  :features:lists:presenter --> :navigation:api
   :features:more-shows:nav --> :navigation:api
   :features:more-shows:presenter --> :core:base
   :features:more-shows:presenter --> :data:popularshows:api
@@ -1228,6 +1242,7 @@ graph TB
   :features:profile:presenter --> :domain:recently-watched
   :features:profile:presenter --> :domain:user
   :features:profile:presenter -.-> :features:home:nav
+  :features:profile:presenter -.-> :features:lists:nav
   :features:profile:presenter --> :features:profile:nav
   :features:profile:presenter -.-> :features:settings:nav
   :features:profile:presenter -.-> :features:show-details:nav
@@ -1575,6 +1590,7 @@ graph TB
   :ios-framework --> :features:home:presenter
   :ios-framework -.-> :features:library:nav
   :ios-framework --> :features:library:presenter
+  :ios-framework --> :features:lists:presenter
   :ios-framework --> :features:more-shows:presenter
   :ios-framework --> :features:my-shows:nav
   :ios-framework --> :features:my-shows:presenter

@@ -143,7 +143,7 @@ private extension ProfileState {
 }
 
 private extension SectionState {
-    func toSwiftSectionState() -> SwiftSectionState<SwiftProfileList> {
+    func toSwiftSectionState() -> SwiftSectionState<ListCollageItem> {
         switch self {
         case is SectionStateLoading:
             return .loading
@@ -153,7 +153,7 @@ private extension SectionState {
             return .error(error.message.message)
         case let content as SectionStateContent<ProfileListItem>:
             let items = content.items.compactMap { $0 as? ProfileListItem }.map { item in
-                SwiftProfileList(
+                ListCollageItem(
                     id: item.id,
                     name: item.name,
                     itemCountLabel: item.itemCountLabel,

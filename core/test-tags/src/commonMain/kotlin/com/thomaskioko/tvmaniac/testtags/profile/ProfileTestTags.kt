@@ -8,6 +8,7 @@ public object ProfileTestTags {
     public const val USER_LISTS_ROW_TEST_TAG: String = "profile_user_lists_row"
     public const val USER_LISTS_RETRY_TEST_TAG: String = "profile_user_lists_retry"
     public const val USER_LISTS_SECTION_KEY: String = "profile_user_lists"
+    public const val VIEW_LISTS_BUTTON_TEST_TAG: String = "profile_view_lists_button"
     public const val PROGRESS_SECTION_KEY: String = "profile_progress"
     public const val PROGRESS_ROW_TEST_TAG: String = "profile_progress_row"
     public const val PROGRESS_RETRY_TEST_TAG: String = "profile_progress_retry"

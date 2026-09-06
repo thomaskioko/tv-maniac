@@ -199,6 +199,16 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertUserListsRowDoesNotExist()
             .clickUserListsToggle()
             .assertUserListsRowDisplayed()
+            .clickViewListsButton(slug = TEST_PROFILE_SLUG)
+
+        listsRobot
+            .assertListsScreenDisplayed()
+            .assertListCardDisplayed(favoritesListId)
+            .assertListCardDisplayed(animeListId)
+            .clickBackButton()
+
+        profileRobot
+            .assertProfileScreenDisplayed()
             .clickSettingsButton()
 
         settingsRobot

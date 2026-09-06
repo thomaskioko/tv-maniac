@@ -22,7 +22,7 @@ public extension ProfileScreen {
         public let userListsTitle: String
         public let viewAllLabel: String
         public let retryLabel: String
-        public let userLists: SwiftSectionState<SwiftProfileList>
+        public let userLists: SwiftSectionState<ListCollageItem>
         public let progressTitle: String
         public let inProgressLabel: String
         public let completedLabel: String
@@ -57,7 +57,7 @@ public extension ProfileScreen {
             userListsTitle: String = "",
             viewAllLabel: String = "",
             retryLabel: String = "",
-            userLists: SwiftSectionState<SwiftProfileList> = .empty,
+            userLists: SwiftSectionState<ListCollageItem> = .empty,
             progressTitle: String = "",
             inProgressLabel: String = "",
             completedLabel: String = "",

@@ -41,6 +41,7 @@ kotlin {
 
                 implementation(projects.data.user.api)
                 implementation(projects.features.home.nav)
+                implementation(projects.features.lists.nav)
                 implementation(projects.features.settings.nav)
                 implementation(projects.features.statistics.nav)
                 implementation(projects.features.showDetails.nav)

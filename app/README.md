@@ -367,6 +367,12 @@ graph TB
     :features:library:presenter[presenter]:::multiplatform
     :features:library:ui[ui]:::android-library
   end
+  subgraph :features:lists
+    direction TB
+    :features:lists:nav[nav]:::multiplatform
+    :features:lists:presenter[presenter]:::multiplatform
+    :features:lists:ui[ui]:::android-library
+  end
   subgraph :features:more-shows
     direction TB
     :features:more-shows:nav[nav]:::multiplatform
@@ -667,6 +673,9 @@ graph TB
   :app -.-> :features:library:nav
   :app -.-> :features:library:presenter
   :app -.-> :features:library:ui
+  :app -.-> :features:lists:nav
+  :app -.-> :features:lists:presenter
+  :app -.-> :features:lists:ui
   :app -.-> :features:more-shows:nav
   :app -.-> :features:more-shows:presenter
   :app -.-> :features:more-shows:ui
@@ -1475,6 +1484,22 @@ graph TB
   :features:library:ui -.-> :i18n:generator
   :features:library:ui --> :navigation:api
   :features:library:ui --> :navigation:ui
+  :features:lists:nav --> :navigation:api
+  :features:lists:presenter --> :core:base
+  :features:lists:presenter --> :core:logger:api
+  :features:lists:presenter --> :core:view
+  :features:lists:presenter -.-> :data:lists:api
+  :features:lists:presenter --> :domain:lists
+  :features:lists:presenter --> :features:lists:nav
+  :features:lists:presenter --> :i18n:api
+  :features:lists:presenter --> :navigation:api
+  :features:lists:ui -.-> :android-designsystem
+  :features:lists:ui --> :core:base
+  :features:lists:ui -.-> :core:test-tags
+  :features:lists:ui --> :features:lists:presenter
+  :features:lists:ui -.-> :i18n:generator
+  :features:lists:ui --> :navigation:api
+  :features:lists:ui --> :navigation:ui
   :features:more-shows:nav --> :navigation:api
   :features:more-shows:presenter --> :core:base
   :features:more-shows:presenter --> :data:popularshows:api
@@ -1528,6 +1553,7 @@ graph TB
   :features:profile:presenter --> :domain:recently-watched
   :features:profile:presenter --> :domain:user
   :features:profile:presenter -.-> :features:home:nav
+  :features:profile:presenter -.-> :features:lists:nav
   :features:profile:presenter --> :features:profile:nav
   :features:profile:presenter -.-> :features:settings:nav
   :features:profile:presenter -.-> :features:show-details:nav
