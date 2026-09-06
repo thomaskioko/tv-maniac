@@ -48,26 +48,18 @@ public class DefaultRestoredListWriter(
         listDao.observeAll().first().firstOrNull { it.name == name }?.id
 
     private suspend fun createList(name: String, traktSlug: String?): Long? {
-        val created = runCatching { listRepository.createList(name = name, traktSlug = traktSlug) }
-        if (created.isFailure) {
-            logger.warning(TAG, "Creating list $name failed: ${created.exceptionOrNull()?.message}")
-            return null
-        }
+        listRepository.createList(name = name, traktSlug = traktSlug)
         return existingListId(name)
     }
 
     private suspend fun addMembers(traktSlug: String?, listId: Long, list: BackupList) {
         list.shows.forEach { show ->
-            runCatching {
-                listRepository.toggleShowInList(
-                    listId = listId,
-                    showId = show.tmdbId,
-                    isCurrentlyInList = false,
-                    traktSlug = traktSlug,
-                )
-            }.onFailure {
-                logger.warning(TAG, "Adding ${show.tmdbId} to ${list.name} failed: ${it.message}")
-            }
+            listRepository.toggleShowInList(
+                listId = listId,
+                showId = show.tmdbId,
+                isCurrentlyInList = false,
+                traktSlug = traktSlug,
+            )
         }
     }
 

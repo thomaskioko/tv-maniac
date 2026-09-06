@@ -456,6 +456,46 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should count local items given a list has no Trakt id`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.toggleShowInList(listId = listId, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+
+        repository.observeLists().first().single().itemCount shouldBe 1L
+    }
+
+    @Test
+    fun `should ignore pending items on local-only lists given pending changes are counted`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.toggleShowInList(listId = listId, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+
+        repository.countPendingListShows() shouldBe 0L
+    }
+
+    @Test
+    fun `should mark the row pending upload given a show pending delete is added again`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
+        showDao.upsertSynced(listId = 1L, tmdbId = 100L, listedAt = "")
+        remoteDataSource.removeFromListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = true, traktSlug = "sean")
+
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+
+        showDao.observeByShowId(100L).first().single().pendingAction shouldBe PendingAction.UPLOAD.value
+        repository.observeListsForShow(showId = 100L).first().first { it.id == 1L }.isShowInList shouldBe true
+    }
+
+    @Test
     fun `should write locally and never call Trakt given no Trakt slug`() = runTest {
         addShow(tmdbId = 100L, traktId = 10L)
         addList(listId = 1L)

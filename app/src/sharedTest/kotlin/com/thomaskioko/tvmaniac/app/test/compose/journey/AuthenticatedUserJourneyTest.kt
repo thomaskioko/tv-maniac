@@ -15,6 +15,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     private val betterCallSaulTmdbId = 60059L
     private val favoritesListId = 1L
     private val animeListId = 2L
+    private val favoritesListTraktId = 34223248L
+    private val animeListTraktId = 34223402L
 
     @Test
     fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {
@@ -40,7 +42,12 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
 
         profileRobot
             .assertSignInButtonDisplayed()
-            .also { scenarios.stubAuthenticatedSyncOnSignIn() }
+            .also {
+                scenarios.stubAuthenticatedSyncOnSignIn {
+                    scenarios.traktLists.stubListItems(listId = favoritesListTraktId)
+                    scenarios.traktLists.stubListItems(listId = animeListTraktId)
+                }
+            }
             .clickSignInButton()
             .onClick(NotificationRationaleTestTags.DISMISS_BUTTON)
             .assertUserCardDisplayed(slug = TEST_PROFILE_SLUG)

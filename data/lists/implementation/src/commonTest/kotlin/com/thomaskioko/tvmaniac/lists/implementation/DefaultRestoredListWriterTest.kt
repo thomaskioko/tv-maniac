@@ -99,26 +99,6 @@ internal class DefaultRestoredListWriterTest {
     }
 
     @Test
-    fun `should skip a list given the provider refuses to create it`() = runTest {
-        listRepository.setCreateListFailure(IllegalStateException("boom"))
-
-        val restored = writer.restoreLists(listOf(backupList()))
-
-        restored shouldBe 0
-        listRepository.toggledShows().shouldBeEmpty()
-    }
-
-    @Test
-    fun `should keep the list given one member cannot be added`() = runTest {
-        listDao.createOnUpsertOf(name = LIST_NAME, id = LIST_ID)
-        listRepository.setToggleFailure(IllegalArgumentException("no trakt id"))
-
-        val restored = writer.restoreLists(listOf(backupList()))
-
-        restored shouldBe 1
-    }
-
-    @Test
     fun `should restore nothing given the file carries no lists`() = runTest {
         val restored = writer.restoreLists(emptyList())
 

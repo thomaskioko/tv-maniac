@@ -133,6 +133,13 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         mockHandler.stubEndpoint(Endpoints.Trakt.createList(slug), method = HttpMethod.Post)
     }
 
+    public fun stubTraktListItems(listId: Long, slug: String = TEST_PROFILE_SLUG) {
+        mockHandler.stubFixture(
+            path = "/users/$slug/lists/$listId/items",
+            fixturePath = "trakt/users/lists/items/with_show.json",
+        )
+    }
+
     public fun stubTraktUsersMeUnauthorized() {
         mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
     }

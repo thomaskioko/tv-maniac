@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS lists(
 CREATE UNIQUE INDEX IF NOT EXISTS index_lists_trakt_id ON lists (trakt_id);
 
 selectAll:
-SELECT id, trakt_id, slug, name, description, item_count, created_at
+SELECT id, trakt_id, slug, name, description, (SELECT COUNT(*) FROM list_shows ls WHERE ls.list_id = lists.id AND ls.pending_action != 'DELETE') AS item_count, created_at
 FROM lists
 ORDER BY name ASC;
 
@@ -34,7 +34,7 @@ SELECT
     lists.slug,
     lists.name,
     lists.description,
-    lists.item_count,
+    (SELECT COUNT(*) FROM list_shows ls WHERE ls.list_id = lists.id AND ls.pending_action != 'DELETE') AS item_count,
     lists.created_at,
     show.poster_path AS poster_url
 FROM lists
