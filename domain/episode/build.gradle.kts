@@ -22,7 +22,9 @@ kotlin {
                 api(projects.data.datastore.api)
                 api(projects.data.episode.api)
                 api(projects.data.library.api)
+                api(projects.data.lists.api)
                 api(projects.data.rewatch.api)
+                api(projects.data.user.api)
                 api(projects.domain.rewatch)
 
                 implementation(projects.core.view)
@@ -38,7 +40,9 @@ kotlin {
                 implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
                 implementation(projects.data.library.testing)
+                implementation(projects.data.lists.testing)
                 implementation(projects.data.rewatch.testing)
+                implementation(projects.data.user.testing)
                 implementation(projects.core.util.testing)
             }
         }

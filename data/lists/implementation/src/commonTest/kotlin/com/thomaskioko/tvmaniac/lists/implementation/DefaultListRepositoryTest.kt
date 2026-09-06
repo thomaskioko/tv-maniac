@@ -508,6 +508,127 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         remoteDataSource.addToListCalls.shouldBeEmpty()
     }
 
+    @Test
+    fun `should push a newly created list before its pending items given syncPendingLists runs`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+        repository.toggleShowInList(listId = listId, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+        remoteDataSource.lists = emptyList()
+
+        repository.syncPendingLists(slug = "sean")
+
+        val list = listDao.observeAll().first().single()
+        list.traktId shouldBe CREATED_LIST_TRAKT_ID
+        list.slug shouldBe "favorites"
+        database.listsQueries.selectById(list.id).executeAsOne().pending_action shouldBe PendingAction.NOTHING.value
+        remoteDataSource.addToListCalls shouldBe listOf(Triple("sean", CREATED_LIST_TRAKT_ID, 10L))
+        showDao.observeByShowId(100L).first().single().pendingAction shouldBe PendingAction.NOTHING.value
+    }
+
+    @Test
+    fun `should reuse the matching Trakt list given its name matches a pending list`() = runTest {
+        repository.createList(name = "Favorites", traktSlug = null)
+        remoteDataSource.lists = listOf(traktListResponse(id = 77L, slug = "Favorites", itemCount = 0))
+
+        repository.syncPendingLists(slug = "sean")
+
+        val list = listDao.observeAll().first().single()
+        list.traktId shouldBe 77L
+        list.slug shouldBe "Favorites"
+        database.listsQueries.selectById(list.id).executeAsOne().pending_action shouldBe PendingAction.NOTHING.value
+        remoteDataSource.createListCalls.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should leave items pending given the list push fails`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+        repository.toggleShowInList(listId = listId, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+        remoteDataSource.lists = emptyList()
+        remoteDataSource.createListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+
+        repository.syncPendingLists(slug = "sean")
+
+        val list = listDao.observeAll().first().single()
+        list.traktId.shouldBeNull()
+        database.listsQueries.selectById(list.id).executeAsOne().pending_action shouldBe PendingAction.UPLOAD.value
+        showDao.observeByShowId(100L).first().single().pendingAction shouldBe PendingAction.UPLOAD.value
+        remoteDataSource.addToListCalls.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should stop pushing items given one push fails and resume on the next run`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        addShow(tmdbId = 200L, traktId = 20L)
+        addList(listId = 1L)
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+        repository.toggleShowInList(listId = 1L, showId = 200L, isCurrentlyInList = false, traktSlug = null)
+        remoteDataSource.addToListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+
+        repository.syncPendingLists(slug = "sean")
+
+        showDao.observeByShowId(100L).first().single().pendingAction shouldBe PendingAction.UPLOAD.value
+        showDao.observeByShowId(200L).first().single().pendingAction shouldBe PendingAction.UPLOAD.value
+        remoteDataSource.addToListCalls shouldBe listOf(Triple("sean", 1L, 10L))
+
+        remoteDataSource.addToListResponse = ApiResponse.Success(
+            TraktAddShowToListResponse(
+                added = TraktAddedShowsResponse(shows = 1),
+                existing = TraktExistingShowsResponse(shows = 0),
+                notFound = TraktNotFoundShowsResponse(shows = emptyList()),
+                list = TraktListResponse(itemCount = 1, updateAdd = "2024-01-01T00:00:00.000Z"),
+            ),
+        )
+        repository.syncPendingLists(slug = "sean")
+
+        showDao.observeByShowId(100L).first().single().pendingAction shouldBe PendingAction.NOTHING.value
+        showDao.observeByShowId(200L).first().single().pendingAction shouldBe PendingAction.NOTHING.value
+        remoteDataSource.addToListCalls shouldBe listOf(
+            Triple("sean", 1L, 10L),
+            Triple("sean", 1L, 10L),
+            Triple("sean", 1L, 20L),
+        )
+    }
+
+    @Test
+    fun `should assign distinct Trakt ids given two pending lists share a name`() = runTest {
+        repository.createList(name = "Favorites", traktSlug = null)
+        repository.createList(name = "Favorites", traktSlug = null)
+        remoteDataSource.lists = listOf(traktListResponse(id = 77L, slug = "Favorites", itemCount = 0))
+
+        repository.syncPendingLists(slug = "sean")
+
+        val lists = listDao.observeAll().first()
+        lists.map { it.traktId } shouldContainExactlyInAnyOrder listOf(77L, CREATED_LIST_TRAKT_ID)
+        lists.forEach { list ->
+            database.listsQueries.selectById(list.id).executeAsOne().pending_action shouldBe PendingAction.NOTHING.value
+        }
+        remoteDataSource.createListCalls shouldBe listOf("sean" to "Favorites")
+    }
+
+    @Test
+    fun `should delete the row given a pending DELETE item push succeeds`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
+        showDao.upsertSynced(listId = 1L, tmdbId = 100L, listedAt = "")
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = true, traktSlug = null)
+
+        repository.syncPendingLists(slug = "sean")
+
+        showDao.observeByShowId(100L).first().shouldBeEmpty()
+        remoteDataSource.removeFromListCalls shouldBe listOf(Triple("sean", 1L, 10L))
+    }
+
     private fun addShow(tmdbId: Long, traktId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
@@ -573,6 +694,7 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
     val itemsCalls: MutableList<Pair<String, Long>> = mutableListOf()
     val addToListCalls: MutableList<Triple<String, Long, Long>> = mutableListOf()
     val removeFromListCalls: MutableList<Triple<String, Long, Long>> = mutableListOf()
+    val createListCalls: MutableList<Pair<String, String>> = mutableListOf()
     var addToListResponse: ApiResponse<TraktAddShowToListResponse> = ApiResponse.Success(
         TraktAddShowToListResponse(
             added = TraktAddedShowsResponse(shows = 1),
@@ -618,7 +740,10 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
     override suspend fun createList(
         userSlug: String,
         name: String,
-    ): ApiResponse<TraktCreateListResponse> = createListResponse
+    ): ApiResponse<TraktCreateListResponse> {
+        createListCalls += userSlug to name
+        return createListResponse
+    }
 
     override suspend fun getWatchList(
         sortBy: String,

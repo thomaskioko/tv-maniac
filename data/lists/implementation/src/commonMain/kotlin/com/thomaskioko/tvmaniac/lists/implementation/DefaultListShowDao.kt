@@ -27,6 +27,17 @@ public class DefaultListShowDao(
             .mapToList(dispatchers.io)
             .map { rows -> rows.associate { it.list_id to it.show_count } }
 
+    override fun selectPendingForSyncedLists(): List<ListShowEntry> =
+        database.listShowsQueries.selectPendingForSyncedLists().executeAsList()
+            .map { row ->
+                ListShowEntry(
+                    listId = row.list_id,
+                    tmdbId = row.tmdb_id.id,
+                    listedAt = row.listed_at,
+                    pendingAction = row.pending_action,
+                )
+            }
+
     override fun observeByShowId(showId: Long): Flow<List<ListShowEntry>> =
         database.listShowsQueries.selectByTmdbId(tmdb_id = Id<TmdbId>(showId))
             .asFlow()

@@ -8,6 +8,8 @@ public interface ListShowDao {
 
     public fun observeActiveCountByListId(): Flow<Map<Long, Long>>
 
+    public fun selectPendingForSyncedLists(): List<ListShowEntry>
+
     public fun upsert(listId: Long, tmdbId: Long, listedAt: String, pendingAction: String)
 
     public fun upsertSynced(listId: Long, tmdbId: Long, listedAt: String)

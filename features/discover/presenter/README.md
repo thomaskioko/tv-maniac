@@ -78,6 +78,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:lists
+    direction TB
+    :data:lists:api[api]:::multiplatform
+  end
   subgraph :data:popularshows
     direction TB
     :data:popularshows:api[api]:::multiplatform
@@ -137,6 +141,10 @@ graph TB
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
+  end
+  subgraph :data:user
+    direction TB
+    :data:user:api[api]:::multiplatform
   end
   subgraph :data:watchproviders
     direction TB
@@ -244,6 +252,9 @@ graph TB
   :data:upcomingshows:api --> :core:base
   :data:upcomingshows:api --> :data:database:sqldelight
   :data:upcomingshows:api --> :data:shows:api
+  :data:user:api --> :core:network-util:api
+  :data:user:api --> :data:account-manager:api
+  :data:user:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:continue-watching --> :core:base
   :domain:continue-watching --> :core:feature-flags:api
@@ -279,7 +290,9 @@ graph TB
   :domain:episode --> :data:datastore:api
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:lists:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :data:user:api
   :domain:episode --> :domain:rewatch
   :domain:followedshows --> :core:base
   :domain:followedshows --> :data:followedshows:api

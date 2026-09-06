@@ -1,13 +1,16 @@
 package com.thomaskioko.tvmaniac.domain.episode
 
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundWorker
 import com.thomaskioko.tvmaniac.core.tasks.api.PeriodicTaskRequest
 import com.thomaskioko.tvmaniac.core.tasks.api.TaskConstraints
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.data.library.LibraryRepository
+import com.thomaskioko.tvmaniac.data.user.api.UserRepository
 import com.thomaskioko.tvmaniac.episodes.api.WatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.lists.api.ListRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
 import dev.zacsweers.metro.AppScope
@@ -20,6 +23,9 @@ import kotlinx.coroutines.CancellationException
 public class PendingUploadsWorker(
     private val syncRepository: Lazy<WatchedEpisodeSyncRepository>,
     private val libraryRepository: Lazy<LibraryRepository>,
+    private val listRepository: Lazy<ListRepository>,
+    private val userRepository: Lazy<UserRepository>,
+    private val activeProviderFeatures: () -> ProviderFeatures,
     private val accountManager: Lazy<AccountManager>,
     private val syncObserver: SyncObserver,
     private val logger: Logger,
@@ -38,6 +44,7 @@ public class PendingUploadsWorker(
         return try {
             syncRepository.value.syncPendingEpisodes()
             libraryRepository.value.syncPendingFollowedShows()
+            syncPendingLists()
             logger.debug(TAG, "Pending uploads sync completed successfully")
             WorkerResult.Success
         } catch (cancellation: CancellationException) {
@@ -47,6 +54,12 @@ public class PendingUploadsWorker(
             syncObserver.log(SyncError.BackgroundSyncFailed(WORKER_NAME, exception))
             WorkerResult.Retry(exception.message ?: "Pending uploads sync failed")
         }
+    }
+
+    private suspend fun syncPendingLists() {
+        if (!activeProviderFeatures().supportsLists) return
+        val slug = userRepository.value.getCurrentUser()?.slug ?: return
+        listRepository.value.syncPendingLists(slug)
     }
 
     public companion object {

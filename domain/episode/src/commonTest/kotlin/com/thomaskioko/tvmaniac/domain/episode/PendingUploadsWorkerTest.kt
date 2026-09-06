@@ -3,12 +3,16 @@ package com.thomaskioko.tvmaniac.domain.episode
 import app.cash.turbine.test
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.api.WorkerResult
 import com.thomaskioko.tvmaniac.data.library.testing.FakeLibraryRepository
+import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
+import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.syncstate.api.SyncError
 import com.thomaskioko.tvmaniac.syncstate.testing.FakeSyncObserver
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.test.runTest
@@ -18,13 +22,19 @@ internal class PendingUploadsWorkerTest {
 
     private val syncRepository = FakeWatchedEpisodeSyncRepository()
     private val libraryRepository = FakeLibraryRepository()
+    private val listRepository = FakeListRepository()
+    private val userRepository = FakeUserRepository()
     private val accountManager = FakeAccountManager()
     private val syncObserver = FakeSyncObserver()
     private val logger = FakeLogger()
+    private var providerFeatures = FakeProviderFeatures(supportsLists = true)
 
     private val worker = PendingUploadsWorker(
         syncRepository = lazy { syncRepository },
         libraryRepository = lazy { libraryRepository },
+        listRepository = lazy { listRepository },
+        userRepository = lazy { userRepository },
+        activeProviderFeatures = { providerFeatures },
         accountManager = lazy { accountManager },
         syncObserver = syncObserver,
         logger = logger,
@@ -93,6 +103,37 @@ internal class PendingUploadsWorkerTest {
 
         syncRepository.setPendingEpisodesError(null)
         worker.doWork().shouldBeInstanceOf<WorkerResult.Success>()
+    }
+
+    @Test
+    fun `should sync pending lists given trakt provider supports lists`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        providerFeatures = FakeProviderFeatures(supportsLists = true)
+
+        worker.doWork().shouldBeInstanceOf<WorkerResult.Success>()
+
+        listRepository.syncPendingListsCalls() shouldBe listOf("test-user")
+    }
+
+    @Test
+    fun `should skip pending lists sync given provider does not support lists`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
+        providerFeatures = FakeProviderFeatures(supportsLists = false)
+
+        worker.doWork().shouldBeInstanceOf<WorkerResult.Success>()
+
+        listRepository.syncPendingListsCalls().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should skip pending lists sync given no current user`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        providerFeatures = FakeProviderFeatures(supportsLists = true)
+        userRepository.setUserProfile(null)
+
+        worker.doWork().shouldBeInstanceOf<WorkerResult.Success>()
+
+        listRepository.syncPendingListsCalls().shouldBeEmpty()
     }
 
     @Test

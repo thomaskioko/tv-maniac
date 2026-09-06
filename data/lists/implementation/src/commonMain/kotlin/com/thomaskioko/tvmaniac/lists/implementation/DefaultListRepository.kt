@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
@@ -36,6 +38,8 @@ public class DefaultListRepository(
     private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ListRepository {
+
+    private val syncPendingListsMutex = Mutex()
 
     override fun observeLists(): Flow<List<UserListEntity>> =
         listDao.observeListsWithPosters().distinctUntilChanged()
@@ -149,5 +153,78 @@ public class DefaultListRepository(
         }
     }
 
+    override suspend fun syncPendingLists(slug: String) {
+        withContext(dispatchers.io) {
+            syncPendingListsMutex.withLock {
+                if (!pushPendingListCreations(slug)) return@withLock
+                pushPendingListItems(slug)
+            }
+        }
+    }
+
+    private suspend fun pushPendingListCreations(slug: String): Boolean {
+        val pendingLists = listDao.selectPendingUploadLists()
+        if (pendingLists.isEmpty()) return true
+
+        val remoteLists = when (val response = traktListRemoteDataSource.getUserList(slug)) {
+            is ApiResponse.Success -> response.body
+            else -> return false
+        }.toMutableList()
+
+        for (pending in pendingLists) {
+            val match = remoteLists.firstOrNull { it.name.trim() == pending.name.trim() }
+            if (match != null) {
+                remoteLists.remove(match)
+                listDao.markSynced(id = pending.id, traktId = match.ids.trakt.toLong(), slug = match.ids.slug)
+                continue
+            }
+
+            when (val response = traktListRemoteDataSource.createList(userSlug = slug, name = pending.name)) {
+                is ApiResponse.Success -> listDao.markSynced(
+                    id = pending.id,
+                    traktId = response.body.ids.trakt.toLong(),
+                    slug = response.body.ids.slug,
+                )
+                else -> return false
+            }
+        }
+        return true
+    }
+
+    private suspend fun pushPendingListItems(slug: String) {
+        val pending = listShowDao.selectPendingForSyncedLists()
+        if (pending.isEmpty()) return
+
+        traktIdResolver.resolveMissingTraktIds(pending.map { it.tmdbId }.distinct())
+
+        for (entry in pending) {
+            val listTraktId = listDao.getTraktId(entry.listId) ?: continue
+            val showTraktId = tvShowsDao.getTraktIdByTmdbId(entry.tmdbId) ?: continue
+
+            val response = if (entry.pendingAction == PendingAction.DELETE.value) {
+                traktListRemoteDataSource.removeShowFromList(slug, listTraktId, showTraktId)
+            } else {
+                traktListRemoteDataSource.addShowToList(slug, listTraktId, showTraktId)
+            }
+
+            when (response) {
+                is ApiResponse.Success -> {
+                    if (entry.pendingAction == PendingAction.DELETE.value) {
+                        listShowDao.deleteByListIdAndTmdbId(listId = entry.listId, tmdbId = entry.tmdbId)
+                    } else {
+                        listShowDao.updatePendingAction(
+                            listId = entry.listId,
+                            tmdbId = entry.tmdbId,
+                            pendingAction = PendingAction.NOTHING.value,
+                        )
+                    }
+                }
+                else -> return
+            }
+        }
+    }
+
     override suspend fun countPendingListShows(): Long = listShowDao.countPendingActions()
+
+    override suspend fun countPendingLists(): Long = listDao.countPendingUploads()
 }
