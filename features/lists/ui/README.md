@@ -55,6 +55,10 @@ graph TB
     :features:lists:presenter[presenter]:::multiplatform
     :features:lists:ui[ui]:::android-library
   end
+  subgraph :features:show-details
+    direction TB
+    :features:show-details:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -93,6 +97,7 @@ graph TB
   :features:lists:presenter -.-> :data:lists:api
   :features:lists:presenter --> :domain:lists
   :features:lists:presenter --> :features:lists:nav
+  :features:lists:presenter -.-> :features:show-details:nav
   :features:lists:presenter --> :i18n:api
   :features:lists:presenter --> :navigation:api
   :features:lists:ui -.-> :android-designsystem
@@ -102,6 +107,7 @@ graph TB
   :features:lists:ui -.-> :i18n:generator
   :features:lists:ui --> :navigation:api
   :features:lists:ui --> :navigation:ui
+  :features:show-details:nav --> :navigation:api
   :i18n:api --> :i18n:generator
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api

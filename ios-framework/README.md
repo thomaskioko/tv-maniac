@@ -1209,6 +1209,7 @@ graph TB
   :features:lists:presenter -.-> :data:lists:api
   :features:lists:presenter --> :domain:lists
   :features:lists:presenter --> :features:lists:nav
+  :features:lists:presenter -.-> :features:show-details:nav
   :features:lists:presenter --> :i18n:api
   :features:lists:presenter --> :navigation:api
   :features:more-shows:nav --> :navigation:api
