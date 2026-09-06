@@ -1,11 +1,10 @@
 package com.thomaskioko.tvmaniac.db
 
-import com.thomaskioko.tvmaniac.db.util.migrateToCurrent
+import com.thomaskioko.tvmaniac.db.util.migrateToVersion
 import com.thomaskioko.tvmaniac.db.util.openSnapshot
 import com.thomaskioko.tvmaniac.db.util.tableNames
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
-import io.kotest.matchers.shouldBe
 import kotlin.test.Test
 
 class Migration22Test {
@@ -15,16 +14,9 @@ class Migration22Test {
         openSnapshot(version = 22).use { driver ->
             driver.tableNames() shouldNotContain "trakt_list_shows"
 
-            migrateToCurrent(driver, oldVersion = 22)
+            migrateToVersion(driver, oldVersion = 22, newVersion = 23)
 
             driver.tableNames() shouldContain "trakt_list_shows"
-
-            val database = DatabaseFactory(driver).createDatabase()
-
-            database.traktListShowsQueries.selectByShowId(show_id = Id(1L))
-                .executeAsList() shouldBe emptyList()
-            database.traktListShowsQueries.countActiveByListId()
-                .executeAsList() shouldBe emptyList()
         }
     }
 }

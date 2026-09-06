@@ -29,6 +29,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -71,12 +72,14 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         val listsStore = TraktListsStore(
             traktListDataSource = remoteDataSource,
             listDao = listDao,
+            listShowDao = showDao,
             requestManagerRepository = requestManager,
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
         val itemsStore = TraktListItemsStore(
             traktListRemoteDataSource = remoteDataSource,
+            listDao = listDao,
             listShowDao = showDao,
             requestManagerRepository = requestManager,
             transactionRunner = transactionRunner,
@@ -155,7 +158,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         )
         showDao.upsert(
             listId = 1L,
-            traktId = 99L,
+            tmdbId = 990L,
             listedAt = "",
             pendingAction = PendingAction.UPLOAD.value,
         )
@@ -181,7 +184,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         )
         showDao.upsert(
             listId = 1L,
-            traktId = 20L,
+            tmdbId = 200L,
             listedAt = "",
             pendingAction = PendingAction.DELETE.value,
         )
@@ -220,6 +223,63 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         )
         lists.first { it.id == 1L }.isShowInList shouldBe true
         lists.first { it.id == 2L }.isShowInList shouldBe true
+    }
+
+    @Test
+    fun `should keep a list's id and its items given the lists sync runs again`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        addShow(tmdbId = 200L, traktId = 20L)
+        remoteDataSource.lists = listOf(
+            traktListResponse(id = 1L, slug = "watchlist", itemCount = 1),
+            traktListResponse(id = 2L, slug = "favorites", itemCount = 1),
+        )
+        remoteDataSource.itemsByListId = mapOf(
+            1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
+            2L to listOf(traktListItemResponse(traktId = 20L, tmdbId = 200L)),
+        )
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+        val firstSync = listDao.observeAll().first()
+        val watchlistId = firstSync.first { it.traktId == 1L }.id
+        val favoritesId = firstSync.first { it.traktId == 2L }.id
+
+        remoteDataSource.lists = listOf(
+            traktListResponse(id = 2L, slug = "favorites", itemCount = 1),
+            traktListResponse(id = 1L, slug = "watchlist", itemCount = 1),
+        )
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+
+        val secondSync = listDao.observeAll().first()
+        secondSync.first { it.traktId == 1L }.id shouldBe watchlistId
+        secondSync.first { it.traktId == 2L }.id shouldBe favoritesId
+        showDao.observeByShowId(100L).first().map { it.listId } shouldBe listOf(watchlistId)
+        showDao.observeByShowId(200L).first().map { it.listId } shouldBe listOf(favoritesId)
+    }
+
+    @Test
+    fun `should remove a list and its items given it is absent from a later sync`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 1))
+        remoteDataSource.itemsByListId = mapOf(
+            1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
+        )
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+        showDao.observeByShowId(100L).first().size shouldBe 1
+
+        remoteDataSource.lists = emptyList()
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+
+        listDao.observeAll().first().shouldBeEmpty()
+        showDao.observeByShowId(100L).first().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should keep one list given the same Trakt list is created twice`() = runTest {
+        repository.createList(slug = "user", name = "Favorites")
+        repository.createList(slug = "user", name = "Favorites")
+
+        val lists = repository.observeLists().first()
+        lists.size shouldBe 1
+        lists.single().traktId shouldBe 34223248L
     }
 
     @Test
@@ -305,7 +365,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     fun `should delete junction entry and call remote with trakt id given show is removed from list`() = runTest {
         addShow(tmdbId = 100L, traktId = 10L)
         addList(listId = 1L)
-        showDao.upsertSynced(listId = 1L, traktId = 10L, listedAt = "")
+        showDao.upsertSynced(listId = 1L, tmdbId = 100L, listedAt = "")
 
         repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = true)
 
@@ -318,7 +378,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     fun `should restore junction entry given remote remove fails`() = runTest {
         addShow(tmdbId = 100L, traktId = 10L)
         addList(listId = 1L)
-        showDao.upsertSynced(listId = 1L, traktId = 10L, listedAt = "")
+        showDao.upsertSynced(listId = 1L, tmdbId = 100L, listedAt = "")
         remoteDataSource.removeFromListResponse = ApiResponse.Error.HttpError(
             code = 500,
             errorBody = null,
@@ -435,10 +495,19 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
         return ApiResponse.Success(itemsByListId[listId].orEmpty())
     }
 
+    var createListResponse: ApiResponse<TraktCreateListResponse> = ApiResponse.Success(
+        TraktCreateListResponse(
+            name = "Favorites",
+            description = "",
+            privacy = "private",
+            ids = ListIds(trakt = 34223248, slug = "favorites"),
+        ),
+    )
+
     override suspend fun createList(
         userSlug: String,
         name: String,
-    ): ApiResponse<TraktCreateListResponse> = error("not used")
+    ): ApiResponse<TraktCreateListResponse> = createListResponse
 
     override suspend fun getWatchList(
         sortBy: String,

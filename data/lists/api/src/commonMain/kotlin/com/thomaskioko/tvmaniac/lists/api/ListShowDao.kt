@@ -8,15 +8,17 @@ public interface ListShowDao {
 
     public fun observeActiveCountByListId(): Flow<Map<Long, Long>>
 
-    public fun upsert(listId: Long, traktId: Long, listedAt: String, pendingAction: String)
+    public fun upsert(listId: Long, tmdbId: Long, listedAt: String, pendingAction: String)
 
-    public fun upsertSynced(listId: Long, traktId: Long, listedAt: String)
+    public fun upsertSynced(listId: Long, tmdbId: Long, listedAt: String)
 
     public fun deleteSyncedByListId(listId: Long)
 
-    public fun updatePendingAction(listId: Long, traktId: Long, pendingAction: String)
+    public fun updatePendingAction(listId: Long, tmdbId: Long, pendingAction: String)
 
-    public fun deleteByListIdAndTraktId(listId: Long, traktId: Long)
+    public fun deleteByListIdAndTmdbId(listId: Long, tmdbId: Long)
+
+    public fun deleteByListId(listId: Long)
 
     public fun deleteAll()
 

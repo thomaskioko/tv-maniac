@@ -74,7 +74,7 @@ internal class ShowListRobot(composeUi: ComposeUiTest) : BaseRobot<ShowListRobot
         assertUnchecked(ShowListTestTags.listItemSwitch(listId))
     }
 
-    fun assertTraktListShowCountText(listId: Long, expectedText: String) = apply {
+    fun assertListShowCountText(listId: Long, expectedText: String) = apply {
         assertNodeHasText(ShowListTestTags.listItemShowCount(listId), expectedText)
     }
 

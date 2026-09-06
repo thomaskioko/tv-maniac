@@ -28,9 +28,9 @@ public class CreateTraktListStore(
     sourceOfTruth = SourceOfTruth.of(
         reader = { _: CreateTraktListParams -> flowOf(Unit) },
         writer = { _, response ->
-            listDao.upsert(
+            listDao.upsertByTraktId(
                 UserListEntity(
-                    id = response.ids.trakt.toLong(),
+                    traktId = response.ids.trakt.toLong(),
                     slug = response.ids.slug,
                     name = response.name,
                     description = response.description,

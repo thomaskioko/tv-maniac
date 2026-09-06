@@ -27,8 +27,8 @@ class SchemaCreateTest {
             "episode",
             "followed_shows",
             "watched_episodes",
-            "trakt_lists",
-            "trakt_list_shows",
+            "lists",
+            "list_shows",
             "calendar_entry",
             "show_metadata",
             "user",
@@ -40,7 +40,7 @@ class SchemaCreateTest {
         val database = DatabaseFactory(driver).createDatabase()
 
         database.followedShowsQueries.entries().executeAsList() shouldBe emptyList()
-        database.traktListsQueries.selectAll().executeAsList() shouldBe emptyList()
-        database.traktListShowsQueries.countActiveByListId().executeAsList() shouldBe emptyList()
+        database.listsQueries.selectAll().executeAsList() shouldBe emptyList()
+        database.listShowsQueries.countActiveByListId().executeAsList() shouldBe emptyList()
     }
 }

@@ -13,8 +13,8 @@ internal class AuthenticatedUserJourneyTest : BaseAppFlowTest() {
     private val pilotEpisodeTraktId = 73640L
     private val secondEpisodeTraktId = 73641L
     private val betterCallSaulTmdbId = 60059L
-    private val favoritesListId = 34223248L
-    private val animeListId = 34223402L
+    private val favoritesListId = 1L
+    private val animeListId = 2L
 
     @Test
     fun givenAuthenticatedUser_whenSignsIn_thenExploresSyncedSurfacesAndSignsOut() = runAppFlowTest {

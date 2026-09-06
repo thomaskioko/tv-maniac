@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
 import com.thomaskioko.tvmaniac.lists.api.ListDao
+import com.thomaskioko.tvmaniac.lists.api.ListShowDao
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAKT_LISTS_SYNC
@@ -24,6 +25,7 @@ import org.mobilenativefoundation.store.store5.Validator
 public class TraktListsStore(
     private val traktListDataSource: TraktListRemoteDataSource,
     private val listDao: ListDao,
+    private val listShowDao: ListShowDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
@@ -35,9 +37,15 @@ public class TraktListsStore(
         reader = { _: String -> listDao.observeAll() },
         writer = { _: String, response: List<TraktPersonalListsResponse> ->
             transactionRunner {
-                listDao.deleteAll()
+                val responseTraktIds = response.map { it.ids.trakt.toLong() }.toSet()
+                listDao.selectIdsByTraktId().forEach { (traktId, localId) ->
+                    if (traktId !in responseTraktIds) {
+                        listShowDao.deleteByListId(localId)
+                        listDao.deleteById(localId)
+                    }
+                }
                 response.forEach { listResponse ->
-                    listDao.upsert(listResponse.toEntity())
+                    listDao.upsertByTraktId(listResponse.toEntity())
                 }
             }
 
@@ -64,7 +72,7 @@ public class TraktListsStore(
 ).build()
 
 private fun TraktPersonalListsResponse.toEntity(): UserListEntity = UserListEntity(
-    id = ids.trakt.toLong(),
+    traktId = ids.trakt.toLong(),
     slug = ids.slug,
     name = name,
     description = description,

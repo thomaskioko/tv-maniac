@@ -93,23 +93,26 @@ public class DefaultListRepository(
             val traktId = requireNotNull(tvShowsDao.getTraktIdByTmdbId(showId)) {
                 "Show $showId has no Trakt id mapping"
             }
+            val listTraktId = requireNotNull(listDao.getTraktId(listId)) {
+                "List $listId has no Trakt id mapping"
+            }
             if (isCurrentlyInList) {
                 listShowDao.updatePendingAction(
                     listId = listId,
-                    traktId = traktId,
+                    tmdbId = showId,
                     pendingAction = PendingAction.DELETE.value,
                 )
-                when (traktListRemoteDataSource.removeShowFromList(slug, listId, traktId)) {
+                when (traktListRemoteDataSource.removeShowFromList(slug, listTraktId, traktId)) {
                     is ApiResponse.Success -> {
-                        listShowDao.deleteByListIdAndTraktId(
+                        listShowDao.deleteByListIdAndTmdbId(
                             listId = listId,
-                            traktId = traktId,
+                            tmdbId = showId,
                         )
                     }
                     else -> {
                         listShowDao.updatePendingAction(
                             listId = listId,
-                            traktId = traktId,
+                            tmdbId = showId,
                             pendingAction = PendingAction.NOTHING.value,
                         )
                     }
@@ -117,22 +120,22 @@ public class DefaultListRepository(
             } else {
                 listShowDao.upsert(
                     listId = listId,
-                    traktId = traktId,
+                    tmdbId = showId,
                     listedAt = "",
                     pendingAction = PendingAction.UPLOAD.value,
                 )
-                when (traktListRemoteDataSource.addShowToList(slug, listId, traktId)) {
+                when (traktListRemoteDataSource.addShowToList(slug, listTraktId, traktId)) {
                     is ApiResponse.Success -> {
                         listShowDao.updatePendingAction(
                             listId = listId,
-                            traktId = traktId,
+                            tmdbId = showId,
                             pendingAction = PendingAction.NOTHING.value,
                         )
                     }
                     else -> {
-                        listShowDao.deleteByListIdAndTraktId(
+                        listShowDao.deleteByListIdAndTmdbId(
                             listId = listId,
-                            traktId = traktId,
+                            tmdbId = showId,
                         )
                     }
                 }

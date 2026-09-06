@@ -20,7 +20,7 @@ public class ShowListMapper(
         lists.map { list ->
             UserListModel(
                 id = list.id,
-                slug = list.slug,
+                slug = list.slug.orEmpty(),
                 name = list.name,
                 description = list.description,
                 showCountText = localizer.getPlural(

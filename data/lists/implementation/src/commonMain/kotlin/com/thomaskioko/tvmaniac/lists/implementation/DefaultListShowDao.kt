@@ -22,66 +22,70 @@ public class DefaultListShowDao(
 ) : ListShowDao {
 
     override fun observeActiveCountByListId(): Flow<Map<Long, Long>> =
-        database.traktListShowsQueries.countActiveByListId()
+        database.listShowsQueries.countActiveByListId()
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows -> rows.associate { it.list_id to it.show_count } }
 
     override fun observeByShowId(showId: Long): Flow<List<ListShowEntry>> =
-        database.traktListShowsQueries.selectByShowId(show_id = Id<TmdbId>(showId))
+        database.listShowsQueries.selectByTmdbId(tmdb_id = Id<TmdbId>(showId))
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows ->
                 rows.map { row ->
                     ListShowEntry(
                         listId = row.list_id,
-                        traktId = row.trakt_id,
+                        tmdbId = row.tmdb_id.id,
                         listedAt = row.listed_at,
                         pendingAction = row.pending_action,
                     )
                 }
             }
 
-    override fun upsert(listId: Long, traktId: Long, listedAt: String, pendingAction: String) {
-        database.traktListShowsQueries.upsert(
+    override fun upsert(listId: Long, tmdbId: Long, listedAt: String, pendingAction: String) {
+        database.listShowsQueries.upsert(
             list_id = listId,
-            trakt_id = traktId,
+            tmdb_id = Id(tmdbId),
             listed_at = listedAt,
             pending_action = pendingAction,
         )
     }
 
-    override fun upsertSynced(listId: Long, traktId: Long, listedAt: String) {
-        database.traktListShowsQueries.upsertSynced(
+    override fun upsertSynced(listId: Long, tmdbId: Long, listedAt: String) {
+        database.listShowsQueries.upsertSynced(
             list_id = listId,
-            trakt_id = traktId,
+            tmdb_id = Id(tmdbId),
             listed_at = listedAt,
         )
     }
 
     override fun deleteSyncedByListId(listId: Long) {
-        database.traktListShowsQueries.deleteSyncedByListId(list_id = listId)
+        database.listShowsQueries.deleteSyncedByListId(list_id = listId)
     }
 
-    override fun updatePendingAction(listId: Long, traktId: Long, pendingAction: String) {
-        database.traktListShowsQueries.updatePendingAction(
+    override fun updatePendingAction(listId: Long, tmdbId: Long, pendingAction: String) {
+        database.listShowsQueries.updatePendingAction(
             pending_action = pendingAction,
             list_id = listId,
-            trakt_id = traktId,
+            tmdb_id = Id(tmdbId),
         )
     }
 
-    override fun deleteByListIdAndTraktId(listId: Long, traktId: Long) {
-        database.traktListShowsQueries.deleteByListIdAndTraktId(
+    override fun deleteByListIdAndTmdbId(listId: Long, tmdbId: Long) {
+        database.listShowsQueries.deleteByListIdAndTmdbId(
             list_id = listId,
-            trakt_id = traktId,
+            tmdb_id = Id(tmdbId),
         )
+    }
+
+    override fun deleteByListId(listId: Long) {
+        database.listShowsQueries.deleteByListId(list_id = listId)
     }
 
     override fun deleteAll() {
-        database.traktListShowsQueries.deleteAll()
+        database.listShowsQueries.deleteAll()
     }
 
     override fun countPendingActions(): Long =
-        database.traktListShowsQueries.countPendingActions().executeAsOne()
+        database.listShowsQueries.countPendingActions().executeAsOne()
 }
