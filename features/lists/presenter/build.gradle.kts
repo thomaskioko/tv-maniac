@@ -24,7 +24,7 @@ kotlin {
                 api(libs.androidx.paging.common)
                 api(libs.kotlinx.collections)
 
-                implementation(projects.data.lists.api)
+                api(projects.data.lists.api)
                 implementation(projects.features.showDetails.nav)
             }
         }
