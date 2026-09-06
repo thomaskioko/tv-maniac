@@ -11,6 +11,8 @@ public sealed interface ProfileAction {
 
     public data object ViewListsClicked : ProfileAction
 
+    public data class ListClicked(val listId: Long, val name: String) : ProfileAction
+
     public data object RefreshProfile : ProfileAction
 
     public data class ShowClicked(val showId: Long) : ProfileAction

@@ -34,6 +34,10 @@ graph TB
     direction TB
     :data:lists:api[api]:::multiplatform
   end
+  subgraph :data:showdetails
+    direction TB
+    :data:showdetails:api[api]:::multiplatform
+  end
   subgraph :data:user
     direction TB
     :data:user:api[api]:::multiplatform
@@ -50,12 +54,14 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
+  :data:showdetails:api --> :data:database:sqldelight
   :data:user:api --> :core:network-util:api
   :data:user:api --> :data:account-manager:api
   :data:user:api --> :data:database:sqldelight
   :domain:lists --> :core:base
   :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
+  :domain:lists --> :data:showdetails:api
   :domain:lists --> :data:user:api
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

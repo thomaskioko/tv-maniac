@@ -63,3 +63,32 @@ countPendingActions:
 SELECT COUNT(*) FROM list_shows
 WHERE pending_action != 'NOTHING'
     AND list_id IN (SELECT id FROM lists WHERE trakt_id IS NOT NULL);
+
+countByListId:
+SELECT COUNT(*)
+FROM list_shows
+INNER JOIN tvshow ON tvshow.tmdb_id = list_shows.tmdb_id
+WHERE list_shows.list_id = :list_id
+    AND list_shows.pending_action != 'DELETE';
+
+pagedShowsByListId:
+SELECT
+    tvshow.tmdb_id,
+    tvshow.name,
+    tvshow.poster_path,
+    tvshow.year
+FROM list_shows
+INNER JOIN tvshow ON tvshow.tmdb_id = list_shows.tmdb_id
+WHERE list_shows.list_id = :list_id
+    AND list_shows.pending_action != 'DELETE'
+ORDER BY list_shows.listed_at DESC, list_shows.tmdb_id DESC
+LIMIT :limit OFFSET :offset;
+
+selectTmdbIdsMissingPosterByListId:
+SELECT list_shows.tmdb_id
+FROM list_shows
+INNER JOIN tvshow ON tvshow.tmdb_id = list_shows.tmdb_id
+WHERE list_shows.list_id = :list_id
+    AND list_shows.pending_action != 'DELETE'
+    AND tvshow.poster_path IS NULL
+ORDER BY list_shows.listed_at DESC, list_shows.tmdb_id DESC;

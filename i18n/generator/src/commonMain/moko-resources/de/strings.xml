@@ -334,6 +334,11 @@
     <string name="profile_feature_share_title">Teilen</string>
     <string name="profile_feature_share_description">Kommentieren, antworten und bewerten Sie TV-Sendungen, Filme, Staffeln und Episoden</string>
 
+    <string name="list_detail_empty">Noch keine Serien in dieser Liste.</string>
+    <string name="list_detail_remove_title">Aus Liste entfernen?</string>
+    <string name="list_detail_remove_message">%1$s aus %2$s entfernen?</string>
+    <string name="list_detail_remove_button">Entfernen</string>
+
     <string name="label_settings_include_specials">Spezialstaffeln</string>
     <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>
 

@@ -1,6 +1,8 @@
 package com.thomaskioko.tvmaniac.lists.testing
 
+import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.lists.api.ListRepository
+import com.thomaskioko.tvmaniac.lists.api.ListShowItem
 import com.thomaskioko.tvmaniac.lists.api.UserList
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import com.thomaskioko.tvmaniac.lists.implementation.DefaultListRepository
@@ -19,9 +21,12 @@ public class FakeListRepository : ListRepository {
 
     private val listsFlow = MutableStateFlow<List<UserListEntity>>(emptyList())
     private val listsWithMembershipFlow = MutableStateFlow<List<UserList>>(emptyList())
+    private val pagedShowsFlow = MutableStateFlow(PagingData.empty<ListShowItem>())
     private var listsAfterSync: List<UserList>? = null
     private var toggleGate: CompletableDeferred<Unit>? = null
     private var observeError: Throwable? = null
+    private var toggleError: Throwable? = null
+    private var tmdbIdsMissingPoster: List<Long> = emptyList()
 
     public var fetchUserListsInvocations: Int = 0
         private set
@@ -56,8 +61,20 @@ public class FakeListRepository : ListRepository {
         observeError = error
     }
 
+    public fun setToggleError(error: Throwable?) {
+        toggleError = error
+    }
+
     public fun setListsForShow(lists: List<UserList>) {
         listsWithMembershipFlow.value = lists
+    }
+
+    public fun setPagedListShows(pagingData: PagingData<ListShowItem>) {
+        pagedShowsFlow.value = pagingData
+    }
+
+    public fun setTmdbIdsMissingPoster(tmdbIds: List<Long>) {
+        tmdbIdsMissingPoster = tmdbIds
     }
 
     public fun setListsAfterSync(lists: List<UserList>) {
@@ -86,6 +103,7 @@ public class FakeListRepository : ListRepository {
     }
 
     override suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?) {
+        toggleError?.let { throw it }
         toggleShowInListInvocations += 1
         lastToggleTraktSlug = traktSlug
         toggledShows += listId to showId
@@ -111,4 +129,8 @@ public class FakeListRepository : ListRepository {
     override suspend fun countPendingListShows(): Long = pendingListShowsCount
 
     override suspend fun countPendingLists(): Long = pendingListsCount
+
+    override fun observePagedListShows(listId: Long): Flow<PagingData<ListShowItem>> = pagedShowsFlow.asStateFlow()
+
+    override suspend fun getTmdbIdsMissingPoster(listId: Long): List<Long> = tmdbIdsMissingPoster
 }

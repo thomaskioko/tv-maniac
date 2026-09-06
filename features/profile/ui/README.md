@@ -256,6 +256,7 @@ graph TB
   :domain:lists --> :core:base
   :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
+  :domain:lists --> :data:showdetails:api
   :domain:lists --> :data:user:api
   :domain:recently-watched --> :core:base
   :domain:recently-watched --> :data:episode:api

@@ -140,6 +140,10 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         )
     }
 
+    public fun stubTraktRemoveShowFromList(listId: Long, slug: String = TEST_PROFILE_SLUG) {
+        mockHandler.stubEndpoint(Endpoints.Trakt.removeShowFromList(slug, listId), method = HttpMethod.Post)
+    }
+
     public fun stubTraktUsersMeUnauthorized() {
         mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
     }

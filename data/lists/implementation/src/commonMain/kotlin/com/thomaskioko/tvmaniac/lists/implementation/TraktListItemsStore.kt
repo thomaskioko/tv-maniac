@@ -7,12 +7,18 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.db.Id
+import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.db.TraktId
 import com.thomaskioko.tvmaniac.lists.api.ListDao
 import com.thomaskioko.tvmaniac.lists.api.ListShowDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAKT_LIST_ITEMS_SYNC
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
+import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TRAKT_PAGE_LIMIT
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.model.ShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
@@ -34,6 +40,7 @@ public class TraktListItemsStore(
     private val traktListRemoteDataSource: TraktListRemoteDataSource,
     private val listDao: ListDao,
     private val listShowDao: ListShowDao,
+    private val tvShowsDao: TvShowsDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
@@ -61,6 +68,7 @@ public class TraktListItemsStore(
                 response.forEach { item ->
                     val show = item.show
                     if (item.type == TYPE_SHOW && show != null) {
+                        tvShowsDao.upsertMerging(show.toShowToPersist())
                         listShowDao.upsertSynced(
                             listId = key.listId,
                             tmdbId = show.ids.tmdb,
@@ -89,5 +97,15 @@ public class TraktListItemsStore(
         }
     },
 ).build()
+
+private fun ShowResponse.toShowToPersist(): ShowToPersist = ShowToPersist(
+    showId = Id<TraktId>(ids.trakt),
+    tmdbId = Id<TmdbId>(ids.tmdb),
+    name = title,
+    overview = "",
+    ratings = 0.0,
+    voteCount = 0,
+    year = year?.toString(),
+)
 
 private const val TYPE_SHOW = "show"

@@ -365,6 +365,9 @@ internal class Scenarios(
         fun stubCreateList(slug: String = TEST_PROFILE_SLUG): Unit = http.stubTraktCreateList(slug)
 
         fun stubListItems(listId: Long, slug: String = TEST_PROFILE_SLUG): Unit = http.stubTraktListItems(listId, slug)
+
+        fun stubRemoveShowFromList(listId: Long, slug: String = TEST_PROFILE_SLUG): Unit =
+            http.stubTraktRemoveShowFromList(listId, slug)
     }
 
     inner class Flags {

@@ -373,6 +373,11 @@
     <string name="profile_feature_share_title">Share</string>
     <string name="profile_feature_share_description">Comment, reply and rate TV shows, movies, seasons and episodes.</string>
 
+    <string name="list_detail_empty">No shows in this list yet.</string>
+    <string name="list_detail_remove_title">Remove from list?</string>
+    <string name="list_detail_remove_message">Remove %1$s from %2$s?</string>
+    <string name="list_detail_remove_button">Remove</string>
+
     <string name="label_up_to_date">All caught up</string>
 
     <string name="label_library_title">Library</string>

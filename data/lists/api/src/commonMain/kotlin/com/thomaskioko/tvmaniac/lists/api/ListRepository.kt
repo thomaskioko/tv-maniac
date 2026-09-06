@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.lists.api
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 public interface ListRepository {
@@ -7,6 +8,10 @@ public interface ListRepository {
     public fun observeLists(): Flow<List<UserListEntity>>
 
     public fun observeListsForShow(showId: Long): Flow<List<UserList>>
+
+    public fun observePagedListShows(listId: Long): Flow<PagingData<ListShowItem>>
+
+    public suspend fun getTmdbIdsMissingPoster(listId: Long): List<Long>
 
     public suspend fun fetchUserLists(slug: String, forceRefresh: Boolean = false)
 

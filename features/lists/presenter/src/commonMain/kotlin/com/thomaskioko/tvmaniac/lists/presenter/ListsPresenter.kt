@@ -13,7 +13,9 @@ import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
+import com.thomaskioko.tvmaniac.lists.nav.ListDetailRoute
 import com.thomaskioko.tvmaniac.lists.nav.ListsRoute
+import com.thomaskioko.tvmaniac.lists.nav.model.ListDetailParam
 import com.thomaskioko.tvmaniac.lists.presenter.ListsAction.BackClicked
 import com.thomaskioko.tvmaniac.lists.presenter.ListsAction.ListClicked
 import com.thomaskioko.tvmaniac.lists.presenter.model.UserListItem
@@ -75,7 +77,9 @@ public class ListsPresenter internal constructor(
 
     public fun dispatch(action: ListsAction) {
         when (action) {
-            is ListClicked -> Unit
+            is ListClicked -> state.value.lists.firstOrNull { it.id == action.listId }?.let { list ->
+                navigator.navigateTo(ListDetailRoute(ListDetailParam(listId = list.id, name = list.name)))
+            }
             BackClicked -> navigator.navigateBack()
         }
     }

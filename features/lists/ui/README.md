@@ -36,6 +36,10 @@ graph TB
     direction TB
     :data:lists:api[api]:::multiplatform
   end
+  subgraph :data:showdetails
+    direction TB
+    :data:showdetails:api[api]:::multiplatform
+  end
   subgraph :data:user
     direction TB
     :data:user:api[api]:::multiplatform
@@ -50,6 +54,10 @@ graph TB
     :features:lists:nav[nav]:::multiplatform
     :features:lists:presenter[presenter]:::multiplatform
     :features:lists:ui[ui]:::android-library
+  end
+  subgraph :features:show-details
+    direction TB
+    :features:show-details:nav[nav]:::multiplatform
   end
   subgraph :i18n
     direction TB
@@ -72,21 +80,25 @@ graph TB
   :core:view --> :core:logger:api
   :data:account-manager:api --> :data:database:sqldelight
   :data:database:sqldelight --> :core:logger:api
+  :data:showdetails:api --> :data:database:sqldelight
   :data:user:api --> :core:network-util:api
   :data:user:api --> :data:account-manager:api
   :data:user:api --> :data:database:sqldelight
   :domain:lists --> :core:base
   :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
+  :domain:lists --> :data:showdetails:api
   :domain:lists --> :data:user:api
   :domain:theme --> :i18n:generator
   :features:lists:nav --> :navigation:api
   :features:lists:presenter --> :core:base
   :features:lists:presenter --> :core:logger:api
   :features:lists:presenter --> :core:view
-  :features:lists:presenter -.-> :data:lists:api
+  :features:lists:presenter --> :data:account-manager:api
+  :features:lists:presenter --> :data:lists:api
   :features:lists:presenter --> :domain:lists
   :features:lists:presenter --> :features:lists:nav
+  :features:lists:presenter -.-> :features:show-details:nav
   :features:lists:presenter --> :i18n:api
   :features:lists:presenter --> :navigation:api
   :features:lists:ui -.-> :android-designsystem
@@ -96,6 +108,7 @@ graph TB
   :features:lists:ui -.-> :i18n:generator
   :features:lists:ui --> :navigation:api
   :features:lists:ui --> :navigation:ui
+  :features:show-details:nav --> :navigation:api
   :i18n:api --> :i18n:generator
   :navigation:ui --> :core:base
   :navigation:ui --> :navigation:api

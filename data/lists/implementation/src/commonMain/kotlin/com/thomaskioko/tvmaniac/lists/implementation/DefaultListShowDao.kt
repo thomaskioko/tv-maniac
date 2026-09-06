@@ -1,13 +1,16 @@
 package com.thomaskioko.tvmaniac.lists.implementation
 
+import androidx.paging.PagingSource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.paging.QueryPagingSource
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.lists.api.ListShowDao
 import com.thomaskioko.tvmaniac.lists.api.ListShowEntry
+import com.thomaskioko.tvmaniac.lists.api.ListShowItem
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -99,4 +102,30 @@ public class DefaultListShowDao(
 
     override fun countPendingActions(): Long =
         database.listShowsQueries.countPendingActions().executeAsOne()
+
+    override fun getPagedShows(listId: Long): PagingSource<Int, ListShowItem> =
+        QueryPagingSource(
+            countQuery = database.listShowsQueries.countByListId(list_id = listId),
+            transacter = database.listShowsQueries,
+            context = dispatchers.io,
+            queryProvider = { limit, offset ->
+                database.listShowsQueries.pagedShowsByListId(
+                    list_id = listId,
+                    limit = limit,
+                    offset = offset,
+                ) { tmdbId, name, posterPath, year ->
+                    ListShowItem(
+                        tmdbId = tmdbId.id,
+                        name = name,
+                        posterPath = posterPath,
+                        year = year,
+                    )
+                }
+            },
+        )
+
+    override fun getTmdbIdsMissingPoster(listId: Long): List<Long> =
+        database.listShowsQueries.selectTmdbIdsMissingPosterByListId(list_id = listId)
+            .executeAsList()
+            .map { it.id }
 }

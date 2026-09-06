@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.app.test.AppFlowScope
 import com.thomaskioko.tvmaniac.app.test.BaseAppFlowTest
 import com.thomaskioko.tvmaniac.testing.integration.TEST_CREATED_LIST_NAME
 import com.thomaskioko.tvmaniac.testing.integration.TEST_CREATED_LIST_TRAKT_ID
+import com.thomaskioko.tvmaniac.testing.integration.TEST_PROFILE_SLUG
 import com.thomaskioko.tvmaniac.testtags.home.HomeTestTags
 import org.junit.Test
 
@@ -106,6 +107,37 @@ internal class UserListFlowTests : BaseAppFlowTest() {
             .assertListShowCountText(createdListId, "1 show")
             .clickCloseSheetButton()
             .assertSheetDoesNotExist()
+    }
+
+    @Test
+    fun givenAuthenticatedUser_whenListOpenedFromProfile_thenShowIsRemovedWithConfirmation() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+        scenarios.traktLists.stubListItems(listId = favoritesListTraktId)
+        scenarios.traktLists.stubRemoveShowFromList(listId = favoritesListTraktId)
+
+        rootRobot.dismissNotificationRationale()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertProfileScreenDisplayed()
+            .scrollToUserLists(slug = TEST_PROFILE_SLUG)
+            .assertListCardDisplayed(favoritesListId)
+            .clickListCard(favoritesListId)
+
+        listDetailRobot
+            .assertListDetailScreenDisplayed()
+            .assertShowCardDisplayed(breakingBadTmdbId)
+            .longClickShowCard(breakingBadTmdbId)
+            .assertRemoveConfirmationDisplayed()
+            .clickRemoveConfirm()
+            .assertShowCardDoesNotExist(breakingBadTmdbId)
+            .clickBackButton()
+
+        profileRobot
+            .assertProfileScreenDisplayed()
     }
 
     private fun AppFlowScope.openListSheet() {

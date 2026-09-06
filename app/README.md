@@ -896,6 +896,7 @@ graph TB
   :data:lists:implementation --> :core:base
   :data:lists:implementation --> :core:logger:api
   :data:lists:implementation -.-> :core:network-util:api
+  :data:lists:implementation --> :core:paging
   :data:lists:implementation --> :core:util:api
   :data:lists:implementation --> :data:account-manager:api
   :data:lists:implementation --> :data:backup:api
@@ -1215,6 +1216,7 @@ graph TB
   :domain:lists --> :core:base
   :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
+  :domain:lists --> :data:showdetails:api
   :domain:lists --> :data:user:api
   :domain:logout --> :core:base
   :domain:logout --> :data:account-manager:api
@@ -1488,9 +1490,11 @@ graph TB
   :features:lists:presenter --> :core:base
   :features:lists:presenter --> :core:logger:api
   :features:lists:presenter --> :core:view
-  :features:lists:presenter -.-> :data:lists:api
+  :features:lists:presenter --> :data:account-manager:api
+  :features:lists:presenter --> :data:lists:api
   :features:lists:presenter --> :domain:lists
   :features:lists:presenter --> :features:lists:nav
+  :features:lists:presenter -.-> :features:show-details:nav
   :features:lists:presenter --> :i18n:api
   :features:lists:presenter --> :navigation:api
   :features:lists:ui -.-> :android-designsystem

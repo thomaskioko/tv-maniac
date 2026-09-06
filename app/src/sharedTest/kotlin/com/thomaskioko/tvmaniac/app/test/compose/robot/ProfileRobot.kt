@@ -45,6 +45,10 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         assertExists(ProfileTestTags.listCard(id))
     }
 
+    fun clickListCard(id: Long) = apply {
+        click(ProfileTestTags.listCard(id))
+    }
+
     fun clickUserListsToggle() = apply {
         click(CollapsibleSectionTestTags.toggle(ProfileTestTags.USER_LISTS_SECTION_KEY))
     }

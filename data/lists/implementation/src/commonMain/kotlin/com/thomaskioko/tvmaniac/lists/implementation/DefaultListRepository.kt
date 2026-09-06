@@ -1,13 +1,17 @@
 package com.thomaskioko.tvmaniac.lists.implementation
 
+import androidx.paging.Pager
+import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fresh
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.get
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
+import com.thomaskioko.tvmaniac.core.paging.CommonPagingConfig.pagingConfig
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.lists.api.ListDao
 import com.thomaskioko.tvmaniac.lists.api.ListRepository
 import com.thomaskioko.tvmaniac.lists.api.ListShowDao
+import com.thomaskioko.tvmaniac.lists.api.ListShowItem
 import com.thomaskioko.tvmaniac.lists.api.UserList
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import com.thomaskioko.tvmaniac.shows.api.ShowTraktIdResolver
@@ -227,4 +231,13 @@ public class DefaultListRepository(
     override suspend fun countPendingListShows(): Long = listShowDao.countPendingActions()
 
     override suspend fun countPendingLists(): Long = listDao.countPendingUploads()
+
+    override fun observePagedListShows(listId: Long): Flow<PagingData<ListShowItem>> =
+        Pager(
+            config = pagingConfig,
+            pagingSourceFactory = { listShowDao.getPagedShows(listId) },
+        ).flow
+
+    override suspend fun getTmdbIdsMissingPoster(listId: Long): List<Long> =
+        listShowDao.getTmdbIdsMissingPoster(listId)
 }
