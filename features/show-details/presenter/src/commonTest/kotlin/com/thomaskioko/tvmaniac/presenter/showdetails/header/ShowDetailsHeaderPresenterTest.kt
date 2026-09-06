@@ -158,42 +158,6 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
     }
 
     @Test
-    fun `should expose canAddToList true given the active provider supports lists`() = runTest {
-        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
-
-        val presenter = buildPresenter(supportsLists = true)
-
-        presenter.state.test {
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().canAddToList shouldBe true
-        }
-    }
-
-    @Test
-    fun `should expose canAddToList false given the active provider does not support lists`() = runTest {
-        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
-
-        val presenter = buildPresenter(supportsLists = false)
-
-        presenter.state.test {
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().canAddToList shouldBe false
-        }
-    }
-
-    @Test
-    fun `should expose canAddToList true given no active provider`() = runTest {
-        accountManager.setActiveProvider(null)
-
-        val presenter = buildPresenter(supportsLists = false)
-
-        presenter.state.test {
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().canAddToList shouldBe true
-        }
-    }
-
-    @Test
     fun `should expose isInList true and listed label given show belongs to a list`() = runTest {
         listRepository.setListsForShow(
             listOf(traktList(isShowInList = true)),
@@ -240,10 +204,10 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
     }
 
     @Test
-    fun `should activate show list overlay given open show list dispatched and lists supported`() = runTest {
+    fun `should activate show list overlay given open show list dispatched with no account`() = runTest {
         accountManager.setActiveProvider(null)
 
-        val presenter = buildPresenter(supportsLists = true)
+        val presenter = buildPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
         presenter.dispatch(ShowDetailsOpenShowList)
@@ -252,15 +216,15 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
     }
 
     @Test
-    fun `should not activate show list overlay given open show list dispatched and lists unsupported`() = runTest {
+    fun `should activate show list overlay given open show list dispatched with a Simkl session`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.SIMKL)
 
-        val presenter = buildPresenter(supportsLists = false)
+        val presenter = buildPresenter()
         testDispatcher.scheduler.advanceUntilIdle()
 
         presenter.dispatch(ShowDetailsOpenShowList)
 
-        navigator.lastActivatedOverlay.shouldBeNull()
+        navigator.lastActivatedOverlay.shouldBeInstanceOf<ShowListRoute>()
     }
 
     @Test
@@ -500,7 +464,6 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
 
     private fun buildPresenter(
         forceRefresh: Boolean = false,
-        supportsLists: Boolean = true,
     ): ShowDetailsHeaderPresenter {
         val notificationRationale = object : NotificationRationale {
             override suspend fun showIfNeeded() = Unit
@@ -564,7 +527,6 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
             ),
             notificationManager = notificationManager,
             accountManager = accountManager,
-            activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
             localizer = localizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),

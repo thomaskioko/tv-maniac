@@ -3,12 +3,9 @@ package com.thomaskioko.tvmaniac.presentation.showlist
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.AuthManager
-import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.coroutines.AppScopeLauncher
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
-import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -19,8 +16,6 @@ import com.thomaskioko.tvmaniac.domain.lists.CreateListInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ObserveListsForShowInteractor
 import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
-import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
-import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
@@ -30,11 +25,11 @@ import dev.zacsweers.metro.AssistedInject
 import io.github.thomaskioko.codegen.annotations.DestinationKind
 import io.github.thomaskioko.codegen.annotations.NavDestination
 import kotlinx.collections.immutable.PersistentSet
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -52,8 +47,6 @@ public class ShowListPresenter(
     observeListsForShowInteractor: ObserveListsForShowInteractor,
     private val navigator: Navigator,
     private val accountManager: AccountManager,
-    private val authManagers: Map<SyncProviderSource, AuthManager>,
-    @SimklLoginFlagQualifier private val simklLoginFlag: FeatureFlag<Boolean>,
     private val syncListsInteractor: SyncListsInteractor,
     private val createListInteractor: CreateListInteractor,
     private val toggleShowInListInteractor: ToggleShowInListInteractor,
@@ -72,31 +65,24 @@ public class ShowListPresenter(
 
     public val state: StateFlow<ShowListState> = combine(
         observeListsForShowInteractor.flow,
-        accountManager.isConnected,
         uiMessageManager.message,
         createListState,
         togglingListIds,
-        simklLoginFlag.observe(),
-    ) { lists, isLoggedIn, message, createUi, togglingIds, simklEnabled ->
+    ) { lists, message, createUi, togglingIds ->
         ShowListState(
-            isLoggedIn = isLoggedIn,
             isLoading = false,
-            lists = if (isLoggedIn) mapper.toModels(lists, togglingIds) else persistentListOf(),
+            lists = mapper.toModels(lists, togglingIds),
             showCreateListField = createUi.showField,
             isCreatingList = createUi.isCreating,
             createListName = createUi.name,
             createListError = createUi.error,
             labels = labels,
-            authProviders = mapper.authProviderOptions(simklEnabled),
             message = message,
         )
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-        initialValue = ShowListState(
-            isLoggedIn = accountManager.getActiveProvider() != null,
-            labels = labels,
-        ),
+        initialValue = ShowListState(labels = labels),
     )
 
     public val stateValue: Value<ShowListState> = state.asValue(coroutineScope)
@@ -108,7 +94,6 @@ public class ShowListPresenter(
 
     public fun dispatch(action: ShowListAction) {
         when (action) {
-            is ShowListAction.Login -> authManagers[action.provider]?.launchWebView()
             ShowListAction.ShowCreateListField -> createListState.update {
                 it.copy(showField = true, error = null)
             }

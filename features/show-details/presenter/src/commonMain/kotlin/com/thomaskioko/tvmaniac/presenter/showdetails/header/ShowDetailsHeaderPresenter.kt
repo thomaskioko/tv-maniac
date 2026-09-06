@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.thomaskioko.root.nav.NotificationRationale
 import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
-import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.combine
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
@@ -86,7 +85,6 @@ public class ShowDetailsHeaderPresenter internal constructor(
     private val scheduleEpisodeNotificationsInteractor: ScheduleEpisodeNotificationsInteractor,
     private val notificationManager: NotificationManager,
     private val accountManager: AccountManager,
-    private val activeProviderFeatures: () -> ProviderFeatures,
     private val localizer: Localizer,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
@@ -110,7 +108,6 @@ public class ShowDetailsHeaderPresenter internal constructor(
         fetchShowDetails(forceRefresh = forceRefresh)
         refreshCommunityRating(forceRefresh = forceRefresh)
         observeAuthState()
-        updateListAvailability()
     }
 
     public val state: StateFlow<ShowDetailsHeaderState> = combine(
@@ -135,7 +132,6 @@ public class ShowDetailsHeaderPresenter internal constructor(
             userRating = userRating,
             isRefreshing = isRefreshing,
             message = message,
-            canAddToList = current.canAddToList,
             isInList = isInList,
             listActionLabel = localizer.getString(
                 if (isInList) StringResourceKey.BtnInList else StringResourceKey.BtnAddToList,
@@ -166,9 +162,7 @@ public class ShowDetailsHeaderPresenter internal constructor(
     public fun dispatch(action: ShowDetailsHeaderAction) {
         when (action) {
             is ShowDetailsFollowClicked -> onFollowClicked(action.isInLibrary)
-            ShowDetailsOpenShowList -> if (_state.value.canAddToList) {
-                navigator.navigateTo(ShowListRoute(ShowListParam(showId = showId)))
-            }
+            ShowDetailsOpenShowList -> navigator.navigateTo(ShowListRoute(ShowListParam(showId = showId)))
             ShowRatingClicked -> navigator.navigateTo(
                 RatingSheetRoute(RatingSheetParam(ratingType = RatingEntityType.SHOW, id = showId)),
             )
@@ -240,7 +234,6 @@ public class ShowDetailsHeaderPresenter internal constructor(
                 .distinctUntilChanged()
                 .filter { it }
                 .collect {
-                    updateListAvailability()
                     fetchShowDetails(forceRefresh = true)
                 }
         }
@@ -271,11 +264,6 @@ public class ShowDetailsHeaderPresenter internal constructor(
                     .collectStatus(loadingState, logger, uiMessageManager, errorToStringMapper = errorToStringMapper)
             }
         }
-    }
-
-    private fun updateListAvailability() {
-        val canAddToList = accountManager.getActiveProvider() == null || activeProviderFeatures().supportsLists
-        _state.update { it.copy(canAddToList = canAddToList) }
     }
 
     @AssistedFactory
