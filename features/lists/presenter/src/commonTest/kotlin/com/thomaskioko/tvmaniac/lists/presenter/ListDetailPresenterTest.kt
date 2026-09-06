@@ -206,6 +206,29 @@ internal class ListDetailPresenterTest {
     }
 
     @Test
+    fun `should surface the mapped error and keep it through a page refresh given the removal fails`() = runTest {
+        listRepository.setPagedListShows(PagingData.from(listOf(breakingBad())))
+        listRepository.setToggleError(RuntimeException("offline"))
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitUntil { it.items.isNotEmpty() }
+            presenter.dispatch(ListDetailAction.RemoveRequested(BREAKING_BAD_ID))
+            awaitUntil { it.removeConfirmation != null }
+
+            presenter.dispatch(ListDetailAction.RemoveConfirmed)
+
+            val failed = awaitUntil { it.errorMessage != null }
+            failed.errorMessage shouldBe "mapped:offline"
+
+            listRepository.setPagedListShows(PagingData.from(listOf(breakingBad(), betterCallSaul())))
+            val refreshed = awaitUntil { it.items.size == 2 }
+            refreshed.errorMessage shouldBe "mapped:offline"
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `should clear the confirmation and toggle nothing given remove is dismissed`() = runTest {
         listRepository.setPagedListShows(PagingData.from(listOf(breakingBad())))
         val presenter = createPresenter()

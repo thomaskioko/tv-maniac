@@ -25,6 +25,7 @@ public class FakeListRepository : ListRepository {
     private var listsAfterSync: List<UserList>? = null
     private var toggleGate: CompletableDeferred<Unit>? = null
     private var observeError: Throwable? = null
+    private var toggleError: Throwable? = null
     private var tmdbIdsMissingPoster: List<Long> = emptyList()
 
     public var fetchUserListsInvocations: Int = 0
@@ -58,6 +59,10 @@ public class FakeListRepository : ListRepository {
 
     public fun setObserveError(error: Throwable?) {
         observeError = error
+    }
+
+    public fun setToggleError(error: Throwable?) {
+        toggleError = error
     }
 
     public fun setListsForShow(lists: List<UserList>) {
@@ -98,6 +103,7 @@ public class FakeListRepository : ListRepository {
     }
 
     override suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?) {
+        toggleError?.let { throw it }
         toggleShowInListInvocations += 1
         lastToggleTraktSlug = traktSlug
         toggledShows += listId to showId

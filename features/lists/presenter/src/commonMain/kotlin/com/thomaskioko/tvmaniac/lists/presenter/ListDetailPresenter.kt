@@ -138,7 +138,8 @@ public class ListDetailPresenter(
                         isRefreshLoading = loadStates.refresh is LoadState.Loading,
                         isAppendLoading = loadStates.append is LoadState.Loading,
                         appendError = (loadStates.append as? LoadState.Error)?.let { error -> errorToStringMapper.mapError(error.error) },
-                        errorMessage = (loadStates.refresh as? LoadState.Error)?.let { error -> errorToStringMapper.mapError(error.error) },
+                        errorMessage = (loadStates.refresh as? LoadState.Error)?.let { error -> errorToStringMapper.mapError(error.error) }
+                            ?: it.errorMessage,
                     )
                 }
             }
