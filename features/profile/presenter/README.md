@@ -139,6 +139,10 @@ graph TB
     direction TB
     :features:home:nav[nav]:::multiplatform
   end
+  subgraph :features:lists
+    direction TB
+    :features:lists:nav[nav]:::multiplatform
+  end
   subgraph :features:profile
     direction TB
     :features:profile:nav[nav]:::multiplatform
@@ -270,6 +274,7 @@ graph TB
   :domain:user --> :data:lists:api
   :domain:user --> :data:user:api
   :features:home:nav --> :navigation:api
+  :features:lists:nav --> :navigation:api
   :features:profile:nav --> :navigation:api
   :features:profile:presenter --> :core:base
   :features:profile:presenter --> :core:feature-flags:api
@@ -284,6 +289,7 @@ graph TB
   :features:profile:presenter --> :domain:recently-watched
   :features:profile:presenter --> :domain:user
   :features:profile:presenter -.-> :features:home:nav
+  :features:profile:presenter -.-> :features:lists:nav
   :features:profile:presenter --> :features:profile:nav
   :features:profile:presenter -.-> :features:settings:nav
   :features:profile:presenter -.-> :features:show-details:nav

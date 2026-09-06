@@ -367,6 +367,10 @@ graph TB
     :features:library:presenter[presenter]:::multiplatform
     :features:library:ui[ui]:::android-library
   end
+  subgraph :features:lists
+    direction TB
+    :features:lists:nav[nav]:::multiplatform
+  end
   subgraph :features:more-shows
     direction TB
     :features:more-shows:nav[nav]:::multiplatform
@@ -1475,6 +1479,7 @@ graph TB
   :features:library:ui -.-> :i18n:generator
   :features:library:ui --> :navigation:api
   :features:library:ui --> :navigation:ui
+  :features:lists:nav --> :navigation:api
   :features:more-shows:nav --> :navigation:api
   :features:more-shows:presenter --> :core:base
   :features:more-shows:presenter --> :data:popularshows:api
@@ -1528,6 +1533,7 @@ graph TB
   :features:profile:presenter --> :domain:recently-watched
   :features:profile:presenter --> :domain:user
   :features:profile:presenter -.-> :features:home:nav
+  :features:profile:presenter -.-> :features:lists:nav
   :features:profile:presenter --> :features:profile:nav
   :features:profile:presenter -.-> :features:settings:nav
   :features:profile:presenter -.-> :features:show-details:nav

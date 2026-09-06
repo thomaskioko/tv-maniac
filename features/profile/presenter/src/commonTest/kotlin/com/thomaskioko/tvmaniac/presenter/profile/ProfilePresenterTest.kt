@@ -36,6 +36,7 @@ import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
+import com.thomaskioko.tvmaniac.lists.nav.ListsRoute
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
@@ -477,6 +478,17 @@ internal class ProfilePresenterTest {
         navigator.test {
             testPresenter.dispatch(ProfileAction.ShowClicked(showId = 5L))
             awaitNavigateTo(ShowDetailsRoute(ShowDetailsParam(showId = 5L)))
+        }
+    }
+
+    @Test
+    fun `should navigate to the lists page given view lists is clicked`() = runTest {
+        val navigator = TestNavigator()
+        val testPresenter = createPresenter(navigator = navigator)
+
+        navigator.test {
+            testPresenter.dispatch(ProfileAction.ViewListsClicked)
+            awaitNavigateTo(ListsRoute)
         }
     }
 
