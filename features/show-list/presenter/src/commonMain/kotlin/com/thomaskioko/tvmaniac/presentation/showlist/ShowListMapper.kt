@@ -1,8 +1,5 @@
 package com.thomaskioko.tvmaniac.presentation.showlist
 
-import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
-import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
-import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -40,18 +37,5 @@ public class ShowListMapper(
         createListPlaceholder = localizer.getString(StringResourceKey.LabelWatchlistNewListPlaceholder),
         emptyListText = localizer.getString(StringResourceKey.LabelWatchlistEmptyList),
         listsHeaderText = localizer.getString(StringResourceKey.LabelWatchlistYourLists),
-        loginRequiredTitle = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredTitle),
-        loginRequiredMessage = localizer.getString(StringResourceKey.LabelWatchlistLoginRequiredMessage),
-    )
-
-    public fun authProviderOptions(simklEnabled: Boolean): ImmutableList<AuthProviderOption> =
-        buildList {
-            add(providerOption(SyncProviderSource.TRAKT))
-            if (simklEnabled) add(providerOption(SyncProviderSource.SIMKL))
-        }.toImmutableList()
-
-    private fun providerOption(provider: SyncProviderSource): AuthProviderOption = AuthProviderOption(
-        provider = provider,
-        label = localizer.getString(StringResourceKey.LabelAuthContinueWith, provider.displayName),
     )
 }

@@ -195,8 +195,8 @@ internal class Scenarios(
      * round-trip without pre-stubbing LOGGED_IN in `@Before`, so DefaultRootPresenter's
      * auth-state collector still observes real LOGGED_OUT to LOGGED_IN transition.
      */
-    fun stubAuthenticatedSyncOnSignIn() {
-        stubOnSignIn(SyncProviderSource.TRAKT)
+    fun stubAuthenticatedSyncOnSignIn(afterSession: () -> Unit = {}) {
+        stubOnSignIn(SyncProviderSource.TRAKT, afterSession)
     }
 
     /**
@@ -212,12 +212,13 @@ internal class Scenarios(
      * authenticated session, mirroring a live OAuth round-trip. Owns the only `graph.oAuthLauncher`
      * access so journey tests never reach into the launcher directly.
      */
-    fun stubOnSignIn(provider: SyncProviderSource) {
+    fun stubOnSignIn(provider: SyncProviderSource, afterSession: () -> Unit = {}) {
         graph.oAuthLauncher.setOnLaunch {
             when (provider) {
                 SyncProviderSource.TRAKT -> stubActiveProvider(SyncProviderSource.TRAKT)
                 SyncProviderSource.SIMKL -> stubAuthenticatedSimklProfile()
             }
+            afterSession()
         }
     }
 
@@ -362,6 +363,8 @@ internal class Scenarios(
             http.stubTraktAddShowToList(listId, slug)
 
         fun stubCreateList(slug: String = TEST_PROFILE_SLUG): Unit = http.stubTraktCreateList(slug)
+
+        fun stubListItems(listId: Long, slug: String = TEST_PROFILE_SLUG): Unit = http.stubTraktListItems(listId, slug)
     }
 
     inner class Flags {

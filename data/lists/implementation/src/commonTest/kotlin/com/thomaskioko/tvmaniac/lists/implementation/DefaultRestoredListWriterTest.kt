@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.lists.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
 import com.thomaskioko.tvmaniac.data.backup.api.model.BackupListShow
@@ -15,17 +16,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-internal class TraktRestoredListWriterTest {
+internal class DefaultRestoredListWriterTest {
 
     private val listRepository = FakeListRepository()
     private val listDao = RecordingListDao()
     private val userRepository = FakeUserRepository()
     private val traktIdResolver = FakeShowTraktIdResolver()
+    private var supportsLists = true
 
-    private val writer = TraktRestoredListWriter(
+    private val writer = DefaultRestoredListWriter(
         listRepository = listRepository,
         listDao = listDao,
         userRepository = userRepository,
+        activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
         traktIdResolver = traktIdResolver,
         logger = FakeLogger(),
     )
@@ -39,6 +42,16 @@ internal class TraktRestoredListWriterTest {
         restored shouldBe 1
         listRepository.createdListNames() shouldBe listOf(LIST_NAME)
         listRepository.toggledShows() shouldBe listOf(LIST_ID to BREAKING_BAD_TMDB_ID)
+    }
+
+    @Test
+    fun `should push to Trakt given a signed in user whose provider syncs lists`() = runTest {
+        listDao.createOnUpsertOf(name = LIST_NAME, id = LIST_ID)
+
+        writer.restoreLists(listOf(backupList()))
+
+        listRepository.lastCreateTraktSlug() shouldBe userRepository.getCurrentUser()?.slug
+        listRepository.lastToggleTraktSlug() shouldBe userRepository.getCurrentUser()?.slug
     }
 
     @Test
@@ -62,33 +75,27 @@ internal class TraktRestoredListWriterTest {
     }
 
     @Test
-    fun `should restore nothing given no user is signed in`() = runTest {
+    fun `should restore local lists given no user is signed in`() = runTest {
         userRepository.setUserProfile(null)
-
-        val restored = writer.restoreLists(listOf(backupList()))
-
-        restored shouldBe 0
-        listRepository.createdListNames().shouldBeEmpty()
-    }
-
-    @Test
-    fun `should skip a list given the provider refuses to create it`() = runTest {
-        listRepository.setCreateListFailure(IllegalStateException("boom"))
-
-        val restored = writer.restoreLists(listOf(backupList()))
-
-        restored shouldBe 0
-        listRepository.toggledShows().shouldBeEmpty()
-    }
-
-    @Test
-    fun `should keep the list given one member cannot be added`() = runTest {
         listDao.createOnUpsertOf(name = LIST_NAME, id = LIST_ID)
-        listRepository.setToggleFailure(IllegalArgumentException("no trakt id"))
 
         val restored = writer.restoreLists(listOf(backupList()))
 
         restored shouldBe 1
+        listRepository.createdListNames() shouldBe listOf(LIST_NAME)
+        listRepository.lastCreateTraktSlug() shouldBe null
+        listRepository.toggledShows() shouldBe listOf(LIST_ID to BREAKING_BAD_TMDB_ID)
+    }
+
+    @Test
+    fun `should create the list locally given the active provider does not sync lists`() = runTest {
+        supportsLists = false
+        listDao.createOnUpsertOf(name = LIST_NAME, id = LIST_ID)
+
+        val restored = writer.restoreLists(listOf(backupList()))
+
+        restored shouldBe 1
+        listRepository.lastCreateTraktSlug() shouldBe null
     }
 
     @Test
@@ -141,6 +148,12 @@ internal class TraktRestoredListWriterTest {
 
         override fun upsertByTraktId(entity: UserListEntity) {
             lists.value = lists.value.filterNot { it.traktId == entity.traktId } + entity
+        }
+
+        override fun insertLocal(name: String, createdAt: String): Long = pendingId
+
+        override fun markSynced(id: Long, traktId: Long, slug: String?) {
+            lists.value = lists.value.map { if (it.id == id) it.copy(traktId = traktId, slug = slug) else it }
         }
 
         override fun getTraktId(id: Long): Long? = lists.value.firstOrNull { it.id == id }?.traktId

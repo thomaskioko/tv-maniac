@@ -10,8 +10,10 @@ import com.thomaskioko.tvmaniac.lists.api.ListRepository
 import com.thomaskioko.tvmaniac.lists.api.ListShowDao
 import com.thomaskioko.tvmaniac.lists.api.UserList
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
+import com.thomaskioko.tvmaniac.shows.api.ShowTraktIdResolver
 import com.thomaskioko.tvmaniac.shows.api.TvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -26,11 +28,12 @@ import kotlinx.coroutines.withContext
 public class DefaultListRepository(
     private val traktListsStore: TraktListsStore,
     private val traktListItemsStore: TraktListItemsStore,
-    private val createTraktListStore: CreateTraktListStore,
     private val listDao: ListDao,
     private val listShowDao: ListShowDao,
     private val traktListRemoteDataSource: TraktListRemoteDataSource,
     private val tvShowsDao: TvShowsDao,
+    private val traktIdResolver: ShowTraktIdResolver,
+    private val dateTimeProvider: DateTimeProvider,
     private val dispatchers: AppCoroutineDispatchers,
 ) : ListRepository {
 
@@ -84,39 +87,30 @@ public class DefaultListRepository(
         }
     }
 
-    override suspend fun createList(slug: String, name: String) {
-        createTraktListStore.fresh(key = CreateTraktListParams(slug = slug, name = name))
+    override suspend fun createList(name: String, traktSlug: String?) {
+        withContext(dispatchers.io) {
+            val localId = listDao.insertLocal(name = name, createdAt = dateTimeProvider.now().toString())
+            if (traktSlug == null) return@withContext
+
+            when (val response = traktListRemoteDataSource.createList(userSlug = traktSlug, name = name)) {
+                is ApiResponse.Success -> listDao.markSynced(
+                    id = localId,
+                    traktId = response.body.ids.trakt.toLong(),
+                    slug = response.body.ids.slug,
+                )
+                else -> Unit
+            }
+        }
     }
 
-    override suspend fun toggleShowInList(slug: String, listId: Long, showId: Long, isCurrentlyInList: Boolean) {
+    override suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?) {
         withContext(dispatchers.io) {
-            val traktId = requireNotNull(tvShowsDao.getTraktIdByTmdbId(showId)) {
-                "Show $showId has no Trakt id mapping"
-            }
-            val listTraktId = requireNotNull(listDao.getTraktId(listId)) {
-                "List $listId has no Trakt id mapping"
-            }
             if (isCurrentlyInList) {
                 listShowDao.updatePendingAction(
                     listId = listId,
                     tmdbId = showId,
                     pendingAction = PendingAction.DELETE.value,
                 )
-                when (traktListRemoteDataSource.removeShowFromList(slug, listTraktId, traktId)) {
-                    is ApiResponse.Success -> {
-                        listShowDao.deleteByListIdAndTmdbId(
-                            listId = listId,
-                            tmdbId = showId,
-                        )
-                    }
-                    else -> {
-                        listShowDao.updatePendingAction(
-                            listId = listId,
-                            tmdbId = showId,
-                            pendingAction = PendingAction.NOTHING.value,
-                        )
-                    }
-                }
             } else {
                 listShowDao.upsert(
                     listId = listId,
@@ -124,21 +118,33 @@ public class DefaultListRepository(
                     listedAt = "",
                     pendingAction = PendingAction.UPLOAD.value,
                 )
-                when (traktListRemoteDataSource.addShowToList(slug, listTraktId, traktId)) {
-                    is ApiResponse.Success -> {
+            }
+
+            if (traktSlug == null) return@withContext
+            val listTraktId = listDao.getTraktId(listId) ?: return@withContext
+
+            traktIdResolver.resolveMissingTraktIds(listOf(showId))
+            val showTraktId = tvShowsDao.getTraktIdByTmdbId(showId) ?: return@withContext
+
+            val response = if (isCurrentlyInList) {
+                traktListRemoteDataSource.removeShowFromList(traktSlug, listTraktId, showTraktId)
+            } else {
+                traktListRemoteDataSource.addShowToList(traktSlug, listTraktId, showTraktId)
+            }
+
+            when (response) {
+                is ApiResponse.Success -> {
+                    if (isCurrentlyInList) {
+                        listShowDao.deleteByListIdAndTmdbId(listId = listId, tmdbId = showId)
+                    } else {
                         listShowDao.updatePendingAction(
                             listId = listId,
                             tmdbId = showId,
                             pendingAction = PendingAction.NOTHING.value,
                         )
                     }
-                    else -> {
-                        listShowDao.deleteByListIdAndTmdbId(
-                            listId = listId,
-                            tmdbId = showId,
-                        )
-                    }
                 }
+                else -> Unit
             }
         }
     }

@@ -92,7 +92,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
     }
 
     @Test
-    fun givenSimklSession_whenShowDetailsOpened_thenAddToListButtonIsDisabled() = runAppFlowTest {
+    fun givenSimklSession_whenAddToListClicked_thenShowsListSheet() = runAppFlowTest {
         scenarios.flags.enableSimklLogin()
         scenarios.discover.stubBrowseGraph()
         scenarios.stubAuthenticatedSimklProfile()
@@ -103,7 +103,10 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         showDetailsRobot
             .assertShowDetailsDisplayed()
-            .assertAddToListButtonDisabled()
+            .clickAddToListButton()
+
+        showListRobot
+            .assertSheetDisplayed()
     }
 
     @Test

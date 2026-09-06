@@ -1,5 +1,6 @@
 package com.thomaskioko.tvmaniac.lists.implementation
 
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.data.backup.api.RestoredListWriter
 import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
@@ -14,10 +15,11 @@ import kotlinx.coroutines.flow.first
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-public class TraktRestoredListWriter(
+public class DefaultRestoredListWriter(
     private val listRepository: ListRepository,
     private val listDao: ListDao,
     private val userRepository: UserRepository,
+    private val activeProviderFeatures: () -> ProviderFeatures,
     private val traktIdResolver: ShowTraktIdResolver,
     private val logger: Logger,
 ) : RestoredListWriter {
@@ -25,22 +27,18 @@ public class TraktRestoredListWriter(
     override suspend fun restoreLists(lists: List<BackupList>): Int {
         if (lists.isEmpty()) return 0
 
-        val slug = userRepository.getCurrentUser()?.slug
-        if (slug == null) {
-            logger.debug(TAG, "No signed in user, leaving ${lists.size} lists unrestored")
-            return 0
-        }
+        val traktSlug = if (activeProviderFeatures().supportsLists) userRepository.getCurrentUser()?.slug else null
 
         traktIdResolver.resolveMissingTraktIds(lists.flatMap { list -> list.shows.map { it.tmdbId } }.distinct())
 
         var restored = 0
         for (list in lists) {
-            val listId = existingListId(list.name) ?: createList(slug, list.name)
+            val listId = existingListId(list.name) ?: createList(name = list.name, traktSlug = traktSlug)
             if (listId == null) {
                 logger.warning(TAG, "Could not create list ${list.name}")
                 continue
             }
-            addMembers(slug = slug, listId = listId, list = list)
+            addMembers(traktSlug = traktSlug, listId = listId, list = list)
             restored++
         }
         return restored
@@ -49,31 +47,23 @@ public class TraktRestoredListWriter(
     private suspend fun existingListId(name: String): Long? =
         listDao.observeAll().first().firstOrNull { it.name == name }?.id
 
-    private suspend fun createList(slug: String, name: String): Long? {
-        val created = runCatching { listRepository.createList(slug = slug, name = name) }
-        if (created.isFailure) {
-            logger.warning(TAG, "Creating list $name failed: ${created.exceptionOrNull()?.message}")
-            return null
-        }
+    private suspend fun createList(name: String, traktSlug: String?): Long? {
+        listRepository.createList(name = name, traktSlug = traktSlug)
         return existingListId(name)
     }
 
-    private suspend fun addMembers(slug: String, listId: Long, list: BackupList) {
+    private suspend fun addMembers(traktSlug: String?, listId: Long, list: BackupList) {
         list.shows.forEach { show ->
-            runCatching {
-                listRepository.toggleShowInList(
-                    slug = slug,
-                    listId = listId,
-                    showId = show.tmdbId,
-                    isCurrentlyInList = false,
-                )
-            }.onFailure {
-                logger.warning(TAG, "Adding ${show.tmdbId} to ${list.name} failed: ${it.message}")
-            }
+            listRepository.toggleShowInList(
+                listId = listId,
+                showId = show.tmdbId,
+                isCurrentlyInList = false,
+                traktSlug = traktSlug,
+            )
         }
     }
 
     private companion object {
-        private const val TAG = "TraktRestoredListWriter"
+        private const val TAG = "DefaultRestoredListWriter"
     }
 }

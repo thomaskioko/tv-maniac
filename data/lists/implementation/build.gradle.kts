@@ -16,6 +16,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.util.api)
                 api(projects.core.logger.api)
+                api(projects.data.accountManager.api)
                 api(projects.data.backup.api)
                 api(projects.data.database.sqldelight)
                 api(projects.data.requestManager.api)
@@ -33,6 +34,7 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.unittest)
                 implementation(projects.core.util.testing)
+                implementation(projects.data.accountManager.testing)
                 implementation(projects.data.database.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.core.logger.testing)

@@ -2,8 +2,6 @@ package com.thomaskioko.tvmaniac.app.test.compose.robot
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.onNodeWithTag
 import com.thomaskioko.tvmaniac.testing.integration.ui.BaseRobot
 import com.thomaskioko.tvmaniac.testtags.showdetails.ShowDetailsTestTags
 
@@ -122,15 +120,6 @@ internal class ShowDetailsRobot(composeUi: ComposeUiTest) : BaseRobot<ShowDetail
     fun assertWatchAgainDoesNotExist() = apply {
         clickMoreButton()
         assertDoesNotExist(ShowDetailsTestTags.WATCH_AGAIN_BUTTON_TEST_TAG)
-    }
-
-    fun assertAddToListButtonDisabled() = apply {
-        val tag = ShowDetailsTestTags.ADD_TO_LIST_BUTTON_TEST_TAG
-        scrollDownUntilTag(
-            listTag = ShowDetailsTestTags.SHOW_DETAILS_SCREEN_TEST_TAG,
-            itemTag = tag,
-        )
-        composeUi.onNodeWithTag(tag).assertIsNotEnabled()
     }
 
     fun clickSeasonChip(seasonNumber: Long): SeasonDetailsRobot {

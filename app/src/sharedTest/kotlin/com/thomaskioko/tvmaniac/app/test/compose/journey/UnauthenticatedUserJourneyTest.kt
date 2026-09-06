@@ -195,25 +195,25 @@ internal class UnauthenticatedUserJourneyTest : BaseAppFlowTest() {
             .assertShowCardDisplayed(breakingBadTmdbId)
             .clickShowCard(breakingBadTmdbId)
             .assertStopTrackingButtonDisplayed()
-            // Raise login-required content inside the sheet and confirm login
-            .also { scenarios.stubProfileOnSignIn() }
             .clickAddToListButton()
 
         showListRobot
             .assertSheetDisplayed()
-            .assertLoginRequiredDisplayed()
-            .confirmLogin()
-            .assertLoginRequiredDoesNotExist()
             .clickCloseSheetButton()
             .assertSheetDoesNotExist()
 
         showDetailsRobot.pressBack()
 
+        scenarios.stubProfileOnSignIn()
+
         homeRobot
             .clickProfileTab()
             .assertTabSelected(HomeTestTags.PROFILE_TAB)
 
-        profileRobot.assertUserCardDisplayed(slug = "integration-test-user")
+        profileRobot
+            .assertSignInButtonDisplayed()
+            .clickSignInButton()
+            .assertUserCardDisplayed(slug = "integration-test-user")
     }
 
     @Test

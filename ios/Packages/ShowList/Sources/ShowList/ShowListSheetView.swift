@@ -17,37 +17,31 @@ public struct ShowListSheetView: View {
 
     public var body: some View {
         NavigationStack {
-            Group {
-                if state.isLoggedIn {
-                    loggedInContent
-                } else {
-                    loginRequiredContent
-                }
-            }
-            .background(.appBackground)
-            .navigationTitle(state.labels.sheetTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.appSurface, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(action: { presenter.dispatch(action: ShowListActionDismiss()) }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.appAccent)
+            loggedInContent
+                .background(.appBackground)
+                .navigationTitle(state.labels.sheetTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.appSurface, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: { presenter.dispatch(action: ShowListActionDismiss()) }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.appAccent)
+                        }
                     }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    if state.isLoggedIn, !state.showCreateListField {
-                        Button(action: { presenter.dispatch(action: ShowListActionShowCreateListField()) }) {
-                            Image(systemName: "plus")
-                                .foregroundStyle(.appOnAccent)
-                                .frame(width: 28, height: 28)
-                                .background(.appAccent)
-                                .clipShape(Circle())
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if !state.showCreateListField {
+                            Button(action: { presenter.dispatch(action: ShowListActionShowCreateListField()) }) {
+                                Image(systemName: "plus")
+                                    .foregroundStyle(.appOnAccent)
+                                    .frame(width: 28, height: 28)
+                                    .background(.appAccent)
+                                    .clipShape(Circle())
+                            }
                         }
                     }
                 }
-            }
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
@@ -190,26 +184,5 @@ public struct ShowListSheetView: View {
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
         }
-    }
-
-    private var loginRequiredContent: some View {
-        VStack {
-            Spacer()
-            ProviderSignInCard(
-                title: state.labels.loginRequiredTitle,
-                description: state.labels.loginRequiredMessage,
-                providers: state.authProviders.map { option in
-                    SwiftAuthProvider(
-                        id: option.provider.name,
-                        label: option.label,
-                        logoName: option.provider.name == "SIMKL" ? "SimklMono" : "TraktMono"
-                    )
-                }
-            ) { id in
-                presenter.dispatch(action: ShowListActionLogin(provider: id == "SIMKL" ? .simkl : .trakt))
-            }
-            Spacer()
-        }
-        .padding()
     }
 }

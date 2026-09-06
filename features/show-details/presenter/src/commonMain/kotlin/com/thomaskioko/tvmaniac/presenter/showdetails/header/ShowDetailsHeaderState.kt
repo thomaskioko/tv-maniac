@@ -20,7 +20,6 @@ public data class ShowDetailsHeaderState(
     val userRating: Int? = null,
     val isInLibrary: Boolean = false,
     val genres: ImmutableList<String> = persistentListOf(),
-    val canAddToList: Boolean = false,
     val isInList: Boolean = false,
     val listActionLabel: String = "",
     val rewatchCount: Int = 0,

@@ -58,6 +58,8 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     private lateinit var rewatchSessionDao: DefaultRewatchSessionDao
     private var showIdForBreakingBad: Id<ShowId> = Id(0L)
     private var showIdForTheWire: Id<ShowId> = Id(0L)
+    private var syncedListId: Long = 0L
+    private var localOnlyListId: Long = 0L
 
     @BeforeTest
     fun setUp() {
@@ -154,11 +156,20 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should clear trakt lists given the user logs out`() = runTest(testDispatcher) {
+    fun `should clear synced lists and their items given the user logs out`() = runTest(testDispatcher) {
         cleaner.clearAccountData()
 
-        database.listsQueries.selectAll().executeAsList().shouldBeEmpty()
-        database.listShowsQueries.countActiveByListId().executeAsList().shouldBeEmpty()
+        database.listsQueries.selectAll().executeAsList().none { it.id == syncedListId } shouldBe true
+        database.listShowsQueries.countActiveByListId().executeAsList().none { it.list_id == syncedListId } shouldBe true
+    }
+
+    @Test
+    fun `should keep local-only lists and their items given the user logs out`() = runTest(testDispatcher) {
+        cleaner.clearAccountData()
+
+        database.listsQueries.selectAll().executeAsList().any { it.id == localOnlyListId } shouldBe true
+        database.listShowsQueries.countActiveByListId().executeAsList()
+            .first { it.list_id == localOnlyListId }.show_count shouldBe 1L
     }
 
     @Test
@@ -268,11 +279,11 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should clear favorites lists and calendar given the user switches accounts`() = runTest(testDispatcher) {
+    fun `should clear favorites and synced lists and calendar given the user switches accounts`() = runTest(testDispatcher) {
         cleaner.clearAccountAndTrackingData()
 
         database.favoritesQueries.favoriteShows().executeAsList().shouldBeEmpty()
-        database.listsQueries.selectAll().executeAsList().shouldBeEmpty()
+        database.listsQueries.selectAll().executeAsList().none { it.id == syncedListId } shouldBe true
         database.calendarQueries.hasEntriesInRange(0L, Long.MAX_VALUE).executeAsOne() shouldBe false
     }
 
@@ -343,13 +354,23 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             1L,
             "2024-01-01T00:00:00Z",
         )
-        val localListId = database.listsQueries.lastInsertRowId().executeAsOne()
+        syncedListId = database.listsQueries.lastInsertRowId().executeAsOne()
 
         database.listShowsQueries.upsert(
-            localListId,
+            syncedListId,
             Id<TmdbId>(BREAKING_BAD_TMDB_ID),
             "2024-01-01T00:00:00Z",
             PendingAction.NOTHING.value,
+        )
+
+        database.listsQueries.insertLocal(name = "Local only", createdAt = "2024-01-01T00:00:00Z")
+        localOnlyListId = database.listsQueries.lastInsertRowId().executeAsOne()
+
+        database.listShowsQueries.upsert(
+            localOnlyListId,
+            Id<TmdbId>(THE_WIRE_TMDB_ID),
+            "2024-01-01T00:00:00Z",
+            PendingAction.UPLOAD.value,
         )
 
         database.showWatchStatusQueries.upsert(

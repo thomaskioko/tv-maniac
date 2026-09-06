@@ -93,7 +93,7 @@ internal fun ShowListSheetTopBar(
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         )
 
-        if (state.isLoggedIn && !state.showCreateListField) {
+        if (!state.showCreateListField) {
             IconButton(
                 onClick = { onAction(ShowListAction.ShowCreateListField) },
                 modifier = Modifier.testTag(ShowListTestTags.CREATE_LIST_BUTTON_TEST_TAG),

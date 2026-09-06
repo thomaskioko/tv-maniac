@@ -3,9 +3,10 @@ package com.thomaskioko.tvmaniac.presentation.showlist
 import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
-import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAuthManager
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
@@ -14,7 +15,6 @@ import com.thomaskioko.tvmaniac.domain.lists.CreateListInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ObserveListsForShowInteractor
 import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
-import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.lists.api.UserList
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
@@ -42,9 +42,7 @@ internal class ShowListPresenterTest {
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
     private val listRepository = FakeListRepository()
     private val accountManager = FakeAccountManager()
-    private val authManager = FakeAuthManager()
-    private val simklAuthManager = FakeAuthManager(SyncProviderSource.SIMKL)
-    private val simklFlag = FakeFeatureFlag(initial = false)
+    private var providerFeatures: ProviderFeatures = FakeProviderFeatures(supportsLists = true)
     private val userRepository = FakeUserRepository()
     private val localizer = FakeLocalizer()
     private val logger = FakeLogger()
@@ -69,8 +67,6 @@ internal class ShowListPresenterTest {
 
         initial.isLoading shouldBe true
         initial.labels.sheetTitle.isNotEmpty() shouldBe true
-        initial.labels.loginRequiredTitle.isNotEmpty() shouldBe true
-        initial.labels.loginRequiredMessage.isNotEmpty() shouldBe true
         initial.labels.emptyListText.isNotEmpty() shouldBe true
         initial.labels.listsHeaderText.isNotEmpty() shouldBe true
         initial.labels.createListButtonText.isNotEmpty() shouldBe true
@@ -93,15 +89,38 @@ internal class ShowListPresenterTest {
     }
 
     @Test
-    fun `should emit logged-out state given user is not logged in`() = runTest {
+    fun `should emit lists given no account is connected`() = runTest {
+        listRepository.setListsForShow(listOf(userList(id = 1L)))
+
         val presenter = createPresenter()
 
         presenter.state.test {
             testDispatcher.scheduler.advanceUntilIdle()
             val state = expectMostRecentItem()
 
-            state.isLoggedIn shouldBe false
-            state.lists shouldHaveSize 0
+            state.lists shouldHaveSize 1
+            state.lists[0].id shouldBe 1L
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should emit lists and open the create field given a Simkl session`() = runTest {
+        accountManager.setActiveProvider(SyncProviderSource.SIMKL)
+        providerFeatures = FakeProviderFeatures(supportsLists = false)
+        listRepository.setListsForShow(listOf(userList(id = 1L)))
+
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            testDispatcher.scheduler.advanceUntilIdle()
+            expectMostRecentItem().lists shouldHaveSize 1
+
+            presenter.dispatch(ShowListAction.ShowCreateListField)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            expectMostRecentItem().showCreateListField shouldBe true
+            listRepository.fetchUserListsInvocations shouldBe 0
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -128,7 +147,6 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val state = expectMostRecentItem()
 
-            state.isLoggedIn shouldBe true
             state.lists shouldHaveSize 1
             state.lists[0].id shouldBe 1L
             state.lists[0].name shouldBe "Watchlist"
@@ -186,44 +204,6 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
 
             listRepository.fetchUserListsInvocations shouldBe 1
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `should launch web view given Login is dispatched`() = runTest {
-        var launchCount = 0
-        authManager.setOnLaunchWebView { launchCount += 1 }
-
-        val presenter = createPresenter()
-
-        presenter.state.test {
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem()
-
-            presenter.dispatch(ShowListAction.Login(SyncProviderSource.TRAKT))
-
-            launchCount shouldBe 1
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `should launch the chosen provider given a non default provider`() = runTest {
-        var traktLaunches = 0
-        var simklLaunches = 0
-        authManager.setOnLaunchWebView { traktLaunches += 1 }
-        simklAuthManager.setOnLaunchWebView { simklLaunches += 1 }
-        val presenter = createPresenter()
-
-        presenter.state.test {
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem()
-
-            presenter.dispatch(ShowListAction.Login(SyncProviderSource.SIMKL))
-
-            simklLaunches shouldBe 1
-            traktLaunches shouldBe 0
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -328,7 +308,7 @@ internal class ShowListPresenterTest {
     }
 
     @Test
-    fun `should not crash given ToggleShowInList is dispatched while logged out`() = runTest {
+    fun `should invoke toggle interactor given ToggleShowInList is dispatched with no account`() = runTest {
         val presenter = createPresenter()
 
         presenter.state.test {
@@ -340,6 +320,7 @@ internal class ShowListPresenterTest {
             )
             testDispatcher.scheduler.advanceUntilIdle()
 
+            listRepository.toggledShows() shouldHaveSize 1
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -478,28 +459,6 @@ internal class ShowListPresenterTest {
         }
     }
 
-    @Test
-    fun `should expose only the trakt option given the simkl flag is off`() = runTest {
-        val presenter = createPresenter()
-        presenter.state.test {
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().authProviders.map { it.provider } shouldBe listOf(SyncProviderSource.TRAKT)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `should expose both provider options given the simkl flag is on`() = runTest {
-        simklFlag.value = true
-        val presenter = createPresenter()
-        presenter.state.test {
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectMostRecentItem().authProviders.map { it.provider } shouldBe
-                listOf(SyncProviderSource.TRAKT, SyncProviderSource.SIMKL)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
     private fun createPresenter(
         showId: Long = 100L,
         appScopeLauncher: FakeAppScopeLauncher = FakeAppScopeLauncher(appCoroutineScope),
@@ -509,14 +468,21 @@ internal class ShowListPresenterTest {
         observeListsForShowInteractor = ObserveListsForShowInteractor(listRepository),
         navigator = navigator,
         accountManager = accountManager,
-        authManagers = mapOf(SyncProviderSource.TRAKT to authManager, SyncProviderSource.SIMKL to simklAuthManager),
-        simklLoginFlag = simklFlag,
-        syncListsInteractor = SyncListsInteractor(listRepository, userRepository),
-        createListInteractor = CreateListInteractor(listRepository, userRepository),
-        toggleShowInListInteractor = ToggleShowInListInteractor(listRepository, userRepository),
+        syncListsInteractor = SyncListsInteractor(listRepository, userRepository) { providerFeatures },
+        createListInteractor = CreateListInteractor(listRepository, userRepository) { providerFeatures },
+        toggleShowInListInteractor = ToggleShowInListInteractor(listRepository, userRepository) { providerFeatures },
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         mapper = ShowListMapper(localizer),
         logger = logger,
         appScopeLauncher = appScopeLauncher,
+    )
+
+    private fun userList(id: Long): UserList = UserList(
+        id = id,
+        slug = "list-$id",
+        name = "List $id",
+        description = null,
+        itemCount = 0L,
+        isShowInList = false,
     )
 }

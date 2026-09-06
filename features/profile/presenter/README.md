@@ -240,6 +240,7 @@ graph TB
   :domain:library --> :domain:showdetails
   :domain:library --> :domain:sync-activity
   :domain:lists --> :core:base
+  :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
   :domain:lists --> :data:user:api
   :domain:recently-watched --> :core:base

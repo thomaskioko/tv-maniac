@@ -333,7 +333,6 @@ internal class ShowDetailsPresenterTest : BaseLocalizerTest() {
             ),
             notificationManager = notificationManager,
             accountManager = accountManager,
-            activeProviderFeatures = { FakeProviderFeatures(supportsLists = true) },
             localizer = localizer,
             errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
             logger = FakeLogger(),

@@ -165,7 +165,6 @@ private fun ShowBody(
 
             ShowDetailButtons(
                 isFollowed = state.isInLibrary,
-                canAddToList = state.canAddToList,
                 isInList = state.isInList,
                 listActionLabel = state.listActionLabel,
                 onTrackShowClicked = { onAction(ShowDetailsFollowClicked(state.isInLibrary)) },
@@ -341,7 +340,6 @@ private fun GenreText(
 @Composable
 internal fun ShowDetailButtons(
     isFollowed: Boolean,
-    canAddToList: Boolean,
     isInList: Boolean,
     listActionLabel: String,
     onTrackShowClicked: (Boolean) -> Unit,
@@ -390,7 +388,6 @@ internal fun ShowDetailButtons(
             containerColor = if (isInList) TvManiacTheme.colorScheme.success else MaterialTheme.colorScheme.secondary,
             contentColor = if (isInList) TvManiacTheme.colorScheme.onSuccess else MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.labelMedium,
-            enabled = canAddToList,
             onClick = onAddToList,
         )
 

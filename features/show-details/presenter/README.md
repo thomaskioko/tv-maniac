@@ -211,6 +211,7 @@ graph TB
   :domain:episode --> :data:rewatch:api
   :domain:episode --> :domain:rewatch
   :domain:lists --> :core:base
+  :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
   :domain:lists --> :data:user:api
   :domain:notifications --> :core:base

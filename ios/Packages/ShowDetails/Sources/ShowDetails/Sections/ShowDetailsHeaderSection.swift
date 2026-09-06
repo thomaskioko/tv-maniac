@@ -16,7 +16,6 @@ struct ShowDetailsHeaderSection: View {
     var body: some View {
         ShowInfoView(
             isFollowed: state.isInLibrary,
-            canAddToList: state.canAddToList,
             isInList: state.isInList,
             genres: Array(state.genres).map { $0.toSwift() },
             trackLabel: String(\.following),

@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeShowTraktIdResolver
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.IdsResponse
@@ -28,9 +29,9 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -58,6 +59,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     private lateinit var remoteDataSource: FakeRemoteDataSource
     private lateinit var requestManager: FakeRequestManagerRepository
     private lateinit var tvShowsDao: FakeTvShowsDao
+    private lateinit var traktIdResolver: FakeShowTraktIdResolver
     private lateinit var repository: DefaultListRepository
 
     @BeforeTest
@@ -68,6 +70,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         remoteDataSource = FakeRemoteDataSource()
         requestManager = FakeRequestManagerRepository().apply { requestValid = false }
         tvShowsDao = FakeTvShowsDao()
+        traktIdResolver = FakeShowTraktIdResolver()
 
         val listsStore = TraktListsStore(
             traktListDataSource = remoteDataSource,
@@ -85,19 +88,15 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
         )
-        val createStore = CreateTraktListStore(
-            traktListRemoteDataSource = remoteDataSource,
-            listDao = listDao,
-            dateTimeProvider = FakeDateTimeProvider(),
-        )
         repository = DefaultListRepository(
             traktListsStore = listsStore,
             traktListItemsStore = itemsStore,
-            createTraktListStore = createStore,
             listDao = listDao,
             listShowDao = showDao,
             traktListRemoteDataSource = remoteDataSource,
             tvShowsDao = tvShowsDao,
+            traktIdResolver = traktIdResolver,
+            dateTimeProvider = FakeDateTimeProvider(),
             dispatchers = dispatchers,
         )
     }
@@ -273,13 +272,32 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should keep one list given the same Trakt list is created twice`() = runTest {
-        repository.createList(slug = "user", name = "Favorites")
-        repository.createList(slug = "user", name = "Favorites")
+    fun `should leave a local-only list untouched given a lists sync absent from the response`() = runTest {
+        repository.createList(name = "Local only", traktSlug = null)
+        val localListId = listDao.observeAll().first().single().id
+        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 0))
+        remoteDataSource.itemsByListId = mapOf(1L to emptyList())
 
-        val lists = repository.observeLists().first()
-        lists.size shouldBe 1
-        lists.single().traktId shouldBe 34223248L
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+
+        val lists = listDao.observeAll().first()
+        lists.any { it.id == localListId && it.traktId == null } shouldBe true
+        database.listsQueries.selectById(localListId).executeAsOne().pending_action shouldBe PendingAction.UPLOAD.value
+    }
+
+    @Test
+    fun `should leave a local-only list's items untouched given an items sync runs`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        repository.createList(name = "Local only", traktSlug = null)
+        val localListId = listDao.observeAll().first().single().id
+        repository.toggleShowInList(listId = localListId, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 0))
+        remoteDataSource.itemsByListId = mapOf(1L to emptyList())
+
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+
+        val entries = showDao.observeByShowId(100L).first()
+        entries.any { it.listId == localListId && it.pendingAction == PendingAction.UPLOAD.value } shouldBe true
     }
 
     @Test
@@ -316,11 +334,44 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should write a pending local row given no Trakt slug`() = runTest {
+        repository.createList(name = "Comfort watches", traktSlug = null)
+
+        val list = listDao.observeAll().first().single()
+        list.traktId.shouldBeNull()
+        database.listsQueries.selectById(list.id).executeAsOne().pending_action shouldBe PendingAction.UPLOAD.value
+    }
+
+    @Test
+    fun `should push and clear the marker given a Trakt slug and a successful response`() = runTest {
+        repository.createList(name = "Favorites", traktSlug = "sean")
+
+        val list = listDao.observeAll().first().single()
+        list.traktId shouldBe CREATED_LIST_TRAKT_ID
+        database.listsQueries.selectById(list.id).executeAsOne().pending_action shouldBe PendingAction.NOTHING.value
+    }
+
+    @Test
+    fun `should keep the pending row given the push fails`() = runTest {
+        remoteDataSource.createListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+
+        repository.createList(name = "Favorites", traktSlug = "sean")
+
+        val list = listDao.observeAll().first().single()
+        list.traktId.shouldBeNull()
+        database.listsQueries.selectById(list.id).executeAsOne().pending_action shouldBe PendingAction.UPLOAD.value
+    }
+
+    @Test
     fun `should store trakt id and call remote with trakt id given show is added to list`() = runTest {
         addShow(tmdbId = 100L, traktId = 10L)
         addList(listId = 1L)
 
-        repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = false)
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = "sean")
 
         remoteDataSource.addToListCalls shouldBe listOf(Triple("sean", 1L, 10L))
         val lists = repository.observeListsForShow(showId = 100L).first()
@@ -333,7 +384,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         addShow(tmdbId = 100L, traktId = 10L)
         addList(listId = 1L)
 
-        repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = false)
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = "sean")
 
         remoteDataSource.itemsByListId = mapOf(
             1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
@@ -345,7 +396,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should revert junction entry given remote add fails`() = runTest {
+    fun `should keep UPLOAD given the push fails on add`() = runTest {
         addShow(tmdbId = 100L, traktId = 10L)
         addList(listId = 1L)
         remoteDataSource.addToListResponse = ApiResponse.Error.HttpError(
@@ -354,11 +405,11 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
             errorMessage = "server error",
         )
 
-        repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = false)
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = "sean")
 
         val lists = repository.observeListsForShow(showId = 100L).first()
-        lists.first { it.id == 1L }.isShowInList shouldBe false
-        showDao.countPendingActions() shouldBe 0L
+        lists.first { it.id == 1L }.isShowInList shouldBe true
+        showDao.countPendingActions() shouldBe 1L
     }
 
     @Test
@@ -367,7 +418,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         addList(listId = 1L)
         showDao.upsertSynced(listId = 1L, tmdbId = 100L, listedAt = "")
 
-        repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = true)
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = true, traktSlug = "sean")
 
         remoteDataSource.removeFromListCalls shouldBe listOf(Triple("sean", 1L, 10L))
         val lists = repository.observeListsForShow(showId = 100L).first()
@@ -375,7 +426,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun `should restore junction entry given remote remove fails`() = runTest {
+    fun `should keep DELETE given the push fails on remove`() = runTest {
         addShow(tmdbId = 100L, traktId = 10L)
         addList(listId = 1L)
         showDao.upsertSynced(listId = 1L, tmdbId = 100L, listedAt = "")
@@ -385,20 +436,76 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
             errorMessage = "server error",
         )
 
-        repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = true)
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = true, traktSlug = "sean")
 
         val lists = repository.observeListsForShow(showId = 100L).first()
-        lists.first { it.id == 1L }.isShowInList shouldBe true
-        showDao.countPendingActions() shouldBe 0L
+        lists.first { it.id == 1L }.isShowInList shouldBe false
+        showDao.countPendingActions() shouldBe 1L
     }
 
     @Test
-    fun `should fail given show has no trakt id mapping`() = runTest {
+    fun `should write the row and stay pending given the show has no Trakt id`() = runTest {
         addList(listId = 1L)
 
-        shouldThrow<IllegalArgumentException> {
-            repository.toggleShowInList(slug = "sean", listId = 1L, showId = 100L, isCurrentlyInList = false)
-        }
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = "sean")
+
+        val lists = repository.observeListsForShow(showId = 100L).first()
+        lists.first { it.id == 1L }.isShowInList shouldBe true
+        showDao.countPendingActions() shouldBe 1L
+        remoteDataSource.addToListCalls.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should count local items given a list has no Trakt id`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.toggleShowInList(listId = listId, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+
+        repository.observeLists().first().single().itemCount shouldBe 1L
+    }
+
+    @Test
+    fun `should ignore pending items on local-only lists given pending changes are counted`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.toggleShowInList(listId = listId, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+
+        repository.countPendingListShows() shouldBe 0L
+    }
+
+    @Test
+    fun `should mark the row pending upload given a show pending delete is added again`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
+        showDao.upsertSynced(listId = 1L, tmdbId = 100L, listedAt = "")
+        remoteDataSource.removeFromListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = true, traktSlug = "sean")
+
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+
+        showDao.observeByShowId(100L).first().single().pendingAction shouldBe PendingAction.UPLOAD.value
+        repository.observeListsForShow(showId = 100L).first().first { it.id == 1L }.isShowInList shouldBe true
+    }
+
+    @Test
+    fun `should write locally and never call Trakt given no Trakt slug`() = runTest {
+        addShow(tmdbId = 100L, traktId = 10L)
+        addList(listId = 1L)
+
+        repository.toggleShowInList(listId = 1L, showId = 100L, isCurrentlyInList = false, traktSlug = null)
+
+        val lists = repository.observeListsForShow(showId = 100L).first()
+        lists.first { it.id == 1L }.isShowInList shouldBe true
+        showDao.countPendingActions() shouldBe 1L
+        remoteDataSource.addToListCalls.shouldBeEmpty()
     }
 
     private fun addShow(tmdbId: Long, traktId: Long) {
@@ -453,6 +560,10 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
             ids = IdsResponse(slug = "show-$traktId", trakt = traktId, tmdb = tmdbId),
         ),
     )
+
+    private companion object {
+        private const val CREATED_LIST_TRAKT_ID = 34223248L
+    }
 }
 
 private class FakeRemoteDataSource : TraktListRemoteDataSource {

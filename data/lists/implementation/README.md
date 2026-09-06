@@ -77,6 +77,7 @@ graph TB
   :data:lists:implementation --> :core:logger:api
   :data:lists:implementation -.-> :core:network-util:api
   :data:lists:implementation --> :core:util:api
+  :data:lists:implementation --> :data:account-manager:api
   :data:lists:implementation --> :data:backup:api
   :data:lists:implementation --> :data:database:sqldelight
   :data:lists:implementation -.-> :data:followedshows:api
