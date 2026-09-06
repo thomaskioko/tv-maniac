@@ -49,6 +49,7 @@ public enum ScreenRegistryBootstrap {
         registry.registerScreen(for: TrailersPresenter.self) { TrailersView(presenter: $0) }
         registry.registerScreen(for: StatisticsPresenter.self) { StatisticsView(presenter: $0) }
         registry.registerScreen(for: ListsPresenter.self) { ListsView(presenter: $0) }
+        registry.registerScreen(for: ListDetailPresenter.self) { ListDetailView(presenter: $0) }
     }
 
     private static func registerSheets(into registry: ScreenRegistry) {

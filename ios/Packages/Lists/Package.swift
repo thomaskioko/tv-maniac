@@ -17,6 +17,7 @@ let package = Package(
     dependencies: [
         .package(name: "DesignSystem", path: "../DesignSystem"),
         .package(name: "Components", path: "../Components"),
+        .package(name: "Models", path: "../Models"),
         .package(name: "TvManiacKit", path: "../TvManiacKit"),
         .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
         .package(name: "SnapshotTestingLib", path: "../SnapshotTestingLib"),
@@ -27,6 +28,7 @@ let package = Package(
             dependencies: [
                 "DesignSystem",
                 "Components",
+                "Models",
                 "TvManiacKit",
                 .product(name: "TvManiac", package: "TvManiacFramework"),
             ]
@@ -38,6 +40,7 @@ let package = Package(
                 "Lists",
                 "DesignSystem",
                 "Components",
+                "Models",
                 .product(name: "TvManiac", package: "TvManiacFramework"),
             ],
             exclude: ["__Snapshots__"]

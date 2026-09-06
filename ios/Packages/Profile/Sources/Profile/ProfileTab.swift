@@ -23,6 +23,9 @@ public struct ProfileTab: View {
                 presenter.dispatch(action: ProfileActionLoginClicked(provider: id == "SIMKL" ? .simkl : .trakt))
             },
             onViewListsClicked: { presenter.dispatch(action: ProfileActionViewListsClicked()) },
+            onListClicked: { listId, name in
+                presenter.dispatch(action: ProfileActionListClicked(listId: listId, name: name))
+            },
             onRetryLists: { presenter.dispatch(action: ProfileActionRefreshProfile()) },
             onShowClicked: { showId in presenter.dispatch(action: ProfileActionShowClicked(showId: showId)) },
             onRetryProgress: { presenter.dispatch(action: ProfileActionRefreshProfile()) },

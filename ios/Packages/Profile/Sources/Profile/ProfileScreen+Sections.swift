@@ -49,7 +49,7 @@ extension ProfileScreen {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: appTheme.spacing.small) {
                     ForEach(lists) { list in
-                        ListCollageCard(list: list, onClick: {})
+                        ListCollageCard(list: list, onClick: { onListClicked(list.id, list.name) })
                     }
                 }
                 .padding(.horizontal, appTheme.spacing.medium)

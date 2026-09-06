@@ -11,6 +11,7 @@ public struct ProfileScreen: View {
     let onSettingsClicked: () -> Void
     let onProviderSelected: (String) -> Void
     let onViewListsClicked: () -> Void
+    let onListClicked: (Int64, String) -> Void
     let onRetryLists: () -> Void
     let onShowClicked: (Int64) -> Void
     let onRetryProgress: () -> Void
@@ -21,6 +22,7 @@ public struct ProfileScreen: View {
         onSettingsClicked: @escaping () -> Void,
         onProviderSelected: @escaping (String) -> Void,
         onViewListsClicked: @escaping () -> Void = {},
+        onListClicked: @escaping (Int64, String) -> Void = { _, _ in },
         onRetryLists: @escaping () -> Void = {},
         onShowClicked: @escaping (Int64) -> Void = { _ in },
         onRetryProgress: @escaping () -> Void = {},
@@ -30,6 +32,7 @@ public struct ProfileScreen: View {
         self.onSettingsClicked = onSettingsClicked
         self.onProviderSelected = onProviderSelected
         self.onViewListsClicked = onViewListsClicked
+        self.onListClicked = onListClicked
         self.onRetryLists = onRetryLists
         self.onShowClicked = onShowClicked
         self.onRetryProgress = onRetryProgress

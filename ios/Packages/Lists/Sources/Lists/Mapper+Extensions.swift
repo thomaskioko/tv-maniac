@@ -1,4 +1,5 @@
 import Components
+import Models
 import TvManiac
 
 extension ListsState {
@@ -20,6 +21,23 @@ extension UserListItem {
             name: name,
             itemCountLabel: itemCountLabel,
             posterUrls: posterUrls
+        )
+    }
+}
+
+extension ListShow {
+    func toSwift() -> ShowPosterImage {
+        .init(showId: tmdbId, title: title, posterUrl: posterUrl)
+    }
+}
+
+extension RemoveConfirmation {
+    func toSwift() -> ListDetailScreen.RemoveConfirmation {
+        .init(
+            tmdbId: tmdbId,
+            title: title,
+            message: message,
+            confirmLabel: confirmLabel
         )
     }
 }
