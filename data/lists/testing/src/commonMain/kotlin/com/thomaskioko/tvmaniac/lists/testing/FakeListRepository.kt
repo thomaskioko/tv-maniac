@@ -11,6 +11,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class, replaces = [DefaultListRepository::class])
@@ -20,6 +21,7 @@ public class FakeListRepository : ListRepository {
     private val listsWithMembershipFlow = MutableStateFlow<List<UserList>>(emptyList())
     private var listsAfterSync: List<UserList>? = null
     private var toggleGate: CompletableDeferred<Unit>? = null
+    private var observeError: Throwable? = null
 
     public var fetchUserListsInvocations: Int = 0
         private set
@@ -50,6 +52,10 @@ public class FakeListRepository : ListRepository {
         listsFlow.value = lists
     }
 
+    public fun setObserveError(error: Throwable?) {
+        observeError = error
+    }
+
     public fun setListsForShow(lists: List<UserList>) {
         listsWithMembershipFlow.value = lists
     }
@@ -62,7 +68,8 @@ public class FakeListRepository : ListRepository {
         toggleGate = gate
     }
 
-    override fun observeLists(): Flow<List<UserListEntity>> = listsFlow.asStateFlow()
+    override fun observeLists(): Flow<List<UserListEntity>> =
+        observeError?.let { error -> flow { throw error } } ?: listsFlow.asStateFlow()
 
     override fun observeListsForShow(showId: Long): Flow<List<UserList>> =
         listsWithMembershipFlow.asStateFlow()

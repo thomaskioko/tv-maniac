@@ -100,6 +100,20 @@ internal class ListsPresenterTest {
     }
 
     @Test
+    fun `should surface the error given the lists stream fails`() = runTest {
+        listRepository.setObserveError(IllegalStateException("Database unavailable"))
+
+        createPresenter().state.test {
+            awaitItem().isLoading shouldBe true
+
+            val failed = awaitItem()
+            failed.isLoading shouldBe false
+            failed.errorMessage shouldBe "Database unavailable"
+            failed.lists.shouldBeEmpty()
+        }
+    }
+
+    @Test
     fun `should navigate back given back is clicked`() = runTest {
         val navigator = TestNavigator()
         val presenter = createPresenter(navigator = navigator)
