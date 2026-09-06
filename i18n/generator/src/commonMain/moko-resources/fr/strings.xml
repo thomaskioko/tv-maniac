@@ -331,6 +331,11 @@
     <string name="profile_feature_share_title">Partager</string>
     <string name="profile_feature_share_description">Commentez, répondez et évaluez les émissions de télévision, les films, les saisons et les épisodes</string>
 
+    <string name="list_detail_empty">Aucune série dans cette liste pour l\'instant.</string>
+    <string name="list_detail_remove_title">Retirer de la liste ?</string>
+    <string name="list_detail_remove_message">Retirer %1$s de %2$s ?</string>
+    <string name="list_detail_remove_button">Retirer</string>
+
     <string name="label_settings_include_specials">Saisons Spéciales</string>
     <string name="label_settings_include_specials_description">Afficher les Specials et saisons bonus</string>
 
