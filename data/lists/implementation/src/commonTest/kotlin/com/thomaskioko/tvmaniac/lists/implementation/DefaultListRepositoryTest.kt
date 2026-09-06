@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
+import com.thomaskioko.tvmaniac.shows.api.ShowToPersist
 import com.thomaskioko.tvmaniac.shows.testing.FakeShowTraktIdResolver
 import com.thomaskioko.tvmaniac.shows.testing.FakeTvShowsDao
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
@@ -84,6 +85,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
             traktListRemoteDataSource = remoteDataSource,
             listDao = listDao,
             listShowDao = showDao,
+            tvShowsDao = tvShowsDao,
             requestManagerRepository = requestManager,
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
@@ -120,6 +122,45 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
 
         val counts = showDao.observeActiveCountByListId().first()
         counts[1L] shouldBe 2L
+    }
+
+    @Test
+    fun `should create a show row with title and year given an unknown tmdb id`() = runTest {
+        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 1))
+        remoteDataSource.itemsByListId = mapOf(
+            1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
+        )
+
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+
+        val show = tvShowsDao.entries().first { it.tmdb_id.id == 100L }
+        show.name shouldBe "Show 10"
+        show.year shouldBe "2024"
+    }
+
+    @Test
+    fun `should preserve an existing poster given the items sync backfills the show`() = runTest {
+        tvShowsDao.upsert(
+            ShowToPersist(
+                showId = null,
+                tmdbId = Id(100L),
+                name = "Existing name",
+                overview = "",
+                ratings = 0.0,
+                voteCount = 0,
+                posterPath = "/existing.jpg",
+            ),
+        )
+        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 1))
+        remoteDataSource.itemsByListId = mapOf(
+            1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
+        )
+
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
+
+        val show = tvShowsDao.entries().first { it.tmdb_id.id == 100L }
+        show.poster_path shouldBe "/existing.jpg"
+        show.name shouldBe "Show 10"
     }
 
     @Test

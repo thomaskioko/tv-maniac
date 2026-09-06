@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(libs.androidx.paging.common)
                 api(libs.coroutines.core)
             }
         }

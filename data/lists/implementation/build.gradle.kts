@@ -14,6 +14,7 @@ kotlin {
                 api(libs.store5)
                 api(projects.api.trakt.api)
                 api(projects.core.base)
+                api(projects.core.paging)
                 api(projects.core.util.api)
                 api(projects.core.logger.api)
                 api(projects.data.accountManager.api)
