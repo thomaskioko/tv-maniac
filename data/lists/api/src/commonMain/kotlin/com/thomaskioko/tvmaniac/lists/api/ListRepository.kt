@@ -14,5 +14,9 @@ public interface ListRepository {
 
     public suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?)
 
+    public suspend fun syncPendingLists(slug: String)
+
     public suspend fun countPendingListShows(): Long
+
+    public suspend fun countPendingLists(): Long
 }

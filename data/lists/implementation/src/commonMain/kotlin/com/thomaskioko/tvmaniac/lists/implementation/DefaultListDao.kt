@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.lists.api.ListDao
+import com.thomaskioko.tvmaniac.lists.api.PendingUploadList
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -84,6 +85,13 @@ public class DefaultListDao(
     override fun selectIdsByTraktId(): Map<Long, Long> =
         database.listsQueries.selectSyncedIds().executeAsList()
             .associate { requireNotNull(it.trakt_id) to it.id }
+
+    override fun selectPendingUploadLists(): List<PendingUploadList> =
+        database.listsQueries.selectPendingUploadLists().executeAsList()
+            .map { PendingUploadList(id = it.id, name = it.name) }
+
+    override fun countPendingUploads(): Long =
+        database.listsQueries.countPendingUploads().executeAsOne()
 
     override fun deleteById(id: Long) {
         database.listsQueries.deleteById(id)

@@ -34,6 +34,13 @@ FROM list_shows
 WHERE pending_action != 'DELETE'
 GROUP BY list_id;
 
+selectPendingForSyncedLists:
+SELECT list_id, tmdb_id, listed_at, pending_action
+FROM list_shows
+WHERE pending_action != 'NOTHING'
+    AND list_id IN (SELECT id FROM lists WHERE trakt_id IS NOT NULL)
+ORDER BY list_id ASC, tmdb_id ASC;
+
 deleteSyncedByListId:
 DELETE FROM list_shows
 WHERE list_id = ? AND pending_action = 'NOTHING';

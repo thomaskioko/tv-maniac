@@ -16,6 +16,7 @@ public class SyncListsInteractor(
     override suspend fun doWork(params: Params) {
         if (!activeProviderFeatures().supportsLists) return
         val slug = userRepository.getCurrentUser()?.slug ?: return
+        repository.syncPendingLists(slug = slug)
         repository.fetchUserLists(slug = slug, forceRefresh = params.forceRefresh)
     }
 

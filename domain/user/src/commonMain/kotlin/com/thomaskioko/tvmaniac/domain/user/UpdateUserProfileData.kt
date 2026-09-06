@@ -31,6 +31,7 @@ public class UpdateUserProfileData(
             )
 
             if (activeProviderFeatures().supportsLists) {
+                listRepository.syncPendingLists(slug = slug)
                 listRepository.fetchUserLists(
                     slug = slug,
                     forceRefresh = params.forceRefresh,

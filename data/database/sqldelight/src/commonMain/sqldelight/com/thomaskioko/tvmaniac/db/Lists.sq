@@ -81,6 +81,17 @@ SELECT id, trakt_id
 FROM lists
 WHERE trakt_id IS NOT NULL;
 
+selectPendingUploadLists:
+SELECT id, name
+FROM lists
+WHERE trakt_id IS NULL AND pending_action = 'UPLOAD'
+ORDER BY id ASC;
+
+countPendingUploads:
+SELECT COUNT(*)
+FROM lists
+WHERE trakt_id IS NULL AND pending_action = 'UPLOAD';
+
 deleteById:
 DELETE FROM lists WHERE id = ?;
 

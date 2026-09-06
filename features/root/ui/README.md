@@ -307,7 +307,9 @@ graph TB
   :domain:episode --> :data:datastore:api
   :domain:episode --> :data:episode:api
   :domain:episode --> :data:library:api
+  :domain:episode --> :data:lists:api
   :domain:episode --> :data:rewatch:api
+  :domain:episode --> :data:user:api
   :domain:episode --> :domain:rewatch
   :domain:library --> :core:base
   :domain:library --> :core:logger:api

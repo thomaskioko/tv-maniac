@@ -16,5 +16,6 @@ public class CountUnsavedChanges(
 
     private suspend fun getPendingCount(): Long = libraryRepository.countPendingFollowedShows() +
         watchedEpisodeSyncRepository.countPendingEpisodes() +
-        listRepository.countPendingListShows()
+        listRepository.countPendingListShows() +
+        listRepository.countPendingLists()
 }

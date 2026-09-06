@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -57,5 +58,24 @@ internal class UpdateUserProfileDataTest {
         interactor.executeSync(UpdateUserProfileData.Params(username = "me", forceRefresh = false))
 
         listRepository.fetchUserListsInvocations shouldBe 0
+    }
+
+    @Test
+    fun `should push pending lists before fetching user lists given trakt provider is active`() = runTest(testDispatcher) {
+        val interactor = buildInteractor(supportsLists = true)
+
+        interactor.executeSync(UpdateUserProfileData.Params(username = "me", forceRefresh = false))
+
+        listRepository.syncPendingListsCalls() shouldBe listOf("test-user")
+        listRepository.callOrder() shouldBe listOf("syncPendingLists", "fetchUserLists")
+    }
+
+    @Test
+    fun `should skip pushing pending lists given simkl provider is active`() = runTest(testDispatcher) {
+        val interactor = buildInteractor(supportsLists = false)
+
+        interactor.executeSync(UpdateUserProfileData.Params(username = "me", forceRefresh = false))
+
+        listRepository.syncPendingListsCalls().shouldBeEmpty()
     }
 }

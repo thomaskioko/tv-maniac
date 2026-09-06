@@ -31,6 +31,8 @@ public class FakeListRepository : ListRepository {
     private val toggledShows = mutableListOf<Pair<Long, Long>>()
     private var lastCreateTraktSlug: String? = null
     private var lastToggleTraktSlug: String? = null
+    private val syncPendingListsCalls = mutableListOf<String>()
+    private val callOrder = mutableListOf<String>()
 
     public fun createdListNames(): List<String> = createdListNames
 
@@ -39,6 +41,10 @@ public class FakeListRepository : ListRepository {
     public fun lastCreateTraktSlug(): String? = lastCreateTraktSlug
 
     public fun lastToggleTraktSlug(): String? = lastToggleTraktSlug
+
+    public fun syncPendingListsCalls(): List<String> = syncPendingListsCalls
+
+    public fun callOrder(): List<String> = callOrder
 
     public fun setLists(lists: List<UserListEntity>) {
         listsFlow.value = lists
@@ -62,6 +68,7 @@ public class FakeListRepository : ListRepository {
         listsWithMembershipFlow.asStateFlow()
 
     override suspend fun fetchUserLists(slug: String, forceRefresh: Boolean) {
+        callOrder += "fetchUserLists"
         fetchUserListsInvocations += 1
         listsAfterSync?.let { listsWithMembershipFlow.value = it }
     }
@@ -78,11 +85,23 @@ public class FakeListRepository : ListRepository {
         toggleGate?.await()
     }
 
+    override suspend fun syncPendingLists(slug: String) {
+        callOrder += "syncPendingLists"
+        syncPendingListsCalls += slug
+    }
+
     private var pendingListShowsCount = 0L
+    private var pendingListsCount = 0L
 
     public fun setPendingListShowsCount(count: Long) {
         pendingListShowsCount = count
     }
 
+    public fun setPendingListsCount(count: Long) {
+        pendingListsCount = count
+    }
+
     override suspend fun countPendingListShows(): Long = pendingListShowsCount
+
+    override suspend fun countPendingLists(): Long = pendingListsCount
 }

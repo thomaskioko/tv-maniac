@@ -18,6 +18,10 @@ public interface ListDao {
 
     public fun selectIdsByTraktId(): Map<Long, Long>
 
+    public fun selectPendingUploadLists(): List<PendingUploadList>
+
+    public fun countPendingUploads(): Long
+
     public fun deleteById(id: Long)
 
     public fun deleteAll()

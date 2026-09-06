@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
 import com.thomaskioko.tvmaniac.data.backup.api.model.BackupListShow
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.lists.api.ListDao
+import com.thomaskioko.tvmaniac.lists.api.PendingUploadList
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.shows.testing.FakeShowTraktIdResolver
@@ -160,6 +161,10 @@ internal class DefaultRestoredListWriterTest {
 
         override fun selectIdsByTraktId(): Map<Long, Long> =
             lists.value.mapNotNull { list -> list.traktId?.let { it to list.id } }.toMap()
+
+        override fun selectPendingUploadLists(): List<PendingUploadList> = emptyList()
+
+        override fun countPendingUploads(): Long = 0L
 
         override fun deleteById(id: Long) {
             lists.value = lists.value.filterNot { it.id == id }

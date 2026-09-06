@@ -24,8 +24,16 @@ internal class CountUnsavedChangesTest {
         libraryRepository.setPendingFollowedShowsCount(2L)
         watchedEpisodeSyncRepository.setPendingEpisodesCount(3L)
         listRepository.setPendingListShowsCount(1L)
+        listRepository.setPendingListsCount(1L)
 
-        countUnsavedChanges() shouldBe 6
+        countUnsavedChanges() shouldBe 7
+    }
+
+    @Test
+    fun `should count a pending list given a list has not reached Trakt yet`() = runTest {
+        listRepository.setPendingListsCount(1L)
+
+        countUnsavedChanges() shouldBe 1
     }
 
     @Test
