@@ -4,6 +4,7 @@ public extension ListDetailScreen {
     struct State: Equatable {
         public let title: String
         public let isLoading: Bool
+        public let canRefresh: Bool
         public let emptyMessage: String
         public let errorMessage: String?
         public let dismissErrorLabel: String
@@ -18,6 +19,7 @@ public extension ListDetailScreen {
         public init(
             title: String,
             isLoading: Bool = true,
+            canRefresh: Bool = false,
             emptyMessage: String = "",
             errorMessage: String? = nil,
             dismissErrorLabel: String = "",
@@ -31,6 +33,7 @@ public extension ListDetailScreen {
         ) {
             self.title = title
             self.isLoading = isLoading
+            self.canRefresh = canRefresh
             self.emptyMessage = emptyMessage
             self.errorMessage = errorMessage
             self.dismissErrorLabel = dismissErrorLabel

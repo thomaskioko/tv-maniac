@@ -18,6 +18,7 @@ public struct ListDetailView: View {
             onBack: { presenter.dispatch(action: ListDetailActionBackClicked()) },
             onItemAppear: { index in presenter.onItemVisible(index: Int32(index)) },
             onLoadMore: { presenter.loadMore() },
+            onRefresh: { presenter.dispatch(action: ListDetailActionRefreshList()) },
             onShowClicked: { tmdbId in presenter.dispatch(action: ListDetailActionShowClicked(tmdbId: tmdbId)) },
             onRemoveRequested: { tmdbId in presenter.dispatch(action: ListDetailActionRemoveRequested(tmdbId: tmdbId)) },
             onRemoveConfirmed: { presenter.dispatch(action: ListDetailActionRemoveConfirmed()) },
@@ -33,6 +34,7 @@ private extension ListDetailState {
         ListDetailScreen.State(
             title: title,
             isLoading: isRefreshLoading,
+            canRefresh: canRefresh,
             emptyMessage: emptyMessage,
             errorMessage: errorMessage,
             dismissErrorLabel: String(\.label_ok),

@@ -12,6 +12,7 @@ public struct ListDetailScreen: View {
     private let onBack: () -> Void
     private let onItemAppear: (Int) -> Void
     private let onLoadMore: () -> Void
+    private let onRefresh: () -> Void
     private let onShowClicked: (Int64) -> Void
     private let onRemoveRequested: (Int64) -> Void
     private let onRemoveConfirmed: () -> Void
@@ -25,6 +26,7 @@ public struct ListDetailScreen: View {
         onBack: @escaping () -> Void = {},
         onItemAppear: @escaping (Int) -> Void = { _ in },
         onLoadMore: @escaping () -> Void = {},
+        onRefresh: @escaping () -> Void = {},
         onShowClicked: @escaping (Int64) -> Void = { _ in },
         onRemoveRequested: @escaping (Int64) -> Void = { _ in },
         onRemoveConfirmed: @escaping () -> Void = {},
@@ -37,6 +39,7 @@ public struct ListDetailScreen: View {
         self.onBack = onBack
         self.onItemAppear = onItemAppear
         self.onLoadMore = onLoadMore
+        self.onRefresh = onRefresh
         self.onShowClicked = onShowClicked
         self.onRemoveRequested = onRemoveRequested
         self.onRemoveConfirmed = onRemoveConfirmed
@@ -203,6 +206,7 @@ public struct ListDetailScreen: View {
             }
         }
         .contentMargins(.top, toolbarInset + theme.spacing.medium)
+        .refreshable(enabled: state.canRefresh, action: onRefresh)
     }
 
     private var posterWidth: CGFloat {
@@ -217,5 +221,16 @@ public struct ListDetailScreen: View {
         let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
             .windows.first?.safeAreaInsets.top ?? 0
         return 44 + safeAreaTop
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func refreshable(enabled: Bool, action: @escaping () -> Void) -> some View {
+        if enabled {
+            refreshable { action() }
+        } else {
+            self
+        }
     }
 }
