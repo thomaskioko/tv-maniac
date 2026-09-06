@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.thomaskioko.tvmaniac.compose.components.CollapsibleSection
@@ -191,7 +192,8 @@ internal fun ListsCard(
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                             shape = MaterialTheme.shapes.small,
                         )
-                        .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xxSmall),
+                        .padding(horizontal = TvManiacSpacing.small, vertical = TvManiacSpacing.xxSmall)
+                        .testTag(ProfileTestTags.VIEW_LISTS_BUTTON_TEST_TAG),
                 )
             }
         }

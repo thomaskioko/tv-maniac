@@ -99,4 +99,12 @@ internal class ProfileRobot(composeUi: ComposeUiTest) : BaseRobot<ProfileRobot>(
         )
         click(ProfileTestTags.STATISTICS_ROW_TEST_TAG)
     }
+
+    fun clickViewListsButton(slug: String) = apply {
+        scrollToListTag(
+            listTag = ProfileTestTags.userCard(slug),
+            itemTag = ProfileTestTags.VIEW_LISTS_BUTTON_TEST_TAG,
+        )
+        click(ProfileTestTags.VIEW_LISTS_BUTTON_TEST_TAG)
+    }
 }

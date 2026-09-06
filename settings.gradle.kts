@@ -92,6 +92,7 @@ include(
     ":features:more-shows:presenter",
     ":features:more-shows:ui",
     ":features:lists:presenter",
+    ":features:lists:ui",
     ":features:profile:presenter",
     ":features:profile:ui",
     ":features:settings:nav",
