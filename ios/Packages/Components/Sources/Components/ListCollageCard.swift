@@ -1,27 +1,45 @@
-import Components
 import DesignSystem
-import Models
 import Nuke
 import NukeUI
 import SwiftUI
 
-/// Trakt-style list card: a 2x2 poster collage with the list name and item count overlaid on a
-/// bottom scrim. Falls back gracefully when fewer than four posters are available.
+public struct ListCollageItem: Identifiable, Equatable {
+    public let id: Int64
+    public let name: String
+    public let itemCountLabel: String
+    public let posterUrls: [String]
+
+    public init(
+        id: Int64,
+        name: String,
+        itemCountLabel: String,
+        posterUrls: [String]
+    ) {
+        self.id = id
+        self.name = name
+        self.itemCountLabel = itemCountLabel
+        self.posterUrls = posterUrls
+    }
+}
+
 public struct ListCollageCard: View {
+    public static let cardSize = CGSize(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
+
     @Environment(\.appTheme) private var theme
 
-    private let list: SwiftProfileList
+    private let list: ListCollageItem
+    private let fillsAvailableWidth: Bool
     private let onClick: () -> Void
 
-    public init(list: SwiftProfileList, onClick: @escaping () -> Void) {
+    public init(list: ListCollageItem, fillsAvailableWidth: Bool = false, onClick: @escaping () -> Void) {
         self.list = list
+        self.fillsAvailableWidth = fillsAvailableWidth
         self.onClick = onClick
     }
 
     public var body: some View {
         Button(action: onClick) {
-            collage
-                .frame(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
+            cardBody
                 .overlay {
                     LinearGradient(
                         colors: [.clear, .black.opacity(0.85)],
@@ -48,6 +66,17 @@ public struct ListCollageCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: theme.shapes.large, style: .continuous))
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var cardBody: some View {
+        if fillsAvailableWidth {
+            collage
+                .frame(maxWidth: .infinity, minHeight: DimensionConstants.cardHeight, maxHeight: DimensionConstants.cardHeight)
+        } else {
+            collage
+                .frame(width: DimensionConstants.cardWidth, height: DimensionConstants.cardHeight)
+        }
     }
 
     @ViewBuilder
@@ -115,7 +144,7 @@ private enum DimensionConstants {
 #Preview {
     HStack {
         ListCollageCard(
-            list: SwiftProfileList(
+            list: ListCollageItem(
                 id: 1,
                 name: "Watchlist",
                 itemCountLabel: "24 shows",
@@ -124,7 +153,7 @@ private enum DimensionConstants {
             onClick: {}
         )
         ListCollageCard(
-            list: SwiftProfileList(
+            list: ListCollageItem(
                 id: 2,
                 name: "Empty List",
                 itemCountLabel: "0 shows",

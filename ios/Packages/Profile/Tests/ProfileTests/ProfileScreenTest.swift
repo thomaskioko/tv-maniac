@@ -96,14 +96,14 @@ class ProfileScreenTest: SnapshotTestCase {
         .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Unauthenticated")
     }
 
-    private let sampleLists: [SwiftProfileList] = [
-        SwiftProfileList(id: 1, name: "Watchlist", itemCountLabel: "24 shows", posterUrls: ["a", "b", "c", "d"]),
-        SwiftProfileList(id: 2, name: "Favorites", itemCountLabel: "2 shows", posterUrls: ["e", "f"]),
-        SwiftProfileList(id: 3, name: "New List", itemCountLabel: "3 shows", posterUrls: []),
+    private let sampleLists: [ListCollageItem] = [
+        ListCollageItem(id: 1, name: "Watchlist", itemCountLabel: "24 shows", posterUrls: ["a", "b", "c", "d"]),
+        ListCollageItem(id: 2, name: "Favorites", itemCountLabel: "2 shows", posterUrls: ["e", "f"]),
+        ListCollageItem(id: 3, name: "New List", itemCountLabel: "3 shows", posterUrls: []),
     ]
 
-    private let manyLists: [SwiftProfileList] = (1 ... 5).map { index in
-        SwiftProfileList(
+    private let manyLists: [ListCollageItem] = (1 ... 5).map { index in
+        ListCollageItem(
             id: Int64(index),
             name: "List \(index)",
             itemCountLabel: "\(index) shows",
@@ -141,7 +141,7 @@ class ProfileScreenTest: SnapshotTestCase {
     ]
 
     private func authenticatedState(
-        userLists: SwiftSectionState<SwiftProfileList>,
+        userLists: SwiftSectionState<ListCollageItem>,
         profile: SwiftProfileInfo? = nil
     ) -> ProfileScreen.State {
         ProfileScreen.State(
@@ -226,7 +226,7 @@ class ProfileScreenTest: SnapshotTestCase {
     func test_ListCollageCard() {
         HStack(spacing: 12) {
             ListCollageCard(
-                list: SwiftProfileList(
+                list: ListCollageItem(
                     id: 1,
                     name: "Watchlist",
                     itemCountLabel: "24 shows",
@@ -235,7 +235,7 @@ class ProfileScreenTest: SnapshotTestCase {
                 onClick: {}
             )
             ListCollageCard(
-                list: SwiftProfileList(id: 2, name: "Favorites", itemCountLabel: "12 shows", posterUrls: ["e", "f"]),
+                list: ListCollageItem(id: 2, name: "Favorites", itemCountLabel: "12 shows", posterUrls: ["e", "f"]),
                 onClick: {}
             )
         }
