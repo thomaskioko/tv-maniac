@@ -40,9 +40,12 @@ import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
+import com.thomaskioko.tvmaniac.lists.nav.ListDetailRoute
 import com.thomaskioko.tvmaniac.lists.nav.ListsRoute
+import com.thomaskioko.tvmaniac.lists.nav.model.ListDetailParam
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
+import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.ListClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.MessageShown
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.RefreshProfile
@@ -216,6 +219,7 @@ public class ProfilePresenter internal constructor(
             SettingsClicked -> navigator.navigateTo(SettingsRoute)
             StatisticsClicked -> navigator.navigateTo(StatisticsRoute)
             ViewListsClicked -> navigator.navigateTo(ListsRoute)
+            is ListClicked -> navigator.navigateTo(ListDetailRoute(ListDetailParam(listId = action.listId, name = action.name)))
             RefreshProfile -> {
                 fetchUserData(forceRefresh = true)
                 syncFavorites(forceRefresh = true)
