@@ -51,6 +51,10 @@ graph TB
     :features:lists:nav[nav]:::multiplatform
     :features:lists:presenter[presenter]:::multiplatform
   end
+  subgraph :features:show-details
+    direction TB
+    :features:show-details:nav[nav]:::multiplatform
+  end
   subgraph :i18n
     direction TB
     :i18n:api[api]:::multiplatform
@@ -84,8 +88,10 @@ graph TB
   :features:lists:presenter -.-> :data:lists:api
   :features:lists:presenter --> :domain:lists
   :features:lists:presenter --> :features:lists:nav
+  :features:lists:presenter -.-> :features:show-details:nav
   :features:lists:presenter --> :i18n:api
   :features:lists:presenter --> :navigation:api
+  :features:show-details:nav --> :navigation:api
   :i18n:api --> :i18n:generator
 
 classDef application fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000;

@@ -7,6 +7,8 @@ import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.domain.lists.ObserveUserListsInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
+import com.thomaskioko.tvmaniac.lists.nav.ListDetailRoute
+import com.thomaskioko.tvmaniac.lists.nav.model.ListDetailParam
 import com.thomaskioko.tvmaniac.lists.presenter.model.UserListItem
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -110,6 +112,23 @@ internal class ListsPresenterTest {
             failed.isLoading shouldBe false
             failed.errorMessage shouldBe "Database unavailable"
             failed.lists.shouldBeEmpty()
+        }
+    }
+
+    @Test
+    fun `should open the list detail with its name given a list is clicked`() = runTest {
+        listRepository.setLists(listOf(createListEntity(id = 2, name = "Comfort watches", itemCount = 3)))
+        val navigator = TestNavigator()
+        val presenter = createPresenter(navigator = navigator)
+
+        presenter.state.test {
+            awaitItem()
+            awaitItem().lists.size shouldBe 1
+
+            navigator.test {
+                presenter.dispatch(ListsAction.ListClicked(listId = 2))
+                awaitNavigateTo(ListDetailRoute(ListDetailParam(listId = 2, name = "Comfort watches")))
+            }
         }
     }
 
