@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
 import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ObserveListsForShowInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
@@ -37,7 +38,6 @@ import com.thomaskioko.tvmaniac.domain.showdetails.FollowShowInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ObservableShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.episodes.api.WatchedDateTarget
 import com.thomaskioko.tvmaniac.episodes.api.model.ShowWatchProgress
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
@@ -46,13 +46,13 @@ import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepositor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.i18n.testing.util.BaseLocalizerTest
+import com.thomaskioko.tvmaniac.lists.api.UserList
+import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.tvShowDetails
 import com.thomaskioko.tvmaniac.ratingsheet.nav.RatingSheetRoute
 import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListRoute
-import com.thomaskioko.tvmaniac.traktlists.api.TraktList
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import com.thomaskioko.tvmaniac.watchdateselection.nav.WatchDateSelectionRoute
@@ -94,7 +94,7 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
     private val datastoreRepository = FakeDatastoreRepository()
     private val notificationManager = FakeNotificationManager()
     private val accountManager = FakeAccountManager()
-    private val traktListRepository = FakeTraktListRepository()
+    private val listRepository = FakeListRepository()
     private val rewatchRepository = FakeRewatchRepository()
     private val localizer = FakeLocalizer()
     private val formatterUtil = FakeFormatterUtil()
@@ -195,7 +195,7 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
 
     @Test
     fun `should expose isInList true and listed label given show belongs to a list`() = runTest {
-        traktListRepository.setListsForShow(
+        listRepository.setListsForShow(
             listOf(traktList(isShowInList = true)),
         )
 
@@ -211,7 +211,7 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
 
     @Test
     fun `should expose isInList false and add label given show belongs to no list`() = runTest {
-        traktListRepository.setListsForShow(
+        listRepository.setListsForShow(
             listOf(traktList(isShowInList = false)),
         )
 
@@ -535,7 +535,7 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
             refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
-            observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
+            observeListsForShowInteractor = ObserveListsForShowInteractor(listRepository),
             observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(episodeRepository),
             startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),
@@ -603,7 +603,7 @@ internal class ShowDetailsHeaderPresenterTest : BaseLocalizerTest() {
     private companion object {
         private const val SHOW_ID = 84958L
 
-        private fun traktList(isShowInList: Boolean): TraktList = TraktList(
+        private fun traktList(isShowInList: Boolean): UserList = UserList(
             id = 1L,
             slug = "watchlist",
             name = "Watchlist",

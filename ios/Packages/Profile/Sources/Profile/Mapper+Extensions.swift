@@ -1,9 +1,7 @@
 import TvManiac
 
-// MARK: - Trakt List Mapping
-
-public extension TvManiac.TraktListModel {
-    func toSwift() -> SwiftTraktListItem {
+public extension TvManiac.UserListModel {
+    func toSwift() -> SwiftListItem {
         .init(
             listId: id,
             slug: slug,

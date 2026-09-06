@@ -11,7 +11,7 @@ scaffold {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            api(projects.data.traktlists.api)
+            api(projects.data.lists.api)
         }
 
         commonMain {
@@ -21,7 +21,7 @@ kotlin {
                 api(projects.core.logger.api)
                 api(projects.core.view)
                 api(projects.data.accountManager.api)
-                api(projects.domain.traktlists)
+                api(projects.domain.lists)
                 api(projects.features.showList.nav)
                 api(projects.i18n.api)
                 api(projects.navigation.api)
@@ -41,7 +41,7 @@ kotlin {
                 implementation(projects.core.featureFlags.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.data.accountManager.testing)
-                implementation(projects.data.traktlists.testing)
+                implementation(projects.data.lists.testing)
                 implementation(projects.data.user.testing)
                 implementation(projects.i18n.testing)
                 implementation(projects.navigation.testing)

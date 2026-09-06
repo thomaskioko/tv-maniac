@@ -26,8 +26,8 @@ internal class UserListFlowTests : BaseAppFlowTest() {
 
         showListRobot
             .assertSheetDisplayed()
-            .assertTraktListItemDisplayed(favoritesListTraktId)
-            .assertTraktListItemDisplayed(animeListTraktId)
+            .assertListItemDisplayed(favoritesListTraktId)
+            .assertListItemDisplayed(animeListTraktId)
             .assertListSwitchIsUnchecked(favoritesListTraktId)
             .assertListSwitchIsUnchecked(animeListTraktId)
             .assertTraktListShowCountText(favoritesListTraktId, "0 shows")
@@ -46,7 +46,7 @@ internal class UserListFlowTests : BaseAppFlowTest() {
             .typeCreateListName(TEST_CREATED_LIST_NAME)
             .clickCreateListSubmit()
             .assertCreateListFieldDoesNotExist()
-            .assertTraktListItemDisplayed(TEST_CREATED_LIST_TRAKT_ID)
+            .assertListItemDisplayed(TEST_CREATED_LIST_TRAKT_ID)
             .assertListSwitchIsUnchecked(TEST_CREATED_LIST_TRAKT_ID)
             .assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "0 shows")
             .clickListSwitch(TEST_CREATED_LIST_TRAKT_ID)

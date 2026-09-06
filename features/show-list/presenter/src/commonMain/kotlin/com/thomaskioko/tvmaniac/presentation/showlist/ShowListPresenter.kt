@@ -15,10 +15,10 @@ import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.UiMessageManager
 import com.thomaskioko.tvmaniac.core.view.collectStatus
-import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
+import com.thomaskioko.tvmaniac.domain.lists.CreateListInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ObserveListsForShowInteractor
+import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
 import com.thomaskioko.tvmaniac.navigation.Navigator
@@ -49,13 +49,13 @@ import kotlinx.coroutines.launch
 public class ShowListPresenter(
     @Assisted private val param: ShowListParam,
     componentContext: ComponentContext,
-    observeTraktListsInteractor: ObserveTraktListsInteractor,
+    observeListsForShowInteractor: ObserveListsForShowInteractor,
     private val navigator: Navigator,
     private val accountManager: AccountManager,
     private val authManagers: Map<SyncProviderSource, AuthManager>,
     @SimklLoginFlagQualifier private val simklLoginFlag: FeatureFlag<Boolean>,
-    private val syncTraktListsInteractor: SyncTraktListsInteractor,
-    private val createTraktListInteractor: CreateTraktListInteractor,
+    private val syncListsInteractor: SyncListsInteractor,
+    private val createListInteractor: CreateListInteractor,
     private val toggleShowInListInteractor: ToggleShowInListInteractor,
     private val errorToStringMapper: ErrorToStringMapper,
     private val mapper: ShowListMapper,
@@ -71,7 +71,7 @@ public class ShowListPresenter(
     private val labels: ShowListCopy = mapper.resolveCopy()
 
     public val state: StateFlow<ShowListState> = combine(
-        observeTraktListsInteractor.flow,
+        observeListsForShowInteractor.flow,
         accountManager.isConnected,
         uiMessageManager.message,
         createListState,
@@ -81,7 +81,7 @@ public class ShowListPresenter(
         ShowListState(
             isLoggedIn = isLoggedIn,
             isLoading = false,
-            traktLists = if (isLoggedIn) mapper.toModels(lists, togglingIds) else persistentListOf(),
+            lists = if (isLoggedIn) mapper.toModels(lists, togglingIds) else persistentListOf(),
             showCreateListField = createUi.showField,
             isCreatingList = createUi.isCreating,
             createListName = createUi.name,
@@ -102,7 +102,7 @@ public class ShowListPresenter(
     public val stateValue: Value<ShowListState> = state.asValue(coroutineScope)
 
     init {
-        observeTraktListsInteractor(param.showId)
+        observeListsForShowInteractor(param.showId)
         observeAuthAndSync()
     }
 
@@ -134,7 +134,7 @@ public class ShowListPresenter(
             accountManager.isConnected
                 .filter { it }
                 .collect {
-                    syncTraktListsInteractor(SyncTraktListsInteractor.Params())
+                    syncListsInteractor(SyncListsInteractor.Params())
                         .collectStatus(
                             actionLoadingState,
                             logger,
@@ -149,7 +149,7 @@ public class ShowListPresenter(
         val name = createListState.value.name
         appScopeLauncher.launch(TAG) {
             createListState.update { it.copy(isCreating = true) }
-            createTraktListInteractor(CreateTraktListInteractor.Params(name = name))
+            createListInteractor(CreateListInteractor.Params(name = name))
                 .collectStatus(
                     actionLoadingState,
                     logger,

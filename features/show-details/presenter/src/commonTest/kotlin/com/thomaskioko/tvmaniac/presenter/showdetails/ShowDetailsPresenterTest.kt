@@ -25,6 +25,7 @@ import com.thomaskioko.tvmaniac.domain.episode.MarkWatchedAtInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ObserveShowWatchProgressInteractor
 import com.thomaskioko.tvmaniac.domain.episode.ShouldShowDatePickerInteractor
 import com.thomaskioko.tvmaniac.domain.episode.SyncShowEpisodeWatchesInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ObserveListsForShowInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.ScheduleEpisodeNotificationsInteractor
 import com.thomaskioko.tvmaniac.domain.notifications.interactor.SyncCalendarInteractor
 import com.thomaskioko.tvmaniac.domain.ratings.ObserveCommunityRatingInteractor
@@ -49,12 +50,12 @@ import com.thomaskioko.tvmaniac.domain.showdetails.ObserveWatchProvidersInteract
 import com.thomaskioko.tvmaniac.domain.showdetails.ShowDetailsInteractor
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.domain.similarshows.SimilarShowsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
 import com.thomaskioko.tvmaniac.episodes.testing.FakeEpisodeRepository
 import com.thomaskioko.tvmaniac.episodes.testing.FakeWatchedEpisodeSyncRepository
 import com.thomaskioko.tvmaniac.followedshows.testing.FakeFollowedShowsRepository
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.i18n.testing.util.BaseLocalizerTest
+import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.ShowDetailsCastPresenter
 import com.thomaskioko.tvmaniac.presenter.showdetails.cast.di.ShowDetailsCastChildGraph
@@ -74,7 +75,6 @@ import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.similar.testing.FakeSimilarShowsRepository
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
 import com.thomaskioko.tvmaniac.trailers.testing.FakeTrailerRepository
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.util.testing.FakeFormatterUtil
 import io.kotest.matchers.nulls.shouldBeNull
@@ -108,7 +108,7 @@ internal class ShowDetailsPresenterTest : BaseLocalizerTest() {
     private val watchProvidersRepository = FakeWatchProviderRepository()
     private val followedShowsRepository = FakeFollowedShowsRepository()
     private val ratingsRepository = FakeRatingsRepository()
-    private val traktListRepository = FakeTraktListRepository()
+    private val listRepository = FakeListRepository()
     private val rewatchRepository = FakeRewatchRepository()
     private val episodeRepository = FakeEpisodeRepository()
     private val datastoreRepository = FakeDatastoreRepository()
@@ -304,7 +304,7 @@ internal class ShowDetailsPresenterTest : BaseLocalizerTest() {
             refreshCommunityRatingInteractor = RefreshCommunityRatingInteractor(ratingsRepository),
             observeRatingInteractor = ObserveRatingInteractor(ratingsRepository),
             observeCommunityRatingInteractor = ObserveCommunityRatingInteractor(ratingsRepository),
-            observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
+            observeListsForShowInteractor = ObserveListsForShowInteractor(listRepository),
             observeRewatchStatusInteractor = ObserveRewatchStatusInteractor(rewatchRepository),
             observeShowWatchProgressInteractor = ObserveShowWatchProgressInteractor(episodeRepository),
             startRewatchSessionInteractor = StartRewatchSessionInteractor(rewatchRepository, dateTimeProvider),

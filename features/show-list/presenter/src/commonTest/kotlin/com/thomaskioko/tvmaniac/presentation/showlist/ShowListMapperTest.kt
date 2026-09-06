@@ -1,7 +1,7 @@
 package com.thomaskioko.tvmaniac.presentation.showlist
 
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
-import com.thomaskioko.tvmaniac.traktlists.api.TraktList
+import com.thomaskioko.tvmaniac.lists.api.UserList
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -13,8 +13,8 @@ internal class ShowListMapperTest {
     private val mapper = ShowListMapper(localizer = FakeLocalizer())
 
     @Test
-    fun `should map TraktList to TraktListModel preserving identifiers and toggle state`() {
-        val source = TraktList(
+    fun `should map UserList to UserListModel preserving identifiers and toggle state`() {
+        val source = UserList(
             id = 7L,
             slug = "favorites",
             name = "Favorites",
@@ -37,8 +37,8 @@ internal class ShowListMapperTest {
     }
 
     @Test
-    fun `should mark TraktListModel as toggling given list id is in toggling set`() {
-        val source = TraktList(
+    fun `should mark UserListModel as toggling given list id is in toggling set`() {
+        val source = UserList(
             id = 7L,
             slug = "favorites",
             name = "Favorites",

@@ -156,6 +156,11 @@ graph TB
     :data:library:api[api]:::multiplatform
     :data:library:implementation[implementation]:::multiplatform
   end
+  subgraph :data:lists
+    direction TB
+    :data:lists:api[api]:::multiplatform
+    :data:lists:implementation[implementation]:::multiplatform
+  end
   subgraph :data:logout
     direction TB
     :data:logout:api[api]:::multiplatform
@@ -254,11 +259,6 @@ graph TB
     direction TB
     :data:traktauth:implementation[implementation]:::multiplatform
   end
-  subgraph :data:traktlists
-    direction TB
-    :data:traktlists:api[api]:::multiplatform
-    :data:traktlists:implementation[implementation]:::multiplatform
-  end
   subgraph :data:trendingshows
     direction TB
     :data:trendingshows:api[api]:::multiplatform
@@ -307,6 +307,7 @@ graph TB
     :domain:followedshows[followedshows]:::multiplatform
     :domain:genre[genre]:::multiplatform
     :domain:library[library]:::multiplatform
+    :domain:lists[lists]:::multiplatform
     :domain:logout[logout]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
@@ -321,7 +322,6 @@ graph TB
     :domain:sync-activity[sync-activity]:::multiplatform
     :domain:telemetry[telemetry]:::multiplatform
     :domain:theme[theme]:::multiplatform
-    :domain:traktlists[traktlists]:::multiplatform
     :domain:user[user]:::multiplatform
     :domain:widget[widget]:::multiplatform
   end
@@ -658,6 +658,18 @@ graph TB
   :data:library:implementation --> :data:shows:api
   :data:library:implementation --> :data:sync-activity:api
   :data:library:implementation --> :data:watchproviders:api
+  :data:lists:implementation --> :api:trakt:api
+  :data:lists:implementation --> :core:base
+  :data:lists:implementation --> :core:logger:api
+  :data:lists:implementation -.-> :core:network-util:api
+  :data:lists:implementation --> :core:util:api
+  :data:lists:implementation --> :data:backup:api
+  :data:lists:implementation --> :data:database:sqldelight
+  :data:lists:implementation -.-> :data:followedshows:api
+  :data:lists:implementation --> :data:lists:api
+  :data:lists:implementation --> :data:request-manager:api
+  :data:lists:implementation --> :data:shows:api
+  :data:lists:implementation --> :data:user:api
   :data:logout:implementation --> :core:base
   :data:logout:implementation --> :data:database:sqldelight
   :data:logout:implementation --> :data:logout:api
@@ -838,18 +850,6 @@ graph TB
   :data:traktauth:implementation --> :core:tasks:api
   :data:traktauth:implementation --> :data:account-manager:api
   :data:traktauth:implementation --> :data:oauth:api
-  :data:traktlists:implementation --> :api:trakt:api
-  :data:traktlists:implementation --> :core:base
-  :data:traktlists:implementation --> :core:logger:api
-  :data:traktlists:implementation -.-> :core:network-util:api
-  :data:traktlists:implementation --> :core:util:api
-  :data:traktlists:implementation --> :data:backup:api
-  :data:traktlists:implementation --> :data:database:sqldelight
-  :data:traktlists:implementation -.-> :data:followedshows:api
-  :data:traktlists:implementation --> :data:request-manager:api
-  :data:traktlists:implementation --> :data:shows:api
-  :data:traktlists:implementation --> :data:traktlists:api
-  :data:traktlists:implementation --> :data:user:api
   :data:trendingshows:api --> :core:base
   :data:trendingshows:api --> :data:database:sqldelight
   :data:trendingshows:api --> :data:shows:api
@@ -909,8 +909,8 @@ graph TB
   :domain:account-switcher --> :data:account-manager:api
   :domain:account-switcher --> :data:episode:api
   :domain:account-switcher --> :data:library:api
+  :domain:account-switcher --> :data:lists:api
   :domain:account-switcher --> :data:logout:api
-  :domain:account-switcher --> :data:traktlists:api
   :domain:account-switcher --> :domain:continue-watching
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
@@ -984,6 +984,9 @@ graph TB
   :domain:library -.-> :data:request-manager:api
   :domain:library --> :domain:showdetails
   :domain:library --> :domain:sync-activity
+  :domain:lists --> :core:base
+  :domain:lists --> :data:lists:api
+  :domain:lists --> :data:user:api
   :domain:logout --> :core:base
   :domain:logout --> :data:account-manager:api
   :domain:logout --> :data:datastore:api
@@ -1057,12 +1060,9 @@ graph TB
   :domain:telemetry --> :data:account-manager:api
   :domain:telemetry --> :data:subscription:api
   :domain:theme --> :i18n:generator
-  :domain:traktlists --> :core:base
-  :domain:traktlists --> :data:traktlists:api
-  :domain:traktlists --> :data:user:api
   :domain:user --> :core:base
   :domain:user --> :data:account-manager:api
-  :domain:user --> :data:traktlists:api
+  :domain:user --> :data:lists:api
   :domain:user --> :data:user:api
   :domain:widget --> :core:base
   :domain:widget --> :core:files:api
@@ -1220,8 +1220,8 @@ graph TB
   :features:profile:presenter --> :domain:continue-watching
   :features:profile:presenter --> :domain:favorites
   :features:profile:presenter --> :domain:library
+  :features:profile:presenter --> :domain:lists
   :features:profile:presenter --> :domain:recently-watched
-  :features:profile:presenter --> :domain:traktlists
   :features:profile:presenter --> :domain:user
   :features:profile:presenter -.-> :features:home:nav
   :features:profile:presenter --> :features:profile:nav
@@ -1333,12 +1333,12 @@ graph TB
   :features:show-details:presenter --> :data:rewatch:api
   :features:show-details:presenter --> :data:seasondetails:api
   :features:show-details:presenter --> :domain:episode
+  :features:show-details:presenter --> :domain:lists
   :features:show-details:presenter --> :domain:notifications
   :features:show-details:presenter --> :domain:ratings
   :features:show-details:presenter --> :domain:rewatch
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
-  :features:show-details:presenter --> :domain:traktlists
   :features:show-details:presenter --> :features:rating-sheet:nav
   :features:show-details:presenter --> :features:rating-sheet:presenter
   :features:show-details:presenter --> :features:root:nav
@@ -1355,7 +1355,7 @@ graph TB
   :features:show-list:presenter --> :core:logger:api
   :features:show-list:presenter --> :core:view
   :features:show-list:presenter --> :data:account-manager:api
-  :features:show-list:presenter --> :domain:traktlists
+  :features:show-list:presenter --> :domain:lists
   :features:show-list:presenter --> :features:show-list:nav
   :features:show-list:presenter --> :i18n:api
   :features:show-list:presenter -.-> :i18n:generator
@@ -1489,6 +1489,8 @@ graph TB
   :ios-framework -.-> :data:genre:implementation
   :ios-framework --> :data:library:api
   :ios-framework --> :data:library:implementation
+  :ios-framework -.-> :data:lists:api
+  :ios-framework -.-> :data:lists:implementation
   :ios-framework -.-> :data:logout:implementation
   :ios-framework -.-> :data:oauth:api
   :ios-framework -.-> :data:oauth:implementation
@@ -1525,8 +1527,6 @@ graph TB
   :ios-framework -.-> :data:trailers:api
   :ios-framework -.-> :data:trailers:implementation
   :ios-framework -.-> :data:traktauth:implementation
-  :ios-framework -.-> :data:traktlists:api
-  :ios-framework -.-> :data:traktlists:implementation
   :ios-framework -.-> :data:trendingshows:api
   :ios-framework -.-> :data:trendingshows:implementation
   :ios-framework -.-> :data:upcomingshows:api
@@ -1549,6 +1549,7 @@ graph TB
   :ios-framework -.-> :domain:feature-flags
   :ios-framework --> :domain:followedshows
   :ios-framework -.-> :domain:followedshows
+  :ios-framework -.-> :domain:lists
   :ios-framework -.-> :domain:logout
   :ios-framework -.-> :domain:notifications
   :ios-framework --> :domain:recently-watched
@@ -1556,7 +1557,6 @@ graph TB
   :ios-framework --> :domain:start-watching
   :ios-framework -.-> :domain:telemetry
   :ios-framework -.-> :domain:theme
-  :ios-framework -.-> :domain:traktlists
   :ios-framework -.-> :domain:user
   :ios-framework --> :domain:widget
   :ios-framework --> :features:calendar:presenter

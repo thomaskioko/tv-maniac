@@ -66,6 +66,10 @@ graph TB
     direction TB
     :data:library:api[api]:::multiplatform
   end
+  subgraph :data:lists
+    direction TB
+    :data:lists:api[api]:::multiplatform
+  end
   subgraph :data:ratings
     direction TB
     :data:ratings:api[api]:::multiplatform
@@ -98,10 +102,6 @@ graph TB
     direction TB
     :data:trailers:api[api]:::multiplatform
   end
-  subgraph :data:traktlists
-    direction TB
-    :data:traktlists:api[api]:::multiplatform
-  end
   subgraph :data:upnext
     direction TB
     :data:upnext:api[api]:::multiplatform
@@ -117,13 +117,13 @@ graph TB
   subgraph :domain
     direction TB
     :domain:episode[episode]:::multiplatform
+    :domain:lists[lists]:::multiplatform
     :domain:notifications[notifications]:::multiplatform
     :domain:ratings[ratings]:::multiplatform
     :domain:rewatch[rewatch]:::multiplatform
     :domain:showdetails[showdetails]:::multiplatform
     :domain:similarshows[similarshows]:::multiplatform
     :domain:theme[theme]:::multiplatform
-    :domain:traktlists[traktlists]:::multiplatform
   end
   subgraph :features:rating-sheet
     direction TB
@@ -210,6 +210,9 @@ graph TB
   :domain:episode --> :data:library:api
   :domain:episode --> :data:rewatch:api
   :domain:episode --> :domain:rewatch
+  :domain:lists --> :core:base
+  :domain:lists --> :data:lists:api
+  :domain:lists --> :data:user:api
   :domain:notifications --> :core:base
   :domain:notifications --> :core:logger:api
   :domain:notifications --> :core:network-util:api
@@ -249,9 +252,6 @@ graph TB
   :domain:similarshows --> :core:base
   :domain:similarshows --> :data:similar:api
   :domain:theme --> :i18n:generator
-  :domain:traktlists --> :core:base
-  :domain:traktlists --> :data:traktlists:api
-  :domain:traktlists --> :data:user:api
   :features:rating-sheet:nav --> :data:ratings:api
   :features:rating-sheet:nav --> :navigation:api
   :features:rating-sheet:presenter --> :core:base
@@ -278,12 +278,12 @@ graph TB
   :features:show-details:presenter --> :data:rewatch:api
   :features:show-details:presenter --> :data:seasondetails:api
   :features:show-details:presenter --> :domain:episode
+  :features:show-details:presenter --> :domain:lists
   :features:show-details:presenter --> :domain:notifications
   :features:show-details:presenter --> :domain:ratings
   :features:show-details:presenter --> :domain:rewatch
   :features:show-details:presenter --> :domain:showdetails
   :features:show-details:presenter --> :domain:similarshows
-  :features:show-details:presenter --> :domain:traktlists
   :features:show-details:presenter --> :features:rating-sheet:nav
   :features:show-details:presenter --> :features:rating-sheet:presenter
   :features:show-details:presenter --> :features:root:nav

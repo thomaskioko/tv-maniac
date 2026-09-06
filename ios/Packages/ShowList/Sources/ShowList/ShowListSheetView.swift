@@ -67,7 +67,7 @@ public struct ShowListSheetView: View {
         Form {
             if state.isLoading {
                 loadingSection
-            } else if state.traktLists.isEmpty {
+            } else if state.lists.isEmpty {
                 emptySection
             } else {
                 listsSection
@@ -96,7 +96,7 @@ public struct ShowListSheetView: View {
 
     private var listsSection: some View {
         Section {
-            ForEach(state.traktLists, id: \.id) { list in
+            ForEach(state.lists, id: \.id) { list in
                 listRow(for: list)
             }
         } header: {
@@ -104,7 +104,7 @@ public struct ShowListSheetView: View {
         }
     }
 
-    private func listRow(for list: TraktListModel) -> some View {
+    private func listRow(for list: UserListModel) -> some View {
         HStack {
             VStack(alignment: .leading) {
                 Text(list.name)

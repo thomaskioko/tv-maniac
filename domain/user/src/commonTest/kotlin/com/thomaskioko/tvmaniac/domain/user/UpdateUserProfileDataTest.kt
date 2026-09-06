@@ -3,7 +3,7 @@ package com.thomaskioko.tvmaniac.domain.user
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
+import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -20,13 +20,13 @@ internal class UpdateUserProfileDataTest {
         databaseRead = testDispatcher,
     )
 
-    private lateinit var traktListRepository: FakeTraktListRepository
+    private lateinit var listRepository: FakeListRepository
 
     private fun buildInteractor(supportsLists: Boolean): UpdateUserProfileData {
-        traktListRepository = FakeTraktListRepository()
+        listRepository = FakeListRepository()
         return UpdateUserProfileData(
             userRepository = FakeUserRepository(),
-            traktListRepository = traktListRepository,
+            listRepository = listRepository,
             activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
             dispatchers = dispatchers,
         )
@@ -38,7 +38,7 @@ internal class UpdateUserProfileDataTest {
 
         interactor.executeSync(UpdateUserProfileData.Params(username = "me", forceRefresh = false))
 
-        traktListRepository.fetchUserListsInvocations shouldBe 1
+        listRepository.fetchUserListsInvocations shouldBe 1
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class UpdateUserProfileDataTest {
 
         interactor.executeSync(UpdateUserProfileData.Params(username = "me", forceRefresh = false))
 
-        traktListRepository.fetchUserListsInvocations shouldBe 0
+        listRepository.fetchUserListsInvocations shouldBe 0
     }
 
     @Test
@@ -56,6 +56,6 @@ internal class UpdateUserProfileDataTest {
 
         interactor.executeSync(UpdateUserProfileData.Params(username = "me", forceRefresh = false))
 
-        traktListRepository.fetchUserListsInvocations shouldBe 0
+        listRepository.fetchUserListsInvocations shouldBe 0
     }
 }

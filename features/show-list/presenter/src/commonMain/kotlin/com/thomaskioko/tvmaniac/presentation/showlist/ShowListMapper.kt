@@ -6,8 +6,8 @@ import com.thomaskioko.tvmaniac.accountmanager.api.displayName
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
-import com.thomaskioko.tvmaniac.presentation.showlist.model.TraktListModel
-import com.thomaskioko.tvmaniac.traktlists.api.TraktList
+import com.thomaskioko.tvmaniac.lists.api.UserList
+import com.thomaskioko.tvmaniac.presentation.showlist.model.UserListModel
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -16,9 +16,9 @@ import kotlinx.collections.immutable.toImmutableList
 public class ShowListMapper(
     private val localizer: Localizer,
 ) {
-    public fun toModels(lists: List<TraktList>, togglingListIds: Set<Long>): ImmutableList<TraktListModel> =
+    public fun toModels(lists: List<UserList>, togglingListIds: Set<Long>): ImmutableList<UserListModel> =
         lists.map { list ->
-            TraktListModel(
+            UserListModel(
                 id = list.id,
                 slug = list.slug,
                 name = list.name,

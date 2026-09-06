@@ -10,16 +10,16 @@ import com.thomaskioko.tvmaniac.core.base.coroutines.FakeAppScopeLauncher
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
-import com.thomaskioko.tvmaniac.domain.traktlists.CreateTraktListInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.SyncTraktListsInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ToggleShowInListInteractor
+import com.thomaskioko.tvmaniac.domain.lists.CreateListInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ObserveListsForShowInteractor
+import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.lists.api.UserList
+import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.showlist.nav.ShowListParam
-import com.thomaskioko.tvmaniac.traktlists.api.TraktList
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -40,7 +40,7 @@ internal class ShowListPresenterTest {
     private val lifecycle = LifecycleRegistry()
     private val testDispatcher = StandardTestDispatcher()
     private val appCoroutineScope = CoroutineScope(testDispatcher + SupervisorJob())
-    private val traktListRepository = FakeTraktListRepository()
+    private val listRepository = FakeListRepository()
     private val accountManager = FakeAccountManager()
     private val authManager = FakeAuthManager()
     private val simklAuthManager = FakeAuthManager(SyncProviderSource.SIMKL)
@@ -101,7 +101,7 @@ internal class ShowListPresenterTest {
             val state = expectMostRecentItem()
 
             state.isLoggedIn shouldBe false
-            state.traktLists shouldHaveSize 0
+            state.lists shouldHaveSize 0
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -109,9 +109,9 @@ internal class ShowListPresenterTest {
     @Test
     fun `should emit lists given user is logged in and lists exist`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
-        traktListRepository.setListsForShow(
+        listRepository.setListsForShow(
             listOf(
-                TraktList(
+                UserList(
                     id = 1L,
                     slug = "watchlist",
                     name = "Watchlist",
@@ -129,10 +129,10 @@ internal class ShowListPresenterTest {
             val state = expectMostRecentItem()
 
             state.isLoggedIn shouldBe true
-            state.traktLists shouldHaveSize 1
-            state.traktLists[0].id shouldBe 1L
-            state.traktLists[0].name shouldBe "Watchlist"
-            state.traktLists[0].isShowInList shouldBe true
+            state.lists shouldHaveSize 1
+            state.lists[0].id shouldBe 1L
+            state.lists[0].name shouldBe "Watchlist"
+            state.lists[0].isShowInList shouldBe true
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -140,9 +140,9 @@ internal class ShowListPresenterTest {
     @Test
     fun `should emit correct show counts given lists are synced`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
-        traktListRepository.setListsForShow(
+        listRepository.setListsForShow(
             listOf(
-                TraktList(
+                UserList(
                     id = 1L,
                     slug = "watchlist",
                     name = "Watchlist",
@@ -150,7 +150,7 @@ internal class ShowListPresenterTest {
                     itemCount = 10L,
                     isShowInList = false,
                 ),
-                TraktList(
+                UserList(
                     id = 2L,
                     slug = "favorites",
                     name = "Favorites",
@@ -167,9 +167,9 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.advanceUntilIdle()
             val state = expectMostRecentItem()
 
-            state.traktLists shouldHaveSize 2
-            state.traktLists[0].showCountText shouldBe "10 shows"
-            state.traktLists[1].showCountText shouldBe "3 shows"
+            state.lists shouldHaveSize 2
+            state.lists[0].showCountText shouldBe "10 shows"
+            state.lists[1].showCountText shouldBe "3 shows"
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -185,7 +185,7 @@ internal class ShowListPresenterTest {
             accountManager.setActiveProvider(SyncProviderSource.TRAKT)
             testDispatcher.scheduler.advanceUntilIdle()
 
-            traktListRepository.fetchUserListsInvocations shouldBe 1
+            listRepository.fetchUserListsInvocations shouldBe 1
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -368,9 +368,9 @@ internal class ShowListPresenterTest {
     @Test
     fun `should mark list as toggling while interactor is running`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
-        traktListRepository.setListsForShow(
+        listRepository.setListsForShow(
             listOf(
-                TraktList(
+                UserList(
                     id = 7L,
                     slug = "favorites",
                     name = "Favorites",
@@ -381,7 +381,7 @@ internal class ShowListPresenterTest {
             ),
         )
         val gate = CompletableDeferred<Unit>()
-        traktListRepository.setToggleGate(gate)
+        listRepository.setToggleGate(gate)
 
         val presenter = createPresenter()
 
@@ -395,13 +395,13 @@ internal class ShowListPresenterTest {
             testDispatcher.scheduler.runCurrent()
 
             val whileToggling = expectMostRecentItem()
-            whileToggling.traktLists[0].isToggling shouldBe true
+            whileToggling.lists[0].isToggling shouldBe true
 
             gate.complete(Unit)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val afterToggling = expectMostRecentItem()
-            afterToggling.traktLists[0].isToggling shouldBe false
+            afterToggling.lists[0].isToggling shouldBe false
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -409,9 +409,9 @@ internal class ShowListPresenterTest {
     @Test
     fun `should ignore duplicate ToggleShowInList given a toggle is already in flight`() = runTest {
         accountManager.setActiveProvider(SyncProviderSource.TRAKT)
-        traktListRepository.setListsForShow(
+        listRepository.setListsForShow(
             listOf(
-                TraktList(
+                UserList(
                     id = 7L,
                     slug = "favorites",
                     name = "Favorites",
@@ -422,7 +422,7 @@ internal class ShowListPresenterTest {
             ),
         )
         val gate = CompletableDeferred<Unit>()
-        traktListRepository.setToggleGate(gate)
+        listRepository.setToggleGate(gate)
 
         val presenter = createPresenter()
 
@@ -440,7 +440,7 @@ internal class ShowListPresenterTest {
             )
             testDispatcher.scheduler.runCurrent()
 
-            traktListRepository.toggleShowInListInvocations shouldBe 1
+            listRepository.toggleShowInListInvocations shouldBe 1
 
             gate.complete(Unit)
             testDispatcher.scheduler.advanceUntilIdle()
@@ -506,14 +506,14 @@ internal class ShowListPresenterTest {
     ): ShowListPresenter = ShowListPresenter(
         param = ShowListParam(showId = showId),
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        observeTraktListsInteractor = ObserveTraktListsInteractor(traktListRepository),
+        observeListsForShowInteractor = ObserveListsForShowInteractor(listRepository),
         navigator = navigator,
         accountManager = accountManager,
         authManagers = mapOf(SyncProviderSource.TRAKT to authManager, SyncProviderSource.SIMKL to simklAuthManager),
         simklLoginFlag = simklFlag,
-        syncTraktListsInteractor = SyncTraktListsInteractor(traktListRepository, userRepository),
-        createTraktListInteractor = CreateTraktListInteractor(traktListRepository, userRepository),
-        toggleShowInListInteractor = ToggleShowInListInteractor(traktListRepository, userRepository),
+        syncListsInteractor = SyncListsInteractor(listRepository, userRepository),
+        createListInteractor = CreateListInteractor(listRepository, userRepository),
+        toggleShowInListInteractor = ToggleShowInListInteractor(listRepository, userRepository),
         errorToStringMapper = ErrorToStringMapper { it.message ?: "Test error" },
         mapper = ShowListMapper(localizer),
         logger = logger,

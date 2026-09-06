@@ -57,6 +57,7 @@ import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlag
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
+import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.testing.FakeNavigator
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLoginClicked
 import com.thomaskioko.tvmaniac.settings.presenter.AccountLogoutClicked
@@ -104,7 +105,6 @@ import com.thomaskioko.tvmaniac.settings.presenter.VersionClicked
 import com.thomaskioko.tvmaniac.settings.presenter.WidgetThemeSelected
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionFeature
 import com.thomaskioko.tvmaniac.subscription.testing.FakeSubscriptionManager
-import com.thomaskioko.tvmaniac.traktlists.testing.FakeTraktListRepository
 import com.thomaskioko.tvmaniac.util.testing.FakeAppMetadata
 import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldContain
@@ -139,7 +139,7 @@ class SettingsPresenterTest {
     private val accountSwitchFlag = FakeFeatureFlag(initial = false)
     private val watchedEpisodeSyncRepository = FakeWatchedEpisodeSyncRepository()
     private val libraryRepository = FakeLibraryRepository()
-    private val traktListRepository = FakeTraktListRepository()
+    private val listRepository = FakeListRepository()
     private val navigator = FakeNavigator()
     private val subscriptionManager = FakeSubscriptionManager()
     private val backupRepository = FakeBackupRepository()
@@ -190,7 +190,7 @@ class SettingsPresenterTest {
                 countUnsavedChanges = CountUnsavedChanges(
                     libraryRepository = libraryRepository,
                     watchedEpisodeSyncRepository = watchedEpisodeSyncRepository,
-                    traktListRepository = traktListRepository,
+                    listRepository = listRepository,
                 ),
                 logger = fakeLogger,
             ),

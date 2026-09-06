@@ -32,9 +32,9 @@ graph TB
     direction TB
     :data:database:sqldelight[sqldelight]:::multiplatform
   end
-  subgraph :data:traktlists
+  subgraph :data:lists
     direction TB
-    :data:traktlists:api[api]:::multiplatform
+    :data:lists:api[api]:::multiplatform
   end
   subgraph :data:user
     direction TB
@@ -97,7 +97,7 @@ graph TB
   :domain:theme --> :i18n:generator
   :domain:user --> :core:base
   :domain:user --> :data:account-manager:api
-  :domain:user --> :data:traktlists:api
+  :domain:user --> :data:lists:api
   :domain:user --> :data:user:api
   :features:discover:nav --> :navigation:api
   :features:home:nav --> :navigation:api

@@ -18,7 +18,7 @@ scaffold {
     ignoreUnusedDependencies(
         ":data:request-manager:testing",
         ":data:sync-activity:testing",
-        ":data:traktlists:testing",
+        ":data:lists:testing",
         ":data:user:testing",
     )
 }
@@ -141,7 +141,7 @@ kotlin {
         jvmMain.dependencies {
             api(projects.data.requestManager.testing)
             implementation(projects.data.syncActivity.testing)
-            implementation(projects.data.traktlists.testing)
+            implementation(projects.data.lists.testing)
             implementation(projects.data.user.testing)
             implementation(libs.sqldelight.driver.jvm)
         }
@@ -149,7 +149,7 @@ kotlin {
         iosMain.dependencies {
             api(projects.data.requestManager.testing)
             api(projects.data.syncActivity.testing)
-            api(projects.data.traktlists.testing)
+            api(projects.data.lists.testing)
             api(projects.data.user.testing)
         }
 

@@ -27,8 +27,8 @@ import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistShowInfo
 import com.thomaskioko.tvmaniac.domain.favorites.ObserveFavoritesInteractor
 import com.thomaskioko.tvmaniac.domain.favorites.SyncFavoritesInteractor
 import com.thomaskioko.tvmaniac.domain.library.ObserveLibraryInteractor
+import com.thomaskioko.tvmaniac.domain.lists.ObserveUserListsInteractor
 import com.thomaskioko.tvmaniac.domain.recentlywatched.ObserveRecentlyWatchedInteractor
-import com.thomaskioko.tvmaniac.domain.traktlists.ObserveUserListsInteractor
 import com.thomaskioko.tvmaniac.domain.user.ObserveUserProfileInteractor
 import com.thomaskioko.tvmaniac.domain.user.UpdateUserProfileData
 import com.thomaskioko.tvmaniac.domain.user.model.UserProfile
@@ -39,6 +39,7 @@ import com.thomaskioko.tvmaniac.featureflags.flags.SimklLoginFlagQualifier
 import com.thomaskioko.tvmaniac.i18n.PluralsResourceKey
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
+import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.profile.nav.ProfileRoot
 import com.thomaskioko.tvmaniac.profile.presenter.ProfileAction.LoginClicked
@@ -60,7 +61,6 @@ import com.thomaskioko.tvmaniac.settings.nav.SettingsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
 import com.thomaskioko.tvmaniac.statistics.nav.StatisticsRoute
-import com.thomaskioko.tvmaniac.traktlists.api.TraktListEntity
 import com.thomaskioko.tvmaniac.upnext.api.model.CompletedShow
 import com.thomaskioko.tvmaniac.upnext.api.model.UpNextEpisode
 import dev.zacsweers.metro.Inject
@@ -342,7 +342,7 @@ private data class ProfileSections(
     val favorites: SectionState<ProfileShowItem>,
 )
 
-private fun TraktListEntity.toListItem(localizer: Localizer): ProfileListItem = ProfileListItem(
+private fun UserListEntity.toListItem(localizer: Localizer): ProfileListItem = ProfileListItem(
     id = id,
     name = name,
     itemCount = itemCount.toInt(),

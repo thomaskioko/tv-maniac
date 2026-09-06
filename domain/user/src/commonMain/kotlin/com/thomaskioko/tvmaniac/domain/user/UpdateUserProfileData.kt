@@ -4,14 +4,14 @@ import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.interactor.Interactor
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.data.user.api.UserRepository
-import com.thomaskioko.tvmaniac.traktlists.api.TraktListRepository
+import com.thomaskioko.tvmaniac.lists.api.ListRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.withContext
 
 @Inject
 public class UpdateUserProfileData(
     private val userRepository: UserRepository,
-    private val traktListRepository: TraktListRepository,
+    private val listRepository: ListRepository,
     private val activeProviderFeatures: () -> ProviderFeatures,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Interactor<UpdateUserProfileData.Params>() {
@@ -31,7 +31,7 @@ public class UpdateUserProfileData(
             )
 
             if (activeProviderFeatures().supportsLists) {
-                traktListRepository.fetchUserLists(
+                listRepository.fetchUserLists(
                     slug = slug,
                     forceRefresh = params.forceRefresh,
                 )
