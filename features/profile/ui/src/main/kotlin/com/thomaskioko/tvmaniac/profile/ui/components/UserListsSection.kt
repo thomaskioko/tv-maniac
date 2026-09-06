@@ -34,7 +34,7 @@ internal fun UserListsSection(
     viewAllLabel: String,
     retryLabel: String,
     onViewAll: () -> Unit,
-    onListClick: (Long) -> Unit,
+    onListClick: (Long, String) -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,7 +70,7 @@ internal fun UserListsSection(
 @Composable
 private fun ListsRow(
     lists: ImmutableList<ProfileListItem>,
-    onListClick: (Long) -> Unit,
+    onListClick: (Long, String) -> Unit,
 ) {
     LazyRow(
         modifier = Modifier.testTag(ProfileTestTags.USER_LISTS_ROW_TEST_TAG),
@@ -85,7 +85,7 @@ private fun ListsRow(
                 name = list.name,
                 itemCountLabel = list.itemCountLabel,
                 posterUrls = list.posterUrls,
-                onClick = { onListClick(list.id) },
+                onClick = { onListClick(list.id, list.name) },
                 modifier = Modifier
                     .width(CollageCardWidth)
                     .testTag(ProfileTestTags.listCard(list.id)),
@@ -128,7 +128,7 @@ private fun UserListsSectionPreview() {
         viewAllLabel = "More",
         retryLabel = "Retry",
         onViewAll = {},
-        onListClick = {},
+        onListClick = { _, _ -> },
         onRetry = {},
     )
 }
