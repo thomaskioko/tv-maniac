@@ -8,15 +8,20 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.thomaskioko.tvmaniac.accountmanager.api.AccountManager
+import com.thomaskioko.tvmaniac.accountmanager.api.ProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.core.base.extensions.asValue
 import com.thomaskioko.tvmaniac.core.base.extensions.coroutineScope
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.view.ErrorToStringMapper
 import com.thomaskioko.tvmaniac.core.view.InvokeError
+import com.thomaskioko.tvmaniac.core.view.InvokeStarted
+import com.thomaskioko.tvmaniac.core.view.InvokeSuccess
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.collectStatus
 import com.thomaskioko.tvmaniac.domain.lists.FetchMissingListShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
 import com.thomaskioko.tvmaniac.i18n.api.Localizer
@@ -26,6 +31,7 @@ import com.thomaskioko.tvmaniac.lists.nav.ListDetailRoute
 import com.thomaskioko.tvmaniac.lists.nav.model.ListDetailParam
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.BackClicked
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.DismissErrorMessage
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RefreshList
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RemoveConfirmed
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RemoveDismissed
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RemoveRequested
@@ -65,6 +71,9 @@ public class ListDetailPresenter(
     private val listRepository: ListRepository,
     private val toggleShowInListInteractor: ToggleShowInListInteractor,
     private val fetchMissingListShowDetailsInteractor: FetchMissingListShowDetailsInteractor,
+    private val syncListsInteractor: SyncListsInteractor,
+    private val accountManager: AccountManager,
+    private val activeProviderFeatures: () -> ProviderFeatures,
     private val errorToStringMapper: ErrorToStringMapper,
     private val logger: Logger,
 ) : ComponentContext by componentContext {
@@ -88,6 +97,7 @@ public class ListDetailPresenter(
     init {
         observeShows()
         observeLoadStates()
+        observeRefreshAvailability()
         fetchMissingDetails()
     }
 
@@ -101,6 +111,7 @@ public class ListDetailPresenter(
             is RemoveRequested -> requestRemoval(action.tmdbId)
             RemoveConfirmed -> confirmRemoval()
             RemoveDismissed -> _state.update { it.copy(removeConfirmation = null) }
+            RefreshList -> refreshList()
             RetryLoadMore -> showsPagingDataPresenter.retry()
             DismissErrorMessage -> _state.update { it.copy(errorMessage = null) }
             BackClicked -> navigator.navigateBack()
@@ -141,6 +152,30 @@ public class ListDetailPresenter(
                         errorMessage = (loadStates.refresh as? LoadState.Error)?.let { error -> errorToStringMapper.mapError(error.error) }
                             ?: it.errorMessage,
                     )
+                }
+            }
+        }
+    }
+
+    private fun observeRefreshAvailability() {
+        coroutineScope.launch {
+            accountManager.isConnected.collect { connected ->
+                _state.update { it.copy(canRefresh = connected && activeProviderFeatures().supportsLists) }
+            }
+        }
+    }
+
+    private fun refreshList() {
+        if (!_state.value.canRefresh || _state.value.isRefreshing) return
+        coroutineScope.launch {
+            syncListsInteractor(SyncListsInteractor.Params(forceRefresh = true)).collect { status ->
+                when (status) {
+                    InvokeStarted -> _state.update { it.copy(isRefreshing = true) }
+                    InvokeSuccess -> _state.update { it.copy(isRefreshing = false) }
+                    is InvokeError -> {
+                        logger.error(LOG_TAG, "Refreshing the list failed", status.throwable)
+                        _state.update { it.copy(isRefreshing = false, errorMessage = errorToStringMapper.mapError(status.throwable)) }
+                    }
                 }
             }
         }

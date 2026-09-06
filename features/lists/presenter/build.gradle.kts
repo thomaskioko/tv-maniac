@@ -13,6 +13,7 @@ kotlin {
                 api(projects.core.base)
                 api(projects.core.logger.api)
                 api(projects.core.view)
+                api(projects.data.accountManager.api)
                 api(projects.domain.lists)
                 api(projects.features.lists.nav)
                 api(projects.i18n.api)

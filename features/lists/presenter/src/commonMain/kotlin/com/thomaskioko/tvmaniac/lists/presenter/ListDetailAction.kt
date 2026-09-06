@@ -9,6 +9,8 @@ public sealed interface ListDetailAction {
 
     public data object RemoveDismissed : ListDetailAction
 
+    public data object RefreshList : ListDetailAction
+
     public data object RetryLoadMore : ListDetailAction
 
     public data object DismissErrorMessage : ListDetailAction

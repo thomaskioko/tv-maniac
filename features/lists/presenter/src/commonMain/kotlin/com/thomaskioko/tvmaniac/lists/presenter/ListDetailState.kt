@@ -14,6 +14,8 @@ public data class ListDetailState(
     val pagingDataFlow: Flow<PagingData<ListShow>> = emptyFlow(),
     val items: ImmutableList<ListShow> = persistentListOf(),
     val isRefreshLoading: Boolean = true,
+    val canRefresh: Boolean = false,
+    val isRefreshing: Boolean = false,
     val isAppendLoading: Boolean = false,
     val appendError: String? = null,
     val errorMessage: String? = null,

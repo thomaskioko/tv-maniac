@@ -7,12 +7,15 @@ import app.cash.turbine.test
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
+import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.accountmanager.testing.FakeAccountManager
 import com.thomaskioko.tvmaniac.accountmanager.testing.FakeProviderFeatures
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.domain.lists.FetchMissingListShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.lists.api.ListShowItem
@@ -43,6 +46,9 @@ internal class ListDetailPresenterTest {
     private val testDispatcher = StandardTestDispatcher()
     private val listRepository = FakeListRepository()
     private val showDetailsRepository = FakeShowDetailsRepository()
+    private val accountManager = FakeAccountManager()
+    private val userRepository = FakeUserRepository()
+    private var supportsLists = false
     private val dispatchers = AppCoroutineDispatchers(
         io = testDispatcher,
         computation = testDispatcher,
@@ -260,6 +266,54 @@ internal class ListDetailPresenterTest {
     }
 
     @Test
+    fun `should offer refresh given the signed in provider syncs lists`() = runTest {
+        supportsLists = true
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+
+        createPresenter().state.test {
+            awaitUntil { it.canRefresh }
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should not offer refresh given no provider is signed in`() = runTest {
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.state.value.canRefresh shouldBe false
+    }
+
+    @Test
+    fun `should pull the lists from the provider given refresh is requested`() = runTest {
+        supportsLists = true
+        accountManager.setActiveProvider(SyncProviderSource.TRAKT)
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitUntil { it.canRefresh }
+
+            presenter.dispatch(ListDetailAction.RefreshList)
+
+            awaitUntil { it.isRefreshing }
+            awaitUntil { !it.isRefreshing }
+            listRepository.fetchUserListsInvocations shouldBe 1
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should ignore refresh given the provider does not sync lists`() = runTest {
+        val presenter = createPresenter()
+        advanceUntilIdle()
+
+        presenter.dispatch(ListDetailAction.RefreshList)
+        advanceUntilIdle()
+
+        listRepository.fetchUserListsInvocations shouldBe 0
+    }
+
+    @Test
     fun `should navigate back given back is clicked`() = runTest {
         val navigator = TestNavigator()
         val presenter = createPresenter(navigator = navigator)
@@ -290,14 +344,21 @@ internal class ListDetailPresenterTest {
             listRepository = listRepository,
             toggleShowInListInteractor = ToggleShowInListInteractor(
                 repository = listRepository,
-                userRepository = FakeUserRepository(),
-                activeProviderFeatures = { FakeProviderFeatures(supportsLists = false) },
+                userRepository = userRepository,
+                activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
             ),
             fetchMissingListShowDetailsInteractor = FetchMissingListShowDetailsInteractor(
                 listRepository = listRepository,
                 showDetailsRepository = showDetailsRepository,
                 dispatchers = dispatchers,
             ),
+            syncListsInteractor = SyncListsInteractor(
+                repository = listRepository,
+                userRepository = userRepository,
+                activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
+            ),
+            accountManager = accountManager,
+            activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
             errorToStringMapper = { "mapped:${it.message}" },
             logger = FakeLogger(),
         ).also { lifecycle.resume() }
