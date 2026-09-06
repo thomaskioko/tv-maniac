@@ -110,10 +110,14 @@ class DefaultTraktListRemoteDataSourceTest {
     fun `should use GET and correct path given getListItems is called`() = runTest {
         var capturedMethod: HttpMethod? = null
         var capturedPath: String? = null
+        var capturedPage: String? = null
+        var capturedLimit: String? = null
 
         val engine = MockEngine { request ->
             capturedMethod = request.method
             capturedPath = request.url.encodedPath
+            capturedPage = request.url.parameters["page"]
+            capturedLimit = request.url.parameters["limit"]
             respond(
                 content = """[]""",
                 status = HttpStatusCode.OK,
@@ -126,6 +130,61 @@ class DefaultTraktListRemoteDataSourceTest {
 
         capturedMethod shouldBe HttpMethod.Get
         capturedPath shouldBe "/users/sean/lists/42/items"
+        capturedPage shouldBe "1"
+        capturedLimit shouldBe "250"
+    }
+
+    @Test
+    fun `should send the given page and limit given getListItems is called with them`() = runTest {
+        var capturedPage: String? = null
+        var capturedLimit: String? = null
+
+        val engine = MockEngine { request ->
+            capturedPage = request.url.parameters["page"]
+            capturedLimit = request.url.parameters["limit"]
+            respond(
+                content = """[]""",
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.getListItems(userSlug = "sean", listId = 42L, page = 3, limit = 50)
+
+        capturedPage shouldBe "3"
+        capturedLimit shouldBe "50"
+    }
+
+    @Test
+    fun `should send page, limit and sort headers given getWatchList is called`() = runTest {
+        var capturedPath: String? = null
+        var capturedPage: String? = null
+        var capturedLimit: String? = null
+        var capturedSortBy: String? = null
+        var capturedSortHow: String? = null
+
+        val engine = MockEngine { request ->
+            capturedPath = request.url.encodedPath
+            capturedPage = request.url.parameters["page"]
+            capturedLimit = request.url.parameters["limit"]
+            capturedSortBy = request.headers["X-Sort-By"]
+            capturedSortHow = request.headers["X-Sort-How"]
+            respond(
+                content = """[]""",
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.getWatchList(sortBy = "added", sortHow = "desc")
+
+        capturedPath shouldBe "/users/me/watchlist/shows"
+        capturedPage shouldBe "1"
+        capturedLimit shouldBe "250"
+        capturedSortBy shouldBe "added"
+        capturedSortHow shouldBe "desc"
     }
 
     @Test

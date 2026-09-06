@@ -1,10 +1,12 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fetchPages
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.startwatching.api.RemotePlanToWatchShow
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingRemoteDataSource
+import com.thomaskioko.tvmaniac.trakt.api.TRAKT_PAGE_LIMIT
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import dev.zacsweers.metro.AppScope
@@ -21,8 +23,9 @@ public class TraktStartWatchingRemoteDataSource(
     override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getPlanToWatch(): ApiResponse<List<RemotePlanToWatchShow>> =
-        remoteDataSource.getWatchList(sortBy = SORT_BY, sortHow = SORT_HOW)
-            .map { shows -> shows.map { it.toRemotePlanToWatchShow() } }
+        fetchPages(limit = TRAKT_PAGE_LIMIT) { page, limit ->
+            remoteDataSource.getWatchList(sortBy = SORT_BY, sortHow = SORT_HOW, page = page, limit = limit)
+        }.map { shows -> shows.map { it.toRemotePlanToWatchShow() } }
 
     private companion object {
         private const val SORT_BY = "added"

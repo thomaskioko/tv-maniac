@@ -1,12 +1,14 @@
 package com.thomaskioko.trakt.service.implementation.sync
 
 import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
+import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.fetchPages
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.map
 import com.thomaskioko.tvmaniac.data.library.LibraryRemoteDataSource
 import com.thomaskioko.tvmaniac.data.library.model.RemoteFollowedShow
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistShowIds
 import com.thomaskioko.tvmaniac.data.library.model.WatchlistSyncResult
+import com.thomaskioko.tvmaniac.trakt.api.TRAKT_PAGE_LIMIT
 import com.thomaskioko.tvmaniac.trakt.api.TraktListRemoteDataSource
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktFollowedShowResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
@@ -24,8 +26,9 @@ public class TraktLibraryRemoteDataSource(
     override val provider: SyncProviderSource = SyncProviderSource.TRAKT
 
     override suspend fun getWatchlist(): ApiResponse<List<RemoteFollowedShow>> =
-        remoteDataSource.getWatchList(sortBy = SORT_BY, sortHow = SORT_HOW)
-            .map { shows -> shows.map { it.toRemoteFollowedShow() } }
+        fetchPages(limit = TRAKT_PAGE_LIMIT) { page, limit ->
+            remoteDataSource.getWatchList(sortBy = SORT_BY, sortHow = SORT_HOW, page = page, limit = limit)
+        }.map { shows -> shows.map { it.toRemoteFollowedShow() } }
 
     override suspend fun addToWatchlist(shows: List<WatchlistShowIds>): ApiResponse<WatchlistSyncResult> =
         remoteDataSource.addShowsToWatchList(shows.map { it.toTraktShowIds() })

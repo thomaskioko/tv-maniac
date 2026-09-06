@@ -53,11 +53,15 @@ public class DefaultTraktListRemoteDataSource(
     override suspend fun getListItems(
         userSlug: String,
         listId: Long,
+        page: Int,
+        limit: Int,
     ): ApiResponse<List<TraktListItemResponse>> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/$userSlug/lists/$listId/items")
+                parameter("page", page)
+                parameter("limit", limit)
             }
         }
 
@@ -71,12 +75,18 @@ public class DefaultTraktListRemoteDataSource(
             setBody(TraktCreateListRequest(name = name))
         }
 
-    override suspend fun getWatchList(sortBy: String, sortHow: String): ApiResponse<List<TraktFollowedShowResponse>> =
+    override suspend fun getWatchList(
+        sortBy: String,
+        sortHow: String,
+        page: Int,
+        limit: Int,
+    ): ApiResponse<List<TraktFollowedShowResponse>> =
         httpClient.authSafeRequest {
             url {
                 method = HttpMethod.Get
                 path("users/me/watchlist/shows")
-                parameter("limit", "10000")
+                parameter("page", page)
+                parameter("limit", limit)
             }
             headers.append("X-Sort-By", sortBy)
             headers.append("X-Sort-How", sortHow)
