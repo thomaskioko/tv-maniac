@@ -896,6 +896,7 @@ graph TB
   :data:lists:implementation --> :core:base
   :data:lists:implementation --> :core:logger:api
   :data:lists:implementation -.-> :core:network-util:api
+  :data:lists:implementation --> :core:paging
   :data:lists:implementation --> :core:util:api
   :data:lists:implementation --> :data:account-manager:api
   :data:lists:implementation --> :data:backup:api
@@ -1215,6 +1216,7 @@ graph TB
   :domain:lists --> :core:base
   :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
+  :domain:lists --> :data:showdetails:api
   :domain:lists --> :data:user:api
   :domain:logout --> :core:base
   :domain:logout --> :data:account-manager:api
