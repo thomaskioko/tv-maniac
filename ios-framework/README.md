@@ -1206,6 +1206,7 @@ graph TB
   :features:lists:presenter --> :core:base
   :features:lists:presenter --> :core:logger:api
   :features:lists:presenter --> :core:view
+  :features:lists:presenter --> :data:account-manager:api
   :features:lists:presenter -.-> :data:lists:api
   :features:lists:presenter --> :domain:lists
   :features:lists:presenter --> :features:lists:nav
