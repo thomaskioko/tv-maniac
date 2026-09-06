@@ -12,6 +12,9 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     private val breakingBadTmdbId = 1396L
     private val favoritesListTraktId = 34223248L
     private val animeListTraktId = 34223402L
+    private val favoritesListId = 1L
+    private val animeListId = 2L
+    private val createdListId = 3L
 
     @Test
     fun userListManagementJourney() = runAppFlowTest {
@@ -26,19 +29,19 @@ internal class UserListFlowTests : BaseAppFlowTest() {
 
         showListRobot
             .assertSheetDisplayed()
-            .assertListItemDisplayed(favoritesListTraktId)
-            .assertListItemDisplayed(animeListTraktId)
-            .assertListSwitchIsUnchecked(favoritesListTraktId)
-            .assertListSwitchIsUnchecked(animeListTraktId)
-            .assertTraktListShowCountText(favoritesListTraktId, "0 shows")
-            .assertTraktListShowCountText(animeListTraktId, "0 shows")
+            .assertListItemDisplayed(favoritesListId)
+            .assertListItemDisplayed(animeListId)
+            .assertListSwitchIsUnchecked(favoritesListId)
+            .assertListSwitchIsUnchecked(animeListId)
+            .assertListShowCountText(favoritesListId, "0 shows")
+            .assertListShowCountText(animeListId, "0 shows")
             // 2. Add to multiple lists & verify counts
-            .clickListSwitch(favoritesListTraktId)
-            .assertListSwitchIsChecked(favoritesListTraktId)
-            .assertTraktListShowCountText(favoritesListTraktId, "1 show")
-            .clickListSwitch(animeListTraktId)
-            .assertListSwitchIsChecked(animeListTraktId)
-            .assertTraktListShowCountText(animeListTraktId, "1 show")
+            .clickListSwitch(favoritesListId)
+            .assertListSwitchIsChecked(favoritesListId)
+            .assertListShowCountText(favoritesListId, "1 show")
+            .clickListSwitch(animeListId)
+            .assertListSwitchIsChecked(animeListId)
+            .assertListShowCountText(animeListId, "1 show")
             // 3. Create new list
             .assertCreateListFieldDoesNotExist()
             .clickCreateListButton()
@@ -46,12 +49,12 @@ internal class UserListFlowTests : BaseAppFlowTest() {
             .typeCreateListName(TEST_CREATED_LIST_NAME)
             .clickCreateListSubmit()
             .assertCreateListFieldDoesNotExist()
-            .assertListItemDisplayed(TEST_CREATED_LIST_TRAKT_ID)
-            .assertListSwitchIsUnchecked(TEST_CREATED_LIST_TRAKT_ID)
-            .assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "0 shows")
-            .clickListSwitch(TEST_CREATED_LIST_TRAKT_ID)
-            .assertListSwitchIsChecked(TEST_CREATED_LIST_TRAKT_ID)
-            .assertTraktListShowCountText(TEST_CREATED_LIST_TRAKT_ID, "1 show")
+            .assertListItemDisplayed(createdListId)
+            .assertListSwitchIsUnchecked(createdListId)
+            .assertListShowCountText(createdListId, "0 shows")
+            .clickListSwitch(createdListId)
+            .assertListSwitchIsChecked(createdListId)
+            .assertListShowCountText(createdListId, "1 show")
             .clickCloseSheetButton()
             .assertSheetDoesNotExist()
     }

@@ -20,13 +20,14 @@ public class DefaultListDao(
 ) : ListDao {
 
     override fun observeAll(): Flow<List<UserListEntity>> =
-        database.traktListsQueries.selectAll()
+        database.listsQueries.selectAll()
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows ->
                 rows.map { list ->
                     UserListEntity(
                         id = list.id,
+                        traktId = list.trakt_id,
                         slug = list.slug,
                         name = list.name,
                         description = list.description,
@@ -37,7 +38,7 @@ public class DefaultListDao(
             }
 
     override fun observeListsWithPosters(): Flow<List<UserListEntity>> =
-        database.traktListsQueries.selectAllWithPosters()
+        database.listsQueries.selectAllWithPosters()
             .asFlow()
             .mapToList(dispatchers.io)
             .map { rows ->
@@ -46,6 +47,7 @@ public class DefaultListDao(
                         val list = group.first()
                         UserListEntity(
                             id = list.id,
+                            traktId = list.trakt_id,
                             slug = list.slug,
                             name = list.name,
                             description = list.description,
@@ -56,9 +58,9 @@ public class DefaultListDao(
                     }
             }
 
-    override fun upsert(entity: UserListEntity) {
-        database.traktListsQueries.upsert(
-            id = entity.id,
+    override fun upsertByTraktId(entity: UserListEntity) {
+        database.listsQueries.upsertByTraktId(
+            trakt_id = entity.traktId,
             slug = entity.slug,
             name = entity.name,
             description = entity.description,
@@ -67,7 +69,18 @@ public class DefaultListDao(
         )
     }
 
+    override fun getTraktId(id: Long): Long? =
+        database.listsQueries.selectTraktIdById(id).executeAsOneOrNull()?.trakt_id
+
+    override fun selectIdsByTraktId(): Map<Long, Long> =
+        database.listsQueries.selectSyncedIds().executeAsList()
+            .associate { requireNotNull(it.trakt_id) to it.id }
+
+    override fun deleteById(id: Long) {
+        database.listsQueries.deleteById(id)
+    }
+
     override fun deleteAll() {
-        database.traktListsQueries.deleteAll()
+        database.listsQueries.deleteAll()
     }
 }

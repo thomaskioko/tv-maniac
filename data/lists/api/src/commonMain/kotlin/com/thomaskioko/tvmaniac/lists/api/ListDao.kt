@@ -8,7 +8,13 @@ public interface ListDao {
 
     public fun observeListsWithPosters(): Flow<List<UserListEntity>>
 
-    public fun upsert(entity: UserListEntity)
+    public fun upsertByTraktId(entity: UserListEntity)
+
+    public fun getTraktId(id: Long): Long?
+
+    public fun selectIdsByTraktId(): Map<Long, Long>
+
+    public fun deleteById(id: Long)
 
     public fun deleteAll()
 }

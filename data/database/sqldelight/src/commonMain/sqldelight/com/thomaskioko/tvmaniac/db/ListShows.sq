@@ -1,0 +1,52 @@
+import com.thomaskioko.tvmaniac.db.Id;
+import com.thomaskioko.tvmaniac.db.TmdbId;
+
+CREATE TABLE IF NOT EXISTS list_shows(
+    list_id INTEGER NOT NULL,
+    tmdb_id INTEGER AS Id<TmdbId> NOT NULL,
+    listed_at TEXT NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    PRIMARY KEY (list_id, tmdb_id)
+);
+
+selectByTmdbId:
+SELECT list_id, tmdb_id, listed_at, pending_action
+FROM list_shows
+WHERE tmdb_id = :tmdb_id;
+
+upsert:
+INSERT OR REPLACE INTO list_shows(list_id, tmdb_id, listed_at, pending_action)
+VALUES(?, ?, ?, ?);
+
+updatePendingAction:
+UPDATE list_shows
+SET pending_action = ?
+WHERE list_id = ? AND tmdb_id = ?;
+
+deleteByListIdAndTmdbId:
+DELETE FROM list_shows
+WHERE list_id = ? AND tmdb_id = ?;
+
+countActiveByListId:
+SELECT list_id, COUNT(*) AS show_count
+FROM list_shows
+WHERE pending_action != 'DELETE'
+GROUP BY list_id;
+
+deleteSyncedByListId:
+DELETE FROM list_shows
+WHERE list_id = ? AND pending_action = 'NOTHING';
+
+upsertSynced:
+INSERT OR IGNORE INTO list_shows(list_id, tmdb_id, listed_at, pending_action)
+VALUES(?, ?, ?, 'NOTHING');
+
+deleteByListId:
+DELETE FROM list_shows WHERE list_id = ?;
+
+deleteAll:
+DELETE FROM list_shows;
+
+countPendingActions:
+SELECT COUNT(*) FROM list_shows WHERE pending_action != 'NOTHING';

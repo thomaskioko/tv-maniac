@@ -139,8 +139,17 @@ internal class TraktRestoredListWriterTest {
 
         override fun observeListsWithPosters(): Flow<List<UserListEntity>> = lists
 
-        override fun upsert(entity: UserListEntity) {
-            lists.value = lists.value + entity
+        override fun upsertByTraktId(entity: UserListEntity) {
+            lists.value = lists.value.filterNot { it.traktId == entity.traktId } + entity
+        }
+
+        override fun getTraktId(id: Long): Long? = lists.value.firstOrNull { it.id == id }?.traktId
+
+        override fun selectIdsByTraktId(): Map<Long, Long> =
+            lists.value.mapNotNull { list -> list.traktId?.let { it to list.id } }.toMap()
+
+        override fun deleteById(id: Long) {
+            lists.value = lists.value.filterNot { it.id == id }
         }
 
         override fun deleteAll() {

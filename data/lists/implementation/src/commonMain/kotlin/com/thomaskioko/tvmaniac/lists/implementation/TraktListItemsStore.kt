@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.storeBuilder
 import com.thomaskioko.tvmaniac.core.networkutil.api.extensions.usingDispatchers
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.db.DatabaseTransactionRunner
+import com.thomaskioko.tvmaniac.lists.api.ListDao
 import com.thomaskioko.tvmaniac.lists.api.ListShowDao
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestManagerRepository
 import com.thomaskioko.tvmaniac.resourcemanager.api.RequestTypeConfig.TRAKT_LIST_ITEMS_SYNC
@@ -31,19 +32,25 @@ public data class TraktListItemsKey(
 @SingleIn(AppScope::class)
 public class TraktListItemsStore(
     private val traktListRemoteDataSource: TraktListRemoteDataSource,
+    private val listDao: ListDao,
     private val listShowDao: ListShowDao,
     private val requestManagerRepository: RequestManagerRepository,
     private val transactionRunner: DatabaseTransactionRunner,
     private val dispatchers: AppCoroutineDispatchers,
 ) : Store<TraktListItemsKey, TraktListItemsKey> by storeBuilder(
     fetcher = apiFetcher { key: TraktListItemsKey ->
-        val response = fetchPages(limit = TRAKT_PAGE_LIMIT) { page, limit ->
-            traktListRemoteDataSource.getListItems(userSlug = key.userSlug, listId = key.listId, page = page, limit = limit)
-        }
-        if (response is ApiResponse.Error.HttpError && response.code == 404) {
+        val traktId = listDao.getTraktId(key.listId)
+        if (traktId == null) {
             ApiResponse.Success(emptyList())
         } else {
-            response
+            val response = fetchPages(limit = TRAKT_PAGE_LIMIT) { page, limit ->
+                traktListRemoteDataSource.getListItems(userSlug = key.userSlug, listId = traktId, page = page, limit = limit)
+            }
+            if (response is ApiResponse.Error.HttpError && response.code == 404) {
+                ApiResponse.Success(emptyList())
+            } else {
+                response
+            }
         }
     },
     sourceOfTruth = SourceOfTruth.of(
@@ -56,7 +63,7 @@ public class TraktListItemsStore(
                     if (item.type == TYPE_SHOW && show != null) {
                         listShowDao.upsertSynced(
                             listId = key.listId,
-                            traktId = show.ids.trakt,
+                            tmdbId = show.ids.tmdb,
                             listedAt = item.listedAt,
                         )
                     }

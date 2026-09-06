@@ -157,8 +157,8 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     fun `should clear trakt lists given the user logs out`() = runTest(testDispatcher) {
         cleaner.clearAccountData()
 
-        database.traktListsQueries.selectAll().executeAsList().shouldBeEmpty()
-        database.traktListShowsQueries.countActiveByListId().executeAsList().shouldBeEmpty()
+        database.listsQueries.selectAll().executeAsList().shouldBeEmpty()
+        database.listShowsQueries.countActiveByListId().executeAsList().shouldBeEmpty()
     }
 
     @Test
@@ -272,7 +272,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
         cleaner.clearAccountAndTrackingData()
 
         database.favoritesQueries.favoriteShows().executeAsList().shouldBeEmpty()
-        database.traktListsQueries.selectAll().executeAsList().shouldBeEmpty()
+        database.listsQueries.selectAll().executeAsList().shouldBeEmpty()
         database.calendarQueries.hasEntriesInRange(0L, Long.MAX_VALUE).executeAsOne() shouldBe false
     }
 
@@ -335,7 +335,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             "2024-01-01T00:00:00Z",
         )
 
-        database.traktListsQueries.upsert(
+        database.listsQueries.upsertByTraktId(
             TRAKT_LIST_ID,
             "my-list",
             "My List",
@@ -343,10 +343,11 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
             1L,
             "2024-01-01T00:00:00Z",
         )
+        val localListId = database.listsQueries.lastInsertRowId().executeAsOne()
 
-        database.traktListShowsQueries.upsert(
-            TRAKT_LIST_ID,
-            BREAKING_BAD_TRAKT_ID,
+        database.listShowsQueries.upsert(
+            localListId,
+            Id<TmdbId>(BREAKING_BAD_TMDB_ID),
             "2024-01-01T00:00:00Z",
             PendingAction.NOTHING.value,
         )

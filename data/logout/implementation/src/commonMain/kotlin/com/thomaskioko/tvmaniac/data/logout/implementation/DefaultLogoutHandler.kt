@@ -59,8 +59,8 @@ public class DefaultLogoutHandler(
     private fun deleteAccountTables() {
         database.watchedShowSyncLogQueries.deleteAll()
         database.favoritesQueries.deleteAll()
-        database.traktListShowsQueries.deleteAll()
-        database.traktListsQueries.deleteAll()
+        database.listShowsQueries.deleteAll()
+        database.listsQueries.deleteAll()
         database.calendarQueries.deleteAll()
         providerMetaDao.clearAll()
     }

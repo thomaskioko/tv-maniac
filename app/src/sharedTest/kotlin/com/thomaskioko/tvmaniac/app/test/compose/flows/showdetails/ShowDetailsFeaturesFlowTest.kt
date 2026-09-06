@@ -9,7 +9,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
     private val breakingBadTmdbId = 1396L
     private val pilotEpisodeTraktId = 73640L
-    private val favoritesListTraktId = 34223248L
+    private val favoritesListId = 1L
     private val ratedScoreValue = 8
 
     @Test
@@ -64,7 +64,7 @@ internal class ShowDetailsFeaturesFlowTest : BaseAppFlowTest() {
 
         showListRobot
             .assertSheetDisplayed()
-            .assertListItemDisplayed(favoritesListTraktId)
+            .assertListItemDisplayed(favoritesListId)
     }
 
     @Test

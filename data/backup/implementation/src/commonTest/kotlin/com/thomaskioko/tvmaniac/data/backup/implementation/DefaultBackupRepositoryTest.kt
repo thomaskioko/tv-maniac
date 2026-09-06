@@ -141,8 +141,8 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun `should leave out a member pending removal given a list is exported`() = runTest(testDispatcher) {
-        addShowToList(listId = 42L, listName = "Comfort watches", traktId = TRAKT_ID)
-        database.traktListShowsQueries.updatePendingAction(PendingAction.DELETE.value, 42L, TRAKT_ID)
+        val localListId = addShowToList(listId = 42L, listName = "Comfort watches", traktId = TRAKT_ID)
+        database.listShowsQueries.updatePendingAction(PendingAction.DELETE.value, localListId, Id<TmdbId>(BREAKING_BAD_TMDB_ID))
 
         val backup = repository.createBackup()
 
@@ -236,10 +236,12 @@ internal class DefaultBackupRepositoryTest : BaseDatabaseTest() {
         backup.shows.single().rating.shouldBeNull()
     }
 
-    private fun addShowToList(listId: Long, listName: String, traktId: Long) {
+    private fun addShowToList(listId: Long, listName: String, traktId: Long): Long {
         showIdForTraktId(traktId = traktId, tmdbId = BREAKING_BAD_TMDB_ID)
-        database.traktListsQueries.upsert(listId, "comfort-watches", listName, null, 1, NOW.toString())
-        database.traktListShowsQueries.upsert(listId, traktId, NOW.toString(), PendingAction.NOTHING.value)
+        database.listsQueries.upsertByTraktId(listId, "comfort-watches", listName, null, 1, NOW.toString())
+        val localListId = database.listsQueries.lastInsertRowId().executeAsOne()
+        database.listShowsQueries.upsert(localListId, Id<TmdbId>(BREAKING_BAD_TMDB_ID), NOW.toString(), PendingAction.NOTHING.value)
+        return localListId
     }
 
     private fun insertShow(): Id<ShowId> {

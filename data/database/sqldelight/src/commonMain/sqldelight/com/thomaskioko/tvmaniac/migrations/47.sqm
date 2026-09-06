@@ -1,0 +1,37 @@
+CREATE TABLE lists_new(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trakt_id INTEGER,
+    slug TEXT,
+    name TEXT NOT NULL,
+    description TEXT,
+    item_count INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE'))
+);
+
+INSERT INTO lists_new (id, trakt_id, slug, name, description, item_count, created_at, pending_action)
+SELECT id, id, slug, name, description, item_count, created_at, 'NOTHING' FROM trakt_lists;
+
+DROP TABLE trakt_lists;
+ALTER TABLE lists_new RENAME TO lists;
+CREATE UNIQUE INDEX IF NOT EXISTS index_lists_trakt_id ON lists (trakt_id);
+
+CREATE TABLE list_shows_new(
+    list_id INTEGER NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    listed_at TEXT NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    PRIMARY KEY (list_id, tmdb_id)
+);
+
+INSERT INTO list_shows_new (list_id, tmdb_id, listed_at, pending_action)
+SELECT trakt_list_shows.list_id, tvshow.tmdb_id, trakt_list_shows.listed_at, trakt_list_shows.pending_action
+FROM trakt_list_shows
+INNER JOIN lists ON lists.id = trakt_list_shows.list_id
+INNER JOIN show_trakt ON show_trakt.trakt_id = trakt_list_shows.trakt_id
+INNER JOIN tvshow ON tvshow.id = show_trakt.show_id;
+
+DROP TABLE trakt_list_shows;
+ALTER TABLE list_shows_new RENAME TO list_shows;
