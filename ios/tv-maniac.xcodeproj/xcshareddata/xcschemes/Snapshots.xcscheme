@@ -267,6 +267,16 @@
                ReferencedContainer = "container:Packages/Statistics">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ListsTests"
+               BuildableName = "ListsTests"
+               BlueprintName = "ListsTests"
+               ReferencedContainer = "container:Packages/Lists">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

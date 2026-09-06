@@ -32,6 +32,7 @@ let package = Package(
         .package(name: "WatchDateSelection", path: "../WatchDateSelection"),
         .package(name: "Trailers", path: "../Trailers"),
         .package(name: "Statistics", path: "../Statistics"),
+        .package(name: "Lists", path: "../Lists"),
         .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
     ],
     targets: [
@@ -55,6 +56,7 @@ let package = Package(
                 "WatchDateSelection",
                 "Trailers",
                 "Statistics",
+                "Lists",
                 .product(name: "TvManiac", package: "TvManiacFramework"),
             ]
         ),
