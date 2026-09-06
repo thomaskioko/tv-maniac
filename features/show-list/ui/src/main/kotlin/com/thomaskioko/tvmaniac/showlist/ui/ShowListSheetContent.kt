@@ -1,6 +1,5 @@
 package com.thomaskioko.tvmaniac.showlist.ui
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -27,11 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
-import com.thomaskioko.tvmaniac.android.designsystem.R
 import com.thomaskioko.tvmaniac.compose.components.FilledTextButton
-import com.thomaskioko.tvmaniac.compose.components.ProviderButton
-import com.thomaskioko.tvmaniac.compose.components.ProviderSignInCard
 import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacSwitch
@@ -53,11 +48,6 @@ internal fun ShowListSheetContent(
             .padding(horizontal = TvManiacSpacing.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (!state.isLoggedIn) {
-            LoginRequiredContent(state, onAction)
-            return@Column
-        }
-
         Spacer(modifier = Modifier.height(TvManiacSpacing.xSmall))
 
         Text(
@@ -253,37 +243,6 @@ private fun CreateListInlineField(
             }
         }
     }
-}
-
-@Composable
-private fun LoginRequiredContent(
-    state: ShowListState,
-    onAction: (ShowListAction) -> Unit,
-) {
-    ProviderSignInCard(
-        title = state.labels.loginRequiredTitle,
-        description = state.labels.loginRequiredMessage,
-        modifier = Modifier.padding(vertical = TvManiacSpacing.large),
-    ) {
-        state.authProviders.forEach { option ->
-            ProviderButton(
-                text = option.label,
-                logo = providerLogo(option.provider),
-                onClick = { onAction(ShowListAction.Login(option.provider)) },
-                modifier = if (option.provider == SyncProviderSource.TRAKT) {
-                    Modifier.testTag(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG)
-                } else {
-                    Modifier
-                },
-            )
-        }
-    }
-}
-
-@DrawableRes
-private fun providerLogo(provider: SyncProviderSource): Int = when (provider) {
-    SyncProviderSource.TRAKT -> R.drawable.ic_trakt_mono
-    SyncProviderSource.SIMKL -> R.drawable.ic_simkl_mono
 }
 
 private const val MAX_LIST_NAME_LENGTH = 50

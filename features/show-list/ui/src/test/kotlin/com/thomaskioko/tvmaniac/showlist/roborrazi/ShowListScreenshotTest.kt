@@ -8,11 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import com.thomaskioko.tvmaniac.showlist.ui.ShowListContent
-import com.thomaskioko.tvmaniac.showlist.ui.loggedInEmpty
-import com.thomaskioko.tvmaniac.showlist.ui.loggedInWithCreateField
-import com.thomaskioko.tvmaniac.showlist.ui.loggedInWithCreateLoading
-import com.thomaskioko.tvmaniac.showlist.ui.loggedInWithLists
-import com.thomaskioko.tvmaniac.showlist.ui.loggedOutState
+import com.thomaskioko.tvmaniac.showlist.ui.emptyState
+import com.thomaskioko.tvmaniac.showlist.ui.withCreateField
+import com.thomaskioko.tvmaniac.showlist.ui.withCreateLoading
+import com.thomaskioko.tvmaniac.showlist.ui.withLists
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,23 +30,11 @@ class ShowListScreenshotTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun showListLoggedOut() {
-        composeTestRule.captureMultiDevice("ShowListLoggedOut") {
-            Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
-                ShowListContent(
-                    state = loggedOutState,
-                    onAction = {},
-                )
-            }
-        }
-    }
-
-    @Test
     fun showListEmpty() {
         composeTestRule.captureMultiDevice("ShowListEmpty") {
             Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
-                    state = loggedInEmpty,
+                    state = emptyState,
                     onAction = {},
                 )
             }
@@ -59,7 +46,7 @@ class ShowListScreenshotTest {
         composeTestRule.captureMultiDevice("ShowListWithLists") {
             Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
-                    state = loggedInWithLists,
+                    state = withLists,
                     onAction = {},
                 )
             }
@@ -71,7 +58,7 @@ class ShowListScreenshotTest {
         composeTestRule.captureMultiDevice("ShowListWithCreateField") {
             Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
-                    state = loggedInWithCreateField,
+                    state = withCreateField,
                     onAction = {},
                 )
             }
@@ -83,7 +70,7 @@ class ShowListScreenshotTest {
         composeTestRule.captureMultiDevice("ShowListCreatingList") {
             Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
                 ShowListContent(
-                    state = loggedInWithCreateLoading,
+                    state = withCreateLoading,
                     onAction = {},
                 )
             }

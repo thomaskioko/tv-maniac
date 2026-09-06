@@ -15,6 +15,55 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     private val favoritesListId = 1L
     private val animeListId = 2L
     private val createdListId = 3L
+    private val firstLocalListId = 1L
+
+    @Test
+    fun givenNoSession_whenShowAddedToNewList_thenListIsCreatedWithoutLoginWall() = runAppFlowTest {
+        scenarios.discover.stubBrowseGraph()
+
+        openListSheet()
+
+        showListRobot
+            .assertSheetDisplayed()
+            .clickCreateListButton()
+            .assertCreateListFieldDisplayed()
+            .typeCreateListName(SIGNED_OUT_LIST_NAME)
+            .clickCreateListSubmit()
+            .assertCreateListFieldDoesNotExist()
+            .assertListItemDisplayed(firstLocalListId)
+            .assertListSwitchIsUnchecked(firstLocalListId)
+            .assertListShowCountText(firstLocalListId, "0 shows")
+            .clickListSwitch(firstLocalListId)
+            .assertListSwitchIsChecked(firstLocalListId)
+            .assertListShowCountText(firstLocalListId, "1 show")
+            .clickCloseSheetButton()
+            .assertSheetDoesNotExist()
+    }
+
+    @Test
+    fun givenSimklSession_whenShowAddedToNewList_thenListIsCreatedWithoutTraktSync() = runAppFlowTest {
+        scenarios.flags.enableSimklLogin()
+        scenarios.discover.stubBrowseGraph()
+        scenarios.stubAuthenticatedSimklProfile()
+
+        openListSheet()
+
+        showListRobot
+            .assertSheetDisplayed()
+            .clickCreateListButton()
+            .assertCreateListFieldDisplayed()
+            .typeCreateListName(SIMKL_LIST_NAME)
+            .clickCreateListSubmit()
+            .assertCreateListFieldDoesNotExist()
+            .assertListItemDisplayed(firstLocalListId)
+            .assertListSwitchIsUnchecked(firstLocalListId)
+            .assertListShowCountText(firstLocalListId, "0 shows")
+            .clickListSwitch(firstLocalListId)
+            .assertListSwitchIsChecked(firstLocalListId)
+            .assertListShowCountText(firstLocalListId, "1 show")
+            .clickCloseSheetButton()
+            .assertSheetDoesNotExist()
+    }
 
     @Test
     fun userListManagementJourney() = runAppFlowTest {
@@ -72,5 +121,10 @@ internal class UserListFlowTests : BaseAppFlowTest() {
             .clickAddToListButton()
 
         showListRobot.assertSheetDisplayed()
+    }
+
+    private companion object {
+        private const val SIGNED_OUT_LIST_NAME = "Weekend Watch"
+        private const val SIMKL_LIST_NAME = "Rewatch Queue"
     }
 }

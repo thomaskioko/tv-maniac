@@ -18,7 +18,6 @@ import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateInList
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateMarkShowWatched
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateMarkShowWatchedConfirm
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateRated
-import com.thomaskioko.tvmaniac.showdetails.ui.previewHeaderStateSimkl
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHostState
 import com.thomaskioko.tvmaniac.showdetails.ui.previewHostStateWithMessage
 import com.thomaskioko.tvmaniac.showdetails.ui.previewProvidersState
@@ -176,47 +175,6 @@ class ShowDetailsScreenScreenshotTest {
                 ) {
                     item(key = "header") {
                         ShowDetailsHeaderSection(state = previewHeaderStateInList, onAction = {})
-                    }
-                }
-            }
-        }
-    }
-
-    @Test
-    fun showDetailsSimklProviderState() {
-        composeTestRule.captureMultiDevice("ShowDetailsSimklProviderState") {
-            TvManiacBackground {
-                ShowDetailsScaffold(
-                    hostState = previewHostState,
-                    title = previewHeaderStateSimkl.title,
-                    isHeaderEmpty = false,
-                    listState = LazyListState(),
-                    onHostAction = {},
-                ) {
-                    item(key = "header") {
-                        ShowDetailsHeaderSection(state = previewHeaderStateSimkl, onAction = {})
-                    }
-                    item(key = "season_episodes") {
-                        ShowDetailsSeasonEpisodesSection(
-                            state = previewSeasonsEpisodesState,
-                            status = previewHeaderStateSimkl.status,
-                            onAction = {},
-                        )
-                    }
-                    item(key = "providers") {
-                        ShowDetailsProvidersSection(state = previewProvidersState)
-                    }
-                    item(key = "trailers") {
-                        ShowDetailsTrailersSection(state = previewTrailersState, onAction = {})
-                    }
-                    item(key = "casts") {
-                        ShowDetailsCastSection(state = previewCastState)
-                    }
-                    item(key = "similar") {
-                        ShowDetailsSimilarSection(state = previewSimilarState, onAction = {})
-                    }
-                    item(key = "bottom_spacer") {
-                        Spacer(modifier = Modifier.height(TvManiacSpacing.xxLarge))
                     }
                 }
             }

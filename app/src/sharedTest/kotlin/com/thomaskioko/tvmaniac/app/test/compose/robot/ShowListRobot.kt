@@ -18,22 +18,6 @@ internal class ShowListRobot(composeUi: ComposeUiTest) : BaseRobot<ShowListRobot
         assertDoesNotExist(ShowListTestTags.SHEET_TEST_TAG)
     }
 
-    fun assertLoginRequiredDisplayed() = apply {
-        awaitTagOnce(
-            ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG,
-            timeoutMillis = SHEET_APPEARANCE_TIMEOUT_MILLIS,
-        )
-        assertExists(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG)
-    }
-
-    fun assertLoginRequiredDoesNotExist() = apply {
-        assertDoesNotExist(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG)
-    }
-
-    fun confirmLogin() = apply {
-        click(ShowListTestTags.LOGIN_REQUIRED_CONFIRM_BUTTON_TEST_TAG)
-    }
-
     fun assertListItemDisplayed(listId: Long) = apply {
         assertExists(ShowListTestTags.listItem(listId))
     }

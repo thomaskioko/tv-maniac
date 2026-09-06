@@ -888,6 +888,7 @@ graph TB
   :data:lists:implementation --> :core:logger:api
   :data:lists:implementation -.-> :core:network-util:api
   :data:lists:implementation --> :core:util:api
+  :data:lists:implementation --> :data:account-manager:api
   :data:lists:implementation --> :data:backup:api
   :data:lists:implementation --> :data:database:sqldelight
   :data:lists:implementation -.-> :data:followedshows:api
@@ -1201,6 +1202,7 @@ graph TB
   :domain:library --> :domain:showdetails
   :domain:library --> :domain:sync-activity
   :domain:lists --> :core:base
+  :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
   :domain:lists --> :data:user:api
   :domain:logout --> :core:base
@@ -1740,7 +1742,6 @@ graph TB
   :features:show-list:ui --> :core:base
   :features:show-list:ui -.-> :core:test-tags
   :features:show-list:ui -.-> :core:view
-  :features:show-list:ui -.-> :data:account-manager:api
   :features:show-list:ui --> :features:show-list:presenter
   :features:show-list:ui --> :navigation:api
   :features:show-list:ui --> :navigation:ui

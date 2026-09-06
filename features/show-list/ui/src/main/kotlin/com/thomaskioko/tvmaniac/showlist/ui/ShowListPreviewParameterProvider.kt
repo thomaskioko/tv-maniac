@@ -1,8 +1,6 @@
 package com.thomaskioko.tvmaniac.showlist.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.thomaskioko.tvmaniac.accountmanager.api.AuthProviderOption
-import com.thomaskioko.tvmaniac.accountmanager.api.SyncProviderSource
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListCopy
 import com.thomaskioko.tvmaniac.presentation.showlist.ShowListState
 import com.thomaskioko.tvmaniac.presentation.showlist.model.UserListModel
@@ -15,27 +13,14 @@ private val previewCopy = ShowListCopy(
     createListPlaceholder = "New list name",
     emptyListText = "You don't have any lists yet.",
     listsHeaderText = "Your Lists",
-    loginRequiredTitle = "Login Required",
-    loginRequiredMessage = "Please log in to manage your lists.",
 )
 
-internal val loggedOutState = ShowListState(
-    isLoggedIn = false,
-    labels = previewCopy,
-    authProviders = persistentListOf(
-        AuthProviderOption(SyncProviderSource.TRAKT, "Continue with Trakt"),
-        AuthProviderOption(SyncProviderSource.SIMKL, "Continue with Simkl"),
-    ),
-)
-
-internal val loggedInLoading = ShowListState(
-    isLoggedIn = true,
+internal val loadingState = ShowListState(
     isLoading = true,
     labels = previewCopy,
 )
 
-internal val loggedInWithLists = ShowListState(
-    isLoggedIn = true,
+internal val withLists = ShowListState(
     isLoading = false,
     labels = previewCopy,
     lists = persistentListOf(
@@ -66,23 +51,23 @@ internal val loggedInWithLists = ShowListState(
     ),
 )
 
-internal val loggedInEmpty = loggedInWithLists.copy(
+internal val emptyState = withLists.copy(
     isLoading = false,
     lists = persistentListOf(),
 )
 
-internal val loggedInWithCreateField = loggedInWithLists.copy(
+internal val withCreateField = withLists.copy(
     showCreateListField = true,
     createListName = "My New List",
 )
 
-internal val loggedInWithCreateLoading = loggedInWithLists.copy(
+internal val withCreateLoading = withLists.copy(
     showCreateListField = true,
     isCreatingList = true,
     createListName = "Sci-Fi Picks",
 )
 
-internal val loggedInWithToggleInFlight = loggedInWithLists.copy(
+internal val withToggleInFlight = withLists.copy(
     lists = persistentListOf(
         UserListModel(
             id = 1L,
@@ -107,12 +92,11 @@ internal val loggedInWithToggleInFlight = loggedInWithLists.copy(
 internal class ShowListPreviewParameterProvider : PreviewParameterProvider<ShowListState> {
     override val values: Sequence<ShowListState>
         get() = sequenceOf(
-            loggedOutState,
-            loggedInLoading,
-            loggedInEmpty,
-            loggedInWithLists,
-            loggedInWithCreateField,
-            loggedInWithCreateLoading,
-            loggedInWithToggleInFlight,
+            loadingState,
+            emptyState,
+            withLists,
+            withCreateField,
+            withCreateLoading,
+            withToggleInFlight,
         )
 }

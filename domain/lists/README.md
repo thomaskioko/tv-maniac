@@ -54,6 +54,7 @@ graph TB
   :data:user:api --> :data:account-manager:api
   :data:user:api --> :data:database:sqldelight
   :domain:lists --> :core:base
+  :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
   :domain:lists --> :data:user:api
 

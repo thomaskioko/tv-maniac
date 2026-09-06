@@ -34,11 +34,8 @@ internal val previewHeaderState = ShowDetailsHeaderState(
     communityVotes = 4958,
     isInLibrary = true,
     genres = persistentListOf("Horror", "Action"),
-    canAddToList = true,
     listActionLabel = "Add To List",
 )
-
-internal val previewHeaderStateSimkl = previewHeaderState.copy(canAddToList = false)
 
 internal val previewHeaderStateRated = previewHeaderState.copy(userRating = 9)
 

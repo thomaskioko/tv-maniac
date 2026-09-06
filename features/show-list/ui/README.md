@@ -80,6 +80,7 @@ graph TB
   :data:user:api --> :data:account-manager:api
   :data:user:api --> :data:database:sqldelight
   :domain:lists --> :core:base
+  :domain:lists --> :data:account-manager:api
   :domain:lists --> :data:lists:api
   :domain:lists --> :data:user:api
   :domain:theme --> :i18n:generator
@@ -98,7 +99,6 @@ graph TB
   :features:show-list:ui --> :core:base
   :features:show-list:ui -.-> :core:test-tags
   :features:show-list:ui -.-> :core:view
-  :features:show-list:ui -.-> :data:account-manager:api
   :features:show-list:ui --> :features:show-list:presenter
   :features:show-list:ui --> :navigation:api
   :features:show-list:ui --> :navigation:ui
