@@ -7,7 +7,6 @@ public struct ShowInfoView: View {
     @Environment(\.appTheme) private var theme
 
     private let isFollowed: Bool
-    private let canAddToList: Bool
     private let isInList: Bool
     private let genres: [SwiftGenres]
     private let trackLabel: String
@@ -28,7 +27,6 @@ public struct ShowInfoView: View {
 
     public init(
         isFollowed: Bool,
-        canAddToList: Bool,
         isInList: Bool,
         genres: [SwiftGenres],
         trackLabel: String,
@@ -48,7 +46,6 @@ public struct ShowInfoView: View {
         onMarkShowWatched: @escaping () -> Void = {}
     ) {
         self.isFollowed = isFollowed
-        self.canAddToList = canAddToList
         self.isInList = isInList
         self.genres = genres
         self.trackLabel = trackLabel
@@ -105,7 +102,6 @@ public struct ShowInfoView: View {
                 containerColor: isInList ? theme.colors.success : nil,
                 action: onAddToCustomList
             )
-            .disabled(!canAddToList)
 
             moreMenu
         }
@@ -149,7 +145,6 @@ public struct ShowInfoView: View {
 #Preview("Followed — Mark show as watched offered") {
     ShowInfoView(
         isFollowed: true,
-        canAddToList: true,
         isInList: false,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
@@ -173,28 +168,6 @@ public struct ShowInfoView: View {
 #Preview("Followed — Add to List shown") {
     ShowInfoView(
         isFollowed: true,
-        canAddToList: true,
-        isInList: false,
-        genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
-        trackLabel: "Track",
-        stopTrackingLabel: "Stop Tracking",
-        listActionLabel: "Add To List",
-        moreLabel: "More",
-        rateLabel: "Rate",
-        watchAgainLabel: "Watch again",
-        onAddToLibrary: {},
-        onAddToCustomList: {},
-        onRate: {},
-        onWatchAgain: {}
-    )
-    .padding()
-    .appPreview(LightTheme())
-}
-
-#Preview("Followed — Add to List hidden") {
-    ShowInfoView(
-        isFollowed: true,
-        canAddToList: false,
         isInList: false,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
@@ -215,7 +188,6 @@ public struct ShowInfoView: View {
 #Preview("Not Followed") {
     ShowInfoView(
         isFollowed: false,
-        canAddToList: true,
         isInList: false,
         genres: [.init(name: "Drama"), .init(name: "Fantasy")],
         trackLabel: "Track",
@@ -236,7 +208,6 @@ public struct ShowInfoView: View {
 #Preview("Already Rated") {
     ShowInfoView(
         isFollowed: true,
-        canAddToList: true,
         isInList: false,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
@@ -258,7 +229,6 @@ public struct ShowInfoView: View {
 #Preview("In a List") {
     ShowInfoView(
         isFollowed: true,
-        canAddToList: true,
         isInList: true,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
@@ -279,7 +249,6 @@ public struct ShowInfoView: View {
 #Preview("Watch Again Available") {
     ShowInfoView(
         isFollowed: true,
-        canAddToList: true,
         isInList: false,
         genres: [.init(name: "Sci-Fi"), .init(name: "Horror"), .init(name: "Action")],
         trackLabel: "Track",
