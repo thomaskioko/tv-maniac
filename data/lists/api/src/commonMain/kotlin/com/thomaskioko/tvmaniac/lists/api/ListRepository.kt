@@ -10,9 +10,9 @@ public interface ListRepository {
 
     public suspend fun fetchUserLists(slug: String, forceRefresh: Boolean = false)
 
-    public suspend fun createList(slug: String, name: String)
+    public suspend fun createList(name: String, traktSlug: String?)
 
-    public suspend fun toggleShowInList(slug: String, listId: Long, showId: Long, isCurrentlyInList: Boolean)
+    public suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?)
 
     public suspend fun countPendingListShows(): Long
 }

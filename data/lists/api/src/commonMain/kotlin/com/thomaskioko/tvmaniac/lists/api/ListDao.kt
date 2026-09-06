@@ -10,6 +10,10 @@ public interface ListDao {
 
     public fun upsertByTraktId(entity: UserListEntity)
 
+    public fun insertLocal(name: String, createdAt: String): Long
+
+    public fun markSynced(id: Long, traktId: Long, slug: String?)
+
     public fun getTraktId(id: Long): Long?
 
     public fun selectIdsByTraktId(): Map<Long, Long>

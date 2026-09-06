@@ -31,10 +31,16 @@ public class FakeListRepository : ListRepository {
     private val toggledShows = mutableListOf<Pair<Long, Long>>()
     private var createListFailure: Throwable? = null
     private var toggleFailure: Throwable? = null
+    private var lastCreateTraktSlug: String? = null
+    private var lastToggleTraktSlug: String? = null
 
     public fun createdListNames(): List<String> = createdListNames
 
     public fun toggledShows(): List<Pair<Long, Long>> = toggledShows
+
+    public fun lastCreateTraktSlug(): String? = lastCreateTraktSlug
+
+    public fun lastToggleTraktSlug(): String? = lastToggleTraktSlug
 
     public fun setCreateListFailure(error: Throwable?) {
         createListFailure = error
@@ -70,14 +76,16 @@ public class FakeListRepository : ListRepository {
         listsAfterSync?.let { listsWithMembershipFlow.value = it }
     }
 
-    override suspend fun createList(slug: String, name: String) {
+    override suspend fun createList(name: String, traktSlug: String?) {
         createListFailure?.let { throw it }
+        lastCreateTraktSlug = traktSlug
         createdListNames += name
     }
 
-    override suspend fun toggleShowInList(slug: String, listId: Long, showId: Long, isCurrentlyInList: Boolean) {
+    override suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?) {
         toggleShowInListInvocations += 1
         toggleFailure?.let { throw it }
+        lastToggleTraktSlug = traktSlug
         toggledShows += listId to showId
         toggleGate?.await()
     }

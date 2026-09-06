@@ -22,6 +22,11 @@ SELECT trakt_id
 FROM lists
 WHERE id = :id;
 
+selectById:
+SELECT id, trakt_id, slug, name, description, item_count, created_at, pending_action
+FROM lists
+WHERE id = :id;
+
 selectAllWithPosters:
 SELECT
     lists.id,
@@ -62,6 +67,15 @@ ON CONFLICT(trakt_id) DO UPDATE SET
     description = excluded.description,
     item_count = excluded.item_count;
 
+insertLocal:
+INSERT INTO lists(trakt_id, slug, name, description, item_count, created_at, pending_action)
+VALUES(NULL, NULL, :name, NULL, 0, :createdAt, 'UPLOAD');
+
+markSynced:
+UPDATE lists
+SET trakt_id = :traktId, slug = :slug, pending_action = 'NOTHING'
+WHERE id = :id;
+
 selectSyncedIds:
 SELECT id, trakt_id
 FROM lists
@@ -75,3 +89,6 @@ SELECT last_insert_rowid();
 
 deleteAll:
 DELETE FROM lists;
+
+deleteSynced:
+DELETE FROM lists WHERE trakt_id IS NOT NULL;

@@ -69,6 +69,15 @@ public class DefaultListDao(
         )
     }
 
+    override fun insertLocal(name: String, createdAt: String): Long {
+        database.listsQueries.insertLocal(name = name, createdAt = createdAt)
+        return database.listsQueries.lastInsertRowId().executeAsOne()
+    }
+
+    override fun markSynced(id: Long, traktId: Long, slug: String?) {
+        database.listsQueries.markSynced(traktId = traktId, slug = slug, id = id)
+    }
+
     override fun getTraktId(id: Long): Long? =
         database.listsQueries.selectTraktIdById(id).executeAsOneOrNull()?.trakt_id
 
