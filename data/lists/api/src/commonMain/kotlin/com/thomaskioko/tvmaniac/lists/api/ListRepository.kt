@@ -17,6 +17,10 @@ public interface ListRepository {
 
     public suspend fun createList(name: String, traktSlug: String?)
 
+    public suspend fun renameList(listId: Long, name: String, traktSlug: String?)
+
+    public suspend fun deleteList(listId: Long, traktSlug: String?)
+
     public suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?)
 
     public suspend fun syncPendingLists(slug: String)

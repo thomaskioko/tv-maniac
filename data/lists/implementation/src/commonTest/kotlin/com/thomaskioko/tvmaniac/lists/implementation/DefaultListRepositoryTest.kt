@@ -670,6 +670,154 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         remoteDataSource.removeFromListCalls shouldBe listOf(Triple("sean", 1L, 10L))
     }
 
+    @Test
+    fun `should make no remote call given a local-only list is renamed`() = runTest {
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.renameList(listId = listId, name = "Cozy watches", traktSlug = null)
+
+        listDao.observeAll().first().single().name shouldBe "Cozy watches"
+        remoteDataSource.updateListCalls.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should make no remote call given a local-only list is deleted`() = runTest {
+        repository.createList(name = "Comfort watches", traktSlug = null)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.deleteList(listId = listId, traktSlug = null)
+
+        listDao.observeAll().first().shouldBeEmpty()
+        remoteDataSource.deleteListCalls.shouldBeEmpty()
+    }
+
+    @Test
+    fun `should push and clear the marker given a synced list is renamed`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.renameList(listId = listId, name = "Renamed", traktSlug = "sean")
+
+        remoteDataSource.updateListCalls shouldBe listOf(Triple("sean", 1L, "Renamed"))
+        database.listsQueries.selectById(listId).executeAsOne().pending_action shouldBe PendingAction.NOTHING.value
+        listDao.observeAll().first().single().name shouldBe "Renamed"
+    }
+
+    @Test
+    fun `should stay pending given the rename push fails`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+        remoteDataSource.updateListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+
+        repository.renameList(listId = listId, name = "Renamed", traktSlug = "sean")
+
+        database.listsQueries.selectById(listId).executeAsOne().pending_action shouldBe PendingAction.UPLOAD.value
+    }
+
+    @Test
+    fun `should push the pending rename given syncPendingLists runs after the push fails`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+        remoteDataSource.updateListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+        repository.renameList(listId = listId, name = "Renamed", traktSlug = "sean")
+        remoteDataSource.updateListResponse = ApiResponse.Success(Unit)
+
+        repository.syncPendingLists(slug = "sean")
+
+        database.listsQueries.selectById(listId).executeAsOne().pending_action shouldBe PendingAction.NOTHING.value
+        remoteDataSource.updateListCalls shouldBe listOf(
+            Triple("sean", 1L, "Renamed"),
+            Triple("sean", 1L, "Renamed"),
+        )
+    }
+
+    @Test
+    fun `should push and remove the row given a synced list is deleted`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.deleteList(listId = listId, traktSlug = "sean")
+
+        remoteDataSource.deleteListCalls shouldBe listOf("sean" to 1L)
+        listDao.observeAll().first().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should remove the row given delete returns a 404`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+        remoteDataSource.deleteListResponse = ApiResponse.Error.HttpError(
+            code = 404,
+            errorBody = null,
+            errorMessage = "not found",
+        )
+
+        repository.deleteList(listId = listId, traktSlug = "sean")
+
+        listDao.observeAll().first().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should keep the row pending and hidden given the delete push fails with a non-404 error`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+        remoteDataSource.deleteListResponse = ApiResponse.Error.HttpError(
+            code = 500,
+            errorBody = null,
+            errorMessage = "server error",
+        )
+
+        repository.deleteList(listId = listId, traktSlug = "sean")
+
+        database.listsQueries.selectById(listId).executeAsOne().pending_action shouldBe PendingAction.DELETE.value
+        listDao.observeAll().first().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should mark the row pending and skip the remote call given no Trakt slug on delete`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+
+        repository.deleteList(listId = listId, traktSlug = null)
+
+        database.listsQueries.selectById(listId).executeAsOne().pending_action shouldBe PendingAction.DELETE.value
+        remoteDataSource.deleteListCalls.shouldBeEmpty()
+        listDao.observeAll().first().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should push the pending delete given syncPendingLists runs`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+        repository.deleteList(listId = listId, traktSlug = null)
+
+        repository.syncPendingLists(slug = "sean")
+
+        remoteDataSource.deleteListCalls shouldBe listOf("sean" to 1L)
+        database.listsQueries.selectById(listId).executeAsOneOrNull().shouldBeNull()
+    }
+
+    @Test
+    fun `should remove a pending delete that never reached Trakt given syncPendingLists runs`() = runTest {
+        val listId = listDao.insertLocal(name = "Comfort watches", createdAt = "2026-01-01T00:00:00Z")
+        listDao.markPendingDelete(listId)
+
+        repository.syncPendingLists(slug = "sean")
+
+        remoteDataSource.deleteListCalls.shouldBeEmpty()
+        database.listsQueries.selectById(listId).executeAsOneOrNull().shouldBeNull()
+        listDao.countPendingChanges() shouldBe 0L
+    }
+
     private fun addShow(tmdbId: Long, traktId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
@@ -784,6 +932,21 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
     ): ApiResponse<TraktCreateListResponse> {
         createListCalls += userSlug to name
         return createListResponse
+    }
+
+    val updateListCalls: MutableList<Triple<String, Long, String>> = mutableListOf()
+    val deleteListCalls: MutableList<Pair<String, Long>> = mutableListOf()
+    var updateListResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
+    var deleteListResponse: ApiResponse<Unit> = ApiResponse.Success(Unit)
+
+    override suspend fun updateList(userSlug: String, listId: Long, name: String): ApiResponse<Unit> {
+        updateListCalls += Triple(userSlug, listId, name)
+        return updateListResponse
+    }
+
+    override suspend fun deleteList(userSlug: String, listId: Long): ApiResponse<Unit> {
+        deleteListCalls += userSlug to listId
+        return deleteListResponse
     }
 
     override suspend fun getWatchList(

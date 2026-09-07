@@ -17,12 +17,28 @@ public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
         ApiResponse.Success(emptyList())
     private var addShowsResponse: ApiResponse<TraktAddShowToListResponse>? = null
     private var removeShowsResponse: ApiResponse<TraktAddRemoveShowFromListResponse>? = null
+    private var updateListResponse: ApiResponse<Unit>? = null
+    private var deleteListResponse: ApiResponse<Unit>? = null
     private val addedShows = mutableListOf<TraktShowIds>()
     private val removedShows = mutableListOf<TraktShowIds>()
+    private val updatedLists = mutableListOf<Pair<Long, String>>()
+    private val deletedListIds = mutableListOf<Long>()
 
     public fun addedShows(): List<TraktShowIds> = addedShows
 
     public fun removedShows(): List<TraktShowIds> = removedShows
+
+    public fun updatedLists(): List<Pair<Long, String>> = updatedLists
+
+    public fun deletedListIds(): List<Long> = deletedListIds
+
+    public fun setUpdateListResponse(response: ApiResponse<Unit>) {
+        updateListResponse = response
+    }
+
+    public fun setDeleteListResponse(response: ApiResponse<Unit>) {
+        deleteListResponse = response
+    }
 
     public fun setWatchList(response: ApiResponse<List<TraktFollowedShowResponse>>) {
         watchListResponse = response
@@ -76,6 +92,16 @@ public class FakeTraktListRemoteDataSource : TraktListRemoteDataSource {
         name: String,
     ): ApiResponse<TraktCreateListResponse> =
         error("FakeTraktListRemoteDataSource: createList not configured")
+
+    override suspend fun updateList(userSlug: String, listId: Long, name: String): ApiResponse<Unit> {
+        updatedLists += listId to name
+        return updateListResponse ?: ApiResponse.Success(Unit)
+    }
+
+    override suspend fun deleteList(userSlug: String, listId: Long): ApiResponse<Unit> {
+        deletedListIds += listId
+        return deleteListResponse ?: ApiResponse.Success(Unit)
+    }
 
     override suspend fun addShowToList(
         userSlug: String,

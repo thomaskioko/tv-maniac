@@ -96,9 +96,9 @@ public class DefaultListRepository(
     }
 
     override suspend fun createList(name: String, traktSlug: String?) {
-        withContext(dispatchers.io) {
+        withLocalChangesLock {
             val localId = listDao.insertLocal(name = name, createdAt = dateTimeProvider.now().toString())
-            if (traktSlug == null) return@withContext
+            if (traktSlug == null) return@withLocalChangesLock
 
             when (val response = traktListRemoteDataSource.createList(userSlug = traktSlug, name = name)) {
                 is ApiResponse.Success -> listDao.markSynced(
@@ -106,6 +106,45 @@ public class DefaultListRepository(
                     traktId = response.body.ids.trakt.toLong(),
                     slug = response.body.ids.slug,
                 )
+                else -> Unit
+            }
+        }
+    }
+
+    override suspend fun renameList(listId: Long, name: String, traktSlug: String?) {
+        withLocalChangesLock {
+            listDao.rename(id = listId, name = name)
+            val traktId = listDao.getTraktId(listId)
+            if (traktSlug == null || traktId == null) return@withLocalChangesLock
+
+            when (traktListRemoteDataSource.updateList(userSlug = traktSlug, listId = traktId, name = name)) {
+                is ApiResponse.Success -> listDao.clearPendingAction(listId)
+                else -> Unit
+            }
+        }
+    }
+
+    override suspend fun deleteList(listId: Long, traktSlug: String?) {
+        withLocalChangesLock {
+            val traktId = listDao.getTraktId(listId)
+            if (traktId == null) {
+                listShowDao.deleteByListId(listId)
+                listDao.deleteById(listId)
+                return@withLocalChangesLock
+            }
+
+            listDao.markPendingDelete(listId)
+            if (traktSlug == null) return@withLocalChangesLock
+
+            when (val response = traktListRemoteDataSource.deleteList(userSlug = traktSlug, listId = traktId)) {
+                is ApiResponse.Success -> {
+                    listShowDao.deleteByListId(listId)
+                    listDao.deleteById(listId)
+                }
+                is ApiResponse.Error.HttpError -> if (response.code == HTTP_NOT_FOUND) {
+                    listShowDao.deleteByListId(listId)
+                    listDao.deleteById(listId)
+                }
                 else -> Unit
             }
         }
@@ -160,10 +199,54 @@ public class DefaultListRepository(
     override suspend fun syncPendingLists(slug: String) {
         withContext(dispatchers.io) {
             syncPendingListsMutex.withLock {
+                if (!pushPendingListDeletes(slug)) return@withLock
                 if (!pushPendingListCreations(slug)) return@withLock
+                if (!pushPendingListRenames(slug)) return@withLock
                 pushPendingListItems(slug)
             }
         }
+    }
+
+    private suspend fun <T> withLocalChangesLock(block: suspend () -> T): T =
+        withContext(dispatchers.io) {
+            syncPendingListsMutex.withLock { block() }
+        }
+
+    private suspend fun pushPendingListDeletes(slug: String): Boolean {
+        val pendingDeletes = listDao.selectPendingDeletes()
+        for (pending in pendingDeletes) {
+            val traktId = pending.traktId
+            if (traktId == null) {
+                listShowDao.deleteByListId(pending.id)
+                listDao.deleteById(pending.id)
+                continue
+            }
+            when (val response = traktListRemoteDataSource.deleteList(userSlug = slug, listId = traktId)) {
+                is ApiResponse.Success -> {
+                    listShowDao.deleteByListId(pending.id)
+                    listDao.deleteById(pending.id)
+                }
+                is ApiResponse.Error.HttpError -> if (response.code == HTTP_NOT_FOUND) {
+                    listShowDao.deleteByListId(pending.id)
+                    listDao.deleteById(pending.id)
+                } else {
+                    return false
+                }
+                else -> return false
+            }
+        }
+        return true
+    }
+
+    private suspend fun pushPendingListRenames(slug: String): Boolean {
+        val pendingRenames = listDao.selectPendingRenames()
+        for (pending in pendingRenames) {
+            when (traktListRemoteDataSource.updateList(userSlug = slug, listId = pending.traktId, name = pending.name)) {
+                is ApiResponse.Success -> listDao.clearPendingAction(pending.id)
+                else -> return false
+            }
+        }
+        return true
     }
 
     private suspend fun pushPendingListCreations(slug: String): Boolean {
@@ -230,7 +313,7 @@ public class DefaultListRepository(
 
     override suspend fun countPendingListShows(): Long = listShowDao.countPendingActions()
 
-    override suspend fun countPendingLists(): Long = listDao.countPendingUploads()
+    override suspend fun countPendingLists(): Long = listDao.countPendingChanges()
 
     override fun observePagedListShows(listId: Long): Flow<PagingData<ListShowItem>> =
         Pager(
@@ -240,4 +323,8 @@ public class DefaultListRepository(
 
     override suspend fun getTmdbIdsMissingPoster(listId: Long): List<Long> =
         listShowDao.getTmdbIdsMissingPoster(listId)
+
+    private companion object {
+        private const val HTTP_NOT_FOUND = 404
+    }
 }

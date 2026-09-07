@@ -14,13 +14,23 @@ public interface ListDao {
 
     public fun markSynced(id: Long, traktId: Long, slug: String?)
 
+    public fun rename(id: Long, name: String)
+
+    public fun markPendingDelete(id: Long)
+
+    public fun clearPendingAction(id: Long)
+
     public fun getTraktId(id: Long): Long?
 
     public fun selectIdsByTraktId(): Map<Long, Long>
 
     public fun selectPendingUploadLists(): List<PendingUploadList>
 
-    public fun countPendingUploads(): Long
+    public fun selectPendingRenames(): List<PendingRenameList>
+
+    public fun selectPendingDeletes(): List<PendingDeleteList>
+
+    public fun countPendingChanges(): Long
 
     public fun deleteById(id: Long)
 
