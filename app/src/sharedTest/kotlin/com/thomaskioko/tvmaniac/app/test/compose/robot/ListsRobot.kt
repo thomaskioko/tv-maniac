@@ -16,6 +16,14 @@ internal class ListsRobot(composeUi: ComposeUiTest) : BaseRobot<ListsRobot>(comp
         assertDisplayed(ListsTestTags.listCard(id))
     }
 
+    fun assertListCardDoesNotExist(id: Long) = apply {
+        assertDoesNotExist(ListsTestTags.listCard(id))
+    }
+
+    fun clickListCard(id: Long) = apply {
+        click(ListsTestTags.listCard(id))
+    }
+
     fun clickBackButton() = apply {
         click(ListsTestTags.BACK_BUTTON_TEST_TAG)
     }

@@ -14,11 +14,20 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -26,10 +35,15 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -47,6 +61,7 @@ import com.thomaskioko.tvmaniac.compose.components.ThemePreviews
 import com.thomaskioko.tvmaniac.compose.components.TvManiacAlertDialog
 import com.thomaskioko.tvmaniac.compose.components.TvManiacPreviewWrapperProvider
 import com.thomaskioko.tvmaniac.compose.components.TvManiacTopBar
+import com.thomaskioko.tvmaniac.compose.components.tvManiacTextFieldColors
 import com.thomaskioko.tvmaniac.compose.theme.ImageDimens
 import com.thomaskioko.tvmaniac.compose.theme.ImageType
 import com.thomaskioko.tvmaniac.compose.theme.Layout
@@ -54,6 +69,7 @@ import com.thomaskioko.tvmaniac.compose.theme.LocalPosterCornerRadius
 import com.thomaskioko.tvmaniac.compose.theme.TvManiacSpacing
 import com.thomaskioko.tvmaniac.core.base.ActivityScope
 import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_back
+import com.thomaskioko.tvmaniac.i18n.MR.strings.cd_list_options
 import com.thomaskioko.tvmaniac.i18n.MR.strings.generic_retry
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_cancel
 import com.thomaskioko.tvmaniac.i18n.MR.strings.label_ok
@@ -90,6 +106,7 @@ internal fun ListDetailScreen(
 ) {
     val context = LocalContext.current
     val lazyPagingItems = state.pagingDataFlow.collectAsLazyPagingItems()
+    var menuExpanded by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.testTag(ListDetailTestTags.SCREEN_TEST_TAG),
@@ -118,6 +135,44 @@ internal fun ListDetailScreen(
                             .fillMaxWidth()
                             .padding(start = TvManiacSpacing.medium),
                     )
+                },
+                actions = {
+                    Box {
+                        IconButton(
+                            onClick = { menuExpanded = true },
+                            modifier = Modifier.testTag(ListDetailTestTags.MORE_BUTTON_TEST_TAG),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = cd_list_options.resolve(context),
+                                tint = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                        ) {
+                            MoreMenuItem(
+                                label = state.renameLabel,
+                                imageVector = Icons.Outlined.Edit,
+                                tag = ListDetailTestTags.RENAME_MENU_ITEM_TEST_TAG,
+                                onClick = {
+                                    menuExpanded = false
+                                    onAction(ListDetailAction.RenameRequested)
+                                },
+                            )
+                            MoreMenuItem(
+                                label = state.deleteLabel,
+                                imageVector = Icons.Outlined.Delete,
+                                tag = ListDetailTestTags.DELETE_MENU_ITEM_TEST_TAG,
+                                onClick = {
+                                    menuExpanded = false
+                                    onAction(ListDetailAction.DeleteRequested)
+                                },
+                            )
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -161,6 +216,73 @@ internal fun ListDetailScreen(
             dismissButtonTestTag = ListDetailTestTags.REMOVE_CANCEL_BUTTON_TEST_TAG,
         )
     }
+
+    state.renameDialog?.let { dialog ->
+        TvManiacAlertDialog(
+            title = dialog.title,
+            message = "",
+            confirmButtonText = dialog.saveLabel,
+            dismissButtonText = label_cancel.resolve(context),
+            onConfirm = { onAction(ListDetailAction.RenameConfirmed) },
+            onDismiss = { onAction(ListDetailAction.RenameDismissed) },
+            confirmButtonTestTag = ListDetailTestTags.RENAME_SAVE_BUTTON_TEST_TAG,
+            confirmButtonEnabled = dialog.canSave && !dialog.isSaving,
+            modifier = Modifier.testTag(ListDetailTestTags.RENAME_DIALOG_TEST_TAG),
+            content = {
+                OutlinedTextField(
+                    value = dialog.name,
+                    onValueChange = { onAction(ListDetailAction.RenameNameChanged(it)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(ListDetailTestTags.RENAME_FIELD_TEST_TAG),
+                    enabled = !dialog.isSaving,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    shape = MaterialTheme.shapes.medium,
+                    colors = tvManiacTextFieldColors(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrectEnabled = false,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (dialog.canSave && !dialog.isSaving) {
+                                onAction(ListDetailAction.RenameConfirmed)
+                            }
+                        },
+                    ),
+                )
+            },
+        )
+    }
+
+    state.deleteConfirmation?.let { confirmation ->
+        TvManiacAlertDialog(
+            title = confirmation.title,
+            message = confirmation.message,
+            confirmButtonText = confirmation.confirmLabel,
+            dismissButtonText = label_cancel.resolve(context),
+            onConfirm = { onAction(ListDetailAction.DeleteConfirmed) },
+            onDismiss = { onAction(ListDetailAction.DeleteDismissed) },
+            confirmButtonTestTag = ListDetailTestTags.DELETE_CONFIRM_BUTTON_TEST_TAG,
+            dismissButtonTestTag = ListDetailTestTags.DELETE_CANCEL_BUTTON_TEST_TAG,
+        )
+    }
+}
+
+@Composable
+private fun MoreMenuItem(
+    label: String,
+    imageVector: ImageVector,
+    tag: String,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = { Text(text = label, style = MaterialTheme.typography.bodyMedium) },
+        leadingIcon = { Icon(imageVector = imageVector, contentDescription = null) },
+        onClick = onClick,
+        modifier = Modifier.testTag(tag),
+    )
 }
 
 @Composable
