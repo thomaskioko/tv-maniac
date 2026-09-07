@@ -37,7 +37,9 @@ class ListDetailScreenTest: SnapshotTestCase {
                 isLoading: false,
                 items: sampleItems,
                 retryLabel: "Retry",
-                removeButtonLabel: "Remove"
+                removeButtonLabel: "Remove",
+                renameLabel: "Rename",
+                deleteLabel: "Delete list"
             )
         )
         .assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Content")

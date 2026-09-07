@@ -15,6 +15,7 @@ public struct ListDetailView: View {
         ListDetailScreen(
             state: uiState.toState(),
             backButtonAccessibilityLabel: String(\.cd_back),
+            moreOptionsAccessibilityLabel: String(\.cd_list_options),
             onBack: { presenter.dispatch(action: ListDetailActionBackClicked()) },
             onItemAppear: { index in presenter.onItemVisible(index: Int32(index)) },
             onLoadMore: { presenter.loadMore() },
@@ -24,7 +25,14 @@ public struct ListDetailView: View {
             onRemoveConfirmed: { presenter.dispatch(action: ListDetailActionRemoveConfirmed()) },
             onRemoveDismissed: { presenter.dispatch(action: ListDetailActionRemoveDismissed()) },
             onRetryLoadMore: { presenter.dispatch(action: ListDetailActionRetryLoadMore()) },
-            onDismissErrorMessage: { presenter.dispatch(action: ListDetailActionDismissErrorMessage()) }
+            onDismissErrorMessage: { presenter.dispatch(action: ListDetailActionDismissErrorMessage()) },
+            onRenameRequested: { presenter.dispatch(action: ListDetailActionRenameRequested()) },
+            onRenameNameChanged: { name in presenter.dispatch(action: ListDetailActionRenameNameChanged(name: name)) },
+            onRenameConfirmed: { presenter.dispatch(action: ListDetailActionRenameConfirmed()) },
+            onRenameDismissed: { presenter.dispatch(action: ListDetailActionRenameDismissed()) },
+            onDeleteRequested: { presenter.dispatch(action: ListDetailActionDeleteRequested()) },
+            onDeleteConfirmed: { presenter.dispatch(action: ListDetailActionDeleteConfirmed()) },
+            onDeleteDismissed: { presenter.dispatch(action: ListDetailActionDeleteDismissed()) }
         )
     }
 }
@@ -44,7 +52,11 @@ private extension ListDetailState {
             retryLabel: String(\.button_error_retry),
             removeButtonLabel: String(\.list_detail_remove_button),
             removeConfirmation: removeConfirmation?.toSwift(),
-            cancelLabel: String(\.label_cancel)
+            cancelLabel: String(\.label_cancel),
+            renameLabel: renameLabel,
+            deleteLabel: deleteLabel,
+            renameDialog: renameDialog?.toSwift(),
+            deleteConfirmation: deleteConfirmation?.toSwift()
         )
     }
 }
