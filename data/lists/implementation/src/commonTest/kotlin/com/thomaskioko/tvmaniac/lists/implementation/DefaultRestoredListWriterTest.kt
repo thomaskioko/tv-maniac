@@ -6,6 +6,8 @@ import com.thomaskioko.tvmaniac.data.backup.api.model.BackupList
 import com.thomaskioko.tvmaniac.data.backup.api.model.BackupListShow
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
 import com.thomaskioko.tvmaniac.lists.api.ListDao
+import com.thomaskioko.tvmaniac.lists.api.PendingDeleteList
+import com.thomaskioko.tvmaniac.lists.api.PendingRenameList
 import com.thomaskioko.tvmaniac.lists.api.PendingUploadList
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
@@ -157,6 +159,14 @@ internal class DefaultRestoredListWriterTest {
             lists.value = lists.value.map { if (it.id == id) it.copy(traktId = traktId, slug = slug) else it }
         }
 
+        override fun rename(id: Long, name: String) {
+            lists.value = lists.value.map { if (it.id == id) it.copy(name = name) else it }
+        }
+
+        override fun markPendingDelete(id: Long) = Unit
+
+        override fun clearPendingAction(id: Long) = Unit
+
         override fun getTraktId(id: Long): Long? = lists.value.firstOrNull { it.id == id }?.traktId
 
         override fun selectIdsByTraktId(): Map<Long, Long> =
@@ -164,7 +174,11 @@ internal class DefaultRestoredListWriterTest {
 
         override fun selectPendingUploadLists(): List<PendingUploadList> = emptyList()
 
-        override fun countPendingUploads(): Long = 0L
+        override fun selectPendingRenames(): List<PendingRenameList> = emptyList()
+
+        override fun selectPendingDeletes(): List<PendingDeleteList> = emptyList()
+
+        override fun countPendingChanges(): Long = 0L
 
         override fun deleteById(id: Long) {
             lists.value = lists.value.filterNot { it.id == id }

@@ -39,4 +39,32 @@ internal class ListDetailRobot(composeUi: ComposeUiTest) : BaseRobot<ListDetailR
     fun clickBackButton() = apply {
         click(ListDetailTestTags.BACK_BUTTON_TEST_TAG)
     }
+
+    fun clickMoreButton() = apply {
+        click(ListDetailTestTags.MORE_BUTTON_TEST_TAG)
+    }
+
+    fun clickRename() = apply {
+        click(ListDetailTestTags.RENAME_MENU_ITEM_TEST_TAG, useUnmergedTree = true)
+    }
+
+    fun clickDeleteList() = apply {
+        click(ListDetailTestTags.DELETE_MENU_ITEM_TEST_TAG, useUnmergedTree = true)
+    }
+
+    fun enterListName(name: String) = apply {
+        replaceText(ListDetailTestTags.RENAME_FIELD_TEST_TAG, name, useUnmergedTree = true)
+    }
+
+    fun clickSave() = apply {
+        click(ListDetailTestTags.RENAME_SAVE_BUTTON_TEST_TAG, useUnmergedTree = true)
+    }
+
+    fun clickConfirmDelete() = apply {
+        click(ListDetailTestTags.DELETE_CONFIRM_BUTTON_TEST_TAG, useUnmergedTree = true)
+    }
+
+    fun verifyTitle(title: String) = apply {
+        assertTextDisplayed(title, substring = false)
+    }
 }

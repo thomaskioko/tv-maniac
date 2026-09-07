@@ -5,8 +5,10 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailState
+import com.thomaskioko.tvmaniac.lists.presenter.model.DeleteConfirmation
 import com.thomaskioko.tvmaniac.lists.presenter.model.ListShow
 import com.thomaskioko.tvmaniac.lists.presenter.model.RemoveConfirmation
+import com.thomaskioko.tvmaniac.lists.presenter.model.RenameDialog
 import kotlinx.coroutines.flow.flowOf
 
 private const val LIST_TITLE = "Comfort Watches"
@@ -20,6 +22,8 @@ internal val listDetailShows: List<ListShow> = listOf(
 internal val listDetailLoadingState: ListDetailState = ListDetailState(
     title = LIST_TITLE,
     emptyMessage = LIST_EMPTY_MESSAGE,
+    renameLabel = "Rename",
+    deleteLabel = "Delete list",
     pagingDataFlow = flowOf(
         PagingData.from(
             data = emptyList(),
@@ -44,6 +48,8 @@ private val idlePage: PagingData<ListShow> = PagingData.from(
 internal val listDetailEmptyState: ListDetailState = ListDetailState(
     title = LIST_TITLE,
     emptyMessage = LIST_EMPTY_MESSAGE,
+    renameLabel = "Rename",
+    deleteLabel = "Delete list",
     pagingDataFlow = flowOf(idlePage),
     isRefreshLoading = false,
 )
@@ -51,6 +57,8 @@ internal val listDetailEmptyState: ListDetailState = ListDetailState(
 internal val listDetailErrorState: ListDetailState = ListDetailState(
     title = LIST_TITLE,
     emptyMessage = LIST_EMPTY_MESSAGE,
+    renameLabel = "Rename",
+    deleteLabel = "Delete list",
     pagingDataFlow = flowOf(idlePage),
     isRefreshLoading = false,
     errorMessage = "Something went wrong",
@@ -59,6 +67,8 @@ internal val listDetailErrorState: ListDetailState = ListDetailState(
 internal val listDetailContentState: ListDetailState = ListDetailState(
     title = LIST_TITLE,
     emptyMessage = LIST_EMPTY_MESSAGE,
+    renameLabel = "Rename",
+    deleteLabel = "Delete list",
     pagingDataFlow = flowOf(PagingData.from(listDetailShows)),
     canRefresh = true,
 )
@@ -66,6 +76,8 @@ internal val listDetailContentState: ListDetailState = ListDetailState(
 internal val listDetailLoadMoreErrorState: ListDetailState = ListDetailState(
     title = LIST_TITLE,
     emptyMessage = LIST_EMPTY_MESSAGE,
+    renameLabel = "Rename",
+    deleteLabel = "Delete list",
     pagingDataFlow = flowOf(
         PagingData.from(
             data = listDetailShows,
@@ -88,6 +100,23 @@ internal val listDetailRemoveConfirmationState: ListDetailState = listDetailCont
     ),
 )
 
+internal val listDetailRenameDialogState: ListDetailState = listDetailContentState.copy(
+    renameDialog = RenameDialog(
+        title = "Rename list",
+        name = "Comfort watches",
+        canSave = false,
+        saveLabel = "Save",
+    ),
+)
+
+internal val listDetailDeleteConfirmationState: ListDetailState = listDetailContentState.copy(
+    deleteConfirmation = DeleteConfirmation(
+        title = "Delete list?",
+        message = "Delete Comfort watches? The shows stay in your library.",
+        confirmLabel = "Delete",
+    ),
+)
+
 internal class ListDetailPreviewParameterProvider : PreviewParameterProvider<ListDetailState> {
     override val values: Sequence<ListDetailState>
         get() = sequenceOf(
@@ -97,5 +126,7 @@ internal class ListDetailPreviewParameterProvider : PreviewParameterProvider<Lis
             listDetailContentState,
             listDetailLoadMoreErrorState,
             listDetailRemoveConfirmationState,
+            listDetailRenameDialogState,
+            listDetailDeleteConfirmationState,
         )
 }

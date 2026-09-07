@@ -266,6 +266,51 @@ class DefaultTraktListRemoteDataSourceTest {
     }
 
     @Test
+    fun `should use PUT method, correct path and body given updateList is called`() = runTest {
+        var capturedMethod: HttpMethod? = null
+        var capturedPath: String? = null
+        var capturedBody: String? = null
+
+        val engine = MockEngine { request ->
+            capturedMethod = request.method
+            capturedPath = request.url.encodedPath
+            capturedBody = request.body.toByteArray().decodeToString()
+            respond(
+                content = "",
+                status = HttpStatusCode.NoContent,
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.updateList(userSlug = "sean", listId = 42L, name = "Renamed")
+
+        capturedMethod shouldBe HttpMethod.Put
+        capturedPath shouldBe "/users/sean/lists/42"
+        capturedBody shouldContain "\"name\": \"Renamed\""
+    }
+
+    @Test
+    fun `should use DELETE method and correct path given deleteList is called`() = runTest {
+        var capturedMethod: HttpMethod? = null
+        var capturedPath: String? = null
+
+        val engine = MockEngine { request ->
+            capturedMethod = request.method
+            capturedPath = request.url.encodedPath
+            respond(
+                content = "",
+                status = HttpStatusCode.NoContent,
+            )
+        }
+        val dataSource = createDataSource(engine)
+
+        dataSource.deleteList(userSlug = "sean", listId = 42L)
+
+        capturedMethod shouldBe HttpMethod.Delete
+        capturedPath shouldBe "/users/sean/lists/42"
+    }
+
+    @Test
     fun `should return HttpError given server returns unauthorized`() = runTest {
         val engine = MockEngine { _ ->
             respondError(

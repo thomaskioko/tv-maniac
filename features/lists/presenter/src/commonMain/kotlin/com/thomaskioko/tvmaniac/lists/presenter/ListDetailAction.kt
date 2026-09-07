@@ -9,6 +9,20 @@ public sealed interface ListDetailAction {
 
     public data object RemoveDismissed : ListDetailAction
 
+    public data object RenameRequested : ListDetailAction
+
+    public data class RenameNameChanged(val name: String) : ListDetailAction
+
+    public data object RenameConfirmed : ListDetailAction
+
+    public data object RenameDismissed : ListDetailAction
+
+    public data object DeleteRequested : ListDetailAction
+
+    public data object DeleteConfirmed : ListDetailAction
+
+    public data object DeleteDismissed : ListDetailAction
+
     public data object RefreshList : ListDetailAction
 
     public data object RetryLoadMore : ListDetailAction

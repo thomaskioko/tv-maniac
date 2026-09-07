@@ -5,6 +5,8 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.lists.api.ListDao
+import com.thomaskioko.tvmaniac.lists.api.PendingDeleteList
+import com.thomaskioko.tvmaniac.lists.api.PendingRenameList
 import com.thomaskioko.tvmaniac.lists.api.PendingUploadList
 import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import dev.zacsweers.metro.AppScope
@@ -79,6 +81,18 @@ public class DefaultListDao(
         database.listsQueries.markSynced(traktId = traktId, slug = slug, id = id)
     }
 
+    override fun rename(id: Long, name: String) {
+        database.listsQueries.rename(name = name, id = id)
+    }
+
+    override fun markPendingDelete(id: Long) {
+        database.listsQueries.markPendingDelete(id = id)
+    }
+
+    override fun clearPendingAction(id: Long) {
+        database.listsQueries.clearPendingAction(id = id)
+    }
+
     override fun getTraktId(id: Long): Long? =
         database.listsQueries.selectTraktIdById(id).executeAsOneOrNull()?.trakt_id
 
@@ -90,8 +104,16 @@ public class DefaultListDao(
         database.listsQueries.selectPendingUploadLists().executeAsList()
             .map { PendingUploadList(id = it.id, name = it.name) }
 
-    override fun countPendingUploads(): Long =
-        database.listsQueries.countPendingUploads().executeAsOne()
+    override fun selectPendingRenames(): List<PendingRenameList> =
+        database.listsQueries.selectPendingRenames().executeAsList()
+            .map { PendingRenameList(id = it.id, traktId = requireNotNull(it.trakt_id), name = it.name) }
+
+    override fun selectPendingDeletes(): List<PendingDeleteList> =
+        database.listsQueries.selectPendingDeletes().executeAsList()
+            .map { PendingDeleteList(id = it.id, traktId = it.trakt_id) }
+
+    override fun countPendingChanges(): Long =
+        database.listsQueries.countPendingChanges().executeAsOne()
 
     override fun deleteById(id: Long) {
         database.listsQueries.deleteById(id)
