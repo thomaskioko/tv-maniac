@@ -377,6 +377,13 @@
     <string name="list_detail_remove_title">Remove from list?</string>
     <string name="list_detail_remove_message">Remove %1$s from %2$s?</string>
     <string name="list_detail_remove_button">Remove</string>
+    <string name="list_detail_menu_rename">Rename</string>
+    <string name="list_detail_rename_title">Rename list</string>
+    <string name="list_detail_menu_delete">Delete list</string>
+    <string name="list_detail_delete_title">Delete list?</string>
+    <string name="list_detail_delete_message">Delete %1$s? The shows stay in your library.</string>
+    <string name="list_detail_delete_button">Delete</string>
+    <string name="cd_list_options">List options</string>
 
     <string name="label_up_to_date">All caught up</string>
 
