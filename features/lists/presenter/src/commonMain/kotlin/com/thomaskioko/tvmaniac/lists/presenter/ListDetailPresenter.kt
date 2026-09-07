@@ -20,7 +20,9 @@ import com.thomaskioko.tvmaniac.core.view.InvokeStarted
 import com.thomaskioko.tvmaniac.core.view.InvokeSuccess
 import com.thomaskioko.tvmaniac.core.view.ObservableLoadingCounter
 import com.thomaskioko.tvmaniac.core.view.collectStatus
+import com.thomaskioko.tvmaniac.domain.lists.DeleteListInteractor
 import com.thomaskioko.tvmaniac.domain.lists.FetchMissingListShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.lists.RenameListInteractor
 import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.i18n.StringResourceKey
@@ -30,15 +32,24 @@ import com.thomaskioko.tvmaniac.lists.api.ListShowItem
 import com.thomaskioko.tvmaniac.lists.nav.ListDetailRoute
 import com.thomaskioko.tvmaniac.lists.nav.model.ListDetailParam
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.BackClicked
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.DeleteConfirmed
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.DeleteDismissed
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.DeleteRequested
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.DismissErrorMessage
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RefreshList
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RemoveConfirmed
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RemoveDismissed
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RemoveRequested
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RenameConfirmed
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RenameDismissed
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RenameNameChanged
+import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RenameRequested
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.RetryLoadMore
 import com.thomaskioko.tvmaniac.lists.presenter.ListDetailAction.ShowClicked
+import com.thomaskioko.tvmaniac.lists.presenter.model.DeleteConfirmation
 import com.thomaskioko.tvmaniac.lists.presenter.model.ListShow
 import com.thomaskioko.tvmaniac.lists.presenter.model.RemoveConfirmation
+import com.thomaskioko.tvmaniac.lists.presenter.model.RenameDialog
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.showdetails.nav.ShowDetailsRoute
 import com.thomaskioko.tvmaniac.showdetails.nav.model.ShowDetailsParam
@@ -53,6 +64,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -72,6 +84,8 @@ public class ListDetailPresenter(
     private val toggleShowInListInteractor: ToggleShowInListInteractor,
     private val fetchMissingListShowDetailsInteractor: FetchMissingListShowDetailsInteractor,
     private val syncListsInteractor: SyncListsInteractor,
+    private val renameListInteractor: RenameListInteractor,
+    private val deleteListInteractor: DeleteListInteractor,
     private val accountManager: AccountManager,
     private val activeProviderFeatures: () -> ProviderFeatures,
     private val errorToStringMapper: ErrorToStringMapper,
@@ -85,6 +99,8 @@ public class ListDetailPresenter(
         ListDetailState(
             title = param.name,
             emptyMessage = localizer.getString(StringResourceKey.ListDetailEmpty),
+            renameLabel = localizer.getString(StringResourceKey.ListDetailMenuRename),
+            deleteLabel = localizer.getString(StringResourceKey.ListDetailMenuDelete),
         ),
     )
 
@@ -95,6 +111,7 @@ public class ListDetailPresenter(
     }
 
     init {
+        observeTitle()
         observeShows()
         observeLoadStates()
         observeRefreshAvailability()
@@ -111,6 +128,13 @@ public class ListDetailPresenter(
             is RemoveRequested -> requestRemoval(action.tmdbId)
             RemoveConfirmed -> confirmRemoval()
             RemoveDismissed -> _state.update { it.copy(removeConfirmation = null) }
+            RenameRequested -> requestRename()
+            is RenameNameChanged -> updateRenameName(action.name)
+            RenameConfirmed -> confirmRename()
+            RenameDismissed -> _state.update { it.copy(renameDialog = null) }
+            DeleteRequested -> requestDelete()
+            DeleteConfirmed -> confirmDelete()
+            DeleteDismissed -> _state.update { it.copy(deleteConfirmation = null) }
             RefreshList -> refreshList()
             RetryLoadMore -> showsPagingDataPresenter.retry()
             DismissErrorMessage -> _state.update { it.copy(errorMessage = null) }
@@ -125,6 +149,15 @@ public class ListDetailPresenter(
     public fun loadMore() {
         val index = showsPagingDataPresenter.size - 1
         showsPagingDataPresenter[index]
+    }
+
+    private fun observeTitle() {
+        coroutineScope.launch {
+            listRepository.observeLists()
+                .map { lists -> lists.firstOrNull { it.id == param.listId }?.name ?: param.name }
+                .distinctUntilChanged()
+                .collect { name -> _state.update { it.copy(title = name) } }
+        }
     }
 
     private fun observeShows() {
@@ -216,6 +249,73 @@ public class ListDetailPresenter(
                 if (status is InvokeError) {
                     logger.error(LOG_TAG, "Removing a show from the list failed", status.throwable)
                     _state.update { it.copy(errorMessage = errorToStringMapper.mapError(status.throwable)) }
+                }
+            }
+        }
+    }
+
+    private fun requestRename() {
+        _state.update {
+            it.copy(
+                renameDialog = RenameDialog(
+                    title = localizer.getString(StringResourceKey.ListDetailRenameTitle),
+                    name = it.title,
+                    canSave = false,
+                    saveLabel = localizer.getString(StringResourceKey.LabelSave),
+                ),
+            )
+        }
+    }
+
+    private fun updateRenameName(name: String) {
+        _state.update {
+            val dialog = it.renameDialog ?: return@update it
+            val trimmed = name.trim()
+            it.copy(renameDialog = dialog.copy(name = name, canSave = trimmed.isNotEmpty() && trimmed != it.title))
+        }
+    }
+
+    private fun confirmRename() {
+        val dialog = _state.value.renameDialog ?: return
+        if (!dialog.canSave || dialog.isSaving) return
+        coroutineScope.launch {
+            renameListInteractor(RenameListInteractor.Params(listId = param.listId, name = dialog.name)).collect { status ->
+                when (status) {
+                    InvokeStarted -> _state.update { it.copy(renameDialog = it.renameDialog?.copy(isSaving = true)) }
+                    InvokeSuccess -> _state.update { it.copy(renameDialog = null) }
+                    is InvokeError -> {
+                        logger.error(LOG_TAG, "Renaming the list failed", status.throwable)
+                        _state.update { it.copy(renameDialog = null, errorMessage = errorToStringMapper.mapError(status.throwable)) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun requestDelete() {
+        _state.update {
+            it.copy(
+                deleteConfirmation = DeleteConfirmation(
+                    title = localizer.getString(StringResourceKey.ListDetailDeleteTitle),
+                    message = localizer.getString(StringResourceKey.ListDetailDeleteMessage, it.title),
+                    confirmLabel = localizer.getString(StringResourceKey.ListDetailDeleteButton),
+                ),
+            )
+        }
+    }
+
+    private fun confirmDelete() {
+        if (_state.value.deleteConfirmation == null) return
+        _state.update { it.copy(deleteConfirmation = null) }
+        coroutineScope.launch {
+            deleteListInteractor(DeleteListInteractor.Params(listId = param.listId)).collect { status ->
+                when (status) {
+                    InvokeStarted -> Unit
+                    InvokeSuccess -> navigator.navigateBack()
+                    is InvokeError -> {
+                        logger.error(LOG_TAG, "Deleting the list failed", status.throwable)
+                        _state.update { it.copy(errorMessage = errorToStringMapper.mapError(status.throwable)) }
+                    }
                 }
             }
         }
