@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS list_shows(
     listed_at TEXT NOT NULL,
     pending_action TEXT NOT NULL DEFAULT 'NOTHING'
         CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
-    PRIMARY KEY (list_id, tmdb_id)
+    PRIMARY KEY (list_id, tmdb_id),
+    FOREIGN KEY(list_id) REFERENCES lists(id) ON DELETE CASCADE
 );
 
 selectByTmdbId:
@@ -48,9 +49,6 @@ WHERE list_id = ? AND pending_action = 'NOTHING';
 upsertSynced:
 INSERT OR IGNORE INTO list_shows(list_id, tmdb_id, listed_at, pending_action)
 VALUES(?, ?, ?, 'NOTHING');
-
-deleteByListId:
-DELETE FROM list_shows WHERE list_id = ?;
 
 deleteAll:
 DELETE FROM list_shows;
