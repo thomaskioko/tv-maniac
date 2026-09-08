@@ -165,10 +165,10 @@ app.cash.sqldelight:coroutines-extensions-jvm:2.3.2
 app.cash.sqldelight:coroutines-extensions:2.3.2
 app.cash.sqldelight:runtime-jvm:2.3.2
 app.cash.sqldelight:runtime:2.3.2
-co.touchlab:kermit-android:2.1.0
-co.touchlab:kermit-core-android:2.1.0
-co.touchlab:kermit-core:2.1.0
-co.touchlab:kermit:2.1.0
+co.touchlab:kermit-android:2.2.0
+co.touchlab:kermit-core-android:2.2.0
+co.touchlab:kermit-core:2.2.0
+co.touchlab:kermit:2.2.0
 com.arkivanov.decompose:decompose-android:3.5.0
 com.arkivanov.decompose:decompose:3.5.0
 com.arkivanov.decompose:extensions-compose-android:3.5.0

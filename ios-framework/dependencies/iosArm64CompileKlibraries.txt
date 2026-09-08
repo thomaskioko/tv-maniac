@@ -20,10 +20,10 @@ co.touchlab.crashkios:core-iosarm64:0.9.0
 co.touchlab.crashkios:core:0.9.0
 co.touchlab.crashkios:crashlytics-iosarm64:0.9.0
 co.touchlab.crashkios:crashlytics:0.9.0
-co.touchlab:kermit-core-iosarm64:2.1.0
-co.touchlab:kermit-core:2.1.0
-co.touchlab:kermit-iosarm64:2.1.0
-co.touchlab:kermit:2.1.0
+co.touchlab:kermit-core-iosarm64:2.2.0
+co.touchlab:kermit-core:2.2.0
+co.touchlab:kermit-iosarm64:2.2.0
+co.touchlab:kermit:2.2.0
 co.touchlab:sqliter-driver-iosarm64:1.3.3
 co.touchlab:sqliter-driver:1.3.3
 co.touchlab:stately-concurrency-iosarm64:2.1.0
