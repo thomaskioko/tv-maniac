@@ -25,8 +25,6 @@ public interface ListShowDao {
 
     public fun deleteByListIdAndTmdbId(listId: Long, tmdbId: Long)
 
-    public fun deleteByListId(listId: Long)
-
     public fun deleteAll()
 
     public fun countPendingActions(): Long

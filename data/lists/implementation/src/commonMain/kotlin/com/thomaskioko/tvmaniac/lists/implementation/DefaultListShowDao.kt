@@ -92,10 +92,6 @@ public class DefaultListShowDao(
         )
     }
 
-    override fun deleteByListId(listId: Long) {
-        database.listShowsQueries.deleteByListId(list_id = listId)
-    }
-
     override fun deleteAll() {
         database.listShowsQueries.deleteAll()
     }

@@ -43,7 +43,7 @@ public class DefaultListRepository(
     private val dispatchers: AppCoroutineDispatchers,
 ) : ListRepository {
 
-    private val syncPendingListsMutex = Mutex()
+    private val listsMutex = Mutex()
 
     override fun observeLists(): Flow<List<UserListEntity>> =
         listDao.observeListsWithPosters().distinctUntilChanged()
@@ -76,29 +76,33 @@ public class DefaultListRepository(
     }
 
     private suspend fun fetchListMetadata(slug: String, forceRefresh: Boolean) {
-        if (forceRefresh) {
-            traktListsStore.fresh(key = slug)
-        } else {
-            traktListsStore.get(key = slug)
+        withListsLock {
+            if (forceRefresh) {
+                traktListsStore.fresh(key = slug)
+            } else {
+                traktListsStore.get(key = slug)
+            }
         }
     }
 
     private suspend fun fetchListItems(slug: String, forceRefresh: Boolean) {
-        val listIds = listDao.observeAll().first().map { it.id }
+        val listIds = withListsLock { listDao.observeAll().first().map { it.id } }
         listIds.forEach { listId ->
-            val key = TraktListItemsKey(userSlug = slug, listId = listId)
-            if (forceRefresh) {
-                traktListItemsStore.fresh(key = key)
-            } else {
-                traktListItemsStore.get(key = key)
+            withListsLock {
+                val key = TraktListItemsKey(userSlug = slug, listId = listId)
+                if (forceRefresh) {
+                    traktListItemsStore.fresh(key = key)
+                } else {
+                    traktListItemsStore.get(key = key)
+                }
             }
         }
     }
 
     override suspend fun createList(name: String, traktSlug: String?) {
-        withLocalChangesLock {
+        withListsLock {
             val localId = listDao.insertLocal(name = name, createdAt = dateTimeProvider.now().toString())
-            if (traktSlug == null) return@withLocalChangesLock
+            if (traktSlug == null) return@withListsLock
 
             when (val response = traktListRemoteDataSource.createList(userSlug = traktSlug, name = name)) {
                 is ApiResponse.Success -> listDao.markSynced(
@@ -112,10 +116,10 @@ public class DefaultListRepository(
     }
 
     override suspend fun renameList(listId: Long, name: String, traktSlug: String?) {
-        withLocalChangesLock {
+        withListsLock {
             listDao.rename(id = listId, name = name)
             val traktId = listDao.getTraktId(listId)
-            if (traktSlug == null || traktId == null) return@withLocalChangesLock
+            if (traktSlug == null || traktId == null) return@withListsLock
 
             when (traktListRemoteDataSource.updateList(userSlug = traktSlug, listId = traktId, name = name)) {
                 is ApiResponse.Success -> listDao.clearPendingAction(listId)
@@ -125,24 +129,19 @@ public class DefaultListRepository(
     }
 
     override suspend fun deleteList(listId: Long, traktSlug: String?) {
-        withLocalChangesLock {
+        withListsLock {
             val traktId = listDao.getTraktId(listId)
             if (traktId == null) {
-                listShowDao.deleteByListId(listId)
                 listDao.deleteById(listId)
-                return@withLocalChangesLock
+                return@withListsLock
             }
 
             listDao.markPendingDelete(listId)
-            if (traktSlug == null) return@withLocalChangesLock
+            if (traktSlug == null) return@withListsLock
 
             when (val response = traktListRemoteDataSource.deleteList(userSlug = traktSlug, listId = traktId)) {
-                is ApiResponse.Success -> {
-                    listShowDao.deleteByListId(listId)
-                    listDao.deleteById(listId)
-                }
+                is ApiResponse.Success -> listDao.deleteById(listId)
                 is ApiResponse.Error.HttpError -> if (response.code == HTTP_NOT_FOUND) {
-                    listShowDao.deleteByListId(listId)
                     listDao.deleteById(listId)
                 }
                 else -> Unit
@@ -151,7 +150,7 @@ public class DefaultListRepository(
     }
 
     override suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?) {
-        withContext(dispatchers.io) {
+        withListsLock {
             if (isCurrentlyInList) {
                 listShowDao.updatePendingAction(
                     listId = listId,
@@ -167,11 +166,11 @@ public class DefaultListRepository(
                 )
             }
 
-            if (traktSlug == null) return@withContext
-            val listTraktId = listDao.getTraktId(listId) ?: return@withContext
+            if (traktSlug == null) return@withListsLock
+            val listTraktId = listDao.getTraktId(listId) ?: return@withListsLock
 
             traktIdResolver.resolveMissingTraktIds(listOf(showId))
-            val showTraktId = tvShowsDao.getTraktIdByTmdbId(showId) ?: return@withContext
+            val showTraktId = tvShowsDao.getTraktIdByTmdbId(showId) ?: return@withListsLock
 
             val response = if (isCurrentlyInList) {
                 traktListRemoteDataSource.removeShowFromList(traktSlug, listTraktId, showTraktId)
@@ -198,7 +197,7 @@ public class DefaultListRepository(
 
     override suspend fun syncPendingLists(slug: String) {
         withContext(dispatchers.io) {
-            syncPendingListsMutex.withLock {
+            listsMutex.withLock {
                 if (!pushPendingListDeletes(slug)) return@withLock
                 if (!pushPendingListCreations(slug)) return@withLock
                 if (!pushPendingListRenames(slug)) return@withLock
@@ -207,9 +206,9 @@ public class DefaultListRepository(
         }
     }
 
-    private suspend fun <T> withLocalChangesLock(block: suspend () -> T): T =
+    private suspend fun <T> withListsLock(block: suspend () -> T): T =
         withContext(dispatchers.io) {
-            syncPendingListsMutex.withLock { block() }
+            listsMutex.withLock { block() }
         }
 
     private suspend fun pushPendingListDeletes(slug: String): Boolean {
@@ -217,17 +216,12 @@ public class DefaultListRepository(
         for (pending in pendingDeletes) {
             val traktId = pending.traktId
             if (traktId == null) {
-                listShowDao.deleteByListId(pending.id)
                 listDao.deleteById(pending.id)
                 continue
             }
             when (val response = traktListRemoteDataSource.deleteList(userSlug = slug, listId = traktId)) {
-                is ApiResponse.Success -> {
-                    listShowDao.deleteByListId(pending.id)
-                    listDao.deleteById(pending.id)
-                }
+                is ApiResponse.Success -> listDao.deleteById(pending.id)
                 is ApiResponse.Error.HttpError -> if (response.code == HTTP_NOT_FOUND) {
-                    listShowDao.deleteByListId(pending.id)
                     listDao.deleteById(pending.id)
                 } else {
                     return false

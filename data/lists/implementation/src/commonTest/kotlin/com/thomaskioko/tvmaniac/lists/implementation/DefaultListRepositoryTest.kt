@@ -34,8 +34,10 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -76,7 +78,6 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         val listsStore = TraktListsStore(
             traktListDataSource = remoteDataSource,
             listDao = listDao,
-            listShowDao = showDao,
             requestManagerRepository = requestManager,
             transactionRunner = transactionRunner,
             dispatchers = dispatchers,
@@ -192,15 +193,17 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should preserve pending UPLOAD rows given items sync replaces synced rows`() = runTest {
         addShow(tmdbId = 990L, traktId = 99L)
-        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 1))
-        remoteDataSource.itemsByListId = mapOf(
-            1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
-        )
+        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 0))
+        remoteDataSource.itemsByListId = mapOf(1L to emptyList())
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
         showDao.upsert(
             listId = 1L,
             tmdbId = 990L,
             listedAt = "",
             pendingAction = PendingAction.UPLOAD.value,
+        )
+        remoteDataSource.itemsByListId = mapOf(
+            1L to listOf(traktListItemResponse(traktId = 10L, tmdbId = 100L)),
         )
 
         repository.fetchUserLists(slug = "sean", forceRefresh = true)
@@ -215,18 +218,20 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
     @Test
     fun `should preserve pending DELETE rows given items sync replaces synced rows`() = runTest {
         addShow(tmdbId = 200L, traktId = 20L)
-        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 2))
-        remoteDataSource.itemsByListId = mapOf(
-            1L to listOf(
-                traktListItemResponse(traktId = 10L, tmdbId = 100L),
-                traktListItemResponse(traktId = 20L, tmdbId = 200L),
-            ),
-        )
+        remoteDataSource.lists = listOf(traktListResponse(id = 1L, slug = "watchlist", itemCount = 0))
+        remoteDataSource.itemsByListId = mapOf(1L to emptyList())
+        repository.fetchUserLists(slug = "sean", forceRefresh = true)
         showDao.upsert(
             listId = 1L,
             tmdbId = 200L,
             listedAt = "",
             pendingAction = PendingAction.DELETE.value,
+        )
+        remoteDataSource.itemsByListId = mapOf(
+            1L to listOf(
+                traktListItemResponse(traktId = 10L, tmdbId = 100L),
+                traktListItemResponse(traktId = 20L, tmdbId = 200L),
+            ),
         )
 
         repository.fetchUserLists(slug = "sean", forceRefresh = true)
@@ -818,6 +823,23 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
         listDao.countPendingChanges() shouldBe 0L
     }
 
+    @Test
+    fun `should apply a delete after an in-flight pull writes given both run at once`() = runTest {
+        addList(listId = 1L)
+        val listId = listDao.observeAll().first().single().id
+        val gate = CompletableDeferred<Unit>()
+        remoteDataSource.pullGate = gate
+
+        val pullJob = launch { repository.fetchUserLists(slug = "sean", forceRefresh = true) }
+        val deleteJob = launch { repository.deleteList(listId = listId, traktSlug = "sean") }
+        gate.complete(Unit)
+        pullJob.join()
+        deleteJob.join()
+
+        listDao.observeAll().first().shouldBeEmpty()
+        remoteDataSource.deleteListCalls shouldBe listOf("sean" to 1L)
+    }
+
     private fun addShow(tmdbId: Long, traktId: Long) {
         database.tvShowQueries.upsert(
             tmdb_id = Id<TmdbId>(tmdbId),
@@ -878,6 +900,7 @@ internal class DefaultListRepositoryTest : BaseDatabaseTest() {
 
 private class FakeRemoteDataSource : TraktListRemoteDataSource {
     var lists: List<TraktPersonalListsResponse> = emptyList()
+    var pullGate: CompletableDeferred<Unit>? = null
     var itemsByListId: Map<Long, List<TraktListItemResponse>> = emptyMap()
     var itemsErrorByListId: Map<Long, ApiResponse<List<TraktListItemResponse>>> = emptyMap()
     val itemsCalls: MutableList<Pair<String, Long>> = mutableListOf()
@@ -903,8 +926,10 @@ private class FakeRemoteDataSource : TraktListRemoteDataSource {
     override suspend fun getUser(userId: String): ApiResponse<TraktUserResponse> =
         error("not used")
 
-    override suspend fun getUserList(userId: String): ApiResponse<List<TraktPersonalListsResponse>> =
-        ApiResponse.Success(lists)
+    override suspend fun getUserList(userId: String): ApiResponse<List<TraktPersonalListsResponse>> {
+        pullGate?.await()
+        return ApiResponse.Success(lists)
+    }
 
     override suspend fun getListItems(
         userSlug: String,
