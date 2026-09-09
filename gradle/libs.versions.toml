@@ -3,7 +3,7 @@ android-compile = "37"
 android-min = "24"
 android-target = "37"
 
-benchmarkMacro = "1.4.1"
+benchmarkMacro = "1.5.0"
 differ = "0.3.0"
 java-target = "21"
 java-toolchain = "21"
