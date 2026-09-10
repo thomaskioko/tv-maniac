@@ -164,6 +164,33 @@ internal class DefaultUserDaoTest : BaseDatabaseTest() {
     }
 
     @Test
+    fun `should keep a single current user given another slug is stored as me`() = runTest {
+        userDao.upsertUser(
+            slug = "trakt-user",
+            userName = "trakt",
+            fullName = null,
+            profilePicture = null,
+            backgroundUrl = null,
+            isMe = true,
+        )
+
+        userDao.upsertUser(
+            slug = "12345678",
+            userName = "simkl",
+            fullName = null,
+            profilePicture = null,
+            backgroundUrl = null,
+            isMe = true,
+        )
+
+        userDao.observeCurrentUser().test {
+            awaitItem()?.slug shouldBe "12345678"
+            cancelAndConsumeRemainingEvents()
+        }
+        database.userQueries.userBySlug("trakt-user").executeAsOneOrNull()?.is_me shouldBe false
+    }
+
+    @Test
     fun `should update when stats change`() = runTest {
         insertTestUser()
         userStatsDao.upsertStats(
