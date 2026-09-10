@@ -177,12 +177,12 @@ com.arkivanov.essenty:back-handler-android:2.5.0
 com.arkivanov.essenty:back-handler:2.5.0
 com.arkivanov.essenty:instance-keeper-android:2.5.0
 com.arkivanov.essenty:instance-keeper:2.5.0
-com.arkivanov.essenty:lifecycle-android:2.5.0
-com.arkivanov.essenty:lifecycle:2.5.0
+com.arkivanov.essenty:lifecycle-android:2.6.0
+com.arkivanov.essenty:lifecycle:2.6.0
 com.arkivanov.essenty:state-keeper-android:2.5.0
 com.arkivanov.essenty:state-keeper:2.5.0
-com.arkivanov.essenty:utils-internal-android:2.5.0
-com.arkivanov.essenty:utils-internal:2.5.0
+com.arkivanov.essenty:utils-internal-android:2.6.0
+com.arkivanov.essenty:utils-internal:2.6.0
 com.flaviofaria:kenburnsview:1.0.7
 com.google.accompanist:accompanist-drawablepainter:0.32.0
 com.google.android.datatransport:transport-api:3.2.0
