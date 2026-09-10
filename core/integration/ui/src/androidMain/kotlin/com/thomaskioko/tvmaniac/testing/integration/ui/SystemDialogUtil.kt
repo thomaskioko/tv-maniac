@@ -68,7 +68,7 @@ public fun dismissSystemDialog(
     appearTimeoutMillis: Long = 3_000,
     dismissTimeoutMillis: Long = 5_000,
 ) {
-    if (Build.FINGERPRINT.startsWith("robolectric", ignoreCase = true)) return
+    if (isRobolectricRuntime) return
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
 
     val instrumentation = InstrumentationRegistry.getInstrumentation()

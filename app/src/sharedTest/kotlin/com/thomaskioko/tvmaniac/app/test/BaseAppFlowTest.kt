@@ -33,6 +33,7 @@ import com.thomaskioko.tvmaniac.app.test.compose.robot.StatisticsRobot
 import com.thomaskioko.tvmaniac.app.test.compose.robot.WatchDateSelectionRobot
 import com.thomaskioko.tvmaniac.app.test.compose.stubs.Scenarios
 import com.thomaskioko.tvmaniac.testing.integration.MockEngineHandler
+import com.thomaskioko.tvmaniac.testing.integration.ui.isRobolectricRuntime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -55,7 +56,7 @@ internal abstract class BaseAppFlowTest {
         application.clearPersistentTestState()
 
         val testDispatcher = StandardTestDispatcher()
-        Dispatchers.setMain(testDispatcher)
+        if (isRobolectricRuntime) Dispatchers.setMain(testDispatcher)
         try {
             runAndroidComposeUiTest<TvManiacTestActivity>(effectContext = testDispatcher) {
                 val graph = application.graph
@@ -68,7 +69,7 @@ internal abstract class BaseAppFlowTest {
                 }
             }
         } finally {
-            Dispatchers.resetMain()
+            if (isRobolectricRuntime) Dispatchers.resetMain()
         }
     }
 }
