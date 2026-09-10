@@ -5,6 +5,7 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
@@ -19,6 +20,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.performClick
@@ -28,6 +30,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.test.swipeUp
@@ -39,6 +42,7 @@ import androidx.compose.ui.test.hasContentDescription as composeHasContentDescri
 public const val TIMEOUT_MILLIS: Long = 10_000
 
 private const val CLOCK_CATCH_UP_MILLIS: Long = 200
+private const val SEMANTICS_TREE_LOG_TAG: String = "SemanticsTree"
 
 /**
  * Base robot for integration tests.
@@ -95,11 +99,16 @@ public abstract class BaseRobot<T : BaseRobot<T>>(protected val composeUi: Compo
     // virtual time advances. waitUntil advances one frame per poll while counting its timeout in
     // real milliseconds, so on a loaded machine a pending delay outlives the timeout.
     private fun awaitCondition(timeoutMillis: Long, condition: () -> Boolean) {
-        composeUi.waitUntil(timeoutMillis = timeoutMillis) {
-            condition() || run {
-                composeUi.mainClock.advanceTimeBy(CLOCK_CATCH_UP_MILLIS)
-                condition()
+        try {
+            composeUi.waitUntil(timeoutMillis = timeoutMillis) {
+                condition() || run {
+                    composeUi.mainClock.advanceTimeBy(CLOCK_CATCH_UP_MILLIS)
+                    condition()
+                }
             }
+        } catch (e: ComposeTimeoutException) {
+            composeUi.onAllNodes(isRoot(), useUnmergedTree = true).printToLog(SEMANTICS_TREE_LOG_TAG)
+            throw e
         }
     }
 
