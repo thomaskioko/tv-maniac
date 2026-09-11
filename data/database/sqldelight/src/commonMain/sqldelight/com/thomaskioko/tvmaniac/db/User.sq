@@ -36,6 +36,11 @@ FROM
 WHERE
     is_me != 0;
 
+clearCurrentUserExcept:
+UPDATE user
+SET is_me = 0
+WHERE is_me != 0 AND slug != ?;
+
 delete:
 DELETE FROM
     user
