@@ -252,7 +252,7 @@ graph TB
   :domain:continue-watching --> :data:episode:api
   :domain:continue-watching --> :data:request-manager:api
   :domain:continue-watching --> :data:upnext:api
-  :domain:continue-watching -.-> :domain:episode
+  :domain:continue-watching --> :domain:episode
   :domain:continue-watching --> :domain:showdetails
   :domain:continue-watching --> :domain:sync-activity
   :domain:episode --> :core:base

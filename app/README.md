@@ -594,10 +594,8 @@ graph TB
   :app -.-> :data:rewatch:implementation
   :app -.-> :data:search:api
   :app -.-> :data:search:implementation
-  :app -.-> :data:seasondetails:api
   :app -.-> :data:seasondetails:implementation
   :app -.-> :data:seasons:implementation
-  :app -.-> :data:showdetails:api
   :app -.-> :data:showdetails:implementation
   :app -.-> :data:shows:implementation
   :app -.-> :data:similar:implementation
@@ -606,7 +604,6 @@ graph TB
   :app -.-> :data:start-watching:implementation
   :app -.-> :data:subscription:api
   :app -.-> :data:subscription:implementation
-  :app -.-> :data:sync-activity:api
   :app -.-> :data:sync-activity:implementation
   :app -.-> :data:topratedshows:api
   :app -.-> :data:topratedshows:implementation
@@ -624,7 +621,6 @@ graph TB
   :app -.-> :data:watch-status:implementation
   :app -.-> :data:watchlist-prefs:api
   :app -.-> :data:watchlist-prefs:implementation
-  :app -.-> :data:watchproviders:api
   :app -.-> :data:watchproviders:implementation
   :app -.-> :domain:account-switcher
   :app -.-> :domain:backup
@@ -1166,7 +1162,7 @@ graph TB
   :domain:continue-watching --> :data:episode:api
   :domain:continue-watching --> :data:request-manager:api
   :domain:continue-watching --> :data:upnext:api
-  :domain:continue-watching -.-> :domain:episode
+  :domain:continue-watching --> :domain:episode
   :domain:continue-watching --> :domain:showdetails
   :domain:continue-watching --> :domain:sync-activity
   :domain:discover --> :core:base
