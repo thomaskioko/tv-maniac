@@ -16,4 +16,6 @@ public actual class PlatformInternetConnectionChecker : InternetConnectionChecke
     public actual override fun isConnected(): Boolean = true
 
     public actual override fun observeConnection(): Flow<Boolean> = connectionState
+
+    public actual override fun observeReconnection(): Flow<Unit> = connectionState.observeReconnections()
 }

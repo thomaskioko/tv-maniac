@@ -6,4 +6,6 @@ public interface InternetConnectionChecker {
     public fun isConnected(): Boolean
 
     public fun observeConnection(): Flow<Boolean>
+
+    public fun observeReconnection(): Flow<Unit>
 }
