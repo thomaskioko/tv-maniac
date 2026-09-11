@@ -22,6 +22,7 @@ kotlin {
             implementation(libs.ktor.negotiation)
             implementation(libs.ktor.serialization.json)
             implementation(libs.kotlinx.serialization.json)
+            implementation(projects.core.connectivity.testing)
             implementation(projects.core.logger.testing)
         }
 
