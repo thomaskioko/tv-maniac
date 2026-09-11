@@ -130,6 +130,7 @@ graph TB
   :data:trailers:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:backup --> :core:base
+  :domain:backup --> :core:connectivity:api
   :domain:backup --> :core:logger:api
   :domain:backup --> :core:network-util:api
   :domain:backup --> :core:tasks:api
