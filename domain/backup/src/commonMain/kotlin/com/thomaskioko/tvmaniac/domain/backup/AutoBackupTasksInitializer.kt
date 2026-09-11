@@ -1,21 +1,28 @@
 package com.thomaskioko.tvmaniac.domain.backup
 
 import com.thomaskioko.tvmaniac.core.base.IoCoroutineScope
+import com.thomaskioko.tvmaniac.core.base.interactor.executeSync
+import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.tasks.api.BackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.data.backup.api.BackupDestination
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Inject
 public class AutoBackupTasksInitializer(
     private val scheduler: BackgroundTaskScheduler,
     private val backupDestination: Lazy<BackupDestination>,
     private val datastoreRepository: Lazy<DatastoreRepository>,
+    private val internetConnectionChecker: InternetConnectionChecker,
+    private val syncRestoredShowsInteractor: Lazy<SyncRestoredShowsInteractor>,
     private val logger: Logger,
     @IoCoroutineScope private val coroutineScope: CoroutineScope,
 ) {
@@ -41,6 +48,24 @@ public class AutoBackupTasksInitializer(
                         scheduler.cancel(AutoBackupWorker.WORKER_NAME)
                     }
                 }
+        }
+
+        coroutineScope.launch {
+            internetConnectionChecker.observeReconnection().collect {
+                withContext(NonCancellable) {
+                    runReconnectMetadataRefill()
+                }
+            }
+        }
+    }
+
+    private suspend fun runReconnectMetadataRefill() {
+        try {
+            syncRestoredShowsInteractor.value.executeSync()
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (throwable: Throwable) {
+            logger.warning(TAG, "Reconnect metadata refill failed", throwable)
         }
     }
 
