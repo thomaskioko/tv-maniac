@@ -210,6 +210,7 @@ graph TB
   :data:user:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:continue-watching --> :core:base
+  :domain:continue-watching --> :core:connectivity:api
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
   :domain:continue-watching --> :core:network-util:api

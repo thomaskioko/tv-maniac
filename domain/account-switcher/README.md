@@ -179,6 +179,7 @@ graph TB
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
   :domain:continue-watching --> :core:base
+  :domain:continue-watching --> :core:connectivity:api
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
   :domain:continue-watching --> :core:network-util:api
@@ -209,6 +210,7 @@ graph TB
   :domain:episode --> :data:user:api
   :domain:episode --> :domain:rewatch
   :domain:library --> :core:base
+  :domain:library --> :core:connectivity:api
   :domain:library --> :core:logger:api
   :domain:library --> :core:network-util:api
   :domain:library --> :core:syncstate:api

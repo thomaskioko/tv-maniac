@@ -240,6 +240,7 @@ graph TB
   :domain:calendar --> :data:calendar:api
   :domain:calendar --> :data:followedshows:api
   :domain:continue-watching --> :core:base
+  :domain:continue-watching --> :core:connectivity:api
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
   :domain:continue-watching --> :core:network-util:api

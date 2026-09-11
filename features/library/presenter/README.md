@@ -156,6 +156,7 @@ graph TB
   :data:trailers:api --> :data:database:sqldelight
   :data:watchproviders:api --> :data:database:sqldelight
   :domain:library --> :core:base
+  :domain:library --> :core:connectivity:api
   :domain:library --> :core:logger:api
   :domain:library --> :core:network-util:api
   :domain:library --> :core:syncstate:api
