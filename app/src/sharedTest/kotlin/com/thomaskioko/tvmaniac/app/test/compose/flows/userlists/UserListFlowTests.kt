@@ -140,6 +140,67 @@ internal class UserListFlowTests : BaseAppFlowTest() {
             .assertProfileScreenDisplayed()
     }
 
+    @Test
+    fun givenAuthenticatedUser_whenListRenamed_thenTitleUpdates() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+        scenarios.traktLists.stubListItems(listId = favoritesListTraktId)
+        scenarios.traktLists.stubUpdateList(listId = favoritesListTraktId)
+
+        rootRobot.dismissNotificationRationale()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertProfileScreenDisplayed()
+            .scrollToUserLists(slug = TEST_PROFILE_SLUG)
+            .assertListCardDisplayed(favoritesListId)
+            .clickListCard(favoritesListId)
+
+        listDetailRobot
+            .assertListDetailScreenDisplayed()
+            .clickMoreButton()
+            .clickRename()
+            .enterListName(RENAMED_LIST_NAME)
+            .clickSave()
+            .verifyTitle(RENAMED_LIST_NAME)
+    }
+
+    @Test
+    fun givenAuthenticatedUser_whenListDeleted_thenListIsRemovedFromLists() = runAppFlowTest {
+        scenarios.stubAuthenticatedSync()
+        scenarios.traktLists.stubListItems(listId = favoritesListTraktId)
+        scenarios.traktLists.stubDeleteList(listId = favoritesListTraktId)
+
+        rootRobot.dismissNotificationRationale()
+
+        homeRobot
+            .clickProfileTab()
+            .assertTabSelected(HomeTestTags.PROFILE_TAB)
+
+        profileRobot
+            .assertProfileScreenDisplayed()
+            .scrollToUserLists(slug = TEST_PROFILE_SLUG)
+            .assertListCardDisplayed(favoritesListId)
+            .clickViewListsButton(slug = TEST_PROFILE_SLUG)
+
+        listsRobot
+            .assertListsScreenDisplayed()
+            .assertListCardDisplayed(favoritesListId)
+            .clickListCard(favoritesListId)
+
+        listDetailRobot
+            .assertListDetailScreenDisplayed()
+            .clickMoreButton()
+            .clickDeleteList()
+            .clickConfirmDelete()
+
+        listsRobot
+            .assertListsScreenDisplayed()
+            .assertListCardDoesNotExist(favoritesListId)
+    }
+
     private fun AppFlowScope.openListSheet() {
         rootRobot.dismissNotificationRationale()
 
@@ -158,5 +219,6 @@ internal class UserListFlowTests : BaseAppFlowTest() {
     private companion object {
         private const val SIGNED_OUT_LIST_NAME = "Weekend Watch"
         private const val SIMKL_LIST_NAME = "Rewatch Queue"
+        private const val RENAMED_LIST_NAME = "Cozy Comfort Watches"
     }
 }

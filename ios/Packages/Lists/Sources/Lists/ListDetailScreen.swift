@@ -9,6 +9,7 @@ public struct ListDetailScreen: View {
 
     private let state: State
     private let backButtonAccessibilityLabel: String
+    private let moreOptionsAccessibilityLabel: String
     private let onBack: () -> Void
     private let onItemAppear: (Int) -> Void
     private let onLoadMore: () -> Void
@@ -19,10 +20,18 @@ public struct ListDetailScreen: View {
     private let onRemoveDismissed: () -> Void
     private let onRetryLoadMore: () -> Void
     private let onDismissErrorMessage: () -> Void
+    private let onRenameRequested: () -> Void
+    private let onRenameNameChanged: (String) -> Void
+    private let onRenameConfirmed: () -> Void
+    private let onRenameDismissed: () -> Void
+    private let onDeleteRequested: () -> Void
+    private let onDeleteConfirmed: () -> Void
+    private let onDeleteDismissed: () -> Void
 
     public init(
         state: State,
         backButtonAccessibilityLabel: String = "",
+        moreOptionsAccessibilityLabel: String = "",
         onBack: @escaping () -> Void = {},
         onItemAppear: @escaping (Int) -> Void = { _ in },
         onLoadMore: @escaping () -> Void = {},
@@ -32,10 +41,18 @@ public struct ListDetailScreen: View {
         onRemoveConfirmed: @escaping () -> Void = {},
         onRemoveDismissed: @escaping () -> Void = {},
         onRetryLoadMore: @escaping () -> Void = {},
-        onDismissErrorMessage: @escaping () -> Void = {}
+        onDismissErrorMessage: @escaping () -> Void = {},
+        onRenameRequested: @escaping () -> Void = {},
+        onRenameNameChanged: @escaping (String) -> Void = { _ in },
+        onRenameConfirmed: @escaping () -> Void = {},
+        onRenameDismissed: @escaping () -> Void = {},
+        onDeleteRequested: @escaping () -> Void = {},
+        onDeleteConfirmed: @escaping () -> Void = {},
+        onDeleteDismissed: @escaping () -> Void = {}
     ) {
         self.state = state
         self.backButtonAccessibilityLabel = backButtonAccessibilityLabel
+        self.moreOptionsAccessibilityLabel = moreOptionsAccessibilityLabel
         self.onBack = onBack
         self.onItemAppear = onItemAppear
         self.onLoadMore = onLoadMore
@@ -46,6 +63,13 @@ public struct ListDetailScreen: View {
         self.onRemoveDismissed = onRemoveDismissed
         self.onRetryLoadMore = onRetryLoadMore
         self.onDismissErrorMessage = onDismissErrorMessage
+        self.onRenameRequested = onRenameRequested
+        self.onRenameNameChanged = onRenameNameChanged
+        self.onRenameConfirmed = onRenameConfirmed
+        self.onRenameDismissed = onRenameDismissed
+        self.onDeleteRequested = onDeleteRequested
+        self.onDeleteConfirmed = onDeleteConfirmed
+        self.onDeleteDismissed = onDeleteDismissed
     }
 
     @SwiftUI.State private var scrollPosition: Int64?
@@ -64,6 +88,9 @@ public struct ListDetailScreen: View {
                     leadingIcon: {
                         GlassButton(icon: "chevron.left", action: onBack)
                             .accessibilityLabel(backButtonAccessibilityLabel)
+                    },
+                    trailingIcon: {
+                        moreOptionsMenu
                     }
                 ),
                 alignment: .top
@@ -89,6 +116,66 @@ public struct ListDetailScreen: View {
             } message: {
                 Text(state.removeConfirmation?.message ?? "")
             }
+            .alert(
+                state.renameDialog?.title ?? "",
+                isPresented: Binding(
+                    get: { state.renameDialog != nil },
+                    set: { isPresented in
+                        if !isPresented { onRenameDismissed() }
+                    }
+                )
+            ) {
+                if let renameDialog = state.renameDialog {
+                    TextField(
+                        "",
+                        text: Binding(
+                            get: { state.renameDialog?.name ?? "" },
+                            set: onRenameNameChanged
+                        )
+                    )
+                    Button(renameDialog.saveLabel) {
+                        onRenameConfirmed()
+                    }
+                    .disabled(!renameDialog.canSave || renameDialog.isSaving)
+                    Button(state.cancelLabel, role: .cancel) {
+                        onRenameDismissed()
+                    }
+                }
+            }
+            .alert(
+                state.deleteConfirmation?.title ?? "",
+                isPresented: Binding(
+                    get: { state.deleteConfirmation != nil },
+                    set: { isPresented in
+                        if !isPresented { onDeleteDismissed() }
+                    }
+                )
+            ) {
+                if let deleteConfirmation = state.deleteConfirmation {
+                    Button(deleteConfirmation.confirmLabel, role: .destructive) {
+                        onDeleteConfirmed()
+                    }
+                    Button(state.cancelLabel, role: .cancel) {
+                        onDeleteDismissed()
+                    }
+                }
+            } message: {
+                Text(state.deleteConfirmation?.message ?? "")
+            }
+    }
+
+    private var moreOptionsMenu: some View {
+        Menu {
+            Button(action: onRenameRequested) {
+                Label(state.renameLabel, systemImage: "pencil")
+            }
+            Button(role: .destructive, action: onDeleteRequested) {
+                Label(state.deleteLabel, systemImage: "trash")
+            }
+        } label: {
+            GlassMenuLabel(icon: "ellipsis")
+        }
+        .accessibilityLabel(moreOptionsAccessibilityLabel)
     }
 
     @ViewBuilder

@@ -15,6 +15,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS index_lists_trakt_id ON lists (trakt_id);
 selectAll:
 SELECT id, trakt_id, slug, name, description, (SELECT COUNT(*) FROM list_shows ls WHERE ls.list_id = lists.id AND ls.pending_action != 'DELETE') AS item_count, created_at
 FROM lists
+WHERE lists.pending_action != 'DELETE'
 ORDER BY name ASC;
 
 selectTraktIdById:
@@ -56,6 +57,7 @@ LEFT JOIN list_shows ON list_shows.list_id = lists.id
             )
     ) < 4
 LEFT JOIN tvshow show ON show.tmdb_id = list_shows.tmdb_id
+WHERE lists.pending_action != 'DELETE'
 ORDER BY lists.name ASC, list_shows.listed_at DESC, list_shows.tmdb_id DESC;
 
 upsertByTraktId:
@@ -65,7 +67,8 @@ ON CONFLICT(trakt_id) DO UPDATE SET
     slug = excluded.slug,
     name = excluded.name,
     description = excluded.description,
-    item_count = excluded.item_count;
+    item_count = excluded.item_count
+WHERE lists.pending_action = 'NOTHING';
 
 insertLocal:
 INSERT INTO lists(trakt_id, slug, name, description, item_count, created_at, pending_action)
@@ -75,6 +78,17 @@ markSynced:
 UPDATE lists
 SET trakt_id = :traktId, slug = :slug, pending_action = 'NOTHING'
 WHERE id = :id;
+
+rename:
+UPDATE lists
+SET name = :name, pending_action = CASE WHEN trakt_id IS NULL THEN pending_action ELSE 'UPLOAD' END
+WHERE id = :id;
+
+markPendingDelete:
+UPDATE lists SET pending_action = 'DELETE' WHERE id = :id;
+
+clearPendingAction:
+UPDATE lists SET pending_action = 'NOTHING' WHERE id = :id;
 
 selectSyncedIds:
 SELECT id, trakt_id
@@ -87,10 +101,22 @@ FROM lists
 WHERE trakt_id IS NULL AND pending_action = 'UPLOAD'
 ORDER BY id ASC;
 
-countPendingUploads:
+selectPendingRenames:
+SELECT id, trakt_id, name
+FROM lists
+WHERE trakt_id IS NOT NULL AND pending_action = 'UPLOAD'
+ORDER BY id ASC;
+
+selectPendingDeletes:
+SELECT id, trakt_id
+FROM lists
+WHERE pending_action = 'DELETE'
+ORDER BY id ASC;
+
+countPendingChanges:
 SELECT COUNT(*)
 FROM lists
-WHERE trakt_id IS NULL AND pending_action = 'UPLOAD';
+WHERE pending_action != 'NOTHING';
 
 deleteById:
 DELETE FROM lists WHERE id = ?;

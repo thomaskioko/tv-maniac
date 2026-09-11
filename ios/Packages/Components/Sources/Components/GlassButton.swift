@@ -58,6 +58,41 @@ public extension GlassButton where Label == GlassButtonIconLabel {
     }
 }
 
+public struct GlassMenuLabel<Label: View>: View {
+    @Environment(\.appTheme) private var theme
+    @Environment(\.colorScheme) private var colorScheme
+
+    private let label: Label
+
+    public init(@ViewBuilder label: () -> Label) {
+        self.label = label()
+    }
+
+    public var body: some View {
+        ZStack {
+            Circle()
+                .fill(theme.colors.scrim.opacity(colorScheme == .dark ? 0.5 : 0.3))
+                .frame(width: 44, height: 44)
+                .overlay(
+                    Circle()
+                        .strokeBorder(theme.colors.onScrim.opacity(0.15), lineWidth: 1)
+                )
+                .appShadow(theme.shadows.medium)
+
+            label
+        }
+        .frame(width: 44, height: 44)
+    }
+}
+
+public extension GlassMenuLabel where Label == GlassButtonIconLabel {
+    init(icon: String) {
+        self.init {
+            GlassButtonIconLabel(icon: icon)
+        }
+    }
+}
+
 // MARK: - Preview
 
 #Preview("Glass Button Styles") {

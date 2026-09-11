@@ -41,3 +41,25 @@ extension RemoveConfirmation {
         )
     }
 }
+
+extension RenameDialog {
+    func toSwift() -> ListDetailScreen.RenameDialogState {
+        .init(
+            title: title,
+            name: name,
+            canSave: canSave,
+            saveLabel: saveLabel,
+            isSaving: isSaving
+        )
+    }
+}
+
+extension DeleteConfirmation {
+    func toSwift() -> ListDetailScreen.DeleteConfirmationState {
+        .init(
+            title: title,
+            message: message,
+            confirmLabel: confirmLabel
+        )
+    }
+}

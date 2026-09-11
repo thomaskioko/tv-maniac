@@ -39,6 +39,7 @@ public fun TvManiacAlertDialog(
     icon: ImageVector? = null,
     dismissButtonText: String? = null,
     confirmButtonTestTag: String? = null,
+    confirmButtonEnabled: Boolean = true,
     dismissButtonTestTag: String? = null,
     neutralButtonText: String? = null,
     onNeutral: (() -> Unit)? = null,
@@ -52,7 +53,7 @@ public fun TvManiacAlertDialog(
 
     AlertDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.widthIn(max = (containerWidth - 80.dp).coerceAtLeast(0.dp)),
+        modifier = modifier.widthIn(max = (containerWidth - 80.dp).coerceAtLeast(0.dp)),
         shape = shape,
         onDismissRequest = onDismiss,
         icon = icon?.let {
@@ -73,11 +74,13 @@ public fun TvManiacAlertDialog(
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(TvManiacSpacing.medium)) {
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                if (message.isNotEmpty()) {
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 content?.invoke()
             }
         },
@@ -92,6 +95,7 @@ public fun TvManiacAlertDialog(
                         color = MaterialTheme.colorScheme.secondary,
                         onClick = onConfirm,
                         testTag = confirmButtonTestTag,
+                        enabled = confirmButtonEnabled,
                     )
                     DialogTextButton(
                         text = neutralButtonText,
@@ -112,6 +116,7 @@ public fun TvManiacAlertDialog(
                     color = MaterialTheme.colorScheme.secondary,
                     onClick = onConfirm,
                     testTag = confirmButtonTestTag,
+                    enabled = confirmButtonEnabled,
                 )
             }
         },
@@ -138,15 +143,17 @@ private fun DialogTextButton(
     color: Color,
     onClick: () -> Unit,
     testTag: String?,
+    enabled: Boolean = true,
 ) {
     TextButton(
         modifier = testTag?.let { Modifier.testTag(it) } ?: Modifier,
         onClick = onClick,
+        enabled = enabled,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelLarge,
-            color = color,
+            color = if (enabled) color else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = DISABLED_ALPHA),
             textAlign = TextAlign.End,
         )
     }
@@ -197,3 +204,5 @@ private fun TvManiacAlertDialogThreeActionsPreview() {
         onNeutral = {},
     )
 }
+
+private const val DISABLED_ALPHA = 0.38f

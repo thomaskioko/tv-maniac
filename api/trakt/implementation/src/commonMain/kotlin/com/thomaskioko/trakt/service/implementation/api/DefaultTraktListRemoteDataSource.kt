@@ -14,6 +14,7 @@ import com.thomaskioko.tvmaniac.trakt.api.model.TraktListItemResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktPersonalListsResponse
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShow
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktShowIds
+import com.thomaskioko.tvmaniac.trakt.api.model.TraktUpdateListRequest
 import com.thomaskioko.tvmaniac.trakt.api.model.TraktUserResponse
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -73,6 +74,24 @@ public class DefaultTraktListRemoteDataSource(
             }
             contentType(ContentType.Application.Json)
             setBody(TraktCreateListRequest(name = name))
+        }
+
+    override suspend fun updateList(userSlug: String, listId: Long, name: String): ApiResponse<Unit> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Put
+                path("users/$userSlug/lists/$listId")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(TraktUpdateListRequest(name = name))
+        }
+
+    override suspend fun deleteList(userSlug: String, listId: Long): ApiResponse<Unit> =
+        httpClient.authSafeRequest {
+            url {
+                method = HttpMethod.Delete
+                path("users/$userSlug/lists/$listId")
+            }
         }
 
     override suspend fun getWatchList(

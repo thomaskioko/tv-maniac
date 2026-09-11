@@ -15,6 +15,10 @@ public extension ListDetailScreen {
         public let removeButtonLabel: String
         public let removeConfirmation: RemoveConfirmation?
         public let cancelLabel: String
+        public let renameLabel: String
+        public let deleteLabel: String
+        public let renameDialog: RenameDialogState?
+        public let deleteConfirmation: DeleteConfirmationState?
 
         public init(
             title: String,
@@ -29,7 +33,11 @@ public extension ListDetailScreen {
             retryLabel: String = "",
             removeButtonLabel: String = "",
             removeConfirmation: RemoveConfirmation? = nil,
-            cancelLabel: String = ""
+            cancelLabel: String = "",
+            renameLabel: String = "",
+            deleteLabel: String = "",
+            renameDialog: RenameDialogState? = nil,
+            deleteConfirmation: DeleteConfirmationState? = nil
         ) {
             self.title = title
             self.isLoading = isLoading
@@ -44,6 +52,10 @@ public extension ListDetailScreen {
             self.removeButtonLabel = removeButtonLabel
             self.removeConfirmation = removeConfirmation
             self.cancelLabel = cancelLabel
+            self.renameLabel = renameLabel
+            self.deleteLabel = deleteLabel
+            self.renameDialog = renameDialog
+            self.deleteConfirmation = deleteConfirmation
         }
     }
 
@@ -60,6 +72,44 @@ public extension ListDetailScreen {
             confirmLabel: String
         ) {
             self.tmdbId = tmdbId
+            self.title = title
+            self.message = message
+            self.confirmLabel = confirmLabel
+        }
+    }
+
+    struct RenameDialogState: Equatable {
+        public let title: String
+        public let name: String
+        public let canSave: Bool
+        public let saveLabel: String
+        public let isSaving: Bool
+
+        public init(
+            title: String,
+            name: String,
+            canSave: Bool,
+            saveLabel: String,
+            isSaving: Bool
+        ) {
+            self.title = title
+            self.name = name
+            self.canSave = canSave
+            self.saveLabel = saveLabel
+            self.isSaving = isSaving
+        }
+    }
+
+    struct DeleteConfirmationState: Equatable {
+        public let title: String
+        public let message: String
+        public let confirmLabel: String
+
+        public init(
+            title: String,
+            message: String,
+            confirmLabel: String
+        ) {
             self.title = title
             self.message = message
             self.confirmLabel = confirmLabel

@@ -40,6 +40,12 @@ public class FakeListRepository : ListRepository {
     private var lastToggleTraktSlug: String? = null
     private val syncPendingListsCalls = mutableListOf<String>()
     private val callOrder = mutableListOf<String>()
+    private val renamedLists = mutableListOf<Pair<Long, String>>()
+    private val deletedListIds = mutableListOf<Long>()
+    private var lastRenameTraktSlug: String? = null
+    private var lastDeleteTraktSlug: String? = null
+    private var renameError: Throwable? = null
+    private var deleteError: Throwable? = null
 
     public fun createdListNames(): List<String> = createdListNames
 
@@ -52,6 +58,22 @@ public class FakeListRepository : ListRepository {
     public fun syncPendingListsCalls(): List<String> = syncPendingListsCalls
 
     public fun callOrder(): List<String> = callOrder
+
+    public fun renamedLists(): List<Pair<Long, String>> = renamedLists
+
+    public fun deletedListIds(): List<Long> = deletedListIds
+
+    public fun lastRenameTraktSlug(): String? = lastRenameTraktSlug
+
+    public fun lastDeleteTraktSlug(): String? = lastDeleteTraktSlug
+
+    public fun setRenameError(error: Throwable?) {
+        renameError = error
+    }
+
+    public fun setDeleteError(error: Throwable?) {
+        deleteError = error
+    }
 
     public fun setLists(lists: List<UserListEntity>) {
         listsFlow.value = lists
@@ -100,6 +122,20 @@ public class FakeListRepository : ListRepository {
     override suspend fun createList(name: String, traktSlug: String?) {
         lastCreateTraktSlug = traktSlug
         createdListNames += name
+    }
+
+    override suspend fun renameList(listId: Long, name: String, traktSlug: String?) {
+        renameError?.let { throw it }
+        lastRenameTraktSlug = traktSlug
+        renamedLists += listId to name
+        listsFlow.value = listsFlow.value.map { if (it.id == listId) it.copy(name = name) else it }
+    }
+
+    override suspend fun deleteList(listId: Long, traktSlug: String?) {
+        deleteError?.let { throw it }
+        lastDeleteTraktSlug = traktSlug
+        deletedListIds += listId
+        listsFlow.value = listsFlow.value.filterNot { it.id == listId }
     }
 
     override suspend fun toggleShowInList(listId: Long, showId: Long, isCurrentlyInList: Boolean, traktSlug: String?) {

@@ -40,7 +40,9 @@ private let previewItems: [ShowPosterImage] = [
                 isLoading: false,
                 items: previewItems,
                 retryLabel: "Retry",
-                removeButtonLabel: "Remove"
+                removeButtonLabel: "Remove",
+                renameLabel: "Rename",
+                deleteLabel: "Delete list"
             )
         )
     }

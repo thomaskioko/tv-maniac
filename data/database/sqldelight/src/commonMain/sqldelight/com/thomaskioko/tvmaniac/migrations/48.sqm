@@ -1,0 +1,17 @@
+CREATE TABLE list_shows_new(
+    list_id INTEGER NOT NULL,
+    tmdb_id INTEGER NOT NULL,
+    listed_at TEXT NOT NULL,
+    pending_action TEXT NOT NULL DEFAULT 'NOTHING'
+        CHECK(pending_action IN ('NOTHING', 'UPLOAD', 'DELETE')),
+    PRIMARY KEY (list_id, tmdb_id),
+    FOREIGN KEY(list_id) REFERENCES lists(id) ON DELETE CASCADE
+);
+
+INSERT INTO list_shows_new (list_id, tmdb_id, listed_at, pending_action)
+SELECT list_id, tmdb_id, listed_at, pending_action
+FROM list_shows
+WHERE list_id IN (SELECT id FROM lists);
+
+DROP TABLE list_shows;
+ALTER TABLE list_shows_new RENAME TO list_shows;

@@ -5,11 +5,13 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.thomaskioko.tvmaniac.compose.components.TvManiacBackground
 import com.thomaskioko.tvmaniac.lists.ui.ListDetailScreen
 import com.thomaskioko.tvmaniac.lists.ui.listDetailContentState
+import com.thomaskioko.tvmaniac.lists.ui.listDetailDeleteConfirmationState
 import com.thomaskioko.tvmaniac.lists.ui.listDetailEmptyState
 import com.thomaskioko.tvmaniac.lists.ui.listDetailErrorState
 import com.thomaskioko.tvmaniac.lists.ui.listDetailLoadMoreErrorState
 import com.thomaskioko.tvmaniac.lists.ui.listDetailLoadingState
 import com.thomaskioko.tvmaniac.lists.ui.listDetailRemoveConfirmationState
+import com.thomaskioko.tvmaniac.lists.ui.listDetailRenameDialogState
 import com.thomaskioko.tvmaniac.screenshottests.captureMultiDevice
 import org.junit.Rule
 import org.junit.Test
@@ -94,6 +96,30 @@ internal class ListDetailScreenTest {
             TvManiacBackground {
                 ListDetailScreen(
                     state = listDetailRemoveConfirmationState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun listDetailScreenRenameDialog() {
+        composeTestRule.captureMultiDevice("ListDetailScreenRenameDialog") {
+            TvManiacBackground {
+                ListDetailScreen(
+                    state = listDetailRenameDialogState,
+                    onAction = {},
+                )
+            }
+        }
+    }
+
+    @Test
+    fun listDetailScreenDeleteConfirmationDialog() {
+        composeTestRule.captureMultiDevice("ListDetailScreenDeleteConfirmationDialog") {
+            TvManiacBackground {
+                ListDetailScreen(
+                    state = listDetailDeleteConfirmationState,
                     onAction = {},
                 )
             }

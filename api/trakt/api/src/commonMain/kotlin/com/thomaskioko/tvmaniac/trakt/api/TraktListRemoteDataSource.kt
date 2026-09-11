@@ -25,6 +25,10 @@ public interface TraktListRemoteDataSource {
 
     public suspend fun createList(userSlug: String, name: String): ApiResponse<TraktCreateListResponse>
 
+    public suspend fun updateList(userSlug: String, listId: Long, name: String): ApiResponse<Unit>
+
+    public suspend fun deleteList(userSlug: String, listId: Long): ApiResponse<Unit>
+
     public suspend fun getWatchList(
         sortBy: String,
         sortHow: String,

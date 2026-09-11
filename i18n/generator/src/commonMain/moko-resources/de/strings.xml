@@ -338,6 +338,13 @@
     <string name="list_detail_remove_title">Aus Liste entfernen?</string>
     <string name="list_detail_remove_message">%1$s aus %2$s entfernen?</string>
     <string name="list_detail_remove_button">Entfernen</string>
+    <string name="list_detail_menu_rename">Umbenennen</string>
+    <string name="list_detail_rename_title">Liste umbenennen</string>
+    <string name="list_detail_menu_delete">Liste löschen</string>
+    <string name="list_detail_delete_title">Liste löschen?</string>
+    <string name="list_detail_delete_message">%1$s löschen? Die Serien bleiben in deiner Bibliothek.</string>
+    <string name="list_detail_delete_button">Löschen</string>
+    <string name="cd_list_options">Listenoptionen</string>
 
     <string name="label_settings_include_specials">Spezialstaffeln</string>
     <string name="label_settings_include_specials_description">Specials und Bonusstaffeln anzeigen</string>

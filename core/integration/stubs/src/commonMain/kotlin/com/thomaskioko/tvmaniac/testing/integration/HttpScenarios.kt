@@ -144,6 +144,23 @@ public class HttpScenarios(private val mockHandler: MockEngineHandler) {
         mockHandler.stubEndpoint(Endpoints.Trakt.removeShowFromList(slug, listId), method = HttpMethod.Post)
     }
 
+    public fun stubTraktUpdateList(listId: Long, slug: String = TEST_PROFILE_SLUG) {
+        mockHandler.stub(
+            method = HttpMethod.Put,
+            path = "/users/$slug/lists/$listId",
+            body = "[]",
+        )
+    }
+
+    public fun stubTraktDeleteList(listId: Long, slug: String = TEST_PROFILE_SLUG) {
+        mockHandler.stub(
+            method = HttpMethod.Delete,
+            path = "/users/$slug/lists/$listId",
+            body = "",
+            status = HttpStatusCode.NoContent,
+        )
+    }
+
     public fun stubTraktUsersMeUnauthorized() {
         mockHandler.stubEndpoint(Endpoints.Trakt.UsersMe, HttpStatusCode.Unauthorized)
     }

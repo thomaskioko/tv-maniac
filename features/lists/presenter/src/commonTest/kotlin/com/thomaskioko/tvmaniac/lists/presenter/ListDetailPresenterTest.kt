@@ -14,14 +14,19 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
 import com.thomaskioko.tvmaniac.data.user.testing.FakeUserRepository
+import com.thomaskioko.tvmaniac.domain.lists.DeleteListInteractor
 import com.thomaskioko.tvmaniac.domain.lists.FetchMissingListShowDetailsInteractor
+import com.thomaskioko.tvmaniac.domain.lists.RenameListInteractor
 import com.thomaskioko.tvmaniac.domain.lists.SyncListsInteractor
 import com.thomaskioko.tvmaniac.domain.lists.ToggleShowInListInteractor
 import com.thomaskioko.tvmaniac.i18n.testing.FakeLocalizer
 import com.thomaskioko.tvmaniac.lists.api.ListShowItem
+import com.thomaskioko.tvmaniac.lists.api.UserListEntity
 import com.thomaskioko.tvmaniac.lists.nav.model.ListDetailParam
+import com.thomaskioko.tvmaniac.lists.presenter.model.DeleteConfirmation
 import com.thomaskioko.tvmaniac.lists.presenter.model.ListShow
 import com.thomaskioko.tvmaniac.lists.presenter.model.RemoveConfirmation
+import com.thomaskioko.tvmaniac.lists.presenter.model.RenameDialog
 import com.thomaskioko.tvmaniac.lists.testing.FakeListRepository
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.navigation.testing.NoOpNavigator
@@ -324,6 +329,206 @@ internal class ListDetailPresenterTest {
         }
     }
 
+    @Test
+    fun `should show the name the repository holds given the list is renamed elsewhere`() = runTest {
+        createPresenter().state.test {
+            awaitItem().title shouldBe LIST_NAME
+
+            listRepository.setLists(listOf(listEntity(name = "Cozy nights")))
+
+            awaitUntil { it.title == "Cozy nights" }
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should open the rename dialog prefilled with the current name given rename is requested`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.RenameRequested)
+
+            val opened = awaitUntil { it.renameDialog != null }
+
+            opened.renameDialog shouldBe RenameDialog(
+                title = "Rename list",
+                name = LIST_NAME,
+                canSave = false,
+                saveLabel = "Save",
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should allow saving only given a new name that is not blank`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.RenameRequested)
+            awaitUntil { it.renameDialog != null }
+
+            presenter.dispatch(ListDetailAction.RenameNameChanged("   "))
+            awaitUntil { it.renameDialog?.name == "   " }.renameDialog?.canSave shouldBe false
+
+            presenter.dispatch(ListDetailAction.RenameNameChanged(" $LIST_NAME "))
+            awaitUntil { it.renameDialog?.name == " $LIST_NAME " }.renameDialog?.canSave shouldBe false
+
+            presenter.dispatch(ListDetailAction.RenameNameChanged("Cozy nights"))
+            awaitUntil { it.renameDialog?.name == "Cozy nights" }.renameDialog?.canSave shouldBe true
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should rename the list with the trimmed name and close the dialog given rename is confirmed`() = runTest {
+        listRepository.setLists(listOf(listEntity(name = LIST_NAME)))
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.RenameRequested)
+            awaitUntil { it.renameDialog != null }
+            presenter.dispatch(ListDetailAction.RenameNameChanged(" Cozy nights "))
+            awaitUntil { it.renameDialog?.canSave == true }
+
+            presenter.dispatch(ListDetailAction.RenameConfirmed)
+
+            val renamed = awaitUntil { it.title == "Cozy nights" }
+            renamed.renameDialog shouldBe null
+            renamed.errorMessage shouldBe null
+            listRepository.renamedLists() shouldBe listOf(LIST_ID to "Cozy nights")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should surface the mapped error and close the dialog given the rename fails`() = runTest {
+        listRepository.setRenameError(RuntimeException("boom"))
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.RenameRequested)
+            awaitUntil { it.renameDialog != null }
+            presenter.dispatch(ListDetailAction.RenameNameChanged("Cozy nights"))
+            awaitUntil { it.renameDialog?.canSave == true }
+
+            presenter.dispatch(ListDetailAction.RenameConfirmed)
+
+            val failed = awaitUntil { it.errorMessage != null }
+            failed.errorMessage shouldBe "mapped:boom"
+            failed.renameDialog shouldBe null
+            failed.title shouldBe LIST_NAME
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should close the rename dialog and rename nothing given it is dismissed`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.RenameRequested)
+            awaitUntil { it.renameDialog != null }
+
+            presenter.dispatch(ListDetailAction.RenameDismissed)
+
+            awaitUntil { it.renameDialog == null }
+            listRepository.renamedLists().shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should ask for confirmation naming the list given delete is requested`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.DeleteRequested)
+
+            val asked = awaitUntil { it.deleteConfirmation != null }
+
+            asked.deleteConfirmation shouldBe DeleteConfirmation(
+                title = "Delete list?",
+                message = "Delete $LIST_NAME? The shows stay in your library.",
+                confirmLabel = "Delete",
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should delete the list and navigate back given delete is confirmed`() = runTest {
+        val navigator = TestNavigator()
+        val presenter = createPresenter(navigator = navigator)
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.DeleteRequested)
+            awaitUntil { it.deleteConfirmation != null }
+
+            navigator.test {
+                presenter.dispatch(ListDetailAction.DeleteConfirmed)
+                awaitNavigateBack()
+            }
+
+            awaitUntil { it.deleteConfirmation == null }
+            listRepository.deletedListIds() shouldBe listOf(LIST_ID)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should surface the mapped error and stay on the list given the delete fails`() = runTest {
+        listRepository.setDeleteError(RuntimeException("boom"))
+        val navigator = TestNavigator()
+        val presenter = createPresenter(navigator = navigator)
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.DeleteRequested)
+            awaitUntil { it.deleteConfirmation != null }
+
+            presenter.dispatch(ListDetailAction.DeleteConfirmed)
+
+            val failed = awaitUntil { it.errorMessage != null }
+            failed.errorMessage shouldBe "mapped:boom"
+            failed.deleteConfirmation shouldBe null
+            navigator.test { expectNoEvents() }
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `should clear the confirmation and delete nothing given delete is dismissed`() = runTest {
+        val presenter = createPresenter()
+
+        presenter.state.test {
+            awaitItem()
+            presenter.dispatch(ListDetailAction.DeleteRequested)
+            awaitUntil { it.deleteConfirmation != null }
+
+            presenter.dispatch(ListDetailAction.DeleteDismissed)
+
+            awaitUntil { it.deleteConfirmation == null }
+            listRepository.deletedListIds().shouldBeEmpty()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private fun listEntity(name: String): UserListEntity = UserListEntity(
+        id = LIST_ID,
+        name = name,
+        description = null,
+        itemCount = 0,
+        createdAt = "2026-01-01T00:00:00Z",
+    )
+
     private suspend fun app.cash.turbine.ReceiveTurbine<ListDetailState>.awaitUntil(
         predicate: (ListDetailState) -> Boolean,
     ): ListDetailState {
@@ -353,6 +558,16 @@ internal class ListDetailPresenterTest {
                 dispatchers = dispatchers,
             ),
             syncListsInteractor = SyncListsInteractor(
+                repository = listRepository,
+                userRepository = userRepository,
+                activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
+            ),
+            renameListInteractor = RenameListInteractor(
+                repository = listRepository,
+                userRepository = userRepository,
+                activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
+            ),
+            deleteListInteractor = DeleteListInteractor(
                 repository = listRepository,
                 userRepository = userRepository,
                 activeProviderFeatures = { FakeProviderFeatures(supportsLists = supportsLists) },
