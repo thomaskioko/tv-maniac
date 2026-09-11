@@ -34,7 +34,7 @@ kotlin {
                 api(projects.domain.showdetails)
                 api(projects.domain.syncActivity)
 
-                implementation(projects.domain.episode)
+                api(projects.domain.episode)
             }
         }
 

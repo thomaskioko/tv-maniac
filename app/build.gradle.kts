@@ -290,6 +290,7 @@ dependencies {
     testImplementation(projects.data.traktauth.testing)
     testImplementation(projects.core.locale.testing)
     testImplementation(projects.core.featureFlags.testing)
+    testImplementation(projects.core.connectivity.testing)
 
     testImplementation(libs.firebase.config)
     testImplementation(libs.androidx.monitor)
@@ -301,6 +302,7 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.ktor.core)
     testImplementation(libs.ktor.http)
+    testImplementation(libs.ktor.mock)
     testImplementation(libs.robolectric.annotations)
 
     testRuntimeOnly(libs.androidx.test.core)
@@ -314,6 +316,8 @@ dependencies {
     androidTestImplementation(projects.core.integration.infra)
     androidTestImplementation(projects.core.integration.stubs)
     androidTestImplementation(projects.core.featureFlags.testing)
+    androidTestImplementation(projects.core.connectivity.testing)
+    androidTestImplementation(libs.ktor.mock)
     androidTestImplementation(projects.core.integration.ui)
     androidTestImplementation(projects.core.testTags)
     androidTestImplementation(projects.data.oauth.api)
