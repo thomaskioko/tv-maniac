@@ -19,6 +19,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
+                api(projects.core.connectivity.api)
                 api(projects.core.featureFlags.api)
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
@@ -40,17 +41,23 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.connectivity.testing)
                 implementation(projects.core.featureFlags.testing)
                 implementation(projects.core.logger.testing)
+                implementation(projects.core.tasks.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.continueWatching.testing)
+                implementation(projects.data.datastore.testing)
                 implementation(projects.data.episode.testing)
+                implementation(projects.data.library.testing)
+                implementation(projects.data.lists.testing)
                 implementation(projects.data.requestManager.testing)
                 implementation(projects.data.seasondetails.testing)
                 implementation(projects.data.showdetails.testing)
                 implementation(projects.data.syncActivity.testing)
                 implementation(projects.data.upnext.testing)
+                implementation(projects.data.user.testing)
                 implementation(projects.data.watchproviders.testing)
             }
         }
