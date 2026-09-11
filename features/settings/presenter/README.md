@@ -220,6 +220,7 @@ graph TB
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
   :domain:backup --> :core:base
+  :domain:backup --> :core:connectivity:api
   :domain:backup --> :core:logger:api
   :domain:backup --> :core:network-util:api
   :domain:backup --> :core:tasks:api
