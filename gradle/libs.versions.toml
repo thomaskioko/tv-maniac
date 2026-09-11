@@ -45,7 +45,7 @@ coroutines = "1.11.0"
 crashkios = "0.9.0"
 datetime = "0.8.0-0.6.x-compat"
 decompose = "3.5.0"
-firebase-bom = "34.18.0"
+firebase-bom = "34.19.0"
 firebase-crashlytics-plugin = "3.0.8"
 essenty = "2.6.0"
 desugar = "2.1.5"
@@ -160,7 +160,7 @@ essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = 
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-config = { module = "com.google.firebase:firebase-config", version = "23.1.0" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.0" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.1" }
 
 
 junit4 = { module = "junit:junit", version.ref = "junit4" }
