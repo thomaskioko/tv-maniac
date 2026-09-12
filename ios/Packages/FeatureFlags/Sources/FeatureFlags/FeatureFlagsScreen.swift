@@ -5,6 +5,8 @@ import SwiftUI
 
 public struct FeatureFlagsScreen: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
+    @SwiftUI.State private var glassQuery: String = ""
     @Environment(\.colorScheme) private var colorScheme
 
     private let state: State
@@ -45,16 +47,18 @@ public struct FeatureFlagsScreen: View {
     public var body: some View {
         List {
             Section {
-                searchField
-                    .listRowInsets(
-                        EdgeInsets(
-                            top: theme.spacing.small,
-                            leading: theme.spacing.medium,
-                            bottom: theme.spacing.small,
-                            trailing: theme.spacing.medium
+                if !liquidGlassEnabled {
+                    searchField
+                        .listRowInsets(
+                            EdgeInsets(
+                                top: theme.spacing.small,
+                                leading: theme.spacing.medium,
+                                bottom: theme.spacing.small,
+                                trailing: theme.spacing.medium
+                            )
                         )
-                    )
-                    .listRowSeparator(.hidden)
+                        .listRowSeparator(.hidden)
+                }
                 actionRow(
                     icon: "arrow.counterclockwise",
                     title: state.resetAllTitle,
@@ -103,6 +107,18 @@ public struct FeatureFlagsScreen: View {
                 view
                     .appScreen()
                     .navigationTitle(state.title)
+                    .searchable(text: $glassQuery, prompt: state.searchPlaceholder)
+                    .onChange(of: glassQuery) { _, newValue in
+                        if newValue != state.searchQuery {
+                            onSearchQueryChanged(newValue)
+                        }
+                    }
+                    .onChange(of: state.searchQuery) { _, newValue in
+                        if newValue.isEmpty, !glassQuery.isEmpty {
+                            glassQuery = ""
+                        }
+                    }
+                    .onAppear { glassQuery = state.searchQuery }
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Button(action: onBack) {
