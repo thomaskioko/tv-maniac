@@ -4,6 +4,7 @@ import SwiftUI
 
 public struct ListsScreen: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
 
     private let state: State
     private let backButtonAccessibilityLabel: String
@@ -24,23 +25,42 @@ public struct ListsScreen: View {
 
     public var body: some View {
         stateBody
-            .appScreen()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .navigationBarColor(backgroundColor: .clear)
             .swipeBackGesture(onSwipe: onBack)
-            .overlay(
-                GlassToolbar(
-                    title: state.title,
-                    opacity: 1.0,
-                    leadingIcon: {
-                        GlassButton(icon: "chevron.left", action: onBack)
-                            .accessibilityLabel(backButtonAccessibilityLabel)
-                    }
-                ),
-                alignment: .top
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .appScreen()
+                        .navigationTitle(state.title)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(action: onBack) {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .tint(theme.colors.onSurface)
+                                .accessibilityLabel(backButtonAccessibilityLabel)
+                            }
+                        }
+                },
+                legacy: { view in
+                    view
+                        .appScreen()
+                        .navigationBarColor(backgroundColor: .clear)
+                        .overlay(
+                            GlassToolbar(
+                                title: state.title,
+                                opacity: 1.0,
+                                leadingIcon: {
+                                    GlassButton(icon: "chevron.left", action: onBack)
+                                        .accessibilityLabel(backButtonAccessibilityLabel)
+                                }
+                            ),
+                            alignment: .top
+                        )
+                        .edgesIgnoringSafeArea(.top)
+                }
             )
-            .edgesIgnoringSafeArea(.top)
     }
 
     @ViewBuilder
@@ -94,6 +114,6 @@ public struct ListsScreen: View {
     private var toolbarInset: CGFloat {
         let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
             .windows.first?.safeAreaInsets.top ?? 0
-        return 44 + safeAreaTop
+        return liquidGlassEnabled ? 0 : 44 + safeAreaTop
     }
 }
