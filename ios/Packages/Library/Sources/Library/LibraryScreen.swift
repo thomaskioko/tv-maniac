@@ -90,36 +90,47 @@ public struct LibraryScreen: View {
     @SwiftUI.State private var localQuery: String = ""
 
     public var body: some View {
-        ZStack {
-            VStack {
-                contentView
-            }
-            .padding(.top, toolbarInset)
-        }
-        .appScreen()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
-        .disableAutocorrection(true)
-        .overlay(
-            Group {
-                if state.isSearchActive {
-                    searchBarOverlay
-                } else {
-                    libraryToolbar
+        contentView
+            .disableAutocorrection(true)
+            .textInputAutocapitalization(.never)
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .appScreen()
+                        .navigationTitle(state.title)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar { glassToolbarContent }
+                },
+                legacy: { view in
+                    ZStack {
+                        VStack {
+                            view
+                        }
+                        .padding(.top, toolbarInset)
+                    }
+                    .appScreen()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarColor(backgroundColor: .clear)
+                    .overlay(
+                        Group {
+                            if state.isSearchActive {
+                                searchBarOverlay
+                            } else {
+                                libraryToolbar
+                            }
+                        },
+                        alignment: .top
+                    )
+                    .edgesIgnoringSafeArea(.top)
                 }
-            },
-            alignment: .top
-        )
-        .edgesIgnoringSafeArea(.top)
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
-        .disableAutocorrection(true)
-        .textInputAutocapitalization(.never)
-        .onAppear {
-            localQuery = state.query
-        }
-        .onChange(of: state.query) { _, newValue in
-            localQuery = newValue
-        }
+            )
+            .onAppear {
+                localQuery = state.query
+            }
+            .onChange(of: state.query) { _, newValue in
+                localQuery = newValue
+            }
     }
 
     @ViewBuilder
@@ -177,6 +188,57 @@ public struct LibraryScreen: View {
         } label: {
             GlassButton(icon: icon(for: state.layout), action: {})
         }
+    }
+
+    @ToolbarContentBuilder
+    private var glassToolbarContent: some ToolbarContent {
+        if state.isSearchActive {
+            ToolbarItem(placement: .principal) {
+                expandedSearchBar
+            }
+        } else {
+            ToolbarItem(placement: .topBarLeading) {
+                layoutMenuGlass
+            }
+            if state.isRefreshing {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ProgressView()
+                        .tint(appTheme.colors.onSurface)
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        onToggleSearch()
+                        isSearchFocused = true
+                    }
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                }
+                .tint(appTheme.colors.onSurface)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: onSortClicked) {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                }
+                .tint(appTheme.colors.onSurface)
+            }
+        }
+    }
+
+    private var layoutMenuGlass: some View {
+        let copy = state.layoutMenuCopy
+        return Menu {
+            layoutMenuRow(.grid, copy: copy)
+            layoutMenuRow(.list, copy: copy)
+            Section(copy.premiumSectionTitle) {
+                layoutMenuRow(.compact, copy: copy)
+                layoutMenuRow(.detailed, copy: copy)
+            }
+        } label: {
+            Image(systemName: icon(for: state.layout))
+        }
+        .tint(appTheme.colors.onSurface)
     }
 
     @ViewBuilder
