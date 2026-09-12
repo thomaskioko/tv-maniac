@@ -37,6 +37,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.coroutines.core)
 
+                implementation(projects.core.featureFlags.api)
                 implementation(projects.core.view)
                 implementation(projects.domain.theme)
                 implementation(projects.features.debug.nav)

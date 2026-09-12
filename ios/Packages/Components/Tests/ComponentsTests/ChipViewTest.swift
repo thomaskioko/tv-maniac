@@ -12,4 +12,11 @@ class ChipViewTest: SnapshotTestCase {
             .appPreview()
             .assertSnapshot(testName: "ChipView")
     }
+
+    func test_ChipView_glass() {
+        ChipView(label: "Drama")
+            .padding()
+            .appPreview()
+            .assertSnapshot(liquidGlass: true, testName: "ChipView")
+    }
 }

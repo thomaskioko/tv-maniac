@@ -5,6 +5,7 @@ import com.thomaskioko.tvmaniac.core.logger.CrashlyticsConfiguration
 import com.thomaskioko.tvmaniac.datastore.api.DatastoreRepository
 import com.thomaskioko.tvmaniac.featureflags.FeatureFlag
 import com.thomaskioko.tvmaniac.featureflags.RemoteConfigBridge
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagLocalStore
 import com.thomaskioko.tvmaniac.navigation.NavDestination
 import com.thomaskioko.tvmaniac.navigation.Navigator
 import com.thomaskioko.tvmaniac.oauth.api.OAuthLauncher
@@ -29,6 +30,7 @@ public interface TestGraph {
     public val featureFlags: Set<FeatureFlag<Boolean>>
     public val subscriptionManager: SubscriptionManager
     public val fakeInternetConnectionChecker: FakeInternetConnectionChecker
+    public val fakeFeatureFlagLocalStore: FakeFeatureFlagLocalStore
 
     @DependencyGraph.Factory
     public fun interface Factory {

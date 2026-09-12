@@ -142,14 +142,22 @@ public struct BackupRestoreConfirmationActions: View {
 /// held is what keeps a chosen folder writable after a relaunch.
 private func backupFolderBookmark(for url: URL) -> String? {
     let accessing = url.startAccessingSecurityScopedResource()
-    defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+    defer {
+        if accessing {
+            url.stopAccessingSecurityScopedResource()
+        }
+    }
     guard let data = try? url.bookmarkData() else { return nil }
     return "bookmark:\(data.base64EncodedString())"
 }
 
 private func importedBackupPath(from url: URL) -> String {
     let isAccessing = url.startAccessingSecurityScopedResource()
-    defer { if isAccessing { url.stopAccessingSecurityScopedResource() } }
+    defer {
+        if isAccessing {
+            url.stopAccessingSecurityScopedResource()
+        }
+    }
     let destination = FileManager.default.temporaryDirectory
         .appendingPathComponent("tvmaniac-restore-\(UUID().uuidString).json")
     do {

@@ -46,8 +46,12 @@ public enum SystemMemory {
         let usedMB = Double(used) / (1024 * 1024)
         let ratio = Double(used) / Double(totalMemory)
 
-        if usedMB > 600 || ratio > 0.35 { return .critical }
-        if usedMB > 350 || ratio > 0.20 { return .warning }
+        if usedMB > 600 || ratio > 0.35 {
+            return .critical
+        }
+        if usedMB > 350 || ratio > 0.20 {
+            return .warning
+        }
         return .normal
     }
 

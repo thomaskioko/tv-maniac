@@ -56,14 +56,30 @@ struct SortOptionsSheet: View {
             items: Array(LibrarySortOption.entries),
             selectedItems: [state.sortOption],
             labelProvider: { sortOption in
-                if sortOption == LibrarySortOption.rankAsc { return String(\.label_library_sort_rank_asc) }
-                if sortOption == LibrarySortOption.rankDesc { return String(\.label_library_sort_rank_desc) }
-                if sortOption == LibrarySortOption.addedDesc { return String(\.label_library_sort_added_desc) }
-                if sortOption == LibrarySortOption.addedAsc { return String(\.label_library_sort_added_asc) }
-                if sortOption == LibrarySortOption.releasedDesc { return String(\.label_library_sort_released_desc) }
-                if sortOption == LibrarySortOption.releasedAsc { return String(\.label_library_sort_released_asc) }
-                if sortOption == LibrarySortOption.titleAsc { return String(\.label_library_sort_title_asc) }
-                if sortOption == LibrarySortOption.titleDesc { return String(\.label_library_sort_title_desc) }
+                if sortOption == LibrarySortOption.rankAsc {
+                    return String(\.label_library_sort_rank_asc)
+                }
+                if sortOption == LibrarySortOption.rankDesc {
+                    return String(\.label_library_sort_rank_desc)
+                }
+                if sortOption == LibrarySortOption.addedDesc {
+                    return String(\.label_library_sort_added_desc)
+                }
+                if sortOption == LibrarySortOption.addedAsc {
+                    return String(\.label_library_sort_added_asc)
+                }
+                if sortOption == LibrarySortOption.releasedDesc {
+                    return String(\.label_library_sort_released_desc)
+                }
+                if sortOption == LibrarySortOption.releasedAsc {
+                    return String(\.label_library_sort_released_asc)
+                }
+                if sortOption == LibrarySortOption.titleAsc {
+                    return String(\.label_library_sort_title_asc)
+                }
+                if sortOption == LibrarySortOption.titleDesc {
+                    return String(\.label_library_sort_title_desc)
+                }
                 return String(\.label_library_sort_rank_desc)
             },
             onItemToggle: { onSortOptionSelected($0) },
@@ -95,11 +111,21 @@ struct SortOptionsSheet: View {
                 items: statuses,
                 selectedItems: Set(state.selectedStatuses),
                 labelProvider: { status in
-                    if status == ShowStatus.returningSeries { return String(\.label_library_status_returning) }
-                    if status == ShowStatus.planned { return String(\.label_library_status_planned) }
-                    if status == ShowStatus.inProduction { return String(\.label_library_status_in_production) }
-                    if status == ShowStatus.ended { return String(\.label_library_status_ended) }
-                    if status == ShowStatus.canceled { return String(\.label_library_status_canceled) }
+                    if status == ShowStatus.returningSeries {
+                        return String(\.label_library_status_returning)
+                    }
+                    if status == ShowStatus.planned {
+                        return String(\.label_library_status_planned)
+                    }
+                    if status == ShowStatus.inProduction {
+                        return String(\.label_library_status_in_production)
+                    }
+                    if status == ShowStatus.ended {
+                        return String(\.label_library_status_ended)
+                    }
+                    if status == ShowStatus.canceled {
+                        return String(\.label_library_status_canceled)
+                    }
                     return status.displayName
                 },
                 onItemToggle: { onStatusToggle($0) },

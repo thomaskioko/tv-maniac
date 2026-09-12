@@ -404,6 +404,7 @@ graph TB
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
   :features:root:presenter --> :core:deeplink:api
+  :features:root:presenter -.-> :core:feature-flags:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view

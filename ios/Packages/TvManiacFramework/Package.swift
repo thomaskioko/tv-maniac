@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import Foundation
 import PackageDescription
@@ -41,7 +41,7 @@ for name in ["TvManiac", "TvManiacTestTags"] where !FileManager.default.fileExis
 let package = Package(
     name: "TvManiacFramework",
     platforms: [
-        .iOS(.v18),
+        .iOS(.v26),
     ],
     products: [
         .library(

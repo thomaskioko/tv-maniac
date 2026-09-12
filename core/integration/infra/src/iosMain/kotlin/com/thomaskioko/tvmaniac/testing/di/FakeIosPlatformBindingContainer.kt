@@ -16,6 +16,9 @@ import com.thomaskioko.tvmaniac.datastore.implementation.DataStorePlatformBindin
 import com.thomaskioko.tvmaniac.db.DatabasePlatformBindingContainer
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.createNativeSqliteDriver
+import com.thomaskioko.tvmaniac.featureflags.FeatureFlagLocalStore
+import com.thomaskioko.tvmaniac.featureflags.implementation.DefaultFeatureFlagLocalStore
+import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagLocalStore
 import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import com.thomaskioko.tvmaniac.oauth.implementation.IosAuthStore
 import com.thomaskioko.tvmaniac.oauth.implementation.IosOAuthLauncher
@@ -53,6 +56,7 @@ import kotlin.random.Random
         IosNotificationManager::class,
         IosCrashReporter::class,
         IosTaskScheduler::class,
+        DefaultFeatureFlagLocalStore::class,
     ],
 )
 internal object FakeIosPlatformBindingContainer {
@@ -60,6 +64,13 @@ internal object FakeIosPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     fun provideAuthStore(): AuthStore = FakeAuthStore()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    fun provideFakeFeatureFlagLocalStore(): FakeFeatureFlagLocalStore = FakeFeatureFlagLocalStore()
+
+    @Provides
+    fun provideFeatureFlagLocalStore(fake: FakeFeatureFlagLocalStore): FeatureFlagLocalStore = fake
 
     @Provides
     @SingleIn(AppScope::class)
