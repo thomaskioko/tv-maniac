@@ -55,7 +55,7 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
     ]
 
     func test_SeasonDetailsScreen_Default() {
-        SeasonDetailsScreen(
+        let view = SeasonDetailsScreen(
             state: SeasonDetailsScreen.State(
                 seasonName: "Season 1",
                 imageUrl: nil,
@@ -89,11 +89,12 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
             onEpisodeWatchToggle: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_Default")
+        view.assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_Default")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SeasonDetailsScreen_Default")
     }
 
     func test_SeasonDetailsScreen_Error() {
-        SeasonDetailsScreen(
+        let view = SeasonDetailsScreen(
             state: SeasonDetailsScreen.State(
                 seasonName: "Season 1",
                 imageUrl: nil,
@@ -127,7 +128,8 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
             onEpisodeWatchToggle: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SeasonDetailsScreen_Error")
     }
 
     func test_SeasonDetailsScreen_FullyWatched() {
@@ -147,7 +149,7 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
             )
         }
 
-        SeasonDetailsScreen(
+        let view = SeasonDetailsScreen(
             state: SeasonDetailsScreen.State(
                 seasonName: "Season 1",
                 imageUrl: nil,
@@ -181,6 +183,7 @@ class SeasonDetailsScreenTest: SnapshotTestCase {
             onEpisodeWatchToggle: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_FullyWatched")
+        view.assertSnapshot(layout: .defaultDevice, testName: "SeasonDetailsScreen_FullyWatched")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SeasonDetailsScreen_FullyWatched")
     }
 }
