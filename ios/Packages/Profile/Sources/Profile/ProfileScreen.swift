@@ -57,7 +57,7 @@ public struct ProfileScreen: View {
             liquidGlass: { view in
                 view
                     .appScreen()
-                    .navigationTitle(state.title)
+                    .navigationTitle(showGlass > 0 ? state.title : "")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {

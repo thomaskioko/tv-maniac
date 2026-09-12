@@ -112,7 +112,7 @@ public struct ShowDetailsScreen<Content: View>: View {
         .liquidGlassVariant(
             liquidGlass: { view in
                 view
-                    .navigationTitle(state.title)
+                    .navigationTitle(showGlass > 0 ? state.title : "")
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Button(action: onBack) {
