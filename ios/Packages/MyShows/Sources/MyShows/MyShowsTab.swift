@@ -54,6 +54,11 @@ public struct MyShowsTab: View {
                 view
                     .navigationTitle(String(\.label_tab_my_shows))
                     .toolbar { glassToolbarContent }
+                    .searchable(text: $localQuery, isPresented: glassSearchPresented, prompt: String(\.label_search_placeholder))
+                    .searchToolbarBehavior(.minimize)
+                    .onChange(of: localQuery) { _, newValue in
+                        presenter.dispatch(action: MyShowsActionQueryChanged(query: newValue))
+                    }
             },
             legacy: { view in
                 view
@@ -180,44 +185,40 @@ public struct MyShowsTab: View {
 
     @ToolbarContentBuilder
     private var glassToolbarContent: some ToolbarContent {
-        if uiState.isSearchActive {
-            ToolbarItem(placement: .principal) {
-                expandedSearchBar
-            }
-        } else {
-            if uiState.selectedPage == 0 {
-                ToolbarItem(placement: .topBarLeading) {
-                    layoutMenuGlass
-                }
-            }
-            if uiState.showRefreshIndicator {
-                ToolbarItem(placement: .topBarTrailing) {
-                    ProgressView()
-                        .tint(appTheme.colors.onSurface)
-                }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        presenter.dispatch(action: MyShowsActionToggleSearch())
-                        isSearchFocused = true
-                    }
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                }
-                .tint(appTheme.colors.onSurface)
-                .testTag(MyShowsTestTags.shared.SEARCH_BUTTON_TEST_TAG)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showSortOptions = true
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                }
-                .tint(appTheme.colors.onSurface)
-                .testTag(MyShowsTestTags.shared.SORT_BUTTON_TEST_TAG)
+        if uiState.selectedPage == 0 {
+            ToolbarItem(placement: .topBarLeading) {
+                layoutMenuGlass
             }
         }
+        if uiState.showRefreshIndicator {
+            ToolbarItem(placement: .topBarTrailing) {
+                ProgressView()
+                    .tint(appTheme.colors.onSurface)
+            }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                showSortOptions = true
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease")
+            }
+            .tint(appTheme.colors.onSurface)
+            .testTag(MyShowsTestTags.shared.SORT_BUTTON_TEST_TAG)
+        }
+    }
+
+    private var glassSearchPresented: Binding<Bool> {
+        Binding(
+            get: { uiState.isSearchActive },
+            set: { presented in
+                guard presented != uiState.isSearchActive else { return }
+                if !presented, !localQuery.isEmpty {
+                    localQuery = ""
+                    presenter.dispatch(action: MyShowsActionClearQuery())
+                }
+                presenter.dispatch(action: MyShowsActionToggleSearch())
+            }
+        )
     }
 
     private var layoutMenuGlass: some View {

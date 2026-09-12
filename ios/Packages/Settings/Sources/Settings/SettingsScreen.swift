@@ -76,6 +76,7 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
     }
 
     @Environment(\.appTheme) private var appTheme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
 
     private let state: State
     private let onBack: () -> Void
@@ -105,20 +106,38 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
         .background(appTheme.colors.background)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .navigationBarColor(backgroundColor: .clear)
         .swipeBackGesture(handledByPresenter: true, onSwipe: onBack)
-        .overlay(
-            GlassToolbar(
-                title: toolbarTitle(state.currentPage),
-                opacity: 1.0,
-                leadingIcon: {
-                    GlassButton(icon: "chevron.left", action: onBack)
-                        .testTag(SettingsTestTags.shared.BACK_BUTTON_TEST_TAG)
-                }
-            ),
-            alignment: .top
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .navigationTitle(toolbarTitle(state.currentPage))
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button(action: onBack) {
+                                Image(systemName: "chevron.left")
+                            }
+                            .tint(appTheme.colors.onSurface)
+                            .testTag(SettingsTestTags.shared.BACK_BUTTON_TEST_TAG)
+                        }
+                    }
+            },
+            legacy: { view in
+                view
+                    .navigationBarColor(backgroundColor: .clear)
+                    .overlay(
+                        GlassToolbar(
+                            title: toolbarTitle(state.currentPage),
+                            opacity: 1.0,
+                            leadingIcon: {
+                                GlassButton(icon: "chevron.left", action: onBack)
+                                    .testTag(SettingsTestTags.shared.BACK_BUTTON_TEST_TAG)
+                            }
+                        ),
+                        alignment: .top
+                    )
+                    .edgesIgnoringSafeArea(.top)
+            }
         )
-        .edgesIgnoringSafeArea(.top)
     }
 
     @ViewBuilder
@@ -182,6 +201,6 @@ public struct SettingsScreen<Theme: ThemeItem>: View {
             .windows.first?.safeAreaInsets.top ?? 0
         // GlassToolbar is `56 + safeAreaTop` tall; clear it with a small gap so the
         // first card is not tucked under the toolbar.
-        return 56 + safeAreaTop + appTheme.spacing.small
+        return liquidGlassEnabled ? 0 : 56 + safeAreaTop + appTheme.spacing.small
     }
 }

@@ -161,22 +161,25 @@ class StatisticsScreenTest: SnapshotTestCase {
     }
 
     func test_StatisticsScreen_Loading() {
-        makeScreen(state: StatisticsScreen.State(isLoading: true, labels: labels))
-            .assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Loading")
+        let view = makeScreen(state: StatisticsScreen.State(isLoading: true, labels: labels))
+        view.assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "StatisticsScreen_Loading")
     }
 
     func test_StatisticsScreen_Empty() {
-        makeScreen(state: StatisticsScreen.State(isLoading: false, showEmptyState: true, labels: labels))
-            .assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Empty")
+        let view = makeScreen(state: StatisticsScreen.State(isLoading: false, showEmptyState: true, labels: labels))
+        view.assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "StatisticsScreen_Empty")
     }
 
     func test_StatisticsScreen_Content() {
-        makeScreen(state: contentState)
-            .assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Content")
+        let view = makeScreen(state: contentState)
+        view.assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Content")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "StatisticsScreen_Content")
     }
 
     func test_StatisticsScreen_MarkedWatchedTimes() {
-        makeScreen(
+        let view = makeScreen(
             state: StatisticsScreen.State(
                 isLoading: false,
                 showContent: true,
@@ -193,11 +196,12 @@ class StatisticsScreenTest: SnapshotTestCase {
                 labels: labels
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_MarkedWatchedTimes")
+        view.assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_MarkedWatchedTimes")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "StatisticsScreen_MarkedWatchedTimes")
     }
 
     func test_StatisticsScreen_Locked() {
-        makeScreen(
+        let view = makeScreen(
             state: StatisticsScreen.State(
                 isLoading: false,
                 isLocked: true,
@@ -214,7 +218,8 @@ class StatisticsScreenTest: SnapshotTestCase {
                 labels: labels
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Locked")
+        view.assertSnapshot(layout: .defaultDevice, testName: "StatisticsScreen_Locked")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "StatisticsScreen_Locked")
     }
 
     func test_ActivityChart_LongRunOfYears() {

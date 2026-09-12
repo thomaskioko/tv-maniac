@@ -90,36 +90,52 @@ public struct LibraryScreen: View {
     @SwiftUI.State private var localQuery: String = ""
 
     public var body: some View {
-        ZStack {
-            VStack {
-                contentView
-            }
-            .padding(.top, toolbarInset)
-        }
-        .appScreen()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
-        .disableAutocorrection(true)
-        .overlay(
-            Group {
-                if state.isSearchActive {
-                    searchBarOverlay
-                } else {
-                    libraryToolbar
+        contentView
+            .disableAutocorrection(true)
+            .textInputAutocapitalization(.never)
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .appScreen()
+                        .navigationTitle(state.title)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar { glassToolbarContent }
+                        .searchable(text: $localQuery, isPresented: glassSearchPresented, prompt: state.searchPlaceholder)
+                        .searchToolbarBehavior(.minimize)
+                        .onChange(of: localQuery) { _, newValue in
+                            onQueryChanged(newValue)
+                        }
+                },
+                legacy: { view in
+                    ZStack {
+                        VStack {
+                            view
+                        }
+                        .padding(.top, toolbarInset)
+                    }
+                    .appScreen()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarColor(backgroundColor: .clear)
+                    .overlay(
+                        Group {
+                            if state.isSearchActive {
+                                searchBarOverlay
+                            } else {
+                                libraryToolbar
+                            }
+                        },
+                        alignment: .top
+                    )
+                    .edgesIgnoringSafeArea(.top)
                 }
-            },
-            alignment: .top
-        )
-        .edgesIgnoringSafeArea(.top)
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.isSearchActive)
-        .disableAutocorrection(true)
-        .textInputAutocapitalization(.never)
-        .onAppear {
-            localQuery = state.query
-        }
-        .onChange(of: state.query) { _, newValue in
-            localQuery = newValue
-        }
+            )
+            .onAppear {
+                localQuery = state.query
+            }
+            .onChange(of: state.query) { _, newValue in
+                localQuery = newValue
+            }
     }
 
     @ViewBuilder
@@ -177,6 +193,54 @@ public struct LibraryScreen: View {
         } label: {
             GlassButton(icon: icon(for: state.layout), action: {})
         }
+    }
+
+    @ToolbarContentBuilder
+    private var glassToolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            layoutMenuGlass
+        }
+        if state.isRefreshing {
+            ToolbarItem(placement: .topBarTrailing) {
+                ProgressView()
+                    .tint(appTheme.colors.onSurface)
+            }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: onSortClicked) {
+                Image(systemName: "line.3.horizontal.decrease")
+            }
+            .tint(appTheme.colors.onSurface)
+        }
+    }
+
+    private var glassSearchPresented: Binding<Bool> {
+        Binding(
+            get: { state.isSearchActive },
+            set: { presented in
+                guard presented != state.isSearchActive else { return }
+                if !presented, !localQuery.isEmpty {
+                    localQuery = ""
+                    onQueryCleared()
+                }
+                onToggleSearch()
+            }
+        )
+    }
+
+    private var layoutMenuGlass: some View {
+        let copy = state.layoutMenuCopy
+        return Menu {
+            layoutMenuRow(.grid, copy: copy)
+            layoutMenuRow(.list, copy: copy)
+            Section(copy.premiumSectionTitle) {
+                layoutMenuRow(.compact, copy: copy)
+                layoutMenuRow(.detailed, copy: copy)
+            }
+        } label: {
+            Image(systemName: icon(for: state.layout))
+        }
+        .tint(appTheme.colors.onSurface)
     }
 
     @ViewBuilder

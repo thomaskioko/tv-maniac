@@ -94,15 +94,42 @@ public struct FeatureFlagsScreen: View {
             }
         }
         .listStyle(.plain)
-        .contentMargins(.top, toolbarInset + theme.spacing.medium)
         .scrollContentBackground(.hidden)
-        .appScreen()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .navigationBarColor(backgroundColor: .clear)
         .swipeBackGesture(onSwipe: onBack)
-        .overlay(toolbar, alignment: .top)
-        .edgesIgnoringSafeArea(.top)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .appScreen()
+                    .navigationTitle(state.title)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button(action: onBack) {
+                                Image(systemName: "chevron.left")
+                            }
+                            .tint(theme.colors.onSurface)
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Menu {
+                                overflowMenuItems
+                            } label: {
+                                Image(systemName: "line.3.horizontal.decrease")
+                            }
+                            .tint(theme.colors.onSurface)
+                            .accessibilityLabel(state.moreActionsLabel)
+                        }
+                    }
+            },
+            legacy: { view in
+                view
+                    .contentMargins(.top, toolbarInset + theme.spacing.medium)
+                    .appScreen()
+                    .navigationBarColor(backgroundColor: .clear)
+                    .overlay(toolbar, alignment: .top)
+                    .edgesIgnoringSafeArea(.top)
+            }
+        )
     }
 
     // MARK: - Toolbar
@@ -122,41 +149,7 @@ public struct FeatureFlagsScreen: View {
 
     private var overflowMenu: some View {
         Menu {
-            Button(action: {
-                if !state.groupByType {
-                    onGroupByTypeToggled()
-                }
-            }) {
-                checkLabel(state.groupByTypeLabel, checked: state.groupByType)
-            }
-            Button(action: {
-                if state.groupByType {
-                    onGroupByTypeToggled()
-                }
-            }) {
-                checkLabel(state.noGroupingLabel, checked: !state.groupByType)
-            }
-            Divider()
-            ForEach(state.sortOptions) { option in
-                Button(action: { onSortChanged(option.id) }) {
-                    checkLabel(option.label, checked: option.id == state.activeSortId)
-                }
-            }
-            Divider()
-            Button(action: {
-                if !state.ascending {
-                    onDirectionToggled()
-                }
-            }) {
-                checkLabel(state.sortAscendingLabel, checked: state.ascending)
-            }
-            Button(action: {
-                if state.ascending {
-                    onDirectionToggled()
-                }
-            }) {
-                checkLabel(state.sortDescendingLabel, checked: !state.ascending)
-            }
+            overflowMenuItems
         } label: {
             ZStack {
                 Circle()
@@ -174,6 +167,45 @@ public struct FeatureFlagsScreen: View {
             }
             .frame(width: 44, height: 44)
             .accessibilityLabel(state.moreActionsLabel)
+        }
+    }
+
+    @ViewBuilder
+    private var overflowMenuItems: some View {
+        Button(action: {
+            if !state.groupByType {
+                onGroupByTypeToggled()
+            }
+        }) {
+            checkLabel(state.groupByTypeLabel, checked: state.groupByType)
+        }
+        Button(action: {
+            if state.groupByType {
+                onGroupByTypeToggled()
+            }
+        }) {
+            checkLabel(state.noGroupingLabel, checked: !state.groupByType)
+        }
+        Divider()
+        ForEach(state.sortOptions) { option in
+            Button(action: { onSortChanged(option.id) }) {
+                checkLabel(option.label, checked: option.id == state.activeSortId)
+            }
+        }
+        Divider()
+        Button(action: {
+            if !state.ascending {
+                onDirectionToggled()
+            }
+        }) {
+            checkLabel(state.sortAscendingLabel, checked: state.ascending)
+        }
+        Button(action: {
+            if state.ascending {
+                onDirectionToggled()
+            }
+        }) {
+            checkLabel(state.sortDescendingLabel, checked: !state.ascending)
         }
     }
 

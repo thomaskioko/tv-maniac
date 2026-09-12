@@ -42,7 +42,7 @@ public struct ProfileScreen: View {
     @SwiftUI.State private var showGlass: Double = 0
 
     public var body: some View {
-        ZStack(alignment: .top) {
+        Group {
             if state.isLoading {
                 profileSkeleton
             } else if !state.isAuthenticated {
@@ -52,32 +52,55 @@ public struct ProfileScreen: View {
             } else {
                 profileSkeleton
             }
-
-            GlassToolbar(
-                title: state.title,
-                opacity: showGlass,
-                trailingIcon: {
-                    HStack(spacing: appTheme.spacing.small) {
-                        if state.isLoading {
-                            GlassButton(action: {}) {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
-                            }
-                            .allowsHitTesting(false)
-                        }
-
-                        GlassButton(icon: "gearshape", action: onSettingsClicked)
-                            .testTag(ProfileTestTags.shared.SETTINGS_BUTTON_TEST_TAG)
-                    }
-                }
-            )
-            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
         }
-        .appScreen()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
-        .toolbar(.hidden, for: .navigationBar)
-        .edgesIgnoringSafeArea(.top)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .appScreen()
+                    .navigationTitle(showGlass > 0 ? state.title : "")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(action: onSettingsClicked) {
+                                Image(systemName: "gearshape")
+                            }
+                            .tint(appTheme.colors.onSurface)
+                            .testTag(ProfileTestTags.shared.SETTINGS_BUTTON_TEST_TAG)
+                        }
+                    }
+                    .edgesIgnoringSafeArea(.top)
+            },
+            legacy: { view in
+                view
+                    .overlay(
+                        GlassToolbar(
+                            title: state.title,
+                            opacity: showGlass,
+                            trailingIcon: {
+                                HStack(spacing: appTheme.spacing.small) {
+                                    if state.isLoading {
+                                        GlassButton(action: {}) {
+                                            ProgressView()
+                                                .progressViewStyle(CircularProgressViewStyle(tint: appTheme.colors.accent))
+                                        }
+                                        .allowsHitTesting(false)
+                                    }
+
+                                    GlassButton(icon: "gearshape", action: onSettingsClicked)
+                                        .testTag(ProfileTestTags.shared.SETTINGS_BUTTON_TEST_TAG)
+                                }
+                            }
+                        )
+                        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),
+                        alignment: .top
+                    )
+                    .appScreen()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarColor(backgroundColor: .clear)
+                    .toolbar(.hidden, for: .navigationBar)
+                    .edgesIgnoringSafeArea(.top)
+            }
+        )
     }
 
     // MARK: - Authenticated Content
