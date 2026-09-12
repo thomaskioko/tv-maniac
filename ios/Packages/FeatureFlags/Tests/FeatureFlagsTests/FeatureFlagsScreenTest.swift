@@ -49,18 +49,21 @@ class FeatureFlagsScreenTest: SnapshotTestCase {
     }
 
     func test_FeatureFlagsScreen_DefaultState() {
-        renderScreen(state: defaultState)
-            .assertSnapshot(layout: .defaultDevice, testName: "FeatureFlagsScreen_DefaultState")
+        let view = renderScreen(state: defaultState)
+        view.assertSnapshot(layout: .defaultDevice, testName: "FeatureFlagsScreen_DefaultState")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "FeatureFlagsScreen_DefaultState")
     }
 
     func test_FeatureFlagsScreen_LocalSourceState() {
-        renderScreen(state: localSourceState)
-            .assertSnapshot(layout: .defaultDevice, testName: "FeatureFlagsScreen_LocalSourceState")
+        let view = renderScreen(state: localSourceState)
+        view.assertSnapshot(layout: .defaultDevice, testName: "FeatureFlagsScreen_LocalSourceState")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "FeatureFlagsScreen_LocalSourceState")
     }
 
     func test_FeatureFlagsScreen_EmptyState() {
-        renderScreen(state: emptyState)
-            .assertSnapshot(layout: .defaultDevice, testName: "FeatureFlagsScreen_EmptyState")
+        let view = renderScreen(state: emptyState)
+        view.assertSnapshot(layout: .defaultDevice, testName: "FeatureFlagsScreen_EmptyState")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "FeatureFlagsScreen_EmptyState")
     }
 
     private func renderScreen(state: FeatureFlagsScreen.State) -> some View {
