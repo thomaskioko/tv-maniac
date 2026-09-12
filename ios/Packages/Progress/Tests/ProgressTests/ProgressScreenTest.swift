@@ -8,18 +8,21 @@ import XCTest
 
 class ProgressScreenTest: SnapshotTestCase {
     func test_ProgressScreen_UpNextSelected() {
-        makeScreen(selectedPage: 0, isLoading: false)
-            .assertSnapshot(layout: .defaultDevice, testName: "ProgressScreen_UpNextSelected")
+        let view = makeScreen(selectedPage: 0, isLoading: false)
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProgressScreen_UpNextSelected")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProgressScreen_UpNextSelected")
     }
 
     func test_ProgressScreen_CalendarSelected() {
-        makeScreen(selectedPage: 1, isLoading: false)
-            .assertSnapshot(layout: .defaultDevice, testName: "ProgressScreen_CalendarSelected")
+        let view = makeScreen(selectedPage: 1, isLoading: false)
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProgressScreen_CalendarSelected")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProgressScreen_CalendarSelected")
     }
 
     func test_ProgressScreen_Loading() {
-        makeScreen(selectedPage: 0, isLoading: true)
-            .assertSnapshot(layout: .defaultDevice, testName: "ProgressScreen_Loading")
+        let view = makeScreen(selectedPage: 0, isLoading: true)
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProgressScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProgressScreen_Loading")
     }
 
     private func makeScreen(

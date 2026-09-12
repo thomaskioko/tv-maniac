@@ -48,10 +48,20 @@ public struct MyShowsTab: View {
         }
         .appScreen()
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { toolbarContent }
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: uiState.isSearchActive)
-        .toolbarBackground(.appSurface, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .navigationTitle(String(\.label_tab_my_shows))
+                    .toolbar { glassToolbarContent }
+            },
+            legacy: { view in
+                view
+                    .toolbar { toolbarContent }
+                    .toolbarBackground(.appSurface, for: .navigationBar)
+                    .toolbarBackground(.visible, for: .navigationBar)
+            }
+        )
         .sheet(isPresented: $showSortOptions) {
             MyShowsSortOptionsSheet(
                 selectedSortOption: uiState.sortOption,
@@ -165,6 +175,63 @@ public struct MyShowsTab: View {
         } label: {
             GlassButton(icon: layoutIcon(uiState.listStyle), action: {})
         }
+        .testTag(MyShowsTestTags.shared.LAYOUT_MENU_BUTTON_TEST_TAG)
+    }
+
+    @ToolbarContentBuilder
+    private var glassToolbarContent: some ToolbarContent {
+        if uiState.isSearchActive {
+            ToolbarItem(placement: .principal) {
+                expandedSearchBar
+            }
+        } else {
+            if uiState.selectedPage == 0 {
+                ToolbarItem(placement: .topBarLeading) {
+                    layoutMenuGlass
+                }
+            }
+            if uiState.showRefreshIndicator {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ProgressView()
+                        .tint(appTheme.colors.onSurface)
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        presenter.dispatch(action: MyShowsActionToggleSearch())
+                        isSearchFocused = true
+                    }
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                }
+                .tint(appTheme.colors.onSurface)
+                .testTag(MyShowsTestTags.shared.SEARCH_BUTTON_TEST_TAG)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showSortOptions = true
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                }
+                .tint(appTheme.colors.onSurface)
+                .testTag(MyShowsTestTags.shared.SORT_BUTTON_TEST_TAG)
+            }
+        }
+    }
+
+    private var layoutMenuGlass: some View {
+        Menu {
+            layoutMenuRow(.grid)
+            layoutMenuRow(.list)
+            Section(String(\.label_premium_badge)) {
+                layoutMenuRow(.compact)
+                layoutMenuRow(.detailed)
+            }
+        } label: {
+            Image(systemName: layoutIcon(uiState.listStyle))
+        }
+        .tint(appTheme.colors.onSurface)
         .testTag(MyShowsTestTags.shared.LAYOUT_MENU_BUTTON_TEST_TAG)
     }
 
