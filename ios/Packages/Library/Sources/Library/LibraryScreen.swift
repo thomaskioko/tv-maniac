@@ -101,6 +101,11 @@ public struct LibraryScreen: View {
                         .navigationTitle(state.title)
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar { glassToolbarContent }
+                        .searchable(text: $localQuery, isPresented: glassSearchPresented, prompt: state.searchPlaceholder)
+                        .searchToolbarBehavior(.minimize)
+                        .onChange(of: localQuery) { _, newValue in
+                            onQueryChanged(newValue)
+                        }
                 },
                 legacy: { view in
                     ZStack {
@@ -192,38 +197,35 @@ public struct LibraryScreen: View {
 
     @ToolbarContentBuilder
     private var glassToolbarContent: some ToolbarContent {
-        if state.isSearchActive {
-            ToolbarItem(placement: .principal) {
-                expandedSearchBar
-            }
-        } else {
-            ToolbarItem(placement: .topBarLeading) {
-                layoutMenuGlass
-            }
-            if state.isRefreshing {
-                ToolbarItem(placement: .topBarTrailing) {
-                    ProgressView()
-                        .tint(appTheme.colors.onSurface)
-                }
-            }
+        ToolbarItem(placement: .topBarLeading) {
+            layoutMenuGlass
+        }
+        if state.isRefreshing {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        onToggleSearch()
-                        isSearchFocused = true
-                    }
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                }
-                .tint(appTheme.colors.onSurface)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: onSortClicked) {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                }
-                .tint(appTheme.colors.onSurface)
+                ProgressView()
+                    .tint(appTheme.colors.onSurface)
             }
         }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: onSortClicked) {
+                Image(systemName: "line.3.horizontal.decrease")
+            }
+            .tint(appTheme.colors.onSurface)
+        }
+    }
+
+    private var glassSearchPresented: Binding<Bool> {
+        Binding(
+            get: { state.isSearchActive },
+            set: { presented in
+                guard presented != state.isSearchActive else { return }
+                if !presented, !localQuery.isEmpty {
+                    localQuery = ""
+                    onQueryCleared()
+                }
+                onToggleSearch()
+            }
+        )
     }
 
     private var layoutMenuGlass: some View {
