@@ -14,7 +14,7 @@ final class SearchTests: XCTestCase {
         app.buttons[DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG].tap()
         app.awaitScreen(SearchTestTags.shared.SCREEN_TEST_TAG)
 
-        let field = app.textFields[SearchTestTags.shared.SEARCH_BAR_TEST_TAG]
+        let field = app.searchField()
         XCTAssertTrue(field.waitForExistence(timeout: UITestTimeouts.screen))
         field.tap()
         field.typeText(FixtureData.searchQuery)
