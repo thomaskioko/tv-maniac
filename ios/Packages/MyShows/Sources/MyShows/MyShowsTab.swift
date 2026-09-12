@@ -199,23 +199,41 @@ public struct MyShowsTab: View {
     }
 
     private func layoutLabel(_ layout: ApiListStyle) -> String {
-        if layout == ApiListStyle.grid { return String(\.label_layout_grid) }
-        if layout == ApiListStyle.list { return String(\.label_layout_list) }
-        if layout == ApiListStyle.compact { return String(\.label_layout_compact) }
+        if layout == ApiListStyle.grid {
+            return String(\.label_layout_grid)
+        }
+        if layout == ApiListStyle.list {
+            return String(\.label_layout_list)
+        }
+        if layout == ApiListStyle.compact {
+            return String(\.label_layout_compact)
+        }
         return String(\.label_layout_detailed)
     }
 
     private func layoutIcon(_ layout: ApiListStyle) -> String {
-        if layout == ApiListStyle.grid { return "rectangle.grid.2x2" }
-        if layout == ApiListStyle.list { return "list.bullet" }
-        if layout == ApiListStyle.compact { return "rectangle.compress.vertical" }
+        if layout == ApiListStyle.grid {
+            return "rectangle.grid.2x2"
+        }
+        if layout == ApiListStyle.list {
+            return "list.bullet"
+        }
+        if layout == ApiListStyle.compact {
+            return "rectangle.compress.vertical"
+        }
         return "rectangle.expand.vertical"
     }
 
     private func layoutOptionTestTag(_ layout: ApiListStyle) -> String {
-        if layout == ApiListStyle.grid { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_GRID_TEST_TAG }
-        if layout == ApiListStyle.list { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_LIST_TEST_TAG }
-        if layout == ApiListStyle.compact { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG }
+        if layout == ApiListStyle.grid {
+            return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_GRID_TEST_TAG
+        }
+        if layout == ApiListStyle.list {
+            return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_LIST_TEST_TAG
+        }
+        if layout == ApiListStyle.compact {
+            return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG
+        }
         return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG
     }
 

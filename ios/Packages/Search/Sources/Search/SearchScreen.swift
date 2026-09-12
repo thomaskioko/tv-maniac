@@ -74,7 +74,9 @@ public struct SearchScreen: View {
     }
 
     private var isBrowsingGenres: Bool {
-        if case .browsingGenres = state.screenState { return true }
+        if case .browsingGenres = state.screenState {
+            return true
+        }
         return false
     }
 

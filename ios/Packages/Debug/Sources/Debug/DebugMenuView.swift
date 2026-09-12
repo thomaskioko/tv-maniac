@@ -97,7 +97,9 @@ private extension DebugItemIcon {
 
 private extension AccountType {
     var label: String {
-        if self == AccountType.premium { return String(\.label_debug_account_type_premium) }
+        if self == AccountType.premium {
+            return String(\.label_debug_account_type_premium)
+        }
         return String(\.label_debug_account_type_free)
     }
 }

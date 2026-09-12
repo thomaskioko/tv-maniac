@@ -140,28 +140,60 @@ public enum DeviceAppTheme: String, CaseIterable, ThemeItem {
 
 public extension KmpTheme {
     func toDeviceAppTheme() -> DeviceAppTheme {
-        if self == KmpTheme.darkTheme { return .dark }
-        if self == KmpTheme.lightTheme { return .light }
-        if self == KmpTheme.terminalTheme { return .terminal }
-        if self == KmpTheme.autumnTheme { return .autumn }
-        if self == KmpTheme.aquaTheme { return .aqua }
-        if self == KmpTheme.amberTheme { return .amber }
-        if self == KmpTheme.snowTheme { return .snow }
-        if self == KmpTheme.crimsonTheme { return .crimson }
+        if self == KmpTheme.darkTheme {
+            return .dark
+        }
+        if self == KmpTheme.lightTheme {
+            return .light
+        }
+        if self == KmpTheme.terminalTheme {
+            return .terminal
+        }
+        if self == KmpTheme.autumnTheme {
+            return .autumn
+        }
+        if self == KmpTheme.aquaTheme {
+            return .aqua
+        }
+        if self == KmpTheme.amberTheme {
+            return .amber
+        }
+        if self == KmpTheme.snowTheme {
+            return .snow
+        }
+        if self == KmpTheme.crimsonTheme {
+            return .crimson
+        }
         return .system
     }
 }
 
 public extension ThemeModel {
     func toDeviceAppTheme() -> DeviceAppTheme {
-        if self == ThemeModel.dark { return .dark }
-        if self == ThemeModel.light { return .light }
-        if self == ThemeModel.terminal { return .terminal }
-        if self == ThemeModel.autumn { return .autumn }
-        if self == ThemeModel.aqua { return .aqua }
-        if self == ThemeModel.amber { return .amber }
-        if self == ThemeModel.snow { return .snow }
-        if self == ThemeModel.crimson { return .crimson }
+        if self == ThemeModel.dark {
+            return .dark
+        }
+        if self == ThemeModel.light {
+            return .light
+        }
+        if self == ThemeModel.terminal {
+            return .terminal
+        }
+        if self == ThemeModel.autumn {
+            return .autumn
+        }
+        if self == ThemeModel.aqua {
+            return .aqua
+        }
+        if self == ThemeModel.amber {
+            return .amber
+        }
+        if self == ThemeModel.snow {
+            return .snow
+        }
+        if self == ThemeModel.crimson {
+            return .crimson
+        }
         return .system
     }
 }
