@@ -6,6 +6,7 @@ import TvManiacKit
 
 public struct StatisticsScreen: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
 
     private let state: State
     private let backButtonAccessibilityLabel: String
@@ -42,24 +43,44 @@ public struct StatisticsScreen: View {
                 accessibilityLabel: state.labels.lockedContentDescription
             )
             .testTag(state.isLocked ? StatisticsTestTags.shared.LOCKED_STATE_TEST_TAG : nil)
-            .appScreen()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .navigationBarColor(backgroundColor: .clear)
             .swipeBackGesture(onSwipe: onBack)
-            .overlay(
-                GlassToolbar(
-                    title: state.labels.screenTitle,
-                    opacity: 1.0,
-                    leadingIcon: {
-                        GlassButton(icon: "chevron.left", action: onBack)
-                            .accessibilityLabel(backButtonAccessibilityLabel)
-                            .testTag(StatisticsTestTags.shared.BACK_BUTTON_TEST_TAG)
-                    }
-                ),
-                alignment: .top
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .appScreen()
+                        .navigationTitle(state.labels.screenTitle)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(action: onBack) {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .tint(theme.colors.onSurface)
+                                .accessibilityLabel(backButtonAccessibilityLabel)
+                                .testTag(StatisticsTestTags.shared.BACK_BUTTON_TEST_TAG)
+                            }
+                        }
+                },
+                legacy: { view in
+                    view
+                        .appScreen()
+                        .navigationBarColor(backgroundColor: .clear)
+                        .overlay(
+                            GlassToolbar(
+                                title: state.labels.screenTitle,
+                                opacity: 1.0,
+                                leadingIcon: {
+                                    GlassButton(icon: "chevron.left", action: onBack)
+                                        .accessibilityLabel(backButtonAccessibilityLabel)
+                                        .testTag(StatisticsTestTags.shared.BACK_BUTTON_TEST_TAG)
+                                }
+                            ),
+                            alignment: .top
+                        )
+                        .edgesIgnoringSafeArea(.top)
+                }
             )
-            .edgesIgnoringSafeArea(.top)
     }
 
     @ViewBuilder
@@ -194,6 +215,6 @@ public struct StatisticsScreen: View {
     private var toolbarInset: CGFloat {
         let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
             .windows.first?.safeAreaInsets.top ?? 0
-        return 44 + safeAreaTop
+        return liquidGlassEnabled ? 0 : 44 + safeAreaTop
     }
 }
