@@ -113,23 +113,42 @@ public struct DiscoverScreen: View {
                     .allowsHitTesting(false)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
-        .toolbar(.hidden, for: .navigationBar)
-        .overlay(
-            GlassToolbar(
-                title: state.title,
-                opacity: showGlass,
-                isLoading: false,
-                trailingIcon: {
-                    GlassButton(icon: "magnifyingglass", action: onSearchClicked)
-                        .testTag(DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG)
-                }
-            )
-            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),
-            alignment: .top
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(action: onSearchClicked) {
+                                Image(systemName: "magnifyingglass")
+                            }
+                            .tint(appTheme.colors.onSurface)
+                            .testTag(DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG)
+                        }
+                    }
+                    .ignoresSafeArea(edges: .top)
+            },
+            legacy: { view in
+                view
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarColor(backgroundColor: .clear)
+                    .toolbar(.hidden, for: .navigationBar)
+                    .overlay(
+                        GlassToolbar(
+                            title: state.title,
+                            opacity: showGlass,
+                            isLoading: false,
+                            trailingIcon: {
+                                GlassButton(icon: "magnifyingglass", action: onSearchClicked)
+                                    .testTag(DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG)
+                            }
+                        )
+                        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),
+                        alignment: .top
+                    )
+                    .edgesIgnoringSafeArea(.top)
+            }
         )
-        .edgesIgnoringSafeArea(.top)
         .onDisappear {
             showGlass = 0
         }
