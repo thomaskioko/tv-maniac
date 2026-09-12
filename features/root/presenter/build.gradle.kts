@@ -37,6 +37,7 @@ kotlin {
                 api(libs.essenty.lifecycle)
                 api(libs.coroutines.core)
 
+                implementation(projects.core.featureFlags.api)
                 implementation(projects.core.view)
                 implementation(projects.domain.theme)
                 implementation(projects.features.debug.nav)
@@ -44,12 +45,6 @@ kotlin {
                 implementation(projects.features.seasonDetails.nav)
                 implementation(projects.features.settings.presenter)
                 implementation(projects.features.showDetails.nav)
-            }
-        }
-
-        iosMain {
-            dependencies {
-                implementation(projects.core.featureFlags.api)
             }
         }
 
