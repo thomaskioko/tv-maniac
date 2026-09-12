@@ -47,6 +47,12 @@ kotlin {
             }
         }
 
+        iosMain {
+            dependencies {
+                implementation(projects.core.featureFlags.api)
+            }
+        }
+
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)

@@ -13,4 +13,5 @@ public data class AppUiState(
     val posterWidthScale: Float = 1f,
     val landscapeWidthScale: Float = 1f,
     val posterCornerRadius: Float = 0f,
+    val liquidGlassEnabled: Boolean = false,
 )
