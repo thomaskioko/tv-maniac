@@ -84,7 +84,10 @@ public struct EpisodeDetailSheetContent<Actions: View>: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-        .background(.appSurface)
+        .liquidGlassVariant(
+            liquidGlass: { view in view },
+            legacy: { view in view.background(.appSurface) }
+        )
     }
 
     private var headerImage: some View {
