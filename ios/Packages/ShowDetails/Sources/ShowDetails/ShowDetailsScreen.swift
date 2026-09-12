@@ -106,28 +106,53 @@ public struct ShowDetailsScreen<Content: View>: View {
         )
         .appScreen()
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarColor(backgroundColor: .clear)
         .navigationBarBackButtonHidden(true)
         .swipeBackGesture(onSwipe: onBack)
-        .overlay(
-            GlassToolbar(
-                title: state.title,
-                opacity: showGlass,
-                isLoading: state.isRefreshing,
-                leadingIcon: {
-                    GlassButton(icon: "chevron.left", action: onBack)
-                        .opacity(1 - showGlass)
-                        .testTag(ShowDetailsTestTags.shared.BACK_BUTTON_TEST_TAG)
-                },
-                trailingIcon: {
-                    GlassButton(icon: "arrow.clockwise", action: onRefresh)
-                }
-            )
-            .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),
-            alignment: .top
-        )
         .coordinateSpace(name: CoordinateSpaces.scrollView)
-        .edgesIgnoringSafeArea(.top)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .navigationTitle(state.title)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button(action: onBack) {
+                                Image(systemName: "chevron.left")
+                            }
+                            .tint(appTheme.colors.onSurface)
+                            .testTag(ShowDetailsTestTags.shared.BACK_BUTTON_TEST_TAG)
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(action: onRefresh) {
+                                Image(systemName: "arrow.clockwise")
+                            }
+                            .tint(appTheme.colors.onSurface)
+                        }
+                    }
+                    .ignoresSafeArea(edges: .top)
+            },
+            legacy: { view in
+                view
+                    .navigationBarColor(backgroundColor: .clear)
+                    .overlay(
+                        GlassToolbar(
+                            title: state.title,
+                            opacity: showGlass,
+                            isLoading: state.isRefreshing,
+                            leadingIcon: {
+                                GlassButton(icon: "chevron.left", action: onBack)
+                                    .opacity(1 - showGlass)
+                                    .testTag(ShowDetailsTestTags.shared.BACK_BUTTON_TEST_TAG)
+                            },
+                            trailingIcon: {
+                                GlassButton(icon: "arrow.clockwise", action: onRefresh)
+                            }
+                        )
+                        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass),
+                        alignment: .top
+                    )
+                    .edgesIgnoringSafeArea(.top)
+            }
+        )
         .toastView(toast: $toast)
     }
 

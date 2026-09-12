@@ -22,29 +22,31 @@ class ShowListSheetTest: SnapshotTestCase {
     }
 
     func test_ShowListSheet_Empty() {
-        makeSheet(
+        let view = makeSheet(
             state: ShowListSheet.State(
                 isLoading: false,
                 lists: [],
                 labels: sampleLabels
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_Empty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ShowListSheet_Empty")
     }
 
     func test_ShowListSheet_WithLists() {
-        makeSheet(
+        let view = makeSheet(
             state: ShowListSheet.State(
                 isLoading: false,
                 lists: sampleLists,
                 labels: sampleLabels
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_WithLists")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_WithLists")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ShowListSheet_WithLists")
     }
 
     func test_ShowListSheet_WithCreateField() {
-        makeSheet(
+        let view = makeSheet(
             state: ShowListSheet.State(
                 isLoading: false,
                 lists: sampleLists,
@@ -53,11 +55,12 @@ class ShowListSheetTest: SnapshotTestCase {
                 labels: sampleLabels
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_WithCreateField")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_WithCreateField")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ShowListSheet_WithCreateField")
     }
 
     func test_ShowListSheet_CreatingList() {
-        makeSheet(
+        let view = makeSheet(
             state: ShowListSheet.State(
                 isLoading: false,
                 lists: sampleLists,
@@ -67,7 +70,8 @@ class ShowListSheetTest: SnapshotTestCase {
                 labels: sampleLabels
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_CreatingList")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ShowListSheet_CreatingList")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ShowListSheet_CreatingList")
     }
 
     private func makeSheet(state: ShowListSheet.State) -> some View {

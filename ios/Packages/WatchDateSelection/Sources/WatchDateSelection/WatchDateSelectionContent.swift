@@ -67,8 +67,14 @@ public struct WatchDateSelectionContent: View {
         }
         .padding(.bottom, theme.spacing.large)
         .frame(maxWidth: .infinity)
-        .background(.appSurface)
-        .clipShape(.rect(topLeadingRadius: sheetCornerRadius, topTrailingRadius: sheetCornerRadius))
+        .liquidGlassVariant(
+            liquidGlass: { view in view },
+            legacy: { view in
+                view
+                    .background(.appSurface)
+                    .clipShape(.rect(topLeadingRadius: sheetCornerRadius, topTrailingRadius: sheetCornerRadius))
+            }
+        )
         .onAppear { latestSelectableDate = .now }
     }
 
