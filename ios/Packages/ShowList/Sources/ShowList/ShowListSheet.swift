@@ -32,30 +32,53 @@ public struct ShowListSheet: View {
     public var body: some View {
         NavigationStack {
             loggedInContent
-                .background(.appBackground)
                 .navigationTitle(state.labels.sheetTitle)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.appSurface, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(action: onDismiss) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.appAccent)
-                        }
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        if !state.showCreateListField {
-                            Button(action: onShowCreateListField) {
-                                Image(systemName: "plus")
-                                    .foregroundStyle(.appOnAccent)
-                                    .frame(width: 28, height: 28)
-                                    .background(.appAccent)
-                                    .clipShape(Circle())
+                .liquidGlassVariant(
+                    liquidGlass: { view in
+                        view
+                            .containerBackground(.clear, for: .navigation)
+                            .toolbar {
+                                ToolbarItem(placement: .topBarLeading) {
+                                    Button(role: .close, action: onDismiss)
+                                        .tint(theme.colors.onSurface)
+                                }
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    if !state.showCreateListField {
+                                        Button(action: onShowCreateListField) {
+                                            Image(systemName: "plus")
+                                        }
+                                        .tint(theme.colors.accent)
+                                    }
+                                }
                             }
-                        }
+                    },
+                    legacy: { view in
+                        view
+                            .background(.appBackground)
+                            .toolbarBackground(.appSurface, for: .navigationBar)
+                            .toolbarBackground(.visible, for: .navigationBar)
+                            .toolbar {
+                                ToolbarItem(placement: .topBarLeading) {
+                                    Button(action: onDismiss) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.appAccent)
+                                    }
+                                }
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    if !state.showCreateListField {
+                                        Button(action: onShowCreateListField) {
+                                            Image(systemName: "plus")
+                                                .foregroundStyle(.appOnAccent)
+                                                .frame(width: 28, height: 28)
+                                                .background(.appAccent)
+                                                .clipShape(Circle())
+                                        }
+                                    }
+                                }
+                            }
                     }
-                }
+                )
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
