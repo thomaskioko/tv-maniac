@@ -64,14 +64,15 @@ class DiscoverScreenTest: SnapshotTestCase {
     ]
 
     func test_DiscoverScreen_Loading() {
-        LoadingIndicatorView()
+        let view = LoadingIndicatorView()
             .appScreen()
             .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_Loading")
     }
 
     func test_DiscoverScreen_Empty() {
-        EmptyStateView(
+        let view = EmptyStateView(
             systemName: "list.bullet.below.rectangle",
             title: "No content available",
             message: "API key missing",
@@ -80,11 +81,12 @@ class DiscoverScreenTest: SnapshotTestCase {
         )
         .appScreen()
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_Empty")
     }
 
     func test_DiscoverScreen_Error() {
-        EmptyStateView(
+        let view = EmptyStateView(
             systemName: "exclamationmark.arrow.triangle.2.circlepath",
             title: "Something went wrong",
             buttonText: "Retry",
@@ -92,32 +94,35 @@ class DiscoverScreenTest: SnapshotTestCase {
         )
         .appScreen()
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_Error")
     }
 
     func test_DiscoverUpNextSection_Content() {
-        DiscoverUpNextContent(
+        let view = DiscoverUpNextContent(
             title: "Up Next",
             episodes: sampleEpisodes,
             onEpisodeClicked: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_UpNext")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_UpNext")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_UpNext")
     }
 
     func test_DiscoverStartWatchingSection_Content() {
-        DiscoverStartWatchingContent(
+        let view = DiscoverStartWatchingContent(
             title: "Start Watching",
             shows: samplePosters,
             onShowClicked: { _ in },
             onMoreClicked: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_StartWatching")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_StartWatching")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_StartWatching")
     }
 
     func test_DiscoverCatalogSection_Content() {
-        DiscoverCatalogContent(
+        let view = DiscoverCatalogContent(
             trendingTitle: "Trending Today",
             upcomingTitle: "Upcoming",
             popularTitle: "Popular",
@@ -133,11 +138,12 @@ class DiscoverScreenTest: SnapshotTestCase {
             onTopRatedMoreClicked: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_Catalog")
     }
 
     func test_DiscoverCatalogSection_HiddenSection() {
-        DiscoverCatalogContent(
+        let view = DiscoverCatalogContent(
             trendingTitle: "Trending Today",
             upcomingTitle: "Upcoming",
             popularTitle: "Popular",
@@ -154,33 +160,46 @@ class DiscoverScreenTest: SnapshotTestCase {
             onTopRatedMoreClicked: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog_HiddenSection")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Catalog_HiddenSection")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_Catalog_HiddenSection")
     }
 
     func test_DiscoverUpNextSection_DynamicTypeXXXLarge() {
-        DiscoverUpNextContent(
+        let view = DiscoverUpNextContent(
             title: "Up Next",
             episodes: sampleEpisodes,
             onEpisodeClicked: { _ in }
         )
         .appPreview()
         .environment(\.dynamicTypeSize, .xxxLarge)
-        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "DiscoverScreen_UpNext_DynamicTypeXXXLarge")
+        view.assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "DiscoverScreen_UpNext_DynamicTypeXXXLarge")
+        view.assertSnapshot(
+            layout: .defaultDevice,
+            styles: .dark,
+            liquidGlass: true,
+            testName: "DiscoverScreen_UpNext_DynamicTypeXXXLarge"
+        )
     }
 
     func test_DiscoverUpNextSection_DynamicTypeAX3() {
-        DiscoverUpNextContent(
+        let view = DiscoverUpNextContent(
             title: "Up Next",
             episodes: sampleEpisodes,
             onEpisodeClicked: { _ in }
         )
         .appPreview()
         .environment(\.dynamicTypeSize, .accessibility3)
-        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "DiscoverScreen_UpNext_DynamicTypeAX3")
+        view.assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "DiscoverScreen_UpNext_DynamicTypeAX3")
+        view.assertSnapshot(
+            layout: .defaultDevice,
+            styles: .dark,
+            liquidGlass: true,
+            testName: "DiscoverScreen_UpNext_DynamicTypeAX3"
+        )
     }
 
     func test_DiscoverFeaturedSection_Empty() {
-        DiscoverFeaturedContent(
+        let view = DiscoverFeaturedContent(
             shows: [],
             currentIndex: .constant(0),
             selectedShow: .constant(nil),
@@ -189,11 +208,12 @@ class DiscoverScreenTest: SnapshotTestCase {
             onIndexChanged: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Featured_Empty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Featured_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_Featured_Empty")
     }
 
     func test_DiscoverFeaturedSection_Content() {
-        DiscoverFeaturedContent(
+        let view = DiscoverFeaturedContent(
             shows: sampleShows,
             currentIndex: .constant(0),
             selectedShow: .constant(sampleShows.first),
@@ -202,6 +222,7 @@ class DiscoverScreenTest: SnapshotTestCase {
             onIndexChanged: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Featured_Content")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DiscoverScreen_Featured_Content")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DiscoverScreen_Featured_Content")
     }
 }
