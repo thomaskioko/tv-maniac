@@ -341,23 +341,18 @@ jobs:
                     path: compilation_cache
                     key: ${{ runner.os }}-xcode-cas-app-${{ env.XCODE_VERSION }}-${{ github.sha }}
 
-            -   name: 📦 Pack the build products
-                if: ${{ !cancelled() }}
-                run: tar -cf ios-build.tar -C derived_data/Build Products
+            -   name: 🧭 Run UI Tests
+                run: bundle exec fastlane ui_tests prebuilt:true
 
-            -   name: Upload build artifacts
+            -   name: Upload test results
                 uses: actions/upload-artifact@v7
                 if: ${{ !cancelled() }}
                 with:
-                    name: ios-build
-                    path: ios-build.tar
-
-            -   name: Upload build logs
-                uses: actions/upload-artifact@v7
-                if: ${{ !cancelled() }}
-                with:
-                    name: ios-build-logs
-                    path: fastlane/logs
+                    name: ui-test-results
+                    path: |
+                        fastlane/test_output
+                        fastlane/logs
+                        derived_data/Logs/Test
 
     ios-snapshot-test:
         needs: [build-ios-framework]
@@ -406,48 +401,6 @@ jobs:
                 if: ${{ !cancelled() }}
                 with:
                     name: snapshot-test-results
-                    path: |
-                        fastlane/test_output
-                        fastlane/logs
-                        derived_data/Logs/Test
-
-
-
-    ios-ui-test:
-        needs: [build-ios]
-        runs-on: macos-26
-        timeout-minutes: 30
-        env:
-            FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
-
-        steps:
-            -   name: 🚚 Checkout project
-                uses: actions/checkout@v7
-
-            -   name: 📱 Setup iOS Environment
-                uses: ./.github/actions/setup-ios
-                with:
-                    xcode-version: ${{ env.XCODE_VERSION }}
-                    kotlin-tooling: 'false'
-
-            -   name: 📦 Download the prebuilt app and test bundle
-                uses: actions/download-artifact@v8
-                with:
-                    name: ios-build
-
-            -   name: 📦 Unpack the build products
-                run: |
-                    mkdir -p derived_data/Build
-                    tar -xf ios-build.tar -C derived_data/Build
-
-            -   name: 🧭 Run UI Tests
-                run: bundle exec fastlane ui_tests prebuilt:true
-
-            -   name: Upload test results
-                uses: actions/upload-artifact@v7
-                if: ${{ !cancelled() }}
-                with:
-                    name: ui-test-results
                     path: |
                         fastlane/test_output
                         fastlane/logs
