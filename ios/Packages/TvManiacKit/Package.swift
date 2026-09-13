@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -6,7 +6,7 @@ let package = Package(
     name: "TvManiacKit",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v18),
+        .iOS(.v26),
     ],
     products: [
         .library(
@@ -21,7 +21,7 @@ let package = Package(
         .package(name: "Components", path: "../Components"),
         .package(name: "TraktAuthKit", path: "../TraktAuthKit"),
         .package(name: "TvManiacFramework", path: "../TvManiacFramework"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.18.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.19.1"),
     ],
     targets: [
         .target(

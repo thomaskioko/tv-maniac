@@ -18,23 +18,41 @@ struct MyShowsSortOptionsSheet: View {
                     .padding(.horizontal)
                     .padding(.top, theme.spacing.medium)
             }
-            .background(theme.colors.background)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(String(\.label_library_sort_by))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .navigationTitle(String(\.label_library_sort_by))
+                        .containerBackground(.clear, for: .navigation)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(role: .close) {
+                                    dismiss()
+                                }
+                                .tint(theme.colors.onSurface)
+                            }
+                        }
+                },
+                legacy: { view in
+                    view
+                        .background(theme.colors.background)
+                        .toolbar {
+                            ToolbarItem(placement: .principal) {
+                                Text(String(\.label_library_sort_by))
+                                    .textStyle(theme.typography.titleMedium)
+                                    .foregroundColor(theme.colors.onSurface)
+                            }
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Image(systemName: "xmark")
+                                        .foregroundColor(theme.colors.onSurface)
+                                }
+                            }
+                        }
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(theme.colors.onSurface)
-                    }
-                }
-            }
+            )
         }
         .screenTag(MyShowsTestTags.shared.SORT_SHEET_TEST_TAG)
     }
@@ -45,12 +63,24 @@ struct MyShowsSortOptionsSheet: View {
             items: Array(ApiWatchlistSortOption.entries),
             selectedItems: [selectedSortOption],
             labelProvider: { option in
-                if option == ApiWatchlistSortOption.addedDesc { return String(\.label_library_sort_added_desc) }
-                if option == ApiWatchlistSortOption.addedAsc { return String(\.label_library_sort_added_asc) }
-                if option == ApiWatchlistSortOption.releasedDesc { return String(\.label_library_sort_released_desc) }
-                if option == ApiWatchlistSortOption.releasedAsc { return String(\.label_library_sort_released_asc) }
-                if option == ApiWatchlistSortOption.titleAsc { return String(\.label_library_sort_title_asc) }
-                if option == ApiWatchlistSortOption.titleDesc { return String(\.label_library_sort_title_desc) }
+                if option == ApiWatchlistSortOption.addedDesc {
+                    return String(\.label_library_sort_added_desc)
+                }
+                if option == ApiWatchlistSortOption.addedAsc {
+                    return String(\.label_library_sort_added_asc)
+                }
+                if option == ApiWatchlistSortOption.releasedDesc {
+                    return String(\.label_library_sort_released_desc)
+                }
+                if option == ApiWatchlistSortOption.releasedAsc {
+                    return String(\.label_library_sort_released_asc)
+                }
+                if option == ApiWatchlistSortOption.titleAsc {
+                    return String(\.label_library_sort_title_asc)
+                }
+                if option == ApiWatchlistSortOption.titleDesc {
+                    return String(\.label_library_sort_title_desc)
+                }
                 return String(\.label_library_sort_added_desc)
             },
             onItemToggle: { onSortOptionSelected($0) },

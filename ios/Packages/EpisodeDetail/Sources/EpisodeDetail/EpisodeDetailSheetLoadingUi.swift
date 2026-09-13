@@ -49,7 +49,10 @@ struct EpisodeDetailSheetLoadingUi: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-        .background(.appSurface)
+        .liquidGlassVariant(
+            liquidGlass: { view in view },
+            legacy: { view in view.background(.appSurface) }
+        )
     }
 
     private var actionRow: some View {

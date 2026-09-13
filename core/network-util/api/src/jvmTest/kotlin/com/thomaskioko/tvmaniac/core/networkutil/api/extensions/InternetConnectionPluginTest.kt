@@ -1,6 +1,7 @@
 package com.thomaskioko.tvmaniac.core.networkutil.api.extensions
 
 import com.thomaskioko.tvmaniac.core.connectivity.api.InternetConnectionChecker
+import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.ApiResponse
 import com.thomaskioko.tvmaniac.core.networkutil.api.model.NoInternetException
 import io.kotest.assertions.throwables.shouldThrow
@@ -17,19 +18,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
 import kotlin.test.Test
 
 class InternetConnectionPluginTest {
-
-    private fun internetConnectionChecker(connected: Boolean) = object : InternetConnectionChecker {
-        override fun isConnected(): Boolean = connected
-
-        override fun observeConnection(): Flow<Boolean> = flowOf(connected)
-    }
 
     private fun createClient(checker: InternetConnectionChecker? = null): HttpClient {
         val engine = MockEngine { _ ->
@@ -49,7 +42,7 @@ class InternetConnectionPluginTest {
 
     @Test
     fun `should proceed with request given device is connected`() = runTest {
-        val client = createClient(internetConnectionChecker(connected = true))
+        val client = createClient(FakeInternetConnectionChecker(connected = true))
 
         val response = client.get("/test")
 
@@ -58,7 +51,7 @@ class InternetConnectionPluginTest {
 
     @Test
     fun `should throw NoInternetException given device is disconnected`() = runTest {
-        val client = createClient(internetConnectionChecker(connected = false))
+        val client = createClient(FakeInternetConnectionChecker(connected = false))
 
         shouldThrow<NoInternetException> {
             client.get("/test")
@@ -86,7 +79,7 @@ class InternetConnectionPluginTest {
         val client = HttpClient(engine) {
             install(ContentNegotiation) { json() }
             install(InternetConnectionPlugin) {
-                internetConnectionChecker = internetConnectionChecker(connected = false)
+                internetConnectionChecker = FakeInternetConnectionChecker(connected = false)
             }
         }
 

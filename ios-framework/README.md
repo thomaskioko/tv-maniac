@@ -922,6 +922,7 @@ graph TB
   :domain:account-switcher --> :domain:library
   :domain:account-switcher --> :domain:user
   :domain:backup --> :core:base
+  :domain:backup --> :core:connectivity:api
   :domain:backup --> :core:logger:api
   :domain:backup --> :core:network-util:api
   :domain:backup --> :core:tasks:api
@@ -934,6 +935,7 @@ graph TB
   :domain:calendar --> :data:calendar:api
   :domain:calendar --> :data:followedshows:api
   :domain:continue-watching --> :core:base
+  :domain:continue-watching --> :core:connectivity:api
   :domain:continue-watching --> :core:feature-flags:api
   :domain:continue-watching --> :core:logger:api
   :domain:continue-watching --> :core:network-util:api
@@ -945,7 +947,7 @@ graph TB
   :domain:continue-watching --> :data:episode:api
   :domain:continue-watching --> :data:request-manager:api
   :domain:continue-watching --> :data:upnext:api
-  :domain:continue-watching -.-> :domain:episode
+  :domain:continue-watching --> :domain:episode
   :domain:continue-watching --> :domain:showdetails
   :domain:continue-watching --> :domain:sync-activity
   :domain:discover --> :core:base
@@ -981,6 +983,7 @@ graph TB
   :domain:genre --> :core:base
   :domain:genre --> :data:genre:api
   :domain:library --> :core:base
+  :domain:library --> :core:connectivity:api
   :domain:library --> :core:logger:api
   :domain:library --> :core:network-util:api
   :domain:library --> :core:syncstate:api
@@ -1275,6 +1278,7 @@ graph TB
   :features:root:presenter --> :core:base
   :features:root:presenter --> :core:connectivity:api
   :features:root:presenter --> :core:deeplink:api
+  :features:root:presenter -.-> :core:feature-flags:api
   :features:root:presenter --> :core:logger:api
   :features:root:presenter --> :core:syncstate:api
   :features:root:presenter -.-> :core:view

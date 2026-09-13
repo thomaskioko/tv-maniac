@@ -20,6 +20,7 @@ kotlin {
             dependencies {
                 api(libs.coroutines.core)
                 api(projects.core.base)
+                api(projects.core.connectivity.api)
                 api(projects.core.logger.api)
                 api(projects.core.networkUtil.api)
                 api(projects.core.syncstate.api)
@@ -39,8 +40,10 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.bundles.unittest)
+                implementation(projects.core.connectivity.testing)
                 implementation(projects.core.logger.testing)
                 implementation(projects.core.syncstate.testing)
+                implementation(projects.core.tasks.testing)
                 implementation(projects.core.util.testing)
                 implementation(projects.data.accountManager.testing)
                 implementation(projects.data.datastore.testing)

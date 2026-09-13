@@ -14,6 +14,7 @@ public struct MyShowsTab: View {
     @StateValue private var startWatchingState: StartWatchingState
 
     @Environment(\.appTheme) private var appTheme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
     @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
     @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
     @State private var toast: Toast?
@@ -48,10 +49,25 @@ public struct MyShowsTab: View {
         }
         .appScreen()
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { toolbarContent }
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: uiState.isSearchActive)
-        .toolbarBackground(.appSurface, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .navigationTitle(String(\.label_tab_my_shows))
+                    .toolbar { glassToolbarContent }
+                    .searchable(text: $localQuery, isPresented: glassSearchPresented, prompt: String(\.label_search_placeholder))
+                    .searchToolbarBehavior(.minimize)
+                    .onChange(of: localQuery) { _, newValue in
+                        presenter.dispatch(action: MyShowsActionQueryChanged(query: newValue))
+                    }
+            },
+            legacy: { view in
+                view
+                    .toolbar { toolbarContent }
+                    .toolbarBackground(.appSurface, for: .navigationBar)
+                    .toolbarBackground(.visible, for: .navigationBar)
+            }
+        )
         .sheet(isPresented: $showSortOptions) {
             MyShowsSortOptionsSheet(
                 selectedSortOption: uiState.sortOption,
@@ -81,7 +97,9 @@ public struct MyShowsTab: View {
             staleEpisodesSwift = newValue.map { $0.toSwift() }
         }
         .onChange(of: uiState.query) { _, newValue in
-            localQuery = newValue
+            if !liquidGlassEnabled || newValue.isEmpty {
+                localQuery = newValue
+            }
         }
         .onAppear {
             localQuery = uiState.query
@@ -168,6 +186,59 @@ public struct MyShowsTab: View {
         .testTag(MyShowsTestTags.shared.LAYOUT_MENU_BUTTON_TEST_TAG)
     }
 
+    @ToolbarContentBuilder
+    private var glassToolbarContent: some ToolbarContent {
+        if uiState.selectedPage == 0 {
+            ToolbarItem(placement: .topBarLeading) {
+                layoutMenuGlass
+            }
+        }
+        if uiState.showRefreshIndicator {
+            ToolbarItem(placement: .topBarTrailing) {
+                ProgressView()
+                    .tint(appTheme.colors.onSurface)
+            }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                showSortOptions = true
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease")
+            }
+            .tint(appTheme.colors.onSurface)
+            .testTag(MyShowsTestTags.shared.SORT_BUTTON_TEST_TAG)
+        }
+    }
+
+    private var glassSearchPresented: Binding<Bool> {
+        Binding(
+            get: { uiState.isSearchActive },
+            set: { presented in
+                guard presented != uiState.isSearchActive else { return }
+                if !presented, !localQuery.isEmpty {
+                    localQuery = ""
+                    presenter.dispatch(action: MyShowsActionClearQuery())
+                }
+                presenter.dispatch(action: MyShowsActionToggleSearch())
+            }
+        )
+    }
+
+    private var layoutMenuGlass: some View {
+        Menu {
+            layoutMenuRow(.grid)
+            layoutMenuRow(.list)
+            Section(String(\.label_premium_badge)) {
+                layoutMenuRow(.compact)
+                layoutMenuRow(.detailed)
+            }
+        } label: {
+            Image(systemName: layoutIcon(uiState.listStyle))
+        }
+        .tint(appTheme.colors.onSurface)
+        .testTag(MyShowsTestTags.shared.LAYOUT_MENU_BUTTON_TEST_TAG)
+    }
+
     private func isPremiumLayout(_ layout: ApiListStyle) -> Bool {
         layout == ApiListStyle.compact || layout == ApiListStyle.detailed
     }
@@ -199,23 +270,41 @@ public struct MyShowsTab: View {
     }
 
     private func layoutLabel(_ layout: ApiListStyle) -> String {
-        if layout == ApiListStyle.grid { return String(\.label_layout_grid) }
-        if layout == ApiListStyle.list { return String(\.label_layout_list) }
-        if layout == ApiListStyle.compact { return String(\.label_layout_compact) }
+        if layout == ApiListStyle.grid {
+            return String(\.label_layout_grid)
+        }
+        if layout == ApiListStyle.list {
+            return String(\.label_layout_list)
+        }
+        if layout == ApiListStyle.compact {
+            return String(\.label_layout_compact)
+        }
         return String(\.label_layout_detailed)
     }
 
     private func layoutIcon(_ layout: ApiListStyle) -> String {
-        if layout == ApiListStyle.grid { return "rectangle.grid.2x2" }
-        if layout == ApiListStyle.list { return "list.bullet" }
-        if layout == ApiListStyle.compact { return "rectangle.compress.vertical" }
+        if layout == ApiListStyle.grid {
+            return "rectangle.grid.2x2"
+        }
+        if layout == ApiListStyle.list {
+            return "list.bullet"
+        }
+        if layout == ApiListStyle.compact {
+            return "rectangle.compress.vertical"
+        }
         return "rectangle.expand.vertical"
     }
 
     private func layoutOptionTestTag(_ layout: ApiListStyle) -> String {
-        if layout == ApiListStyle.grid { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_GRID_TEST_TAG }
-        if layout == ApiListStyle.list { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_LIST_TEST_TAG }
-        if layout == ApiListStyle.compact { return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG }
+        if layout == ApiListStyle.grid {
+            return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_GRID_TEST_TAG
+        }
+        if layout == ApiListStyle.list {
+            return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_LIST_TEST_TAG
+        }
+        if layout == ApiListStyle.compact {
+            return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_COMPACT_TEST_TAG
+        }
         return MyShowsTestTags.shared.LAYOUT_MENU_ITEM_DETAILED_TEST_TAG
     }
 

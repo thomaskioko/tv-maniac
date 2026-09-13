@@ -69,8 +69,16 @@ public struct ProgressScreen<UpNextContent: View, CalendarContent: View>: View {
                 titleView
             }
         }
-        .toolbarBackground(.appSurface, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+            },
+            legacy: { view in
+                view
+                    .toolbarBackground(.appSurface, for: .navigationBar)
+                    .toolbarBackground(.visible, for: .navigationBar)
+            }
+        )
     }
 
     private var titleView: some View {

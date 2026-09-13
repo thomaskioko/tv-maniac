@@ -18,6 +18,8 @@ import com.thomaskioko.tvmaniac.featureflags.FeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.oauth.api.AuthStore
 import com.thomaskioko.tvmaniac.oauth.testing.FakeAuthStore
+import com.thomaskioko.tvmaniac.presenter.root.LiquidGlassAvailability
+import com.thomaskioko.tvmaniac.testing.fixture.FakeLiquidGlassAvailability
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -42,6 +44,13 @@ public object TestJvmPlatformBindingContainer {
     @Provides
     @SingleIn(AppScope::class)
     public fun provideFeatureFlagsRemoteConfig(): FeatureFlagsRemoteConfig = FakeFeatureFlagsRemoteConfig()
+
+    @Provides
+    @SingleIn(AppScope::class)
+    public fun provideFakeLiquidGlassAvailability(): FakeLiquidGlassAvailability = FakeLiquidGlassAvailability()
+
+    @Provides
+    public fun provideLiquidGlassAvailability(fake: FakeLiquidGlassAvailability): LiquidGlassAvailability = fake
 
     @Provides
     @SingleIn(AppScope::class)

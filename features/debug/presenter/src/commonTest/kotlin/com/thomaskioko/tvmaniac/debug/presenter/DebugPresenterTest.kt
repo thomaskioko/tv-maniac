@@ -206,12 +206,12 @@ class DebugPresenterTest {
             val state = expectMostRecentItem()
             val ids = state.items.map { it.id }
             ids shouldBe listOf(
+                "feature-flags",
                 "account_type",
                 "notifications",
                 "delayed-notification",
                 "library-sync",
                 "upnext-sync",
-                "feature-flags",
                 "test-crash",
                 "report-test-error",
             )

@@ -17,7 +17,7 @@ class MoreShowsScreenTest: SnapshotTestCase {
     ]
 
     func test_MoreShowsScreen() {
-        MoreShowsScreen(
+        let view = MoreShowsScreen(
             state: MoreShowsScreen.State(
                 title: "Popular",
                 items: sampleItems,
@@ -34,11 +34,12 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onRetry: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen")
+        view.assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "MoreShowsScreen")
     }
 
     func test_MoreShowsScreen_LoadingMore() {
-        MoreShowsScreen(
+        let view = MoreShowsScreen(
             state: MoreShowsScreen.State(
                 title: "Trending",
                 items: sampleItems,
@@ -55,11 +56,12 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onRetry: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_LoadingMore")
+        view.assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_LoadingMore")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "MoreShowsScreen_LoadingMore")
     }
 
     func test_MoreShowsScreen_Error() {
-        MoreShowsScreen(
+        let view = MoreShowsScreen(
             state: MoreShowsScreen.State(
                 title: "Top Rated",
                 items: sampleItems,
@@ -76,11 +78,12 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onRetry: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "MoreShowsScreen_Error")
     }
 
     func test_MoreShowsScreen_Empty() {
-        MoreShowsScreen(
+        let view = MoreShowsScreen(
             state: MoreShowsScreen.State(
                 title: "Upcoming",
                 items: [],
@@ -97,6 +100,7 @@ class MoreShowsScreenTest: SnapshotTestCase {
             onRetry: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "MoreShowsScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "MoreShowsScreen_Empty")
     }
 }

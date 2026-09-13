@@ -22,7 +22,7 @@ class ShowDetailsScreenTest: SnapshotTestCase {
     )
 
     func test_ShowDetailsScreen_Default() {
-        ShowDetailsScreen(
+        let view = ShowDetailsScreen(
             state: sampleState,
             toast: .constant(nil),
             seasonCountFormat: { "\($0) Seasons" },
@@ -32,11 +32,12 @@ class ShowDetailsScreenTest: SnapshotTestCase {
             EmptyView()
         }
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_Default")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_Default")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ShowDetailsScreen_Default")
     }
 
     func test_ShowDetailsScreen_DynamicTypeXXXLarge() {
-        ShowDetailsScreen(
+        let view = ShowDetailsScreen(
             state: sampleState,
             toast: .constant(nil),
             seasonCountFormat: { "\($0) Seasons" },
@@ -47,11 +48,17 @@ class ShowDetailsScreenTest: SnapshotTestCase {
         }
         .appPreview()
         .environment(\.dynamicTypeSize, .xxxLarge)
-        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "ShowDetailsScreen_DynamicTypeXXXLarge")
+        view.assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "ShowDetailsScreen_DynamicTypeXXXLarge")
+        view.assertSnapshot(
+            layout: .defaultDevice,
+            styles: .dark,
+            liquidGlass: true,
+            testName: "ShowDetailsScreen_DynamicTypeXXXLarge"
+        )
     }
 
     func test_ShowDetailsScreen_DynamicTypeAX3() {
-        ShowDetailsScreen(
+        let view = ShowDetailsScreen(
             state: sampleState,
             toast: .constant(nil),
             seasonCountFormat: { "\($0) Seasons" },
@@ -62,11 +69,17 @@ class ShowDetailsScreenTest: SnapshotTestCase {
         }
         .appPreview()
         .environment(\.dynamicTypeSize, .accessibility3)
-        .assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "ShowDetailsScreen_DynamicTypeAX3")
+        view.assertSnapshot(layout: .defaultDevice, styles: .dark, testName: "ShowDetailsScreen_DynamicTypeAX3")
+        view.assertSnapshot(
+            layout: .defaultDevice,
+            styles: .dark,
+            liquidGlass: true,
+            testName: "ShowDetailsScreen_DynamicTypeAX3"
+        )
     }
 
     func test_ShowDetailsScreen_Refreshing() {
-        ShowDetailsScreen(
+        let view = ShowDetailsScreen(
             state: ShowDetailsScreen<EmptyView>.State(
                 title: "The Last of Us",
                 overview: "Twenty years after modern civilization has been destroyed.",
@@ -88,6 +101,7 @@ class ShowDetailsScreenTest: SnapshotTestCase {
             EmptyView()
         }
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_Refreshing")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ShowDetailsScreen_Refreshing")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ShowDetailsScreen_Refreshing")
     }
 }

@@ -29,13 +29,18 @@ internal class PendingUploadsWorkerTest {
     private val logger = FakeLogger()
     private var providerFeatures = FakeProviderFeatures(supportsLists = true)
 
-    private val worker = PendingUploadsWorker(
-        syncRepository = lazy { syncRepository },
-        libraryRepository = lazy { libraryRepository },
-        listRepository = lazy { listRepository },
-        userRepository = lazy { userRepository },
+    private val interactor = SyncPendingUploadsInteractor(
+        syncRepository = syncRepository,
+        libraryRepository = libraryRepository,
+        listRepository = listRepository,
+        userRepository = userRepository,
         activeProviderFeatures = { providerFeatures },
-        accountManager = lazy { accountManager },
+        accountManager = accountManager,
+        logger = logger,
+    )
+
+    private val worker = PendingUploadsWorker(
+        syncPendingUploadsInteractor = lazy { interactor },
         syncObserver = syncObserver,
         logger = logger,
     )
