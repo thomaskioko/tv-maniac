@@ -142,7 +142,9 @@ extension SettingsView {
                         body: uiState.labels.aboutDescription,
                         link: uiState.githubUrl,
                         onOpen: {
-                            if let url = URL(string: uiState.githubUrl) { openURL(url) }
+                            if let url = URL(string: uiState.githubUrl) {
+                                openURL(url)
+                            }
                         }
                     ),
                 ]
@@ -158,7 +160,9 @@ extension SettingsView {
                         body: uiState.labels.tmdbBody,
                         link: tmdbURL,
                         onOpen: {
-                            if let url = URL(string: tmdbURL) { openURL(url) }
+                            if let url = URL(string: tmdbURL) {
+                                openURL(url)
+                            }
                         }
                     ),
                     SettingsLinkItem(
@@ -168,7 +172,9 @@ extension SettingsView {
                         body: uiState.labels.traktBody,
                         link: traktURL,
                         onOpen: {
-                            if let url = URL(string: traktURL) { openURL(url) }
+                            if let url = URL(string: traktURL) {
+                                openURL(url)
+                            }
                         }
                     ),
                 ]

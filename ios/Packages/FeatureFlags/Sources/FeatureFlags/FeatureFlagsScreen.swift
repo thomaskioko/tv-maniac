@@ -123,12 +123,16 @@ public struct FeatureFlagsScreen: View {
     private var overflowMenu: some View {
         Menu {
             Button(action: {
-                if !state.groupByType { onGroupByTypeToggled() }
+                if !state.groupByType {
+                    onGroupByTypeToggled()
+                }
             }) {
                 checkLabel(state.groupByTypeLabel, checked: state.groupByType)
             }
             Button(action: {
-                if state.groupByType { onGroupByTypeToggled() }
+                if state.groupByType {
+                    onGroupByTypeToggled()
+                }
             }) {
                 checkLabel(state.noGroupingLabel, checked: !state.groupByType)
             }
@@ -140,12 +144,16 @@ public struct FeatureFlagsScreen: View {
             }
             Divider()
             Button(action: {
-                if !state.ascending { onDirectionToggled() }
+                if !state.ascending {
+                    onDirectionToggled()
+                }
             }) {
                 checkLabel(state.sortAscendingLabel, checked: state.ascending)
             }
             Button(action: {
-                if state.ascending { onDirectionToggled() }
+                if state.ascending {
+                    onDirectionToggled()
+                }
             }) {
                 checkLabel(state.sortDescendingLabel, checked: !state.ascending)
             }

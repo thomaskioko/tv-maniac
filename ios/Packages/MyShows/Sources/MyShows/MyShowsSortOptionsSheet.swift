@@ -45,12 +45,24 @@ struct MyShowsSortOptionsSheet: View {
             items: Array(ApiWatchlistSortOption.entries),
             selectedItems: [selectedSortOption],
             labelProvider: { option in
-                if option == ApiWatchlistSortOption.addedDesc { return String(\.label_library_sort_added_desc) }
-                if option == ApiWatchlistSortOption.addedAsc { return String(\.label_library_sort_added_asc) }
-                if option == ApiWatchlistSortOption.releasedDesc { return String(\.label_library_sort_released_desc) }
-                if option == ApiWatchlistSortOption.releasedAsc { return String(\.label_library_sort_released_asc) }
-                if option == ApiWatchlistSortOption.titleAsc { return String(\.label_library_sort_title_asc) }
-                if option == ApiWatchlistSortOption.titleDesc { return String(\.label_library_sort_title_desc) }
+                if option == ApiWatchlistSortOption.addedDesc {
+                    return String(\.label_library_sort_added_desc)
+                }
+                if option == ApiWatchlistSortOption.addedAsc {
+                    return String(\.label_library_sort_added_asc)
+                }
+                if option == ApiWatchlistSortOption.releasedDesc {
+                    return String(\.label_library_sort_released_desc)
+                }
+                if option == ApiWatchlistSortOption.releasedAsc {
+                    return String(\.label_library_sort_released_asc)
+                }
+                if option == ApiWatchlistSortOption.titleAsc {
+                    return String(\.label_library_sort_title_asc)
+                }
+                if option == ApiWatchlistSortOption.titleDesc {
+                    return String(\.label_library_sort_title_desc)
+                }
                 return String(\.label_library_sort_added_desc)
             },
             onItemToggle: { onSortOptionSelected($0) },

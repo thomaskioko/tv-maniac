@@ -13,6 +13,7 @@ import com.thomaskioko.tvmaniac.presenter.home.di.HomeChildGraph
 import com.thomaskioko.tvmaniac.presenter.root.RootPresenter
 import com.thomaskioko.tvmaniac.subscription.api.SubscriptionManager
 import com.thomaskioko.tvmaniac.syncstate.api.SyncObserver
+import com.thomaskioko.tvmaniac.testing.fixture.FakeLiquidGlassAvailability
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +32,7 @@ public interface TestGraph {
     public val featureFlags: Set<FeatureFlag<Boolean>>
     public val subscriptionManager: SubscriptionManager
     public val fakeInternetConnectionChecker: FakeInternetConnectionChecker
+    public val fakeLiquidGlassAvailability: FakeLiquidGlassAvailability
 
     @IoCoroutineScope
     public val ioCoroutineScope: CoroutineScope

@@ -65,7 +65,9 @@ public struct CalendarPageContent: View {
     }
 
     private var isLocked: Bool {
-        if case .locked = state.screenState { return true }
+        if case .locked = state.screenState {
+            return true
+        }
         return false
     }
 

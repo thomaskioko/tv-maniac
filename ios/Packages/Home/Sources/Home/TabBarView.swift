@@ -36,8 +36,14 @@ public struct TabBarView: View {
             tabContent(.profile, stack: presenter.profileChildStackValue, avatarImage: avatarImage)
         }
         .tint(theme.colors.accent)
-        .toolbarBackground(theme.colors.surface, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
+        .liquidGlassVariant(
+            liquidGlass: { $0.tabBarMinimizeBehavior(.onScrollDown) },
+            legacy: {
+                $0
+                    .toolbarBackground(theme.colors.surface, for: .tabBar)
+                    .toolbarBackground(.visible, for: .tabBar)
+            }
+        )
         .task(id: profileAvatar.url) {
             await loadAvatar()
         }

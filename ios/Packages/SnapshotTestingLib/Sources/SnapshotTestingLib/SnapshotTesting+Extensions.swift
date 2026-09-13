@@ -1,3 +1,4 @@
+import DesignSystem
 import SnapshotTesting
 import SwiftUI
 
@@ -48,6 +49,7 @@ public extension View {
         record recording: SnapshotTestingConfiguration.Record? = nil,
         layout: SwiftUISnapshotLayout = .defaultDevice,
         styles: SnapshotStyles = .all,
+        liquidGlass: Bool = false,
         timeout: TimeInterval = {
             // Use longer timeout in CI environment
             if ProcessInfo.processInfo.environment["CI"] != nil {
@@ -84,17 +86,17 @@ public extension View {
         #endif
 
         assertSnapshots(
-            of: viewController,
+            of: viewController(liquidGlass: liquidGlass),
             as: themes,
             record: effectiveRecording,
             timeout: timeout,
             file: file,
-            testName: testName
+            testName: liquidGlass ? "\(testName)_glass" : testName
         )
     }
 
-    private var viewController: UIViewController {
-        let viewController = UIHostingController(rootView: self)
+    private func viewController(liquidGlass: Bool) -> UIViewController {
+        let viewController = UIHostingController(rootView: environment(\.liquidGlassEnabled, liquidGlass))
 
         let view = viewController.view!
         view.bounds = CGRect(origin: .zero, size: view.intrinsicContentSize)

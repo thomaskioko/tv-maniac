@@ -6,9 +6,15 @@ import TvManiac
 
 public extension TvManiac.ImageQuality {
     func toSwift() -> SwiftImageQuality {
-        if self == ImageQuality.auto_ { return .auto }
-        if self == ImageQuality.high { return .high }
-        if self == ImageQuality.medium { return .medium }
+        if self == ImageQuality.auto_ {
+            return .auto
+        }
+        if self == ImageQuality.high {
+            return .high
+        }
+        if self == ImageQuality.medium {
+            return .medium
+        }
         return .low
     }
 
@@ -287,7 +293,9 @@ public extension TvManiac.UpNextEpisodeItem {
 
 public extension TvManiac.EpisodeBadge {
     func toSwift() -> SwiftEpisodeBadge {
-        if self == EpisodeBadge.premiere { return .premiere }
+        if self == EpisodeBadge.premiere {
+            return .premiere
+        }
         return .new
     }
 }
@@ -359,9 +367,15 @@ public extension TvManiac.WatchProviderUiModel {
 
 public extension ApiListStyle {
     func toSwift() -> SwiftListStyle {
-        if self == ApiListStyle.grid { return .grid }
-        if self == ApiListStyle.list { return .list }
-        if self == ApiListStyle.compact { return .compact }
+        if self == ApiListStyle.grid {
+            return .grid
+        }
+        if self == ApiListStyle.list {
+            return .list
+        }
+        if self == ApiListStyle.compact {
+            return .compact
+        }
         return .detailed
     }
 }

@@ -101,7 +101,9 @@ public struct ListDetailScreen: View {
                 isPresented: Binding(
                     get: { state.removeConfirmation != nil },
                     set: { isPresented in
-                        if !isPresented { onRemoveDismissed() }
+                        if !isPresented {
+                            onRemoveDismissed()
+                        }
                     }
                 )
             ) {
@@ -121,7 +123,9 @@ public struct ListDetailScreen: View {
                 isPresented: Binding(
                     get: { state.renameDialog != nil },
                     set: { isPresented in
-                        if !isPresented { onRenameDismissed() }
+                        if !isPresented {
+                            onRenameDismissed()
+                        }
                     }
                 )
             ) {
@@ -147,7 +151,9 @@ public struct ListDetailScreen: View {
                 isPresented: Binding(
                     get: { state.deleteConfirmation != nil },
                     set: { isPresented in
-                        if !isPresented { onDeleteDismissed() }
+                        if !isPresented {
+                            onDeleteDismissed()
+                        }
                     }
                 )
             ) {
