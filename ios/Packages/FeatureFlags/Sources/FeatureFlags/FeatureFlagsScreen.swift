@@ -107,6 +107,7 @@ public struct FeatureFlagsScreen: View {
                 view
                     .appScreen()
                     .navigationTitle(state.title)
+                    .toolbar { DefaultToolbarItem(kind: .search, placement: .bottomBar) }
                     .searchable(text: $glassQuery, prompt: state.searchPlaceholder)
                     .onChange(of: glassQuery) { _, newValue in
                         if newValue != state.searchQuery {
