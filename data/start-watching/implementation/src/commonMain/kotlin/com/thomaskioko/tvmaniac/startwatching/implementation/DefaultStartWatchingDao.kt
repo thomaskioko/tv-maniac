@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.StartWatchingShows
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingDao
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -19,10 +20,15 @@ import kotlinx.coroutines.flow.map
 public class DefaultStartWatchingDao(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
+    private val dateTimeProvider: DateTimeProvider,
 ) : StartWatchingDao {
 
     override fun observeStartWatchingShows(): Flow<List<StartWatchingShow>> =
-        database.startWatchingQueries.startWatchingShows()
+        database.startWatchingQueries
+            .startWatchingShows(
+                nowMillis = dateTimeProvider.nowMillis(),
+                currentYear = dateTimeProvider.currentYear().toLong(),
+            )
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { rows -> rows.map { it.toStartWatchingShow() } }
