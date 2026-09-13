@@ -48,12 +48,19 @@ runs:
         restore-keys: |
           ${{ runner.os }}-spm-
 
+    - name: 🔑 Resolve Kotlin version
+      id: kotlin
+      if: inputs.kotlin-tooling == 'true'
+      shell: bash
+      run: |
+        echo "version=$(sed -n 's/^kotlin = "\(.*\)"/\1/p' gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
+
     - name: 🗂️ Cache Kotlin/Native (konan)
       if: inputs.kotlin-tooling == 'true'
       uses: actions/cache@v6
       with:
         path: ~/.konan
-        key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+        key: ${{ runner.os }}-konan-${{ steps.kotlin.outputs.version }}
         restore-keys: |
           ${{ runner.os }}-konan-
 
