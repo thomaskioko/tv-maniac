@@ -40,6 +40,7 @@ runs:
       with:
         path: ios-framework/build/spm
         key: ${{ runner.os }}-xcframework-${{ steps.sdk.outputs.sdk_name }}-${{ steps.key.outputs.hash }}
+        fail-on-cache-miss: true
 
     # Builds the XCFramework into ios-framework/build/spm, the directory the
     # TvManiacFramework package's binaryTarget points at. Consumer jobs restore
