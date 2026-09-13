@@ -375,6 +375,7 @@ jobs:
                 uses: ./.github/actions/setup-ios
                 with:
                     xcode-version: ${{ env.XCODE_VERSION }}
+                    kotlin-tooling: 'false'
 
             -   name: 🗂️ Restore prebuilt KMP frameworks
                 uses: ./.github/actions/kmp-ios-framework
