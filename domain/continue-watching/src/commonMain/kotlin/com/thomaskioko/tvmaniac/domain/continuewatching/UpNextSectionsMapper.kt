@@ -42,7 +42,6 @@ public class UpNextSectionsMapper(
                     badge = badge,
                 )
             }
-            .filter { it.firstAired != null && it.firstAired <= currentTime }
             .groupBySections(currentTime)
     }
 

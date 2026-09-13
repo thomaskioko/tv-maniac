@@ -4,6 +4,21 @@ import kotlin.String;
 import kotlin.collections.List;
 
 libraryShows:
+WITH watched_counts AS (
+    SELECT show_id, COUNT(*) AS watched_count
+    FROM watched_episodes
+    WHERE pending_action NOT IN ('DELETE', 'SYNCED_DELETE')
+    GROUP BY show_id
+),
+total_counts AS (
+    SELECT episode.show_id, COUNT(*) AS total_count
+    FROM episode
+    INNER JOIN season ON episode.season_id = season.id
+    WHERE season.season_number > 0
+      AND episode.first_aired IS NOT NULL
+      AND episode.first_aired <= :nowMillis
+    GROUP BY episode.show_id
+)
 SELECT
     tvshow.tmdb_id AS show_id,
     tvshow.tmdb_id AS tmdb_id,
@@ -15,8 +30,8 @@ SELECT
     tvshow.genres,
     COALESCE(CAST(tvshow.season_numbers AS INTEGER), 0) AS season_count,
     COALESCE(CAST(tvshow.episode_numbers AS INTEGER), 0) AS episode_count,
-    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
-    COALESCE(show_watch_progress.total_count, 0) AS total_count,
+    COALESCE(watched_counts.watched_count, 0) AS watched_count,
+    COALESCE(total_counts.total_count, 0) AS total_count,
     show_metadata.last_watched_at,
     followed_shows.followed_at,
     CASE WHEN followed_shows.id IS NOT NULL THEN 1 ELSE 0 END AS is_followed
@@ -24,10 +39,11 @@ FROM tvshow
 LEFT JOIN followed_shows ON tvshow.id = followed_shows.show_id
     AND followed_shows.pending_action != 'DELETE'
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
-LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
+LEFT JOIN watched_counts ON watched_counts.show_id = tvshow.id
+LEFT JOIN total_counts ON total_counts.show_id = tvshow.id
 WHERE (
     followed_shows.id IS NOT NULL
-    OR COALESCE(show_watch_progress.watched_count, 0) > 0
+    OR COALESCE(watched_counts.watched_count, 0) > 0
 )
 AND (
     :query IS NULL
@@ -39,13 +55,3 @@ AND (
     OR followed_shows.id IS NOT NULL
 )
 ORDER BY COALESCE(followed_shows.followed_at, 0) DESC, tvshow.id;
-
-countLibraryShows:
-SELECT COUNT(*) FROM tvshow
-LEFT JOIN followed_shows ON tvshow.id = followed_shows.show_id
-    AND followed_shows.pending_action != 'DELETE'
-LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
-WHERE (
-    followed_shows.id IS NOT NULL
-    OR COALESCE(show_watch_progress.watched_count, 0) > 0
-);

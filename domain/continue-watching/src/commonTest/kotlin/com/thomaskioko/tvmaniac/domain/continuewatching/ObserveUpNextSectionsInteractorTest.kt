@@ -207,24 +207,6 @@ class ObserveUpNextSectionsInteractorTest {
     }
 
     @Test
-    fun `should filter out episodes with unknown air date`() = runTest {
-        val episodes = listOf(
-            createNextEpisode(showId = 1, showName = "Loki", firstAired = LocalDate(2021, 6, 9).toEpochMillis()),
-            createNextEpisode(showId = 2, showName = "Wednesday", firstAired = null),
-        )
-        upNextRepository.setNextEpisodesForWatchlist(episodes)
-
-        interactor("")
-
-        interactor.flow.test {
-            val result = awaitItem()
-            result.watchNext.size shouldBe 1
-            result.watchNext[0].showName shouldBe "Loki"
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
     fun `should format episode number with padding`() = runTest {
         val episodes = listOf(
             createNextEpisode(showId = 1, showName = "Show", seasonNumber = 10, episodeNumber = 5),
@@ -252,27 +234,6 @@ class ObserveUpNextSectionsInteractorTest {
         interactor.flow.test {
             val result = awaitItem()
             result.watchNext[0].formattedRuntime shouldBe null
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `should filter out episodes that have not aired yet`() = runTest {
-        val pastEpoch = dateTimeProvider.nowMillis() - (14 * 24 * 60 * 60 * 1000L)
-        val futureEpoch = dateTimeProvider.nowMillis() + (17 * 24 * 60 * 60 * 1000L)
-
-        val episodes = listOf(
-            createNextEpisode(showId = 1, showName = "Aired Show", firstAired = pastEpoch),
-            createNextEpisode(showId = 2, showName = "Future Show", firstAired = futureEpoch),
-        )
-        upNextRepository.setNextEpisodesForWatchlist(episodes)
-
-        interactor("")
-
-        interactor.flow.test {
-            val result = awaitItem()
-            result.watchNext.size shouldBe 1
-            result.watchNext[0].showName shouldBe "Aired Show"
             cancelAndConsumeRemainingEvents()
         }
     }

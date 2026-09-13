@@ -32,7 +32,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlin.time.Clock
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -260,7 +259,7 @@ public class DefaultWatchedEpisodeDao(
                 .asFlow()
                 .mapToList(dispatchers.databaseRead),
             database.watchedEpisodesQueries
-                .getTotalEpisodesForSeason(internalShowId, seasonNumber)
+                .getTotalEpisodesForSeason(internalShowId, seasonNumber, nowMillis = dateTimeProvider.nowMillis())
                 .asFlow()
                 .map { it.executeAsOne() },
         ) { watchedEpisodes, totalCount ->
@@ -394,6 +393,7 @@ public class DefaultWatchedEpisodeDao(
                         showId = internalShowId,
                         season_number = seasonNumber,
                         include_specials = if (includeSpecials) 1L else 0L,
+                        nowMillis = dateTimeProvider.nowMillis(),
                     )
                     .executeAsList()
 
@@ -409,7 +409,7 @@ public class DefaultWatchedEpisodeDao(
                 }
 
                 val currentSeasonEpisodes = database.watchedEpisodesQueries
-                    .getEpisodesForSeason(internalShowId, seasonNumber)
+                    .getEpisodesForSeason(internalShowId, seasonNumber, nowMillis = dateTimeProvider.nowMillis())
                     .executeAsList()
 
                 val _ = database.continueWatchingQueries.upsertMembershipForLocalMark(
@@ -497,6 +497,7 @@ public class DefaultWatchedEpisodeDao(
                 season_number = seasonNumber,
                 episode_number = episodeNumber,
                 include_specials = if (includeSpecials) 1L else 0L,
+                nowMillis = dateTimeProvider.nowMillis(),
             )
             .executeAsList()
         return unwatchedEpisodes
@@ -548,7 +549,7 @@ public class DefaultWatchedEpisodeDao(
         return withContext(dispatchers.databaseRead) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext emptyList()
             database.watchedEpisodesQueries
-                .getEpisodesForSeason(internalShowId, seasonNumber)
+                .getEpisodesForSeason(internalShowId, seasonNumber, nowMillis = dateTimeProvider.nowMillis())
                 .executeAsList()
                 .map { result ->
                     EpisodeWatchParams(
@@ -573,6 +574,7 @@ public class DefaultWatchedEpisodeDao(
                     showId = internalShowId,
                     season_number = seasonNumber,
                     include_specials = if (includeSpecials) 1L else 0L,
+                    nowMillis = dateTimeProvider.nowMillis(),
                 )
                 .executeAsOne()
         }
@@ -589,6 +591,7 @@ public class DefaultWatchedEpisodeDao(
                 showId = internalShowId,
                 season_number = seasonNumber,
                 include_specials = if (includeSpecials) 1L else 0L,
+                nowMillis = dateTimeProvider.nowMillis(),
             )
             .asFlow()
             .map { it.executeAsOne() }
@@ -654,7 +657,7 @@ public class DefaultWatchedEpisodeDao(
     ) {
         if (entries.isEmpty()) return
 
-        val syncedAt = Clock.System.now().toEpochMilliseconds()
+        val syncedAt = dateTimeProvider.nowMillis()
 
         withContext(dispatchers.databaseWrite) {
             val internalShowId = showIdResolver.showIdForTmdbId(showId) ?: return@withContext

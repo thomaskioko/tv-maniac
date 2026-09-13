@@ -106,13 +106,13 @@ SELECT
      INNER JOIN season s ON e.season_id = s.id
      WHERE rse.session_id = rs.id
        AND (s.season_number > 0 OR s.title != 'Specials')
-       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS watched_in_session,
+       AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis)) AS watched_in_session,
     (SELECT COUNT(*)
      FROM episode e
      INNER JOIN season s ON e.season_id = s.id
      WHERE e.show_id = rs.show_id
        AND (s.season_number > 0 OR s.title != 'Specials')
-       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS aired_total
+       AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis)) AS aired_total
 FROM rewatch_session rs
 WHERE rs.id = :sessionId;
 
@@ -175,13 +175,13 @@ SELECT
      INNER JOIN season s ON e.season_id = s.id
      WHERE rse.session_id = open_session.id
        AND (s.season_number > 0 OR s.title != 'Specials')
-       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS watched_in_session,
+       AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis)) AS watched_in_session,
     (SELECT COUNT(*)
      FROM episode e
      INNER JOIN season s ON e.season_id = s.id
      WHERE e.show_id = :showId
        AND (s.season_number > 0 OR s.title != 'Specials')
-       AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)) AS aired_total
+       AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis)) AS aired_total
 FROM tvshow
 LEFT JOIN rewatch_session AS open_session
     ON open_session.show_id = tvshow.id AND open_session.closed_at IS NULL

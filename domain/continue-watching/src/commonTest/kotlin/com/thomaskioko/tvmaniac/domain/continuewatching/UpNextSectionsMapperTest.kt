@@ -162,42 +162,7 @@ class UpNextSectionsMapperTest {
 
         val result = mapper.map(episodes)
 
-        result.watchNext.size shouldBe 0
-    }
-
-    @Test
-    fun `should filter out episodes that have not aired yet`() {
-        val currentTime = LocalDate(2023, 11, 14).toEpochMillis()
-        val futureDate = LocalDate(2023, 11, 20).toEpochMillis()
-        val pastDate = LocalDate(2023, 11, 10).toEpochMillis()
-        dateTimeProvider.setCurrentTimeMillis(currentTime)
-
-        val episodes = listOf(
-            createNextEpisode(showId = 1, showName = "Aired", firstAired = pastDate),
-            createNextEpisode(showId = 2, showName = "Future", firstAired = futureDate),
-        )
-
-        val result = mapper.map(episodes)
-
-        result.watchNext.size shouldBe 1
-        result.watchNext[0].showName shouldBe "Aired"
-    }
-
-    @Test
-    fun `should filter out episodes with null air date`() {
-        val currentTime = LocalDate(2023, 11, 14).toEpochMillis()
-        val pastDate = LocalDate(2023, 11, 10).toEpochMillis()
-        dateTimeProvider.setCurrentTimeMillis(currentTime)
-
-        val episodes = listOf(
-            createNextEpisode(showId = 1, showName = "Known Date", firstAired = pastDate),
-            createNextEpisode(showId = 2, showName = "Unknown Date", firstAired = null),
-        )
-
-        val result = mapper.map(episodes)
-
-        result.watchNext.size shouldBe 1
-        result.watchNext[0].showName shouldBe "Known Date"
+        result.watchNext.single().badge shouldBe EpisodeBadge.NONE
     }
 
     @Test

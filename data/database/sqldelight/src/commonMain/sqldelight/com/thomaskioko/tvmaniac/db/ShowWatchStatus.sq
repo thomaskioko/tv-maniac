@@ -26,7 +26,20 @@ statusForShow:
 SELECT status FROM show_watch_status WHERE show_id = :showId;
 
 watchProgressForShow:
-SELECT watched_count, total_count FROM show_watch_progress WHERE show_id = :showId;
+SELECT
+    (SELECT COUNT(*)
+     FROM watched_episodes
+     WHERE watched_episodes.show_id = tvshow.id
+       AND watched_episodes.pending_action NOT IN ('DELETE', 'SYNCED_DELETE')) AS watched_count,
+    (SELECT COUNT(*)
+     FROM episode
+     INNER JOIN season ON episode.season_id = season.id
+     WHERE episode.show_id = tvshow.id
+       AND season.season_number > 0
+       AND episode.first_aired IS NOT NULL
+       AND episode.first_aired <= :nowMillis) AS total_count
+FROM tvshow
+WHERE tvshow.id = :showId;
 
 delete:
 DELETE FROM show_watch_status WHERE show_id = :showId;

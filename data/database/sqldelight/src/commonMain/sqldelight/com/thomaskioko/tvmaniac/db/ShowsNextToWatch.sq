@@ -77,7 +77,7 @@ next_abs AS (
     WHERE (season.season_number > 0 OR (season.season_number = 0 AND season.title != 'Specials'))
       AND (:includeSpecials = 1 OR season.season_number > 0)
       AND episode.first_aired IS NOT NULL
-      AND episode.first_aired <= strftime('%s', 'now') * 1000
+      AND episode.first_aired <= :nowMillis
       AND ((1000 * season.season_number) + episode.episode_number) > COALESCE(last_watched.last_watched_abs_number, 0)
       AND NOT EXISTS (
         SELECT 1 FROM watched_episodes
@@ -107,7 +107,7 @@ total_counts AS (
     INNER JOIN continue_watching ON continue_watching.show_id = episode.show_id
     WHERE season.season_number > 0
       AND episode.first_aired IS NOT NULL
-      AND episode.first_aired <= strftime('%s', 'now') * 1000
+      AND episode.first_aired <= :nowMillis
     GROUP BY episode.show_id
 )
 SELECT
@@ -167,7 +167,7 @@ total_counts AS (
     INNER JOIN continue_watching ON continue_watching.show_id = episode.show_id
     WHERE season.season_number > 0
       AND episode.first_aired IS NOT NULL
-      AND episode.first_aired <= strftime('%s', 'now') * 1000
+      AND episode.first_aired <= :nowMillis
     GROUP BY episode.show_id
 )
 SELECT

@@ -8,6 +8,7 @@ import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingDao
 import com.thomaskioko.tvmaniac.startwatching.api.StartWatchingShow
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -35,7 +36,7 @@ internal class DefaultStartWatchingDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setUp() {
-        dao = DefaultStartWatchingDao(database, dispatchers)
+        dao = DefaultStartWatchingDao(database, dispatchers, FakeDateTimeProvider())
     }
 
     @AfterTest

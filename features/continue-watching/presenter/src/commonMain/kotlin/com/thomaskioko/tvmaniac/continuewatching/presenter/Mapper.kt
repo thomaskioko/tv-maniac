@@ -6,66 +6,13 @@ import com.thomaskioko.tvmaniac.continuewatching.presenter.model.NextEpisodeItem
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.SectionedEpisodes
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.SectionedItems
 import com.thomaskioko.tvmaniac.continuewatching.presenter.model.UpNextEpisodeItem
-import com.thomaskioko.tvmaniac.db.FollowedShows
-import com.thomaskioko.tvmaniac.db.SearchFollowedShows
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.NextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextEpisodeInfo
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.UpNextSections
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistSections
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.WatchlistShowInfo
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toPersistentList
 import com.thomaskioko.tvmaniac.domain.continuewatching.model.EpisodeBadge as DomainEpisodeBadge
-
-internal fun List<FollowedShows>.entityToWatchlistShowList(
-    lastWatchedMap: Map<Long, Long?> = emptyMap(),
-): PersistentList<ContinueWatchingItem> {
-    return this.map {
-        val watched = it.watched_count
-        val total = it.total_episode_count
-        val progress = if (total > 0) watched.toFloat() / total else 0f
-        ContinueWatchingItem(
-            showId = it.show_id.id,
-            title = it.name,
-            posterImageUrl = it.poster_path,
-            status = it.status,
-            year = it.year,
-            seasonCount = it.season_count ?: 0,
-            episodeCount = it.episode_count ?: 0,
-            episodesWatched = watched,
-            totalEpisodesTracked = total,
-            watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_id.id],
-        )
-    }
-        .toPersistentList()
-}
-
-internal fun List<SearchFollowedShows>.entityToWatchlistShowList(
-    lastWatchedMap: Map<Long, Long?> = emptyMap(),
-): ImmutableList<ContinueWatchingItem> {
-    return this.map {
-        val watched = it.watched_count
-        val total = it.total_episode_count
-        val progress = if (total > 0) watched.toFloat() / total else 0f
-        ContinueWatchingItem(
-            showId = it.show_id.id,
-            title = it.name,
-            posterImageUrl = it.poster_path,
-            status = it.status,
-            year = it.year,
-            seasonCount = it.season_count ?: 0,
-            episodeCount = it.episode_count ?: 0,
-            episodesWatched = watched,
-            totalEpisodesTracked = total,
-            watchProgress = progress,
-            lastWatchedAt = lastWatchedMap[it.show_id.id],
-        )
-    }
-        .toPersistentList()
-}
 
 internal fun WatchlistSections.toPresenter(): SectionedItems = SectionedItems(
     watchNext = watchNext.map { it.toPresenter() }.toImmutableList(),
