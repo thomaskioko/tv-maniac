@@ -201,31 +201,6 @@ internal fun SqlDriver.insertWatchedEpisode(
     )
 }
 
-internal data class WatchProgress(val watched: Long, val total: Long)
-
-internal fun SqlDriver.queryWatchProgress(showTraktId: Long): WatchProgress = executeQuery(
-    identifier = null,
-    sql = """
-        SELECT watched_count, total_count
-        FROM show_watch_progress
-        WHERE show_id = (SELECT show_id FROM show_trakt WHERE trakt_id = $showTraktId)
-    """.trimIndent(),
-    parameters = 0,
-    binders = null,
-    mapper = { cursor ->
-        QueryResult.Value(
-            if (cursor.next().value) {
-                WatchProgress(
-                    watched = cursor.getLong(0) ?: 0L,
-                    total = cursor.getLong(1) ?: 0L,
-                )
-            } else {
-                WatchProgress(watched = 0L, total = 0L)
-            },
-        )
-    },
-).value
-
 internal fun SqlDriver.countNextToWatch(showTraktId: Long): Long = executeQuery(
     identifier = null,
     sql = """
