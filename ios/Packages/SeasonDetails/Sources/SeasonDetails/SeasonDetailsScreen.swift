@@ -144,7 +144,7 @@ public struct SeasonDetailsScreen: View {
         .liquidGlassVariant(
             liquidGlass: { view in
                 view
-                    .navigationTitle(state.seasonName)
+                    .navigationTitle(showGlass > 0 ? state.seasonName : "")
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Button(action: onBack) {

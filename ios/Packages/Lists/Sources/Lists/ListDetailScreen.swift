@@ -5,6 +5,7 @@ import SwiftUI
 
 public struct ListDetailScreen: View {
     @Environment(\.appTheme) private var theme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
     @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let state: State
@@ -76,26 +77,48 @@ public struct ListDetailScreen: View {
 
     public var body: some View {
         stateBody
-            .appScreen()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .navigationBarColor(backgroundColor: .clear)
             .swipeBackGesture(onSwipe: onBack)
-            .overlay(
-                GlassToolbar(
-                    title: state.title,
-                    opacity: 1.0,
-                    leadingIcon: {
-                        GlassButton(icon: "chevron.left", action: onBack)
-                            .accessibilityLabel(backButtonAccessibilityLabel)
-                    },
-                    trailingIcon: {
-                        moreOptionsMenu
-                    }
-                ),
-                alignment: .top
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .appScreen()
+                        .navigationTitle(state.title)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(action: onBack) {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .tint(theme.colors.onSurface)
+                                .accessibilityLabel(backButtonAccessibilityLabel)
+                            }
+                            ToolbarItem(placement: .topBarTrailing) {
+                                moreOptionsMenuGlass
+                            }
+                        }
+                },
+                legacy: { view in
+                    view
+                        .appScreen()
+                        .navigationBarColor(backgroundColor: .clear)
+                        .overlay(
+                            GlassToolbar(
+                                title: state.title,
+                                opacity: 1.0,
+                                leadingIcon: {
+                                    GlassButton(icon: "chevron.left", action: onBack)
+                                        .accessibilityLabel(backButtonAccessibilityLabel)
+                                },
+                                trailingIcon: {
+                                    moreOptionsMenu
+                                }
+                            ),
+                            alignment: .top
+                        )
+                        .edgesIgnoringSafeArea(.top)
+                }
             )
-            .edgesIgnoringSafeArea(.top)
             .alert(
                 state.removeConfirmation?.title ?? "",
                 isPresented: Binding(
@@ -181,6 +204,21 @@ public struct ListDetailScreen: View {
         } label: {
             GlassMenuLabel(icon: "ellipsis")
         }
+        .accessibilityLabel(moreOptionsAccessibilityLabel)
+    }
+
+    private var moreOptionsMenuGlass: some View {
+        Menu {
+            Button(action: onRenameRequested) {
+                Label(state.renameLabel, systemImage: "pencil")
+            }
+            Button(role: .destructive, action: onDeleteRequested) {
+                Label(state.deleteLabel, systemImage: "trash")
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+        }
+        .tint(theme.colors.onSurface)
         .accessibilityLabel(moreOptionsAccessibilityLabel)
     }
 
@@ -313,7 +351,7 @@ public struct ListDetailScreen: View {
     private var toolbarInset: CGFloat {
         let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
             .windows.first?.safeAreaInsets.top ?? 0
-        return 44 + safeAreaTop
+        return liquidGlassEnabled ? 0 : 44 + safeAreaTop
     }
 }
 

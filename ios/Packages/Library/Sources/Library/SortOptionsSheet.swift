@@ -30,23 +30,40 @@ struct SortOptionsSheet: View {
 
                 actionBar
             }
-            .background(theme.colors.background)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(String(\.label_library_filter_title))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .navigationTitle(String(\.label_library_filter_title))
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(role: .close) {
+                                    dismiss()
+                                }
+                                .tint(theme.colors.onSurface)
+                            }
+                        }
+                },
+                legacy: { view in
+                    view
+                        .background(theme.colors.background)
+                        .toolbar {
+                            ToolbarItem(placement: .principal) {
+                                Text(String(\.label_library_filter_title))
+                                    .textStyle(theme.typography.titleMedium)
+                                    .foregroundColor(theme.colors.onSurface)
+                            }
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Image(systemName: "xmark")
+                                        .foregroundColor(theme.colors.onSurface)
+                                }
+                            }
+                        }
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(theme.colors.onSurface)
-                    }
-                }
-            }
+            )
         }
     }
 

@@ -14,41 +14,45 @@ class ListsScreenTest: SnapshotTestCase {
     ]
 
     func test_ListsScreen_Loading() {
-        makeScreen(state: ListsScreen.State(title: "Lists", isLoading: true))
-            .assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Loading")
+        let view = makeScreen(state: ListsScreen.State(title: "Lists", isLoading: true))
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListsScreen_Loading")
     }
 
     func test_ListsScreen_Empty() {
-        makeScreen(
+        let view = makeScreen(
             state: ListsScreen.State(
                 title: "Lists",
                 isLoading: false,
                 emptyMessage: "You don't have any lists yet."
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListsScreen_Empty")
     }
 
     func test_ListsScreen_Content() {
-        makeScreen(
+        let view = makeScreen(
             state: ListsScreen.State(
                 title: "Lists",
                 isLoading: false,
                 lists: sampleLists
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Content")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Content")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListsScreen_Content")
     }
 
     func test_ListsScreen_Error() {
-        makeScreen(
+        let view = makeScreen(
             state: ListsScreen.State(
                 title: "Lists",
                 isLoading: false,
                 errorMessage: "Failed to load lists"
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListsScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListsScreen_Error")
     }
 
     private func makeScreen(state: ListsScreen.State) -> some View {
