@@ -51,6 +51,12 @@
             ]
         },
         {
+            "groupName": "Robolectric",
+            "matchPackageNames": [
+                "/org.robolectric/"
+            ]
+        },
+        {
             "groupName": "Roborazzi",
             "matchPackageNames": [
                 "/io.github.takahirom.roborazzi/"
