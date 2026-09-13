@@ -26,10 +26,6 @@ extension XCUIApplication {
         tabBars.firstMatch
     }
 
-    func screen(_ identifier: String) -> XCUIElement {
-        otherElements[identifier]
-    }
-
     func element(_ identifier: String) -> XCUIElement {
         descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
@@ -41,14 +37,14 @@ extension XCUIApplication {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> XCUIElement {
-        let element = screen(identifier)
+        let screen = element(identifier)
         XCTAssertTrue(
-            element.waitForExistence(timeout: timeout),
+            screen.waitForExistence(timeout: timeout),
             "Screen \"\(identifier)\" never appeared within \(timeout)s.",
             file: file,
             line: line
         )
-        return element
+        return screen
     }
 
     func openTab(
