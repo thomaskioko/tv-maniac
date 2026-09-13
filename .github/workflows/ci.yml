@@ -245,7 +245,6 @@ jobs:
                     path: '**/build/reports/*'
 
     build-ios-framework:
-        needs: [swift-lint]
         runs-on: macos-26
         timeout-minutes: 60
         env:
