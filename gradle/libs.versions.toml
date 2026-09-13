@@ -67,13 +67,12 @@ multiplatformsettings = "1.3.0"
 napier = "2.7.1"
 okhttp = "5.5.0"
 okio = "3.18.2"
-robolectric = "4.16.1"
+robolectric = "4.17"
 roborazzi = "1.74.0"
 profileinstaller = "1.4.1"
 roborazziCore = "1.74.0"
 runner = "1.7.0"
 serialization = "1.11.0"
-shadowsFramework = "4.16.1"
 sqldelight = "2.3.2"
 spotless = "8.10.2"
 store5 = "5.0.0"
@@ -206,7 +205,7 @@ robolectric-annotations = { group = "org.robolectric", name = "annotations", ver
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
 
 roborazzi-core = { module = "io.github.takahirom.roborazzi:roborazzi-core", version.ref = "roborazziCore" }
-shadows-framework = { module = "org.robolectric:shadows-framework", version.ref = "shadowsFramework" }
+shadows-framework = { module = "org.robolectric:shadows-framework", version.ref = "robolectric" }
 
 sqldelight-dialect = { module = "app.cash.sqldelight:sqlite-3-25-dialect", version.ref = "sqldelight" }
 sqldelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
