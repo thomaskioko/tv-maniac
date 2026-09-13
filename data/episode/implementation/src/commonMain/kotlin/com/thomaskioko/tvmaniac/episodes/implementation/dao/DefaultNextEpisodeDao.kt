@@ -27,19 +27,19 @@ public class DefaultNextEpisodeDao(
 
     override fun observeNextEpisodesForWatchlist(includeSpecials: Boolean): Flow<List<NextEpisodeWithShow>> {
         return database.showsNextToWatchQueries
-            .nextEpisodesForWatchlist(includeSpecials = if (includeSpecials) 1L else 0L)
+            .nextEpisodesForWatchlist(
+                includeSpecials = if (includeSpecials) 1L else 0L,
+                nowMillis = dateTimeProvider.nowMillis(),
+            )
             .asFlow()
             .mapToList(dispatchers.databaseRead)
-            .map { rows ->
-                rows.map { it.toNextEpisodeWithShow() }
-                    .filterActionableEpisodes(dateTimeProvider.nowMillis())
-            }
+            .map { rows -> rows.map { it.toNextEpisodeWithShow() }.filter { it.episodeId != null } }
             .catch { emit(emptyList()) }
     }
 
     override fun observeCompletedShows(): Flow<List<CompletedShow>> {
         return database.showsNextToWatchQueries
-            .completedShowsForWatchlist()
+            .completedShowsForWatchlist(nowMillis = dateTimeProvider.nowMillis())
             .asFlow()
             .mapToList(dispatchers.databaseRead)
             .map { rows -> rows.map { it.toCompletedShow() } }
@@ -82,11 +82,4 @@ private fun NextEpisodesForWatchlist.toNextEpisodeWithShow(): NextEpisodeWithSho
         rating = ratings,
         voteCount = vote_count,
     )
-}
-
-private fun List<NextEpisodeWithShow>.filterActionableEpisodes(
-    nowMillis: Long,
-): List<NextEpisodeWithShow> = filter { episode ->
-    val airDate = episode.firstAired
-    episode.episodeId != null && airDate != null && airDate <= nowMillis
 }
