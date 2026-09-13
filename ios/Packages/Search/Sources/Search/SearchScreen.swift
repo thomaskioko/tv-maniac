@@ -94,11 +94,8 @@ public struct SearchScreen: View {
                     .appScreen()
                     .navigationTitle(state.title)
                     .toolbar { glassToolbarContent }
-                    .searchable(
-                        text: $glassQuery,
-                        placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: state.searchPlaceholder
-                    )
+                    .toolbar { DefaultToolbarItem(kind: .search, placement: .bottomBar) }
+                    .searchable(text: $glassQuery, prompt: state.searchPlaceholder)
                     .searchFocused($isSearchFocused)
                     .onChange(of: glassQuery) { _, newValue in
                         if newValue != query {
