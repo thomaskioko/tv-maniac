@@ -1,8 +1,6 @@
 name: iOS Binary Size
 
 on:
-    push:
-        branches: [ main ]
     schedule:
         -   cron: '30 4 * * *'
     workflow_dispatch:
@@ -58,7 +56,7 @@ jobs:
 
             -   name: 🔐 Authenticate for the size sheet
                 id: sheet-auth
-                if: ${{ (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.append_to_sheet)) && env.SHEET_SECRETS_PRESENT == 'true' }}
+                if: ${{ (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.append_to_sheet)) && env.SHEET_SECRETS_PRESENT == 'true' }}
                 uses: google-github-actions/auth@v3
                 with:
                     credentials_json: ${{ secrets.GCP_SA_KEY }}
