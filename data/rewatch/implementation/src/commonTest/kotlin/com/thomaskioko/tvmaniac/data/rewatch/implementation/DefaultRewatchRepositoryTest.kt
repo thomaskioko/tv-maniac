@@ -53,7 +53,7 @@ internal class DefaultRewatchRepositoryTest : BaseDatabaseTest() {
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        rewatchSessionDao = DefaultRewatchSessionDao(database, dispatchers)
+        rewatchSessionDao = DefaultRewatchSessionDao(database, dispatchers, dateTimeProvider)
         localShowId = addShow(tmdbId = TMDB_ID)
         addSeason(seasonId = SEASON_ID, showId = localShowId)
         addEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID, showId = localShowId, episodeNumber = 1L)

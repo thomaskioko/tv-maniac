@@ -17,6 +17,7 @@ import com.thomaskioko.tvmaniac.followedshows.api.PendingAction
 import com.thomaskioko.tvmaniac.requestmanager.testing.FakeRequestManagerRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeActivitySyncRepository
 import com.thomaskioko.tvmaniac.syncactivity.testing.FakeTraktActivityRepository
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
@@ -65,7 +66,7 @@ internal class DefaultLogoutHandlerTest : BaseDatabaseTest() {
     fun setUp() {
         ratingsDao = DefaultRatingsDao(database, dispatchers)
         providerMetaDao = DefaultProviderMetaDao(database, dispatchers)
-        rewatchSessionDao = DefaultRewatchSessionDao(database, dispatchers)
+        rewatchSessionDao = DefaultRewatchSessionDao(database, dispatchers, FakeDateTimeProvider())
         cleaner = DefaultLogoutHandler(
             syncCoroutineScope = syncCoroutineScope,
             userRepository = fakeUserRepository,
