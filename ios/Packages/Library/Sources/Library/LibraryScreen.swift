@@ -51,6 +51,7 @@ public struct LibraryScreen: View {
     }
 
     @Environment(\.appTheme) private var appTheme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
     @Environment(\.widthSizeClass) private var widthSizeClass
 
     private let state: State
@@ -134,7 +135,9 @@ public struct LibraryScreen: View {
                 localQuery = state.query
             }
             .onChange(of: state.query) { _, newValue in
-                localQuery = newValue
+                if !liquidGlassEnabled || newValue.isEmpty {
+                    localQuery = newValue
+                }
             }
     }
 
