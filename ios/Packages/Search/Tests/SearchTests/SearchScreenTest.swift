@@ -47,38 +47,45 @@ class SearchScreenTest: SnapshotTestCase {
     ]
 
     func test_SearchScreen_Loading() {
-        makeScreen(state: .loading)
-            .assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_Loading")
+        let view = makeScreen(state: .loading)
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SearchScreen_Loading")
     }
 
     func test_SearchScreen_BrowsingGenres() {
-        makeScreen(state: .browsingGenres(genres: sampleGenres, isRefreshing: false))
-            .assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_BrowsingGenres")
+        let view = makeScreen(state: .browsingGenres(genres: sampleGenres, isRefreshing: false))
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_BrowsingGenres")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SearchScreen_BrowsingGenres")
     }
 
     func test_SearchScreen_BrowsingGenres_Refreshing() {
-        makeScreen(state: .browsingGenres(genres: sampleGenres, isRefreshing: true))
-            .assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_BrowsingGenres_Refreshing")
+        let view = makeScreen(state: .browsingGenres(genres: sampleGenres, isRefreshing: true))
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_BrowsingGenres_Refreshing")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SearchScreen_BrowsingGenres_Refreshing")
     }
 
     func test_SearchScreen_SearchResults() {
-        makeScreen(state: .searchResults(results: sampleResults, isUpdating: false), query: "penguin")
-            .assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_SearchResults")
+        let view = makeScreen(state: .searchResults(results: sampleResults, isUpdating: false), query: "penguin")
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_SearchResults")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SearchScreen_SearchResults")
     }
 
     func test_SearchScreen_SearchResults_Updating() {
-        makeScreen(state: .searchResults(results: sampleResults, isUpdating: true), query: "penguin")
-            .assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_SearchResults_Updating")
+        let view = makeScreen(state: .searchResults(results: sampleResults, isUpdating: true), query: "penguin")
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_SearchResults_Updating")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SearchScreen_SearchResults_Updating")
     }
 
     func test_SearchScreen_Empty() {
-        makeScreen(state: .empty, query: "xyzabc")
-            .assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_Empty")
+        let view = makeScreen(state: .empty, query: "xyzabc")
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SearchScreen_Empty")
     }
 
     func test_SearchScreen_Error() {
-        makeScreen(state: .error(message: "Something went wrong. Please try again."))
-            .assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_Error")
+        let view = makeScreen(state: .error(message: "Something went wrong. Please try again."))
+        view.assertSnapshot(layout: .defaultDevice, testName: "SearchScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "SearchScreen_Error")
     }
 
     private func makeScreen(

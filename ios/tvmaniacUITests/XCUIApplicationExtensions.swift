@@ -81,6 +81,18 @@ extension XCUIApplication {
         buttons[SettingsTestTags.shared.BACK_BUTTON_TEST_TAG].tap()
     }
 
+    func searchField() -> XCUIElement {
+        let taggedField = textFields[SearchTestTags.shared.SEARCH_BAR_TEST_TAG]
+        if taggedField.exists {
+            return taggedField
+        }
+        let systemField = searchFields.firstMatch
+        if systemField.waitForExistence(timeout: UITestTimeouts.shortProbe) {
+            return systemField
+        }
+        return taggedField
+    }
+
     func openShowDetailsFromSearch(
         file: StaticString = #filePath,
         line: UInt = #line
@@ -89,7 +101,7 @@ extension XCUIApplication {
         buttons[DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG].tap()
         awaitScreen(SearchTestTags.shared.SCREEN_TEST_TAG)
 
-        let field = textFields[SearchTestTags.shared.SEARCH_BAR_TEST_TAG]
+        let field = searchField()
         XCTAssertTrue(
             field.waitForExistence(timeout: UITestTimeouts.screen),
             "The search field never appeared.",
@@ -141,4 +153,5 @@ enum StubScenario {
 enum UITestTimeouts {
     static let launch: TimeInterval = 90
     static let screen: TimeInterval = 30
+    static let shortProbe: TimeInterval = 1
 }

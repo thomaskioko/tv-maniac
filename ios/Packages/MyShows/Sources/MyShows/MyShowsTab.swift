@@ -14,6 +14,7 @@ public struct MyShowsTab: View {
     @StateValue private var startWatchingState: StartWatchingState
 
     @Environment(\.appTheme) private var appTheme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
     @State private var watchNextEpisodesSwift: [SwiftNextEpisode] = []
     @State private var staleEpisodesSwift: [SwiftNextEpisode] = []
     @State private var toast: Toast?
@@ -96,7 +97,9 @@ public struct MyShowsTab: View {
             staleEpisodesSwift = newValue.map { $0.toSwift() }
         }
         .onChange(of: uiState.query) { _, newValue in
-            localQuery = newValue
+            if !liquidGlassEnabled || newValue.isEmpty {
+                localQuery = newValue
+            }
         }
         .onAppear {
             localQuery = uiState.query

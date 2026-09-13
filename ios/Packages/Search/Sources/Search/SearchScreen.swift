@@ -46,6 +46,7 @@ public struct SearchScreen: View {
     }
 
     @Environment(\.appTheme) private var theme
+    @Environment(\.liquidGlassEnabled) private var liquidGlassEnabled
 
     private let state: State
     @Binding private var query: String
@@ -55,6 +56,7 @@ public struct SearchScreen: View {
     private let onCategoryChanged: (String) -> Void
 
     @FocusState private var isSearchFocused: Bool
+    @SwiftUI.State private var glassQuery: String = ""
     @SwiftUI.State private var showFilterSheet = false
 
     public init(
@@ -81,26 +83,74 @@ public struct SearchScreen: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .top) {
-            ScrollView(showsIndicators: false) {
-                contentView
-                    .padding(.top, theme.spacing.medium)
-            }
-            .contentMargins(.top, totalHeaderHeight)
-
-            headerOverlay
+        ScrollView(showsIndicators: false) {
+            contentView
+                .padding(.top, theme.spacing.medium)
         }
-        .appScreen()
+        .contentMargins(.top, totalHeaderHeight)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .appScreen()
+                    .navigationTitle(state.title)
+                    .toolbar { glassToolbarContent }
+                    .searchable(
+                        text: $glassQuery,
+                        placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: state.searchPlaceholder
+                    )
+                    .searchFocused($isSearchFocused)
+                    .onChange(of: glassQuery) { _, newValue in
+                        if newValue != query {
+                            query = newValue
+                        }
+                    }
+                    .onChange(of: query) { _, newValue in
+                        if newValue.isEmpty, !glassQuery.isEmpty {
+                            glassQuery = ""
+                        }
+                    }
+                    .onAppear { glassQuery = query }
+            },
+            legacy: { view in
+                ZStack(alignment: .top) {
+                    view
+
+                    headerOverlay
+                }
+                .appScreen()
+                .navigationBarColor(backgroundColor: .clear)
+                .edgesIgnoringSafeArea(.top)
+            }
+        )
         .screenTag(SearchTestTags.shared.SCREEN_TEST_TAG)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .navigationBarColor(backgroundColor: .clear)
-        .edgesIgnoringSafeArea(.top)
         .disableAutocorrection(true)
         .textInputAutocapitalization(.never)
         .sheet(isPresented: $showFilterSheet) {
             filterSheetContent
                 .presentationDetents([.height(200)])
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var glassToolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button(action: onBack) {
+                Image(systemName: "chevron.left")
+            }
+            .tint(theme.colors.onSurface)
+        }
+        if isBrowsingGenres {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showFilterSheet = true
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease")
+                }
+                .tint(theme.colors.onSurface)
+            }
         }
     }
 
@@ -294,6 +344,7 @@ public struct SearchScreen: View {
     }
 
     private var totalHeaderHeight: CGFloat {
+        guard !liquidGlassEnabled else { return 0 }
         let toolbarHeight: CGFloat = 56
         let searchBarHeight: CGFloat = 44
         let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
