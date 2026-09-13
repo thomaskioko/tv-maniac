@@ -47,8 +47,11 @@ public struct WatchDateSelectionView: View {
         }
         .presentationDetents([.height(sheetHeight)])
         .presentationDragIndicator(.hidden)
-        .presentationBackground(store.appTheme.designSystemTheme.colors.surface)
         .presentationCornerRadius(16)
+        .liquidGlassVariant(
+            liquidGlass: { view in view },
+            legacy: { view in view.presentationBackground(store.appTheme.designSystemTheme.colors.surface) }
+        )
         .appTheme()
     }
 

@@ -7,7 +7,7 @@ import XCTest
 
 class EpisodeDetailSheetContentTest: SnapshotTestCase {
     func test_EpisodeDetailSheetContent_AllActions() {
-        makeSheet(
+        let view = makeSheet(
             episode: EpisodeDetailSheetInfo(
                 title: "The Walking Dead: Daryl Dixon",
                 imageUrl: nil,
@@ -19,11 +19,12 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
             showAllActions: true,
             isWatched: false
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_AllActions")
+        view.assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_AllActions")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "EpisodeDetailSheetContent_AllActions")
     }
 
     func test_EpisodeDetailSheetContent_Watched() {
-        makeSheet(
+        let view = makeSheet(
             episode: EpisodeDetailSheetInfo(
                 title: "Wednesday",
                 imageUrl: nil,
@@ -35,11 +36,12 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
             showAllActions: true,
             isWatched: true
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_Watched")
+        view.assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_Watched")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "EpisodeDetailSheetContent_Watched")
     }
 
     func test_EpisodeDetailSheetContent_SeasonDetailsSource() {
-        makeSheet(
+        let view = makeSheet(
             episode: EpisodeDetailSheetInfo(
                 title: "House of the Dragon",
                 imageUrl: nil,
@@ -51,11 +53,12 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
             showAllActions: false,
             isWatched: false
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_SeasonDetailsSource")
+        view.assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_SeasonDetailsSource")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "EpisodeDetailSheetContent_SeasonDetailsSource")
     }
 
     func test_EpisodeDetailSheetContent_NoOverview() {
-        makeSheet(
+        let view = makeSheet(
             episode: EpisodeDetailSheetInfo(
                 title: "Severance",
                 imageUrl: nil,
@@ -67,11 +70,12 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
             showAllActions: true,
             isWatched: false
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_NoOverview")
+        view.assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_NoOverview")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "EpisodeDetailSheetContent_NoOverview")
     }
 
     func test_EpisodeDetailSheetContent_WatchedAgain() {
-        makeSheet(
+        let view = makeSheet(
             episode: EpisodeDetailSheetInfo(
                 title: "The Walking Dead: Daryl Dixon",
                 imageUrl: nil,
@@ -85,11 +89,12 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
             showAllActions: true,
             isWatched: true
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_WatchedAgain")
+        view.assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_WatchedAgain")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "EpisodeDetailSheetContent_WatchedAgain")
     }
 
     func test_EpisodeDetailSheetContent_SeenOnce() {
-        makeSheet(
+        let view = makeSheet(
             episode: EpisodeDetailSheetInfo(
                 title: "The Walking Dead: Daryl Dixon",
                 imageUrl: nil,
@@ -103,7 +108,8 @@ class EpisodeDetailSheetContentTest: SnapshotTestCase {
             showAllActions: false,
             isWatched: true
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_SeenOnce")
+        view.assertSnapshot(layout: .defaultDevice, testName: "EpisodeDetailSheetContent_SeenOnce")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "EpisodeDetailSheetContent_SeenOnce")
     }
 
     private func makeSheet(

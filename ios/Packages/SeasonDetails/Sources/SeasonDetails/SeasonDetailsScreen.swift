@@ -140,32 +140,65 @@ public struct SeasonDetailsScreen: View {
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .navigationBarColor(backgroundColor: .clear)
         .swipeBackGesture(onSwipe: onBack)
-        .overlay(
-            VStack(spacing: 0) {
-                GlassToolbar(
-                    title: state.seasonName,
-                    opacity: showGlass,
-                    isLoading: state.isRefreshing,
-                    leadingIcon: {
-                        GlassButton(icon: "chevron.left", action: onBack)
-                            .opacity(1 - showGlass)
+        .liquidGlassVariant(
+            liquidGlass: { view in
+                view
+                    .navigationTitle(state.seasonName)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button(action: onBack) {
+                                Image(systemName: "chevron.left")
+                            }
+                            .tint(appTheme.colors.onSurface)
+                        }
                     }
-                )
-                ProgressView(value: state.watchProgress, total: 1)
-                    .progressViewStyle(RoundedRectProgressViewStyle())
-                    .offset(y: progressViewOffset)
-                    .opacity(showGlass)
+                    .overlay(
+                        ProgressView(value: state.watchProgress, total: 1)
+                            .progressViewStyle(RoundedRectProgressViewStyle())
+                            .padding(.top, toolbarInset)
+                            .offset(y: progressViewOffset)
+                            .opacity(showGlass),
+                        alignment: .top
+                    )
+                    .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
+                    .ignoresSafeArea(edges: .top)
             },
-            alignment: .top
+            legacy: { view in
+                view
+                    .navigationBarColor(backgroundColor: .clear)
+                    .overlay(
+                        VStack(spacing: 0) {
+                            GlassToolbar(
+                                title: state.seasonName,
+                                opacity: showGlass,
+                                isLoading: state.isRefreshing,
+                                leadingIcon: {
+                                    GlassButton(icon: "chevron.left", action: onBack)
+                                        .opacity(1 - showGlass)
+                                }
+                            )
+                            ProgressView(value: state.watchProgress, total: 1)
+                                .progressViewStyle(RoundedRectProgressViewStyle())
+                                .offset(y: progressViewOffset)
+                                .opacity(showGlass)
+                        },
+                        alignment: .top
+                    )
+                    .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
+                    .edgesIgnoringSafeArea(.top)
+            }
         )
-        .animation(.easeInOut(duration: AnimationConstants.defaultDuration), value: showGlass)
-        .edgesIgnoringSafeArea(.top)
         .sheet(isPresented: $showGallery) {
             ImageGalleryContentView(items: state.seasonImages)
         }
         .toastView(toast: $toast)
+    }
+
+    private var toolbarInset: CGFloat {
+        let safeAreaTop = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+            .windows.first?.safeAreaInsets.top ?? 0
+        return 44 + safeAreaTop
     }
 
     private var seasonDetailsContent: some View {
