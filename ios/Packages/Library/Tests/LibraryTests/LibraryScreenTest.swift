@@ -112,53 +112,54 @@ class LibraryScreenTest: SnapshotTestCase {
             onSortClicked: {},
             onShowClicked: { _ in }
         )
+        .appPreview()
     }
 
     func test_LibraryScreen_Loading() {
-        screen(state: makeState(isLoading: true))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Loading")
+        let view = screen(state: makeState(isLoading: true))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_Loading")
     }
 
     func test_LibraryScreen_Empty() {
-        screen(state: makeState(isEmpty: true))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Empty")
+        let view = screen(state: makeState(isEmpty: true))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_Empty")
     }
 
     func test_LibraryScreen_GridMode() {
-        screen(state: makeState(layout: .grid, gridItems: sampleGridItems))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_GridMode")
+        let view = screen(state: makeState(layout: .grid, gridItems: sampleGridItems))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_GridMode")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_GridMode")
     }
 
     func test_LibraryScreen_ListMode() {
-        screen(state: makeState(layout: .list, listItems: sampleListItems))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_ListMode")
+        let view = screen(state: makeState(layout: .list, listItems: sampleListItems))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_ListMode")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_ListMode")
     }
 
     func test_LibraryScreen_CompactMode() {
-        screen(state: makeState(layout: .compact, listItems: sampleListItems))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_CompactMode")
+        let view = screen(state: makeState(layout: .compact, listItems: sampleListItems))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_CompactMode")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_CompactMode")
     }
 
     func test_LibraryScreen_DetailedMode() {
-        screen(state: makeState(layout: .detailed, listItems: sampleListItems))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_DetailedMode")
+        let view = screen(state: makeState(layout: .detailed, listItems: sampleListItems))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_DetailedMode")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_DetailedMode")
     }
 
     func test_LibraryScreen_MenuUnlocked() {
-        screen(state: makeState(layout: .grid, isLayoutLocked: false, gridItems: sampleGridItems))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_MenuUnlocked")
+        let view = screen(state: makeState(layout: .grid, isLayoutLocked: false, gridItems: sampleGridItems))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_MenuUnlocked")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_MenuUnlocked")
     }
 
     func test_LibraryScreen_MenuLocked() {
-        screen(state: makeState(layout: .grid, isLayoutLocked: true, gridItems: sampleGridItems))
-            .appPreview()
-            .assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_MenuLocked")
+        let view = screen(state: makeState(layout: .grid, isLayoutLocked: true, gridItems: sampleGridItems))
+        view.assertSnapshot(layout: .defaultDevice, testName: "LibraryScreen_MenuLocked")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "LibraryScreen_MenuLocked")
     }
 }

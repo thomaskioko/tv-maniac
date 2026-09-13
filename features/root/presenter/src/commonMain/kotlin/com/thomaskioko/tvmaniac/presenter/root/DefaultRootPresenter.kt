@@ -96,6 +96,7 @@ public class DefaultRootPresenter(
     private val syncObserver: SyncObserver,
     private val localizer: Localizer,
     private val internetConnectionChecker: InternetConnectionChecker,
+    private val liquidGlassAvailability: LiquidGlassAvailability,
 ) : RootPresenter, ComponentContext by componentContext {
 
     private val coroutineScope = coroutineScope()
@@ -192,7 +193,8 @@ public class DefaultRootPresenter(
             datastoreRepository.observePosterWidth(),
             datastoreRepository.observeLandscapeWidth(),
             datastoreRepository.observePosterCornerStyle(),
-        ) { theme, hapticFeedbackEnabled, blurImage, fontSizePercent, posterWidth, landscapeWidth, posterCornerStyle ->
+            liquidGlassAvailability.observe(),
+        ) { theme, hapticFeedbackEnabled, blurImage, fontSizePercent, posterWidth, landscapeWidth, posterCornerStyle, liquidGlassEnabled ->
             AppUiState(
                 isFetching = false,
                 appTheme = theme.toTheme(),
@@ -202,6 +204,7 @@ public class DefaultRootPresenter(
                 posterWidthScale = posterWidth.scale,
                 landscapeWidthScale = landscapeWidth.scale,
                 posterCornerRadius = posterCornerStyle.cornerRadius,
+                liquidGlassEnabled = liquidGlassEnabled,
             )
         }
             .stateIn(

@@ -54,7 +54,7 @@ class DebugScreenTest: SnapshotTestCase {
     ]
 
     func test_DebugScreen() {
-        DebugScreen(
+        let view = DebugScreen(
             state: DebugScreen.State(
                 title: "Debug Menu",
                 items: sampleItems
@@ -63,7 +63,8 @@ class DebugScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DebugScreen")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DebugScreen")
     }
 
     func test_DebugScreen_WithLoadingItem() {
@@ -85,7 +86,7 @@ class DebugScreenTest: SnapshotTestCase {
             ),
         ]
 
-        DebugScreen(
+        let view = DebugScreen(
             state: DebugScreen.State(
                 title: "Debug Menu",
                 items: items
@@ -94,7 +95,8 @@ class DebugScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_WithLoadingItem")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_WithLoadingItem")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DebugScreen_WithLoadingItem")
     }
 
     func test_DebugScreen_WithDisabledItem() {
@@ -116,7 +118,7 @@ class DebugScreenTest: SnapshotTestCase {
             ),
         ]
 
-        DebugScreen(
+        let view = DebugScreen(
             state: DebugScreen.State(
                 title: "Debug Menu",
                 items: items
@@ -125,11 +127,12 @@ class DebugScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_WithDisabledItem")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_WithDisabledItem")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DebugScreen_WithDisabledItem")
     }
 
     func test_DebugScreen_AccountType_Premium() {
-        DebugScreen(
+        let view = DebugScreen(
             state: DebugScreen.State(
                 title: "Debug Menu",
                 items: accountTypeItems(selectedId: "premium", subtitle: "Premium")
@@ -138,11 +141,12 @@ class DebugScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Premium")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Premium")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DebugScreen_AccountType_Premium")
     }
 
     func test_DebugScreen_AccountType_Free() {
-        DebugScreen(
+        let view = DebugScreen(
             state: DebugScreen.State(
                 title: "Debug Menu",
                 items: accountTypeItems(selectedId: "free", subtitle: "Free")
@@ -151,11 +155,12 @@ class DebugScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Free")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Free")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DebugScreen_AccountType_Free")
     }
 
     func test_DebugScreen_AccountType_Default() {
-        DebugScreen(
+        let view = DebugScreen(
             state: DebugScreen.State(
                 title: "Debug Menu",
                 items: accountTypeItems(selectedId: "none", subtitle: "Update account type")
@@ -164,7 +169,8 @@ class DebugScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Default")
+        view.assertSnapshot(layout: .defaultDevice, testName: "DebugScreen_AccountType_Default")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "DebugScreen_AccountType_Default")
     }
 
     private func accountTypeItems(selectedId: String, subtitle: String) -> [DebugMenuItem] {

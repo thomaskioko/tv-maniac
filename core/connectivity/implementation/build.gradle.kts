@@ -13,5 +13,9 @@ kotlin {
             api(projects.core.connectivity.api)
             implementation(projects.core.base)
         }
+
+        commonTest.dependencies {
+            implementation(libs.bundles.unittest)
+        }
     }
 }

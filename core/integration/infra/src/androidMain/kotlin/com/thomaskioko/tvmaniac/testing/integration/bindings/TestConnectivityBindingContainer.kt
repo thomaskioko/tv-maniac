@@ -18,6 +18,11 @@ public object TestConnectivityBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideInternetConnectionChecker(): InternetConnectionChecker =
+    public fun provideFakeInternetConnectionChecker(): FakeInternetConnectionChecker =
         FakeInternetConnectionChecker(connected = true)
+
+    @Provides
+    public fun provideInternetConnectionChecker(
+        fake: FakeInternetConnectionChecker,
+    ): InternetConnectionChecker = fake
 }

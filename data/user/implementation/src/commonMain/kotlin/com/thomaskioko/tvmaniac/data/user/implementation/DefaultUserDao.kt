@@ -126,6 +126,7 @@ public class DefaultUserDao(
         isMe: Boolean,
     ) {
         database.transaction {
+            if (isMe) database.userQueries.clearCurrentUserExcept(slug)
             database.userQueries.insertOrReplace(
                 slug = slug,
                 user_name = userName,

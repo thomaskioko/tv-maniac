@@ -15,23 +15,25 @@ class ListDetailScreenTest: SnapshotTestCase {
     ]
 
     func test_ListDetailScreen_Loading() {
-        makeScreen(state: ListDetailScreen.State(title: "Watchlist", isLoading: true))
-            .assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Loading")
+        let view = makeScreen(state: ListDetailScreen.State(title: "Watchlist", isLoading: true))
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListDetailScreen_Loading")
     }
 
     func test_ListDetailScreen_Empty() {
-        makeScreen(
+        let view = makeScreen(
             state: ListDetailScreen.State(
                 title: "Watchlist",
                 isLoading: false,
                 emptyMessage: "No shows in this list yet."
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListDetailScreen_Empty")
     }
 
     func test_ListDetailScreen_Content() {
-        makeScreen(
+        let view = makeScreen(
             state: ListDetailScreen.State(
                 title: "Watchlist",
                 isLoading: false,
@@ -42,11 +44,12 @@ class ListDetailScreenTest: SnapshotTestCase {
                 deleteLabel: "Delete list"
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Content")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Content")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListDetailScreen_Content")
     }
 
     func test_ListDetailScreen_Error() {
-        makeScreen(
+        let view = makeScreen(
             state: ListDetailScreen.State(
                 title: "Watchlist",
                 isLoading: false,
@@ -54,7 +57,8 @@ class ListDetailScreenTest: SnapshotTestCase {
                 dismissErrorLabel: "OK"
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ListDetailScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ListDetailScreen_Error")
     }
 
     private func makeScreen(state: ListDetailScreen.State) -> some View {

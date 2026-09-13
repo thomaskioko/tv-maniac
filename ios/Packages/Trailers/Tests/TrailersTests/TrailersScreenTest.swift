@@ -14,7 +14,7 @@ class TrailersScreenTest: SnapshotTestCase {
     ]
 
     func test_TrailersScreen() {
-        TrailersScreen(
+        let view = TrailersScreen(
             state: TrailersScreen.State(
                 title: "Trailers",
                 screenState: .content(
@@ -29,11 +29,12 @@ class TrailersScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "TrailersScreen")
+        view.assertSnapshot(layout: .defaultDevice, testName: "TrailersScreen")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "TrailersScreen")
     }
 
     func test_TrailersScreen_Loading() {
-        TrailersScreen(
+        let view = TrailersScreen(
             state: TrailersScreen.State(
                 title: "Trailers",
                 screenState: .loading
@@ -44,11 +45,12 @@ class TrailersScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "TrailersScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, testName: "TrailersScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "TrailersScreen_Loading")
     }
 
     func test_TrailersScreen_Error() {
-        TrailersScreen(
+        let view = TrailersScreen(
             state: TrailersScreen.State(
                 title: "Trailers",
                 screenState: .error(message: "Something went wrong", retryLabel: "Retry")
@@ -59,6 +61,7 @@ class TrailersScreenTest: SnapshotTestCase {
             onBack: {}
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "TrailersScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, testName: "TrailersScreen_Error")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "TrailersScreen_Error")
     }
 }

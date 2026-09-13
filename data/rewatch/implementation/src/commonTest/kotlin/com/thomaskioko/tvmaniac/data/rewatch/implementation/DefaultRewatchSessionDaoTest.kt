@@ -6,6 +6,7 @@ import com.thomaskioko.tvmaniac.data.rewatch.api.RewatchSessionDao
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -35,7 +36,7 @@ internal class DefaultRewatchSessionDaoTest : BaseDatabaseTest() {
 
     @BeforeTest
     fun setup() {
-        dao = DefaultRewatchSessionDao(database, coroutineDispatchers)
+        dao = DefaultRewatchSessionDao(database, coroutineDispatchers, FakeDateTimeProvider())
         showId = addShow(tmdbId = TMDB_ID)
         addSeason(seasonId = SEASON_ID, showId = showId)
         addEpisode(episodeId = EPISODE_ID, seasonId = SEASON_ID, showId = showId)

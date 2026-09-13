@@ -8,7 +8,6 @@ import com.thomaskioko.tvmaniac.core.logger.KermitLogger
 import com.thomaskioko.tvmaniac.core.logger.Logger
 import com.thomaskioko.tvmaniac.core.logger.LoggingInitializerModule
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeCrashReporter
-import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -30,7 +29,7 @@ public object TestLoggerBindingContainer {
 
     @Provides
     @SingleIn(AppScope::class)
-    public fun provideLogger(): Logger = FakeLogger()
+    public fun provideLogger(): Logger = KermitLogger().apply { setup(debugMode = true) }
 
     @Provides
     @SingleIn(AppScope::class)

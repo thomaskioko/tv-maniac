@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -55,9 +56,9 @@ abstract class DefaultRootPresenterTest {
     abstract val internetConnectionChecker: FakeInternetConnectionChecker
 
     private val lifecycle = LifecycleRegistry()
-    private val testDispatcher = StandardTestDispatcher()
+    protected val testDispatcher: TestDispatcher = StandardTestDispatcher()
 
-    private lateinit var presenter: RootPresenter
+    protected lateinit var presenter: RootPresenter
 
     private val RootPresenter.activeTabStack: Flow<ChildStack<*, RootChild>>
         get() = homePresenter.hostState.map { it.tabStacks.getValue(it.activeRoot) }

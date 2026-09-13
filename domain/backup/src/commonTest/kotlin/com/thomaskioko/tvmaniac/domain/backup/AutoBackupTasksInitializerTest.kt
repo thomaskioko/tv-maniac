@@ -1,16 +1,26 @@
 package com.thomaskioko.tvmaniac.domain.backup
 
+import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
+import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
 import com.thomaskioko.tvmaniac.core.logger.fixture.FakeLogger
 import com.thomaskioko.tvmaniac.core.tasks.testing.FakeBackgroundTaskScheduler
 import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupDestination
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeBackupRepository
+import com.thomaskioko.tvmaniac.data.backup.testing.FakeShowRefillReporter
+import com.thomaskioko.tvmaniac.data.showdetails.testing.FakeShowDetailsRepository
+import com.thomaskioko.tvmaniac.data.watchproviders.testing.FakeWatchProviderRepository
 import com.thomaskioko.tvmaniac.datastore.api.AutoBackupInterval
 import com.thomaskioko.tvmaniac.datastore.testing.FakeDatastoreRepository
+import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
+import com.thomaskioko.tvmaniac.seasondetails.testing.FakeSeasonDetailsRepository
+import com.thomaskioko.tvmaniac.shows.testing.FakeShowTraktIdResolver
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -22,6 +32,29 @@ internal class AutoBackupTasksInitializerTest {
     private val scheduler = FakeBackgroundTaskScheduler()
     private val datastoreRepository = FakeDatastoreRepository()
     private val backupDestination = FakeBackupDestination()
+    private val internetConnectionChecker = FakeInternetConnectionChecker()
+    private val backupRepository = FakeBackupRepository()
+    private val showDetailsRepository = FakeShowDetailsRepository()
+    private val dispatchers = AppCoroutineDispatchers(
+        main = testDispatcher,
+        io = testDispatcher,
+        computation = testDispatcher,
+        databaseWrite = testDispatcher,
+        databaseRead = testDispatcher,
+    )
+    private val syncRestoredShowsInteractor = SyncRestoredShowsInteractor(
+        backupRepository = backupRepository,
+        syncShowMetadataInteractor = SyncShowMetadataInteractor(
+            showDetailsRepository = showDetailsRepository,
+            seasonDetailsRepository = FakeSeasonDetailsRepository(),
+            watchProviderRepository = FakeWatchProviderRepository(),
+            dispatchers = dispatchers,
+        ),
+        traktIdResolver = FakeShowTraktIdResolver(),
+        refillReporter = FakeShowRefillReporter(),
+        dispatchers = dispatchers,
+        logger = FakeLogger(),
+    )
 
     @AfterTest
     fun tearDown() {
@@ -33,9 +66,17 @@ internal class AutoBackupTasksInitializerTest {
             scheduler = scheduler,
             backupDestination = lazyOf(backupDestination),
             datastoreRepository = lazyOf(datastoreRepository),
+            internetConnectionChecker = internetConnectionChecker,
+            syncRestoredShowsInteractor = lazyOf(syncRestoredShowsInteractor),
             logger = FakeLogger(),
             coroutineScope = initializerScope,
         ).init()
+    }
+
+    private fun TestScope.reconnect() {
+        internetConnectionChecker.setConnected(false)
+        internetConnectionChecker.setConnected(true)
+        testScheduler.runCurrent()
     }
 
     @Test
@@ -164,9 +205,57 @@ internal class AutoBackupTasksInitializerTest {
         scheduler.getCancelledIds() shouldBe listOf(AutoBackupWorker.WORKER_NAME)
     }
 
+    @Test
+    fun `should run the metadata refill given a reconnect`() = runTest(testDispatcher) {
+        backupRepository.setShowsNeedingMetadata(listOf(SHOW_ID))
+
+        startInitializer()
+        testScheduler.advanceUntilIdle()
+        reconnect()
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(SHOW_ID)
+    }
+
+    @Test
+    fun `should run the metadata refill on reconnect given Sync and Update is off`() = runTest(testDispatcher) {
+        datastoreRepository.setBackgroundSyncEnabled(false)
+        backupRepository.setShowsNeedingMetadata(listOf(SHOW_ID))
+
+        startInitializer()
+        testScheduler.advanceUntilIdle()
+        reconnect()
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(SHOW_ID)
+    }
+
+    @Test
+    fun `should make no request on reconnect given no restored show needs metadata`() = runTest(testDispatcher) {
+        startInitializer()
+        testScheduler.advanceUntilIdle()
+        reconnect()
+
+        showDetailsRepository.fetchInvocations().shouldBeEmpty()
+    }
+
+    @Test
+    fun `should keep collecting reconnects given a show refill fails`() = runTest(testDispatcher) {
+        backupRepository.setShowsNeedingMetadata(listOf(SHOW_ID))
+        showDetailsRepository.setFetchError(RuntimeException("Boom"))
+
+        startInitializer()
+        testScheduler.advanceUntilIdle()
+        reconnect()
+
+        showDetailsRepository.setFetchError(null)
+        reconnect()
+
+        showDetailsRepository.fetchInvocations().map { it.id } shouldBe listOf(SHOW_ID, SHOW_ID)
+    }
+
     private companion object {
         private const val LOCATION = "content://downloads/tree"
         private const val DEFAULT_FOLDER = "/Documents"
+        private const val SHOW_ID = 7L
         private const val ONE_DAY_MS = 24L * 60 * 60 * 1000
         private const val SEVEN_DAYS_MS = 7 * ONE_DAY_MS
         private const val THIRTY_DAYS_MS = 30 * ONE_DAY_MS

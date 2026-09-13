@@ -69,7 +69,9 @@ public struct EpisodeDetailSheetView: View {
             isPresented: Binding(
                 get: { state.removeWatchConfirmation != nil },
                 set: { isPresented in
-                    if !isPresented { presenter.dispatch(action: EpisodeSheetActionRemoveWatchDismissed()) }
+                    if !isPresented {
+                        presenter.dispatch(action: EpisodeSheetActionRemoveWatchDismissed())
+                    }
                 }
             )
         ) {

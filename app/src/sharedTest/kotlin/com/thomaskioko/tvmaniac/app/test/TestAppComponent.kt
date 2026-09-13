@@ -3,8 +3,10 @@ package com.thomaskioko.tvmaniac.app.test
 import android.app.Application
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.thomaskioko.tvmaniac.core.base.AppInitializers
 import com.thomaskioko.tvmaniac.core.base.AppPreferencesDataStore
 import com.thomaskioko.tvmaniac.core.base.IsDebugBuild
+import com.thomaskioko.tvmaniac.core.connectivity.testing.FakeInternetConnectionChecker
 import com.thomaskioko.tvmaniac.featureflags.testing.FakeFeatureFlagsRemoteConfig
 import com.thomaskioko.tvmaniac.oauth.api.AuthStateHolder
 import com.thomaskioko.tvmaniac.oauth.testing.FakeOAuthLauncher
@@ -22,6 +24,8 @@ interface TestAppComponent {
     val authStateHolder: AuthStateHolder
     val featureFlagsRemoteConfig: FakeFeatureFlagsRemoteConfig
     val dateTimeProvider: DateTimeProvider
+    val internetConnectionChecker: FakeInternetConnectionChecker
+    val initializers: AppInitializers
 
     @AppPreferencesDataStore
     val dataStore: DataStore<Preferences>

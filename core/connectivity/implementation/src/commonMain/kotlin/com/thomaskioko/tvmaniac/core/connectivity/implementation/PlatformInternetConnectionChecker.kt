@@ -7,4 +7,6 @@ public expect class PlatformInternetConnectionChecker : InternetConnectionChecke
     override fun isConnected(): Boolean
 
     override fun observeConnection(): Flow<Boolean>
+
+    override fun observeReconnection(): Flow<Unit>
 }

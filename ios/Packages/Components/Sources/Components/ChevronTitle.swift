@@ -46,16 +46,15 @@ public struct ChevronTitle: View {
         }
     }
 
+    @ViewBuilder
     private var chevronView: some View {
-        Group {
-            switch chevronStyle {
-            case .none:
-                EmptyView()
-            case .chevronOnly:
-                chevronButton(title: nil)
-            case let .withTitle(title):
-                chevronButton(title: title)
-            }
+        switch chevronStyle {
+        case .none:
+            EmptyView()
+        case .chevronOnly:
+            chevronButton(title: nil)
+        case let .withTitle(title):
+            chevronButton(title: title)
         }
     }
 

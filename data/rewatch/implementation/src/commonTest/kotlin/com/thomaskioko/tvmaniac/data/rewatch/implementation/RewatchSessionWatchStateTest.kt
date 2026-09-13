@@ -4,6 +4,7 @@ import com.thomaskioko.tvmaniac.core.base.model.AppCoroutineDispatchers
 import com.thomaskioko.tvmaniac.database.test.BaseDatabaseTest
 import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.TmdbId
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,7 @@ import kotlin.test.Test
 
 internal class RewatchSessionWatchStateTest : BaseDatabaseTest() {
 
+    private val dateTimeProvider = FakeDateTimeProvider()
     private lateinit var dao: DefaultRewatchSessionDao
     private var showId: Long = 0
 
@@ -27,6 +29,7 @@ internal class RewatchSessionWatchStateTest : BaseDatabaseTest() {
                 databaseWrite = Dispatchers.Unconfined,
                 databaseRead = Dispatchers.Unconfined,
             ),
+            dateTimeProvider = dateTimeProvider,
         )
         showId = addShow(tmdbId = TMDB_ID)
         addSeason(seasonId = SEASON_ID, showId = showId)
@@ -45,11 +48,11 @@ internal class RewatchSessionWatchStateTest : BaseDatabaseTest() {
 
     @Test
     fun `should return the same watch progress given a rewatch session exists for the show`() {
-        val before = database.showWatchStatusQueries.watchProgressForShow(Id(showId)).executeAsOne()
+        val before = watchProgress()
 
         startRewatchSession()
 
-        database.showWatchStatusQueries.watchProgressForShow(Id(showId)).executeAsOne() shouldBe before
+        watchProgress() shouldBe before
     }
 
     @Test
@@ -67,33 +70,31 @@ internal class RewatchSessionWatchStateTest : BaseDatabaseTest() {
 
     @Test
     fun `should return the same watchlist next episodes given a rewatch session exists`() {
-        val before = database.showsNextToWatchQueries.nextEpisodesForWatchlist(includeSpecials = 0).executeAsList()
+        val before = watchlistNextEpisodes()
 
         startRewatchSession()
 
-        database.showsNextToWatchQueries.nextEpisodesForWatchlist(includeSpecials = 0).executeAsList() shouldBe before
+        watchlistNextEpisodes() shouldBe before
     }
 
     @Test
     fun `should return the same completed shows for the watchlist given a rewatch session exists`() {
         markWatched(episodeId = EPISODE_THREE, episodeNumber = 3L, watchedAt = THIRD_WATCHED_AT)
-        val before = database.showsNextToWatchQueries.completedShowsForWatchlist().executeAsList()
+        val before = completedShows()
 
         startRewatchSession()
 
-        database.showsNextToWatchQueries.completedShowsForWatchlist().executeAsList() shouldBe before
+        completedShows() shouldBe before
     }
 
     @Test
     fun `should offer no next episode for a fully watched show given a rewatch session exists`() {
         markWatched(episodeId = EPISODE_THREE, episodeNumber = 3L, watchedAt = THIRD_WATCHED_AT)
-        database.showsNextToWatchQueries.nextEpisodesForWatchlist(includeSpecials = 0)
-            .executeAsList().single().episode_id.shouldBeNull()
+        watchlistNextEpisodes().single().episode_id.shouldBeNull()
 
         startRewatchSession()
 
-        database.showsNextToWatchQueries.nextEpisodesForWatchlist(includeSpecials = 0)
-            .executeAsList().single().episode_id.shouldBeNull()
+        watchlistNextEpisodes().single().episode_id.shouldBeNull()
     }
 
     @Test
@@ -102,18 +103,32 @@ internal class RewatchSessionWatchStateTest : BaseDatabaseTest() {
 
         startRewatchSession()
 
-        val progress = database.showWatchStatusQueries.watchProgressForShow(Id(showId)).executeAsOne()
+        val progress = watchProgress()
         progress.watched_count shouldBe progress.total_count
     }
 
     @Test
     fun `should return the same library count given a rewatch session exists`() {
-        val before = database.libraryQueries.countLibraryShows().executeAsOne()
+        val before = libraryShowCount()
 
         startRewatchSession()
 
-        database.libraryQueries.countLibraryShows().executeAsOne() shouldBe before
+        libraryShowCount() shouldBe before
     }
+
+    private fun watchProgress() =
+        database.showWatchStatusQueries.watchProgressForShow(showId = Id(showId), nowMillis = dateTimeProvider.nowMillis()).executeAsOne()
+
+    private fun watchlistNextEpisodes() =
+        database.showsNextToWatchQueries
+            .nextEpisodesForWatchlist(includeSpecials = 0, nowMillis = dateTimeProvider.nowMillis())
+            .executeAsList()
+
+    private fun completedShows() =
+        database.showsNextToWatchQueries.completedShowsForWatchlist(nowMillis = dateTimeProvider.nowMillis()).executeAsList()
+
+    private fun libraryShowCount() =
+        database.libraryQueries.libraryShows(query = null, followedOnly = 0L, nowMillis = dateTimeProvider.nowMillis()).executeAsList().size
 
     private fun startRewatchSession() {
         val sessionId = dao.openSession(showId = showId, startedAt = SESSION_STARTED_AT)

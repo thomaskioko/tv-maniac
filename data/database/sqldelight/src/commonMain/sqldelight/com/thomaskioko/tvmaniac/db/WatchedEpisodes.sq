@@ -91,8 +91,8 @@ WHERE show_id = ? AND season_number = ?;
 getTotalEpisodesForSeason:
 SELECT COUNT(*) FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-WHERE e.show_id = ? AND s.season_number = ?
-  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
+WHERE e.show_id = :showId AND s.season_number = :seasonNumber
+  AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis);
 
 getPreviousUnwatchedEpisodes:
 SELECT
@@ -112,7 +112,7 @@ WHERE e.show_id = :showId
     OR (s.season_number = :season_number AND e.episode_number < :episode_number)
   )
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
+  AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis)
 ORDER BY s.season_number, e.episode_number;
 
 getEpisodesForSeason:
@@ -125,8 +125,8 @@ SELECT
     e.runtime
 FROM episode e
 INNER JOIN season s ON e.season_id = s.id
-WHERE e.show_id = ? AND s.season_number = ?
-  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
+WHERE e.show_id = :showId AND s.season_number = :seasonNumber
+  AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis)
 ORDER BY e.episode_number;
 
 getTotalEpisodesForShow:
@@ -155,7 +155,7 @@ WHERE e.show_id = :showId
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000)
+  AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis)
 ORDER BY s.season_number, e.episode_number;
 
 getUnwatchedEpisodeCountInPreviousSeasons:
@@ -166,7 +166,7 @@ WHERE e.show_id = :showId
   AND s.season_number < :season_number
   AND (:include_specials = 1 OR (s.season_number > 0 OR s.title != 'Specials'))
   AND we.id IS NULL
-  AND (e.first_aired IS NULL OR e.first_aired <= strftime('%s', 'now') * 1000);
+  AND (e.first_aired IS NULL OR e.first_aired <= :nowMillis);
 
 -- One row per show for the profile "Recently Watched" rail: the show's furthest watched episode,
 -- ordered by the show's most-recent watch. Collapsing per show matches the Simkl/Trakt website

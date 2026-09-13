@@ -48,23 +48,41 @@ public struct TrailersScreen: View {
 
     public var body: some View {
         content
-            .contentMargins(.top, toolbarInset + theme.spacing.medium)
-            .appScreen()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .navigationBarColor(backgroundColor: .clear)
             .swipeBackGesture(onSwipe: onBack)
-            .overlay(
-                GlassToolbar(
-                    title: state.title,
-                    opacity: 1.0,
-                    leadingIcon: {
-                        GlassButton(icon: "chevron.left", action: onBack)
-                    }
-                ),
-                alignment: .top
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .appScreen()
+                        .navigationTitle(state.title)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(action: onBack) {
+                                    Image(systemName: "chevron.left")
+                                }
+                                .tint(theme.colors.onSurface)
+                            }
+                        }
+                },
+                legacy: { view in
+                    view
+                        .contentMargins(.top, toolbarInset + theme.spacing.medium)
+                        .appScreen()
+                        .navigationBarColor(backgroundColor: .clear)
+                        .overlay(
+                            GlassToolbar(
+                                title: state.title,
+                                opacity: 1.0,
+                                leadingIcon: {
+                                    GlassButton(icon: "chevron.left", action: onBack)
+                                }
+                            ),
+                            alignment: .top
+                        )
+                        .edgesIgnoringSafeArea(.top)
+                }
             )
-            .edgesIgnoringSafeArea(.top)
     }
 
     @ViewBuilder

@@ -9,13 +9,18 @@ import com.thomaskioko.tvmaniac.data.backup.api.BackupRepository
 import com.thomaskioko.tvmaniac.data.backup.api.ShowRefillReporter
 import com.thomaskioko.tvmaniac.domain.showdetails.SyncShowMetadataInteractor
 import com.thomaskioko.tvmaniac.shows.api.ShowTraktIdResolver
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 @Inject
+@SingleIn(AppScope::class)
 public class SyncRestoredShowsInteractor(
     private val backupRepository: BackupRepository,
     private val syncShowMetadataInteractor: SyncShowMetadataInteractor,
@@ -25,7 +30,11 @@ public class SyncRestoredShowsInteractor(
     private val logger: Logger,
 ) : Interactor<Unit>() {
 
-    override suspend fun doWork(params: Unit) {
+    private val refillMutex = Mutex()
+
+    override suspend fun doWork(params: Unit): Unit = refillMutex.withLock { refill() }
+
+    private suspend fun refill() {
         val showIds = backupRepository.showsNeedingMetadata()
         if (showIds.isEmpty()) {
             logger.debug(TAG, "No restored shows need metadata")

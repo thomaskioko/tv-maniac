@@ -48,6 +48,7 @@ internal class DefaultListShowDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should return pages newest added first given a list has multiple shows`() = runTest {
+        addList()
         addShow(tmdbId = 1L, name = "Show 1")
         addShow(tmdbId = 2L, name = "Show 2")
         addShow(tmdbId = 3L, name = "Show 3")
@@ -64,6 +65,7 @@ internal class DefaultListShowDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should exclude shows pending delete given the count and the page`() = runTest {
+        addList()
         addShow(tmdbId = 1L, name = "Show 1")
         addShow(tmdbId = 2L, name = "Show 2")
         addListShow(listId = 1L, tmdbId = 1L, listedAt = "2024-01-01")
@@ -79,6 +81,7 @@ internal class DefaultListShowDaoTest : BaseDatabaseTest() {
 
     @Test
     fun `should start the second page where the first ended given loadSize is smaller than the total`() = runTest {
+        addList()
         addShow(tmdbId = 1L, name = "Show 1")
         addShow(tmdbId = 2L, name = "Show 2")
         addShow(tmdbId = 3L, name = "Show 3")
@@ -97,6 +100,10 @@ internal class DefaultListShowDaoTest : BaseDatabaseTest() {
         firstPage.data.map { it.tmdbId } shouldBe listOf(3L, 2L)
         secondPage.data.map { it.tmdbId } shouldBe listOf(1L)
         secondPage.nextKey shouldBe null
+    }
+
+    private fun addList() {
+        database.listsQueries.insertLocal(name = "List", createdAt = "2024-01-01T00:00:00Z")
     }
 
     private fun addShow(tmdbId: Long, name: String) {

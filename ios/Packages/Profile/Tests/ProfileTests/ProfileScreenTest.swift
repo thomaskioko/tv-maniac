@@ -35,7 +35,7 @@ class ProfileScreenTest: SnapshotTestCase {
     ]
 
     func test_ProfileScreen_Loading() {
-        ProfileScreen(
+        let view = ProfileScreen(
             state: ProfileScreen.State(
                 title: "Profile",
                 isLoading: true,
@@ -60,11 +60,12 @@ class ProfileScreenTest: SnapshotTestCase {
             onProviderSelected: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProfileScreen_Loading")
     }
 
     func test_ProfileScreen_Unauthenticated() {
-        ProfileScreen(
+        let view = ProfileScreen(
             state: ProfileScreen.State(
                 title: "Profile",
                 isLoading: false,
@@ -93,7 +94,8 @@ class ProfileScreenTest: SnapshotTestCase {
             onProviderSelected: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Unauthenticated")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Unauthenticated")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProfileScreen_Unauthenticated")
     }
 
     private let sampleLists: [ListCollageItem] = [
@@ -181,17 +183,18 @@ class ProfileScreenTest: SnapshotTestCase {
     }
 
     func test_ProfileScreen_Authenticated() {
-        ProfileScreen(
+        let view = ProfileScreen(
             state: authenticatedState(userLists: .content(sampleLists)),
             onSettingsClicked: {},
             onProviderSelected: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProfileScreen_Authenticated")
     }
 
     func test_ProfileScreen_Authenticated_StatsHidden() {
-        ProfileScreen(
+        let view = ProfileScreen(
             state: authenticatedState(
                 userLists: .content(sampleLists),
                 profile: authenticatedProfile(stats: nil)
@@ -200,27 +203,30 @@ class ProfileScreenTest: SnapshotTestCase {
             onProviderSelected: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated_StatsHidden")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_Authenticated_StatsHidden")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProfileScreen_Authenticated_StatsHidden")
     }
 
     func test_ProfileScreen_UserListsWithMore() {
-        ProfileScreen(
+        let view = ProfileScreen(
             state: authenticatedState(userLists: .content(manyLists)),
             onSettingsClicked: {},
             onProviderSelected: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsWithMore")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsWithMore")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProfileScreen_UserListsWithMore")
     }
 
     func test_ProfileScreen_UserListsEmpty() {
-        ProfileScreen(
+        let view = ProfileScreen(
             state: authenticatedState(userLists: .empty),
             onSettingsClicked: {},
             onProviderSelected: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsEmpty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsEmpty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProfileScreen_UserListsEmpty")
     }
 
     func test_ListCollageCard() {
@@ -245,13 +251,14 @@ class ProfileScreenTest: SnapshotTestCase {
     }
 
     func test_ProfileScreen_UserListsError() {
-        ProfileScreen(
+        let view = ProfileScreen(
             state: authenticatedState(userLists: .error("Failed to load lists")),
             onSettingsClicked: {},
             onProviderSelected: { _ in }
         )
         .appPreview()
-        .assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsError")
+        view.assertSnapshot(layout: .defaultDevice, testName: "ProfileScreen_UserListsError")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "ProfileScreen_UserListsError")
     }
 
     // MARK: - Progress Section

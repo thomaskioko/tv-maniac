@@ -13,7 +13,7 @@ internal class DeepLinkToShowDetailsFlowTest : BaseAppFlowTest() {
 
         discoverRobot.assertFeaturedPagerDisplayed()
 
-        activityGraph.rootPresenter.onDeepLinkUrl("tvmaniac://show/$breakingBadTmdbId")
+        composeUi.runOnUiThread { activityGraph.rootPresenter.onDeepLinkUrl("tvmaniac://show/$breakingBadTmdbId") }
 
         showDetailsRobot
             .waitForIdle()
@@ -26,7 +26,7 @@ internal class DeepLinkToShowDetailsFlowTest : BaseAppFlowTest() {
 
         discoverRobot.assertFeaturedPagerDisplayed()
 
-        activityGraph.rootPresenter.onDeepLinkUrl("tvmaniac://show/not-a-number")
+        composeUi.runOnUiThread { activityGraph.rootPresenter.onDeepLinkUrl("tvmaniac://show/not-a-number") }
 
         discoverRobot
             .waitForIdle()

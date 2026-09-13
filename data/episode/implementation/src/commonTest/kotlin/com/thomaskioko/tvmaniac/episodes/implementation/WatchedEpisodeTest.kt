@@ -93,6 +93,8 @@ internal class WatchedEpisodeTest : BaseDatabaseTest() {
         addSyncedRow(seasonNumber = 1L, episodeNumber = 1L, traktId = 901L)
         addSyncedRow(seasonNumber = 1L, episodeNumber = 2L, traktId = 902L)
 
+        fakeDateTimeProvider.setCurrentTimeMillis(now + 1_000L)
+
         dao.upsertBatchFromTrakt(
             showId = SHOW_ID,
             entries = listOf(traktEntry(seasonNumber = 1L, episodeNumber = 1L, traktId = 901L)),

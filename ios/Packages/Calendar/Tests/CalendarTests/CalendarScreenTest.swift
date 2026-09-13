@@ -41,33 +41,36 @@ class CalendarScreenTest: SnapshotTestCase {
     ]
 
     func test_CalendarScreen_Loading() {
-        makeScreen(state: .loading)
-            .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Loading")
+        let view = makeScreen(state: .loading)
+        view.assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Loading")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "CalendarScreen_Loading")
     }
 
     func test_CalendarScreen_LoginRequired() {
-        makeScreen(
+        let view = makeScreen(
             state: .loginRequired(
                 title: "Nothing to see here",
                 message: "Login to Trakt to see your calendar"
             ),
             canNavigateNext: false
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_LoginRequired")
+        view.assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_LoginRequired")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "CalendarScreen_LoginRequired")
     }
 
     func test_CalendarScreen_Empty() {
-        makeScreen(
+        let view = makeScreen(
             state: .empty(
                 title: "Nothing to see here",
                 message: "No upcoming episodes"
             )
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Empty")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "CalendarScreen_Empty")
     }
 
     func test_CalendarScreen_Locked() {
-        makeScreen(
+        let view = makeScreen(
             state: .locked(
                 underlying: .content(dateGroups: sampleDateGroups),
                 title: "Calendar is a Premium feature",
@@ -77,12 +80,14 @@ class CalendarScreenTest: SnapshotTestCase {
             lockedActionText: "Upgrade to Premium",
             lockedAccessibilityLabel: "Locked"
         )
-        .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Locked")
+        view.assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Locked")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "CalendarScreen_Locked")
     }
 
     func test_CalendarScreen_Content() {
-        makeScreen(state: .content(dateGroups: sampleDateGroups))
-            .assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Content")
+        let view = makeScreen(state: .content(dateGroups: sampleDateGroups))
+        view.assertSnapshot(layout: .defaultDevice, testName: "CalendarScreen_Content")
+        view.assertSnapshot(layout: .defaultDevice, liquidGlass: true, testName: "CalendarScreen_Content")
     }
 
     private func makeScreen(

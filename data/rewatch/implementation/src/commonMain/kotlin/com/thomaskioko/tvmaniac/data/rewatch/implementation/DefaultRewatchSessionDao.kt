@@ -16,6 +16,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.Rewatch_session
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.UnsentEpisodes
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.map
 public class DefaultRewatchSessionDao(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
+    private val dateTimeProvider: DateTimeProvider,
 ) : RewatchSessionDao {
 
     private val queries = database.rewatchQueries
@@ -75,7 +77,7 @@ public class DefaultRewatchSessionDao(
             .map { rows -> rows.map { it.toRewatchSession() } }
 
     override fun observeRewatchStatus(showId: Long): Flow<RewatchStatus> =
-        queries.rewatchStatusForShow(Id(showId))
+        queries.rewatchStatusForShow(showId = Id(showId), nowMillis = dateTimeProvider.nowMillis())
             .asFlow()
             .mapToOneOrNull(dispatchers.databaseRead)
             .map { row ->
@@ -131,7 +133,7 @@ public class DefaultRewatchSessionDao(
     }
 
     override fun sessionCoverage(sessionId: Long): RewatchCoverage? =
-        queries.sessionCoverage(sessionId).executeAsOneOrNull()?.let { row ->
+        queries.sessionCoverage(sessionId = sessionId, nowMillis = dateTimeProvider.nowMillis()).executeAsOneOrNull()?.let { row ->
             RewatchCoverage(watchedInSession = row.watched_in_session, airedTotal = row.aired_total)
         }
 
