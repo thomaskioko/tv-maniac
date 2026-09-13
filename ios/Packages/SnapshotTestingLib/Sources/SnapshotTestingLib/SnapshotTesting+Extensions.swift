@@ -50,6 +50,7 @@ public extension View {
         layout: SwiftUISnapshotLayout = .defaultDevice,
         styles: SnapshotStyles = .all,
         liquidGlass: Bool = false,
+        settleSystemSearch: Bool = false,
         timeout: TimeInterval = {
             // Use longer timeout in CI environment
             if ProcessInfo.processInfo.environment["CI"] != nil {
@@ -86,7 +87,7 @@ public extension View {
         #endif
 
         assertSnapshots(
-            of: viewController(liquidGlass: liquidGlass),
+            of: viewController(liquidGlass: liquidGlass, settleSystemSearch: settleSystemSearch),
             as: themes,
             record: effectiveRecording,
             timeout: timeout,
@@ -95,13 +96,29 @@ public extension View {
         )
     }
 
-    private func viewController(liquidGlass: Bool) -> UIViewController {
+    private func viewController(liquidGlass: Bool, settleSystemSearch: Bool) -> UIViewController {
         let viewController = UIHostingController(rootView: environment(\.liquidGlassEnabled, liquidGlass))
 
         let view = viewController.view!
         view.bounds = CGRect(origin: .zero, size: view.intrinsicContentSize)
         view.backgroundColor = .clear
 
+        if liquidGlass, settleSystemSearch {
+            settleSearchField(of: viewController)
+        }
+
         return viewController
+    }
+
+    private func settleSearchField(of viewController: UIViewController) {
+        let animationsWereEnabled = UIView.areAnimationsEnabled
+        UIView.setAnimationsEnabled(false)
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = viewController
+        window.isHidden = false
+        viewController.view.layoutIfNeeded()
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.3))
+        window.isHidden = true
+        UIView.setAnimationsEnabled(animationsWereEnabled)
     }
 }
