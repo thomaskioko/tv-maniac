@@ -9,6 +9,7 @@ import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.ShowWatchStatusQueries
 import com.thomaskioko.tvmaniac.db.TvManiacDatabase
 import com.thomaskioko.tvmaniac.db.WatchStatus
+import com.thomaskioko.tvmaniac.util.api.DateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchProgress
 import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusDao
 import dev.zacsweers.metro.AppScope
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.map
 public class DefaultShowWatchStatusDao(
     private val database: TvManiacDatabase,
     private val dispatchers: AppCoroutineDispatchers,
+    private val dateTimeProvider: DateTimeProvider,
 ) : ShowWatchStatusDao {
 
     private val queries: ShowWatchStatusQueries
@@ -46,7 +48,7 @@ public class DefaultShowWatchStatusDao(
             .map { it?.status }
 
     override fun getWatchProgress(showId: Id<ShowId>): ShowWatchProgress? =
-        queries.watchProgressForShow(showId)
+        queries.watchProgressForShow(showId = showId, nowMillis = dateTimeProvider.nowMillis())
             .executeAsOneOrNull()
             ?.let { ShowWatchProgress(watchedCount = it.watched_count, totalCount = it.total_count) }
 

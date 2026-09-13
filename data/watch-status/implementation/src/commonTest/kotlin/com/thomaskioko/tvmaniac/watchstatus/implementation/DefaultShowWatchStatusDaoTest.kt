@@ -7,6 +7,7 @@ import com.thomaskioko.tvmaniac.db.Id
 import com.thomaskioko.tvmaniac.db.ShowId
 import com.thomaskioko.tvmaniac.db.TmdbId
 import com.thomaskioko.tvmaniac.db.WatchStatus
+import com.thomaskioko.tvmaniac.util.testing.FakeDateTimeProvider
 import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchProgress
 import com.thomaskioko.tvmaniac.watchstatus.api.ShowWatchStatusDao
 import io.kotest.matchers.nulls.shouldBeNull
@@ -20,6 +21,7 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
@@ -33,13 +35,14 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
         databaseRead = testDispatcher,
     )
 
+    private val dateTimeProvider = FakeDateTimeProvider(currentTime = Instant.fromEpochMilliseconds(NOW_MILLIS))
     private lateinit var dao: ShowWatchStatusDao
     private var showId: Id<ShowId> = Id(0L)
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        dao = DefaultShowWatchStatusDao(database, dispatchers)
+        dao = DefaultShowWatchStatusDao(database, dispatchers, dateTimeProvider)
         showId = addShow(SHOW_TRAKT_ID)
     }
 
@@ -178,6 +181,80 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
         dao.getWatchProgress(Id(999_999L)).shouldBeNull()
     }
 
+    @Test
+    fun `should exclude deleted rows from the watched count`() {
+        addSeason()
+        addEpisode(episodeId = 1L, episodeNumber = 1L, firstAired = PAST_AIR_DATE)
+        addEpisode(episodeId = 2L, episodeNumber = 2L, firstAired = PAST_AIR_DATE)
+        addEpisode(episodeId = 3L, episodeNumber = 3L, firstAired = PAST_AIR_DATE)
+        markWatched(episodeId = 1L, episodeNumber = 1L, pendingAction = "NOTHING")
+        markWatched(episodeId = 2L, episodeNumber = 2L, pendingAction = "DELETE")
+        markWatched(episodeId = 3L, episodeNumber = 3L, pendingAction = "SYNCED_DELETE")
+
+        dao.getWatchProgress(showId) shouldBe ShowWatchProgress(watchedCount = 1, totalCount = 3)
+    }
+
+    @Test
+    fun `should exclude null-aired and future-aired episodes from the total count`() {
+        addSeason()
+        addEpisode(episodeId = 1L, episodeNumber = 1L, firstAired = PAST_AIR_DATE)
+        addEpisode(episodeId = 2L, episodeNumber = 2L, firstAired = null)
+        addEpisode(episodeId = 3L, episodeNumber = 3L, firstAired = FUTURE_AIR_DATE)
+
+        dao.getWatchProgress(showId) shouldBe ShowWatchProgress(watchedCount = 0, totalCount = 1)
+    }
+
+    @Test
+    fun `should count an episode once it airs under the injected clock`() {
+        addSeason()
+        addEpisode(episodeId = 1L, episodeNumber = 1L, firstAired = FUTURE_AIR_DATE)
+
+        dao.getWatchProgress(showId) shouldBe ShowWatchProgress(watchedCount = 0, totalCount = 0)
+
+        dateTimeProvider.setCurrentTimeMillis(FUTURE_AIR_DATE)
+
+        dao.getWatchProgress(showId) shouldBe ShowWatchProgress(watchedCount = 0, totalCount = 1)
+    }
+
+    private fun addSeason() {
+        database.seasonsQueries.upsert(
+            id = Id(SEASON_ID),
+            show_id = showId,
+            season_number = 1L,
+            episode_count = 3L,
+            title = "Season 1",
+            overview = "overview",
+            image_url = null,
+        )
+    }
+
+    private fun addEpisode(episodeId: Long, episodeNumber: Long, firstAired: Long?) {
+        database.episodesQueries.upsert(
+            id = Id(episodeId),
+            season_id = Id(SEASON_ID),
+            show_id = showId,
+            title = "Episode $episodeNumber",
+            overview = "overview",
+            runtime = 40L,
+            vote_count = 10L,
+            ratings = 8.0,
+            episode_number = episodeNumber,
+            image_url = null,
+            first_aired = firstAired,
+        )
+    }
+
+    private fun markWatched(episodeId: Long, episodeNumber: Long, pendingAction: String) {
+        database.watchedEpisodesQueries.upsert(
+            show_id = showId,
+            episode_id = Id(episodeId),
+            season_number = 1L,
+            episode_number = episodeNumber,
+            watched_at = PAST_AIR_DATE,
+            pending_action = pendingAction,
+        )
+    }
+
     private fun follow(showId: Id<ShowId>, pendingAction: String = "NOTHING") {
         database.followedShowsQueries.upsert(
             showId = showId,
@@ -209,5 +286,9 @@ internal class DefaultShowWatchStatusDaoTest : BaseDatabaseTest() {
     private companion object {
         private const val SHOW_TRAKT_ID = 1388L
         private const val OTHER_TRAKT_ID = 1429L
+        private const val SEASON_ID = 10L
+        private const val NOW_MILLIS = 1_700_000_000_000L
+        private const val PAST_AIR_DATE = 1_600_000_000_000L
+        private const val FUTURE_AIR_DATE = 1_800_000_000_000L
     }
 }

@@ -50,7 +50,7 @@ internal class WatchStatisticsCalculatorTest : BaseDatabaseTest() {
     )
 
     private val watchedEpisodeDao = DefaultWatchedEpisodeDao(database, showIdResolver, dispatchers, dateTimeProvider)
-    private val showWatchStatusDao = DefaultShowWatchStatusDao(database, dispatchers)
+    private val showWatchStatusDao = DefaultShowWatchStatusDao(database, dispatchers, dateTimeProvider)
     private val ratingsDao = DefaultRatingsDao(database, dispatchers)
     private val calculator = WatchStatisticsCalculator(dateTimeProvider)
 

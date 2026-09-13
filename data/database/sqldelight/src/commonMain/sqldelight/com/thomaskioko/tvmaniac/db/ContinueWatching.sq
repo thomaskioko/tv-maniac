@@ -88,7 +88,7 @@ VALUES(:showId, :tmdbId, 0, 0, 0, 0, :title, :year);
 
 -- Seeds a membership row per show that has live watched episodes but no continue_watching row yet.
 -- Used by providers without a native continue-watching sync (Simkl): the watched-history sync fills
--- watched_episodes, this derives membership, and the metadata fan-out + show_watch_progress view then
+-- watched_episodes, this derives membership, and the metadata fan-out + inlined watch-progress counts then
 -- compute counts. Count columns stay zero (non-load-bearing for reads). INSERT OR IGNORE never
 -- regresses an existing row (e.g. a Trakt Nitro-curated one).
 insertMembershipFromWatchedEpisodes:
