@@ -128,40 +128,9 @@ SELECT
     followed_shows.followed_at AS created_at,
     show_metadata.season_count,
     show_metadata.episode_count,
-    show_metadata.status,
-    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
-    COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
+    show_metadata.status
 FROM followed_shows
 INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
 LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
-LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
 WHERE followed_shows.pending_action != 'DELETE'
 ORDER BY COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC, tvshow.id ASC;
-
-searchFollowedShows:
-SELECT
-    tvshow.tmdb_id AS show_id,
-    tvshow.tmdb_id AS tmdb_id,
-    tvshow.name,
-    tvshow.poster_path,
-    tvshow.status,
-    tvshow.year,
-    followed_shows.followed_at AS created_at,
-    show_metadata.season_count,
-    show_metadata.episode_count,
-    show_metadata.status AS metadata_status,
-    COALESCE(show_watch_progress.watched_count, 0) AS watched_count,
-    COALESCE(show_watch_progress.total_count, 0) AS total_episode_count
-FROM followed_shows
-INNER JOIN tvshow ON followed_shows.show_id = tvshow.id
-LEFT JOIN show_metadata ON show_metadata.show_id = tvshow.id
-LEFT JOIN show_watch_progress ON show_watch_progress.show_id = tvshow.id
-WHERE followed_shows.pending_action != 'DELETE'
-  AND tvshow.name LIKE '%' || :query || '%' COLLATE NOCASE
-ORDER BY
-  CASE
-    WHEN tvshow.name LIKE :query || '%' COLLATE NOCASE THEN 1
-    WHEN tvshow.name LIKE '% ' || :query || '%' COLLATE NOCASE THEN 2
-    ELSE 3
-  END,
-  COALESCE(show_metadata.last_watched_at, followed_shows.followed_at) DESC;
