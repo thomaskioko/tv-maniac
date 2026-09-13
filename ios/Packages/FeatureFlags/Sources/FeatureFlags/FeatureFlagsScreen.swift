@@ -107,6 +107,7 @@ public struct FeatureFlagsScreen: View {
                 view
                     .appScreen()
                     .navigationTitle(state.title)
+                    .toolbar { DefaultToolbarItem(kind: .search, placement: .bottomBar) }
                     .searchable(text: $glassQuery, prompt: state.searchPlaceholder)
                     .onChange(of: glassQuery) { _, newValue in
                         if newValue != state.searchQuery {
@@ -271,9 +272,6 @@ public struct FeatureFlagsScreen: View {
         onTap: @escaping () -> Void
     ) -> some View {
         HStack(spacing: theme.spacing.medium) {
-            Image(systemName: icon)
-                .foregroundStyle(.appSecondary)
-                .frame(width: theme.spacing.large, height: theme.spacing.large)
             VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
@@ -283,6 +281,9 @@ public struct FeatureFlagsScreen: View {
                     .foregroundStyle(.appOnSurfaceVariant)
             }
             Spacer()
+            Image(systemName: icon)
+                .foregroundStyle(.appSecondary)
+                .frame(width: theme.spacing.large, height: theme.spacing.large)
         }
         .padding(.vertical, theme.spacing.small)
         .contentShape(Rectangle())

@@ -165,6 +165,13 @@ public class DebugPresenter internal constructor(
     ): ImmutableList<DebugItem> {
         val items = mutableListOf<DebugItem>()
         items += DebugItem(
+            id = "feature-flags",
+            icon = DebugItemIcon.FeatureFlags,
+            title = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsTitle),
+            subtitle = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsDescription),
+            action = OpenFeatureFlags,
+        )
+        items += DebugItem(
             id = "account_type",
             icon = DebugItemIcon.Account,
             title = localizer.getString(StringResourceKey.LabelDebugAccountTypeTitle),
@@ -202,13 +209,6 @@ public class DebugPresenter internal constructor(
             subtitle = syncSubtitle(lastUpNextSyncDate),
             isLoading = isSyncingUpNext,
             action = TriggerUpNextSync,
-        )
-        items += DebugItem(
-            id = "feature-flags",
-            icon = DebugItemIcon.FeatureFlags,
-            title = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsTitle),
-            subtitle = localizer.getString(StringResourceKey.LabelDebugFeatureFlagsDescription),
-            action = OpenFeatureFlags,
         )
         if (tokenSubtitle != null) {
             items += DebugItem(
