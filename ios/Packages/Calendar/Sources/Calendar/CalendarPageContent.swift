@@ -97,8 +97,16 @@ public struct CalendarPageContent: View {
                         }
                     }
                 }
-                .toolbarBackground(.appSurface, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
+                .liquidGlassVariant(
+                    liquidGlass: { view in
+                        view
+                    },
+                    legacy: { view in
+                        view
+                            .toolbarBackground(.appSurface, for: .navigationBar)
+                            .toolbarBackground(.visible, for: .navigationBar)
+                    }
+                )
             } else {
                 VStack(spacing: 0) {
                     if !isLocked {

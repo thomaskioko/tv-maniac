@@ -18,23 +18,41 @@ struct MyShowsSortOptionsSheet: View {
                     .padding(.horizontal)
                     .padding(.top, theme.spacing.medium)
             }
-            .background(theme.colors.background)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(String(\.label_library_sort_by))
-                        .textStyle(theme.typography.titleMedium)
-                        .foregroundColor(theme.colors.onSurface)
+            .liquidGlassVariant(
+                liquidGlass: { view in
+                    view
+                        .navigationTitle(String(\.label_library_sort_by))
+                        .containerBackground(.clear, for: .navigation)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(role: .close) {
+                                    dismiss()
+                                }
+                                .tint(theme.colors.onSurface)
+                            }
+                        }
+                },
+                legacy: { view in
+                    view
+                        .background(theme.colors.background)
+                        .toolbar {
+                            ToolbarItem(placement: .principal) {
+                                Text(String(\.label_library_sort_by))
+                                    .textStyle(theme.typography.titleMedium)
+                                    .foregroundColor(theme.colors.onSurface)
+                            }
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button {
+                                    dismiss()
+                                } label: {
+                                    Image(systemName: "xmark")
+                                        .foregroundColor(theme.colors.onSurface)
+                                }
+                            }
+                        }
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(theme.colors.onSurface)
-                    }
-                }
-            }
+            )
         }
         .screenTag(MyShowsTestTags.shared.SORT_SHEET_TEST_TAG)
     }
