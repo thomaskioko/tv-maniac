@@ -272,9 +272,6 @@ public struct FeatureFlagsScreen: View {
         onTap: @escaping () -> Void
     ) -> some View {
         HStack(spacing: theme.spacing.medium) {
-            Image(systemName: icon)
-                .foregroundStyle(.appSecondary)
-                .frame(width: theme.spacing.large, height: theme.spacing.large)
             VStack(alignment: .leading, spacing: theme.spacing.xxSmall) {
                 Text(title)
                     .textStyle(theme.typography.titleMedium)
@@ -284,6 +281,9 @@ public struct FeatureFlagsScreen: View {
                     .foregroundStyle(.appOnSurfaceVariant)
             }
             Spacer()
+            Image(systemName: icon)
+                .foregroundStyle(.appSecondary)
+                .frame(width: theme.spacing.large, height: theme.spacing.large)
         }
         .padding(.vertical, theme.spacing.small)
         .contentShape(Rectangle())
