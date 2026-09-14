@@ -126,6 +126,8 @@ public struct DiscoverScreen: View {
                             .testTag(DiscoverTestTags.shared.SEARCH_BUTTON_TEST_TAG)
                         }
                     }
+                    .scrollEdgeEffectHidden(showGlass == 0, for: .top)
+                    .scrollEdgeEffectHidden(for: .bottom)
                     .ignoresSafeArea(edges: .top)
             },
             legacy: { view in
